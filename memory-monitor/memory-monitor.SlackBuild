@@ -1,0 +1,121 @@
+#!/bin/sh
+#
+# Slackware build script for memory-monitor
+# http://www.smultron.net/wiki/index.php?title=Memory_monitor
+#
+# Copyright 2009-2012 Corrado Franco (http://conraid.net)
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Exit on most errors
+set -e
+
+# Set variables:
+CWD=$(pwd)
+
+PRGNAME=${PRGNAME:-memory-monitor}
+PKGNAME=${PKGNAME:-$PRGNAME}
+VERSION=${VERSION:-1.1}
+BUILD=${BUILD:-5}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+SOURCE="SOURCE=http://www.smultron.net/project/memory-monitor/${PRGNAME}-${VERSION}.tar.gz"
+PKG=$TMP/package-$PKGNAME
+DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
+
+# Automatically determine the architecture we are building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+        i?86) ARCH=i686 ;;
+        arm*) ARCH=arm ;;
+        # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
+fi
+
+# Set compiling FLAGS
+case "$ARCH" in
+    i486)
+	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    i686)
+	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    x86_64)
+	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
+	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+        ;;
+    *)
+        SLKCFLAGS="-O2"; CHOST=$ARCH
+        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	;;
+esac
+
+# Download source, if not exist
+if ! [ -e $(basename $SOURCE) ]; then
+    wget $SOURCE
+fi
+
+# Extract source and prepare:
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PKGNAME-$VERSION
+
+tar xzvf $CWD/$PRGNAME-$VERSION.tar.gz
+cd $PRGNAME-$VERSION
+
+# Make sure ownerships and permissions are sane:
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
+
+# Configure
+qmake PREFIX=/usr QMAKE_LIBS="$SLKLDFLAGS" QMAKE_CFLAGS="$SLKCFLAGS" QMAKE_CXXFLAGS="$SLKCFLAGS" -o Makefile ${PRGNAME}.pro
+
+# Build and install:
+make
+mkdir -p $PKG/usr/bin
+cp memory-monitor $PKG/usr/bin
+
+# Strip binaries:
+strip --strip-unneeded $PKG/usr/bin/memory-monitor 2> /dev/null
+
+# Add a documentation directory:
+mkdir -p ${DOCS}
+cp -a README ${DOCS}
+
+# Add a slackbuild script:
+cat $CWD/$PKGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
+
+# Add slack-desc
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+# Add a desktop file, if any
+if [ -e $CWD/$PKGNAME.desktop ]; then
+    mkdir -p $PKG/usr/share/applications/
+    cp -f $CWD/$PKGNAME.desktop $PKG/usr/share/applications/$PKGNAME.desktop
+fi
+
+# Create package:
+cd $PKG
+/sbin/makepkg -l y -c n $CWD/$PKGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz
+

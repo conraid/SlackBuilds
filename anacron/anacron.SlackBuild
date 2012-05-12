@@ -1,0 +1,134 @@
+#!/bin/sh
+#
+# Slackware build script for anacron (http://http://sourceforge.net/projects/anacron2/)
+#
+# Copyright 2009-2012 Corrado Franco (http://conraid.net)
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Exit on most errors
+set -e
+
+# Set variables:
+CWD=$(pwd)
+
+PRGNAME=${PRGNAME:-anacron}
+PKGNAME=${PKGNAME:-$PRGNAME}
+VERSION=${VERSION:-2.5.3}
+PKGVERSION=$(echo $VERSION | tr - _)
+BUILD=${BUILD:-2}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+SOURCE="http://heanet.dl.sourceforge.net/sourceforge/anacron2/anacron.${VERSION}.tar.gz"
+PKG=$TMP/package-$PKGNAME
+DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
+
+# Insert document files in this variable
+DOCFILES="COPYING ChangeLog Makefile README TODO"
+
+# Automatically determine the architecture we are building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+        i?86) ARCH=i686 ;;
+        arm*) ARCH=arm ;;
+        # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
+fi
+
+# Set compiling FLAGS
+case "$ARCH" in
+    i486)
+	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    i686)
+	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    x86_64)
+	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
+	SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"
+        ;;
+    *)
+        SLKCFLAGS="-O2"; CHOST=$ARCH
+        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	;;
+esac
+
+# Download source, if not exist
+if ! [ -e $(basename $SOURCE) ]; then
+    wget $SOURCE
+fi
+
+# Extract source and prepare:
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAME-$VERSION
+tar xzvf $CWD/${PRGNAME}.${VERSION}.tar.gz
+cd $PRGNAME-$VERSION
+
+# Make sure ownerships and permissions are sane:
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
+
+# Build and install
+make CFLAGS="$SLKCFLAGS" LDFLAGS="$SLKLDFLAGS"
+mkdir -p $PKG/etc
+make PREFIX=$PKG ANACRONTAB="$PKG/etc/anacrontab.new" install
+
+# Strip binaries:
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true
+
+# Compress and link manpages, if any:
+if [ -d $PKG/usr/man ]; then
+( cd $PKG/usr/man
+  find . -type f -exec gzip -9 {} \;
+  for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+)
+fi
+
+# Add a documentation directory:
+mkdir -p ${DOCS}
+for i in ${DOCFILES}; do
+    if [ -e "${i}" ]; then
+        if ! [ -L "${i}" ]; then
+	    cp -a "${i}" ${DOCS}
+	else
+	    cp -LRp "${i}" ${DOCS}
+        fi
+    fi;
+done
+
+# Add a slackbuild script:
+cat $CWD/$PKGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
+
+# Add slack-desc
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+# Add a doinst.sh
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+
+# Create package:
+cd $PKG
+/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+

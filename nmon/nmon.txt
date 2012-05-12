@@ -1,0 +1,118 @@
+nmon -?
+
+Outputs a hint on nmon use:
+
+Hint: nmon [-h] [-s <seconds>] [-c <count>] [-f -d <disks> -t -r <name>] [-x]
+        -h            FULL help information
+        Interactive-Mode:
+        read startup banner and type: "h" once it is running
+        For Data-Collect-Mode (-f)
+        -f            spreadsheet output format [note: default -s300 -c288]
+        optional
+        -s <seconds>  between refreshing the screen [default 2]
+        -c <number>   of refreshes [default millions]
+        -d <disks>    to increase the number of disks [default 256]
+        -t            spreadsheet includes top processes;
+        -x            capacity planning (15 min for 1 day = -fdt -s 900 -c 96)
+
+nmon -h
+
+Outputs the hint above and the following:
+
+For Interactive-Mode
+        -s <seconds>  between refreshing the screen [default 2]
+        -c <number>   of refreshes [default millions]
+        -g <filename> User Defined Disk Groups [hit g to show them]
+                      - file = on each line: group_name <disks list> sapce separated
+                      - like: database sdb sdc sdd sde
+                      - upto 32 disk groups, disks can appear more than once
+        -b            black and white [default is colour]
+        example: nmon -s 1 -c 100
+
+For Data-Collect-Mode = spreadsheet format (comma separated values)
+        Note: use only one of f,F,z,x or X and make it the first argument
+        -f            spreadsheet output format [note: default -s300 -c288]
+        \t\t output file is <hostname>_YYYYMMDD_HHMM.nmon
+        -F <filename> same as -f but user supplied filename
+        -r <runname>  goes into spreadsheet file [default hostname]
+        -t            include top processes in the output
+        -T            as -t plus saves command line arguments in UARG section
+        -s <seconds>  between snap shots
+        -c <number>   of refreshes
+        -d <disks>    to increase the number of disks [default 256]
+        -l <dpl>      disks/line default 150 to avoid spreadsheet issues. EMC=64.
+        -g <filename> User Defined Disk Groups (see above)
+
+        -N            include NFS Network File System
+        -I <percent>  Include precoess and disks busy threshold (default 0.1)
+                      don't save or show proc/disk using less than this percent
+        -m <directory> nmon changes to this directory before saving to file
+        -D            Skip disk configuration sections
+        example: collect for 1 hour at 30 second intervals with top procs
+        \t nmons -f -t -r Test1 -s30 -c120
+
+        To load into a spreadsheet like Lotus 1-2-3:
+        sort -A *nmon >stats.csv
+        transfer the stats.csv file to your PC
+        Start 1-2-3 and then Open <char-separated-value ASCII file>
+
+Capacity planning mode - use cron to run each day
+        -x            sensible spreadsheet output for CP =  one day
+                      every 15 mins for 1 day ( i.e. -ft -s 900 -c 96)
+        -X            sensible spreadsheet output for CP = busy hour
+                      every 30 secs for 1 hour ( i.e. -ft -s 30 -c 120)
+
+Set-up and installation
+        - this adds the disk % busy numbers (otherwise they are zero)
+        If you have hundreds of disk this can take 1%% to 2%% CPU
+
+Interactive Mode Commands
+        key --- Toggles to control what is displayed ---
+        h   = Online help information
+        r   = Machine type, machine name, cache details and OS version + LPAR
+        c   = CPU by processor stats with bar graphs
+        l   = long term CPU (over 75 snapshots) with bar graphs
+        m   = Memory stats
+        V   = Virtual Memory and Swap stats
+        k   = Kernel Internal stats
+        n   = Network stats and errors
+        N   = NFS Network File System
+        d   = Disk I/O Graphs
+        D   = Disk I/O Stats
+        o   = Disk I/O Map (one character per disk showing how busy it is)
+#ifdef PARTITIONS
+        P   = Partitions Disk I/O Stats
+#endif
+#ifdef POWER
+        p   = Logical Partitions Stats
+#endif
+        b   = black and white mode (or use -b option)
+        .   = minimum mode i.e. only busy disks and processes
+
+        key --- Other Controls ---
+        +   = double the screen refresh time
+        -   = halves the screen refresh time
+        q   = quit (also x, e or control-C)
+        0   = reset peak counts to zero (peak = ">")
+        space = refresh screen now
+
+        artup Control
+        If you find you always type the same toggles every time you start
+        then place them in the NMON shell variable. For example:
+         export NMON=cmdrvtan
+
+        hers:
+        a) To you want to stop nmon - kill -USR2 <nmon-pid>
+        b) Use -p and nmon outputs the background process pid
+        c) To limit the processes nmon lists (online and to a file)
+           Either set NMONCMD0 to NMONCMD63 to the program names
+           or use -C cmd:cmd:cmd etc. example: -C ksh:vi:syncd
+        d) If you want to pipe nmon output to other commands use a FIFO:
+           mkfifo /tmp/mypipe
+           nmon -F /tmp/mypipe &
+           grep /tmp/mypipe
+        e) If nmon fails please report it with:
+           1) nmon version like: 12b
+           2) the output of cat /proc/cpuinfo
+           3) some clue of what you were doing
+           4) I may ask you to run the debug version

@@ -1,0 +1,126 @@
+#!/bin/sh
+#
+# Slackware build script for openal-soft
+#
+# Copyright 2011-2012 Corrado Franco (http://conraid.net)
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Exit on most errors
+set -e
+
+# Set variables:
+CWD=$(pwd)
+
+PRGNAME=openal-soft
+PKGNAME=openal
+VERSION=${VERSION:-1.13}
+PKGVERSION=$(echo $VERSION | tr - _)
+BUILD=${BUILD:-1}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+PKG=$TMP/package-$PKGNAME
+DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
+
+# Insert document files in this variable
+DOCFILES="COPYING README"
+
+# Automatically determine the architecture we are building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+        i?86) ARCH=i686 ;;
+        arm*) ARCH=arm ;;
+        # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
+fi
+
+# Set compiling FLAGS
+case "$ARCH" in
+    i486)
+	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    i686)
+	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    x86_64)
+	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
+	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+        ;;
+    *)
+        SLKCFLAGS="-O2"; CHOST=$ARCH
+        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	;;
+esac
+
+# Extract source and prepare:
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAME-$VERSION
+tar xvf $CWD/openal-soft-$VERSION.tbz2
+cd $PRGNAME-$VERSION
+
+# Make sure ownerships and permissions are sane:
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
+
+# Configure
+mkdir -p build
+cd build
+cmake \
+  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
+  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
+  -DCMAKE_LD_FLAGS:STRING="$SLKLDFLAGS" \
+  -DCMAKE_BUILD_TYPE=none \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
+  -DEXAMPLES=OFF \
+  ..
+
+# Build and install:
+make 
+make DESTDIR=$PKG install/strip
+cd ..
+
+# Add a documentation directory:
+mkdir -p ${DOCS}
+for i in ${DOCFILES}; do
+    if [ -e "${i}" ]; then
+        if ! [ -L "${i}" ]; then
+	    cp -a "${i}" ${DOCS}
+	else
+	    cp -LRp "${i}" ${DOCS}
+        fi
+    fi;
+done
+
+# Add a slackbuild script:
+cat $CWD/$PKGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
+
+# Add slack-desc
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+# Create package:
+cd $PKG
+/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+

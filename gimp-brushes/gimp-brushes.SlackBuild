@@ -1,0 +1,89 @@
+#!/bin/sh
+#
+# Slackware build script for gimp-brushes (http://www.gimphelp.org)
+#
+# Copyright 2008-2012 Corrado Franco (http://conraid.net)
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Exit on most errors
+set -e 
+
+# Set variables:
+CWD=$(pwd)
+
+PRGNAME=${PRGNAME:-gimp-brushes}
+VERSION=${VERSION:-2.6}
+BUILD=${BUILD:-4}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+SOURCE="http://www.gimphelp.org/DL/arrow_brushes_BW_1.tar.bz2
+http://www.gimphelp.org/DL/arrow_brushes_BW_2.tar.bz2
+http://www.gimphelp.org/DL/arrow_brushes_color_1.tar.bz2
+http://www.gimphelp.org/DL/arrow_brushes_color_2.tar.bz2
+http://www.gimphelp.org/DL/cursor_brushes-1.0.tar.bz2
+http://www.gimphelp.org/DL/circle_brushes-1.0.tar.bz2
+http://www.gimphelp.org/DL/checkmark_brushes-1.0.tar.bz2
+http://www.gimphelp.org/DL/arrow_brushes_black_gloss.tar.bz2
+http://www.gimphelp.org/DL/star_brushes.tar.bz2
+http://www.gimphelp.org/DL/hand_pointer_brushes.tar.bz2
+http://www.gimphelp.org/DL/arrow_action.tar.bz2
+http://www.gimphelp.org/DL/button_arrow_brushes.tar.bz2"
+
+PKG=$TMP/package-$PRGNAME
+DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
+BRUSHES=$PKG/usr/share/gimp/2.0/brushes
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+        i?86) ARCH=x86 ;;
+        arm*) ARCH=arm ;;
+        # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+        esac
+fi
+
+# Download source, if not exist
+for SOURCEFILE in $SOURCE; do
+    if ! [ -e $(basename $SOURCEFILE) ]; then
+        wget $SOURCEFILE
+    fi
+done
+
+# prepare:
+rm -rf $PKG
+mkdir -p $TMP $PKG $DOCS $BRUSHES
+cd $TMP
+
+for BRUSHESFILE in $(ls $CWD/*brushes*.tar.bz2); do
+    tar -xjf $BRUSHESFILE
+    cp */*.gbr $BRUSHES
+done
+
+# Add a slackbuild script:
+cat $CWD/$PRGNAME.SlackBuild > $DOCS/$PRGNAME.SlackBuild
+
+# Add slack-desc
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+# Create package:
+cd $PKG
+/sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz

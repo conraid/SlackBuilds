@@ -1,0 +1,140 @@
+#!/bin/sh
+#
+# Slackware build script for ctunnel
+#
+# Copyright 2011-2012 Corrado Franco (http://conraid.net)
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Latest version of this SlackBuild at http://slackers.it/repository
+#
+# Exit on most errors
+set -e
+
+# Set variables:
+CWD=$(pwd)
+
+PRGNAME=${PRGNAME:-ctunnel}
+PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
+VERSION=${VERSION:-0.6}
+PKGVERSION=$(echo $VERSION | tr - _)
+BUILD=${BUILD:-1}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+MAKEFLAGS=${MAKEFLAGS:--j2}
+SOURCE="http://nardcore.org/ctunnel/ctunnel-$VERSION.tar.gz"
+PKG=$TMP/package-$PKGNAME
+DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
+
+# Insert document files in this variable
+DOCFILES="AUTHORS COPYING ChangeLog INSTALL README"
+
+# Automatically determine the architecture we are building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+        i?86) ARCH=i686 ;;
+        arm*) ARCH=arm ;;
+        # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
+fi
+
+# Set compiling FLAGS
+case "$ARCH" in
+    i486)
+	SLKCFLAGS="-march=i486 -mtune=i686"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    i686)
+	SLKCFLAGS="-march=i686 -mtune=i686"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    x86_64)
+	SLKCFLAGS="-O2 -fPIC"; CHOST="x86_64"
+	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+        ;;
+    *)
+        SLKCFLAGS="-O2"; CHOST=$ARCH
+        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	;;
+esac
+
+# Download source, if not exist
+if ! [ -e $(basename $SOURCE) ]; then
+    wget $SOURCE
+fi
+
+# Extract source and prepare:
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAME-$VERSION
+tar xvf $CWD/$(basename $SOURCE)
+cd $PRGNAME-$VERSION
+
+# Make sure ownerships and permissions are sane:
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
+
+# Build and install:
+sed -i "s/^CFLAGS=\(.*\)/CFLAGS=$SLKCFLAGS \1/" src/Makefile
+sed -i "s#^LDFLAGS=\(.*\)#LDFLAGS=$SLKLDFLAGS \1#" src/Makefile
+
+# GCrypt version
+sed -i 's/^#CRYPTO_TYPE=GCRYPT/CRYPTO_TYPE=GCRYPT/;s/^CRYPTO_TYPE=OPENSSL/#CRYPTO_TYPE=OPENSSL/' Makefile.cfg
+make
+install -Dsm 755 src/ctunnel $PKG/usr/bin/ctunnel-gcrypt
+# OpenSSL version
+make clean
+sed -i 's/^CRYPTO_TYPE=GCRYPT/#CRYPTO_TYPE=GCRYPT/;s/^#CRYPTO_TYPE=OPENSSL/CRYPTO_TYPE=OPENSSL/' Makefile.cfg
+make
+install -Dsm 755 src/ctunnel $PKG/usr/bin/ctunnel-openssl
+
+# Make link for default ctunnel-gcrypt
+(cd $PKG/usr/bin
+ln -s ctunnel-gcrypt ctunnel
+)
+
+# Install and gzipped man pages
+install -Dm644 ctunnel.1 $PKG/usr/man/man1/ctunnel.1
+gzip -9 $PKG/usr/man/man1/ctunnel.1
+
+# Add a documentation directory:
+mkdir -p ${DOCS}
+for i in ${DOCFILES}; do
+    if [ -e "${i}" ]; then
+        if ! [ -L "${i}" ]; then
+	    cp -a "${i}" ${DOCS}
+	else
+	    cp -LRp "${i}" ${DOCS}
+        fi
+    fi;
+done
+
+# Add a slackbuild script:
+cat $CWD/$PKGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
+
+# Add slack-desc
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+# Create package:
+cd $PKG
+/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+

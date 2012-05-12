@@ -1,0 +1,175 @@
+Author: n/a
+Description: Needs to be broken out (FIXME).
+
+diff -Naurp apachetop.orig/man/apachetop.1 apachetop/man/apachetop.1
+--- apachetop.orig/man/apachetop.1	2009-07-16 21:43:27.000000000 +0000
++++ apachetop/man/apachetop.1	2009-07-16 21:46:39.000000000 +0000
+@@ -51,4 +51,4 @@ apachetop -f /var/logs/httpd/access.log
+ .SH AUTHOR
+ Chris Elsworth <chris@shagged.org>
+ .SH SEE ALSO
+-http://clueful.shagged.org/apachetop/
++http://www.webta.org/projects/apachetop/
+diff -Naurp apachetop.orig/src/apachetop.cc apachetop/src/apachetop.cc
+--- apachetop.orig/src/apachetop.cc	2009-07-16 21:43:27.000000000 +0000
++++ apachetop/src/apachetop.cc	2009-07-16 21:46:39.000000000 +0000
+@@ -1007,7 +1013,11 @@ int new_file(char *filename, bool do_see
+ 
+ 	if (do_seek_to_end) lseek(fd, 0, SEEK_END);
+ 
+-	if (this_file->filename) free(this_file->filename);
++	/*
++	 * skx: This causes crashes since the realloc above doesn't
++	 * NULL set the memory.
++	 * if (this_file->filename) free(this_file->filename);
++	 */
+ 
+ 	this_file->inode = sb.st_ino;
+ 	this_file->filename = strdup(realfile);
+diff -Naurp apachetop.orig/src/apachetop.h apachetop/src/apachetop.h
+--- apachetop.orig/src/apachetop.h	2009-07-16 21:43:27.000000000 +0000
++++ apachetop/src/apachetop.h	2009-07-16 21:46:39.000000000 +0000
+@@ -5,6 +5,11 @@
+ # include "config.h"
+ #endif
+ 
++#undef _FILE_OFFSET_BITS
++#undef _LARGE_FILES
++#define _FILE_OFFSET_BITS 64
++#define _LARGE_FILES 1
++
+ #include <stdio.h>
+ #include <errno.h>
+ #include <ctype.h>
+@@ -248,7 +253,7 @@ struct gstat {
+ 
+ /* this can be overridden from config.h via ./configure --with-logfile .. */
+ #ifndef DEFAULT_LOGFILE
+-# define DEFAULT_LOGFILE "/var/httpd/apache_log"
++# define DEFAULT_LOGFILE "/var/log/httpd/access.log"
+ #endif
+ #define DEFAULT_CIRCLE_SIZE 30
+ #define DEFAULT_CIRCLE_MODE TIMED_CIRCLE
+diff -Naurp apachetop.orig/src/hits_circle.cc apachetop/src/hits_circle.cc
+--- apachetop.orig/src/hits_circle.cc	2009-07-16 21:43:27.000000000 +0000
++++ apachetop/src/hits_circle.cc	2009-07-16 21:46:39.000000000 +0000
+@@ -8,7 +8,7 @@
+ 
+ #include "apachetop.h"
+ 
+-extern map *hm, *um, *rm;
++extern map *hm, *um, *rm, *im;
+ 
+ int Hits_Circle::create(unsigned int passed_size)
+ {
+@@ -48,7 +48,7 @@ int Hits_Circle::insert(struct logbits l
+ 		hm->sub_ref(posptr->host_pos);
+ 		um->sub_ref(posptr->url_pos);
+ 		rm->sub_ref(posptr->ref_pos);
+-
++		im->sub_ref(posptr->ip_pos);
+ 	}
+ 	
+ 	/* maintain some stats */
+diff -Naurp apachetop.orig/src/log.cc apachetop/src/log.cc
+--- apachetop.orig/src/log.cc	2009-07-16 21:43:27.000000000 +0000
++++ apachetop/src/log.cc	2009-07-16 21:46:39.000000000 +0000
+@@ -365,7 +365,8 @@ void collect_dns_responses()
+ 		lb->want_host = false;
+ 		lb->want_ip = false;
+ 		delete lb->dns_query;
+-
++		lb->dns_query = NULL;
++		
+ 		if (answer->status == adns_s_ok)
+ 		{
+ 			/* we have a reply */
+diff -Naurp apachetop.orig/src/map.cc apachetop/src/map.cc
+--- apachetop.orig/src/map.cc	2009-07-16 21:43:27.000000000 +0000
++++ apachetop/src/map.cc	2009-07-16 21:46:39.000000000 +0000
+@@ -41,7 +41,6 @@ int map::destroy(void)
+ {
+ 	free(tab);
+ 
+-	tab_hash->destroy();
+ 	delete tab_hash;
+ 
+ 	return 0;
+@@ -99,7 +98,7 @@ int map::insert(char *string)
+ 		 * particular entry is incremented */
+ 		tab[x].refcount++;
+ 
+-//		dprintf("%d Found %p %d for %s\n", time(NULL), this, x, string);
++//		dprintf("%d Found %p %d %d for %s\n", time(NULL), this, x, tab[x].refcount, string);
+ 		return x;
+ 	}
+ 	
+@@ -188,10 +187,22 @@ char *map::reverse(int pos)
+ 
+ void map::sub_ref(int pos)
+ {
+-//	dprintf("%d subref %p %d for %s\n",
+-//	    time(NULL), this, pos, tab[pos].string);
++//	dprintf("%d subref %p %d %d for %s\n",
++//	    time(NULL), this, pos, tab[pos].refcount, tab[pos].string);
++
++	/* -1 means no/invalid position, can happen with ip map */
++	if (pos < 0) return;
+ 	
+-	if (tab[pos].refcount > 0)
++	if (tab[pos].refcount > 0) {
+ 		tab[pos].refcount--;
+-
++		if ((tab[pos].refcount == 0) && (tab[pos].string)) {
++			/* remove from hash */
++			tab_hash->remove(tab[pos].string);
++			
++			/* remove from table */
++			free(tab[pos].string);
++			tab[pos].string = NULL;
++			tab[pos].time = 0;
++		}
++	}
+ }
+diff -Naurp apachetop.orig/src/resolver.h apachetop/src/resolver.h
+--- apachetop.orig/src/resolver.h	2009-07-16 21:43:27.000000000 +0000
++++ apachetop/src/resolver.h	2009-07-16 21:46:39.000000000 +0000
+@@ -10,8 +10,8 @@ enum resolver_action
+ class Resolver
+ {
+ 	public:
+-	Resolver::Resolver(void);
+-	Resolver::~Resolver(void);
++	Resolver(void);
++	~Resolver(void);
+ 	int add_request(char *request, enum resolver_action act);
+ 
+ 
+diff -Naurp apachetop.orig/src/timed_circle.cc apachetop/src/timed_circle.cc
+--- apachetop.orig/src/timed_circle.cc	2009-07-16 21:43:27.000000000 +0000
++++ apachetop/src/timed_circle.cc	2009-07-16 21:46:39.000000000 +0000
+@@ -15,7 +15,7 @@
+ extern time_t now; /* global ApacheTop-wide to save on time() calls */
+ extern struct gstat gstats;
+ 
+-extern map *hm, *um, *rm;
++extern map *hm, *um, *rm, *im;
+ 
+ int Timed_Circle::create(unsigned int size)
+ {
+@@ -92,6 +92,7 @@ void Timed_Circle::resetbucketstats(cons
+ 		if (hit->host_pos) hm->sub_ref(hit->host_pos);
+ 		if (hit->url_pos) um->sub_ref(hit->url_pos);
+ 		if (hit->ref_pos) rm->sub_ref(hit->ref_pos);
++		if (hit->ip_pos) im->sub_ref(hit->ip_pos);
+ 	}
+ 
+ 	/* start at the beginning of the HIT array */
+@@ -144,6 +145,7 @@ int Timed_Circle::insert(struct logbits 
+ 	if (hit->host_pos) hm->sub_ref(hit->host_pos);
+ 	if (hit->url_pos) um->sub_ref(hit->url_pos);
+ 	if (hit->ref_pos) rm->sub_ref(hit->ref_pos);
++	if (hit->ip_pos) im->sub_ref(hit->ip_pos);
+ 
+ 	/* store the data itself */
+ 	memcpy(hit, &lb, sizeof(lb));

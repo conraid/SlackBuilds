@@ -1,0 +1,74 @@
+#!/bin/sh
+# Start/Stop/Restart vnStat
+# Copyright 2009 Corrado Franco
+#
+# READ FIRST
+# Before you run this script make sure you run:
+# vnstat -u -i eth0
+# Replace 'eth0' with the interface that should be monitored.
+
+VNSTATBIN="/usr/sbin/vnstatd"
+PIDFILE="/var/run/vnstat.pid"
+
+start_vnstat() {
+    echo -n "Starting vnStat daemon: "
+    if [ -e "$PIDFILE" ]; then
+	echo "Already running"
+	return 0 
+    fi
+    $VNSTATBIN -d
+    if [ $? -gt 0 ]; then
+        echo "Failed"
+    else
+	echo "Done"
+    fi
+}
+
+stop_vnstat() {
+    echo -n "Stopping vnStat daemon: "
+    if [ ! -e "$PIDFILE" ]; then
+	echo "Not running"
+	return 0 
+    fi
+    kill $(cat $PIDFILE)
+    if [ $? -gt 0 ]; then
+        echo "Failed"
+    else
+	echo "Done"
+    fi
+}
+
+reload_vnstat() {
+    echo -n  "Reloading vnStat daemon: "
+    if [ ! -e "$PIDFILE" ]; then
+	echo "Not running"
+	return 0 
+    fi
+    kill -HUP $(cat $PIDFILE)
+    if [ $? -gt 0 ]; then
+        echo "Failed"
+    else
+	echo "Done"
+    fi
+}
+
+case "$1" in
+  start)
+    start_vnstat
+    ;;
+  stop)
+    stop_vnstat
+    ;;
+  reload)
+    reload_vnstat
+    ;;
+  restart)
+    stop_vnstat
+    sleep 2
+    start_vnstat
+    ;;
+  *)
+    echo "usage: $0 {start|stop|restart}"
+esac
+exit 0
+

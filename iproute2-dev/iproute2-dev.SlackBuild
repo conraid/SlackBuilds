@@ -1,0 +1,90 @@
+#!/bin/sh
+
+# Copyright 2005-2012  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Build this against 2.6.x kernel source and headers...
+set -e
+
+VERSION=2.6.37
+BUILD=${BUILD:-1}
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+  case "$( uname -m )" in
+    i?86) export ARCH=i486 ;;
+    arm*) export ARCH=arm ;;
+    # Unless $ARCH is already set, use uname -m for all other archs:
+       *) export ARCH=$( uname -m ) ;;
+  esac
+fi
+
+if [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC"
+  LIBDIRSUFFIX="64"
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+fi
+
+CWD=$(pwd)
+TMP=${TMP:-/tmp}
+PKG=$TMP/package-iproute2
+
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf iproute2-$VERSION
+tar xvf $CWD/iproute2-$VERSION.tar.bz2 # Source are in a mirror of Slackware -current
+cd iproute2-$VERSION
+
+chown -R root:root .
+find . \
+  \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
+
+# Fix up path to bdb and iptables libs
+cat $CWD/iproute2.fixup_dbpath_and_iptablespath.diff | sed \
+  -e "s,@LIBDIR@,/usr/lib${LIBDIRSUFFIX},g" \
+  -e "s,@VERSION@,$VERSION,g" | patch -p1
+
+# Use our custom SLKCFLAGS
+sed -i "s/-O2 /-O2 -fPIC /" Makefile
+
+./configure  # This is okay, really :-)
+make
+
+install -Dm644 include/libnetlink.h $PKG/usr/include/libnetlink.h
+install -Dm644 lib/libnetlink.a $PKG/usr/lib${LIBDIRSUFFIX}/libnetlink.a
+
+install -Dm644 COPYING $PKG/usr/doc/iproute2-dev-$VERSION/COPYING
+
+install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+
+cd $PKG
+/sbin/makepkg -l y -c n $CWD/iproute2-dev-$(echo $VERSION | tr - _)-$ARCH-${BUILD}cf.txz

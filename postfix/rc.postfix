@@ -1,0 +1,63 @@
+#!/bin/sh
+#
+# Start/stop/restart the Postfix mail server.
+#
+# To make Postfix start automatically at boot, make this
+# file executable:  chmod 755 /etc/rc.d/rc.postfix
+#
+
+postfix_start() {
+    if [ -x /usr/sbin/postfix ]; then
+        echo -n  "Starting postfix MTA...  "
+	/usr/sbin/postfix start 2>/dev/null
+	echo "OK"
+    fi
+}
+
+postfix_stop() {
+    if [ -x /usr/sbin/postfix ]; then
+        echo -n "Stopping postfix MTA...  "
+        /usr/sbin/postfix stop 2>/dev/null
+        echo "OK"
+    fi
+}
+
+postfix_restart() {
+    sh $0 stop
+    sleep 1
+    sh $0 start
+}
+
+postfix_reload() {
+    if [ -x /usr/sbin/postfix ]; then
+        echo -n "Reloading postfix MTA...  "
+        /usr/sbin/postfix reload 2>/dev/null
+        echo "OK"
+    fi
+}
+
+postfix_status() {
+    if [ -x /usr/sbin/postfix ]; then
+        /usr/sbin/postfix status
+    fi
+}
+
+case "$1" in
+    'start')
+            postfix_start
+            ;;
+    'stop')
+            postfix_stop
+            ;;
+    'restart')
+            postfix_restart
+            ;;
+    'reload')
+            postfix_reload
+            ;;
+    'status')
+	    postfix_status
+	    ;;
+    *)
+            echo "usage $0 start|stop|restart|reload|status"
+esac

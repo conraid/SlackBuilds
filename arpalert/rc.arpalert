@@ -1,0 +1,42 @@
+#!/bin/bash
+#
+# Startup script for arpalert. 
+
+DEFAULT_PID_FILE="/var/run/arpalert.pid"
+
+start() {
+    if [ ! -f $DEFAULT_PID_FILE ]; then
+	echo -n "Starting Arpalert: /usr/sbin/arpalert"
+        /usr/sbin/arpalert
+    else 
+	echo -n "Arpalert is running. "
+    fi
+}
+
+stop() {
+    if [ -f $DEFAULT_PID_FILE ]; then
+	echo -n "Stopping Arpalert: "
+        killall arpalert
+    else 
+	echo -n "Arpalert is not running. "
+    fi
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+        echo "Usage:  {start|stop|restart[|probe]"
+        exit 1
+        ;;
+esac
+exit 0
+

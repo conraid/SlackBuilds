@@ -1,0 +1,165 @@
+#!/bin/sh
+#
+# Slackware build script for <prgname> (http://www.privoxy.org/)
+#
+# Copyright 2009-2012 Corrado Franco (http://conraid.net)
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Exit on most errors
+set -e
+
+# Set variables:
+CWD=$(pwd)
+
+PRGNAME=${PRGNAME:-privoxy}
+PKGNAME=${PKGNAME:-$PRGNAME}
+VERSION=${VERSION:-3.0.19}
+PKGVERSION=$(echo $VERSION | tr - _)
+BUILD=${BUILD:-1}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+PKG=$TMP/package-$PKGNAME
+DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
+
+## privoxy user & group *MUST* exist before package creation
+# See http://slackbuilds.org/uid_gid.txt for current recomendations.
+PRIVOXY_USER=${PRIVOXY_USER:-privoxy}
+PRIVOXY_GROUP=${PRIVOXY_GROUP:-privoxy}
+
+if ! grep -q ^$PRIVOXY_GROUP: /etc/group 2>/dev/null ; then
+    echo "    Error: PRIVOXY group ($PRIVOXY_GROUP) doesn't exist."
+    echo "    Try creating one with: groupadd -g 206 $PRIVOXY_GROUP"
+    exit 1
+fi
+if ! grep -q ^$PRIVOXY_USER: /etc/passwd 2>/dev/null ; then
+    echo "    Error: PRIVOXY user ($PRIVOXY_USER) doesn't exist."
+    echo "    Try creating one with: useradd -u 206 -g $PRIVOXY_GROUP -d /dev/null -s /bin/false $PRIVOXY_USER"
+    exit 1
+fi
+
+# Automatically determine the architecture we are building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+        i?86) ARCH=i686 ;;
+        arm*) ARCH=arm ;;
+        # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
+fi
+
+# Set compiling FLAGS
+case "$ARCH" in
+    i486)
+	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    i686)
+	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    x86_64)
+	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
+	SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"
+        ;;
+    *)
+        SLKCFLAGS="-O2"; CHOST=$ARCH
+        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	;;
+esac
+
+# Extract source and prepare:
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAME-$VERSION-stable
+tar xvf $CWD/privoxy-$VERSION-stable-src.tar.gz
+cd $PRGNAME-$VERSION-stable
+
+# Make sure ownerships and permissions are sane:
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
+
+# Configure
+autoheader
+autoconf
+LDFLAGS="$SLKLDFLAGS" \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+  --prefix=/usr \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --sysconfdir=/etc/privoxy \
+  --localstatedir=/var \
+  --mandir=/usr/man \
+  --infodir=/usr/info \
+  --docdir=/usr/doc/${PKGNAME}-${VERSION} \
+  --with-docbook=no \
+  --with-user=$PRIVOXY_USER \
+  --with-group=$PRIVOXY_GROUP \
+  --host=$CHOST-slackware-linux \
+  --build=$CHOST-slackware-linux
+
+# Build and install:
+make 
+make DESTDIR=$PKG install-strip
+
+mkdir $PKG/etc/rc.d
+cat slackware/rc.privoxy > $PKG/etc/rc.d/rc.privoxy
+
+# Fix Path with the config file to point to right usermanual
+sed -i "s%user-manual /usr/share/doc/$PRGNAME%user-manual /usr/doc/$PRGNAME-$VERSION%" $PKG/etc/privoxy/config*
+# Make .new files so we dont clobber existing configuration
+find $PKG/etc -type f ! -name "*.new" -exec mv {} {}.new \;
+# Don't clobber the logfile either
+mv $PKG/var/log/privoxy/logfile $PKG/var/log/privoxy/logfile.new
+# Remove this directory since it's empty and part of Slackware base
+rmdir $PKG/var/run
+
+# Compress and link manpages, if any:
+if [ -d $PKG/usr/man ]; then
+( cd $PKG/usr/man
+  find . -type f -exec gzip -9 {} \;
+  for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+)
+fi
+
+# Sane doc path
+mkdir -p $PKG/usr/doc
+mv $PKG/usr/share/doc/$PRGNAME $DOCS
+rm -rf $PKG/usr/share/
+find $PKG/usr/doc -type f -exec chmod 644 {} \;
+
+# Add template for TOR
+cp $CWD/config.tor.template $DOCS
+
+# Add a slackbuild script:
+cat $CWD/$PKGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
+
+# Add slack-desc
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+# Add a doinst.sh, if any
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+
+# Create package:
+cd $PKG
+/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+

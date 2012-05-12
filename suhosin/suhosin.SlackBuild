@@ -1,0 +1,119 @@
+#!/bin/sh
+#
+# Slackware build script for suhosin
+#
+# Copyright 2008-2012 Corrado Franco (http://conraid.net)
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Exit on most errors
+set -e
+
+# Set variables:
+CWD=$(pwd)
+
+PRGNAME=${PRGNAME:-suhosin}
+VERSION=${VERSION:-0.9.33}
+BUILD=${BUILD:-4}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+PKG=$TMP/package-$PRGNAME
+DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
+
+# Insert document files in this variable
+DOCFILES="CREDITS ChangeLog"
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+	i?86) ARCH=i686 ;;
+	arm*) ARCH=arm ;;
+        # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
+fi
+
+# Set compiling FLAGS
+case "$ARCH" in
+    i486)
+	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    i686)
+	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    x86_64)
+	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
+	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+        ;;
+    *)
+	SLKCFLAGS="-O2"; CHOST=$ARCH
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	;;
+esac
+
+# Extract source and prepare:
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAME-$VERSION
+tar xvf $CWD/$PRGNAME-$VERSION.tgz
+cd $PRGNAME-$VERSION
+
+# Make sure ownerships and permissions are sane:
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
+
+# Configure
+phpize --clean
+phpize
+LDFLAGS="$SLKLDFLAGS" \
+CFLAGS="$SLKCFLAGS" \
+./configure \
+  --prefix=/usr \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --enable-shared=yes \
+  --enable-static=no \
+  --enable-suhosin \
+  --host=$CHOST-slackware-linux \
+  --build=$CHOST-slackware-linux
+
+# Build and install:
+make -j $JOBS
+make INSTALL_ROOT=$PKG install
+
+# Strip binaries:
+strip --strip-unneeded $PKG/usr/lib${LIBDIRSUFFIX}/php/extensions/suhosin.so
+
+# Copy config files
+install -Dm 644 suhosin.ini $PKG/etc/php/suhosin.ini.new
+
+# Add a slackbuild script:
+install -Dm644 $CWD/$PRGNAME.SlackBuild $DOCS/$PRGNAME.SlackBuild
+
+# Add slack-desc
+install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+
+# Add a doinst.sh, if any
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+
+# Create package:
+cd $PKG
+/sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz

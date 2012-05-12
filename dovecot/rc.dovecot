@@ -1,0 +1,35 @@
+#!/bin/bash
+# Dovecot start script
+
+PID=$(pidof -o %PPID /usr/sbin/dovecot)
+
+case "$1" in
+	start)
+		echo "Starting Dovecot Server"
+		if [ -z "$PID" ]; then
+			/usr/sbin/dovecot > /dev/null &
+		fi
+		;;
+	stop)
+		echo "Stopping Dovecot Server"
+		[ ! -z "$PID" ] && kill $PID &> /dev/null
+		;;
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+	status)
+		if [ ! -z "$PID" ]; then
+			echo "The Dovecot server is running."
+			exit 0
+		else
+			echo "The Dovecot server is not running."
+			exit 1
+		fi
+		;;
+	*)
+		echo "usage: $0 {start|stop|restart|status}"
+		;;
+esac
+exit 0

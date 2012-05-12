@@ -1,0 +1,126 @@
+#!/bin/sh
+# Slackware build script for John the Ripper (http://www.openwall.com/john/)
+#
+# Copyright 2008-2012 Corrado Franco (http://conraid.net)
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Exit on most errors
+set -e
+
+# Set variables:
+CWD=$(pwd)
+
+PRGNAME=${PRGNAME:-john}
+VERSION=${VERSION:-1.7.9}
+BUILD=${BUILD:-1}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+PKG=$TMP/package-$PRGNAME
+DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+        i?86) ARCH=x86 ;;
+        arm*) ARCH=arm ;;
+        # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
+fi
+
+# Extract source and prepare:
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAME-$VERSION
+tar xzvf $CWD/$PRGNAME-$VERSION.tar.gz
+cd $PRGNAME-$VERSION
+
+# Make sure ownerships and permissions are sane:
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
+
+# Build and install
+cd src
+
+# Apply patch for path config
+cat $CWD/params.h.patch | patch -p0 --backup --suffix=".orig"
+if [ $ARCH = "x86" ]; then
+    SLACKFLAGS="-c -DJOHN_SYSTEMWIDE=1 -Wall -O2 -fomit-frame-pointer"
+    make clean
+    make CFLAGS="${SLACKFLAGS}" linux-x86-sse2
+    install -Dsm755 ../run/john $PKG/usr/libexec/john/john-sse2
+    make clean
+    make CFLAGS="${SLACKFLAGS}" linux-x86-mmx
+    install -Dsm755 ../run/john $PKG/usr/libexec/john/john-mmx
+    make clean
+    make CFLAGS="${SLACKFLAGS}" linux-x86-any
+    install -Dsm755 ../run/john $PKG/usr/libexec/john/john-any
+    install -Dm755 $CWD/john.sh $PKG/usr/bin/john
+elif [ $ARCH = "x86_64" ]; then
+    SLACKFLAGS="-c -DJOHN_SYSTEMWIDE=1 -Wall -O2 -fomit-frame-pointer -fPIC"
+    make clean
+    make CFLAGS="${SLACKFLAGS}" linux-x86-64
+    install -Dsm755 ../run/john $PKG/usr/libexec/john/john-64
+    install -Dm755 $CWD/john-64.sh $PKG/usr/bin/john
+fi
+cd ..
+
+# Add mailer script
+mkdir -p $PKG/usr/bin
+install -m 755 run/mailer $PKG/usr/libexec/john/mailer
+
+# Add config file
+install -Dm644 run/john.conf $PKG/etc/john/john.conf.new
+
+# Add shared file
+mkdir -p $PKG/usr/share/john
+cp run/*.chr $PKG/usr/share/john
+cp run/*.lst $PKG/usr/share/john
+
+# Make symbolic link
+(cd $PKG/usr/bin
+ln -s /usr/bin/john unafs
+ln -s /usr/bin/john unique
+ln -s /usr/bin/john unshadows
+ln -s /usr/libexec/john/mailer mailer
+)
+
+# Strip binaries:
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+
+# Add a documentation directory:
+mkdir -p ${DOCS}
+cp -a doc/* ${DOCS}
+
+# Add a slackbuild script:
+cat $CWD/$PRGNAME.SlackBuild > $DOCS/$PRGNAME.SlackBuild
+
+# Add slack-desc
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+# Add a doinst.sh
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+
+# Create package:
+cd $PKG
+/sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz

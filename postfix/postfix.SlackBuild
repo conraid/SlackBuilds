@@ -1,0 +1,210 @@
+#!/bin/sh
+# Slackware build script for postfix (http://www.postfix.org)
+#
+# Copyright 2006, Alan Hicks, Lizella, GA (by slackbuilds.org)
+# Copyright 2008-2012 Corrado Franco (http://conraid.net)
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#
+
+# IMPORTANT
+#
+#  Must have a postfix user to run this script
+#  Otherwise your permissions will be FUBAR
+#
+# groupadd -g 200 postfix
+# useradd -u 200 -d /dev/null -s /bin/false -g postfix postfix
+#
+#  Must have a postdrop group to run this script
+#  Otherwise your permissions will be FUBAR
+#
+# groupadd -g 201 postdrop
+#
+
+# Exit on most errors
+set -e
+
+# backup e restore mysql include files
+if [ -e /usr/include/mysql/events.h ]; then
+    mv /usr/include/mysql/events.h /usr/include/mysql/events.h.old
+fi
+restore_events(){
+    if [ -e /usr/include/mysql/events.h.old ]; then
+	mv /usr/include/mysql/events.h.old /usr/include/mysql/events.h
+    fi
+}
+trap restore_events EXIT
+
+# Set variables:
+CWD=$(pwd)
+
+PRGNAME=${PRGNAME:-postfix}
+VERSION=${VERSION:-2.9.2}
+BUILD=${BUILD:-1}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+PKG=$TMP/package-$PRGNAME
+DOCS="$PKG/usr/doc/${PRGNAME}"
+
+ # access aliases canonical generic header_checks main.cf main.cf.default \
+ # makedefs.out master.cf postfix-files relocated transport virtual"
+NEWFILES="access aliases canonical generic header_checks main.cf \
+  makedefs.out master.cf relocated transport virtual"
+
+# Set variables for install
+config_directory=/etc/postfix
+daemon_directory=/usr/libexec/postfix
+command_directory=/usr/sbin
+queue_directory=/var/spool/postfix
+sendmail_path=/usr/sbin/sendmail
+newaliases_path=/usr/bin/newaliases
+mailq_path=/usr/bin/mailq
+html_directory=/usr/doc/$PRGNAME/html
+readme_directory=/usr/doc/$PRGNAME/README_FILES
+# I use PRGNAME without version for compatibility with old main.cf
+manpage_directory=/usr/man
+mail_owner=postfix
+setgid_group=postdrop
+
+# Insert document files in this variable
+DOCFILES="AAAREADME COMPATIBILITY COPYRIGHT HISTORY IPv6-ChangeLog LICENSE \
+  PORTING RELEASE_NOTES* TLS_ACKNOWLEDGEMENTS TLS_CHANGES TLS_LICENSE \
+  US_PATENT_6321267 implementation-notes examples README_FILES html"
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+        i?86) ARCH=i686 ;;
+        arm*) ARCH=arm ;;
+        # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
+fi
+
+# Set compiling FLAGS
+case "$ARCH" in
+    i486)
+        SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    i686)
+        SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
+        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    x86_64)
+        SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
+        SLKLDFLAGS=""; LIBDIRSUFFIX="64"
+        ;;
+    *)
+        SLKCFLAGS="-O2"; CHOST=$ARCH
+        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+esac
+
+# Extract source and prepare:
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAME-$VERSION
+tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
+cd $PRGNAME-$VERSION
+
+# Make sure ownerships and permissions are sane:
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
+
+# Build and install:
+make makefiles \
+  OPT="$SLKCFLAGS" \
+  CCARGS="-DUSE_SASL_AUTH -DUSE_CYRUS_SASL -I/usr/include/sasl -DUSE_TLS -DHAS_MYSQL -I/usr/include/mysql -DHAS_SQLITE" \
+  AUXLIBS="-L/lib${LIBDIRSUFFIX} -L/usr/lib${LIBDIRSUFFIX} -lsasl2 -lssl -lcrypto -L/usr/lib${LIBDIRSUFFIX}/mysql -lmysqlclient -lz -lm -lsqlite3 -lpthread"
+make
+make non-interactive-package \
+  install_root=$PKG \
+  tempdir=$TMP/$PRGNAME-temp \
+  config_directory=$config_directory \
+  daemon_directory=$daemon_directory \
+  command_directory=$command_directory \
+  queue_directory=$queue_directory \
+  sendmail_path=$sendmail_path \
+  newaliases_path=$newaliases \
+  mailq_path=$mailq_path \
+  mail_owner=$mail_owner \
+  setgid_group=$setgid_group \
+  html_directory=$html_directory \
+  manpage_directory=$manpage_directory \
+  readme_directory=$readme_directory
+
+# Add auxiliary files
+install -Dm 755 auxiliary/qshape/qshape.pl $PKG/usr/sbin/qshape
+install -Dm 755 auxiliary/rmail/rmail $PKG/usr/sbin/rmail
+
+# Strip binaries:
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+
+# Add a documentation directory:
+mkdir -p $DOCS
+for i in ${DOCFILES}; do
+    if [ -e ${i} ]; then
+        if ! [ -L ${i} ]; then
+	    cp -a ${i} ${DOCS}
+	else
+	    cp -LRp ${i} ${DOCS}
+        fi
+    fi;
+done
+
+# Compress and link manpages, if any:
+if [ -d $PKG/usr/man ]; then
+( cd $PKG/usr/man
+  find . -type f -exec gzip -9 {} \;
+  for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+)
+fi
+
+# Add rc.postfix
+install -m 0755 -D $CWD/rc.postfix $PKG/etc/rc.d/rc.postfix.new
+
+# Add a slackbuild script:
+cat $CWD/$PRGNAME.SlackBuild > $DOCS/$PRGNAME.SlackBuild
+
+# Add slack-desc
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+# Add a doinst.sh
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+
+# Since we gzip the manpages, let's fix the postfix-files to reflect that
+# so it won't throw errors during post-install
+cd $PKG/usr/libexec/postfix
+grep manpage postfix-files | while read line;
+do MANPAGE="$(echo "$line" | cut -d: -f1)"
+  sed -i s%"$MANPAGE"%"$MANPAGE.gz"% postfix-files
+done
+
+# Create .new files
+cd $PKG/etc/postfix
+for i in $NEWFILES; do
+    mv ${i} ${i}.new ;
+done
+
+# Create package:
+cd $PKG
+/sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz

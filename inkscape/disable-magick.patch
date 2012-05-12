@@ -1,0 +1,22 @@
+--- configure.ac.orig	2012-02-19 02:43:03.393190443 +0100
++++ configure.ac	2012-03-26 18:00:04.062851041 +0200
+@@ -697,9 +697,16 @@ dnl ******************************
+ dnl Check for ImageMagick Magick++ 
+ dnl ******************************
+ 
+-PKG_CHECK_MODULES(IMAGEMAGICK, ImageMagick++, magick_ok=yes, magick_ok=no)
+-if test "x$magick_ok" = "xyes"; then
+-      AC_DEFINE(WITH_IMAGE_MAGICK,1,[Image Magick++ support for bitmap effects])
++AC_ARG_ENABLE(magick,
++       [  --disable-magick        compile without Magick++ support for bitmap effects],
++       enable_magick=$enableval,enable_magick=yes)
++
++magick_ok="no"
++if test "x$enable_magick" = "xyes"; then
++   PKG_CHECK_MODULES(IMAGEMAGICK, ImageMagick++, magick_ok=yes, magick_ok=no)
++   if test "x$magick_ok" = "xyes"; then
++         AC_DEFINE(WITH_IMAGE_MAGICK,1,[Image Magick++ support for bitmap effects])
++   fi
+ fi
+ AM_CONDITIONAL(USE_IMAGE_MAGICK, test "x$magick_ok" = "xyes")
+ 

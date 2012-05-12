@@ -1,0 +1,172 @@
+#!/bin/sh
+#
+# Slackware build script for lua (http://www.lua.org/)
+#
+# Copyright 2008 Menno Duursma from SlackBuilds.org
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Modified by the SlackBuilds.org project
+# Modified by Aaron W. Hsu
+# Modified by Corrado Franco <http://conraid.net>
+
+# Exit on most errors
+set -e
+
+# Set variables:
+CWD=$(pwd)
+
+PRGNAME=${PRGNAME:-lua}
+VERSION=${VERSION:-5.1.5}
+BUILD=${BUILD:-1}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+PKG=$TMP/package-$PRGNAME
+DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
+
+# Insert document files in this variable
+DOCFILES="COPYRIGHT HISTORY INSTALL README etc test" 
+
+# Automatically determine the architecture we are building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+        i?86) ARCH=i686 ;;
+        arm*) ARCH=arm ;;
+        # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
+fi
+
+# Set compiling FLAGS
+case "$ARCH" in
+    i486)
+	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    i686)
+	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    x86_64)
+	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
+	SLKLDFLAGS=""; LIBDIRSUFFIX="64"
+        ;;
+    *)
+        SLKCFLAGS="-O2"; CHOST=$ARCH
+        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	;;
+esac
+
+# Extract source and prepare:
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAME-$VERSION
+tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
+cd $PRGNAME-$VERSION
+
+# Make sure ownerships and permissions are sane:
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
+
+# Fix up a to-be-installed header and the pkgconfig file
+sed -i "s|/usr/local|/usr|" src/luaconf.h
+sed -i "s|lib/lua|lib$LIBDIRSUFFIX/lua|" src/luaconf.h
+sed -i "s|/usr/local|/usr|" etc/lua.pc
+sed -i "s|prefix}/lib|prefix}/lib${LIBDIRSUFFIX}|g" etc/lua.pc
+
+# Configure
+# Let's use our custom CFLAGS from above
+sed -i "s/-DLUA_USE_LINUX/\"-DLUA_USE_LINUX $SLKCFLAGS\"/g" src/Makefile
+
+# Build and install:
+if [ "$ARCH" = "x86_64" ]; then
+    sed -i s#/lib#/lib64#g Makefile
+fi
+
+make linux \
+CFLAGS="$SLKCFLAGS \$(MYCFLAGS)" \
+INSTALL_TOP=/usr \
+INSTALL_LIB=/usr/lib${LIBDIRSUFFIX} \
+INSTALL_LMOD=/usr/share/lua/5.1 \
+INSTALL_CMOD=/usr/lib${LIBDIRSUFFIX}/lua/5.1
+
+make linux install \
+CFLAGS="$SLKCFLAGS \$(MYCFLAGS)" \
+INSTALL_TOP=$PKG/usr \
+INSTALL_LIB=$PKG/usr/lib${LIBDIRSUFFIX} \
+INSTALL_LMOD=$PKG/usr/share/lua/5.1 \
+INSTALL_CMOD=$PKG/usr/lib${LIBDIRSUFFIX}/lua/5.1
+
+# Now let's build the shared library
+mkdir -p shared
+cd shared
+  ar -x $PKG/usr/lib${LIBDIRSUFFIX}/liblua.a
+  gcc -ldl -lreadline -lhistory -lncurses -shared *.o -o liblua.so.5.1.5
+  cp -a liblua.so.5.1.5 $PKG/usr/lib${LIBDIRSUFFIX}
+ ( cd $PKG/usr/lib${LIBDIRSUFFIX}
+    ln -s liblua.so.5.1.5 liblua.so.5.1
+    ln -s liblua.so.5.1.5 liblua.so.5
+    ln -s liblua.so.5.1.5 liblua.so
+  )
+cd -
+
+# Install the pkg-config file so other apps can find LUA
+# Also, fix the prefix path in lua.pc
+install -Dm644 etc/lua.pc $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/lua.pc
+
+# Strip binaries:
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true                                                                                                                                         
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true
+strip -g $PKG/usr/lib${LIBDIRSUFFIX}/*.a
+
+# Compress and link manpages, if any:
+if [ -d $PKG/usr/man ]; then
+( cd $PKG/usr/man
+  find . -type f -exec gzip -9 {} \;
+  for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+)
+fi
+
+# Add a documentation directory:
+mkdir -p ${DOCS}
+for i in ${DOCFILES}; do
+    if [ -e ${i} ]; then
+        if ! [ -L ${i} ]; then
+	    cp -a ${i} ${DOCS}
+	else
+	    cp -LRp ${i} ${DOCS}
+        fi
+    fi;
+done
+mkdir $DOCS/html
+cp -a doc/*.html doc/logo.gif doc/lua.css $DOCS/html
+mv $DOCS/etc $DOCS/extra
+
+# Add a slackbuild script:
+cat $CWD/$PRGNAME.SlackBuild > $DOCS/$PRGNAME.SlackBuild
+
+# Add slack-desc
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+# Create package:
+cd $PKG
+/sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz
+
