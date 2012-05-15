@@ -1,8 +1,8 @@
 #!/bin/sh
 #
-# Slackware build script for Balsa
+# Slackware build script for nfacct
 #
-# Copyright 2011-2012 Corrado Franco (http://conraid.net)
+# Copyright 2012 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -21,16 +21,18 @@
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+#
+# Latest version of this SlackBuild at http://slackers.it/repository
+#
 # Exit on most errors
 set -e
 
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-balsa}
+PRGNAME=${PRGNAME:-nfacct}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-2.4.12}
+VERSION=${VERSION:-1.0.0}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -39,13 +41,13 @@ PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
 # Insert document files in this variable
-DOCFILES="AUTHORS COPYING ChangeLog HACKING INSTALL NEWS README TODO"
+DOCFILES="COPYING*"
 
-# Automatically determine the architecture we are building on:
+# Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
-        i?86) ARCH=i686 ;;
-        arm*) ARCH=arm ;;
+	i?86) ARCH=i686 ;;
+	arm*) ARCH=arm ;;
         # Unless $ARCH is already set, use uname -m for all other archs:
         *) ARCH=$( uname -m ) ;;
     esac
@@ -53,8 +55,8 @@ fi
 
 # Set compiling FLAGS
 case "$ARCH" in
-    i486)
-	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+    i[3-5]86)
+        SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
         ;;
     i686)
@@ -66,8 +68,8 @@ case "$ARCH" in
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
     *)
-        SLKCFLAGS="-O2"; CHOST=$ARCH
-        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	SLKCFLAGS="-O2"; CHOST=$ARCH
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
 
@@ -97,54 +99,33 @@ CXXFLAGS="$SLKCFLAGS" \
   --docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
   --enable-static=no \
   --enable-shared=yes \
-  --without-gnome \
-  --with-html-widget=no \
-  --without-nm \
-  --with-gpgme=gpgme-config \
-  --disable-scrollkeeper \
-  --with-unique \
-  --with-ssl \
-  --with-rubrica \
-  --with-sqlite \
-  --disable-nls \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux
 
 # Build and install:
-make 
-make DESTDIR=$PKG install-strip
+make
+make DESTDIR=$PKG install
 
-# Compress and link manpages, if any:
+# Strip binaries:
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+
+# Compress man files
 if [ -d $PKG/usr/man ]; then
-( cd $PKG/usr/man
-  find -type f -exec gzip -9 {} \;
-  for i in $(find -type l); do ln -s $(readlink $i).gz $i.gz; rm $i; done
-)
+    find $PKG/usr/man -type f -exec gzip -9 {} \;
+    for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
-for i in ${DOCFILES}; do
-    if [ -e "${i}" ]; then
-        if ! [ -L "${i}" ]; then
-	    cp -a "${i}" ${DOCS}
-	else
-	    cp -LRp "${i}" ${DOCS}
-        fi
-    fi;
-done
+cp -a $DOCFILES $DOCS
 
 # Add a slackbuild script:
-cat $CWD/$PKGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
+install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
 
 # Add slack-desc
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
-
-# Add a doinst.sh, if any
-cat $CWD/doinst.sh > $PKG/install/doinst.sh
+install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
 
 # Create package:
 cd $PKG
 /sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
-
