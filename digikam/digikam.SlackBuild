@@ -27,8 +27,9 @@ set -e
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-digikam}
-VERSION=${VERSION:-2.6.0-beta3}
+PRGNAME=${PRGNAME:-digikam-software-compilation}
+PKGNAME=digikam
+VERSION=${VERSION:-2.6.0-rc}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -37,7 +38,7 @@ PKG=$TMP/package-$PRGNAME
 DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
 
 # Insert document files in this variable
-DOCFILES="AUTHORS COPYING* COPYRIGHT ChangeLog DESIGN INSTALL NEWS README TODO CONTEXTMENU-PORT HACKING"
+DOCFILES="COPYING* core/NEWS README"
 
 # Automatically determine the architecture we are building on:
 if [ -z "$ARCH" ]; then
@@ -119,7 +120,7 @@ for i in ${DOCFILES}; do
 done
 
 # Add a slackbuild script:
-cat $CWD/$PRGNAME.SlackBuild > $DOCS/$PRGNAME.SlackBuild
+cat $CWD/$PRGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
 
 # Add slack-desc
 mkdir -p $PKG/install
