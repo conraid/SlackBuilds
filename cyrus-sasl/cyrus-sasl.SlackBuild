@@ -30,10 +30,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-cyrus-sasl}
 VERSION=${VERSION:-2.1.23}
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-SOURCE="ftp://ftp.andrew.cmu.edu/pub/cyrus-mail/cyrus-sasl-${VERSION}.tar.gz"
 PKG=$TMP/package-$PRGNAME
 DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
 
@@ -70,17 +69,11 @@ case "$ARCH" in
 	;;
 esac
 
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
-
 # Extract source and prepare:
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-
 tar xzvf $CWD/$PRGNAME-$VERSION.tar.gz
 cd $PRGNAME-$VERSION
 
