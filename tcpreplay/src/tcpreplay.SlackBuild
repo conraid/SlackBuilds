@@ -32,16 +32,24 @@ PRGNAME=${PRGNAME:-tcpreplay}
 PKGNAME=${PKGNAME:-$PRGNAME}
 VERSION=${VERSION:-3.4.4}
 ARCH=${ARCH:-i686}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-JOBS=${JOBS:--j2}
-SOURCE="http://garr.dl.sourceforge.net/sourceforge/tcpreplay/tcpreplay-${VERSION}.tar.gz"
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
 
 # Insert document files in this variable
 DOCFILES="INSTALL README"
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+	i?86) ARCH=i686 ;;
+	arm*) ARCH=arm ;;
+        # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
+fi
 
 # Set compiling FLAGS
 case "$ARCH" in
@@ -57,20 +65,18 @@ case "$ARCH" in
 	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
+    *)
+	SLKCFLAGS="-O2"; CHOST=$ARCH
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	;;
 esac
-
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
 
 # Extract source and prepare:
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-
-tar xzvf $CWD/$PRGNAME-$VERSION.tar.gz
+tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
 cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
@@ -123,9 +129,3 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 # Create package:
 cd $PKG
 /sbin/makepkg -l y -c n $CWD/$PKGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz
-
-# Clean file, if option is set: 
-if [ "$1" = "--cleanup" ]; then
-  rm -rf $TMP/$PRGNAME-$VERSION
-  rm -rf $PKG
-fi
