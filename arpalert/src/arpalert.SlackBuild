@@ -36,10 +36,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-arpalert}
 VERSION=${VERSION:-2.0.11}
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-SOURCE="http://www.arpalert.org/src/arpalert-${VERSION}.tar.gz"
 PKG=$TMP/package-$PRGNAME
 DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
 
@@ -75,11 +74,6 @@ case "$ARCH" in
         SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
-
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
 
 # Extract source and prepare:
 rm -rf $PKG
@@ -152,7 +146,6 @@ cat $CWD/doinst.sh > $PKG/install/doinst.sh
 # Create package:
 cd $PKG
 /sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz
-
 
 
 

@@ -30,18 +30,24 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-abook}
 VERSION=${VERSION:-0.6.0pre2}
-ARCH=${ARCH:-i686}
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
-TMP=${TMP:-/tmp/tgz} # If you use /tmp here, don't use --cleanup options
-JOBS=${JOBS:-2}
-SOURCE=http://abook.sourceforge.net/devel/abook-0.6.0pre2.tar.gz
-PATCH=http://abook.sourceforge.net/patches/abook_vcard_import.patch
+TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
 DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
 
 # Insert document files in this variable
 DOCFILES="ABOUT-NLS ANNOUNCE AUTHORS BUGS COPYING ChangeLog FAQ NEWS README RELEASE_NOTES THANKS TODO"
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+	i?86) ARCH=i686 ;;
+	arm*) ARCH=arm ;;
+        # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
+fi
 
 # Set compiling FLAGS
 case "$ARCH" in
@@ -57,27 +63,22 @@ case "$ARCH" in
 	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
+    *)
+	SLKCFLAGS="-O2"; CHOST=$ARCH
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	;;
 esac
-
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
-
-# Download source, if not exist
-if ! [ -e $(basename $PATCH) ]; then
-    wget $PATCH
-fi
 
 # Extract source and prepare:
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-
-tar xzvf $CWD/$PRGNAME-$VERSION.tar.gz
+tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
 cd $PRGNAME-$VERSION
-cat $CWD/$(basename $PATCH) | patch -p1 --verbose --backup --suffix=.orig
+
+# Apply patch for vcard
+cat $CWD/abook_vcard_import.patch | patch -p1
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -99,7 +100,7 @@ CXXFLAGS="$SLKCFLAGS" \
 
 
 # Build and install:
-make -j $JOBS
+make
 make DESTDIR=$PKG install
 
 # Strip binaries:
@@ -135,13 +136,7 @@ cat $CWD/$PRGNAME.SlackBuild > $DOCS/$PRGNAME.SlackBuild
 # Add slack-desc
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-cat $CWD/slack-desc > $DOCS/slack-desc
 
 # Create package:
 cd $PKG
 /sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz
-
-# Clean file, if option is set: 
-if [ "$1" = "--cleanup" ]; then
-  rm -rf $TMP
-fi
