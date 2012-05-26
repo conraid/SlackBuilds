@@ -31,10 +31,9 @@ CWD=$(pwd)
 PRGNAME=${PRGNAME:-encfs}
 VERSION=${VERSION:-1.7.4}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-SOURCE="http://encfs.googlecode.com/files/encfs-$VERSION.tgz"
 PKG=$TMP/package-$PRGNAME
 DOCS="$PKG/usr/doc/$PRGNAME-$PKGVERSION"
 
@@ -70,11 +69,6 @@ case "$ARCH" in
         SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
-
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
 
 # Extract source and prepare:
 rm -rf $PKG
