@@ -34,10 +34,9 @@ PRGNAME=${PRGNAME:-barnyard2}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-1.9}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-SOURCE="http://www.securixlive.com/download/barnyard2/barnyard2-$VERSION.tar.gz"
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
@@ -74,17 +73,12 @@ case "$ARCH" in
 	;;
 esac
 
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
-
 # Extract source and prepare:
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$(basename $SOURCE)
+tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
 cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
@@ -105,7 +99,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
   --enable-static=no \
   --enable-shared=yes \
-  --with-mysql-libraries=/usr/lib${LIBDIRSUFFIX}/mysql \
+  --with-mysql-libraries=/usr/lib${LIBDIRSUFFIX} \
   --with-mysql-includes=/usr/include/mysql \
   --without-postgresql \
   --host=$CHOST-slackware-linux \

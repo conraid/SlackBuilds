@@ -29,41 +29,50 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-bost}
 VERSION=${VERSION:-0.0.8}
-ARCH=${ARCH:-i686}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-JOBS=${JOBS:-2}
-SOURCE=http://blambi.chebab.com/software/bost/files/bost-${VERSION}.tar.gz
 PKG=$TMP/package-$PRGNAME
 DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
 
 # Insert document files in this variable
 DOCFILES="COPYING ChangeLog README"
 
-# Set compiling FLAGS
-if [ "$ARCH" = "i486" ]; then
-  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
-  SLKLDFLAGS="";
-elif [ "$ARCH" = "i686" ]; then
-  SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"
-  SLKLDFLAGS="";
-elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
-  SLKLDFLAGS="-L/usr/lib64";
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+	i?86) ARCH=i686 ;;
+	arm*) ARCH=arm ;;
+        # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
 fi
 
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
+# Set compiling FLAGS
+case "$ARCH" in
+    i486)
+	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    i686)
+	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    x86_64)
+	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
+	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+        ;;
+    *)
+	SLKCFLAGS="-O2"; CHOST=$ARCH
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	;;
+esac
 
 # Extract source and prepare:
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-
 tar xzvf $CWD/$PRGNAME-$VERSION.tar.gz
 cd $PRGNAME-$VERSION
 
@@ -104,9 +113,3 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 # Create package:
 cd $PKG
 /sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz
-
-# Clean file, if option is set: 
-if [ "$1" = "--cleanup" ]; then
-  rm -rf $TMP/$PRGNAME-$VERSION
-  rm -rf $PKG
-fi
