@@ -1,0 +1,13 @@
+diff --git a/src/nfct-extensions/timeout.c b/src/nfct-extensions/timeout.c
+index a1a5c52..5b32023 100644
+--- a/src/nfct-extensions/timeout.c
++++ b/src/nfct-extensions/timeout.c
+@@ -96,7 +96,7 @@ static int nfct_timeout_cb(const struct nlmsghdr *nlh, void *data)
+		goto err_free;
+	}
+
+-	nfct_timeout_snprintf(buf, sizeof(buf), t, 0);
++	nfct_timeout_snprintf(buf, sizeof(buf), t, NFCT_TIMEOUT_O_DEFAULT, 0);
+	printf("%s\n", buf);
+
+ err_free:

@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-conntrack-tools}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-1.0.1}
+VERSION=${VERSION:-1.2.0}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -80,6 +80,9 @@ cd $TMP
 rm -rf $PRGNAME-$VERSION
 tar xvf $CWD/conntrack-tools-$VERSION.tar.bz2
 cd $PRGNAME-$VERSION
+
+# apply patch for timeout extension
+patch -p1 -i $CWD/fix-timeout-extension.patch
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .

@@ -1,15 +1,24 @@
 
-Slackers.it (SlackBuild for Slackware -current)
+Slackers.it (repository for Slackware -current)
 
 ================================================================================
 
-Repository contain everything (SlackBuild script, slack-desc file,
+Repository contain a 'src', a 'pkg' and a 'pkg64' directory.
+
+The 'src' directory contains everything (SlackBuild script, slack-desc file,
 plus all possible patch) you'll need when you want to build the packages yourself.
+
+The 'pkg' directory contains the binary packages, ready for installation using
+'installpkg' or 'upgradepkg'. You'll find *.txz (the package itself),
+*.txt (the package description) and *.md5 (containing the md5 checksum of the
+package) files in each 'pkg' directory.
+
+The 'pkg64' directory contains the 64bit binary packages and other files as the
+directory 'pkg'
 
 For make package from slackbuild do
 
-# . <program>.info
-# wget $SOURCE
+# cd <program>/src
 # sh <program>.SlackBuild
 
 to build a package which will be created in the same directory.

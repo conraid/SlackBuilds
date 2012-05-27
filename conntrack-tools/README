@@ -15,6 +15,6 @@ and the command line interface conntrack.
 
 Home: http://conntrack-tools.netfilter.org
 ======================================================================
-Requires:
-libnetfilter_conntrack 
-libnfnetlink 
+Requires libnetfilter_conntrack, libnfnetlink, libmnl,
+libnetfilter_cttimeout and a kernel >= 2.6.18
+To support the nfnetlink_cttimeout subsystem kernel requires >= 3.4.0
