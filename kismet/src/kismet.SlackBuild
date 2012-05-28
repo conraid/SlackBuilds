@@ -41,9 +41,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-kismet}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-2012-03-R2}
+VERSION=${VERSION:-2011-03-R2}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 SOURCE="http://kismetwireless.net/code/${PRGNAME}-${VERSION}.tar.gz"
@@ -83,11 +83,6 @@ case "$ARCH" in
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
-
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
 
 # Extract source and prepare:
 rm -rf $PKG
