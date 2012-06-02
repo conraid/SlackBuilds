@@ -34,7 +34,7 @@ PRGNAME=${PRGNAME:-snort}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-2.9.2.3}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -116,8 +116,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --without-oracle \
   --without-odbc \
   --with-mysql \
-  --with-mysql-libraries=/usr/lib${LIBDIRSUFFIX}/mysql \
-  --with-mysql-includes=/usr/include/mysql \
+  --with-mysql-libraries=/usr/lib${LIBDIRSUFFIX} \
   --enable-build-dynamic-examples \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux
