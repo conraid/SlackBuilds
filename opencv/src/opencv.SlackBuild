@@ -30,13 +30,14 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-OpenCV}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-2.3.1}
+VERSION=${VERSION:-2.4.1}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
+SSE2=${SSE2:-ON}
 
 # Insert document files in this variable
 DOCFILES="AUTHORS COPYING INSTALL NEWS README THANKS TODO doc/license.txt"
@@ -56,15 +57,17 @@ case "$ARCH" in
     i486)
 	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	CONFSSE="-DENABLE_SSE3=OFF -DENABLE_SSE2=OFF -DENABLE_SSE=OFF"
         ;;
     i686)
 	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	CONFSSE="-DENABLE_SSE3=OFF -DENABLE_SSE2=${SSE2} -DENABLE_SSE=ON"
         ;;
     x86_64)
 	SLKCFLAGS="-O2 -pipe -fomit-frame-pointer"; CHOST="x86_64"
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-	CONF64="-DUSE_SSE3=ON"
+	CONFSSE="-DENABLE_SSE3=ON -DENABLE_SSE2=ON -DENABLE_SSE=ON"
         ;;
     *)
         SLKCFLAGS="-O2"; CHOST=$ARCH
@@ -77,15 +80,8 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-${VERSION}a.tar.bz2
+tar xvf $CWD/$PRGNAME-${VERSION}.tar.bz2
 cd $PRGNAME-$VERSION
-
-# Honor LIB_SUFFIX (from opensuse)
-patch -p1 < $CWD/opencv-libdir.patch
-
-# fix ffmpeg-related C++ issue
-# see http://code.google.com/p/ffmpegsource/source/detail?r=311
-export CXXFLAGS="$CXXFLAGS -D__STDC_CONSTANT_MACROS"
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -95,17 +91,23 @@ chmod -R u+w,go+r-w,a-s .
 mkdir -p build
 cd build
 cmake \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_EXTRA_C_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
-  -DCMAKE_LD_FLAGS:STRING="$SLKLDFLAGS" \
+  -DCMAKE_BUILD_TYPE=None \
+  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
+  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DMAN_INSTALL_DIR=/usr/man \
-  -DSYSCONF_INSTALL_DIR=/etc \
   -DLIB_SUFFIX=${LIBDIRSUFFIX} \
-  -DCMAKE_SKIP_RPATH=ON \
-  -DUSE_SSE=ON \
-  -DBUILD_PYTHON_SUPPORT=ON \
-  $CONF64 ..
+  -DWITH_QT=On \
+  -DENABLE_SSE41=OFF \
+  -DENABLE_SSE42=OFF \
+  -DBUILD_EXAMPLES=OFF \
+  -DINSTALL_PYTHON_EXAMPLES=OFF \
+  -DWITH_XINE=ON \
+  -DWITH_QT=ON \
+  -DBUILD_TESTS=OFF \
+  -DBUILD_SHARED_LIBS=ON \
+  -DBUILD_PERF_TESTS=OFF \
+  -DBUILD_WITH_DEBUG_INFO=OFF \
+  $CONFSSE ..
 
 # Build and install:
 make 
