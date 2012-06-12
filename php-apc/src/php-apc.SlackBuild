@@ -32,7 +32,7 @@ PRGNAME=${PRGNAME:-APC}
 PKGNAME=${PKGNAME:-php-apc}
 VERSION=${VERSION:-3.1.10}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -78,6 +78,9 @@ cd $TMP
 rm -rf $PRGNAME-$VERSION
 tar xzvf $CWD/$PRGNAME-$VERSION.tgz
 cd $PRGNAME-$VERSION
+
+# Patch for some bug
+patch -p1 -i $CWD/svn.patch
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
