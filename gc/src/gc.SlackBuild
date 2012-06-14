@@ -98,7 +98,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --build=$CHOST-slackware-linux
 
 # Build and install:
-make $JOBS
+make
 make DESTDIR=$PKG install-strip
 
 # Install man

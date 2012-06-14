@@ -30,12 +30,11 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-rekonq}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-0.9.2}
+VERSION=${VERSION:-0.9.80}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-SOURCE="http://mesh.dl.sourceforge.net/project/rekonq/$VERSION/$VERSION/rekonq-$VERSION.tar.bz2"
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
@@ -89,7 +88,6 @@ cd build
 cmake \
   -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
   -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_LD_FLAGS:STRING="$SLKLDFLAGS" \
   -DCMAKE_BUILD_TYPE=none \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DMAN_INSTALL_DIR=/usr/man \
