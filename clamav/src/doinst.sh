@@ -19,8 +19,8 @@ config() {
 config etc/freshclam.conf.new
 config etc/clamd.conf.new
 config etc/rc.d/rc.clamav.new
-config var/log/clamd.log.new; rm -f var/log/clamd.log.new
-config var/log/freshclam.log.new; rm -f var/log/freshclam.log.new
+config var/log/clamav/clamd.log.new; rm -f var/log/clamav/clamd.log.new
+config var/log/clamav/freshclam.log.new; rm -f var/log/clamav/freshclam.log.new
 
 # Check for presence of clamav group and clamav user on target system
 if ! grep -q "^clamav:" etc/group; then

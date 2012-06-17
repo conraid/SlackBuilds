@@ -1,7 +1,7 @@
-diff -aupr clamav.orig/etc/clamd.conf clamav/etc/clamd.conf
---- clamav.orig/etc/clamd.conf	2012-03-06 17:31:31.000000000 +0100
-+++ clamav/etc/clamd.conf	2012-03-16 09:28:53.835056580 +0100
-@@ -5,7 +5,7 @@
+diff -Naupr clamav-0.97.5.orig//etc/clamd.conf clamav-0.97.5/etc/clamd.conf
+--- clamav-0.97.5.orig//etc/clamd.conf	2012-06-12 15:03:26.000000000 +0200
++++ clamav-0.97.5/etc/clamd.conf	2012-06-16 22:28:44.000000000 +0200
+@@ -5,13 +5,13 @@
  
  
  # Comment or remove the line below.
@@ -10,6 +10,13 @@ diff -aupr clamav.orig/etc/clamd.conf clamav/etc/clamd.conf
  
  # Uncomment this option to enable logging.
  # LogFile must be writable for the user running daemon.
+ # A full path is required.
+ # Default: disabled
+-#LogFile /tmp/clamd.log
++LogFile /var/log/clamav/clamd.log
+ 
+ # By default the log file is locked for writing - the lock protects against
+ # running clamd multiple times (if want to run another clamd, please
 @@ -40,12 +40,12 @@ Example
  
  # Use system logger (can work together with LogFile).
@@ -25,17 +32,16 @@ diff -aupr clamav.orig/etc/clamd.conf clamav/etc/clamd.conf
  
  # Enable verbose logging.
  # Default: no
-@@ -58,7 +58,8 @@ Example
+@@ -58,7 +58,7 @@ Example
  # This option allows you to save a process identifier of the listening
  # daemon (main thread).
  # Default: disabled
 -#PidFile /var/run/clamd.pid
 +PidFile /var/run/clamav/clamd.pid
-+
  
  # Optional path to the global temporary directory.
  # Default: system specific (usually /tmp or /var/tmp).
-@@ -77,7 +78,7 @@ Example
+@@ -77,19 +77,19 @@ Example
  
  # Path to a local socket file the daemon will listen on.
  # Default: disabled (must be specified by a user)
@@ -44,7 +50,22 @@ diff -aupr clamav.orig/etc/clamd.conf clamav/etc/clamd.conf
  
  # Sets the group ownership on the unix socket.
  # Default: disabled (the primary group of the user running clamd)
-@@ -186,14 +187,14 @@ Example
+-#LocalSocketGroup virusgroup
++LocalSocketGroup clamav
+ 
+ # Sets the permissions on the unix socket to the specified mode.
+ # Default: disabled (socket is world accessible)
+-#LocalSocketMode 660
++LocalSocketMode 660
+ 
+ # Remove stale socket after unclean shutdown.
+ # Default: yes
+-#FixStaleSocket yes
++FixStaleSocket yes
+ 
+ # TCP port address.
+ # Default: no
+@@ -186,14 +186,14 @@ Example
  
  # Run as another user (clamd must be started by root for this option to work)
  # Default: don't drop privileges
@@ -62,10 +83,10 @@ diff -aupr clamav.orig/etc/clamd.conf clamav/etc/clamd.conf
  
  # Don't fork into background.
  # Default: no
-diff -aupr clamav.orig/etc/freshclam.conf clamav/etc/freshclam.conf
---- clamav.orig/etc/freshclam.conf	2012-03-06 17:31:40.000000000 +0100
-+++ clamav/etc/freshclam.conf	2012-03-16 09:30:35.745061990 +0100
-@@ -5,12 +5,12 @@
+diff -Naupr clamav-0.97.5.orig//etc/freshclam.conf clamav-0.97.5/etc/freshclam.conf
+--- clamav-0.97.5.orig//etc/freshclam.conf	2012-06-12 15:36:05.000000000 +0200
++++ clamav-0.97.5/etc/freshclam.conf	2012-06-16 22:28:44.000000000 +0200
+@@ -5,7 +5,7 @@
  
  
  # Comment or remove the line below.
@@ -74,12 +95,15 @@ diff -aupr clamav.orig/etc/freshclam.conf clamav/etc/freshclam.conf
  
  # Path to the database directory.
  # WARNING: It must match clamd.conf's directive!
- # Default: hardcoded (depends on installation options)
--#DatabaseDirectory /var/lib/clamav
-+DatabaseDirectory /usr/share/clamav
+@@ -14,7 +14,7 @@ Example
  
  # Path to the log file (make sure it has proper permissions)
  # Default: disabled
+-#UpdateLogFile /var/log/freshclam.log
++UpdateLogFile /var/log/clamav/freshclam.log
+ 
+ # Maximum size of the log file.
+ # Value of 0 disables the limit.
 @@ -34,25 +34,25 @@ Example
  
  # Use system logger (can work together with UpdateLogFile).
@@ -111,15 +135,16 @@ diff -aupr clamav.orig/etc/freshclam.conf clamav/etc/freshclam.conf
  
  # Use DNS to verify virus database version. Freshclam uses DNS TXT records
  # to verify database and software versions. With this directive you can change
-@@ -66,6 +66,7 @@ Example
+@@ -65,7 +65,7 @@ Example
+ # Uncomment the following line and replace XY with your country
  # code. See http://www.iana.org/cctld/cctld-whois.htm for the full list.
  # You can use db.XY.ipv6.clamav.net for IPv6 connections.
- #DatabaseMirror db.XY.clamav.net
-+DatabaseMirror db.it.clamav.net
+-#DatabaseMirror db.XY.clamav.net
++DatabaseMirror db.us.clamav.net
  
  # database.clamav.net is a round-robin record which points to our most 
  # reliable mirrors. It's used as a fall back in case db.XY.clamav.net is 
-@@ -118,7 +119,7 @@ DatabaseMirror database.clamav.net
+@@ -118,7 +118,7 @@ DatabaseMirror database.clamav.net
  
  # Send the RELOAD command to clamd.
  # Default: no
