@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-c-ares}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-1.7.5}
+VERSION=${VERSION:-1.9.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -90,6 +90,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
   --mandir=/usr/man \
+  --disable-static \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux
 

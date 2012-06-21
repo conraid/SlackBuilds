@@ -29,8 +29,8 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-ecryptfs-utils}
-VERSION=${VERSION:-96}
-BUILD=${BUILD:-2}
+VERSION=${VERSION:-97}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
@@ -76,10 +76,6 @@ cd $TMP
 rm -rf $PRGNAME-$VERSION
 tar xvf $CWD/ecryptfs-utils_$VERSION.orig.tar.gz
 cd $PRGNAME-$VERSION
-
-# Apply patch to detect if /etc/mtab is a symlink.
-# https://bugs.launchpad.net/ecryptfs/+bug/959897
-patch -p1 -i $CWD/symlinked_mtab.patch
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .

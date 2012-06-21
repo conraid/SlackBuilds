@@ -30,9 +30,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-qmmp}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-0.5.5}
+VERSION=${VERSION:-0.5.6}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -78,9 +78,6 @@ cd $TMP
 rm -rf $PRGNAME-$VERSION
 tar xjvf $CWD/$PRGNAME-$VERSION.tar.bz2
 cd $PRGNAME-$VERSION
-
-# Apply patch for ffmpeg 0.11
-patch -p0 -i $CWD/ffmpeg-0.11.diff
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
