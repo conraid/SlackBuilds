@@ -29,7 +29,7 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-wireshark}
-VERSION=${VERSION:-1.7.1}
+VERSION=${VERSION:-1.8.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -91,15 +91,14 @@ CXXFLAGS="$SLKCFLAGS" \
   --sysconfdir=/etc \
   --localstatedir=/var \
   --mandir=/usr/man \
-  --with-ssl=/usr/lib \
-  --enable-threads \
   --disable-static \
   --disable-usr-local \
   --with-lua \
-  --with-ssl \
+  --with-ssl=/usr/lib${LIBDIRSUFFIX} \
   --with-c-ares \
   --with-geoip \
   --with-plugins \
+  --with-adns \
   --docdir=/usr/doc/$PRGNAME-$VERSION \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux
