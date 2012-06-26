@@ -29,8 +29,8 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-cyrus-sasl}
-VERSION=${VERSION:-2.1.23}
-BUILD=${BUILD:-6}
+VERSION=${VERSION:-2.1.25}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
@@ -81,9 +81,6 @@ cd $PRGNAME-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Apply patch for gcc4.4. Thanks to gentoo
-cat $CWD/cyrus-sasl-gcc44.patch | patch -p0 --backup --suffix=".orig"
-
 # Configure
 LDFLAGS="$SLKLDFLAGS" \
 CFLAGS="$SLKCFLAGS" \
@@ -103,7 +100,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-saslauthd \
   --with-gdbm \
   --with-dblib=gdbm \
-  --with-saslauthd=/var/state/saslauthd \
+  --with-saslauthd \
   --without-pwcheck \
   --with-devrandom=/dev/urandom \
   --enable-sql \

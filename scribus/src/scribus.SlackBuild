@@ -30,9 +30,9 @@ set -e
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-scribus}
+PRGNAME=${PRGNAME:-Scribus}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-1.4.0}
+VERSION=${VERSION:-1.4.1}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -74,9 +74,9 @@ esac
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-$VERSION.tar.xz
-cd $PRGNAME-$VERSION
+rm -rf $PRGNAME
+tar xvf $CWD/$PKGNAME-$VERSION.tar.xz
+cd $PRGNAME
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -91,13 +91,9 @@ cd build
 cmake \
   -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
   -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_LD_FLAGS:STRING="$SLKLDFLAGS" \
   -DCMAKE_BUILD_TYPE=none \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DMAN_INSTALL_DIR=/usr/man \
-  -DSYSCONF_INSTALL_DIR=/etc \
   -DLIB_SUFFIX=${LIBDIRSUFFIX} \
-  -DLIB_DIR=/usr/lib${LIBDIRSUFFIX} \
   -DRENDER_LIB=CAIRO \
   -DDOCDIR=/usr/doc/$PKGNAME-$VERSION \
   ..
