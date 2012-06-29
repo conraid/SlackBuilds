@@ -29,7 +29,7 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-cyrus-sasl}
-VERSION=${VERSION:-2.1.25}
+VERSION=${VERSION:-2.1.23}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -80,6 +80,9 @@ cd $PRGNAME-$VERSION
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
+
+# Fix compiling:
+patch -p1 -i $CWD/cyrus-sasl.bad_elif.diff
 
 # Configure
 LDFLAGS="$SLKLDFLAGS" \
