@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-netsniff-ng}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-0.5.6}
+VERSION=${VERSION:-0.5.7}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -39,12 +39,13 @@ PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
 
 # Insert document files in this variable
-DOCFILES="AUTHORS  COPYING  INSTALL  MAINTAINER  MIRRORS  PROJECTS  README  REPORTING-BUGS  THANKS  VERSION"
+DOCFILES="AUTHORS  COPYING  INSTALL  README  REPORTING-BUGS  VERSION"
 
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
 	i?86) ARCH=i686 ;;
+	arm*) ARCH=arm ;;
         # Unless $ARCH is already set, use uname -m for all other archs:
         *) ARCH=$( uname -m ) ;;
     esac
@@ -54,18 +55,20 @@ fi
 case "$ARCH" in
     i486)
 	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""; NACL="x86"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
         ;;
     i686)
 	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX="";  NACL="x86"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
         ;;
     x86_64)
 	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64";  NACL="amd64"
+	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
     *)
-	exit
+	SLKCFLAGS="-O2"; CHOST=$ARCH
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	;;
 esac
 
 # Extract source and prepare:
@@ -118,4 +121,3 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 # Create package:
 cd $PKG
 /sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
-
