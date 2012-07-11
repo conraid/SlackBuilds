@@ -32,7 +32,6 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-hotot}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-GITVERSION=${VERSION:-$(echo shellex-*.tar.gz | cut -f 1 -d . | cut -f 3 -d -)}
 VERSION=${VERSION:-$(date +%Y%m%d)git}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
@@ -82,9 +81,9 @@ esac
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf shellex-Hotot-$GITVERSION
-tar xvf $CWD/shellex-Hotot-$GITVERSION.tar.gz
-cd shellex-Hotot-$GITVERSION
+rm -rf shellex-Hotot-*
+tar xvf $CWD/shellex-Hotot-*.tar.gz
+cd shellex-Hotot-*
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
