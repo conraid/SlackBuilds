@@ -30,21 +30,16 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-gst-plugins-ugly}
-VERSION=${VERSION:-0.10.17}
+VERSION=${VERSION:-0.10.19}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-SOURCE="http://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-${VERSION}.tar.bz2"
 PKG=$TMP/package-$PRGNAME
 DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
 
 # Insert document files in this variable
 DOCFILES="ABOUT-NLS AUTHORS COPYING ChangeLog README NEWS RELEASE REQUIREMENTS"
 
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
 # Automatically determine the architecture we are building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -80,7 +75,6 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-
 tar xjvf $CWD/$PRGNAME-$VERSION.tar.bz2
 cd $PRGNAME-$VERSION
 

@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-tellico}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-2.3.5}
+VERSION=${VERSION:-2.3.6}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -78,9 +78,6 @@ cd $TMP
 rm -rf $PRGNAME-$VERSION
 tar xvf $CWD/$PRGNAME-$VERSION.tar.bz2
 cd $PRGNAME-$VERSION
-
-# Apply patch for kde 4.5
-patch -p1 -i $CWD/tellico-2.3.5.patch
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .

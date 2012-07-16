@@ -30,10 +30,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-ike-scan}
 VERSION=${VERSION:-1.9}
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-SOURCE=http://www.nta-monitor.com/tools/ike-scan/download/${PRGNAME}-${VERSION}.tar.gz
 PKG=$TMP/package-$PRGNAME
 DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
 
@@ -69,11 +68,6 @@ case "$ARCH" in
         SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
-
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
 
 # Extract source and prepare:
 rm -rf $PKG

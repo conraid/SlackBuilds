@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Slackware build script for farsight2
+# Slackware build script for farstream
 #
 # Copyright 2008-2012 Corrado Franco (http://conraid.net)
 # All rights reserved.
@@ -28,8 +28,8 @@ set -e
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-farsight2}
-VERSION=${VERSION:-0.0.26}
+PRGNAME=${PRGNAME:-farstream}
+VERSION=${VERSION:-0.1.2}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -97,10 +97,9 @@ LDFLAGS="$SLKLDFLAGS" \
   --disable-static \
   --disable-valgrind \
   --disable-debug \
+  --disable-gtk-doc \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux
-
-sed -i 's/-gtkdoc-rebase.*//' docs/libs/Makefile
 
 # Build and install:
 make 
