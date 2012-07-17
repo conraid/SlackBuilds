@@ -29,7 +29,7 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-gimp-script-fu}
-VERSION=${VERSION:-2.6.39}
+VERSION=${VERSION:-2.8.36}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -50,7 +50,7 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $DOCS
 cd $TMP
-tar -xjf $CWD/gimp_scripts_26.tar.bz2
+tar -xjf $CWD/gimp_scripts-2.8.tar.bz2
 mkdir -p $PKG/usr/share/gimp/2.0/scripts $PKG/usr/share/gimp/2.0/gimpressionist/Presets
 install -m644 */*.scm $PKG/usr/share/gimp/2.0/scripts
 install -m644 */Presets/*.txt $PKG/usr/share/gimp/2.0/gimpressionist/Presets
