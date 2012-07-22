@@ -32,9 +32,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-snort}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-2.9.2.3}
+VERSION=${VERSION:-2.9.3}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -112,11 +112,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-pthread \
   --enable-linux-smp-stats \
   --enable-zlib \
-  --without-postgresql \
-  --without-oracle \
-  --without-odbc \
-  --with-mysql \
-  --with-mysql-libraries=/usr/lib${LIBDIRSUFFIX} \
   --enable-build-dynamic-examples \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux
@@ -163,10 +158,6 @@ cat etc/unicode.map > $PKG/etc/snort/unicode.map.new
 
 # Create directories for schemas and signatures
 mkdir -p $DOCS/{schemas,signatures}
-# Bundle the SQL schemas and install the docs
-for file in schemas/create_*; do
-    cat $file > $DOCS/$file
-done
 cat $CWD/SLACKWARE.README > $DOCS/README.SLACKWARE
 
 # Include the rc.snort file.
