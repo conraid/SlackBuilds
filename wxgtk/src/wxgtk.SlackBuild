@@ -32,7 +32,7 @@ PKGNAME=${PKGNAME:-wxgtk}
 PRGNAME=${PRGNAME:-wxGTK}
 VERSION=${VERSION:-2.8.12}
 VERSION2=$( echo ${VERSION} | cut -d. -f1-2 )
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -102,7 +102,15 @@ CXXFLAGS="$SLKCFLAGS" \
 
 # Build and install:
 make 
+make -C locale allmo
+cd contrib/src
+make
+cd -
+
 make DESTDIR=$PKG install
+cd contrib/src
+make DESTDIR=$PKG install
+cd -
 
 # Strip binaries:
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
