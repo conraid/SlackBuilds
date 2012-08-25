@@ -30,17 +30,24 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-sslscan}
 VERSION=${VERSION:-1.8.2}
-ARCH=${ARCH:-i686}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-JOBS=${JOBS:--j2}
-SOURCE="http://heanet.dl.sourceforge.net/sourceforge/sslscan/sslscan-${VERSION}.tgz"
 PKG=$TMP/package-$PRGNAME
 DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
 
 # Insert document files in this variable
 DOCFILES="Changelog INSTALL LICENSE"
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+	i?86) ARCH=i686 ;;
+	arm*) ARCH=arm ;;
+        # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
+fi
 
 # Set compiling FLAGS
 case "$ARCH" in
@@ -56,20 +63,18 @@ case "$ARCH" in
 	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
+    *)
+	SLKCFLAGS="-O2"; CHOST=$ARCH
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	;;
 esac
-
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
 
 # Extract source and prepare:
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-
-tar xzvf $CWD/$PRGNAME-$VERSION.tgz
+tar xvf $CWD/$PRGNAME-$VERSION.tgz
 cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
@@ -77,7 +82,8 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
-CFLAGS="$SLKCFLAGS" LDFLAGS="$LDFLAGS" make $JOBS
+sed -i 's/-lssl/-lssl -lcrypto/g' Makefile
+CFLAGS="$SLKCFLAGS" LDFLAGS="$LDFLAGS" make
 install -D -m 755 sslscan $PKG/usr/bin/sslscan
 install -D -m 644 sslscan.1 $PKG/usr/man/man1/sslscan.1
 
@@ -115,9 +121,3 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 # Create package:
 cd $PKG
 /sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz
-
-# Clean file, if option is set: 
-if [ "$1" = "--cleanup" ]; then
-  rm -rf $TMP/$PRGNAME-$VERSION
-  rm -rf $PKG
-fi

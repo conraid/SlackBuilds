@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-wine}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-1.5.10}
+VERSION=${VERSION:-1.5.11}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -76,7 +76,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-tar xjvf $CWD/$PRGNAME-$VERSION.tar.bz2
+tar xvf $CWD/$PRGNAME-$VERSION.tar.bz2
 cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
