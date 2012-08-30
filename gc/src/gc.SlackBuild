@@ -29,7 +29,8 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-gc}
-VERSION=${VERSION:-7.2}
+VERSION=${VERSION:-7.2d}
+SRCVERSION=${SRCVERSION:-7.2}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -73,10 +74,9 @@ esac
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAME-$VERSION
-
-tar xzvf $CWD/$PRGNAME-$VERSION.tar.gz
-cd $PRGNAME-$VERSION
+rm -rf $PRGNAME-$SRCVERSION
+tar xvf $CWD/$PRGNAME-${VERSION}.tar.gz
+cd $PRGNAME-$SRCVERSION
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
