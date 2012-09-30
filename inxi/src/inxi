@@ -1,8 +1,8 @@
 #!/bin/bash
 ########################################################################
 ####  Script Name: inxi
-####  version: 1.8.14
-####  Date: July 30 2012
+####  version: 1.8.17
+####  Date: September 16 2012
 ####  Patch Number: 00
 ########################################################################
 ####  SPECIAL THANKS
@@ -416,8 +416,8 @@ ALTERNATE_FTP='' # for data uploads
 LOG_FILE="$SCRIPT_DATA_DIR/inxi.log"
 LOG_FILE_1="$SCRIPT_DATA_DIR/inxi.1.log"
 LOG_FILE_2="$SCRIPT_DATA_DIR/inxi.2.log"
-MAN_FILE_DOWNLOAD='http://inxi.googlecode.com/svn/trunk/inxi.8.gz'
-MAN_FILE_LOCATION='/usr/share/man/man8'
+MAN_FILE_DOWNLOAD='http://inxi.googlecode.com/svn/trunk/inxi.1.gz'
+MAN_FILE_LOCATION='/usr/share/man/man1'
 SCRIPT_NAME="inxi"
 SCRIPT_PATCH_NUMBER=''
 SCRIPT_PATH=""			#filled-in in Main
@@ -1259,7 +1259,7 @@ script_self_updater()
 {
 	eval $LOGFS
 	local wget_error=0 file_contents='' wget_man_error=0 
-	local man_file_path="$MAN_FILE_LOCATION/inxi.8.gz"
+	local man_file_path="$MAN_FILE_LOCATION/inxi.1.gz"
 
 	print_screen_output "Starting $SCRIPT_NAME self updater."
 	print_screen_output "Currently running $SCRIPT_NAME version number: $SCRIPT_VERSION_NUMBER"
@@ -1285,6 +1285,13 @@ script_self_updater()
 			else
 				if [[ $B_ROOT == 'true' ]];then
 					print_screen_output "Checking Man page download URL..."
+					if [[ -f /usr/share/man/man8/inxi.8.gz ]];then
+						print_screen_output "Updating man page location to man1."
+						mv -f /usr/share/man/man8/inxi.8.gz /usr/share/man/man1/inxi.1.gz 
+						if [[ -n $( type -p mandb ) ]];then
+							exec $( type -p mandb ) -q 
+						fi
+					fi
 					wget -q --spider $MAN_FILE_DOWNLOAD || wget_man_error=$?
 					if [[ $wget_man_error -eq 0 ]];then
 						print_screen_output "Man file download URL verified: $MAN_FILE_DOWNLOAD"
@@ -1473,7 +1480,7 @@ debug_data_collector()
 			cat /etc/mtab &> $debug_data_dir/etc-mtab.txt
 		fi
 		echo 'Creating inxi output file now. This can take a few seconds...'
-		$SCRIPT_NAME -Fploudxx -c 0 -@ 8 > $debug_data_dir/inxi-Fploudxx.txt
+		$SCRIPT_NAME -FRploudxxx -c 0 -@ 8 > $debug_data_dir/inxi-FRploudxxx.txt
 		cp $LOG_FILE $SCRIPT_DATA_DIR/$debug_data_dir
 		if [[ -f $debug_data_dir.tar.gz ]];then
 			echo "Found and removing previous tar.gz data file: $debug_data_dir.tar.gz"
@@ -3243,16 +3250,46 @@ get_desktop_environment()
 	local desktop_environment='' xprop_root='' ps_aux='' 
 	local version='' version_data='' toolkit=''
 	
+	if [[ -n $( type -p xprop ) ]];then
+		xprop_root="$( xprop -root 2>/dev/null )"
+	fi
+
+	# note that cinnamon split from gnome, and and can now be id'ed via xprop,
+	# but it will still trigger the next gnome true case, so this needs to go before gnome test
+	# eventually this needs to be better organized so all the xprop tests are in the same
+	# section, but this is good enough for now.
+	if [[ -n $xprop_root && -n $( grep -is '^_MUFFIN' <<< "$xprop_root" ) ]];then
+		version=$( get_de_app_version 'cinnamon' '^cinnamon' '2' )
+		# not certain cinn will always have version, so keep output right if not
+		if [[ -n $version ]];then
+			version="$version "
+		fi
+		if [[ $B_EXTRA_DATA == 'true' ]];then
+			toolkit=$( get_de_gtk_data )
+			if [[ -n $toolkit ]];then
+				version="${version}(Gtk ${toolkit})"
+			fi
+		fi
+		desktop_environment="Cinnamon"
+	elif [[ -n $xprop_root && -n $( grep -is '^_MARCO' <<< "$xprop_root" ) ]];then
+		version=$( get_de_app_version 'mate-about' '^MATE[[:space:]]DESKTOP' 'NF' )
+		# not certain cinn/mate will always have version, so keep output right if not
+		if [[ -n $version ]];then
+			version="$version "
+		fi
+		if [[ $B_EXTRA_DATA == 'true' ]];then
+			toolkit=$( get_de_gtk_data )
+			if [[ -n $toolkit ]];then
+				version="${version}(Gtk ${toolkit})"
+			fi
+		fi
+		desktop_environment="MATE"
 	# note, GNOME_DESKTOP_SESSION_ID is deprecated so we'll see how that works out
 	# https://bugzilla.gnome.org/show_bug.cgi?id=542880
-	if [[ -n $GNOME_DESKTOP_SESSION_ID ]]; then
+	elif [[ -n $GNOME_DESKTOP_SESSION_ID ]]; then
 		version=$( get_de_app_version 'gnome-about' 'gnome' '3' )
 		if [[ $B_EXTRA_DATA == 'true' ]];then
-			# this is a hack, and has to be changed with every toolkit version change
-			toolkit=$( pkg-config --modversion gtk+-3.0 2>/dev/null )
-			if [[ -z $toolkit ]];then
-				toolkit=$( pkg-config --modversion gtk+-2.0 2>/dev/null )
-			fi
+			toolkit=$( get_de_gtk_data )
 			if [[ -n $toolkit ]];then
 				version="$version (Gtk $toolkit)"
 			fi
@@ -3305,8 +3342,7 @@ get_desktop_environment()
 	# xprop detections possible
 	else
 		ps_aux="$( ps aux )"
-		if [[ -n $( type -p xprop ) ]];then
-			xprop_root="$( xprop -root 2>/dev/null )"
+		if [[ -n $xprop_root ]];then
 			# String: "This is xfdesktop version 4.2.12"
 			if [[ -n $( grep -Eis '\"xfce4\"' <<< "$xprop_root" ) ]];then
 				version=$( get_de_app_version 'xfdesktop' 'xfdesktop[[:space:]]version' '5' )
@@ -3413,8 +3449,9 @@ get_de_app_version()
 {
 	local version_data='' version='' get_version='--version' 
 	
+	# mate-about -v = MATE Desktop Environment 1.4.0
 	case $1 in
-		dwm|jwm|wmii)
+		dwm|jwm|mate-about|wmii)
 			get_version='-v'
 			;;
 	esac
@@ -3453,7 +3490,7 @@ get_desktop_extra_data()
 		desktops=""
 		separator=""
 	}
-	/(cinnamon|gnome-shell|gnome-panel|kicker|lxpanel|mate-panel|plasma-desktop|xfce4-panel)$/ {
+	/(gnome-shell|gnome-panel|kicker|lxpanel|mate-panel|plasma-desktop|xfce4-panel)$/ {
 		# only one entry per type, can be multiple
 		if ( desktops !~ $NF ) {
 			desktops = desktops separator $NF
@@ -3465,6 +3502,25 @@ get_desktop_extra_data()
 	}
 	' )
 	echo $de_data
+	
+	eval $LOGFE
+}
+
+get_de_gtk_data()
+{
+	eval $LOGFS
+	
+	local toolkit=''
+	
+	# this is a hack, and has to be changed with every toolkit version change
+	toolkit=$( pkg-config --modversion gtk+-4.0 2>/dev/null )
+	if [[ -z $toolkit ]];then
+		toolkit=$( pkg-config --modversion gtk+-3.0 2>/dev/null )
+	fi
+	if [[ -z $toolkit ]];then
+		toolkit=$( pkg-config --modversion gtk+-2.0 2>/dev/null )
+	fi
+	echo $toolkit
 	
 	eval $LOGFE
 }
