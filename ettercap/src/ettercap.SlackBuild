@@ -28,8 +28,8 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-ettercap}
-VERSION=${VERSION:-0.7.4.1}
-BUILD=${BUILD:-3}
+VERSION=${VERSION:-0.7.5}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
@@ -72,9 +72,9 @@ esac
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAME
+rm -rf $PRGNAME-$VERSION
 tar xzvf $CWD/$PRGNAME-$VERSION.tar.gz
-cd $PRGNAME
+cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -85,24 +85,21 @@ find . \
  -exec chmod 644 {} \;
 
 # Configure
-LDFLAGS="$SLKLDFLAGS" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --enable-plugins \
-  --enable-gtk \
-  --enable-https \
-  --host=$CHOST-slackware-linux \
-  --build=$CHOST-slackware-linux
-
+mkdir -p build
+cd build
+cmake \
+-DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
+-DCMAKE_BUILD_TYPE=none \
+-DCMAKE_INSTALL_PREFIX=/usr \
+-DLIB_SUFFIX=${LIBDIRSUFFIX} \
+-DENABLE_GTK=ON \
+-DENABLE_IPV6=ON \
+-DMAN_INSTALLDIR=/usr/man \
+..
 # Build and install:
-make 
-make install-strip DESTDIR=$PKG
+make
+make DESTDIR=$PKG install
+cd ..
 
 # Compress and link manpages, if any:
 if [ -d $PKG/usr/man ]; then
@@ -125,7 +122,9 @@ for i in ${DOCFILES}; do
 done
 
 # Rename con file
-mv $PKG/etc/etter.conf $PKG/etc/etter.conf.new
+mv $PKG/etc/ettercap/etter.conf $PKG/etc/ettercap/etter.conf.new
+mv $PKG/etc/ettercap/etter.dns $PKG/etc/ettercap/etter.dns.new
+mv $PKG/etc/ettercap/etter.nbns $PKG/etc/ettercap/etter.nbns.new
 
 # Add a slackbuild script:
 cat $CWD/$PRGNAME.SlackBuild > $PKG/usr/doc/$PRGNAME-$VERSION/$PRGNAME.SlackBuild

@@ -11,4 +11,6 @@ config() {
   fi
   # Otherwise, we leave the .new copy for the admin to consider...
 }
-config /etc/etter.conf.new
+config /etc/ettercap/etter.conf.new
+config /etc/ettercap/etter.dns.new
+config /etc/ettercap/etter.nbns.new

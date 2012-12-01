@@ -1,8 +1,8 @@
 #!/bin/bash
 ########################################################################
 ####  Script Name: inxi
-####  version: 1.8.17
-####  Date: September 16 2012
+####  version: 1.8.22
+####  Date: November 17 2012
 ####  Patch Number: 00
 ########################################################################
 ####  SPECIAL THANKS
@@ -180,6 +180,7 @@ COLOR_SCHEME=''
 CPU_SLEEP='0.3' 
 DEV_DISK_ID=''
 DEV_DISK_LABEL=''
+DEV_DISK_MAPPER=''
 DEV_DISK_UUID=''
 FILTER_STRING='<filter>'
 IRC_CLIENT=''
@@ -240,6 +241,7 @@ B_HANDLE_CORRUPT_DATA='false'
 B_LABEL_SET='false'
 B_LOG_COLORS='false'
 B_LOG_FULL_DATA='false'
+B_MAPPER_SET='false'
 B_OUTPUT_FILTER='false'
 B_OVERRIDE_FILTER='false'
 # kde qdbus
@@ -313,7 +315,7 @@ B_MDSTAT_FILE='false'
 B_MEMINFO_FILE='false'
 B_MODULES_FILE='false' #
 B_MOUNTS_FILE='false'
-B_OS_RELEASE='false' # new default distro id file? will this one work where lsb-release didn't?
+B_OS_RELEASE_FILE='false' # new default distro id file? will this one work where lsb-release didn't?
 B_PARTITIONS_FILE='false' #
 B_PROC_DIR='false'
 B_SCSI_FILE='false'
@@ -506,8 +508,10 @@ CN=''
 DISTROS_DERIVED="antix-version aptosid-version kanotix-version knoppix-version mandrake-release pardus-release sabayon-release siduction-version sidux-version turbolinux-release zenwalk-version"
 # debian_version excluded from DISTROS_PRIMARY so Debian can fall through to /etc/issue detection. Same goes for Ubuntu.
 DISTROS_EXCLUDE_LIST="debian_version ubuntu_version"
-DISTROS_PRIMARY="gentoo-release redhat-release slackware-version SuSE-release"
+DISTROS_PRIMARY="arch-release gentoo-release redhat-release slackware-version SuSE-release"
 DISTROS_LSB_GOOD="mandrake-release mandriva-release mandrakelinux-release"
+# almost no distros are using this normally, and derived distros are not using it at all as far as I can see so far
+DISTROS_OS_RELEASE_GOOD="arch-release SuSE-release"
 ## Distros with known problems
 # DSL (Bash 2.05b: grep -m doesn't work; arrays won't work) --> unusable output
 # Puppy Linux 4.1.2 (Bash 3.0: arrays won't work) --> works partially
@@ -724,7 +728,7 @@ initialize_script_data()
 	fi
 	
 	if [[ -f $FILE_OS_RELEASE ]];then
-		B_OS_FILE='true'
+		B_OS_RELEASE_FILE='true'
 	fi
 
 	if [[ -e $FILE_SCSI ]];then
@@ -1360,11 +1364,13 @@ debug_data_collector()
 		echo 'Collecting system info: sensors, lsusb, lspci, lspci -v data, plus /proc data'
 		lsusb &> $debug_data_dir/lsusb.txt
 		lspci &> $debug_data_dir/lspci.txt
+		lspci -n &> $debug_data_dir/lspci-n.txt
 		lspci -v &> $debug_data_dir/lspci-v.txt
 		ps aux &> $debug_data_dir/ps-aux.txt
 		sensors &> $debug_data_dir/sensors.txt
 		ls /usr/bin/gcc* &> $debug_data_dir/gcc-sys-versions.txt
 		gcc --version &> $debug_data_dir/gcc-version.txt
+		cat /etc/issue &> $debug_data_dir/etc-issue.txt
 		cat $FILE_LSB_RELEASE &> $debug_data_dir/lsb-release.txt
 		cat $FILE_OS_RELEASE &> $debug_data_dir/os-release.txt
 		cat $FILE_ASOUND_DEVICE &> $debug_data_dir/proc-asound-device.txt
@@ -1465,6 +1471,7 @@ debug_data_collector()
 			ls -l /dev/disk/by-label &> $debug_data_dir/dev-disk-label-data.txt
 			ls -l /dev/disk/by-uuid &> $debug_data_dir/dev-disk-uuid-data.txt
 			ls -l /dev/disk/by-path &> $debug_data_dir/dev-disk-path-data.txt
+			ls -l /dev/mapper &> $debug_data_dir/dev-disk-mapper-data.txt
 			readlink /dev/root &> $debug_data_dir/dev-root.txt
 			df -h -T -P --exclude-type=aufs --exclude-type=squashfs --exclude-type=unionfs --exclude-type=devtmpfs --exclude-type=tmpfs --exclude-type=iso9660 --exclude-type=devfs --exclude-type=linprocfs --exclude-type=sysfs --exclude-type=fdescfs &> $debug_data_dir/df-h-T-excludes.txt
 			swapon -s &> $debug_data_dir/swapon-s.txt
@@ -2277,9 +2284,12 @@ show_options()
 	print_screen_output "    -S - Desktop toolkit if avaliable (GNOME/XFCE/KDE only); Kernel gcc version"
 	print_screen_output "    -t - Adds memory use output to cpu (-xt c), and cpu use to memory (-xt m)."
 	print_screen_output "-xx Show extra, extra data (only works with verbose or line output, not short form): "
+	print_screen_output "    -A - Adds chip vendor:product ID for each audio device."
 	print_screen_output "    -D - Adds disk serial number."
+	print_screen_output "    -G - Adds chip vendor:product ID for each video card."
 	print_screen_output "    -I - Adds other detected installed gcc versions to primary gcc output (if present)."
 	print_screen_output "    -M - Adds chassis information, if any data for that is available."
+	print_screen_output "    -N - Adds chip vendor:product ID for each nic."
 	print_screen_output "    -R - Adds superblock (if present); algorythm, U data. Adds system info line (kernel support,"
 	print_screen_output "         read ahead, raid events). Adds if present, unused device line. Resync line, shows progress bar."
 	print_screen_output "    -S - Adds display manager (dm) to desktop output, if in X (like kdm, gdm3, lightdm)."
@@ -2372,7 +2382,7 @@ get_start_client()
 {
 	eval $LOGFS
 	local irc_client_path='' irc_client_path_lower='' non_native_konvi='' i=''
-	local b_non_native_app='false' pppid='' app_working_name=''
+	local b_non_native_app='false' pppid='' app_working_name='' file_data=''
 	local b_qt4_konvi='false'
 
 	if [[ $B_RUNNING_IN_SHELL == 'true' ]];then
@@ -2400,6 +2410,7 @@ get_start_client()
 				fi
 				;;
 		esac
+
 		# replacing loose detection with tight detection, bugs will be handled with app names
 		# as they appear.
 		case $app_working_name in
@@ -2440,9 +2451,32 @@ get_start_client()
 				IRC_CLIENT="Gaim"
 				;;
 			hexchat)
-				IRC_CLIENT_VERSION=" $( $irc_client_path -v | gawk 'NR == 1 {
-				print $2
-				}' )"
+				# the hexchat author decided to make --version/-v return a gtk dialogue box, lol...
+				# so we need to read the actual config file for hexchat. Note that older hexchats
+				# used xchat config file, so test first for default, then legacy. Because it's possible
+				# for this file to be use edited, doing some extra checks here.
+				if [[ -f ~/.config/hexchat/hexchat.conf ]];then
+					file_data="$( cat ~/.config/hexchat/hexchat.conf )"
+				elif [[ -f  ~/.config/hexchat/xchat.conf ]];then
+					file_data="$( cat ~/.config/hexchat/xchat.conf )"
+				fi
+				if [[ -n $file_data ]];then
+					IRC_CLIENT_VERSION=$( gawk '
+					BEGIN {
+						IGNORECASE=1
+						FS="="
+					}
+					/^[[:space:]]*version/ {
+						# get rid of the space if present
+						gsub(/[[:space:]]*/, "", $2 )
+						print $2
+						exit # usually this is the first line, no point in continuing
+					}' <<< "$file_data" )
+					
+					IRC_CLIENT_VERSION=" $IRC_CLIENT_VERSION"
+				else
+					IRC_CLIENT_VERSION=' N/A'
+				fi
 				IRC_CLIENT="HexChat"
 				;;
 			ircii)
@@ -2752,13 +2786,13 @@ get_cmdline()
 get_audio_data()
 {
 	eval $LOGFS
-	local i='' alsa_data='' alsa_driver='' device_count='' temp_array=''
+	local i='' alsa_data='' audio_driver='' device_count='' temp_array=''
 
 	IFS=$'\n'
 	# this first step handles the drivers for cases where the second step fails to find one
-	device_count=$( echo "$Lspci_Data" | grep -iEc '(multimedia audio controller|audio device)' )
+	device_count=$( echo "$Lspci_v_Data" | grep -iEc '(multimedia audio controller|audio device)' )
 	if [[ $device_count -eq 1 ]] && [[ $B_ASOUND_DEVICE_FILE == 'true' ]];then
-		alsa_driver=$( gawk -F ']: ' '
+		audio_driver=$( gawk -F ']: ' '
 		BEGIN {
 			IGNORECASE=1
 		}
@@ -2776,10 +2810,10 @@ get_audio_data()
 
 	# this is to safeguard against line breaks from results > 1, which if inserted into following
 	# array will create a false array entry. This is a hack, not a permanent solution.
-	alsa_driver=$( echo $alsa_driver )
+	audio_driver=$( echo $audio_driver )
 	# now we'll build the main audio data, card name, driver, and port. If no driver is found,
 	# and if the first method above is not null, and one card is found, it will use that instead.
-	A_AUDIO_DATA=( $( echo "$Lspci_Data" | gawk -F ': ' -v alsaDriver="$alsa_driver" '
+	A_AUDIO_DATA=( $( echo "$Lspci_v_Data" | gawk -F ': ' -v audioDriver="$audio_driver" '
 	BEGIN {
 		IGNORECASE=1
 	}
@@ -2830,8 +2864,8 @@ get_audio_data()
 				if (drivers[i] != "") {
 					useDrivers=drivers[i]
 				}
-				else if ( alsaDriver != "" ) {
-					useDrivers=alsaDriver
+				else if ( audioDriver != "" ) {
+					useDrivers=audioDriver
 				}
 			}
 			if (ports[i] != "") {
@@ -2914,8 +2948,9 @@ get_audio_usb_data()
 							string = string separator $i
 							separator = " "
 						}
-						if ( $6 != "" ){
-							print string ",USB Audio,,," $6
+						if ( $2 != "" ){
+							sub(/:/,"", $4)
+							print string ",USB Audio,,," $2 "-" $4 "," $6
 						}
 					}' <<< "$usb_data" )
 				fi
@@ -3585,11 +3620,13 @@ get_distro_data()
 				# Now lets see if the distro file is in the known-good working-lsb-list
 				# if so, use lsb-release, if not, then just use the found file
 				# this is for only those distro's with self named release/version files
-				# because Mint does not use such, it must be done as below
+				# because Mint does not use such, it must be done as below 
 				## this if statement requires the spaces and * as it is, else it won't work
 				##
 				if [[ " $DISTROS_LSB_GOOD " == *" ${i} "* ]] && [[ $B_LSB_FILE == 'true' ]];then
 					distro_file='lsb-release'
+				elif [[ " $DISTROS_OS_RELEASE_GOOD " == *" ${i} "* ]] && [[ $B_OS_RELEASE_FILE == 'true' ]];then
+					distro_file='os-release'
 				else
 					distro_file="${i}"
 				fi
@@ -3604,19 +3641,29 @@ get_distro_data()
 	# this handles case where only one release/version file was found, and it's lsb-release. This would
 	# never apply for ubuntu or debian, which will filter down to the following conditions. In general
 	# if there's a specific distro release file available, that's to be preferred, but this is a good backup.
-	elif [[ -n $distro_file && -f $FILE_LSB_RELEASE && " $DISTROS_LSB_GOOD" == *" $distro_file "* ]];then
-		distro=$( get_distro_lsb_data )
+	elif [[ -n $distro_file && $B_LSB_FILE == 'true' && " $DISTROS_LSB_GOOD" == *" $distro_file "* ]];then
+		distro=$( get_lsb_os_release_data 'lsb-file' )
 	elif [[ $distro_file == 'lsb-release' ]];then
-		distro=$( get_distro_lsb_data )
+		distro=$( get_lsb_os_release_data 'lsb-file' )
+	elif [[ $distro_file == 'os-release' ]];then
+		distro=$( get_lsb_os_release_data 'os-release-file' )
 	# then if the distro id file was found and it's not in the exluded primary distro file list, read it
 	elif [[ -n $distro_file && -s /etc/$distro_file && " $DISTROS_EXCLUDE_LIST " != *" $distro_file "* ]];then
-		distro=$( remove_erroneous_chars "/etc/$distro_file" )
+		# new opensuse uses os-release, but older ones may have a similar syntax, so just use the first line
+		if [[ $distro_file == 'SuSE-release' ]];then
+			# leaving off extra data since all new suse have it, in os-release, this file has line breaks, like os-release
+			# but in case we  want it, it's: CODENAME = Mantis  | VERSION = 12.2 
+			# for now, just take first occurance, which should be the first line, which does not use a variable type format
+			distro=$( grep -i -m 1 'suse' /etc/$distro_file )
+		else
+			distro=$( remove_erroneous_chars "/etc/$distro_file" )
+		fi
 	# otherwise try  the default debian/ubuntu /etc/issue file
 	elif [[ -f /etc/issue ]];then
 		# lsb gives more manageable and accurate output than issue, but mint should use issue for now
 		# some bashism, boolean must be in parenthesis to work correctly, ie [[ $(boolean) ]] not [[ $boolean ]]
 		if [[ $B_LSB_FILE == 'true' ]] && [[ -z $( grep -i 'mint' /etc/issue ) ]];then
-			distro=$( get_distro_lsb_data )
+			distro=$( get_lsb_os_release_data 'lsb-file' )
 		else
 			distro=$( gawk '
 			BEGIN {
@@ -3629,10 +3676,17 @@ get_distro_data()
 				gsub(/ [ \t]+/, " ")
 				print
 			}' /etc/issue )
+			
+			# this handles an arch bug where /etc/arch-release is empty and /etc/issue is corrupted
+			# only older arch installs that have not been updated should have this fallback required, new ones use
+			# os-release
+			if [[ -n $( grep -i 'arch linux' <<< $distro ) ]];then
+				distro='Arch Linux'
+			fi
 		fi
 	fi
-
-	if [[ ${#distro} -gt 80 ]] &&  [[ $B_HANDLE_CORRUPT_DATA != 'true' ]];then
+	
+	if [[ ${#distro} -gt 80 ]] && [[ $B_HANDLE_CORRUPT_DATA != 'true' ]];then
 		distro="${RED}/etc/${distro_file} corrupted, use -% to override${NORMAL}"
 	fi
 	## note: would like to actually understand the method even if it's not used
@@ -3640,7 +3694,10 @@ get_distro_data()
 	## test for /etc/lsb-release as a backup in case of failure, in cases where > one version/release file
 	## were found but the above resulted in null distro value
 	if [[ -z $distro ]] && [[ $B_LSB_FILE == 'true' ]];then
-		distro=$( get_distro_lsb_data )
+		distro=$( get_lsb_os_release_data 'lsb-file' )
+	fi
+	if [[ -z $distro ]] && [[ $B_OS_RELEASE_FILE == 'true' ]];then
+		distro=$( get_lsb_os_release_data 'os-release-file' )
 	fi
 	# now some final null tries
 	if [[ -z $distro ]];then
@@ -3654,95 +3711,160 @@ get_distro_data()
 			distro='unknown'
 		fi
 	fi
-
-	# this handles an arch bug where /etc/arch-release is empty and /etc/issue is corrupted
-	if [[ -n $( grep -i 'arch linux' <<< $distro ) ]];then
-		distro='Arch Linux'
-	fi
-
+	# final step cleanup of unwanted information
+	# opensuse has the x86 etc type string in names, not needed as redundant since -S already shows that
+	distro=$( gawk '
+	BEGIN {
+		IGNORECASE=1
+	}
+	{
+		sub(/ *\(*(x86_64|i486|i586|i686|686|586|486)\)*/, "", $0)
+		print $0
+	}' <<< $distro )
 	echo "$distro"
 	log_function_data "distro: $distro"
 	eval $LOGFE
 }
 
-# args: $1 - optional, app, uses the app test, not being used now
-get_distro_lsb_data()
+# args: $1 - lsb-file/lsb-app/os-release-file
+get_lsb_os_release_data()
 {
 	eval $LOGFS
 	local distro=''
-
-	if [[ $B_LSB_FILE == 'true' ]] && [[ $1 != 'app' ]];then
-		distro=$( gawk -F '=' '
-		BEGIN {
-			IGNORECASE=1
-		}
-		# note: adding the spacing directly to variable to make sure distro output is null if not found
-		/^DISTRIB_ID/ {
-			gsub(/^ +| +$/, "", $NF)
-			# this is needed because grep for "arch" is too loose to be safe
-			if ( $NF == "arch" ) {
-				distroId = "Arch Linux"
-			}
-			else if ( $NF != "n/a" ) {
-				distroId = $NF " "
-			}
-		}
-		/^DISTRIB_RELEASE/ {
-			gsub(/^ +| +$/, "", $NF)
-			if ( $NF != "n/a" ) {
-				distroRelease = $NF " "
-			}
-		}
-		/^DISTRIB_CODENAME/ {
-			gsub(/^ +| +$/, "", $NF)
-			if ( $NF != "n/a" ) {
-				distroCodename = $NF " "
-			}
-		}
-		# sometimes some distros cannot do their lsb-release files correctly, so here is
-		# one last chance to get it right.
-		/^DISTRIB_DESCRIPTION/ {
-			gsub(/^ +| +$/, "", $0)
-			if ( $NF != "n/a" ) {
-				# slice out the part inside "", like: DISTRIB_DESCRIPTION="Arch Linux"
-				gsub(/DISTRIB_DESCRIPTION=|"/,"",$0)
-				distroDescription = $0
-			}
-		}
-		END {
-			fullString=""
-			if ( distroId == "" && distroRelease == "" && distroCodename == "" && distroDescription != "" ){
-				fullString = distroDescription
-			}
-			else {
-				fullString = distroId distroRelease distroCodename
-			}
-			print fullString
-		}
-		' $FILE_LSB_RELEASE )
-		log_function_data 'cat' "$FILE_LSB_RELEASE"
-	fi
-	# this is HORRIBLY slow, but I don't know why, it runs fast in shell
-# 	if [[  -n $( type -p lsb_release ) && $1 == 'app' ]];then
-# 		distro=$( echo "$( lsb_release -irc )" | gawk '
-# 		{ IGNORECASE=1 }
-# 		/^Distributor ID/ {
-# 			gsub(/^ +| +$/, "", $NF)
-# 			distroId = $NF
-# 		}
-# 		/^Release/ {
-# 			gsub(/^ +| +$/, "", $NF)
-# 			distroRelease = $NF
-# 		}
-# 		/^Codename/ {
-# 			gsub(/^ +| +$/, "", $NF)
-# 			distroCodename = $NF
-# 		}
-# 		END {
-# 			print distroId " " distroRelease " (" distroCodename ")"
-# 		}' )
-# 	fi
-
+	
+	case $1 in
+		lsb-file)
+			if [[ $B_LSB_FILE == 'true' ]];then
+				distro=$( gawk -F '=' '
+				BEGIN {
+					IGNORECASE=1
+				}
+				# note: adding the spacing directly to variable to make sure distro output is null if not found
+				/^DISTRIB_ID/ {
+					gsub(/^ +| +$/, "", $NF)
+					# this is needed because grep for "arch" is too loose to be safe
+					if ( $NF == "arch" ) {
+						distroId = "Arch Linux"
+					}
+					else if ( $NF != "n/a" ) {
+						distroId = $NF " "
+					}
+				}
+				/^DISTRIB_RELEASE/ {
+					gsub(/^ +| +$/, "", $NF)
+					if ( $NF != "n/a" ) {
+						distroRelease = $NF " "
+					}
+				}
+				/^DISTRIB_CODENAME/ {
+					gsub(/^ +| +$/, "", $NF)
+					if ( $NF != "n/a" ) {
+						distroCodename = $NF " "
+					}
+				}
+				# sometimes some distros cannot do their lsb-release files correctly, so here is
+				# one last chance to get it right.
+				/^DISTRIB_DESCRIPTION/ {
+					gsub(/^ +| +$/, "", $0)
+					if ( $NF != "n/a" ) {
+						# slice out the part inside "", like: DISTRIB_DESCRIPTION="Arch Linux"
+						gsub(/DISTRIB_DESCRIPTION=|"/,"",$0)
+						distroDescription = $0
+					}
+				}
+				END {
+					fullString=""
+					if ( distroId == "" && distroRelease == "" && distroCodename == "" && distroDescription != "" ){
+						fullString = distroDescription
+					}
+					else {
+						fullString = distroId distroRelease distroCodename
+					}
+					print fullString
+				}
+				' $FILE_LSB_RELEASE )
+				log_function_data 'cat' "$FILE_LSB_RELEASE"
+			fi
+			;;
+		lsb-app)
+			# this is HORRIBLY slow, not using
+			if [[  -n $( type -p lsb_release ) ]];then
+				distro=$( echo "$( lsb_release -irc )" | gawk '
+				BEGIN { 
+					IGNORECASE=1 
+				}
+				/^Distributor ID/ {
+					gsub(/^ +| +$/, "", $NF)
+					distroId = $NF
+				}
+				/^Release/ {
+					gsub(/^ +| +$/, "", $NF)
+					distroRelease = $NF
+				}
+				/^Codename/ {
+					gsub(/^ +| +$/, "", $NF)
+					distroCodename = $NF
+				}
+				END {
+					print distroId " " distroRelease " (" distroCodename ")"
+				}' )
+			fi
+			;;
+		os-release-file)
+			if [[ $B_OS_RELEASE_FILE == 'true' ]];then
+				distro=$( gawk -F '=' '
+				BEGIN {
+					IGNORECASE=1
+					prettyName=""
+					regularName=""
+					versionName=""
+					versionId=""
+					distroName=""
+				}
+				# note: adding the spacing directly to variable to make sure distro output is null if not found
+				/^PRETTY_NAME/ {
+					gsub(/^ +| +$|\"/, "", $NF)
+					if ( $NF != "n/a" ) {
+						prettyName = $NF
+					}
+				}
+				/^NAME/ {
+					gsub(/^ +| +$|\"/, "", $NF)
+					if ( $NF != "n/a" ) {
+						regularName = $NF
+					}
+				}
+				/^VERSION/ {
+					gsub(/^ +| +$|\"/, "", $NF)
+					gsub(/^ +| +$/, "", $1)
+					if ( $NF != "n/a" && $1 == "VERSION" ) {
+						versionName = $NF
+					}
+					else if ( $NF != "n/a" && $1 == "VERSION_ID" ) {
+						versionId = $NF
+					}
+				}
+				END {
+					if ( prettyName != "" ) {
+						distroName = prettyName
+					}
+					else if ( regularName != "" ) {
+						distroName = regularName
+						if ( versionName != "" ) {
+							distroName = distroName " " versionName
+						}
+						else if ( versionId != "" ) {
+							distroName = distroName " " versionId
+						}
+						
+					}
+					print distroName
+				}
+				' $FILE_OS_RELEASE )
+				log_function_data 'cat' "$FILE_OS_RELEASE"
+			fi
+			;;
+	esac
 	echo $distro
 	log_function_data "distro: $distro"
 	eval $LOGFE
@@ -3918,7 +4040,7 @@ get_graphics_card_data()
 		gsub(/ [ \t]+/, " ", $NF)
 		busId=gensub(/^([0-9a-f:\.]+) (.+)$/,"\\1","",$1)
 		print $NF "," busId
-	}' <<< "$Lspci_Data" ) )
+	}' <<< "$Lspci_v_Data" ) )
 	IFS="$ORIGINAL_IFS"
 # 	for (( i=0; i < ${#A_GFX_CARD_DATA[@]}; i++ ))
 # 	do
@@ -3926,7 +4048,7 @@ get_graphics_card_data()
 # 	done
 
 	# GFXMEM is UNUSED at the moment, because it shows AGP aperture size, which is not necessarily equal to GFX memory..
-	# GFXMEM="size=[$(echo "$Lspci_Data" | gawk '/VGA/{while (!/^$/) {getline;if (/size=[0-9][0-9]*M/) {size2=gensub(/.*\[size=([0-9]+)M\].*/,"\\1","g",$0);if (size<size2){size=size2}}}}END{print size2}')M]"
+	# GFXMEM="size=[$(echo "$Lspci_v_Data" | gawk '/VGA/{while (!/^$/) {getline;if (/size=[0-9][0-9]*M/) {size2=gensub(/.*\[size=([0-9]+)M\].*/,"\\1","g",$0);if (size<size2){size=size2}}}}END{print size2}')M]"
 	temp_array=${A_GFX_CARD_DATA[@]}
 	log_function_data "A_GFX_CARD_DATA: $temp_array"
 	eval $LOGFE
@@ -4493,17 +4615,37 @@ get_hdd_temp_data()
 	eval $LOGFE
 }
 
+# args: $1 - v/n 
 get_lspci_data()
 {
 	eval $LOGFS
-	local lspci_data="$( lspci -v | gawk '{
+	local lspci_data="$( lspci -$1 | gawk '{
 		gsub(/\(prog-if[^)]*\)/,"")
 		sub(/^0000:/, "", $0) # seen case where the 0000: is prepended, rare, but happens
 		print
 	}' )"
 	
 	echo "$lspci_data"
-	log_function_data 'raw' "lspci_data:\n$lspci_data"
+	log_function_data 'raw' "lspci_data $1:\n$lspci_data"
+	eval $LOGFE
+}
+
+# args: $1 - busid
+get_lspci_vendor_product()
+{
+	eval $LOGFS
+	
+	local vendor_product=''
+	
+	vendor_product=$( gawk '
+	/^'$1'/ {
+		if ( $3 != "" ) {
+			print $3
+		}
+	}' <<< "$Lspci_n_Data" )
+	
+	echo $vendor_product
+	
 	eval $LOGFE
 }
 
@@ -4669,7 +4811,7 @@ get_networking_data()
 	
 	IFS=$'\n'
 	A_NETWORK_DATA=( $( 
-	echo "$Lspci_Data" | gawk '
+	echo "$Lspci_v_Data" | gawk '
 	BEGIN {
 		IGNORECASE=1
 		counter=0 # required to handle cases of > 1 instance of the same chipset
@@ -4710,6 +4852,7 @@ get_networking_data()
 			usePorts=""
 			useModules=""
 			usePciBusId=""
+
 			if ( eth[i] > 1 ) {
 				a[j] = eth[i] "x " i
 			}
@@ -4753,7 +4896,7 @@ get_network_advanced_data()
 {
 	eval $LOGFS
 	local a_network_adv_working='' if_path='' working_path='' working_uevent_path='' dir_path=''
-	local if_id='' speed='' duplex='' mac_id='' oper_state='' 
+	local if_id='' speed='' duplex='' mac_id='' oper_state=''  vendor_product=''
 	local usb_data='' usb_vendor='' usb_product='' product_path='' driver_test=''
 	
 	for (( i=0; i < ${#A_NETWORK_DATA[@]}; i++ ))
@@ -4768,6 +4911,7 @@ get_network_advanced_data()
 		mac_id='' 
 		oper_state=''
 		usb_data=''
+		vendor_product=''
 		if [[ -z $( grep '^usb-' <<< ${a_network_adv_working[4]} ) ]];then
 			# note although this may exist technically don't use it, it's a virtual path
 			# and causes weird cat errors when there's a missing file as well as a virtual path
@@ -4790,8 +4934,8 @@ get_network_advanced_data()
 			fi
 			# working_path=$( ls /sys/devices/pci*/*/0000:${a_network_adv_working[4]}/net/*/uevent  )
 		else
-			# slice off the usb- part
-			usb_data=$( cut -d '-' -f 2-4 <<< ${a_network_adv_working[4]} )
+			# now we'll use the actual vendor:product string instead
+			usb_data=${a_network_adv_working[10]}
 			usb_vendor=$( cut -d ':' -f 1 <<< $usb_data )
 			usb_product=$( cut -d ':' -f 2 <<< $usb_data )
 			# this grep returns the path plus the contents of the file, with a colon separator, so slice that off
@@ -4865,7 +5009,10 @@ get_network_advanced_data()
 			fi
 		fi
 		
-		A_NETWORK_DATA[i]=${a_network_adv_working[0]}","${a_network_adv_working[1]}","${a_network_adv_working[2]}","${a_network_adv_working[3]}","${a_network_adv_working[4]}","$if_id","$oper_state","$speed","$duplex","$mac_id
+		if [[ -n ${a_network_adv_working[10]} ]];then
+			vendor_product=${a_network_adv_working[10]}
+		fi
+		A_NETWORK_DATA[i]=${a_network_adv_working[0]}","${a_network_adv_working[1]}","${a_network_adv_working[2]}","${a_network_adv_working[3]}","${a_network_adv_working[4]}","$if_id","$oper_state","$speed","$duplex","$mac_id","$vendor_product
 		IFS="$ORIGINAL_IFS"
 	done
 
@@ -4905,12 +5052,14 @@ get_networking_usb_data()
 				sub(/realtek semiconductor/, "Realtek", $0)
 				sub(/davicom semiconductor/, "Davicom", $0)
 				sub(/Belkin Components/, "Belkin", $0)
+				
 				for ( i=7; i<= NF; i++ ) {
 					string = string separator $i
 					separator = " "
 				}
-				if ( $6 != "" ){
-					print string ",,,,usb-" $6
+				if ( $2 != "" ){
+					sub(/:/, "", $4 )
+					print string ",,,,usb-" $2 "-" $4 ",,,,,," $6
 				}
 			}' <<< "$lsusb_data" 
 			) )
@@ -5247,14 +5396,15 @@ get_partition_data()
 {
 	eval $LOGFS
 	
-	local a_partition_working='' dev_item='' temp_array=''
+	local a_partition_working='' dev_item='' temp_array='' dev_working_item=''
 	#local excluded_file_types='--exclude-type=aufs --exclude-type=tmpfs --exclude-type=iso9660'
 	# df doesn't seem to work in script with variables like at the command line
 	# added devfs linprocfs sysfs fdescfs which show on debian kfreebsd kernel output
 	local main_partition_data="$( df -h -T -P --exclude-type=aufs --exclude-type=squashfs --exclude-type=unionfs --exclude-type=devtmpfs --exclude-type=tmpfs --exclude-type=iso9660 --exclude-type=devfs --exclude-type=linprocfs --exclude-type=sysfs --exclude-type=fdescfs )"
 	local swap_data="$( swapon -s )"
-	# set dev disk label/uuid data globals
+	# set dev disk label/mapper/uuid data globals
 	get_partition_dev_data 'label'
+	get_partition_dev_data 'mapper'
 	get_partition_dev_data 'uuid'
 	
 	log_function_data 'raw' "main_partition_data:\n$main_partition_data\n\nswap_data:\n$swap_data"
@@ -5345,11 +5495,13 @@ get_partition_data()
 		a_partition_working=( ${A_PARTITION_DATA[i]} )
 		IFS="$ORIGINAL_IFS"
 		dev_item='' # reset each loop
+		
 		# note: for swap this will already be set
 		if [[ -n $( grep -E '(by-uuid|by-label)' <<< ${a_partition_working[6]} ) ]];then
+			dev_working_item=$( basename ${a_partition_working[6]} )
 			if [[ -n $DEV_DISK_UUID ]];then
 				dev_item=$( echo "$DEV_DISK_UUID" | gawk '
-					/'$( basename ${a_partition_working[6]} )'/ {
+					$0 ~ /[ /t]'$dev_working_item'[ /t]/ {
 						item=gensub( /..\/..\/(.+)/, "\\1", 1, $NF )
 						print item
 					}' )
@@ -5357,17 +5509,21 @@ get_partition_data()
 			# if we didn't find anything for uuid try label
 			if [[ -z $dev_item && -n $DEV_DISK_LABEL ]];then
 				dev_item=$( echo "$DEV_DISK_LABEL" | gawk '
-					/'$( basename ${a_partition_working[6]} )'/ {
+					$0 ~ /[ /t]'$dev_working_item'[ /t]/ {
 						item=gensub( /..\/..\/(.+)/, "\\1", 1, $NF )
 						print item
 					}' )
 			fi
-			if [[ -n $dev_item ]];then
-				# assemble everything we could get for dev/h/dx, label, and uuid
-				IFS=","
-				A_PARTITION_DATA[i]=${a_partition_working[0]}","${a_partition_working[1]}","${a_partition_working[2]}","${a_partition_working[3]}","${a_partition_working[4]}","${a_partition_working[5]}","$dev_item
-				IFS="$ORIGINAL_IFS"
-			fi
+		elif [[ -n $( grep 'mapper/' <<< ${a_partition_working[6]} ) ]];then
+			# get the mapper actual dev item
+			dev_item=$( get_dev_processed_item "${a_partition_working[6]}" )
+		fi
+		
+		if [[ -n $dev_item ]];then
+			# assemble everything we could get for dev/h/dx, label, and uuid
+			IFS=","
+			A_PARTITION_DATA[i]=${a_partition_working[0]}","${a_partition_working[1]}","${a_partition_working[2]}","${a_partition_working[3]}","${a_partition_working[4]}","${a_partition_working[5]}","$dev_item
+			IFS="$ORIGINAL_IFS"
 		fi
 	done
 	temp_array=${A_PARTITION_DATA[@]}
@@ -5385,8 +5541,9 @@ get_partition_data_advanced()
 	local a_partition_working='' dev_partition_data=''
 	local dev_item='' dev_label='' dev_uuid='' temp_array=''
 	local mount_point=''
-	# set dev disk label/uuid data globals
+	# set dev disk label/mapper/uuid data globals
 	get_partition_dev_data 'label'
+	get_partition_dev_data 'mapper'
 	get_partition_dev_data 'uuid'
 
 	if [[ $B_MOUNTS_FILE == 'true' ]];then
@@ -5460,8 +5617,9 @@ get_partition_data_advanced()
 			IFS=","
 			a_partition_working=( ${A_PARTITION_DATA[i]} )
 			IFS="$ORIGINAL_IFS"
-
-			dev_item=${a_partition_working[6]}
+			# get the mapper actual dev item first, in case it's mapped
+			dev_item=$( get_dev_processed_item "${a_partition_working[6]}" )
+			dev_item=$( basename $dev_item ) ## needed to avoid error in case name still has / in it
 			dev_label=${a_partition_working[7]}
 			dev_uuid=${a_partition_working[8]}
 			
@@ -5472,7 +5630,7 @@ get_partition_data_advanced()
 			if [[ -z $dev_item ]];then
 				if [[ -n $DEV_DISK_UUID && -n $dev_uuid ]];then
 					dev_item=$( echo "$DEV_DISK_UUID" | gawk '
-						/'$dev_uuid'/ {
+						$0 ~ /[ \t]'$dev_uuid'[ \t]/ {
 							item=gensub( /..\/..\/(.+)/, "\\1", 1, $NF )
 							print item
 						}' )
@@ -5481,7 +5639,7 @@ get_partition_data_advanced()
 						# first we need to change space x20 in by-label back to a real space
 						#gsub( /x20/, " ", $0 )
 						# then we can see if the string is there
-						/'$dev_label'/ {
+						$0 ~ /[ \t]'$dev_label'[ \t]/ {
 							item=gensub( /..\/..\/(.+)/, "\\1", 1, $NF )
 							print item
 						}' )
@@ -5515,19 +5673,35 @@ get_partition_data_advanced()
 	eval $LOGFE
 }
 
-# args: $1 - uuid/label/id
+# args: $1 - uuid/label/id/mapper
 get_partition_dev_data()
 {
 	eval $LOGFS
 	
 	# only run these tests once per directory to avoid excessive queries to fs
 	case $1 in
+		id)
+			if [[ $B_ID_SET != 'true' ]];then
+				if [[ -d /dev/disk/by-id ]];then
+					DEV_DISK_ID="$( ls -l /dev/disk/by-id )"
+				fi
+				B_ID_SET='true'
+			fi
+			;;
 		label)
 			if [[ $B_LABEL_SET != 'true' ]];then
 				if [[ -d /dev/disk/by-label ]];then
 					DEV_DISK_LABEL="$( ls -l /dev/disk/by-label )"
 				fi
 				B_LABEL_SET='true'
+			fi
+			;;
+		mapper)
+			if [[ $B_MAPPER_SET != 'true' ]];then
+				if [[ -d /dev/mapper ]];then
+					DEV_DISK_MAPPER="$( ls -l /dev/mapper )"
+				fi
+				B_MAPPER_SET='true'
 			fi
 			;;
 		uuid)
@@ -5538,16 +5712,9 @@ get_partition_dev_data()
 				B_UUID_SET='true'
 			fi
 			;;
-		id)
-			if [[ $B_ID_SET != 'true' ]];then
-				if [[ -d /dev/disk/by-uuid ]];then
-					DEV_DISK_ID="$( ls -l /dev/disk/by-id )"
-				fi
-				B_ID_SET='true'
-			fi
-			;;
+		
 	esac
-	log_function_data 'raw' "DEV_DISK_LABEL:\n$DEV_DISK_LABEL\n\nDEV_DISK_UUID:\n$DEV_DISK_UUID$DEV_DISK_LABEL\n\nDEV_DISK_ID:\n$DEV_DISK_ID"
+	log_function_data 'raw' "DEV_DISK_LABEL:\n$DEV_DISK_LABEL\n\nDEV_DISK_UUID:\n$DEV_DISK_UUID\n\nDEV_DISK_ID:\n$DEV_DISK_ID\n\nDEV_DISK_MAPPER:\n$DEV_DISK_MAPPER"
 	# debugging section, uncomment to insert user data
 # 	DEV_DISK_LABEL='
 #
@@ -5555,12 +5722,40 @@ get_partition_dev_data()
 # DEV_DISK_UUID='
 #
 # '
+# DEV_DISK_MAPPER='
+#
+# '
+	eval $LOGFE
+}
+
+# args: $1 - dev item, check for mapper, then get actual dev item if mapped
+# eg: lrwxrwxrwx 1 root root       7 Sep 26 15:10 truecrypt1 -> ../dm-2 
+get_dev_processed_item()
+{
+	eval $LOGFS
+	
+	local dev_item=$1 dev_return=''
+	
+	if [[ -n $DEV_DISK_MAPPER && -n $( grep -is 'mapper/' <<< $dev_item ) ]];then
+		dev_return=$( echo "$DEV_DISK_MAPPER" | gawk '
+		$( NF - 2 ) ~ /^'$( basename $dev_item )'$/ {
+			item=gensub( /..\/(.+)/, "\\1", 1, $NF )
+			print item
+		}' )
+	fi
+	if [[ -z $dev_return ]];then
+		dev_return=$dev_item
+	fi
+	
+	echo $dev_return
+
 	eval $LOGFE
 }
 
 get_patch_version_string()
 {
 	local script_patch_number=$( sed 's/^[0]\+//' <<< $SCRIPT_PATCH_NUMBER )
+	
 	if [[ -n $script_patch_number ]];then
 		script_patch_number="-$script_patch_number"
 	fi
@@ -6529,13 +6724,16 @@ print_it_out()
 {
 	eval $LOGFS
 	# note that print_it_out passes local variable values on to its children,
-	# and in some cases, their children, with Lspci_Data
-	local Lspci_Data='' # only for verbose
+	# and in some cases, their children, with Lspci_v_Data
+	local Lspci_v_Data='' Lspci_n_Data='' # only for verbose
 
 	if [[ $B_SHOW_SHORT_OUTPUT == 'true' ]];then
 		print_short_data
 	else
-		Lspci_Data="$( get_lspci_data )"
+		Lspci_v_Data="$( get_lspci_data 'v' )"
+		if [[ $B_EXTRA_EXTRA_DATA == 'true' ]];then
+			Lspci_n_Data="$( get_lspci_data 'n' )"
+		fi
 		if [[ $B_SHOW_SYSTEM == 'true' ]];then
 			print_system_data
 		fi
@@ -6678,9 +6876,9 @@ print_short_data()
 print_audio_data()
 {
 	eval $LOGFS
-	local i='' card_id='' audio_data='' a_audio_data='' port_data='' pci_bus_id=''
-	local a_audio_working='' alsa_driver='' alsa_data='' port_plural='' module_version=''
-	local bus_usb_text='' bus_usb_id='' line_starter='Audio:' alsa='' alsa_version=''
+	local i='' card_id='' audio_data='' a_audio_data='' port_data='' pci_bus_id='' card_string=''
+	local a_audio_working='' audio_driver='' alsa_data='' port_plural='' module_version=''
+	local bus_usb_text='' bus_usb_id='' line_starter='Audio:' alsa='' alsa_version='' print_data=''
 	# set A_AUDIO_DATA and get alsa data
 	get_audio_data
 	get_audio_alsa_data
@@ -6709,13 +6907,17 @@ print_audio_data()
 			a_audio_working=( ${A_AUDIO_DATA[i]} )
 			IFS="$ORIGINAL_IFS"
 			port_data=''
-			alsa_driver=''
+			audio_driver=''
 			audio_data=''
+			card_string=''
 			port_plural=''
 			module_version=''
 			pci_bus_id=''
 			bus_usb_text=''
 			bus_usb_id=''
+			print_data=''
+			vendor_product=''
+			
 			if [[ ${#A_AUDIO_DATA[@]} -gt 1 ]];then
 				card_id="-$(( $i + 1 ))"
 			fi
@@ -6726,36 +6928,61 @@ print_audio_data()
 			fi
 			# we're testing for the presence of the 2nd array item here, which is the driver name
 			if [[ -n ${a_audio_working[1]} ]];then
-				alsa_driver=" ${C1}driver$SEP3${C2} ${a_audio_working[1]}"
+				audio_driver="${C1}driver$SEP3${C2} ${a_audio_working[1]} "
 			fi
 			if [[ -n ${a_audio_working[2]} && $B_EXTRA_DATA == 'true' ]];then
 				if [[ $( wc -w <<< ${a_audio_working[2]} ) -gt 1 ]];then
 					port_plural='s'
 				fi
-				port_data=" ${C1}port$port_plural$SEP3${C2} ${a_audio_working[2]}"
+				port_data="${C1}port$port_plural$SEP3${C2} ${a_audio_working[2]} "
 			fi
 			if [[ -n ${a_audio_working[4]} && $B_EXTRA_DATA == 'true' ]];then
 				if [[ ${a_audio_working[1]} != 'USB Audio' ]];then
 					bus_usb_text='bus-ID'
+					if [[ $B_EXTRA_EXTRA_DATA == 'true' ]];then
+						vendor_product=$( get_lspci_vendor_product "${a_audio_working[4]}" )
+					fi
 				else
 					bus_usb_text='usb-ID'
+					if [[ $B_EXTRA_EXTRA_DATA == 'true' ]];then
+						vendor_product=${a_audio_working[5]}
+					fi
 				fi
 				bus_usb_id=${a_audio_working[4]}
-				pci_bus_id=" ${C1}$bus_usb_text$SEP3${C2} $bus_usb_id"
+				pci_bus_id="${C1}$bus_usb_text$SEP3${C2} $bus_usb_id "
+				if [[ -n $vendor_product ]];then
+					vendor_product="${C1}chip-ID$SEP3${C2} $vendor_product "
+				fi
 			fi
 			if [[ -n ${a_audio_working[0]} ]];then
-				audio_data="${C1}Card$card_id:${C2} ${a_audio_working[0]}$alsa_driver$port_data$pci_bus_id"
+				card_string="${C1}Card$card_id:${C2} ${a_audio_working[0]} "
+				audio_data="$audio_driver$port_data$pci_bus_id$vendor_product"
 			fi
 			# only print alsa on last line if short enough, otherwise print on its own line
 			if [[ $i -eq 0 ]];then
-				if [[ -n $alsa_data && $( calculate_line_length "${audio_data}$alsa_data" ) -lt $LINE_MAX ]];then
-					audio_data="$audio_data $alsa_data"
+				if [[ -n $alsa_data && $( calculate_line_length "$card_string${audio_data}$alsa_data" ) -lt $LINE_MAX ]];then
+					audio_data="$audio_data$alsa_data"
 					alsa_data=''
 				fi
 			fi
 			if [[ -n $audio_data ]];then
-				audio_data=$( create_print_line "$line_starter" "$audio_data" )
-				print_screen_output "$audio_data"
+				if [[ $( calculate_line_length "$card_string$audio_data" ) -lt $LINE_MAX ]];then
+					print_data=$( create_print_line "$line_starter" "$card_string$audio_data" )
+					print_screen_output "$print_data"
+				# print the line
+				else
+					# keep the driver on the same line no matter what, looks weird alone on its own line
+					if [[ $B_EXTRA_DATA != 'true' ]];then
+						print_data=$( create_print_line "$line_starter" "$card_string$audio_data" )
+						print_screen_output "$print_data"
+					else
+						print_data=$( create_print_line "$line_starter" "$card_string" )
+						print_screen_output "$print_data"
+						line_starter=' '
+						print_data=$( create_print_line "$line_starter" "$audio_data" )
+						print_screen_output "$print_data"
+					fi
+				fi
 				line_starter=' '
 			fi
 		done
@@ -6914,9 +7141,9 @@ print_gfx_data()
 	eval $LOGFS
 	local gfx_data='' i='' card_id='' root_alert='' root_x_string='' a_gfx_working=''
 	local b_is_mesa='false' display_full_string='' gfx_bus_id='' gfx_card_data=''
-	local res_tty='Resolution' xorg_data='' x_vendor_string='' 
+	local res_tty='Resolution' xorg_data='' x_vendor_string='' vendor_product=''
 	local spacer='' x_driver='' x_driver_string='' x_driver_plural='' direct_render_string=''
-	local separator_loaded='' separator_unloaded='' separator_failed=''
+	local separator_loaded='' separator_unloaded='' separator_failed='' 
 	local loaded='' unloaded='' failed=''
 	local line_starter='Graphics:'
 	local screen_resolution="$( get_graphics_res_data )"
@@ -7014,16 +7241,22 @@ print_gfx_data()
 			if [[ $B_EXTRA_DATA == 'true' ]];then
 				if [[ -n ${a_gfx_working[1]} ]];then
 					gfx_bus_id=" ${C1}bus-ID$SEP3${C2} ${a_gfx_working[1]}"
+					if [[ $B_EXTRA_EXTRA_DATA == 'true' ]];then
+						vendor_product=$( get_lspci_vendor_product "${a_gfx_working[1]}" )
+					fi
 				else
 					gfx_bus_id=" ${C1}bus-ID$SEP3${C2} N/A"
 				fi
+			fi
+			if [[ -n $vendor_product ]];then
+				vendor_product=" ${C1}chip-ID$SEP3${C2} $vendor_product"
 			fi
 			if [[ ${#A_GFX_CARD_DATA[@]} -gt 1 ]];then
 				card_id="Card-$(($i+1)):"
 			else
 				card_id='Card:'
 			fi
-			gfx_data="${C1}$card_id${C2} $gfx_card_data$gfx_bus_id "
+			gfx_data="${C1}$card_id${C2} $gfx_card_data$gfx_bus_id$vendor_product "
 			if [[ ${#A_GFX_CARD_DATA[@]} -gt 1 ]];then
 				gfx_data=$( create_print_line "$line_starter" "${gfx_data}" )
 				print_screen_output "$gfx_data"
@@ -7437,7 +7670,7 @@ print_networking_data()
 	eval $LOGFS
 	local i='' card_id='' network_data='' a_network_working='' port_data='' driver_data=''
 	local card_string='' port_plural='' module_version='' pci_bus_id='' bus_usb_text=''
-	local bus_usb_id='' line_starter='Network:' card_string='' card_data=''
+	local bus_usb_id='' line_starter='Network:' card_string='' card_data='' vendor_product=''
 	# set A_NETWORK_DATA
 	get_networking_data
 
@@ -7459,6 +7692,7 @@ print_networking_data()
 			pci_bus_id=''
 			port_data=''
 			port_plural=''
+			vendor_product=''
 
 			if [[ ${#A_NETWORK_DATA[@]} -gt 1 ]];then
 				card_id="-$(( $i + 1 ))"
@@ -7479,14 +7713,23 @@ print_networking_data()
 				if [[ -z $( grep '^usb-' <<< ${a_network_working[4]} ) ]];then
 					bus_usb_text='bus-ID'
 					bus_usb_id=${a_network_working[4]}
+					if [[ $B_EXTRA_EXTRA_DATA == 'true' ]];then
+						vendor_product=$( get_lspci_vendor_product "${a_network_working[4]}" )
+					fi
 				else
 					bus_usb_text='usb-ID'
 					bus_usb_id=$( cut -d '-' -f '2-4' <<< ${a_network_working[4]} )
+					if [[ $B_EXTRA_EXTRA_DATA == 'true' ]];then
+						vendor_product=${a_network_working[10]}
+					fi
 				fi
 				pci_bus_id="${C1}$bus_usb_text$SEP3${C2} $bus_usb_id"
+				if [[ -n $vendor_product ]];then
+					vendor_product=" ${C1}chip-ID$SEP3${C2} $vendor_product"
+				fi
 			fi
 			card_string="${C1}Card$card_id:${C2} ${a_network_working[0]} "
-			card_data="$driver_data$port_data$pci_bus_id"
+			card_data="$driver_data$port_data$pci_bus_id$vendor_product"
 			if [[ $( calculate_line_length "$card_string$card_data" ) -gt $LINE_MAX ]];then
 				network_data=$( create_print_line "$line_starter" "$card_string" )
 				line_starter=' '

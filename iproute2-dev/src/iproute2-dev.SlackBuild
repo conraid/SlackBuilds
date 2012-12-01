@@ -20,10 +20,12 @@
 #  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Build this against 2.6.x kernel source and headers...
+# Modified by Corrado Franco for dev package
+
+# Build this against 3.x kernel source and headers...
 set -e
 
-VERSION=2.6.37
+VERSION=3.4.0
 BUILD=${BUILD:-1}
 
 # Automatically determine the architecture we're building on:
@@ -58,7 +60,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf iproute2-$VERSION
-tar xvf $CWD/iproute2-$VERSION.tar.bz2 # Source are in a mirror of Slackware -current
+tar xvf $CWD/iproute2-$VERSION.tar.xz # Source are in a mirror of Slackware -current
 cd iproute2-$VERSION
 
 chown -R root:root .
@@ -68,16 +70,20 @@ find . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
-# Fix up path to bdb and iptables libs
-cat $CWD/iproute2.fixup_dbpath_and_iptablespath.diff | sed \
-  -e "s,@LIBDIR@,/usr/lib${LIBDIRSUFFIX},g" \
-  -e "s,@VERSION@,$VERSION,g" | patch -p1
+# Fix up path iptables libs
+zcat $CWD/fixup-for-x86_64.diff.gz | patch -p1
 
 # Use our custom SLKCFLAGS
 sed -i "s/-O2 /-O2 -fPIC /" Makefile
 
 ./configure  # This is okay, really :-)
-make
+make \
+  CCOPTS="$SLKCFLAGS" \
+  LIBDIR=/usr/lib${LIBDIRSUFFIX} \
+  CONFDIR=/etc/iproute2 \
+  DOCDIR=/usr/doc/iproute2-$VERSION \
+  MANDIR=/usr/man \
+  DBM_INCLUDE=/usr/include/db44 
 
 install -Dm644 include/libnetlink.h $PKG/usr/include/libnetlink.h
 install -Dm644 lib/libnetlink.a $PKG/usr/lib${LIBDIRSUFFIX}/libnetlink.a

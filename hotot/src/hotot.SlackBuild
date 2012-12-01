@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-hotot}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-$(date +%Y%m%d)git}
+VERSION=${VERSION:-0.9.8.10git}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -82,7 +82,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf shellex-Hotot-*
-tar xvf $CWD/shellex-Hotot-*.tar.gz
+tar xvf $CWD/hotot-$VERSION.tar.gz
 cd shellex-Hotot-*
 
 # Make sure ownerships and permissions are sane:

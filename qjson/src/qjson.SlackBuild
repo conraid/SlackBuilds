@@ -30,12 +30,11 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-qjson}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-0.7.1}
+VERSION=${VERSION:-0.8.1}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-SOURCE="http://heanet.dl.sourceforge.net/sourceforge/qjson/qjson-${VERSION}.tar.bz2"
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
 
@@ -72,18 +71,13 @@ case "$ARCH" in
 	;;
 esac
 
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
-
 # Extract source and prepare:
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAME
+rm -rf $PRGNAME-$VERSION
 tar xjvf $CWD/$PRGNAME-$VERSION.tar.bz2
-cd $PRGNAME
+cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -101,6 +95,7 @@ cmake \
   -DMAN_INSTALL_DIR=/usr/man \
   -DSYSCONF_INSTALL_DIR=/etc \
   -DLIB_SUFFIX=${LIBDIRSUFFIX} \
+  -DLIB_DESTINATION=lib${LIBDIRSUFFIX} \
   ..
 
 # Build and install:
