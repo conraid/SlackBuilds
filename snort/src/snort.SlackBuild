@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-snort}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-2.9.3.1}
+VERSION=${VERSION:-2.9.4}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -107,11 +107,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
   --enable-static=no \
   --enable-shared=yes \
-  --enable-ipv6 \
-  --enable-zlib \
-  --enable-pthread \
   --enable-linux-smp-stats \
-  --enable-zlib \
   --enable-build-dynamic-examples \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux

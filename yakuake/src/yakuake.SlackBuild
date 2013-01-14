@@ -29,11 +29,10 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-yakuake}
-VERSION=${VERSION:-2.9.8}
+VERSION=${VERSION:-2.9.9}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-SOURCE="ftp://ftp.kde.org/pub/kde/stable/yakuake/$VERSION/src/yakuake-$VERSION.tar.bz2"
 PKG=$TMP/package-$PRGNAME
 DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
 
@@ -70,18 +69,12 @@ case "$ARCH" in
         ;;
 esac
 
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
-
 # Extract source and prepare:
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-
-tar xjvf $CWD/$PRGNAME-$VERSION.tar.bz2
+tar xvf $CWD/$PRGNAME-$VERSION.tar.xz
 cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:

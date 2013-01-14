@@ -30,9 +30,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-TiMidity++}
 PKGNAME=${PKGNAME:-timidity}
-VERSION=${VERSION:-2.13.2}
+VERSION=${VERSION:-2.14.0}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -76,7 +76,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-$VERSION.tar.bz2
+tar xvf $CWD/$PRGNAME-$VERSION.tar.xz
 cd $PRGNAME-$VERSION
 
 # The patches here include most of those in Debian's 2.13.2-19
@@ -111,8 +111,11 @@ CXXFLAGS="$SLKCFLAGS" \
   --infodir=/usr/info \
   --docdir=/usr/doc/${PKGNAME}-${VERSION} \
   --with-module-dir=/usr/lib${LIBDIRSUFFIX}/timidity \
+  --with-default-path=/etc \
+  --with-xaw-resource-prefix=/etc/X11 \
+  --with-xawlib=yes \
   --enable-audio=alsa,oss,arts,esd,ao,vorbis,flac \
-  --enable-dynamic=gtk,ncurses,tcltk,server,alsaseq,emacs \
+  --enable-dynamic=gtk,ncurses,tcltk,server,alsaseq,emacs,vt100,xaw \
   --enable-spectrogram \
   --enable-network \
   --host=$CHOST-slackware-linux \
