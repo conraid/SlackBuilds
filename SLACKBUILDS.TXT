@@ -268,6 +268,15 @@ SLACKBUILD DOWNLOAD: http://download.sourceforge.net/project/cmus/cmus-v2.5.0.ta
 SLACKBUILD MD5SUM: 9af16d324060447996ed25e1a9c1c7d8
 SLACKBUILD SHORT DESCRIPTION:  cmus (ncurses based music player)
 
+SLACKBUILD NAME: collectd
+SLACKBUILD LOCATION: ./collectd/src
+SLACKBUILD FILES: README collectd.SlackBuild collectd.info configure.in doinst.sh rc.collectd slack-desc
+SLACKBUILD VERSION: 5.2.0
+SLACKBUILD REQUIRES: "cyrus-sasl libdbi libesmtp libmemcached liboping libstatgrab postgresql rrdtool yajl"
+SLACKBUILD DOWNLOAD: http://collectd.org/files/collectd-5.2.0.tar.bz2
+SLACKBUILD MD5SUM: d8544f3881937c21ab3409dd3f6449f4
+SLACKBUILD SHORT DESCRIPTION:  collectd (system statistics collection daemon)
+
 SLACKBUILD NAME: conntrack-tools
 SLACKBUILD LOCATION: ./conntrack-tools/src
 SLACKBUILD FILES: README conntrack-tools.SlackBuild conntrack-tools.info slack-desc
@@ -321,15 +330,6 @@ SLACKBUILD REQUIRES: cyrus-sasl
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/curlftpfs/curlftpfs/0.9.2/curlftpfs-0.9.2.tar.gz
 SLACKBUILD MD5SUM: b452123f755114cd4461d56c648d9f12
 SLACKBUILD SHORT DESCRIPTION:  curlftpfs (Mount FTP/SFTP via fuse)
-
-SLACKBUILD NAME: cyrus-sasl
-SLACKBUILD LOCATION: ./cyrus-sasl/src
-SLACKBUILD FILES: README cyrus-sasl.SlackBuild cyrus-sasl.bad_elif.diff cyrus-sasl.info doinst.sh.gz rc.saslauthd.gz slack-desc smtpd.conf.gz
-SLACKBUILD VERSION: 2.1.23
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: ftp://ftp.cyrusimap.org/cyrus-sasl/cyrus-sasl-2.1.23.tar.gz
-SLACKBUILD MD5SUM: 2eb0e48106f0e9cd8001e654f267ecbc
-SLACKBUILD SHORT DESCRIPTION:  cyrus-sasl (Simple Authentication and Security Layer)
 
 SLACKBUILD NAME: daq
 SLACKBUILD LOCATION: ./daq/src
@@ -393,15 +393,6 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: http://www.xs4all.nl/~waterlan/dos2unix/dos2unix-6.0.2.tar.gz
 SLACKBUILD MD5SUM: 11ee6ae80c8acd6d750399cbf4ab6bd9
 SLACKBUILD SHORT DESCRIPTION:  dos2unix (DOS/MAC to UNIX text file format converter)
-
-SLACKBUILD NAME: dovecot
-SLACKBUILD LOCATION: ./dovecot/src
-SLACKBUILD FILES: README doinst.sh dovecot.SlackBuild dovecot.info rc.dovecot slack-desc
-SLACKBUILD VERSION: 2.1.12
-SLACKBUILD REQUIRES: cyrus-sasl 
-SLACKBUILD DOWNLOAD: http://www.dovecot.org/releases/2.1/dovecot-2.1.12.tar.gz
-SLACKBUILD MD5SUM: b575dfb5db954132f41e7c390e7e11ff
-SLACKBUILD SHORT DESCRIPTION:  Dovecot (open source IMAP and POP3 server)
 
 SLACKBUILD NAME: easywake
 SLACKBUILD LOCATION: ./easywake/src
@@ -781,10 +772,10 @@ SLACKBUILD SHORT DESCRIPTION:  Open Source Scalable Vector Graphics Editor
 SLACKBUILD NAME: inxi
 SLACKBUILD LOCATION: ./inxi/src
 SLACKBUILD FILES: README gpl.txt inxi inxi.8.gz inxi.SlackBuild inxi.info slack-desc
-SLACKBUILD VERSION: 1.8.27
+SLACKBUILD VERSION: 1.8.28
 SLACKBUILD REQUIRES: 
 SLACKBUILD DOWNLOAD: http://inxi.googlecode.com/svn/trunk/inxi
-SLACKBUILD MD5SUM: 214db4519f1b0259d0992cf9a77fa5b2
+SLACKBUILD MD5SUM: a9c18c4c695ce64b115c29bf761abd46
 SLACKBUILD SHORT DESCRIPTION:  inxi (system information script)
 
 SLACKBUILD NAME: iotop
@@ -1714,10 +1705,10 @@ SLACKBUILD SHORT DESCRIPTION:  PHP Memcached
 SLACKBUILD NAME: pmacct
 SLACKBUILD LOCATION: ./pmacct/src
 SLACKBUILD FILES: README pmacct.SlackBuild pmacct.info slack-desc
-SLACKBUILD VERSION: 0.14.1
+SLACKBUILD VERSION: 0.14.2
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: http://www.pmacct.net/pmacct-0.14.1.tar.gz
-SLACKBUILD MD5SUM: a1a9805af114df913470933873bba594
+SLACKBUILD DOWNLOAD: http://www.pmacct.net/pmacct-0.14.2.tar.gz
+SLACKBUILD MD5SUM: f83726d2ba266a4e98a2c0b778ca284b
 SLACKBUILD SHORT DESCRIPTION:  PMACCT: a small set of passive network monitoring tools
 
 SLACKBUILD NAME: pmount
@@ -1819,10 +1810,10 @@ SLACKBUILD SHORT DESCRIPTION:  qoauth (A Qt-based C++ library for OAuth authoriz
 SLACKBUILD NAME: qtcurve-gtk2
 SLACKBUILD LOCATION: ./qtcurve-gtk2/src
 SLACKBUILD FILES: README qtcurve-gtk2.SlackBuild qtcurve-gtk2.info slack-desc
-SLACKBUILD VERSION: 1.8.15
+SLACKBUILD VERSION: 1.8.16
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: http://craigd.wikispaces.com/file/view/QtCurve-Gtk2-1.8.15.tar.bz2
-SLACKBUILD MD5SUM: 00054b1923f995fa55e0573730b9f3a6
+SLACKBUILD DOWNLOAD: http://craigd.wikispaces.com/file/view/QtCurve-Gtk2-1.8.16.tar.bz2
+SLACKBUILD MD5SUM: 8923caaa0704f6a30252a5eadb015d76
 SLACKBUILD SHORT DESCRIPTION:  qtcurve (GTK2 style)
 
 SLACKBUILD NAME: qtcurve-kde4
@@ -2269,15 +2260,15 @@ SLACKBUILD SHORT DESCRIPTION:  wacomtablet (Wacom tablet KDE 4 KCModule)
 SLACKBUILD NAME: weechat
 SLACKBUILD LOCATION: ./weechat/src
 SLACKBUILD FILES: README slack-desc weechat.SlackBuild weechat.info
-SLACKBUILD VERSION: 0.3.9.2
+SLACKBUILD VERSION: 0.4.0
 SLACKBUILD REQUIRES: "cyrus-sasl lua"
-SLACKBUILD DOWNLOAD: http://www.weechat.org/files/src/weechat-0.3.9.2.tar.bz2
-SLACKBUILD MD5SUM: 636e96a62e60155f3b9769905d9912b9
+SLACKBUILD DOWNLOAD: http://www.weechat.org/files/src/weechat-0.4.0.tar.bz2
+SLACKBUILD MD5SUM: b2e10ca1e3a72142fcc8d58c7c774b1b
 SLACKBUILD SHORT DESCRIPTION:  WeeChat (fast, light & extensible chat client)
 
 SLACKBUILD NAME: wifite
 SLACKBUILD LOCATION: ./wifite/src
-SLACKBUILD FILES: COPYING HELP README slack-desc wifite.SlackBuild wifite.info
+SLACKBUILD FILES: COPYING HELP README SLACKWARE-README slack-desc wifite.SlackBuild wifite.info
 SLACKBUILD VERSION: r85
 SLACKBUILD REQUIRES: 
 SLACKBUILD DOWNLOAD: https://wifite.googlecode.com/svn/trunk/wifite.py
@@ -2287,10 +2278,10 @@ SLACKBUILD SHORT DESCRIPTION:  wifite (automated wireless auditor)
 SLACKBUILD NAME: wine
 SLACKBUILD LOCATION: ./wine/src
 SLACKBUILD FILES: README doinst.sh slack-desc wine.SlackBuild wine.info
-SLACKBUILD VERSION: 1.5.14
+SLACKBUILD VERSION: 1.5.22
 SLACKBUILD REQUIRES: "cyrus-sasl openal"
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/wine/Source/wine-1.5.14.tar.bz2
-SLACKBUILD MD5SUM: f84c54bd7422328e96b6cf14ee6e163c
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/wine/Source/wine-1.5.22.tar.bz2
+SLACKBUILD MD5SUM: 8b37350b58da09eb3ce63422070c27c4
 SLACKBUILD SHORT DESCRIPTION:  wine (Wine Is Not an Emulator)
 
 SLACKBUILD NAME: wipe

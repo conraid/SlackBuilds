@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-wine}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-1.5.14}
+VERSION=${VERSION:-1.5.22}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -95,6 +95,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --mandir=/usr/man \
   --infodir=/usr/info \
   --docdir=/usr/doc/${PKGNAME}-${VERSION} \
+  --with-x \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux $CONF64
 
