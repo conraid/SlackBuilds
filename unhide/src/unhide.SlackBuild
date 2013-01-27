@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-unhide}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-20120113}
+VERSION=${VERSION:-20121229}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -86,11 +86,13 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
-gcc $SLKCFLAGS --static unhide-tcp.c -o unhide-tcp
-gcc $SLKCFLAGS -Wall --static -pthread unhide-linux26.c -o unhide
+gcc $SLKFLAGS --static -pthread unhide-linux*.c unhide-output.c -o unhide
+gcc $SLKFLAGS --static unhide_rb.c -o unhide_rb 
+gcc $SLKFLAGS --static unhide-tcp.c unhide-tcp-fast.c unhide-output.c -o unhide-tcp
 
 install -Dsm0755 unhide $PKG/usr/sbin/unhide
 install -Dsm0755 unhide-tcp $PKG/usr/sbin/unhide-tcp
+install -DSm0755 unhide_rb $PKG/usr/sbin/unhide_rb
 install -Dm0644 man/unhide.8 $PKG/usr/man/man8/unhide.8
 install -Dm0644 man/unhide-tcp.8 $PKG/usr/man/man8/unhide-tcp.8
 

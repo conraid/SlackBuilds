@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-kamerka}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-0.8.1}
+VERSION=${VERSION:-0.8.5}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -91,13 +91,11 @@ cd build
 cmake \
   -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
   -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_LD_FLAGS:STRING="$SLKLDFLAGS" \
   -DCMAKE_BUILD_TYPE=none \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DMAN_INSTALL_DIR=/usr/man \
   -DSYSCONF_INSTALL_DIR=/etc \
   -DLIB_SUFFIX=${LIBDIRSUFFIX} \
-  -DLIB_DIR=/usr/lib${LIBDIRSUFFIX} \
   ..
 
 # Build and install:

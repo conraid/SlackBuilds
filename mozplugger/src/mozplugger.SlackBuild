@@ -29,7 +29,7 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-mozplugger}
-VERSION=${VERSION:-1.14.5}
+VERSION=${VERSION:-2.1.1}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -97,9 +97,8 @@ CXXFLAGS="$SLKCFLAGS" \
   --build=$CHOST-slackware-linux
 make
 
-install -Dm755 mozplugger-helper $PKG/usr/bin/mozplugger-helper
-install -Dm755 mozplugger-controller $PKG/usr/bin/mozplugger-controller
-install -Dm755 mozplugger-linker $PKG/usr/bin/mozplugger-linker
+mkdir -p $PKG/usr/bin/
+install -m755 mozplugger-{helper,controller,linker,update} $PKG/usr/bin/
 install -Dm644 mozplugger.so $PKG/usr/lib${LIBDIRSUFFIX}/mozilla/plugins/mozplugger.so
 install -Dm644 mozpluggerrc $PKG/etc/mozpluggerrc.new
 install -Dm644 mozplugger.7 $PKG/usr/man/man7/mozplugger.7

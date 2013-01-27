@@ -30,9 +30,9 @@ set -e
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-Scribus}
+PRGNAME=${PRGNAME:-scribus}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-1.4.1}
+VERSION=${VERSION:-1.4.2}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -74,9 +74,9 @@ esac
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAME
+rm -rf $PRGNAME-$VERSION
 tar xvf $CWD/$PKGNAME-$VERSION.tar.xz
-cd $PRGNAME
+cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .

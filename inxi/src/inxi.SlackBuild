@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-inxi}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=$(grep "^####  version:" inxi | cut -d" " -f4)
+VERSION=${VERSION:-1.8.32}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -50,11 +50,23 @@ if [ -z "$ARCH" ]; then
     esac
 fi
 
+# Extract files
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAME
+mkdir -p $PRGNAME
+tar -xf $CWD/$PRGNAME.tar.gz -C $TMP/$PRGNAME
+cd $PRGNAME
+
 # Install:
-install -Dm755 $CWD/inxi $PKG/usr/bin/inxi
+install -Dm755 inxi $PKG/usr/bin/inxi
 
 # Install man page:
-install -Dm644 $CWD/inxi.8.gz $PKG/usr/man/man8/inxi.8.gz
+install -Dm644 inxi.1.gz $PKG/usr/man/man1/inxi.1.gz
+
+# Install changelos
+install -Dm644 inxi.changelog $DOCS/ChangeLog
 
 # Install Copyright files
 install -Dm644 $CWD/gpl.txt $DOCS/COPYING
