@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-libmemcached}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-1.0.15}
+VERSION=${VERSION:-1.0.16}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -55,15 +55,15 @@ fi
 case "$ARCH" in
     i486)
 	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""; CONF64="--disable-64bit"
+	SLKLDFLAGS=""; LIBDIRSUFFIX="";
         ;;
     i686)
 	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""; CONF64="--disable-64bit"
+	SLKLDFLAGS=""; LIBDIRSUFFIX="";
         ;;
     x86_64)
 	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"; CONF64="--enable-64bit"
+	SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64";ù
         ;;
     *)
 	SLKCFLAGS="-O2"; CHOST="$ARCH"
@@ -93,7 +93,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --mandir=/usr/man \
   --enable-static=no \
   --host=$CHOST-slackware-linux \
-  --build=$CHOST-slackware-linux $CONF64
+  --build=$CHOST-slackware-linux
 
 # Build and install:
 make

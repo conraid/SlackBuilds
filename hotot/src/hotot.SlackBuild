@@ -34,15 +34,11 @@ PRGNAME=${PRGNAME:-hotot}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-0.9.8.10git}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
-
-# Set gui version
-GTK=${GTK:-Off}
-QT=${QT:-On}
 
 # Insert document files in this variable
 DOCFILES="LGPL* README*"
@@ -81,9 +77,9 @@ esac
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf shellex-Hotot-*
+rm -rf lyricat-Hotot-*
 tar xvf $CWD/hotot-$VERSION.tar.gz
-cd shellex-Hotot-*
+cd lyricat-Hotot-*
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -97,8 +93,9 @@ cmake \
   -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
   -DCMAKE_BUILD_TYPE=None \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DWITH_GTK=$GTK \
-  -DWITH_QT=$QT \
+  -DWITH_GTK=OFF \
+  -DWITH_QT=ON \
+  -DWITH_KDE=ON \
   ..
 
 # Build and install:
@@ -130,10 +127,6 @@ install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
 
 # Add a doinst.sh
 install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
-
-# Add a js for "italy" trending topic
-# Copy in /usr/share/hotot/js if you want italy trendind topic
-install -Dm644 $CWD/ui.trending_topicsview-italy.js $DOCS/italy/ui.trending_topicsview.js
 
 # Create package:
 cd $PKG

@@ -29,18 +29,26 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-lensfun}
-VERSION=${VERSION:-0.2.5}
+VERSION=${VERSION:-0.2.6}
 ARCH=${ARCH:-i686}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-JOBS=${JOBS:--j2}
-SOURCE="http://download.berlios.de/lensfun/lensfun-${VERSION}.tar.bz2"
 PKG=$TMP/package-$PRGNAME
 DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
 
 # Insert document files in this variable
 DOCFILES="README"
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+        i?86) ARCH=i686 ;;
+        arm*) ARCH=arm ;;
+    # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
+fi
 
 # Set compiling FLAGS
 case "$ARCH" in
@@ -57,11 +65,6 @@ case "$ARCH" in
 	SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
 esac
-
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
 
 # Extract source and prepare:
 rm -rf $PKG
@@ -125,9 +128,3 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 # Create package:
 cd $PKG
 /sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz
-
-# Clean file, if option is set: 
-if [ "$1" = "--cleanup" ]; then
-  rm -rf $TMP/$PRGNAME-$VERSION
-  rm -rf $PKG
-fi
