@@ -32,15 +32,14 @@ PRGNAME=${PRGNAME:-sshguard}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-1.5}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-SOURCE="http://freefr.dl.sourceforge.net/project/sshguard/sshguard/sshguard-$VERSION/sshguard-$VERSION.tar.bz2"
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
 
 # Insert document files in this variable
-DOCFILES="Changes README"
+DOCFILES="Changes README scripts examples"
 
 # Automatically determine the architecture we are building on:
 if [ -z "$ARCH" ]; then
@@ -72,17 +71,12 @@ case "$ARCH" in
 	;;
 esac
 
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
-
 # Extract source and prepare:
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$(basename $SOURCE)
+tar xvf $CWD/$PRGNAME-$VERSION.tar.bz2
 cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
@@ -128,14 +122,24 @@ for i in ${DOCFILES}; do
     fi;
 done
 
+# Add config files (thanks to Debian project)
+install -Dm644 $CWD/whitelist $PKG/etc/sshguard/whitelist.new
+install -Dm644 $CWD/sshguard.conf $PKG/etc/sshguard/sshguard.conf.new
+
+# Add startup file
+install -Dm644 $CWD/rc.sshguard $PKG/etc/rc.d/rc.sshguard.new
+
 # Add a slackbuild script:
-cat $CWD/$PKGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
+install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
+
+# Add a doinst.sh
+install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
 
 # Add slack-desc
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
 
 # Create package:
 cd $PKG
 /sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+
 
