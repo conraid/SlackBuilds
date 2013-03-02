@@ -2,7 +2,7 @@
 #
 # Slackware build script for tcptraceroute (http://michael.toren.net/code/tcptraceroute/)
 #
-# Copyright 2008-2012 Corrado Franco (http://conraid.net)
+# Copyright 2008-2013 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -31,16 +31,14 @@ CWD=$(pwd)
 PRGNAME=${PRGNAME:-tcptraceroute}
 PKGNAME=${PKGNAME:-$PRGNAME}
 VERSION=${VERSION:-1.5beta7}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-SOURCE="http://michael.toren.net/code/tcptraceroute/tcptraceroute-${VERSION}.tar.gz"
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
 
 # Insert document files in this variable
 DOCFILES="AUTHORS CHANGES COPYING ChangeLog INSTALL NEWS README VERSION"
-
 
 # Automatically determine the architecture we are building on:
 if [ -z "$ARCH" ]; then
@@ -72,18 +70,12 @@ case "$ARCH" in
 	;;
 esac
 
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
-
 # Extract source and prepare:
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-
-tar xzvf $CWD/$PRGNAME-$VERSION.tar.gz
+tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
 cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:

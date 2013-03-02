@@ -2,7 +2,7 @@
 # Slackware build script for postfix (http://www.postfix.org)
 #
 # Copyright 2006, Alan Hicks, Lizella, GA (by slackbuilds.org)
-# Copyright 2008-2012 Corrado Franco (http://conraid.net)
+# Copyright 2008-2013 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -55,7 +55,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-postfix}
 VERSION=${VERSION:-2.10.0}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
@@ -66,25 +66,15 @@ DOCS="$PKG/usr/doc/${PRGNAME}"
 NEWFILES="access aliases canonical generic header_checks main.cf \
   makedefs.out master.cf relocated transport virtual"
 
-# Set variables for install
-config_directory=/etc/postfix
-daemon_directory=/usr/libexec/postfix
-command_directory=/usr/sbin
-queue_directory=/var/spool/postfix
-sendmail_path=/usr/sbin/sendmail
-newaliases_path=/usr/bin/newaliases
-mailq_path=/usr/bin/mailq
-html_directory=/usr/doc/$PRGNAME/html
-readme_directory=/usr/doc/$PRGNAME/README_FILES
-# I use PRGNAME without version for compatibility with old main.cf
-manpage_directory=/usr/man
-mail_owner=postfix
-setgid_group=postdrop
 
 # Insert document files in this variable
 DOCFILES="AAAREADME COMPATIBILITY COPYRIGHT HISTORY IPv6-ChangeLog LICENSE \
   PORTING RELEASE_NOTES* TLS_ACKNOWLEDGEMENTS TLS_CHANGES TLS_LICENSE \
   US_PATENT_6321267 implementation-notes examples README_FILES html"
+
+mail_owner=postfix
+setgid_group=postdrop
+
 
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
@@ -129,26 +119,34 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
+
 make makefiles \
   OPT="$SLKCFLAGS" \
-  CCARGS="-DUSE_SASL_AUTH -DUSE_CYRUS_SASL -I/usr/include/sasl -DUSE_TLS -DHAS_MYSQL -I/usr/include/mysql -DHAS_SQLITE" \
-  AUXLIBS="-L/lib${LIBDIRSUFFIX} -L/usr/lib${LIBDIRSUFFIX} -lsasl2 -lssl -lcrypto -L/usr/lib${LIBDIRSUFFIX}/mysql -lmysqlclient -lz -lm -lsqlite3 -lpthread"
+  CCARGS='-DUSE_SASL_AUTH \
+          -DUSE_CYRUS_SASL -I/usr/include/sasl \
+          -DUSE_TLS -DHAS_MYSQL -I/usr/include/mysql \
+          -DHAS_SQLITE \
+          -DDEF_MANPAGE_DIR=\"/usr/man\" \
+          -DDEF_DAEMON_DIR=\"/usr/libexec/postfix\" \
+          -DDEF_COMMAND_DIR=\"/usr/sbin\" \
+          -DDEF_CONFIG_DIR=\"/etc/postfix\" \
+          -DDEF_DATA_DIR=\"/var/lib/postfix\" \
+          -DDEF_MAILQ_PATH=\"/usr/bin/mailq\" \
+          -DDEF_HTML_DIR=\"/usr/doc/postfix/html\" \
+          -DDEF_NEWALIAS_PATH=\"/usr/bin/newaliases\" \
+          -DDEF_QUEUE_DIR=\"/var/spool/postfix\" \
+          -DDEF_README_DIR=\"/usr/doc/postfix/README_FILES\" \
+          -DDEF_SENDMAIL_PATH=\"/usr/sbin/sendmail\"' \
+  AUXLIBS="-L/lib${LIBDIRSUFFIX} -L/usr/lib${LIBDIRSUFFIX} \
+           -lsasl2 -lssl -lcrypto \
+           -L/usr/lib${LIBDIRSUFFIX}/mysql -lmysqlclient \
+           -lz -lm -lsqlite3 -lpthread"
 make
 make non-interactive-package \
   install_root=$PKG \
   tempdir=$TMP/$PRGNAME-temp \
-  config_directory=$config_directory \
-  daemon_directory=$daemon_directory \
-  command_directory=$command_directory \
-  queue_directory=$queue_directory \
-  sendmail_path=$sendmail_path \
-  newaliases_path=$newaliases \
-  mailq_path=$mailq_path \
   mail_owner=$mail_owner \
-  setgid_group=$setgid_group \
-  html_directory=$html_directory \
-  manpage_directory=$manpage_directory \
-  readme_directory=$readme_directory
+  setgid_group=$setgid_group
 
 # Add auxiliary files
 install -Dm 755 auxiliary/qshape/qshape.pl $PKG/usr/sbin/qshape

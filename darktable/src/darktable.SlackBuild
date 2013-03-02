@@ -1,8 +1,8 @@
 #!/bin/sh
 #
-# Slackware build script for liblinebreak
+# Slackware build script for darktable
 #
-# Copyright 2011-2012 Corrado Franco (http://conraid.net)
+# Copyright 2013 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -30,19 +30,18 @@ set -e
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-liblinebreak}
+PRGNAME=${PRGNAME:-darktable}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-2.0}
+VERSION=${VERSION:-1.1.3}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-SOURCE="http://netcologne.dl.sourceforge.net/project/vimgadgets/liblinebreak/2.0/liblinebreak-$VERSION.tar.gz"
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
 # Insert document files in this variable
-DOCFILES="AUTHORS ChangeLog LICENCE NEWS README"
+DOCFILES="doc/ChangeLog doc/NEWS"
 
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
@@ -56,8 +55,8 @@ fi
 
 # Set compiling FLAGS
 case "$ARCH" in
-    i486)
-	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+    i[3-5]86)
+        SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
         ;;
     i686)
@@ -74,17 +73,12 @@ case "$ARCH" in
 	;;
 esac
 
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
-
 # Extract source and prepare:
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$(basename $SOURCE)
+tar xvf $CWD/$PRGNAME-$VERSION.tar.xz
 cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
@@ -92,43 +86,47 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure
-LDFLAGS="$SLKLDFLAGS" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --infodir=/usr/info \
-  --docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
-  --enable-static=no \
-  --enable-shared=yes \
-  --host=$CHOST-slackware-linux \
-  --build=$CHOST-slackware-linux
+sed -i 's/-Werror//' src/CMakeLists.txt
+sed -i 's#share/doc#doc#' doc/CMakeLists.txt
+mkdir -p build
+cd build
+cmake \
+  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
+  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
+  -DCMAKE_BUILD_TYPE=none \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DMAN_INSTALL_DIR=/usr/man \
+  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
+  -DBINARY_PACKAGE_BUILD=On \
+  ..
 
 # Build and install:
 make
-make DESTDIR=$PKG install-strip
+make DESTDIR=$PKG install
+cd ..
+
+# Strip binaries:
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+
+# Compress and link manpages, if any:
+if [ -d $PKG/usr/man ]; then
+    find $PKG/usr/man -type f -exec gzip -9 {} \;
+    for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+fi
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
-for i in ${DOCFILES}; do
-    if [ -e "${i}" ]; then
-        if ! [ -L "${i}" ]; then
-	    cp -a "${i}" ${DOCS}
-	else
-	    cp -LRp "${i}" ${DOCS}
-        fi
-    fi;
-done
+mv $PKG/usr/doc/$PRGNAME $DOCS
+cp -a $DOCFILES $DOCS
 
 # Add a slackbuild script:
 install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
 
 # Add slack-desc
 install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+
+# Add a doinst.sh
+install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
 
 # Create package:
 cd $PKG
