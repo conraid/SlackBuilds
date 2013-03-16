@@ -2,7 +2,7 @@
 #
 # Slackware build script for libdbi (http://libdbi.sourceforge.net/)
 #
-# Copyright 2009-2012 Corrado Franco (http://conraid.net)
+# Copyright 2009-2013 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -30,12 +30,11 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-libdbi}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-0.8.4}
+VERSION=${VERSION:-0.9.0}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-SOURCE="http://heanet.dl.sourceforge.net/project/libdbi/libdbi/libdbi-${VERSION}/libdbi-${VERSION}.tar.gz"
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
 
@@ -71,11 +70,6 @@ case "$ARCH" in
         SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
-
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
 
 # Extract source and prepare:
 rm -rf $PKG

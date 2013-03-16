@@ -2,7 +2,7 @@
 #
 # Slackware build script for packETH
 #
-# Copyright 2012 Corrado Franco (http://conraid.net)
+# Copyright 2013 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-packETH}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-1.7.1}
+VERSION=${VERSION:-1.7.2}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -77,15 +77,17 @@ esac
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAME-1.7
+rm -rf $PRGNAME-$VERSION
 tar xvf $CWD/$PRGNAME-$VERSION.tar.bz2
-cd $PRGNAME-1.7
+cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure
+sed -i 's/^LIBS=/LIBS+=/' Makefile.am
+autoreconf
 LDFLAGS="$SLKLDFLAGS" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
