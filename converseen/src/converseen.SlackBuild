@@ -2,7 +2,7 @@
 #
 # Slackware build script for converseen
 #
-# Copyright 2009-2012 Corrado Franco (http://conraid.net)
+# Copyright 2009-2013 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -33,7 +33,7 @@ PKGNAME=${PKGNAME:-$PRGNAME}
 VERSION=${VERSION:-0.5.3}
 SRCVERSION=${SRCVERSION:-0.5.3}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -90,6 +90,12 @@ cmake \
   -DCMAKE_BUILD_TYPE=none \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DLIB_SUFFIX=${LIBDIRSUFFIX} \
+  -DImageMagick_Magick++_INCLUDE_DIR:PATH=/usr/include/ImageMagick-6 \
+  -DImageMagick_Magick++_LIBRARY:FILEPATH=/usr/lib${LIBDIRSUFFIX}/libMagick++-6.Q16.so \
+  -DImageMagick_MagickWand_INCLUDE_DIR:PATH=/usr/include/ImageMagick-6 \
+  -DImageMagick_MagickWand_LIBRARY:FILEPATH=/usr/lib${LIBDIRSUFFIX}/libMagickWand-6.Q16.so \
+  -DImageMagick_MagickCore_INCLUDE_DIR:PATH=/usr/include/ImageMagick-6 \
+  -DImageMagick_MagickCore_LIBRARY:FILEPATH=/usr/lib${LIBDIRSUFFIX}/libMagickCore-6.Q16.so \
   ..
 
 # Build and install:

@@ -39,23 +39,12 @@
 # Exit on most errors
 set -e
 
-# backup e restore mysql include files
-if [ -e /usr/include/mysql/events.h ]; then
-    mv /usr/include/mysql/events.h /usr/include/mysql/events.h.old
-fi
-restore_events(){
-    if [ -e /usr/include/mysql/events.h.old ]; then
-	mv /usr/include/mysql/events.h.old /usr/include/mysql/events.h
-    fi
-}
-trap restore_events EXIT
-
 # Set variables:
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-postfix}
 VERSION=${VERSION:-2.10.0}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME

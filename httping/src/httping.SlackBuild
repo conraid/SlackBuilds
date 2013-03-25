@@ -27,7 +27,7 @@ set -e
 
 # Set variables:
 PRGNAME=httping
-VERSION=${VERSION:-2.0}
+VERSION=${VERSION:-2.1}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 CWD=$(pwd)
@@ -77,7 +77,7 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
-make OFLAGS="$SLKCFLAGS" MANDIR="/usr/man/" DOCDIR="/usr/doc/$PRGNAME-$VERSION"
+make OFLAGS="$SLKCFLAGS" MANDIR="/usr/man/" DOCDIR="/usr/doc/$PRGNAME-$VERSION" DEBUG="no"
 make DESTDIR="$PKG" MANDIR="/usr/man/" DOCDIR="/usr/doc/$PRGNAME-$VERSION" install
 
 strip --strip-unneeded $PKG/usr/bin/httping

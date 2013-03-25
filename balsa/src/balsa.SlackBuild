@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-balsa}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-2.4.14}
+VERSION=${VERSION:-2.5.0}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
@@ -101,7 +101,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-html-widget=no \
   --with-gpgme=gpgme-config \
   --disable-scrollkeeper \
-  --with-unique \
   --with-ssl \
   --with-rubrica \
   --with-sqlite \
