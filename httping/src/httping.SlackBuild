@@ -27,7 +27,7 @@ set -e
 
 # Set variables:
 PRGNAME=httping
-VERSION=${VERSION:-2.1}
+VERSION=${VERSION:-2.2}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 CWD=$(pwd)
@@ -77,6 +77,12 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
+./configure \
+--with-tfo \
+--with-ncurses \
+--with-openssl \
+--with-fftw3 \
+
 make OFLAGS="$SLKCFLAGS" MANDIR="/usr/man/" DOCDIR="/usr/doc/$PRGNAME-$VERSION" DEBUG="no"
 make DESTDIR="$PKG" MANDIR="/usr/man/" DOCDIR="/usr/doc/$PRGNAME-$VERSION" install
 

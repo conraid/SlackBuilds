@@ -30,10 +30,10 @@ set -e
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-hotot}
+PRGNAME=${PRGNAME:-Hotot}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-0.9.8.10}
-PKGVERSION=$(echo $VERSION | tr - _)_$(date +%Y%m%d)git
+VERSION=${VERSION:-0.9.8.13}
+PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -77,9 +77,9 @@ esac
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf lyricat-Hotot-*
-tar xvf $CWD/hotot-${PKGVERSION}.tar.gz
-cd lyricat-Hotot-*
+rm -rf Hotot-$PKGVERSION
+tar xvf $CWD/Hotot-${PKGVERSION}.tar.gz
+cd Hotot-$PKGVERSION
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
