@@ -1,8 +1,8 @@
 #!/bin/sh
 #
-# Slackware build script for converseen
+# Slackware build script for EasyWake
 #
-# Copyright 2009-2013 Corrado Franco (http://conraid.net)
+# Copyright 2013 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -21,29 +21,33 @@
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+#
+# Latest version of this SlackBuild at http://slackers.it/repository
+#
 # Exit on most errors
 set -e
 
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-converseen}
-PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-0.6}
-SRCVERSION=${SRCVERSION:-0.6}
-PKGVERSION=$(echo $VERSION | tr - _)
+PRGNAME=${PRGNAME:-EasyWake}
+PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
+VERSION=${VERSION:-3-0}
+PKGVERSION=$(echo $VERSION | tr - .)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
-DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
+DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
-# Automatically determine the architecture we are building on:
+# Insert document files in this variable
+DOCFILES="COPYING* README"
+
+# Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
-        i?86) ARCH=i686 ;;
-        arm*) ARCH=arm ;;
+	i?86) ARCH=i686 ;;
+	arm*) ARCH=arm ;;
         # Unless $ARCH is already set, use uname -m for all other archs:
         *) ARCH=$( uname -m ) ;;
     esac
@@ -51,8 +55,8 @@ fi
 
 # Set compiling FLAGS
 case "$ARCH" in
-    i486)
-	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+    i[3-5]86)
+        SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
         ;;
     i686)
@@ -61,11 +65,11 @@ case "$ARCH" in
         ;;
     x86_64)
 	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"
+	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
     *)
-        SLKCFLAGS="-O2"; CHOST=$ARCH
-        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	SLKCFLAGS="-O2"; CHOST=$ARCH
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
 
@@ -73,51 +77,42 @@ esac
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf ${PRGNAME}-${SRCVERSION}
-tar xf $CWD/$PRGNAME-$VERSION.tar.bz2
-cd ${PRGNAME}-${SRCVERSION}
+rm -rf $PRGNAME-$VERSION-Source
+unzip $CWD/$PRGNAME-$VERSION-Source.zip
+cd $PRGNAME-$VERSION-Source
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure
-mkdir -p build
-cd build
-cmake \
-  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_BUILD_TYPE=none \
-  -DCMAKE_INSTALL_PREFIX=/usr \
-  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
-  -DImageMagick_Magick++_INCLUDE_DIR:PATH=/usr/include/ImageMagick-6 \
-  -DImageMagick_Magick++_LIBRARY:FILEPATH=/usr/lib${LIBDIRSUFFIX}/libMagick++-6.Q16.so \
-  -DImageMagick_MagickWand_INCLUDE_DIR:PATH=/usr/include/ImageMagick-6 \
-  -DImageMagick_MagickWand_LIBRARY:FILEPATH=/usr/lib${LIBDIRSUFFIX}/libMagickWand-6.Q16.so \
-  -DImageMagick_MagickCore_INCLUDE_DIR:PATH=/usr/include/ImageMagick-6 \
-  -DImageMagick_MagickCore_LIBRARY:FILEPATH=/usr/lib${LIBDIRSUFFIX}/libMagickCore-6.Q16.so \
-  ..
+cd Build
+qmake PREFIX=/usr QMAKE_LIBS="$SLKLDFLAGS" QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" -Wnone -o Makefile ${PRGNAME}.pro
 
 # Build and install:
 make
-make DESTDIR=$PKG install
-cd ..
+install -Dsm755 $PRGNAME $PKG/usr/bin/$PRGNAME
+cd -
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
-cp COPYING INSTALL README ${DOCS}
+cp -a $DOCFILES $DOCS
 
 # Add a slackbuild script:
-cat $CWD/$PKGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
+install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
 
 # Add slack-desc
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
 
 # Add a doinst.sh
-cat $CWD/doinst.sh > $PKG/install/doinst.sh
+install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
+
+# Add a desktop file
+install -Dm644 $CWD/$PKGNAME.desktop $PKG/usr/share/applications/$PKGNAME.desktop
+
+# Add an icon
+install -Dm644 Resources/Icons/ico.png $PKG/usr/share/pixmaps/$PRGNAME.png
 
 # Create package:
 cd $PKG
 /sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
-

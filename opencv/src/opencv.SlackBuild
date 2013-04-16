@@ -28,9 +28,9 @@ set -e
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-OpenCV}
+PRGNAME=${PRGNAME:-opencv}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-2.4.4}
+VERSION=${VERSION:-2.4.5}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -80,7 +80,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PKGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-${VERSION}a.tar.bz2
+tar xvf $CWD/$PRGNAME-${VERSION}.tar.gz
 cd $PKGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
