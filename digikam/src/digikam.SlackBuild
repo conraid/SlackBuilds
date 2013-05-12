@@ -31,7 +31,7 @@ PRGNAME=${PRGNAME:-digikam}
 PKGNAME=digikam
 VERSION=${VERSION:-3.1.0}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -82,6 +82,9 @@ cd $PRGNAME-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
+# https://bugs.kde.org/show_bug.cgi?id=316620
+patch -Np1 -i "${CWD}/digikam-3.1.0-htmlexport.patch"
+
 # Configure
 mkdir build
 cd build
@@ -92,7 +95,10 @@ cmake \
 -DSYSCONF_INSTALL_DIR=/etc/kde \
 -DLIB_SUFFIX="$LIBDIRSUFFIX" \
 -DCMAKE_BUILD_TYPE=None \
+-DImageMagick_MagickCore_INCLUDE_DIR:PATH=/usr/include/ImageMagick-6 \
+-DImageMagick_MagickCore_LIBRARY:FILEPATH=/usr/lib${LIBDIRSUFFIX}/libMagickCore-6.Q16.so \
 -DDIGIKAMSC_USE_PRIVATE_KDEGRAPHICS=OFF \
+-DENABLE_LCMS2=ON \
 ..
 
 # Build and install:
