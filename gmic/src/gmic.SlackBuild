@@ -31,8 +31,8 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-gmic}
-PKGNAME=$(echo $PRGNAME | tr A-Z a-z)-gimp
-VERSION=${VERSION:-1.5.5.1}
+PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
+VERSION=${VERSION:-1.5.5.2}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -41,7 +41,7 @@ PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
 # Insert document files in this variable
-DOCFILES="AUTHORS COPYING ChangeLog INSTALL NEWS README"
+DOCFILES="COPYING README"
 
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
@@ -87,10 +87,15 @@ chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
 cd src
-sed -i 's/GIMP_LDFLAGS)/GIMP_LDFLAGS) $(SLKLDFLAGS)/' Makefile
-sed -i 's/GIMP_CFLAGS)/GIMP_CFLAGS) $(SLKCFLAGS)/' Makefile
-make SLKCFLAGS="$SLKCFLAGS" SLKLDFLAGS="$SLKLDFLAGS" gimp
-install -Dm755 gmic_gimp $PKG/usr/lib${LIBDIRSUFFIX}/gimp/2.0/plug-ins/gmic_gimp
+if [ $ARCH == 'x86_64' ]; then
+    sed -i 's#/lib/#/lib64/#g' Makefile
+    sed -i 's#/lib #/lib64 #g' Makefile
+    sed -i 's#/lib$#/lib64#g' Makefile
+fi
+sed -i 's#/share/man/#/man/#g' Makefile
+sed -i 's/qmake-qt4 zart.pro/qmake zart.pro/' Makefile
+make OPT_CFLAGS="$SLKCFLAGS" OPT_LDFLAGS="$SLKLDFLAGS" all
+make install DESTDIR="$PKG" USR="/usr"
 cd -
 
 # Add a documentation directory:

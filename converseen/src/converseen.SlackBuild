@@ -30,8 +30,8 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-converseen}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-0.6}
-SRCVERSION=${SRCVERSION:-0.6}
+VERSION=${VERSION:-0.6.2}
+SRCVERSION=${SRCVERSION:-0.6.2}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -105,7 +105,7 @@ cd ..
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
-cp COPYING INSTALL README ${DOCS}
+cp COPYING INSTALL ${DOCS}
 
 # Add a slackbuild script:
 cat $CWD/$PKGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
