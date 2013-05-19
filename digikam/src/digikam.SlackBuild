@@ -29,9 +29,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-digikam}
 PKGNAME=digikam
-VERSION=${VERSION:-3.1.0}
+VERSION=${VERSION:-3.2.0}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -81,9 +81,6 @@ cd $PRGNAME-$VERSION
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
-
-# https://bugs.kde.org/show_bug.cgi?id=316620
-patch -Np1 -i "${CWD}/digikam-3.1.0-htmlexport.patch"
 
 # Configure
 mkdir build
