@@ -2,7 +2,7 @@
 #
 # Slackware build script for podofo
 #
-# Copyright 2009-2012 Corrado Franco (http://conraid.net)
+# Copyright 2009-2013 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-podofo}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-0.9.1}
+VERSION=${VERSION:-0.9.2}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -83,17 +83,17 @@ cd $PRGNAME-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
+# Built without LUA
+sed -i 's/FIND_PACKAGE(LUA)/#FIND_PACKAGE(LUA)/' CMakeLists.txt
+
 # Configure
 mkdir build
 cd build
 cmake \
   -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
   -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_LD_FLAGS:STRING="$SLKLDFLAGS" \
   -DCMAKE_BUILD_TYPE=None \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DMAN_INSTALL_DIR=/usr/man \
-  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
   -DPODOFO_BUILD_STATIC:BOOL=FALSE \
   -DPODOFO_BUILD_SHARED:BOOL=TRUE \
   -DPODOFO_USE_VISIBILITY=1 \
