@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-LibRaw}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-0.15.0}
+VERSION=${VERSION:-0.15.1}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -75,8 +75,11 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
+tar xvf $CWD/LibRaw-$VERSION.tar.gz
 cd $PRGNAME-$VERSION
+
+tar xvf $CWD/LibRaw-demosaic-pack-GPL2-$VERSION.tar.gz
+tar xvf $CWD/LibRaw-demosaic-pack-GPL3-$VERSION.tar.gz
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -94,10 +97,11 @@ CXXFLAGS="$SLKCFLAGS" \
   --mandir=/usr/man \
   --infodir=/usr/info \
   --docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
-  --disable-lcms \
   --disable-examples \
-  --enable-demosaic-pack-gpl2=no \
-  --enable-demosaic-pack-gpl3=no \
+  --disable-static \
+  --enable-lcms \
+  --enable-demosaic-pack-gpl2 \
+  --enable-demosaic-pack-gpl3 \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux
 
@@ -110,6 +114,12 @@ install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
 
 # Add slack-desc
 install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+
+# Add doc files
+mkdir -p $DOCS/demosaic-pack-GPL{2,3}
+cp -a $PRGNAME-demosaic-pack-GPL2-$VERSION/{COPYRIGHT,Changelog,LICENSE.txt,README} $DOCS/demosaic-pack-GPL2
+cp -a $PRGNAME-demosaic-pack-GPL3-$VERSION/{COPYRIGHT,Changelog,LICENSE.txt,README} $DOCS/demosaic-pack-GPL3
+cp -a doc/* README* $DOCS
 
 # Create package:
 cd $PKG
