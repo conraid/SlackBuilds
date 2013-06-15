@@ -1,0 +1,17 @@
+--- Makefile.orig	2013-05-09 11:34:54.000000000 +0200
++++ Makefile	2013-05-26 13:23:13.067153331 +0200
+@@ -109,13 +109,12 @@ install: $(TARGET) $(TRANSLATIONS)
+ 	$(INSTALLBIN) $(TARGET) $(DESTDIR)/$(BINDIR)
+ 	$(INSTALLDIR) $(DESTDIR)/$(MANDIR)/man1
+ 	$(INSTALLMAN) $(MAN_EN) $(DESTDIR)/$(MANDIR)/man1
+-	$(INSTALLMAN) $(MAN_NL) $(DESTDIR)/$(MANDIR)/nl/man1
+ 	$(INSTALLDIR) $(DESTDIR)/$(DOCDIR)
+ 	$(INSTALLDOC) $(DOCS) $(DESTDIR)/$(DOCDIR)
+ ifneq ($(DEBUG),yes)
+ 	$(STRIP) $(DESTDIR)/$(BINDIR)/$(TARGET)
+ endif
+-	cp nl.mo $(PREFIX)/share/locale/nl/LC_MESSAGES/httping.mo
++	install -D nl.mo $(DESTDIR)/$(PREFIX)/share/locale/nl/LC_MESSAGES/httping.mo
+ 
+ makefile.inc:
+ 	./configure

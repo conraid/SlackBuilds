@@ -46,10 +46,10 @@ SLACKBUILD SHORT DESCRIPTION:  afflib
 SLACKBUILD NAME: aircrack-ng
 SLACKBUILD LOCATION: ./aircrack-ng/src
 SLACKBUILD FILES: README aircrack-ng.SlackBuild aircrack-ng.info slack-desc
-SLACKBUILD VERSION: 1.1
+SLACKBUILD VERSION: 1.2-beta1
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: http://download.aircrack-ng.org/aircrack-ng-1.1.tar.gz
-SLACKBUILD MD5SUM: f7a24ed8fad122c4187d06bfd6f998b4
+SLACKBUILD DOWNLOAD: http://download.aircrack-ng.org/aircrack-ng-1.2-beta1.tar.gz
+SLACKBUILD MD5SUM: f1cc7e19563bd64964f3584048a1031b
 SLACKBUILD SHORT DESCRIPTION:  Aircrack-NG (the next generation of aircrack)
 
 SLACKBUILD NAME: anacron
@@ -343,10 +343,10 @@ SLACKBUILD SHORT DESCRIPTION:  darkstat (packet sniffing daemon that serves stat
 SLACKBUILD NAME: darktable
 SLACKBUILD LOCATION: ./darktable/src
 SLACKBUILD FILES: README darktable.SlackBuild darktable.info doinst.sh slack-desc
-SLACKBUILD VERSION: 1.2
-SLACKBUILD REQUIRES: lensfun
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/darktable/darktable/1.2/darktable-1.2.tar.xz
-SLACKBUILD MD5SUM: 31bfd13d4786aac4f99d5155a811602b
+SLACKBUILD VERSION: 1.2.1
+SLACKBUILD REQUIRES: "lensfun openjpeg flickcurl json-glib"
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/darktable/darktable/1.2/darktable-1.2.1.tar.xz
+SLACKBUILD MD5SUM: f970573777752b1b4447997d1f1f65fa
 SLACKBUILD SHORT DESCRIPTION:  darktable (digital photography application)
 
 SLACKBUILD NAME: dia
@@ -499,11 +499,20 @@ SLACKBUILD SHORT DESCRIPTION:  fdupes
 SLACKBUILD NAME: filezilla
 SLACKBUILD LOCATION: ./filezilla/src
 SLACKBUILD FILES: README doinst.sh filezilla.SlackBuild filezilla.info slack-desc
-SLACKBUILD VERSION: 3.7.0.1
+SLACKBUILD VERSION: 3.7.0.2
 SLACKBUILD REQUIRES: "wxgtk"
-SLACKBUILD DOWNLOAD: https://downloads.sourceforge.net/project/filezilla/FileZilla_Client/3.7.0.1/FileZilla_3.7.0.1_src.tar.bz2
-SLACKBUILD MD5SUM: cb07cf02ee4cc767e10e8a022ad0ce0d
+SLACKBUILD DOWNLOAD: https://downloads.sourceforge.net/project/filezilla/FileZilla_Client/3.7.0.2/FileZilla_3.7.0.2_src.tar.bz2
+SLACKBUILD MD5SUM: 04a6a6aea31a01feda78e509246ae10a
 SLACKBUILD SHORT DESCRIPTION:  filezilla (the free FTP solution)
+
+SLACKBUILD NAME: flickcurl
+SLACKBUILD LOCATION: ./flickcurl/src
+SLACKBUILD FILES: README flickcurl.SlackBuild flickcurl.info slack-desc
+SLACKBUILD VERSION: 1.24
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: http://download.dajobe.org/flickcurl/flickcurl-1.24.tar.gz
+SLACKBUILD MD5SUM: 7cf6a627465471d76a5f4dc31099d9cf
+SLACKBUILD SHORT DESCRIPTION:  flickcurl (Flickr API library)
 
 SLACKBUILD NAME: fping
 SLACKBUILD LOCATION: ./fping/src
@@ -681,11 +690,11 @@ SLACKBUILD SHORT DESCRIPTION:  httperf (HTTP load generator)
 
 SLACKBUILD NAME: httping
 SLACKBUILD LOCATION: ./httping/src
-SLACKBUILD FILES: README httping.SlackBuild httping.info slack-desc
-SLACKBUILD VERSION: 2.2.1
+SLACKBUILD FILES: README httping.SlackBuild httping.info path-fix.patch slack-desc
+SLACKBUILD VERSION: 2.3.1
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: http://www.vanheusden.com/httping/httping-2.2.1.tgz
-SLACKBUILD MD5SUM: ccc1666f435a37f9472ab6b97f174fab
+SLACKBUILD DOWNLOAD: http://www.vanheusden.com/httping/httping-2.3.1.tgz
+SLACKBUILD MD5SUM: c0297099adf96f80bd9e3a2902b456ae
 SLACKBUILD SHORT DESCRIPTION:  Httping is like 'ping' but for http-requests.
 
 SLACKBUILD NAME: httpry
@@ -700,19 +709,19 @@ SLACKBUILD SHORT DESCRIPTION:  httpry (packet sniffer)
 SLACKBUILD NAME: httrack
 SLACKBUILD LOCATION: ./httrack/src
 SLACKBUILD FILES: README doinst.sh httrack.SlackBuild httrack.info slack-desc
-SLACKBUILD VERSION: 3.47.6
+SLACKBUILD VERSION: 3.47.14
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: http://mirror.httrack.com/httrack-3.47.6.tar.gz
-SLACKBUILD MD5SUM: 7ff96a7a276c7ce28a454407e1a2aee0
+SLACKBUILD DOWNLOAD: http://mirror.httrack.com/httrack-3.47.14.tar.gz
+SLACKBUILD MD5SUM: 75caf8b8af6025ce3e1ce37470f9a4e8
 SLACKBUILD SHORT DESCRIPTION:  HTTrack
 
 SLACKBUILD NAME: httraqt
 SLACKBUILD LOCATION: ./httraqt/src
 SLACKBUILD FILES: README doinst.sh httraqt.SlackBuild httraqt.info slack-desc
-SLACKBUILD VERSION: 1.0.7
-SLACKBUILD REQUIRES: httrack
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/httraqt/httraqt-1.0.7.tar.gz
-SLACKBUILD MD5SUM: 5445634637ace73cfd15ed8d5c1e80eb
+SLACKBUILD VERSION: 1.0.12
+SLACKBUILD REQUIRES: "httrack"
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/httraqt/httraqt-1.0.12.tar.gz
+SLACKBUILD MD5SUM: 86b037146c63cefe2a7311ef952f8f38
 SLACKBUILD SHORT DESCRIPTION:  HTTraQt
 
 SLACKBUILD NAME: hungrycat
@@ -727,10 +736,10 @@ SLACKBUILD SHORT DESCRIPTION:  hungrycat
 SLACKBUILD NAME: icoutils
 SLACKBUILD LOCATION: ./icoutils/src
 SLACKBUILD FILES: README icoutils.SlackBuild icoutils.info slack-desc
-SLACKBUILD VERSION: 0.30.0
+SLACKBUILD VERSION: 0.31.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: http://savannah.nongnu.org/download/icoutils/icoutils-0.30.0.tar.bz2
-SLACKBUILD MD5SUM: 2574eb4ff5c0d3b2a59ad5a7d8848ced
+SLACKBUILD DOWNLOAD: http://savannah.nongnu.org/download/icoutils/icoutils-0.31.0.tar.bz2
+SLACKBUILD MD5SUM: 
 SLACKBUILD SHORT DESCRIPTION:  icoutils (Windows Icon and Cursor Utilities)
 
 SLACKBUILD NAME: id3lib
@@ -760,10 +769,10 @@ SLACKBUILD SHORT DESCRIPTION:  Open Source Scalable Vector Graphics Editor
 SLACKBUILD NAME: inxi
 SLACKBUILD LOCATION: ./inxi/src
 SLACKBUILD FILES: README gpl.txt inxi.SlackBuild inxi.info inxi.tar.gz slack-desc
-SLACKBUILD VERSION: 1.9.5
+SLACKBUILD VERSION: 1.9.7
 SLACKBUILD REQUIRES: 
 SLACKBUILD DOWNLOAD: http://inxi.googlecode.com/svn/trunk/inxi.tar.gz
-SLACKBUILD MD5SUM: 2e8045f486123b0702894c9367bcb650
+SLACKBUILD MD5SUM: 7aa2549a8046df65716b06eaa5796623
 SLACKBUILD SHORT DESCRIPTION:  inxi (system information script)
 
 SLACKBUILD NAME: iotop
@@ -820,11 +829,20 @@ SLACKBUILD SHORT DESCRIPTION:  jhead (JPEG Exif header manipulation tool)
 SLACKBUILD NAME: john
 SLACKBUILD LOCATION: ./john/src
 SLACKBUILD FILES: README doinst.sh john-64.sh john.SlackBuild john.info john.sh params.h.patch slack-desc
-SLACKBUILD VERSION: 1.7.9
+SLACKBUILD VERSION: 1.8.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: http://www.openwall.com/john/g/john-1.7.9.tar.gz
-SLACKBUILD MD5SUM: 2b448547109db3777d8068145ea69ddf
+SLACKBUILD DOWNLOAD: http://www.openwall.com/john/j/john-1.8.0.tar.xz
+SLACKBUILD MD5SUM: a4086df68f51778782777e60407f1869
 SLACKBUILD SHORT DESCRIPTION:  john (John The Ripper)
+
+SLACKBUILD NAME: json-glib
+SLACKBUILD LOCATION: ./json-glib/src
+SLACKBUILD FILES: README json-glib.SlackBuild json-glib.info slack-desc
+SLACKBUILD VERSION: 0.14.2
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: http://ftp.gnome.org/pub/GNOME/sources/json-glib/0.14/json-glib-0.14.2.tar.xz
+SLACKBUILD MD5SUM: 2a22832c4654156a35b38ee027f6f065
+SLACKBUILD SHORT DESCRIPTION:  JSON-Glib (a de/serialization library for the JS Object Notation)
 
 SLACKBUILD NAME: justniffer
 SLACKBUILD LOCATION: ./justniffer/src
@@ -1585,6 +1603,15 @@ SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/opencvlibrary/open
 SLACKBUILD MD5SUM: 8eac87462c7bec8b89021b723207c623
 SLACKBUILD SHORT DESCRIPTION:  OpenCV (Open Source Computer Vision) 
 
+SLACKBUILD NAME: openjpeg
+SLACKBUILD LOCATION: ./openjpeg/src
+SLACKBUILD FILES: README openjpeg.SlackBuild openjpeg.info slack-desc
+SLACKBUILD VERSION: 1.5.1
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://openjpeg.googlecode.com/files/openjpeg-1.5.1.tar.gz
+SLACKBUILD MD5SUM: b5f74cec2688fb918331bb014061be6f
+SLACKBUILD SHORT DESCRIPTION:  openjpeg (JPEG2000 Codec)
+
 SLACKBUILD NAME: ostinato
 SLACKBUILD LOCATION: ./ostinato/src
 SLACKBUILD FILES: README doinst.sh ostinato.SlackBuild ostinato.desktop ostinato.info slack-desc
@@ -1723,10 +1750,10 @@ SLACKBUILD SHORT DESCRIPTION:  Privoxy (a web proxy with advanced filtering capa
 SLACKBUILD NAME: protobuf
 SLACKBUILD LOCATION: ./protobuf/src
 SLACKBUILD FILES: README protobuf.SlackBuild protobuf.info slack-desc
-SLACKBUILD VERSION: 2.4.1
+SLACKBUILD VERSION: 2.5.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: http://protobuf.googlecode.com/files/protobuf-2.4.1.tar.bz2
-SLACKBUILD MD5SUM: ed436802019c9e1f40cc750eaf78f318
+SLACKBUILD DOWNLOAD: http://protobuf.googlecode.com/files/protobuf-2.5.0.tar.bz2
+SLACKBUILD MD5SUM: a72001a9067a4c2c4e0e836d0f92ece4
 SLACKBUILD SHORT DESCRIPTION:  protobuf (Google's data interchange format)
 
 SLACKBUILD NAME: q4wine
@@ -1903,15 +1930,6 @@ SLACKBUILD DOWNLOAD: http://kde-look.org/CONTENT/content-files/101336-serverstat
 SLACKBUILD MD5SUM: 2a33c714238edbbd9c4771b973b2d360
 SLACKBUILD SHORT DESCRIPTION:  Server Status Widget (KDE4 Plasmoid)
 
-SLACKBUILD NAME: simple-scan
-SLACKBUILD LOCATION: ./simple-scan/src
-SLACKBUILD FILES: README doinst.sh simple-scan.SlackBuild simple-scan.info slack-desc
-SLACKBUILD VERSION: 2.32.0.2
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: http://launchpad.net/simple-scan/trunk/2.32.0.2/+download/simple-scan-2.32.0.2.tar.gz
-SLACKBUILD MD5SUM: bd04ec7387c2f3164f81a490c0fe0b30
-SLACKBUILD SHORT DESCRIPTION:  Simple-Scan (Simple Scanning Utility)
-
 SLACKBUILD NAME: skdet
 SLACKBUILD LOCATION: ./skdet/src
 SLACKBUILD FILES: README skdet-fix-includes.diff skdet.1.gz skdet.SlackBuild skdet.info slack-desc
@@ -1933,10 +1951,10 @@ SLACKBUILD SHORT DESCRIPTION:  sleuthkit (tsk)
 SLACKBUILD NAME: smb4k
 SLACKBUILD LOCATION: ./smb4k/src
 SLACKBUILD FILES: README doinst.sh slack-desc smb4k.SlackBuild smb4k.info
-SLACKBUILD VERSION: 1.0.6
+SLACKBUILD VERSION: 1.0.7
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/smb4k/Smb4K%20%28stable%20releases%29/1.0.6/smb4k-1.0.6.tar.bz2
-SLACKBUILD MD5SUM: 438ea64ed1296de6618677758257445b
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/smb4k/Smb4K%20%28stable%20releases%29/1.0.7/smb4k-1.0.7.tar.bz2
+SLACKBUILD MD5SUM: 1b15d7f0f4ad89b0fe730629ec53c2ae
 SLACKBUILD SHORT DESCRIPTION:  smb4k 
 
 SLACKBUILD NAME: smem
