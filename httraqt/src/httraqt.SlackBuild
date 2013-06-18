@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-httraqt}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-1.0.12}
+VERSION=${VERSION:-1.0.14}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -86,15 +86,20 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure
+mkdir -p build
+cd build
 cmake \
   -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
   -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DCMAKE_BUILD_TYPE=None \
-  .
+  ..
+
 # Build and install:
 make
 make DESTDIR=$PKG install
+chmod 755 $PKG/usr/bin/$PRGNAME
+cd ..
 
 # Add a documentation directory:
 mkdir -p ${DOCS}

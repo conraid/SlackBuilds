@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-john}
 VERSION=${VERSION:-1.8.0}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
@@ -96,8 +96,9 @@ cp run/*.chr $PKG/usr/share/john
 cp run/*.lst $PKG/usr/share/john
 
 # Add extra chr from http://www.openwall.com/john/j/john-extra-20130529.tar.xz
-cd $PKG
-tar xvf $CWD/john-extra-20130529.tar.xz
+mkdir -p $TMP/$PRGNAME-$VERSION/extra
+cd $TMP/$PRGNAME-$VERSION/extra
+tar -xvf $CWD/john-extra-20130529.tar.xz 
 cp john-extra-20130529/* $PKG/usr/share/john
 cd -
 

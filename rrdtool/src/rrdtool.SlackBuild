@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-rrdtool}
 VERSION=${VERSION:-1.4.7}
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
@@ -91,7 +91,7 @@ find . \
 
 # Configure:
 LDFLAGS="$SLKLDFLAGS" \
-CFLAGS="$SLKCFLAGS" \
+CFLAGS="$SLKCFLAGS -I/usr/include/glib-2.0" \
 CXXFLAGS="$SLKCFLAGS" \
 RRDDOCDIR="/usr/doc/${PRGNAME}-${VERSION}" \
 ./configure \
