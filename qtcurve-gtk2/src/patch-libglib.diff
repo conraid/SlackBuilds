@@ -1,0 +1,68 @@
+diff -Naupr QtCurve-Gtk2-1.8.16.orig/style/qt_settings.c QtCurve-Gtk2-1.8.16/style/qt_settings.c
+--- QtCurve-Gtk2-1.8.16.orig/style/qt_settings.c	2013-01-16 21:35:36.000000000 +0100
++++ QtCurve-Gtk2-1.8.16/style/qt_settings.c	2013-06-27 10:05:45.000000000 +0200
+@@ -61,8 +61,8 @@ static char * getKdeHome()
+     static char *kdeHome=NULL;
+ 
+     if(!kdeHome)
+-        if(g_spawn_command_line_sync(qtSettings.qt4 ? "kde4-config --expandvars --localprefix"
+-                                                    : "kde-config --expandvars --localprefix", &kdeHome, NULL, NULL, NULL))
++        if(runCommand(qtSettings.qt4 ? "kde4-config --expandvars --localprefix"
++                                     : "kde-config --expandvars --localprefix", &kdeHome))
+         {
+             int len=strlen(kdeHome);
+ 
+@@ -337,7 +337,7 @@ static int getMozillaVersion(int pid)
+         {
+             char *version=0L;
+             strcat(cmdline, " --version");
+-            if(g_spawn_command_line_sync(cmdline, &version, NULL, NULL, NULL))
++            if(runCommand(cmdline, &version))
+             {
+                 char *dot=strchr(version, '.');
+ 
+@@ -1324,8 +1324,8 @@ static const char * kdeIconsPrefix()
+     static char *kdeIcons=NULL;
+ 
+     if(!kdeIcons)
+-        if(g_spawn_command_line_sync(qtSettings.qt4 ? "kde4-config --expandvars --install icon"
+-                                                    : "kde-config --expandvars --install icon", &kdeIcons, NULL, NULL, NULL))
++        if(runCommand(qtSettings.qt4 ? "kde4-config --expandvars --install icon"
++                                     : "kde-config --expandvars --install icon", &kdeIcons))
+         {
+             int len=strlen(kdeIcons);
+ 
+@@ -2991,3 +2991,23 @@ void qtSettingsSetColors(GtkStyle *style
+     SET_COLOR(style, rc_style, fg, GTK_RC_FG, GTK_STATE_ACTIVE, COLOR_WINDOW_TEXT)
+     SET_COLOR(style, rc_style, fg, GTK_RC_FG, GTK_STATE_PRELIGHT, COLOR_WINDOW_TEXT)
+ }
++
++bool runCommand(const char* cmd, char** result)
++{
++    FILE* fp = popen(cmd, "r");
++    if(fp)
++    {
++        gulong bufSize=512;
++        size_t currentOffset=0;
++        *result=(char*)(g_malloc(bufSize));
++        while(fgets(*result+currentOffset, bufSize-currentOffset, fp) && result[strlen(*result)-1] != '\n')
++        {
++            currentOffset = bufSize-1;
++            bufSize *= 2;
++            *result = (char*)(g_realloc(*result, bufSize));
++        }
++        pclose(fp);
++        return true;
++    }
++    return false;
++}
+diff -Naupr QtCurve-Gtk2-1.8.16.orig/style/qt_settings.h QtCurve-Gtk2-1.8.16/style/qt_settings.h
+--- QtCurve-Gtk2-1.8.16.orig/style/qt_settings.h	2013-01-16 21:35:36.000000000 +0100
++++ QtCurve-Gtk2-1.8.16/style/qt_settings.h	2013-06-27 10:06:11.000000000 +0200
+@@ -184,5 +184,6 @@ extern void qtSettingsSetColors(GtkStyle
+ extern char * getAppName();
+ extern bool haveAlternateListViewCol();
+ extern gboolean isMozilla();
++extern bool runCommand(const char* cmd, char** result);
+ 
+ #endif

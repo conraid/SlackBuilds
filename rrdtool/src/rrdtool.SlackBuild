@@ -31,8 +31,8 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-rrdtool}
-VERSION=${VERSION:-1.4.7}
-BUILD=${BUILD:-4}
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
@@ -89,7 +89,11 @@ find . \
  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
  -exec chmod 644 {} \;
 
+# Apply patch for pango font
+patch -p1 -i $CWD/pango.diff
+
 # Configure:
+autoreconf
 LDFLAGS="$SLKLDFLAGS" \
 CFLAGS="$SLKCFLAGS -I/usr/include/glib-2.0" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -107,11 +111,12 @@ RRDDOCDIR="/usr/doc/${PRGNAME}-${VERSION}" \
   --disable-static \
   --disable-lua \
   --with-perl-options='INSTALLDIRS=vendor' \
+  --with-ruby-options="sitedir=\${DESTDIR}/usr/lib${LIBDIRSUFFIX}/ruby/vendor_ruby" \
   --docdir=$PKG/usr/doc/rrdtool-$VERSION \
   --build=$CHOST-slackware-linux
 
 # Build and install:
-make
+make LIBS+="-lglib-2.0"
 
 # Correct man paths in the Perl bindings.
 sed -r -i 's|/usr/share/man|/usr/man|g' bindings/perl-piped/Makefile
