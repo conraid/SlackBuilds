@@ -29,8 +29,8 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-wireshark}
-VERSION=${VERSION:-1.10.0}
-BUILD=${BUILD:-1}
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
@@ -86,7 +86,7 @@ patch -p0 -i $CWD/01_fix_encoding_asn2deb_pod.patch
 patch -p0 -i $CWD/02_fix_encoding_idl2deb_pod.patch
 patch -p0 -i $CWD/03_force_utf8_for_pod2man.patch
 
-# Configure
+# configure
 libtoolize --force
 autoreconf -vif
 LDFLAGS="$SLKLDFLAGS" \
@@ -100,13 +100,15 @@ CXXFLAGS="$SLKCFLAGS" \
   --mandir=/usr/man \
   --disable-static \
   --disable-usr-local \
+  --enable-wireshark \
+  --enable-packet-editor \
   --with-lua \
   --with-ssl=/usr/lib${LIBDIRSUFFIX} \
   --with-c-ares \
   --with-geoip \
-  --with-plugins \
   --with-adns \
   --without-libnl \
+  --with-plugins \
   --docdir=/usr/doc/$PRGNAME-$VERSION \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux
@@ -114,6 +116,13 @@ CXXFLAGS="$SLKCFLAGS" \
 # Build and install:
 make
 make DESTDIR=$PKG install-strip
+
+# add headers files
+install -dm755 ${PKG}/usr/include/${PRGNAME}/{epan/{crypt,dfilter,dissectors,ftypes},wiretap,wsutil}
+install -m644 color.h config.h register.h ws_symbol_export.h "${PKG}/usr/include/${PRGNAME}"
+for d in epan epan/crypt epan/dfilter epan/dissectors epan/ftypes wiretap wsutil; do
+  install -m644 ${d}/*.h ${PKG}/usr/include/${PRGNAME}/${d}
+done
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
