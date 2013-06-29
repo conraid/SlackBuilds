@@ -2,7 +2,7 @@
 #
 # Slackware build script for gtkmm (http://www.gtkmm.org/)
 #
-# Copyright 2011-2012 Corrado Franco (http://www.conraid.net)
+# Copyright 2011-2013 Corrado Franco (http://www.conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -29,8 +29,8 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-gtkmm}
-VERSION=${VERSION:-2.24.2}
-BUILD=${BUILD:-4}
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
