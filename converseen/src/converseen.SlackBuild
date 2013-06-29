@@ -30,8 +30,8 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-converseen}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-0.6.2}
-SRCVERSION=${SRCVERSION:-0.6.2}
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
+SRCVERSION=${SRCVERSION:-0.6.3}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -74,7 +74,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf ${PRGNAME}-${SRCVERSION}
-tar xf $CWD/$PRGNAME-$VERSION.tar.bz2
+tar xvf $CWD/$PRGNAME-$VERSION.tar.bz2
 cd ${PRGNAME}-${SRCVERSION}
 
 # Make sure ownerships and permissions are sane:
