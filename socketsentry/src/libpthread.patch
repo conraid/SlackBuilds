@@ -1,0 +1,19 @@
+--- socketsentry-service/CMakeLists.txt.orig	2010-04-06 00:13:49.000000000 +0200
++++ socketsentry-service/CMakeLists.txt	2012-06-16 16:43:53.998467448 +0200
+@@ -25,6 +25,7 @@
+ 
+ # Other runtime dependencies.
+ find_library (PCAP pcap)
++find_package (Threads)
+ 
+ include_directories (${QT4_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR} src)
+ 
+@@ -103,7 +104,7 @@
+ qt4_wrap_cpp (SsService_MOC_OUTFILES ${SsService_MOC_HEADERS})
+ set (SsService_ALL_SRCS ${SsService_SRCS} ${SsService_MOC_OUTFILES} ${SsCommon_SRCS})
+ add_library (socksent-service-common STATIC ${SsService_ALL_SRCS})
+-target_link_libraries (socksent-service-common ${QT_LIBRARIES} ${PCAP})
++target_link_libraries (socksent-service-common ${QT_LIBRARIES} ${PCAP} ${CMAKE_THREAD_LIBS_INIT})
+ 
+ # Create the service executable.
+ set (SS_SERVICE_EXE socksent-service)
