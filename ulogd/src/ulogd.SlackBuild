@@ -1,8 +1,8 @@
 #!/bin/sh
 #
-# Slackware build script for inkscape (http://inkscape.org)
+# Slackware build script for ulogd
 #
-# Copyright 2008-2013 Corrado Franco (http://conraid.net)
+# Copyright 2013 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -21,29 +21,33 @@
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+#
+# Latest version of this SlackBuild at http://slackers.it/repository
+#
 # Exit on most errors
 set -e
 
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-inkscape}
-VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
-BUILD=${BUILD:-3}
+PRGNAME=${PRGNAME:-ulogd}
+PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+PKGVERSION=$(echo $VERSION | tr - _)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAME
-DOCS="${PKG}/usr/doc/${PRGNAME}-${VERSION}"
+PKG=$TMP/package-$PKGNAME
+DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
 # Insert document files in this variable
-DOCFILES="AUTHORS ChangeLog COPYING* INSTALL NEWS README"
+DOCFILES="AUTHORS COPYING README TODO"
 
-# Automatically determine the architecture we are building on:
+# Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
-        i?86) ARCH=i686 ;;
-        arm*) ARCH=arm ;;
+	i?86) ARCH=i686 ;;
+	arm*) ARCH=arm ;;
         # Unless $ARCH is already set, use uname -m for all other archs:
         *) ARCH=$( uname -m ) ;;
     esac
@@ -51,21 +55,21 @@ fi
 
 # Set compiling FLAGS
 case "$ARCH" in
-    i486)
-	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
-        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    i[3-5]86)
+        SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
         ;;
     i686)
 	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
         ;;
     x86_64)
-	SLKCFLAGS="-O2 -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"
+	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
+	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
     *)
-        SLKCFLAGS="-O2"; CHOST=$ARCH
-        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	SLKCFLAGS="-O2"; CHOST=$ARCH
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
 
@@ -75,22 +79,16 @@ mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
 tar xvf $CWD/$PRGNAME-$VERSION.tar.bz2
-cd $PRGNAME-$VERSION 
+cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Apply path 
-patch -p1 -i $CWD/remove-stray-comma.diff
-
 # Configure
-CPPFLAGS="-I/usr/include/ImageMagick/" \
 LDFLAGS="$SLKLDFLAGS" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
-CC='ccache gcc' \
-CXX='ccache g++' \
 ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -98,53 +96,52 @@ CXX='ccache g++' \
   --localstatedir=/var \
   --mandir=/usr/man \
   --infodir=/usr/info \
-  --docdir=/usr/doc/inkscape-$VERSION \
-  --enable-lcms \
-  --enable-poppler-cairo \
-  --without-gnome-vfs \
+  --docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
+  --enable-static=no \
+  --enable-shared=yes \
+  --with-dbi \
+  --with-mysql \
+  --without-pgsql \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux
 
 # Build and install:
-make 
+make
 make DESTDIR=$PKG install
 
 # Strip binaries:
-( cd $PKG
-  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
-  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
-  find . | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
-)
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
-# Add a documentation directory:
-mkdir -p ${DOCS}
-for i in ${DOCFILES}; do
-    if [ -e ${i} ]; then
-        if ! [ -L ${i} ]; then
-	    cp -a ${i} ${DOCS}
-	else
-	    cp -LRp ${i} ${DOCS}
-        fi
-    fi;
-done
+# Install init script
+install -Dm0755 $CWD/rc.ulogd $PKG/etc/rc.d/rc.ulogd.new
+
+# Install config file
+install -Dm0644 ulogd.conf $PKG/etc/ulogd.conf.new
+
+# Install logrotate script
+install -Dm0644 ulogd.logrotate $PKG/etc/logrotate.d/ulogd.new
 
 # Compress and link manpages, if any:
 if [ -d $PKG/usr/man ]; then
-( cd $PKG/usr/man
-  find . -type f -exec gzip -9 {} \;
-  for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
-)
+    find $PKG/usr/man -type f -exec gzip -9 {} \;
+    for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
+# Add a documentation directory:
+mkdir -p ${DOCS}/db
+cp -a $DOCFILES $DOCS
+cp -a doc/*.table doc/*.sql $DOCS/db
+
 # Add a slackbuild script:
-cat $CWD/$PRGNAME.SlackBuild > $DOCS/$PRGNAME.SlackBuild
+install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
 
 # Add slack-desc
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+
+# Add a doinst.sh
+install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
 
 # Create package:
 cd $PKG
-/sbin/makepkg -l y -c n ${CWD}/${PRGNAME}-${VERSION}-${ARCH}-${BUILD}${TAG}.txz
-
-
+/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz

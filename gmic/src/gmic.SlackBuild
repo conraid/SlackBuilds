@@ -32,17 +32,13 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-gmic}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-1.5.6.1_beta}
-SRCVERSION=${SRCVERSION:-1.5.6.1}
+VERSION=${VERSION:-$(echo ${PRGNAME}_*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d_ | rev)}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
-
-# Insert document files in this variable
-DOCFILES="COPYING README"
 
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
@@ -78,38 +74,28 @@ esac
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAME-$SRCVERSION
-tar xvf $CWD/gmic_${VERSION}.tar.gz
-cd $PRGNAME-$SRCVERSION
+rm -rf $PRGNAME-$VERSION
+tar xvf $CWD/${PRGNAME}_${VERSION}.tar.gz
+cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
-cd src
 if [ $ARCH == 'x86_64' ]; then
-    sed -i 's#/lib/#/lib64/#g' Makefile
-    sed -i 's#/lib #/lib64 #g' Makefile
-    sed -i 's#/lib$#/lib64#g' Makefile
+    sed -i 's#/lib/#/lib64/#g' src/Makefile
+    sed -i 's#/lib #/lib64 #g' src/Makefile
+    sed -i 's#/lib$#/lib64#g' src/Makefile
 fi
-sed -i 's#/share/man/#/man/#g' Makefile
-sed -i 's/qmake-qt4 zart.pro/qmake zart.pro/' Makefile
-make OPT_CFLAGS="$SLKCFLAGS" OPT_LDFLAGS="$SLKLDFLAGS" all
-make install DESTDIR="$PKG" USR="/usr"
-cd -
+sed -i 's#/share/man/#/man/#g' src/Makefile
+sed -i 's/qmake-qt4 zart.pro/qmake zart.pro/' src/Makefile
+make -C src OPT_CFLAGS="$SLKCFLAGS" OPT_LDFLAGS="$SLKLDFLAGS" all
+make -C src install DESTDIR="$PKG" USR="/usr"
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
-for i in ${DOCFILES}; do
-    if [ -e "${i}" ]; then
-        if ! [ -L "${i}" ]; then
-	    cp -a "${i}" ${DOCS}
-	else
-	    cp -LRp "${i}" ${DOCS}
-        fi
-    fi;
-done
+cp -a COPYING README $DOCS
 
 # Add a slackbuild script:
 install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
