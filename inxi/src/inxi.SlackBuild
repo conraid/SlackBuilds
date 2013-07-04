@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-inxi}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-1.9.11}
+VERSION=${VERSION:-$(tar xzOf $PRGNAME.tar.gz inxi | grep "^#.* Version" | cut -d" " -f4)}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
