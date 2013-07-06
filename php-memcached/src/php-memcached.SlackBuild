@@ -32,7 +32,7 @@ PRGNAME=${PRGNAME:-memcached}
 PKGNAME=${PKGNAME:-php-memcached}
 VERSION=${VERSION:-2.1.0}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -82,6 +82,14 @@ cd $PRGNAME-$VERSION
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
+
+# Apply patch for libmemcached 1.0.17
+# https://github.com/php-memcached-dev/php-memcached/issues/69
+sed -i '3 a\
+typedef const struct memcached_server_st *memcached_server_instance_st;' php_libmemcached_compat.h
+
+# Apply patch from git
+patch -p1 -i $CWD/master.diff
 
 # Configure
 phpize --clean
