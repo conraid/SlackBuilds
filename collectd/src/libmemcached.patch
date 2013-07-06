@@ -1,0 +1,20 @@
+--- configure.orig	2013-04-10 17:41:42.000000000 +0200
++++ configure	2013-07-06 10:11:23.884258776 +0200
+@@ -20033,7 +20033,7 @@ if test "${ac_cv_lib_memcached_memcached
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lmemcached  $LIBS"
++LIBS="-lmemcached -lpthread $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -20077,7 +20077,7 @@ if test "x$with_libmemcached" = "xyes"
+ then
+ 	BUILD_WITH_LIBMEMCACHED_CPPFLAGS="$with_libmemcached_cppflags"
+ 	BUILD_WITH_LIBMEMCACHED_LDFLAGS="$with_libmemcached_ldflags"
+-	BUILD_WITH_LIBMEMCACHED_LIBS="-lmemcached"
++	BUILD_WITH_LIBMEMCACHED_LIBS="-lmemcached -lpthread"
+ 
+ 
+ 

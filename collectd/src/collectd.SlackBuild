@@ -30,9 +30,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-collectd}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-5.3.0}
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -83,11 +83,13 @@ cd $PRGNAME-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
+# Patch for libmemcached 1.0.17
+patch -p0 -i $CWD/libmemcached.patch
+
 # Configure
 sed -i -e "s:@prefix@/var:/var:g" src/collectd.conf.in
 sed 's/-Werror//g' -i src/Makefile.in
-
-LDFLAGS="$SLKLDFLAGS" \
+LDFLAGS="$SLKLDFLAGSd" \
 KERNEL_CFLAGS="-I/usr/include" \
 KERNEL_DIR="/usr/src/linux" \
 CFLAGS="$SLKCFLAGS" \
