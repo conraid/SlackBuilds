@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-CImg}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-1.5.5}
+VERSION=${VERSION:-$(echo $PRGNAME-*.zip | rev | cut -f2- -d. | cut -f1 -d- | rev)}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -56,7 +56,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-unzip $CWD/CImg-$VERSION.zip
+unzip $CWD/$PRGNAME-$VERSION.zip
 cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
