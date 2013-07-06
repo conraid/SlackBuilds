@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-wireshark}
 VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
@@ -107,7 +107,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-c-ares \
   --with-geoip \
   --with-adns \
-  --with-libnl=1 \
   --with-plugins \
   --docdir=/usr/doc/$PRGNAME-$VERSION \
   --host=$CHOST-slackware-linux \
