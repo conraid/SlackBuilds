@@ -244,10 +244,10 @@ SLACKBUILD SHORT DESCRIPTION:  chkrootkit (Check Rootkit)
 SLACKBUILD NAME: cimg
 SLACKBUILD LOCATION: ./cimg/src
 SLACKBUILD FILES: README cimg.SlackBuild cimg.info slack-desc
-SLACKBUILD VERSION: 1.5.5
+SLACKBUILD VERSION: 1.5.6
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/cimg/CImg-1.5.5.zip
-SLACKBUILD MD5SUM: 358c374c607912cf1781b232a84d034f
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/cimg/CImg-1.5.6.zip
+SLACKBUILD MD5SUM: 37ba9caa83c6319b97de8feb750575dd
 SLACKBUILD SHORT DESCRIPTION:  CImg (open-source C++ toolkit for image processing)
 
 SLACKBUILD NAME: cmus
@@ -261,9 +261,9 @@ SLACKBUILD SHORT DESCRIPTION:  cmus (ncurses based music player)
 
 SLACKBUILD NAME: collectd
 SLACKBUILD LOCATION: ./collectd/src
-SLACKBUILD FILES: README collectd.SlackBuild collectd.info configure.in doinst.sh rc.collectd slack-desc
+SLACKBUILD FILES: README collectd.SlackBuild collectd.info configure.in doinst.sh libmemcached.patch rc.collectd slack-desc
 SLACKBUILD VERSION: 5.3.0
-SLACKBUILD REQUIRES: "libdbi libesmtp liboping libstatgrab rrdtool yajl"
+SLACKBUILD REQUIRES: "libdbi libesmtp liboping libstatgrab rrdtool yajl libmemcached"
 SLACKBUILD DOWNLOAD: http://collectd.org/files/collectd-5.3.0.tar.bz2
 SLACKBUILD MD5SUM: 1f0eb7b27ada94b22ed881daf788958b
 SLACKBUILD SHORT DESCRIPTION:  collectd (system statistics collection daemon)
@@ -1152,11 +1152,11 @@ SLACKBUILD SHORT DESCRIPTION:  liblqr (Liquid Rescale Library)
 
 SLACKBUILD NAME: libmemcached
 SLACKBUILD LOCATION: ./libmemcached/src
-SLACKBUILD FILES: README libmemcached.SlackBuild libmemcached.info slack-desc
-SLACKBUILD VERSION: 1.0.16
+SLACKBUILD FILES: README libmemcached.SlackBuild libmemcached.info patch-sanitize.diff slack-desc
+SLACKBUILD VERSION: 1.0.17
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: http://launchpad.net/libmemcached/1.0/1.0.16/+download/libmemcached-1.0.16.tar.gz
-SLACKBUILD MD5SUM: 1f3a7d559714791ac04ce8bcccc6b67e
+SLACKBUILD DOWNLOAD: http://launchpad.net/libmemcached/1.0/1.0.17/+download/libmemcached-1.0.17.tar.gz
+SLACKBUILD MD5SUM: d1a34be4d65b5e12dffcbb7763003056
 SLACKBUILD SHORT DESCRIPTION:  libmemcached
 
 SLACKBUILD NAME: libmnl
@@ -1599,11 +1599,11 @@ SLACKBUILD SHORT DESCRIPTION:  OpenAL Soft (a cross-platform 3D audio API)
 
 SLACKBUILD NAME: opencv
 SLACKBUILD LOCATION: ./opencv/src
-SLACKBUILD FILES: README opencv.SlackBuild opencv.info slack-desc
-SLACKBUILD VERSION: 2.4.5
+SLACKBUILD FILES: README fsh.patch opencv.SlackBuild opencv.info pkgconfig.patch slack-desc
+SLACKBUILD VERSION: 2.4.6
 SLACKBUILD REQUIRES: ffmpeg
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/opencvlibrary/opencv-unix/2.4.5/opencv-2.4.5.tar.gz
-SLACKBUILD MD5SUM: 8eac87462c7bec8b89021b723207c623
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/opencvlibrary/opencv-unix/2.4.6/opencv-2.4.6.tar.gz
+SLACKBUILD MD5SUM: c5e8758a419b4f258611b17fc83aafaf
 SLACKBUILD SHORT DESCRIPTION:  OpenCV (Open Source Computer Vision) 
 
 SLACKBUILD NAME: openjpeg
@@ -1671,7 +1671,7 @@ SLACKBUILD SHORT DESCRIPTION:  php-apc (APC Alternative PHP Cache)
 
 SLACKBUILD NAME: php-memcached
 SLACKBUILD LOCATION: ./php-memcached/src
-SLACKBUILD FILES: README doinst.sh memcached.ini php-memcached.SlackBuild php-memcached.info slack-desc
+SLACKBUILD FILES: README doinst.sh master.diff memcached.ini php-memcached.SlackBuild php-memcached.info slack-desc
 SLACKBUILD VERSION: 2.1.0
 SLACKBUILD REQUIRES: libmemcached 
 SLACKBUILD DOWNLOAD: http://pecl.php.net/get/memcached-2.1.0.tgz
