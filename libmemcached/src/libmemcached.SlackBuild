@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-libmemcached}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-1.0.16}
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -63,7 +63,7 @@ case "$ARCH" in
         ;;
     x86_64)
 	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64";ù
+	SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64";
         ;;
     *)
 	SLKCFLAGS="-O2"; CHOST="$ARCH"
@@ -82,6 +82,9 @@ cd $PRGNAME-$VERSION
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
+
+# Apply patch for gcc 4.8
+patch -p0 -i $CWD/patch-sanitize.diff
 
 # Configure
 LDFLAGS="$SLKLDFLAGS" \
