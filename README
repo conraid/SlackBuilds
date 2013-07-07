@@ -15,8 +15,11 @@ For make package from slackbuild do
 Download source code:
 # source <program>.info
 # wget -c $DOWNLOAD
-if SOURCE variable is present in info file
+if exists SOURCE variable, do instead
 # wget -c $DOWNLOAD -O $SOURCE
+
+if exists EXTRAFILE variables, do also
+# wget -c $EXTRAFILE1 [$EXTRAFILE2]
 
 Build:
 # sh <program>.SlackBuild
