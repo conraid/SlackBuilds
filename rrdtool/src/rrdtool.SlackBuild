@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-rrdtool}
 VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
@@ -92,8 +92,13 @@ find . \
 # Apply patch for pango font
 patch -p1 -i $CWD/pango.diff
 
+
 # Configure:
 autoreconf
+# Correct hard-coded path to lua libs (thanks to pprkut for spotting this one!)
+# Thanks to SBo
+sed -i "s|/lib/lua|/lib${LIBDIRSUFFIX}/lua|g" configure
+
 LDFLAGS="$SLKLDFLAGS" \
 CFLAGS="$SLKCFLAGS -I/usr/include/glib-2.0" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -109,7 +114,7 @@ RRDDOCDIR="/usr/doc/${PRGNAME}-${VERSION}" \
   --enable-tcl-site \
   --disable-nls \
   --disable-static \
-  --disable-lua \
+  --enable-lua \
   --with-perl-options='INSTALLDIRS=vendor' \
   --with-ruby-options="sitedir=\${DESTDIR}/usr/lib${LIBDIRSUFFIX}/ruby/vendor_ruby" \
   --docdir=$PKG/usr/doc/rrdtool-$VERSION \
