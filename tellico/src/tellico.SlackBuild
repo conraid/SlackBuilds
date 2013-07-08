@@ -30,9 +30,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-tellico}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-2.3.7}
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -89,13 +89,11 @@ cd build
 cmake \
   -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
   -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_LD_FLAGS:STRING="$SLKLDFLAGS" \
   -DCMAKE_BUILD_TYPE=none \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DMAN_INSTALL_DIR=/usr/man \
   -DSYSCONF_INSTALL_DIR=/etc \
   -DLIB_SUFFIX=${LIBDIRSUFFIX} \
-  -DLIB_DIR=/usr/lib${LIBDIRSUFFIX} \
   ..
 
 # Build and install
