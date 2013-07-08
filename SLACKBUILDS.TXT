@@ -1326,11 +1326,11 @@ SLACKBUILD SHORT DESCRIPTION:  lshw (Hardware Lister)
 
 SLACKBUILD NAME: lua
 SLACKBUILD LOCATION: ./lua/src
-SLACKBUILD FILES: README liblua.so.patch lua.SlackBuild lua.info lua.pc slack-desc
-SLACKBUILD VERSION: 5.2.2
+SLACKBUILD FILES: README liblua.so.patch lua.SlackBuild lua.info slack-desc
+SLACKBUILD VERSION: 5.1.5
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: http://www.lua.org/ftp/lua-5.2.2.tar.gz
-SLACKBUILD MD5SUM: efbb645e897eae37cad4344ce8b0a614
+SLACKBUILD DOWNLOAD: http://www.lua.org/ftp/lua-5.1.5.tar.gz
+SLACKBUILD MD5SUM: 2e115fe26e435e33b0d5c022e4490567
 SLACKBUILD SHORT DESCRIPTION:  Lua (a powerful, fast, light-weight, embeddable scripting language)
 
 SLACKBUILD NAME: luckybackup
@@ -1727,7 +1727,7 @@ SLACKBUILD NAME: podofo
 SLACKBUILD LOCATION: ./podofo/src
 SLACKBUILD FILES: README podofo.SlackBuild podofo.info slack-desc
 SLACKBUILD VERSION: 0.9.2
-SLACKBUILD REQUIRES: 
+SLACKBUILD REQUIRES: "lua"
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/podofo/podofo-0.9.2.tar.gz
 SLACKBUILD MD5SUM: 41966c57fa4266ac5cef80bfade0c8e7
 SLACKBUILD SHORT DESCRIPTION:  PoDoFo (Is a library to work with the PDF file format)
@@ -1901,7 +1901,7 @@ SLACKBUILD NAME: rrdtool
 SLACKBUILD LOCATION: ./rrdtool/src
 SLACKBUILD FILES: README pango.diff rrdtool.SlackBuild rrdtool.info slack-desc
 SLACKBUILD VERSION: 1.4.8
-SLACKBUILD REQUIRES: "libdbi"
+SLACKBUILD REQUIRES: "libdbi lua"
 SLACKBUILD DOWNLOAD: http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.4.8.tar.gz
 SLACKBUILD MD5SUM: dbe59386db97fd2f2216729facd74ca8
 SLACKBUILD SHORT DESCRIPTION:  RRDtool
@@ -2149,10 +2149,10 @@ SLACKBUILD SHORT DESCRIPTION:  tcptraceroute (traceroute implementation using TC
 SLACKBUILD NAME: tellico
 SLACKBUILD LOCATION: ./tellico/src
 SLACKBUILD FILES: README doinst.sh index.html slack-desc tellico.SlackBuild tellico.info
-SLACKBUILD VERSION: 2.3.7
-SLACKBUILD REQUIRES: "qjson kde-4.9"
-SLACKBUILD DOWNLOAD: http://tellico-project.org/files/tellico-2.3.7.tar.bz2
-SLACKBUILD MD5SUM: ac4728948c6c603dceeb6e6fe0d04c55
+SLACKBUILD VERSION: 2.3.8
+SLACKBUILD REQUIRES: "qjson"
+SLACKBUILD DOWNLOAD: http://tellico-project.org/files/tellico-2.3.8.tar.bz2
+SLACKBUILD MD5SUM: 3f85002f6f369bdcf72ac7499d39297a
 SLACKBUILD SHORT DESCRIPTION:  Tellico (KDE application for keeping track of your collections)
 
 SLACKBUILD NAME: testdisk
@@ -2268,7 +2268,7 @@ SLACKBUILD SHORT DESCRIPTION:  wacomtablet (Wacom tablet KDE 4 KCModule)
 
 SLACKBUILD NAME: weechat
 SLACKBUILD LOCATION: ./weechat/src
-SLACKBUILD FILES: README index.html slack-desc weechat.SlackBuild weechat.info
+SLACKBUILD FILES: README slack-desc weechat.SlackBuild weechat.info
 SLACKBUILD VERSION: 0.4.1
 SLACKBUILD REQUIRES: "lua"
 SLACKBUILD DOWNLOAD: http://www.weechat.org/files/src/weechat-0.4.1.tar.bz2
