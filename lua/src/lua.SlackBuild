@@ -33,8 +33,8 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-lua}
-MAINVERSION=5.2
-VERSION=${VERSION:-5.2.2}
+MAINVERSION=5.1
+VERSION=${VERSION:-5.1.5}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -88,18 +88,22 @@ chmod -R u+w,go+r-w,a-s .
 
 # Fix up a to-be-installed header and the pkgconfig file
 sed -i "s|lib/lua|lib$LIBDIRSUFFIX/lua|" src/luaconf.h
+sed -i "s|/usr/local|/usr|" src/luaconf.h
+sed -i "s|/usr/local|/usr|" etc/lua.pc
+sed -i "s|prefix}/lib|prefix}/lib${LIBDIRSUFFIX}|g" etc/lua.pc
 
 # Apply patch for shared libraries
 patch -p1 -i "$CWD/liblua.so.patch"
 
 # Build and install
 sed -i 's/V.1/V.2/' Makefile
-make MYCFLAGS="$SLKCFLAGS" MYLDFLAGS="$SLKLDFLAGS" \
+make CFLAGS="$SLKCFLAGS \$(MYCFLAGS)" \
+MYCFLAGS="$SLKCFLAGS" MYLDFLAGS="$SLKLDFLAGS" \
 MYLIBS="-ltermcap" \
 linux
 
 make \
-TO_LIB="liblua.a liblua.so liblua.so.5.2 liblua.so.5.2.2" \
+TO_LIB="liblua.a liblua.so liblua.so.$MAINVERSION liblua.so.$VERSION" \
 INSTALL_DATA="cp -d" \
 INSTALL_TOP="$PKG/usr" \
 INSTALL_LIB=$PKG/usr/lib${LIBDIRSUFFIX} \
@@ -107,11 +111,7 @@ INSTALL_CMOD=$PKG/usr/lib${LIBDIRSUFFIX}/lua/$MAINVERSION \
 linux install
 
 # Install the pkg-config file so other apps can find LUA
-# Also, fix the prefix path in lua.pc
-# and install the pkgconfig file
-mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
-cat $CWD/lua.pc | sed "s|prefix}/lib|prefix}/lib${LIBDIRSUFFIX}|g" \
-  > $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/lua.pc
+install -Dm644 etc/lua.pc $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/lua.pc
 
 # Strip binaries:
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true                                                                                                                                         
