@@ -1,0 +1,48 @@
+#!/bin/bash
+#
+# Init file for the NTOPNG network monitor
+#
+# Changelog
+# 1.0 First version. Testing only. See man page for options
+
+set -e
+
+if [ -e $1 ]; then
+    OPTIONS="-i $1"
+fi
+
+
+start() {
+    echo -n $"Starting ntopng: "
+    /usr/bin/ntopng $OPTIONS -e 2> /dev/null
+    echo 'OK'
+}
+
+stop() {
+    echo -n $"Stopping ntopng: "
+    killall ntopng
+    echo 'OK'
+}
+
+restart() {
+	stop
+	sleep 2
+	start
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart|reload)
+	restart
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart} [interface(s)]"
+esac
+exit
+
+
