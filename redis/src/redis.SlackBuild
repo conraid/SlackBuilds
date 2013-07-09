@@ -1,0 +1,144 @@
+#!/bin/sh
+#
+# Slackware build script for redis
+#
+# Copyright 2010 Kuroi Kenshi <kuroi_kenshi96@yahoo.com>
+# Copyright 2012-2013 Audrius Kažukauskas <audrius@neutrino.lt>
+# Copyright 2013 Corrado Franco (http://conraid.net)
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Latest version of this SlackBuild at http://slackers.it/repository
+#
+# Based on SlackBuild by SBo
+# Modified by Corrado Franco to slackers.it
+
+# Exit on most errors
+set -e
+
+# Set variables:
+CWD=$(pwd)
+
+PRGNAME=${PRGNAME:-redis}
+PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+PKGVERSION=$(echo $VERSION | tr - _)
+BUILD=${BUILD:-1}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+PKG=$TMP/package-$PKGNAME
+DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
+
+# Insert document files in this variable
+DOCFILES="00-RELEASENOTES BUGS CONTRIBUTING COPYING INSTALL MANIFESTO README"
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+	i?86) ARCH=i686 ;;
+	arm*) ARCH=arm ;;
+        # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
+fi
+
+# Set compiling FLAGS
+case "$ARCH" in
+    i[3-5]86)
+        SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    i686)
+	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
+    x86_64)
+	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
+	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+        ;;
+    *)
+	SLKCFLAGS="-O2"; CHOST=$ARCH
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	;;
+esac
+
+# Extract source and prepare:
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAME-$VERSION
+tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
+cd $PRGNAME-$VERSION
+
+# Make sure ownerships and permissions are sane:
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
+
+
+# Build and install:
+
+# Use our CFLAGS.
+sed -i 's#-O3##' deps/Makefile deps/hiredis/Makefile
+# http://lists.slackbuilds.org/pipermail/slackbuilds-users/2013-January/010042.html
+# Thanks to SBo
+( unset ARCH ; CFLAGS="$SLKCFLAGS" make MALLOC=libc CFLAGS="$SLKCFLAGS" PREFIX=/usr)
+mkdir -p $PKG/usr/bin
+make INSTALL_BIN="$PKG/usr/bin" PREFIX=/usr install
+
+# Create symlink to start redis in sentinel mode.
+( cd $PKG/usr/bin ; ln -sf redis-server redis-sentinel )
+
+# Strip binaries:
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+
+# Use sample config and set some sane defaults.
+install -D -m 0644 redis.conf $PKG/etc/redis.conf.new
+sed -i \
+  -e 's|^daemonize no|daemonize yes|' \
+  -e 's|^dir \.|dir /var/lib/redis|' \
+  -e 's|^logfile stdout|logfile /var/log/redis.log|' \
+  -e 's|^# bind 127.0.0.1|bind 127.0.0.1|' \
+  $PKG/etc/redis.conf.new
+
+# Create data directory.
+install -dm0700 $PKG/var/lib/redis
+
+# Install init script.
+install -Dm644 $CWD/rc.redis $PKG/etc/rc.d/rc.redis.new
+
+# Install logrotate script.
+install -Dm644 $CWD/redis.logrotate $PKG/etc/logrotate.d/redis.new
+
+# Add a documentation directory:
+mkdir -p ${DOCS}
+cp -a $DOCFILES $DOCS
+
+# Add a slackbuild script:
+install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
+
+# Add slack-desc
+install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+
+# Add a doinst.sh
+install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
+
+# Create package:
+cd $PKG
+/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
