@@ -29,8 +29,8 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-justniffer}
-VERSION=${VERSION:-0.5.11}
-BUILD=${BUILD:-4}
+VERSION=${VERSION:-$(echo ${PRGNAME}_*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d_ | rev)}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME

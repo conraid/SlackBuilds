@@ -29,8 +29,8 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-lyx}
-VERSION=${VERSION:-2.0.6}
-BUILD=${BUILD:-1}
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME

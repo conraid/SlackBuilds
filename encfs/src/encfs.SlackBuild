@@ -29,9 +29,9 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-encfs}
-VERSION=${VERSION:-1.7.4}
+VERSION=${VERSION:-$(echo $PRGNAME-*.tgz | rev | cut -f2- -d. | cut -f1 -d- | rev)}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-7}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
