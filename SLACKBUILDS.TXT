@@ -295,6 +295,15 @@ SLACKBUILD DOWNLOAD: http://www.willhackforsushi.com/code/cowpatty/4.6/cowpatty-
 SLACKBUILD MD5SUM: b90fd36ad987c99e7cc1d2a05a565cbd
 SLACKBUILD SHORT DESCRIPTION:  cowpatty (WPA-PSK dictionary attack tool)
 
+SLACKBUILD NAME: cracklib
+SLACKBUILD LOCATION: ./cracklib/src
+SLACKBUILD FILES: README cracklib.SlackBuild cracklib.info slack-desc
+SLACKBUILD VERSION: 2.9.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/cracklib/cracklib/2.9.0/cracklib-2.9.0.tar.gz
+SLACKBUILD MD5SUM: e0f94ac2138fd33c7e77b19c1e9a9390
+SLACKBUILD SHORT DESCRIPTION:  cracklib (password crack library)
+
 SLACKBUILD NAME: ctemplate
 SLACKBUILD LOCATION: ./ctemplate/src
 SLACKBUILD FILES: README ctemplate.SlackBuild ctemplate.info slack-desc
@@ -1291,6 +1300,15 @@ SLACKBUILD DOWNLOAD: http://verplant.org/liboping/files/liboping-1.6.2.tar.bz2
 SLACKBUILD MD5SUM: 64a6f31310093d2517cfe7f05aa011e0
 SLACKBUILD SHORT DESCRIPTION:  liboping
 
+SLACKBUILD NAME: libpwmd
+SLACKBUILD LOCATION: ./libpwmd/src
+SLACKBUILD FILES: README libpwmd.SlackBuild libpwmd.info slack-desc
+SLACKBUILD VERSION: 7.1.0
+SLACKBUILD REQUIRES: pwmnd cracklib libssh2
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/libpwmd/7.1.0/libpwmd-7.1.0.tar.bz2
+SLACKBUILD MD5SUM: c6174ba693914b0a89536765f593795a
+SLACKBUILD SHORT DESCRIPTION:  libpwmd (API for connecting to pwmd)
+
 SLACKBUILD NAME: libqtidy
 SLACKBUILD VERSION: 0.8.5
 SLACKBUILD LOCATION: ./libqtidy/src
@@ -1320,6 +1338,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: http://ftp.gnome.org/pub/GNOME/sources/libsigc++/2.3/libsigc++-2.3.1.tar.xz
 SLACKBUILD MD5SUM: 06a0569e8ba161d3428e7daa838682f8
 SLACKBUILD SHORT DESCRIPTION: libsigc++: libsigc++ (typesafe callback system for standard C++)
+
+SLACKBUILD NAME: libssh2
+SLACKBUILD LOCATION: ./libssh2/src
+SLACKBUILD FILES: README libssh2.SlackBuild libssh2.info slack-desc
+SLACKBUILD VERSION: 1.4.3
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: http://www.libssh2.org/download/libssh2-1.4.3.tar.gz
+SLACKBUILD MD5SUM: 071004c60c5d6f90354ad1b701013a0b
+SLACKBUILD SHORT DESCRIPTION:  libssh2 (SSH2 library)
 
 SLACKBUILD NAME: libstatgrab
 SLACKBUILD VERSION: 0.17
@@ -1786,6 +1813,15 @@ SLACKBUILD DOWNLOAD: http://protobuf.googlecode.com/files/protobuf-2.5.0.tar.bz2
 SLACKBUILD MD5SUM: a72001a9067a4c2c4e0e836d0f92ece4
 SLACKBUILD SHORT DESCRIPTION:  protobuf (Google's data interchange format)
 
+SLACKBUILD NAME: pwmd
+SLACKBUILD LOCATION: ./pwmd/src
+SLACKBUILD FILES: README pwmd.SlackBuild pwmd.info slack-desc
+SLACKBUILD VERSION: 3.0.3
+SLACKBUILD REQUIRES: cracklib
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/pwmd/3.0.3/pwmd-3.0.3.tar.bz2
+SLACKBUILD MD5SUM: 53f7d734d43aa1b18a20107aa3e81811
+SLACKBUILD SHORT DESCRIPTION:  pwmd (Password Manager Daemon)
+
 SLACKBUILD NAME: q4wine
 SLACKBUILD LOCATION: ./q4wine/src
 SLACKBUILD FILES: README doinst.sh q4wine.SlackBuild q4wine.info slack-desc
@@ -1809,6 +1845,15 @@ SLACKBUILD VERSION: 1.0.1
 SLACKBUILD LOCATION: ./qoauth/src
 SLACKBUILD FILES: README qoauth.SlackBuild slack-desc
 SLACKBUILD SHORT DESCRIPTION:  qoauth (A Qt-based C++ library for OAuth authorization scheme)
+
+SLACKBUILD NAME: qpwmc
+SLACKBUILD LOCATION: ./qpwmc/src
+SLACKBUILD FILES: README doinst.sh qpwmc.SlackBuild qpwmc.desktop qpwmc.info slack-desc
+SLACKBUILD VERSION: 0.2.0
+SLACKBUILD REQUIRES: libpwmd pwmnd libssh2 pwmd
+SLACKBUILD DOWNLOAD: https://downloads.sourceforge.net/project/qpwmc/qpwmc-0.2.0.tar.gz
+SLACKBUILD MD5SUM: e1d6946299b1839864a3b2a30eef382f
+SLACKBUILD SHORT DESCRIPTION:  qpwmc (Qt4 pwmd client)
 
 SLACKBUILD NAME: qtcurve-gtk2
 SLACKBUILD LOCATION: ./qtcurve-gtk2/src
