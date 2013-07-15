@@ -24,8 +24,8 @@
 #
 # Latest version of this SlackBuild at http://slackers.it/repository
 #
-# Exit on most errors
-set -e
+# Exit on most errors or unset variables
+set -euu
 
 # Set variables:
 CWD=$(pwd)
@@ -45,6 +45,7 @@ SQUIDGROUP=${SQUIDGROUP:-nobody}
 # Insert document files in this variable
 DOCFILES="CONTRIBUTORS COPYING COPYRIGHT CREDITS ChangeLog INSTALL QUICKSTART README RELEASENOTES* SPONSORS"
 
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -176,7 +177,7 @@ rmdir $PKG/usr/include
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
-cp -a $DOCFILES $DOCS
+cp -a $DOCFILES $DOCS || true
 install -Dm644 $CWD/SLACKWARE.README $DOCS/README.SLACKWARE
 
 # Add a slackbuild script:
