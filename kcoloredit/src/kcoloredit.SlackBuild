@@ -2,7 +2,7 @@
 #
 # Slackware build script for kcoloredit (http://extragear.kde.org/apps/kcoloredit/)
 #
-# Copyright 2009-2012 Corrado Franco (http://conraid.net)
+# Copyright 2009-2013 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -22,8 +22,8 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Exit on most errors
-set -e
+# Exit on most errors or unset variables
+set -eu
 
 # Set variables:
 CWD=$(pwd)
@@ -32,17 +32,25 @@ PRGNAME=${PRGNAME:-kcoloredit}
 PKGNAME=${PKGNAME:-$PRGNAME}
 VERSION=${VERSION:-2.0.0-kde4.4.0}
 PKGVERSION=$(echo $VERSION | tr - _)
-ARCH=${ARCH:-i686}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-JOBS=${JOBS:--j2}
-SOURCE="ftp://ftp.kde.org/pub/kde/stable/4.4.0/src/extragear/kcoloredit-$VERSION.tar.bz2"
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
 
 # Insert document files in this variable
 DOCFILES="AUTHORS COPYING README"
+
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+        i?86) ARCH=i686 ;;
+        arm*) ARCH=arm ;;
+        # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
+fi
 
 # Set compiling FLAGS
 case "$ARCH" in
@@ -58,12 +66,11 @@ case "$ARCH" in
 	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
+    *)
+        SLKCFLAGS="-O2"; CHOST=$ARCH
+        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
 esac
-
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
 
 # Extract source and prepare:
 rm -rf $PKG
@@ -81,9 +88,8 @@ chmod -R u+w,go+r-w,a-s .
 mkdir build
 cd build
 cmake \
--DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
--DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
--DCMAKE_LD_FLAGS:STRING="$SLKLDFLAGS" \
+-DCMAKE_C_FLAGS:STRING="$SLKCFLAGS -ldl -lX11" \
+-DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -ldl -lX11" \
 -DCMAKE_BUILD_TYPE=none \
 -DCMAKE_INSTALL_PREFIX=/usr \
 -DMAN_INSTALL_DIR=/usr/man \
@@ -91,7 +97,7 @@ cmake \
 ..
 
 # Build and install:
-make $JOBS
+make
 make DESTDIR=$PKG install/strip
 cd ..
 
@@ -114,19 +120,9 @@ cat $CWD/$PKGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
-# Add a doinst.sh, if any
-if [ -f $CWD/doinst.sh.gz ]; then
-    zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
-elif [ -f $CWD/doinst.sh ]; then
-    cat $CWD/doinst.sh > $PKG/install/doinst.sh
-fi
+# Add a doinst.sh
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 # Create package:
 cd $PKG
 /sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
-
-# Clean file, if option is set: 
-if [ "$1" = "--cleanup" ]; then
-  rm -rf $TMP/$PRGNAME-$VERSION
-  rm -rf $PKG
-fi
