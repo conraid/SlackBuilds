@@ -2,7 +2,7 @@
 #
 # Slackware build script for KeePassX (http://www.keepassx.org)
 #
-# Copyright 2008-2012 Corrado Franco (http://conraid.net)
+# Copyright 2008-2013 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -22,27 +22,35 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Exit on most errors
-set -e
+# Exit on most errors or unset variables
+set -eu
 
 # Set variables:
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-keepassx}
 PKGNAME=${PKGNAME:-keepassx}
-VERSION=${VERSION:-0.4.3}
-ARCH=${ARCH:-i686}
-BUILD=${BUILD:-1}
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-JOBS=${JOBS:-2}
-SOURCE="http://garr.dl.sourceforge.net/sourceforge/keepassx/keepassx-${VERSION}.tar.gz"
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
 QMAKE="/usr/bin/qmake"
 
 # Insert document files in this variable
 DOCFILES="COPYING changelog"
+
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+        i?86) ARCH=i686 ;;
+        arm*) ARCH=arm ;;
+        # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
+fi
 
 # Set compiling FLAGS
 case "$ARCH" in
@@ -58,19 +66,17 @@ case "$ARCH" in
 	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
+    *)
+        SLKCFLAGS="-O2"; CHOST=$ARCH
+        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
 esac
-
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
 
 # Extract source and prepare:
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PKGNAME-$VERSION
-
 tar xzvf $CWD/$PRGNAME-$VERSION.tar.gz
 cd $PKGNAME-$VERSION
 
@@ -79,18 +85,15 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure:
-$QMAKE -unix PREFIX=$PKG/usr QMAKE_LDFLAGS="$SLKLDFLAGS" QMAKE_CFLAGS="$SLKCFLAGS" QMAKE_CXXFLAGS="$SLKCFLAGS" -o Makefile keepassx.pro
+sed -i '1,1i#include <unistd.h>' src/lib/random.cpp
+$QMAKE -unix PREFIX=/usr QMAKE_LDFLAGS="$SLKLDFLAGS" QMAKE_CFLAGS="$SLKCFLAGS" QMAKE_CXXFLAGS="$SLKCFLAGS" -o Makefile keepassx.pro
 
 # Build and install:
-make -j $JOBS
-make install
+make
+make install INSTALL_ROOT=$PKG
 
 # Strip binaries:
-( cd $PKG
-  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
-  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
-  find . | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true
-)
+find $PKG | xargs file | grep -e "executable" -e -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
@@ -115,18 +118,8 @@ mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 # Add a doinst.sh, if any
-if [ -f $CWD/doinst.sh.gz ]; then
-    zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
-elif [ -f $CWD/doinst.sh ]; then
-    cat $CWD/doinst.sh > $PKG/install/doinst.sh
-fi
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 # Create package:
 cd $PKG
 /sbin/makepkg -l y -c n $CWD/$PKGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz
-
-# Clean file, if option is set: 
-if [ "$1" = "--cleanup" ]; then
-  rm -rf $TMP/$PRGNAME-$VERSION
-  rm -rf $PKG
-fi
