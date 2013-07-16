@@ -2,7 +2,7 @@
 #
 # Slackware build script for lifstat
 #
-# Copyright 2009-2012 Corrado Franco (http://conraid.net)
+# Copyright 2009-2013 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -22,27 +22,35 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Exit on most errors
-set -e
+# Exit on most errors or unset variables
+set -eu
 
 # Set variables:
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-lifstat}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-20120318}
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
 PKGVERSION=$(echo $VERSION | tr - _)
-ARCH=${ARCH:-i686}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-JOBS=${JOBS:--j2}
-SOURCE="http://fejes.net/frank/lifstat/files/lifstat-$VERSION.tar.gz"
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
 # Insert document files in this variable
 DOCFILES="CHANGELOG LICENSE README"
+
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+    case "$( uname -m )" in
+        i?86) ARCH=i686 ;;
+        arm*) ARCH=arm ;;
+        # Unless $ARCH is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
+fi
 
 # Set compiling FLAGS
 case "$ARCH" in
@@ -58,19 +66,18 @@ case "$ARCH" in
 	SLKCFLAGS="-O2 -pipe -fomit-frame-pointer"; CHOST="x86_64"
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
+    *)
+        SLKCFLAGS="-O2"; CHOST=$ARCH
+        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
 esac
-
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
 
 # Extract source and prepare:
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$(basename $SOURCE)
+tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
 cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
@@ -78,7 +85,7 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
-make $JOBS
+make CFLAGS="$SLKCFLAGS"
 make DESTDIR=$PKG/usr install
 
 # Strip binaries:
@@ -109,15 +116,8 @@ done
 cat $CWD/$PKGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
 
 # Add slack-desc
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
 
 # Create package:
 cd $PKG
 /sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
-
-# Clean file, if option is set: 
-if [ "$1" = "--cleanup" ]; then
-  rm -rf $PKG
-  rm -rf ${TMP}/${PRGNAME}-${VERSION}
-fi
