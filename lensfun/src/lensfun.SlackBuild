@@ -22,16 +22,15 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Exit on most errors
-set -e 
+# Exit on most errors or unset variables
+set -eu 
 
 # Set variables:
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-lensfun}
 VERSION=${VERSION:-0.2.7}
-ARCH=${ARCH:-i686}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
@@ -40,6 +39,7 @@ DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
 # Insert document files in this variable
 DOCFILES="README"
 
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -64,6 +64,10 @@ case "$ARCH" in
 	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
 	SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
+    *)
+        SLKCFLAGS="-O2"; CHOST=$ARCH
+        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+        ;;
 esac
 
 # Extract source and prepare:
@@ -71,7 +75,6 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-
 tar xjvf $CWD/$PRGNAME-$VERSION.tar.bz2
 cd $PRGNAME-$VERSION
 
@@ -90,7 +93,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --docdir=/usr/doc/${PRGNAME}-${VERSION}
 
 # Build and install:
-make $JOBS
+make
 make DESTDIR=$PKG install
 
 # Strip binaries:
