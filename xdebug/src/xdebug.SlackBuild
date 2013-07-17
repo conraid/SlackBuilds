@@ -22,8 +22,8 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Exit on most errors
-set -e
+# Exit on most errors or unset variables
+set -eu
 
 # Set variables:
 CWD=$(pwd)
@@ -32,7 +32,7 @@ PRGNAME=${PRGNAME:-xdebug}
 PKGNAME=${PKGNAME:-$PRGNAME}
 VERSION=${VERSION:-2.2.3}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -41,6 +41,7 @@ DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
 # Insert document files in this variable
 DOCFILES="CREDITS ChangeLog LICENSE NEWS README"
 
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -105,15 +106,16 @@ LDFLAGS="$SLKLDFLAGS" \
 CFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr \
+  --with-libedit \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux
 # Build and install debugclient:
-make $JOBS
+make
 make DESTDIR=$PKG install-strip
 cd -
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
+mkdir -p ${DOCS}/debugclient
 for i in ${DOCFILES}; do
     if [ -e ${i} ]; then
         if ! [ -L ${i} ]; then
@@ -123,6 +125,8 @@ for i in ${DOCFILES}; do
         fi
     fi;
 done
+# Add debgclient document
+cp -a debugclient/INSTALL debugclient/LICENSE $DOCS/debugclient
 
 # Copy config files
 mkdir -p $PKG/etc/php
