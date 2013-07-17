@@ -32,7 +32,7 @@ PRGNAME=${PRGNAME:-id3lib}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -140,7 +140,7 @@ cat $CWD/$PRGNAME.SlackBuild > $DOCS/$PRGNAME.SlackBuild
 
 # Add slack-desc
 mkdir -p $PKG/install
-cat $CWD/slack-desc > $DOCS/slack-desc
+cat $CWD/slack-desc > $PKG/install/slack-desc
 
 # Create package:
 cd $PKG
