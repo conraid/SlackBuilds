@@ -1,0 +1,34 @@
+diff -Naupr wireshark-1.10.1-orig/doc/Makefile.am wireshark-1.10.1/doc/Makefile.am
+--- wireshark-1.10.1-orig/doc/Makefile.am	2013-05-21 01:00:25.000000000 +0200
++++ wireshark-1.10.1/doc/Makefile.am	2013-07-27 09:15:30.732117024 +0200
+@@ -123,6 +123,7 @@ POD_CSS_URL ?= $(top_srcdir)/docbook/ws.
+ 	$(AM_V_POD2MAN)$(POD2MAN)                       \
+ 	--center="The Wireshark Network Analyzer"       \
+ 	--release=$(VERSION)                            \
++	--utf8						\
+ 	$< > $@
+ 
+ .pod.html: ../config.h $(top_srcdir)/docbook/ws.css
+diff -Naupr wireshark-1.10.1-orig/doc/Makefile.nmake wireshark-1.10.1/doc/Makefile.nmake
+--- wireshark-1.10.1-orig/doc/Makefile.nmake	2013-04-22 20:04:29.000000000 +0200
++++ wireshark-1.10.1/doc/Makefile.nmake	2013-07-27 09:15:45.612117485 +0200
+@@ -56,6 +56,7 @@ wireshark.1: wireshark.pod ../config.h
+ 	$(POD2MAN)                     \
+ 	--center="The Wireshark Network Analyzer" \
+ 	--release=$(VERSION)			 \
++	--utf8					 \
+ 	wireshark.pod > wireshark.1
+ 
+ wireshark.html: wireshark.pod ../config.h ws.css
+diff -Naupr wireshark-1.10.1-orig/doc/reordercap.pod wireshark-1.10.1/doc/reordercap.pod
+--- wireshark-1.10.1-orig/doc/reordercap.pod	2013-06-06 01:21:18.000000000 +0200
++++ wireshark-1.10.1/doc/reordercap.pod	2013-07-27 10:15:54.420229248 +0200
+@@ -40,6 +40,8 @@ the same way B<reordercap> handles this.
+ When the B<-n> option is used, B<reordercap> will not write out the output
+ file if it finds that the input file is already in order.
+ 
++=back
++
+ =head1 SEE ALSO
+ 
+ pcap(3), wireshark(1), tshark(1), dumpcap(1), editcap(1), mergecap(1),

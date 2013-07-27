@@ -22,15 +22,15 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Exit on most errors
-set -e
+# Exit on most errors or unset variables
+set -eu
 
 # Set variables:
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-wireshark}
 VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
@@ -39,6 +39,7 @@ DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
 # Insert document files in this variable
 DOCFILES="AUTHORS COPYING ChangeLog INSTALL* NEWS README* doc/README*"
 
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -82,9 +83,10 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # https://bugs.wireshark.org/bugzilla/show_bug.cgi?id=8774
-patch -p0 -i $CWD/01_fix_encoding_asn2deb_pod.patch
-patch -p0 -i $CWD/02_fix_encoding_idl2deb_pod.patch
-patch -p0 -i $CWD/03_force_utf8_for_pod2man.patch
+# Only Makefile patch in Linux
+# And patch for reordercap.pod
+# https://anonsvn.wireshark.org/viewvc?view=revision&revision=49436
+patch -p1 -i $CWD/utf8-docmakefiles.patch
 
 # configure
 libtoolize --force
