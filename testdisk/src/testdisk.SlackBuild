@@ -30,9 +30,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-testdisk}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-6.13}
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-8}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
