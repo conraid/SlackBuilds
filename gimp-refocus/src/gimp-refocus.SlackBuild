@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Slackware build script for Gimp lqr plugin
+# Slackware build script for gimp refocus
 #
 # Copyright 2013 Corrado Franco (http://conraid.net)
 # All rights reserved.
@@ -30,9 +30,9 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-gimp-lqr-plugin}
-PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
+PRGNAME=refocus
+PKGNAME=gimp-refocus
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -41,7 +41,7 @@ PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
 # Insert document files in this variable
-DOCFILES="ABOUT-NLS AUTHORS BUGS COPYING ChangeLog INSTALL NEWS README TODO"
+DOCFILES="AUTHORS  COPYING  ChangeLog  INSTALL NEWS  README"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
@@ -79,20 +79,26 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-$VERSION.tar.bz2
+tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
 cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
+# Patch for new gimp release. Thanks archlinux
+patch -p1 -i $CWD/refocus.patch
+
 # Configure
+aclocal
+autoconf
+automake --add-missing
 LDFLAGS="$SLKLDFLAGS" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --bindir=/usr/lib${LIBDIRSUFFIX}/gimp/2.0/plug-ins \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux
 
@@ -101,20 +107,11 @@ make
 make DESTDIR=$PKG install
 
 # Strip binaries:
-find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
-find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+strip --strip-unneeded $PKG/usr/lib${LIBDIRSUFFIX}/gimp/2.0/plug-ins/$PRGNAME
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
-for i in ${DOCFILES}; do
-    if [ -e "${i}" ]; then
-        if ! [ -L "${i}" ]; then
-	    cp -a "${i}" ${DOCS}
-	else
-	    cp -LRp "${i}" ${DOCS}
-        fi
-    fi;
-done
+cp -a $DOCFILES $DOCS || true
 
 # Add a slackbuild script:
 install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
