@@ -2,7 +2,7 @@
 #
 # Slackware build script for pngcrush (http://pmt.sourceforge.net/pngcrush/)
 #
-# Copyright 2009-2012 Corrado Franco (http://conraid.net)
+# Copyright 2009-2013 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -22,15 +22,15 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Exit on most errors
-set -e
+# Exit on most errors or unset variables
+set -eu
 
 # Set variables:
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-pngcrush}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-1.7.15}
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -41,6 +41,7 @@ DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
 # Insert document files in this variable
 DOCFILES="AUTHORS BUGS CHANGES COPYING* COPYRIGHT ChangeLog INSTALL LICENSE MANIFEST NEWS README* THANKS TODO VERSION"	
 
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we are building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -76,7 +77,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-$VERSION.tar.bz2
+tar xvf $CWD/$PRGNAME-$VERSION.tar.xz
 cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
