@@ -36,8 +36,8 @@
 # groupadd -g 201 postdrop
 #
 
-# Exit on most errors
-set -e
+# Exit on most errors or unset variables
+set -eu
 
 # Set variables:
 CWD=$(pwd)
@@ -65,6 +65,7 @@ mail_owner=postfix
 setgid_group=postdrop
 
 
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
