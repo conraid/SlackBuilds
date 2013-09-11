@@ -82,12 +82,6 @@ cd $PRGNAME-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# https://bugs.wireshark.org/bugzilla/show_bug.cgi?id=8774
-# Only Makefile patch in Linux
-# And patch for reordercap.pod
-# https://anonsvn.wireshark.org/viewvc?view=revision&revision=49436
-patch -p1 -i $CWD/utf8-docmakefiles.patch
-
 # configure
 libtoolize --force
 autoreconf -vif
