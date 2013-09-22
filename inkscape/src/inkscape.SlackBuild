@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-inkscape}
 VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
@@ -86,7 +86,7 @@ chmod -R u+w,go+r-w,a-s .
 patch -p1 -i $CWD/remove-stray-comma.diff
 
 # Configure
-CPPFLAGS="-I/usr/include/ImageMagick/" \
+CPPFLAGS="-I/usr/include/ImageMagick-6/" \
 LDFLAGS="$SLKLDFLAGS" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
