@@ -21,23 +21,24 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Exit on most errors
-set -e
+# Exit on most errors or unset variables
+set -eu
 
 # Set variables:
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-ettercap}
-VERSION=${VERSION:-0.7.6}
-BUILD=${BUILD:-2}
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
 DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
 
 # Insert document files in this variable
-DOCFILES="AUTHORS BUGS COPYING* ChangeLog INSTALL NEWS README* THANKS TODO* VERSION"
+DOCFILES="AUTHORS BUGS COPYING* ChangeLog INSTALL NEWS README* THANKS TODO* VERSION doc/*"
 
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we are building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -89,13 +90,15 @@ mkdir -p build
 cd build
 cmake \
 -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
--DCMAKE_BUILD_TYPE=none \
+-DCMAKE_BUILD_TYPE=Release \
+-DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
 -DCMAKE_INSTALL_PREFIX=/usr \
 -DLIB_SUFFIX=${LIBDIRSUFFIX} \
 -DENABLE_GTK=ON \
 -DENABLE_IPV6=ON \
 -DMAN_INSTALLDIR=/usr/man \
 ..
+
 # Build and install:
 make
 make DESTDIR=$PKG install
