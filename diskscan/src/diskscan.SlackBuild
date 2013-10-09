@@ -78,9 +78,9 @@ esac
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAME-$PRGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-$PRGNAME-$VERSION.tar.gz
-cd $PRGNAME-$PRGNAME-$VERSION
+rm -rf $PRGNAME-$VERSION
+tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
+cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
