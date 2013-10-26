@@ -22,14 +22,14 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Exit on most errors
-set -e
+# Exit on most errors or unset variables
+set -eu
 
 # Set variables:
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-kid3}
-VERSION=${VERSION:-2.3}
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -39,6 +39,7 @@ DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
 # Insert document files in this variable
 DOCFILES="AUTHORS COPYING NEWS LICENSE ChangeLog INSTALL README"
 
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we are building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -81,19 +82,23 @@ cd $PRGNAME-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
+# Apply patch to build kid3-cli with readline and termcap
+# see http://sourceforge.net/p/kid3/bugs/76/
+patch -p1 -i $CWD/kid3-3.0_readline_termcap.diff
+
 # Configure
 mkdir build
 cd build
 cmake \
 -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
 -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
--DCMAKE_LD_FLAGS:STRING="$SLKLDFLAGS" \
 -DCMAKE_BUILD_TYPE=none \
 -DCMAKE_INSTALL_PREFIX=/usr \
--DMAN_INSTALL_DIR=/usr/man \
 -DSYSCONF_INSTALL_DIR=/etc \
 -DCMAKE_BUILD_TYPE=none \
 -DWITH_CHROMAPRINT=OFF \
+-DWITH_MP4V2=ON \
+-DWITH_APPS="Qt;CLI;KDE" \
 ..
 
 # Build and install:
@@ -102,6 +107,9 @@ make DESTDIR=$PKG install/strip
 cd ..
 
 # Compress and link manpages, if any:
+if [ -d $PKG/usr/share/man ]; then
+    mv $PKG/usr/share/man $PKG/usr
+fi
 if [ -d $PKG/usr/man ]; then
 ( cd $PKG/usr/man
   find . -type f -exec gzip -9 {} \;
