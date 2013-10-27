@@ -22,24 +22,25 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Exit on most errors
-set -e
+# Exit on most errors or unset variables
+set -eu
 
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-QtCurve-Gtk2}
+PRGNAME=${PRGNAME:-qtcurve}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-1.8.16}
-BUILD=${BUILD:-2}
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
 
 # Insert document files in this variable
-DOCFILES="AUTHORS COPYING README ChangeLog"
+DOCFILES="AUTHORS Bugs* COPYING README* ChangeLog.md README* TODO*"
 
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -73,16 +74,15 @@ esac
 # Extract source
 mkdir -p $PKG
 cd $TMP
-rm -rf QtCurve-* $PKG
-tar xjvf $CWD/QtCurve-Gtk2-${VERSION}.tar.bz2
-cd $PRGNAME-$VERSION
+rm -rf $PRGNAME-$VERSION $PKG
+tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
+cd $TMP/$PRGNAME-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Apply patch
-# Workaround for bug in libglib >= 2.36.1 
-# https://github.com/QtCurve/qtcurve-gtk2/commit/deb9c52
-patch -p1 -i $CWD/patch-libglib.diff
+# Apply patch to fix wrong logic
+# See https://github.com/QtCurve/qtcurve/commit/ce1ad0ce5b2812b2e2cfaa65c5a9bc89ee810a00#diff-0
+patch -p0 -i $CWD/qt4config.patch
 
 # Configure
 mkdir build
@@ -91,11 +91,13 @@ cmake \
  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
  -DCMAKE_INSTALL_PREFIX=/usr \
- -DQTC_MODIFY_MOZILLA=false \
- -DQTC_STYLE_SUPPORT=true \
+ -DMAN_INSTALL_DIR=/usr/man \
+ -DSYSCONF_INSTALL_DIR=/etc \
+ -DLIB_SUFFIX=${LIBDIRSUFFIX} \
+ -DENABLE_QT5=Off \
  ..
- 
-# Build and install 
+
+# Build and install
 make VERBOSE=1
 make install/strip VERBOSE=1 DESTDIR=$PKG
 cd ..

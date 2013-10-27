@@ -1,0 +1,11 @@
+--- qt4/config/qtcurveconfig.cpp.orig	2013-10-27 13:31:23.240042559 +0100
++++ qt4/config/qtcurveconfig.cpp	2013-10-27 13:32:14.868044158 +0100
+@@ -1488,7 +1488,7 @@ void QtCurveConfig::stripedProgressChang
+ void QtCurveConfig::activeTabAppearanceChanged()
+ {
+     int  current(activeTabAppearance->currentIndex());
+-    bool disableCol(APPEARANCE_FLAT==current && APPEARANCE_RAISED==current);
++    bool disableCol(APPEARANCE_FLAT==current || APPEARANCE_RAISED==current);
+ 
+     if(colorSelTab->value() && disableCol)
+         colorSelTab->setValue(MIN_COLOR_SEL_TAB_FACTOR);
