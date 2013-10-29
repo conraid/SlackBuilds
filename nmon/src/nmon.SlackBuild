@@ -2,7 +2,7 @@
 #
 # Slackware build script for nmon
 #
-# Copyright 2012 Corrado Franco (http://conraid.net)
+# Copyright 2013 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -24,15 +24,15 @@
 #
 # Latest version of this SlackBuild at http://slackers.it/repository
 #
-# Exit on most errors
-set -e
+# Exit on most errors or unset variables
+set -eu
 
 # Set variables:
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-nmon}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-14g}
+VERSION=${VERSION:-14i}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -40,6 +40,7 @@ TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -82,7 +83,7 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
-gcc -o nmon ${PRGNAME}.c ${SLKCFLAGS} ${SLKLDFLAGS} -DJFS -DGETUSER -Wall -DLARGEMEM -lncurses -g
+gcc -o nmon ${PRGNAME}.c ${SLKCFLAGS} ${SLKLDFLAGS} -DJFS -DGETUSER -Wall -DLARGEMEM -lncurses -g -DX86
 install -Dsm755 $PRGNAME $PKG/usr/bin/nmon
 
 # Add a documentation directory and man file
