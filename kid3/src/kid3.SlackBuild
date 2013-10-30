@@ -82,10 +82,6 @@ cd $PRGNAME-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Apply patch to build kid3-cli with readline and termcap
-# see http://sourceforge.net/p/kid3/bugs/76/
-patch -p1 -i $CWD/kid3-3.0_readline_termcap.diff
-
 # Configure
 mkdir build
 cd build
