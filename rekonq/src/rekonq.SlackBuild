@@ -22,8 +22,8 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Exit on most errors
-set -e
+# Exit on most errors or unset variables
+set -eu
 
 # Set variables:
 CWD=$(pwd)
@@ -41,6 +41,7 @@ DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 # Insert document files in this variable
 DOCFILES="AUTHORS COPYING ChangeLog INSTALL TODO"
 
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -75,7 +76,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-$VERSION.tar.bz2
+tar xvf $CWD/$PRGNAME-$VERSION.tar.xz
 cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
