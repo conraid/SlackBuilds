@@ -35,7 +35,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-lynis}
 VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
@@ -73,6 +73,9 @@ install -Dm755 lynis $PKG/usr/bin/lynis
 # Install plugins, include, db
 mkdir -p $PKG/usr/share/$PRGNAME
 cp -a db include plugins $PKG/usr/share/$PRGNAME
+
+# Install config file
+install -Dm644 default.prf $PKG/etc/lynis/default.prf.new
 
 # Install and compress manpage
 install -Dm644 lynis.8 $PKG/usr/man/man8/lynis.8
