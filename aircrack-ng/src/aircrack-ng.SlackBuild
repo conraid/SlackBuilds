@@ -22,21 +22,22 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Exit on most errors
-set -e
+# Exit on most errors or unset variables
+set -eu
 
 # Set variables:
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-aircrack-ng}
-VERSION=${VERSION:-1.2_beta1}
-SRCVERSION=$(echo $VERSION | tr _ -)
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1-2 -d- | rev)}
+PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
-DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
+DOCS="$PKG/usr/doc/$PRGNAME-$PKGVERSION"
 
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -71,13 +72,13 @@ esac
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAME-$SRCVERSION
-tar xvf $CWD/$PRGNAME-$SRCVERSION.tar.gz
-cd $PRGNAME-$SRCVERSION
+rm -rf $PRGNAME-$VERSION
+tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
+cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
 # Build and install:
-OPTIONS="unstable=true sqlite=true prefix=/usr mandir=/usr/man/man1 smandir=/usr/man/man8 docdir=/usr/doc/$PRGNAME-$VERSION"
+OPTIONS="unstable=true sqlite=true prefix=/usr mandir=/usr/man/man1 smandir=/usr/man/man8 docdir=/usr/doc/$PRGNAME-$PKGVERSION"
 LDFLAGS="$SLKLDFLAGS" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -103,4 +104,4 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 
 # Create package:
 cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-$BUILD$TAG.txz
+/sbin/makepkg -l y -c n $CWD/$PRGNAME-$PKGVERSION-$ARCH-$BUILD$TAG.txz
