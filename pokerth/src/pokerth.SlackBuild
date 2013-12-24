@@ -24,8 +24,8 @@
 #
 # Latest version of this SlackBuild at http://slackers.it/repository
 #
-# Exit on most errors
-set -e
+# Exit on most errors or unset variables
+set -eu
 
 # Set variables:
 CWD=$(pwd)
@@ -34,7 +34,7 @@ PRGNAME=${PRGNAME:-PokerTH}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f 3- -d . | cut -f 2 -d - | rev)}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -43,6 +43,7 @@ DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 # Insert document files in this variable
 DOCFILES="COPYING ChangeLog INSTALL TODO data/data-copyright.txt docs/*.txt"
 
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -83,6 +84,9 @@ cd $PRGNAME-$VERSION-src
 
 # fix g++: error: unrecognized option '-no_dead_strip_inits_and_terms'
 sed -i 's/QMAKE_LFLAGS += -no_dead_strip_inits_and_terms//' -i zlib_compress.pro pokerth_game.pro pokerth_server.pro
+
+# Fix for QT < 5
+sed 's/include <QtWidgets>/include <QtGui>/g' -i src/gui/qt/*/*/*.h -i src/gui/qt/*/*.h -i src/*.cpp
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
