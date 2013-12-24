@@ -2,7 +2,7 @@
 #
 # Slackware build script for tor http://www.torproject.org
 #
-# Copyright 2009-2012 Corrado Franco (http://conraid.net)
+# Copyright 2009-2013 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -30,15 +30,15 @@
 #  useradd -u 220 -g tor -d /dev/null -s /bin/false tor
 
 
-# Exit on most errors
-set -e
+# Exit on most errors or unset variables
+set -eu
 
 # Set variables:
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-tor}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-0.2.3.25}
+VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -63,6 +63,7 @@ fi
 # Insert document files in this variable
 DOCFILES="AUTHORS ChangeLog INSTALL LICENSE README ReleaseNotes"
 
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we are building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -133,7 +134,6 @@ chmod 0700 $PKG/var/lib/tor
 install -D -m 0755 contrib/tor.sh $PKG/etc/rc.d/rc.tor.new
 install -D -m 0755 contrib/torctl $PKG/usr/bin/torctl
 mv $PKG/etc/tor/torrc.sample $PKG/etc/tor/torrc.new
-mv $PKG/etc/tor/tor-tsocks.conf $PKG/etc/tor/tor-tsocks.conf.new
 
 
 # Compress and link manpages, if any:
