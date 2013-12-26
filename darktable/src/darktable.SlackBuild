@@ -87,13 +87,13 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure
-sed -i 's/-Werror//' src/CMakeLists.txt
+sed -i 's/-Werror"/"/' src/CMakeLists.txt
 sed -i 's#share/doc#doc#' doc/CMakeLists.txt
 mkdir -p build
 cd build
 cmake \
-  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
+  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_BUILD_TYPE=none \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DMAN_INSTALL_DIR=/usr/man \
@@ -101,6 +101,7 @@ cmake \
   -DBINARY_PACKAGE_BUILD=On \
   -DUSE_DARKTABLE_PROFILING=On \
   ..
+
 # Build and install:
 make
 make DESTDIR=$PKG install
