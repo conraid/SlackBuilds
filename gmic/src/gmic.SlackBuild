@@ -32,9 +32,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-gmic}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-$(echo ${PRGNAME}_*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d_ | rev)}
+VERSION=${VERSION:-1.5.8.1}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
