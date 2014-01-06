@@ -30,9 +30,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-opencv}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
+VERSION=${VERSION:-2.4.8}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -81,7 +81,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PKGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-${VERSION}.tar.gz
+unzip $CWD/$PRGNAME-${VERSION}.zip
 cd $PKGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
