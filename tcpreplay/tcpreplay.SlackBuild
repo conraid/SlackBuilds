@@ -30,8 +30,8 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-tcpreplay}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
-BUILD=${BUILD:-3}
+VERSION=${VERSION:-4.0.0}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
