@@ -29,7 +29,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-smb4k}
-VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
+VERSION=${VERSION:-1.1.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
