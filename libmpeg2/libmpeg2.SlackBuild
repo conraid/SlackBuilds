@@ -32,16 +32,16 @@ PRGNAME=${PRGNAME:-libmpeg2}
 PKGNAME=${PKGNAME:-$PRGNAME}
 VERSION=${VERSION:-0.5.1}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-SOURCE="http://libmpeg2.sourceforge.net/files/libmpeg2-$VERSION.tar.gz"
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
 
 # Insert document files in this variable
 DOCFILES="AUTHORS ChangeLog CodingStyle COPYING INSTALL NEWS README TODO doc/*.txt"
 
+ARCH=${ARCH=""}
 # Automatically determine the architecture we are building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -72,17 +72,12 @@ case "$ARCH" in
 	;;
 esac
 
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
-
 # Extract source and prepare:
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$(basename $SOURCE)
+tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
 cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:

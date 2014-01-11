@@ -30,15 +30,15 @@ set -e
 # Set variables:
 PRGNAME=libdnet
 VERSION=${VERSION:-1.12}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 CWD=$(pwd)
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
-SOURCE="http://libdnet.googlecode.com/files/libdnet-$VERSION.tgz"
 DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
 DOCFILES="LICENSE README THANKS"
 
+ARCH=${ARCH:=""}
 # Automatically determine the architecture we are building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -69,17 +69,12 @@ case "$ARCH" in
 	;;
 esac
 
-# Download source, if not exist
-if ! [ -e $(basename $SOURCE) ]; then
-    wget $SOURCE
-fi
-
 # Extract source and prepare:
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$(basename $SOURCE)
+tar xvf $CWD/$PRGNAME-$VERSION.tgz
 cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
