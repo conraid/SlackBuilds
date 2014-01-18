@@ -2,7 +2,7 @@
 #
 # Slackware build script for APC
 #
-# Copyright 2009-2013 Corrado Franco (http://conraid.net)
+# Copyright 2009-2014 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -28,11 +28,11 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-APC}
+PRGNAME=${PRGNAME:-apc}
 PKGNAME=${PKGNAME:-php-apc}
-VERSION=${VERSION:-3.1.14}
-PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-8}
+VERSION=${VERSION:-6a90406}
+PKGVERSION=git$(echo $VERSION | tr - _)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -77,7 +77,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-tar xzvf $CWD/$PRGNAME-$VERSION.tgz
+tar xzvf $CWD/$PRGNAME-$VERSION.tar.gz
 cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
