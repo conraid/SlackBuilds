@@ -29,7 +29,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-bluefish}
-VERSION=${VERSION:-2.2.5beta2}
+VERSION=${VERSION:-2.2.5}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -76,7 +76,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/${PRGNAME}-${VERSION}.tar.gz
+tar xvf $CWD/${PRGNAME}-${VERSION}.tar.bz2
 cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
