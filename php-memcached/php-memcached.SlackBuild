@@ -30,9 +30,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-memcached}
 PKGNAME=${PKGNAME:-php-memcached}
-VERSION=${VERSION:-$(echo $PRGNAME-*.tgz | rev | cut -f2- -d. | cut -f1 -d- | rev)}
+VERSION=${VERSION:-2.2.0b1}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-9}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -84,21 +84,13 @@ cd $PRGNAME-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Apply patch for libmemcached 1.0.17
-# https://github.com/php-memcached-dev/php-memcached/issues/69
-sed -i '3 a\
-typedef const struct memcached_server_st *memcached_server_instance_st;' php_libmemcached_compat.h
-
-# Apply patch from git
-patch -p1 -i $CWD/master.diff
-
 # Configure
 phpize --clean
 phpize
 LDFLAGS="$SLKLDFLAGS" \
 CFLAGS="$SLKCFLAGS" \
 ./configure \
-  --with-libdir=/usr/lib${LIBDIRSUFFIX} \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
   --enable-memcached \
   --disable-static \
   --enable-memcached-json \
