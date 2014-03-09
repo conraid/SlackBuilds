@@ -31,9 +31,9 @@ CWD=$(pwd)
 PRGNAME=php-handlersocket
 EXTNAME=handlersocket
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+VERSION=${VERSION:-0.3.1}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -92,8 +92,8 @@ LDFLAGS="$SLKLDFLAGS" \
 CFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr \
+  --with-libdir=lib${LIBDIRSUFFIX} \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --with-libdir=/usr/lib${LIBDIRSUFFIX} \
   --enable-static=no \
   --enable-shared=yes \
   --disable-handlersocket-hsclient \

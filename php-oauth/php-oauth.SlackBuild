@@ -32,7 +32,7 @@ PRGNAME=${PRGNAME:-oauth}
 PKGNAME=${PKGNAME:-php-oauth}
 VERSION=${VERSION:-1.2.3}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-7}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -90,13 +90,13 @@ phpize
 LDFLAGS="$SLKLDFLAGS" \
 CFLAGS="$SLKCFLAGS" \
 ./configure \
-  --with-libdir=/usr/lib${LIBDIRSUFFIX} \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
   --disable-static \
   --enable-oauth \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux
 
-# Build and install debugclient:
+# Build and install:
 make
 make INSTALL_ROOT=$PKG install
 strip --strip-unneeded $PKG/usr/lib${LIBDIRSUFFIX}/php/extensions/oauth.so
