@@ -2,7 +2,7 @@
 #
 # Slackware build script for sshfs (http://fuse.sourceforge.net/sshfs.html)
 #
-# Copyright 2008-2012 Corrado Franco (http://conraid.net)
+# Copyright 2008-2014 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-sshfs-fuse}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-2.4}
+VERSION=${VERSION:-2.5}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -41,6 +41,7 @@ DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
 # Insert document files in this variable
 DOCFILES="AUTHORS COPYING ChangeLog FAQ.txt INSTALL NEWS README"
 
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
