@@ -2,7 +2,7 @@
 #
 # Slackware build script for httping (http://www.vanheusden.com/httping/)
 #
-# Copyright 2008-2013 Corrado Franco (http://conraid.net)
+# Copyright 2008-2014 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -27,7 +27,7 @@ set -e
 
 # Set variables:
 PRGNAME=httping
-VERSION=${VERSION:-2.3.3}
+VERSION=${VERSION:-2.3.4}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 CWD=$(pwd)
@@ -77,7 +77,6 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
-patch -p0 < $CWD/path-fix.patch
 sed -i 's%-DVERSION=\\"$(VERSION)\\"%-DVERSION=\\"$(VERSION)\\" -D_GNU_SOURCE%' Makefile
 sed -i 's/0644/0644 -D/g' Makefile
 ./configure \
