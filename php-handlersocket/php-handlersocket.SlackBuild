@@ -33,14 +33,14 @@ EXTNAME=handlersocket
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-0.3.1}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
 
 # Insert document files in this variable
-DOCFILES="CHANGELOG README LICENSE handlersocket.php"
+DOCFILES="CREDITS ChangeLog README LICENSE handlersocket.php"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
