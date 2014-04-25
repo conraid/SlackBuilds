@@ -4,7 +4,7 @@
 #
 # Copyright 2010 Kuroi Kenshi <kuroi_kenshi96@yahoo.com>
 # Copyright 2012-2013 Audrius Kažukauskas <audrius@neutrino.lt>
-# Copyright 2013 Corrado Franco (http://conraid.net)
+# Copyright 2013-2014 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -37,7 +37,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-redis}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+VERSION=${VERSION:-2.8.9}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -100,6 +100,9 @@ sed -i 's#-O3##' deps/Makefile deps/hiredis/Makefile
 ( unset ARCH ; CFLAGS="$SLKCFLAGS" make MALLOC=libc CFLAGS="$SLKCFLAGS" PREFIX=/usr)
 mkdir -p $PKG/usr/bin
 make INSTALL_BIN="$PKG/usr/bin" PREFIX=/usr install
+cd deps/hiredis
+make PREFIX=$PKG/usr LIBRARY_PATH=lib64 install
+cd -
 
 # Create symlink to start redis in sentinel mode.
 ( cd $PKG/usr/bin ; ln -sf redis-server redis-sentinel )
