@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-squid}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-3.4.4}
+VERSION=${VERSION:-3.4.4.2}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -175,10 +175,6 @@ chown $SQUIDUSER:$SQUIDGROUP $PKG/var/{cache,log,run}/squid
 ## Edit the config file to set the user and group to run as
 sed -i -e 's%^cache_effective_user nobody%cache_effective_user '"$SQUIDUSER"'%g' $PKG/etc/squid/squid.conf.new
 sed -i -e 's%^cache_effective_group nobody%cache_effective_group '"$SQUIDGROUP"'%g' $PKG/etc/squid/squid.conf.new
-
-# Clean empty directory
-rmdir $PKG/usr/lib${LIBDIRSUFFIX}
-rmdir $PKG/usr/include
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
