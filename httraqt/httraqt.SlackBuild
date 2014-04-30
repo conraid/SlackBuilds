@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-httraqt}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-1.3.1}
+VERSION=${VERSION:-1.3.2}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -85,6 +85,8 @@ cd $PRGNAME
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
+
+sed -i "295s|opt->mms_maxtime|//opt->mms_maxtime|g" sources/main/options.cpp
 
 # Configure
 mkdir -p build
