@@ -2,7 +2,7 @@
 #
 # Slackware build script for GeoIP (http://www.maxmind.com/app/c)
 #
-# Copyright 2008-2013 Corrado Franco (http://conraid.net)
+# Copyright 2008-2014 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -29,7 +29,7 @@ set -e
 CWD=$(pwd)
 PRGNAME=${PRGNAME:-GeoIP}
 PKGNAME=${PKGNAME:-geoip}
-VERSION=${VERSION:-1.5.1}
+VERSION=${VERSION:-1.6.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -37,7 +37,7 @@ PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
 
 # Insert document files in this variable
-DOCFILES="AUTHORS COPYING ChangeLog INSTALL NEWS README TODO"
+DOCFILES="AUTHORS COPYING ChangeLog INSTALL LICENSE NEWS README TODO"
 
 # Automatically determine the architecture we are building on:
 if [ -z "$ARCH" ]; then
@@ -98,7 +98,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --build=$CHOST-slackware-linux
 
 # Build and install:
-make 
+make
 make DESTDIR=$PKG install
 
 # Strip binaries:
@@ -112,10 +112,6 @@ if [ -d $PKG/usr/man ]; then
   for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 )
 fi
-
-# Move config files
-mv $PKG/etc/GeoIP.conf.default $PKG/etc/GeoIP.conf.default.new
-mv $PKG/etc/GeoIP.conf $PKG/etc/GeoIP.conf.new
 
 # Other distros (and some other software) look in /var/lib/GeoIP/
 mkdir -p $PKG/var/lib
@@ -139,9 +135,6 @@ cat $CWD/$PKGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
 # Add slack-desc
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-
-# Add a doinst.sh
-cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 # Create package:
 cd $PKG
