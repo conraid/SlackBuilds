@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-opencv}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-2.4.8}
+VERSION=${VERSION:-2.4.9}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -87,9 +87,6 @@ cd $PKGNAME-$VERSION
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
-
-# http://code.opencv.org/issues/1925
-patch -Np1 -i $CWD/pkgconfig.patch
 
 # http://code.opencv.org/issues/2512
 patch -Np1 -i $CWD/fsh.patch
