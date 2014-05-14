@@ -2,7 +2,7 @@
 #
 # Slackware build script for lensfun (http://lensfun.berlios.de)
 #
-# Copyright 2008-2013 Corrado Franco (http://conraid.net)
+# Copyright 2008-2014 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -29,8 +29,8 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-lensfun}
-VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
-BUILD=${BUILD:-1}
+VERSION=${VERSION:-0.2.8}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
