@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-monit}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-5.8}
+VERSION=${VERSION:-5.8.1}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -41,7 +41,7 @@ PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
 # Insert document files in this variable
-DOCFILES="CHANGES COPYING README doc/*"
+DOCFILES="CONTRIBUTORS COPYING README doc/*"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
