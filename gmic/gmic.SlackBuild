@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-gmic}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-1.5.9.0}
+VERSION=${VERSION:-1.5.9.2}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -83,14 +83,16 @@ cd $PRGNAME-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Build and install:
+# Change Makefile for lib64 path
 if [ $ARCH == 'x86_64' ]; then
-    sed -i 's#/lib/#/lib64/#g' src/Makefile
-    sed -i 's#/lib #/lib64 #g' src/Makefile
-    sed -i 's#/lib$#/lib64#g' src/Makefile
+    sed -i -e 's#/lib/#/lib64/#g' -e 's#/lib #/lib64 #g' -e 's#/lib$#/lib64#g' src/Makefile
 fi
 sed -i 's#/share/man/#/man/#g' src/Makefile
+
+# Change Makefile for qmake command
 sed -i 's/qmake-qt4 zart.pro/qmake zart.pro/' src/Makefile
+
+# Build and install:
 make -C src OPT_CFLAGS="$SLKCFLAGS" OPT_LDFLAGS="$SLKLDFLAGS" all
 make -C src install DESTDIR="$PKG" USR="/usr"
 
