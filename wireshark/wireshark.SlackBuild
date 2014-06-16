@@ -29,12 +29,13 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-wireshark}
-VERSION=${VERSION:-1.11.3}
+VERSION=${VERSION:-1.12.0-rc2}
+PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
-DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
+DOCS="$PKG/usr/doc/$PRGNAME-$PKGVERSION"
 
 # Insert document files in this variable
 DOCFILES="AUTHORS COPYING ChangeLog INSTALL* NEWS README* doc/README*"
@@ -104,7 +105,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-geoip \
   --with-adns \
   --with-plugins \
-  --docdir=/usr/doc/$PRGNAME-$VERSION \
+  --docdir=/usr/doc/$PRGNAME-$PKGVERSION \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux
 
@@ -160,4 +161,4 @@ done
 
 # Create package:
 cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n $CWD/$PRGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
