@@ -2,7 +2,7 @@
 #
 # Slackware build script for inkscape (http://inkscape.org)
 #
-# Copyright 2008-2013 Corrado Franco (http://conraid.net)
+# Copyright 2008-2014 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -81,9 +81,6 @@ cd $PRGNAME-$VERSION
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
-
-# Apply path 
-patch -p1 -i $CWD/remove-stray-comma.diff
 
 # Configure
 CPPFLAGS="-I/usr/include/ImageMagick-6/" \
