@@ -1,52 +1,30 @@
-diff -baur opencv-2.4.7.orig/cmake/OpenCVGenPkgconfig.cmake opencv-2.4.7/cmake/OpenCVGenPkgconfig.cmake
---- opencv-2.4.7.orig/cmake/OpenCVGenPkgconfig.cmake	2013-11-12 20:31:27.253763202 +0000
-+++ opencv-2.4.7/cmake/OpenCVGenPkgconfig.cmake	2013-11-12 20:31:54.923577113 +0000
-@@ -46,7 +46,7 @@
- 
-   #need better solution....
-   if(libpath MATCHES "3rdparty")
--    set(installDir "share/OpenCV/3rdparty/${OPENCV_LIB_INSTALL_PATH}")
-+    set(installDir "share/opencv/3rdparty/${OPENCV_LIB_INSTALL_PATH}")
-   else()
-     set(installDir "${OPENCV_LIB_INSTALL_PATH}")
-   endif()
-diff -baur opencv-2.4.7.orig/cmake/OpenCVModule.cmake opencv-2.4.7/cmake/OpenCVModule.cmake
---- opencv-2.4.7.orig/cmake/OpenCVModule.cmake	2013-11-12 20:31:27.253763202 +0000
-+++ opencv-2.4.7/cmake/OpenCVModule.cmake	2013-11-12 20:35:37.805415871 +0000
-@@ -807,7 +807,7 @@
-   if(INSTALL_C_EXAMPLES AND NOT WIN32 AND EXISTS "${samples_path}")
-     file(GLOB sample_files "${samples_path}/*")
-     install(FILES ${sample_files}
--            DESTINATION share/OpenCV/samples/${module_id}
-+            DESTINATION share/opencv/samples/${module_id}
-             PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
-   endif()
- endfunction()
-diff -baur opencv-2.4.7.orig/CMakeLists.txt opencv-2.4.7/CMakeLists.txt
---- opencv-2.4.7.orig/CMakeLists.txt	2013-11-12 20:31:27.437095684 +0000
-+++ opencv-2.4.7/CMakeLists.txt	2013-11-12 20:40:21.160171499 +0000
-@@ -243,9 +243,9 @@
+diff -Naurp opencv-2.4.9-orig/CMakeLists.txt opencv-2.4.9/CMakeLists.txt
+--- opencv-2.4.9-orig/CMakeLists.txt	2014-04-11 12:15:26.000000000 +0200
++++ opencv-2.4.9/CMakeLists.txt	2014-06-26 15:06:18.705309828 +0200
+@@ -258,9 +258,9 @@ endif()
  if(ANDROID OR WIN32)
    set(OPENCV_DOC_INSTALL_PATH doc)
  elseif(INSTALL_TO_MANGLED_PATHS)
 -  set(OPENCV_DOC_INSTALL_PATH share/OpenCV-${OPENCV_VERSION}/doc)
-+  set(OPENCV_DOC_INSTALL_PATH doc/opencv-${OPENCV_VERSION})
++  set(OPENCV_DOC_INSTALL_PATH share/doc/opencv-${OPENCV_VERSION})
  else()
 -  set(OPENCV_DOC_INSTALL_PATH share/OpenCV/doc)
-+  set(OPENCV_DOC_INSTALL_PATH doc/opencv)
++  set(OPENCV_DOC_INSTALL_PATH share/doc/opencv)
  endif()
  
  if(WIN32)
-@@ -282,7 +282,7 @@
-     set(OPENCV_3P_LIB_INSTALL_PATH  "${OpenCV_INSTALL_BINARIES_PREFIX}staticlib${LIB_SUFFIX}")
+@@ -313,8 +313,8 @@ else()
+     set(OPENCV_SAMPLES_SRC_INSTALL_PATH    samples/native)
    else()
      set(OPENCV_LIB_INSTALL_PATH     lib${LIB_SUFFIX})
 -    set(OPENCV_3P_LIB_INSTALL_PATH  share/OpenCV/3rdparty/${OPENCV_LIB_INSTALL_PATH})
+-    set(OPENCV_SAMPLES_SRC_INSTALL_PATH    share/OpenCV/samples)
 +    set(OPENCV_3P_LIB_INSTALL_PATH  share/opencv/3rdparty/${OPENCV_LIB_INSTALL_PATH})
++    set(OPENCV_SAMPLES_SRC_INSTALL_PATH    share/opencv/samples)
    endif()
    set(OPENCV_INCLUDE_INSTALL_PATH "include")
  
-@@ -290,7 +290,7 @@
+@@ -322,7 +322,7 @@ else()
    if(LIB_SUFFIX AND NOT SIZEOF_VOID_P_BITS EQUAL LIB_SUFFIX)
      set(OPENCV_CONFIG_INSTALL_PATH lib${LIB_SUFFIX}/cmake/opencv)
    else()
@@ -55,82 +33,107 @@ diff -baur opencv-2.4.7.orig/CMakeLists.txt opencv-2.4.7/CMakeLists.txt
    endif()
  endif()
  
-diff -baur opencv-2.4.7.orig/data/CMakeLists.txt opencv-2.4.7/data/CMakeLists.txt
---- opencv-2.4.7.orig/data/CMakeLists.txt	2013-11-12 20:31:27.280430213 +0000
-+++ opencv-2.4.7/data/CMakeLists.txt	2013-11-12 20:31:54.923577113 +0000
-@@ -5,6 +5,6 @@
-   install(FILES ${HAAR_CASCADES} DESTINATION sdk/etc/haarcascades COMPONENT main)
-   install(FILES ${LBP_CASCADES}  DESTINATION sdk/etc/lbpcascades  COMPONENT main)
+diff -Naurp opencv-2.4.9-orig/cmake/OpenCVGenPkgconfig.cmake opencv-2.4.9/cmake/OpenCVGenPkgconfig.cmake
+--- opencv-2.4.9-orig/cmake/OpenCVGenPkgconfig.cmake	2014-04-11 12:15:26.000000000 +0200
++++ opencv-2.4.9/cmake/OpenCVGenPkgconfig.cmake	2014-06-26 15:07:24.804483474 +0200
+@@ -10,7 +10,7 @@
+ # -------------------------------------------------------------------------------------------
+ set(prefix      "${CMAKE_INSTALL_PREFIX}")
+ set(exec_prefix "\${prefix}")
+-set(libdir      "") #TODO: need link paths for OpenCV_EXTRA_COMPONENTS
++set(libdir      "\${prefix}/${OPENCV_LIB_INSTALL_PATH}")
+ set(includedir  "\${prefix}/${OPENCV_INCLUDE_INSTALL_PATH}")
+ 
+ if(CMAKE_BUILD_TYPE MATCHES "Release")
+@@ -35,10 +35,11 @@ ocv_list_reverse(OpenCV_LIB_COMPONENTS)
+ ocv_list_reverse(OpenCV_EXTRA_COMPONENTS)
+ 
+ #build the list of components
+-set(OpenCV_LIB_COMPONENTS_ "")
++set(OpenCV_LIB_COMPONENTS_ "-L\${libdir}")
+ foreach(CVLib ${OpenCV_LIB_COMPONENTS})
+   get_target_property(libpath ${CVLib} LOCATION_${CMAKE_BUILD_TYPE})
+   get_filename_component(libname "${libpath}" NAME)
++  get_filename_component(lname "${libpath}" NAME_WE)
+ 
+   if(INSTALL_TO_MANGLED_PATHS)
+     set(libname "${libname}.${OPENCV_VERSION}")
+@@ -46,12 +47,13 @@ foreach(CVLib ${OpenCV_LIB_COMPONENTS})
+ 
+   #need better solution....
+   if(libpath MATCHES "3rdparty")
+-    set(installDir "share/OpenCV/3rdparty/${OPENCV_LIB_INSTALL_PATH}")
++    set(installDir "share/opencv/3rdparty/${OPENCV_LIB_INSTALL_PATH}")
+   else()
+     set(installDir "${OPENCV_LIB_INSTALL_PATH}")
+   endif()
+ 
+-  set(OpenCV_LIB_COMPONENTS_ "${OpenCV_LIB_COMPONENTS_} \${exec_prefix}/${installDir}/${libname}")
++  string(REPLACE "libopencv" "-lopencv" lname "${lname}")
++  set(OpenCV_LIB_COMPONENTS_ "${OpenCV_LIB_COMPONENTS_} ${lname}")
+ endforeach()
+ 
+ # add extra dependencies required for OpenCV
+diff -Naurp opencv-2.4.9-orig/cmake/templates/opencv_run_all_tests_unix.sh.in opencv-2.4.9/cmake/templates/opencv_run_all_tests_unix.sh.in
+--- opencv-2.4.9-orig/cmake/templates/opencv_run_all_tests_unix.sh.in	2014-04-11 12:15:26.000000000 +0200
++++ opencv-2.4.9/cmake/templates/opencv_run_all_tests_unix.sh.in	2014-06-26 15:09:21.456025129 +0200
+@@ -1,7 +1,7 @@
+ #!/bin/sh
+ 
+ OPENCV_TEST_PATH=@CMAKE_INSTALL_PREFIX@/@OPENCV_TEST_INSTALL_PATH@
+-export OPENCV_TEST_DATA_PATH=@CMAKE_INSTALL_PREFIX@/share/OpenCV/testdata
++export OPENCV_TEST_DATA_PATH=@CMAKE_INSTALL_PREFIX@/share/opencv/testdata
+ 
+ SUMMARY_STATUS=0
+ for t in "$OPENCV_TEST_PATH/"opencv_test_* "$OPENCV_TEST_PATH/"opencv_perf_*;
+@@ -22,4 +22,4 @@ else
+   echo "OpenCV tests finished with status $SUMMARY_STATUS"
+ fi
+ 
+-return $SUMMARY_STATUS
+\ Manca newline alla fine del file
++return $SUMMARY_STATUS
+diff -Naurp opencv-2.4.9-orig/cmake/templates/opencv_testing.sh.in opencv-2.4.9/cmake/templates/opencv_testing.sh.in
+--- opencv-2.4.9-orig/cmake/templates/opencv_testing.sh.in	2014-04-11 12:15:26.000000000 +0200
++++ opencv-2.4.9/cmake/templates/opencv_testing.sh.in	2014-06-26 15:09:09.472174948 +0200
+@@ -1,2 +1,2 @@
+ # Environment setup for OpenCV testing
+-export OPENCV_TEST_DATA_PATH=@CMAKE_INSTALL_PREFIX@/share/OpenCV/testdata
+\ Manca newline alla fine del file
++export OPENCV_TEST_DATA_PATH=@CMAKE_INSTALL_PREFIX@/share/opencv/testdata
+diff -Naurp opencv-2.4.9-orig/data/CMakeLists.txt opencv-2.4.9/data/CMakeLists.txt
+--- opencv-2.4.9-orig/data/CMakeLists.txt	2014-04-11 12:15:26.000000000 +0200
++++ opencv-2.4.9/data/CMakeLists.txt	2014-06-26 15:07:54.202115953 +0200
+@@ -5,8 +5,8 @@ if(ANDROID)
+   install(FILES ${HAAR_CASCADES} DESTINATION sdk/etc/haarcascades COMPONENT libs)
+   install(FILES ${LBP_CASCADES}  DESTINATION sdk/etc/lbpcascades  COMPONENT libs)
  elseif(NOT WIN32)
--  install(FILES ${HAAR_CASCADES} DESTINATION share/OpenCV/haarcascades COMPONENT main)
--  install(FILES ${LBP_CASCADES}  DESTINATION share/OpenCV/lbpcascades  COMPONENT main)
-+  install(FILES ${HAAR_CASCADES} DESTINATION share/opencv/haarcascades COMPONENT main)
-+  install(FILES ${LBP_CASCADES}  DESTINATION share/opencv/lbpcascades  COMPONENT main)
+-  install(FILES ${HAAR_CASCADES} DESTINATION share/OpenCV/haarcascades COMPONENT libs)
+-  install(FILES ${LBP_CASCADES}  DESTINATION share/OpenCV/lbpcascades  COMPONENT libs)
++  install(FILES ${HAAR_CASCADES} DESTINATION share/opencv/haarcascades COMPONENT libs)
++  install(FILES ${LBP_CASCADES}  DESTINATION share/opencv/lbpcascades  COMPONENT libs)
  endif()
-diff -baur opencv-2.4.7.orig/modules/java/CMakeLists.txt opencv-2.4.7/modules/java/CMakeLists.txt
---- opencv-2.4.7.orig/modules/java/CMakeLists.txt	2013-11-12 20:31:27.360429532 +0000
-+++ opencv-2.4.7/modules/java/CMakeLists.txt	2013-11-12 20:36:41.984985273 +0000
-@@ -279,7 +279,7 @@
+ 
+ if(INSTALL_TESTS AND OPENCV_TEST_DATA_PATH)
+@@ -17,6 +17,6 @@ if(INSTALL_TESTS AND OPENCV_TEST_DATA_PA
+     install(DIRECTORY ${OPENCV_TEST_DATA_PATH}
+             DIRECTORY_PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE
+               GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+-            DESTINATION share/OpenCV/testdata COMPONENT tests)
++            DESTINATION share/opencv/testdata COMPONENT tests)
+   endif()
+-endif()
+\ Manca newline alla fine del file
++endif()
+diff -Naurp opencv-2.4.9-orig/modules/java/CMakeLists.txt opencv-2.4.9/modules/java/CMakeLists.txt
+--- opencv-2.4.9-orig/modules/java/CMakeLists.txt	2014-04-11 12:15:26.000000000 +0200
++++ opencv-2.4.9/modules/java/CMakeLists.txt	2014-06-26 15:08:28.534686737 +0200
+@@ -280,7 +280,7 @@ else(ANDROID)
    if(WIN32)
      set(JAR_INSTALL_DIR java)
    else(WIN32)
 -    set(JAR_INSTALL_DIR share/OpenCV/java)
 +    set(JAR_INSTALL_DIR share/opencv/java)
    endif(WIN32)
-   install(FILES ${JAR_FILE} DESTINATION ${JAR_INSTALL_DIR} COMPONENT main)
+   install(FILES ${JAR_FILE} DESTINATION ${JAR_INSTALL_DIR} COMPONENT java)
  endif(ANDROID)
-diff -baur opencv-2.4.7.orig/samples/c/CMakeLists.txt opencv-2.4.7/samples/c/CMakeLists.txt
---- opencv-2.4.7.orig/samples/c/CMakeLists.txt	2013-11-12 20:31:27.433762373 +0000
-+++ opencv-2.4.7/samples/c/CMakeLists.txt	2013-11-12 20:31:54.923577113 +0000
-@@ -54,6 +54,6 @@
- if (INSTALL_C_EXAMPLES AND NOT WIN32)
-   file(GLOB C_SAMPLES *.c *.cpp *.jpg *.png *.data makefile.* build_all.sh *.dsp *.cmd )
-   install(FILES ${C_SAMPLES}
--          DESTINATION share/OpenCV/samples/c
-+          DESTINATION share/opencv/samples/c
-           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
- endif ()
-diff -baur opencv-2.4.7.orig/samples/cpp/CMakeLists.txt opencv-2.4.7/samples/cpp/CMakeLists.txt
---- opencv-2.4.7.orig/samples/cpp/CMakeLists.txt	2013-11-12 20:31:27.417095818 +0000
-+++ opencv-2.4.7/samples/cpp/CMakeLists.txt	2013-11-12 20:31:55.110242982 +0000
-@@ -83,6 +83,6 @@
- if (INSTALL_C_EXAMPLES AND NOT WIN32)
-   file(GLOB C_SAMPLES *.c *.cpp *.jpg *.png *.data makefile.* build_all.sh *.dsp *.cmd )
-   install(FILES ${C_SAMPLES}
--          DESTINATION share/OpenCV/samples/cpp
-+          DESTINATION share/opencv/samples/cpp
-           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
- endif()
-diff -baur opencv-2.4.7.orig/samples/gpu/CMakeLists.txt opencv-2.4.7/samples/gpu/CMakeLists.txt
---- opencv-2.4.7.orig/samples/gpu/CMakeLists.txt	2013-11-12 20:31:27.407095885 +0000
-+++ opencv-2.4.7/samples/gpu/CMakeLists.txt	2013-11-12 20:31:55.110242982 +0000
-@@ -83,6 +83,6 @@
- if (INSTALL_C_EXAMPLES AND NOT WIN32)
-   file(GLOB install_list *.c *.cpp *.jpg *.png *.data makefile.* build_all.sh *.dsp *.cmd )
-   install(FILES ${install_list}
--          DESTINATION share/OpenCV/samples/${project}
-+          DESTINATION share/opencv/samples/${project}
-           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
- endif()
-diff -baur opencv-2.4.7.orig/samples/gpu/performance/CMakeLists.txt opencv-2.4.7/samples/gpu/performance/CMakeLists.txt
---- opencv-2.4.7.orig/samples/gpu/performance/CMakeLists.txt	2013-11-12 20:31:27.407095885 +0000
-+++ opencv-2.4.7/samples/gpu/performance/CMakeLists.txt	2013-11-12 20:31:55.110242982 +0000
-@@ -29,6 +29,6 @@
- if(INSTALL_C_EXAMPLES AND NOT WIN32)
-   file(GLOB GPU_FILES performance/*.cpp performance/*.h)
-   install(FILES ${GPU_FILES}
--          DESTINATION share/OpenCV/samples/gpu/performance
-+          DESTINATION share/opencv/samples/gpu/performance
-           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
- endif()
-diff -baur opencv-2.4.7.orig/samples/ocl/CMakeLists.txt opencv-2.4.7/samples/ocl/CMakeLists.txt
---- opencv-2.4.7.orig/samples/ocl/CMakeLists.txt	2013-11-12 20:31:27.397095952 +0000
-+++ opencv-2.4.7/samples/ocl/CMakeLists.txt	2013-11-12 20:39:29.227200043 +0000
-@@ -54,6 +54,6 @@
- if (INSTALL_C_EXAMPLES AND NOT WIN32)
-   file(GLOB install_list *.c *.cpp *.jpg *.png *.data makefile.* build_all.sh *.dsp *.cmd )
-   install(FILES ${install_list}
--          DESTINATION share/OpenCV/samples/${project}
-+          DESTINATION share/opencv/samples/${project}
-           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
- endif()

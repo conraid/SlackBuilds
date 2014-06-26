@@ -32,7 +32,7 @@ PRGNAME=${PRGNAME:-opencv}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-2.4.9}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -40,7 +40,7 @@ DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 SSE2=${SSE2:-ON}
 
 # Insert document files in this variable
-DOCFILES="AUTHORS COPYING INSTALL NEWS README THANKS TODO doc/license.txt"
+DOCFILES="LICENSE README*"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we are building on:
@@ -88,7 +88,7 @@ cd $PKGNAME-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# http://code.opencv.org/issues/2512
+# Apply patch for case sensitive path
 patch -Np1 -i $CWD/fsh.patch
 
 # Configure
