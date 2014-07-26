@@ -4,6 +4,7 @@
 #
 # Changelog
 # 1.0 First version. Testing only. See man page for options
+# 1.1 Add exit if redis not running
 
 set -e
 
@@ -11,10 +12,21 @@ if [ -e $1 ]; then
     OPTIONS="-i $1"
 fi
 
-
 start() {
+
     echo -n $"Starting ntopng: "
+
+    if [ -z $(pidof redis-server) ]; then
+      echo "Redis is not running."
+      exit 0
+    fi
+
     /usr/bin/ntopng $OPTIONS -e 2> /dev/null
+
+    if [[ $? -ne 0 ]]; then
+	    echo "Error in starting process"
+	    exit 1
+    fi
     echo 'OK'
 }
 

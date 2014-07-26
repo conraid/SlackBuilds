@@ -2,7 +2,7 @@
 #
 # Slackware build script for ntopng
 #
-# Copyright 2013 Corrado Franco (http://conraid.net)
+# Copyright 2013-2014 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -32,8 +32,8 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-ntopng}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
-PKGVERSION=$(echo $VERSION | tr - _)
+VERSION=${VERSION:-1.1_6932}
+PKGVERSION=$(echo $VERSION | cut -d_ -f1)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -78,7 +78,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
+tar xvf $CWD/$PRGNAME-$VERSION.tgz
 cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
