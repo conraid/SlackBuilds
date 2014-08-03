@@ -1,0 +1,25 @@
+diff -Naurp hping3-20051105-orig/Makefile.in hping3-20051105/Makefile.in
+--- hping3-20051105-orig/Makefile.in	2004-04-10 01:38:56.000000000 +0200
++++ hping3-20051105/Makefile.in	2014-08-03 09:56:43.623817980 +0200
+@@ -72,17 +72,10 @@ distclean:
+ 	rm -rf hping3 *.o byteorder byteorder.h systype.h Makefile libars.a .depend
+ 
+ install: hping3
+-	cp -f hping3 /usr/sbin/
+-	chmod 755 /usr/sbin/hping3
+-	ln -s /usr/sbin/hping3 /usr/sbin/hping
+-	ln -s /usr/sbin/hping3 /usr/sbin/hping2
+-	@if [ -d ${INSTALL_MANPATH}/man8 ]; then \
+-		cp ./docs/hping3.8 ${INSTALL_MANPATH}/man8; \
+-		chmod 644 ${INSTALL_MANPATH}/man8/hping3.8; \
+-	else \
+-		echo "@@@@@@ WARNING @@@@@@"; \
+-		echo "Can't install the man page: ${INSTALL_MANPATH}/man8 does not exist"; \
+-	fi
++	install -Dm755 hping3 ${DESTDIR}/usr/sbin/hping3
++	ln -s hping3 ${DESTDIR}/usr/sbin/hping
++	ln -s hping3 ${DESTDIR}/usr/sbin/hping2
++	install -Dm644 ./docs/hping3.8 ${DESTDIR}${INSTALL_MANPATH}/man8/hping3.8
+ 
+ strip: hping3
+ 	@ls -l ./hping3
