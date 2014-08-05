@@ -2,7 +2,7 @@
 #
 # Slackware build script for wxGTK (http://www.wxwidgets.org)
 #
-# Copyright 2008-2012 Corrado Franco (http://conraid.net)
+# Copyright 2008-2014 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -29,10 +29,10 @@ set -e
 CWD=$(pwd)
 
 PKGNAME=${PKGNAME:-wxgtk}
-PRGNAME=${PRGNAME:-wxGTK}
-VERSION=${VERSION:-2.8.12}
+PRGNAME=${PRGNAME:-wxWidgets}
+VERSION=${VERSION:-3.0.1}
 VERSION2=$( echo ${VERSION} | cut -d. -f1-2 )
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -73,7 +73,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME-$VERSION
-tar xjvf $CWD/wxGTK-$VERSION.tar.bz2
+tar xvf $CWD/$PRGNAME-$VERSION.tar.bz2
 cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
@@ -97,20 +97,16 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-opengl \
   --with-libmspack \
   --enable-mediactrl \
-  --host=$CHOST-slackware-linux \
+  --enable-graphics_ctx \
+  --with-gtk=3 \
+  --enable-ipv6 \
+  --enable-shared \
   --build=$CHOST-slackware-linux
 
 # Build and install:
 make 
 make -C locale allmo
-cd contrib/src
-make
-cd -
-
 make DESTDIR=$PKG install
-cd contrib/src
-make DESTDIR=$PKG install
-cd -
 
 # Strip binaries:
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
@@ -127,7 +123,7 @@ fi
 # Fix wrong link
 rm -f $PKG/usr/bin/wx-config
 ( cd $PKG/usr/bin
-  ln -sf /usr/lib${LIBDIRSUFFIX}/wx/config/gtk2-unicode-release-${VERSION2} wx-config
+  ln -sf /usr/lib${LIBDIRSUFFIX}/wx/config/gtk3-unicode-${VERSION2} wx-config
 )
 
 # Add a documentation directory:
