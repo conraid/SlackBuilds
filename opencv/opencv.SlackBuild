@@ -32,12 +32,13 @@ PRGNAME=${PRGNAME:-opencv}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-2.4.9}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 SSE2=${SSE2:-ON}
+SSE3=${SSE3:-ON}
 
 # Insert document files in this variable
 DOCFILES="LICENSE README*"
@@ -68,7 +69,7 @@ case "$ARCH" in
     x86_64)
 	SLKCFLAGS="-O2 -pipe -fomit-frame-pointer"; CHOST="x86_64"
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-	CONFSSE="-DENABLE_SSE3=ON -DENABLE_SSE2=ON -DENABLE_SSE=ON"
+	CONFSSE="-DENABLE_SSE3=${SSE3} -DENABLE_SSE2=ON -DENABLE_SSE=ON"
         ;;
     *)
         SLKCFLAGS="-O2"; CHOST=$ARCH
