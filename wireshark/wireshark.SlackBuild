@@ -29,9 +29,9 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-wireshark}
-VERSION=${VERSION:-1.12.0}
+VERSION=${VERSION:-1.12.1}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
