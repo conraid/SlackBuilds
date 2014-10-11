@@ -29,8 +29,8 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-lensfun}
-VERSION=${VERSION:-0.2.8}
-BUILD=${BUILD:-2}
+VERSION=${VERSION:-0.3.0}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
@@ -83,18 +83,26 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure
-LDFLAGS="$SLKLDFLAGS" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc \
-  --docdir=/usr/doc/${PRGNAME}-${VERSION}
+mkdir -p build
+cd build
+cmake \
+  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
+  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
+  -DCMAKE_LD_FLAGS:STRING="$SLKLDFLAGS" \
+  -DCMAKE_BUILD_TYPE=none \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DMAN_INSTALL_DIR=/usr/man \
+  -DSYSCONF_INSTALL_DIR=/etc \
+  -DLOCALSTATEDIR=/var \
+  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
+  -DBUILD_FOR_SSE=ON \
+  -DBUILD_FOR_SSE2=ON \
+  ..
 
 # Build and install:
 make
 make DESTDIR=$PKG install
+cd ..
 
 # Strip binaries:
 find $PKG | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
