@@ -34,7 +34,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-lynis}
-VERSION=${VERSION:-1.5.6}
+VERSION=${VERSION:-1.6.2}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -59,9 +59,9 @@ DOCFILES="CHANGELOG FAQ LICENSE README INSTALL"
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAME-$VERSION
+rm -rf $PRGNAME
 tar xzvf $CWD/$PRGNAME-$VERSION.tar.gz
-cd $PRGNAME-$VERSION
+cd $PRGNAME
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
