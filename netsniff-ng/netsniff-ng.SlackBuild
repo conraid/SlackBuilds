@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-netsniff-ng}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-0.5.7}
+VERSION=${VERSION:-0.5.8}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -39,7 +39,7 @@ PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
 
 # Insert document files in this variable
-DOCFILES="AUTHORS  COPYING  INSTALL  README  REPORTING-BUGS  VERSION"
+DOCFILES=" AUTHORS COPYING Cmds CodingStyle Config Extra INSTALL README REPORTING-BUGS SubmittingPatches"
 
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
@@ -84,24 +84,11 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure
-cd src
-sed -i 's#share/man/#man/#g' netsniff-ng/CMakeLists.txt
-sed -i 's#share/man/#man/#g' cmake/modules/Pod2Man.cmake
-mkdir -p build
-cd curvetun
-./build_nacl.sh $TMP
-./nacl_path.sh $TMP/nacl-20110221/build/$(hostname)/include/$NACL $TMP/nacl-20110221/build/$(hostname)/lib/$NACL
-cd ../build
-cmake \
-  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_BUILD_TYPE=none \
-  -DCMAKE_INSTALL_PREFIX=/usr \
-..
+./configure
 
 # Build and install:
-make
-make DESTDIR=$PKG install
-cd ../..
+make PREFIX=/usr ETCDIR=/etc MAN8DIR=/usr/man/man8 DISTRO=1 LDFLAGS="$SLKLDFLAGS" CFLAGS_DEF+="$SLKCFLAGS" 
+make PREFIX=/usr ETCDIR=/etc MAN8DIR=/usr/man/man8 DESTDIR=$PKG install
 
 # Strip binaries:
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
