@@ -28,8 +28,8 @@ set -e
 # Set variables:
 CWD=$(pwd)
 PRGNAME=${PRGNAME:-GeoIP}
-PKGNAME=${PKGNAME:-geoip}
-VERSION=${VERSION:-1.6.0}
+PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
+VERSION=${VERSION:-1.6.2}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -39,11 +39,12 @@ DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
 # Insert document files in this variable
 DOCFILES="AUTHORS COPYING ChangeLog INSTALL LICENSE NEWS README TODO"
 
-# Automatically determine the architecture we are building on:
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
+# Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
-        i?86) ARCH=i686 ;;
-        arm*) ARCH=arm ;;
+	i?86) ARCH=i686 ;;
+	arm*) ARCH=arm ;;
         # Unless $ARCH is already set, use uname -m for all other archs:
         *) ARCH=$( uname -m ) ;;
     esac
