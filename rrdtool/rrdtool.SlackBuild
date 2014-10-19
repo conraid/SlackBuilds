@@ -2,7 +2,7 @@
 #
 # Slackware build script for rrdtool (http://oss.oetiker.ch/rrdtool)
 #
-# Copyright 2008-2013 Corrado Franco (http://conraid.net)
+# Copyright 2008-2014 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -31,8 +31,8 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-rrdtool}
-VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
-BUILD=${BUILD:-2}
+VERSION=${VERSION:-1.4.9}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
@@ -89,16 +89,11 @@ find . \
  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
  -exec chmod 644 {} \;
 
-# Apply patch for pango font
-patch -p1 -i $CWD/pango.diff
-
-
-# Configure:
-autoreconf
 # Correct hard-coded path to lua libs (thanks to pprkut for spotting this one!)
 # Thanks to SBo
 sed -i "s|/lib/lua|/lib${LIBDIRSUFFIX}/lua|g" configure
 
+# Configure
 LDFLAGS="$SLKLDFLAGS" \
 CFLAGS="$SLKCFLAGS -I/usr/include/glib-2.0" \
 CXXFLAGS="$SLKCFLAGS" \
