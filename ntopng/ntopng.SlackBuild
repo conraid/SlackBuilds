@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-ntopng}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-1.1_6932}
+VERSION=${VERSION:-1.2.1}
 PKGVERSION=$(echo $VERSION | cut -d_ -f1)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -86,8 +86,9 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure
-sed -i 's#/usr/local#/usr#g' ntop_defines.h
-sed -i 's#/usr/local#/usr#g' Ntop.cpp
+#sed -i 's#/usr/local#/usr#g' ntop_defines.h
+#sed -i 's#/usr/local#/usr#g' Ntop.cpp
+./autogen.sh
 LDFLAGS="$SLKLDFLAGS" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -99,7 +100,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --mandir=/usr/man \
   --infodir=/usr/info \
   --docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
-  --datarootdir=/usr/share \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux
 
@@ -110,8 +110,6 @@ install -Dm644 ntopng.8 $PKG/usr/man/man8/ntopng.8
 mkdir -p $PKG/usr/share/ntopng
 cp -a httpdocs $PKG/usr/share/ntopng
 cp -a scripts $PKG/usr/share/ntopng
-rm $PKG/usr/share/ntopng/scripts/lua/modules/redis.lua
-cp third-party/redis-lua/src/redis.lua $PKG/usr/share/ntopng/scripts/lua/modules
 
 # Copy init and config file
 mkdir -p $PKG/etc/ntopng
@@ -128,7 +126,7 @@ fi
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
-cp -a $DOCFILES $DOCS
+cp -a $DOCFILES $DOCS || true
 
 # Add a slackbuild script:
 install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
