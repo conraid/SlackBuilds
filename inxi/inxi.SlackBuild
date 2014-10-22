@@ -34,7 +34,7 @@ PRGNAME=${PRGNAME:-inxi}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-2.2.15}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -66,7 +66,7 @@ install -Dm755 inxi $PKG/usr/bin/inxi
 # Install man page:
 install -Dm644 inxi.1.gz $PKG/usr/man/man1/inxi.1.gz
 
-# Install changelos
+# Install changelog
 install -Dm644 inxi.changelog $DOCS/ChangeLog
 
 # Install Copyright files
