@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-rawtherapee}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+VERSION=${VERSION:-4.2}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -105,6 +105,24 @@ cd ..
 # Strip binaries:
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+
+# Sane man path
+if [ -d $PKG/usr/share/man ]; then
+    mv $PKG/usr/share/man $PKG/usr
+fi
+if [ -d $PKG/usr/share/doc ]; then
+    mv $PKG/usr/share/doc $PKG/usr
+    if [ -d $PKG/usr/doc/$PKGNAME ]; then
+        mv $PKG/usr/doc/$PKGNAME $DOCS
+    fi
+fi
+
+# Compress and link manpages, if any:
+if [ -d $PKG/usr/man ]; then
+    find $PKG/usr/man -type f -exec gzip -9 {} \;
+    for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+fi
+
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
