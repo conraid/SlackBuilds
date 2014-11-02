@@ -38,7 +38,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-tor}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-0.2.4.25}
+VERSION=${VERSION:-0.2.5.10}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -131,10 +131,14 @@ make DESTDIR=$PKG install-strip
 mkdir -p $PKG/var/{run,log,lib}/tor
 chown $TOR_USER:$TOR_GROUP $PKG/var/{run,log,lib}/tor
 chmod 0700 $PKG/var/lib/tor
-install -D -m 0755 contrib/tor.sh $PKG/etc/rc.d/rc.tor.new
-install -D -m 0755 contrib/torctl $PKG/usr/bin/torctl
+install -Dm755 contrib/dist/tor.sh $PKG/etc/rc.d/rc.tor.new
+install -Dm755 contrib/dist/torctl $PKG/usr/bin/torctl
 mv $PKG/etc/tor/torrc.sample $PKG/etc/tor/torrc.new
-
+sed -i -e "s/_tor/$TOR_USER/" \
+	-e "s/_tor/$TOR_GROUP/" \
+	-e 's#/etc/init.d/tor#/etc/rc.d/rc.tor#' \
+	contrib/operator-tools/tor.logrotate
+install -Dm644 contrib/operator-tools/tor.logrotate $PKG/etc/logrotate.d/tor.new
 
 # Compress and link manpages, if any:
 if [ -d $PKG/usr/man ]; then
