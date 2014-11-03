@@ -2,7 +2,7 @@
 #
 # Slackware build script for numpy
 #
-# Copyright 2009-2013 Corrado Franco (http://conraid.net)
+# Copyright 2009-2014 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-numpy}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-$(echo $PRGNAME-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
+VERSION=${VERSION:-1.9.1}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -39,7 +39,7 @@ PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
 # Insert document files in this variable
-DOCFILES="OMPATIBILITY DEV_README.txt LICENSE.txt README.txt THANKS.txt"
+DOCFILES="COMPATIBILITY *.txt"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we are building on:
@@ -85,7 +85,11 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
+export LDFLAGS="$SLKLDFLAGS -shared"
+python setup.py config_fc --fcompiler=gnu95 build
 python setup.py build
+
+python setup.py config_fc --fcompiler=gnu95 install --prefix=/usr --root=$PKG --optimize=1
 python setup.py install --root $PKG
 
 # Strip binaries:
