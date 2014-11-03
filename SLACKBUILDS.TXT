@@ -28,10 +28,10 @@ SLACKBUILD SHORT DESCRIPTION:  afflib
 SLACKBUILD NAME: aircrack-ng
 SLACKBUILD LOCATION: ./aircrack-ng
 SLACKBUILD FILES: aircrack-ng.SlackBuild aircrack-ng.info slack-desc
-SLACKBUILD VERSION: 1.2-beta3
+SLACKBUILD VERSION: 1.2-rc1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://download.aircrack-ng.org/aircrack-ng-1.2-beta3.tar.gz
-SLACKBUILD MD5SUM: ec5492e65ce7e98c6812e84b1d18d811
+SLACKBUILD DOWNLOAD: http://download.aircrack-ng.org/aircrack-ng-1.2-rc1.tar.gz
+SLACKBUILD MD5SUM: c2f8648c92f7e46051c86c618d4fb0d5
 SLACKBUILD SHORT DESCRIPTION:  Aircrack-NG (the next generation of aircrack)
 
 SLACKBUILD NAME: anacron
@@ -343,10 +343,10 @@ SLACKBUILD SHORT DESCRIPTION:  curlftpfs (Mount FTP/SFTP via fuse)
 SLACKBUILD NAME: daq
 SLACKBUILD LOCATION: ./daq
 SLACKBUILD FILES: daq.SlackBuild daq.info slack-desc
-SLACKBUILD VERSION: 2.0.2
+SLACKBUILD VERSION: 2.0.4
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.snort.org/dl/snort-current/daq-2.0.2.tar.gz
-SLACKBUILD MD5SUM: 865bf9b750a2a2ca632591a3c70b0ea0
+SLACKBUILD DOWNLOAD: http://www.snort.org/downloads/snort/daq-2.0.4.tar.gz
+SLACKBUILD MD5SUM: 65e51d72e9d5d8b397e192e4e5857eff
 SLACKBUILD SHORT DESCRIPTION:  daq (Data Acquisition libary)
 
 SLACKBUILD NAME: darkstat
@@ -1060,6 +1060,15 @@ SLACKBUILD DOWNLOAD: http://download.gna.org/kvpnc/kvpnc-0.9.6a-kde4.tar.bz2
 SLACKBUILD MD5SUM: bf8b7224284f5d3f8ad5235c599fe9e7
 SLACKBUILD SHORT DESCRIPTION:  KVnpc (KDE vpn client)
 
+SLACKBUILD NAME: lapack
+SLACKBUILD LOCATION: ./lapack
+SLACKBUILD FILES: lapack.SlackBuild lapack.info make.inc.patch slack-desc
+SLACKBUILD VERSION: 3.5.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://www.netlib.org/lapack/lapack-3.5.0.tgz
+SLACKBUILD MD5SUM: b1d3e3e425b2e44a06760ff173104bdf
+SLACKBUILD SHORT DESCRIPTION:  LAPACK (linear algebra routines)
+
 SLACKBUILD NAME: lensfun
 SLACKBUILD LOCATION: ./lensfun
 SLACKBUILD FILES: lensfun.SlackBuild lensfun.info slack-desc
@@ -1351,10 +1360,10 @@ SLACKBUILD SHORT DESCRIPTION:  lynis
 SLACKBUILD NAME: lyx
 SLACKBUILD LOCATION: ./lyx
 SLACKBUILD FILES: doinst.sh lyx.SlackBuild lyx.info slack-desc
-SLACKBUILD VERSION: 2.1.2
+SLACKBUILD VERSION: 2.1.2.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: ftp://ftp.lyx.org/pub/lyx/stable/2.1.x/lyx-2.1.2.tar.xz
-SLACKBUILD MD5SUM: 1ee04fda4b65c011bb18f10333040dd8
+SLACKBUILD DOWNLOAD: ftp://ftp.lyx.org/pub/lyx/stable/2.1.x/lyx-2.1.2.1.tar.xz
+SLACKBUILD MD5SUM: 4581b368596dd6c9780e8add7b67c1c5
 SLACKBUILD SHORT DESCRIPTION:  LyX (WYSIWYM document processor)
 
 SLACKBUILD NAME: macchanger
@@ -1558,9 +1567,9 @@ SLACKBUILD SHORT DESCRIPTION:  nmon (Performance Monitoring)
 SLACKBUILD NAME: node
 SLACKBUILD LOCATION: ./node
 SLACKBUILD FILES: node.SlackBuild node.info slack-desc
-SLACKBUILD VERSION: v0.10.32
+SLACKBUILD VERSION: v0.10.33
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://nodejs.org/dist/v0.10.32/node-v0.10.32.tar.gz
+SLACKBUILD DOWNLOAD: http://nodejs.org/dist/v0.10.33/node-v0.10.33.tar.gz
 SLACKBUILD MD5SUM: f5fd3a03948ec5d12b49fdc7c49a5cac
 SLACKBUILD SHORT DESCRIPTION:  Node (Evented I/O for V8 JavaScript)
 
@@ -1594,10 +1603,10 @@ SLACKBUILD SHORT DESCRIPTION:  ntopng (next generation network top)
 SLACKBUILD NAME: numpy
 SLACKBUILD LOCATION: ./numpy
 SLACKBUILD FILES: numpy.SlackBuild numpy.info slack-desc
-SLACKBUILD VERSION: 1.7.1
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/numpy/NumPy/1.7.1/numpy-1.7.1.tar.gz
-SLACKBUILD MD5SUM: 0ab72b3b83528a7ae79c6df9042d61c6
+SLACKBUILD VERSION: 1.9.1
+SLACKBUILD REQUIRED: lapack
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/numpy/NumPy/1.9.1/numpy-1.9.1.tar.gz
+SLACKBUILD MD5SUM: 78842b73560ec378142665e712ae4ad9
 SLACKBUILD SHORT DESCRIPTION:  NumPy (a Python extension for scientific computing)
 
 SLACKBUILD NAME: omping
@@ -1620,11 +1629,11 @@ SLACKBUILD SHORT DESCRIPTION:  OpenAL Soft (a cross-platform 3D audio API)
 
 SLACKBUILD NAME: opencv
 SLACKBUILD LOCATION: ./opencv
-SLACKBUILD FILES: fsh.patch opencv.SlackBuild opencv.info slack-desc
-SLACKBUILD VERSION: 2.4.9
+SLACKBUILD FILES: opencv.SlackBuild opencv.info pkgconfig.patch slack-desc x86_asmfix.patch
+SLACKBUILD VERSION: 2.4.10
 SLACKBUILD REQUIRED: ffmpeg
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/opencvlibrary/opencv-unix/2.4.9/opencv-2.4.9.zip
-SLACKBUILD MD5SUM: 7f958389e71c77abdf5efe1da988b80c
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/opencvlibrary/opencv-unix/2.4.10/opencv-2.4.10.zip
+SLACKBUILD MD5SUM: ec63952d3a3dff965d5fdde765926821
 SLACKBUILD SHORT DESCRIPTION:  OpenCV (Open Source Computer Vision) 
 
 SLACKBUILD NAME: openjpeg
@@ -1900,10 +1909,10 @@ SLACKBUILD SHORT DESCRIPTION:  RAWStudio (read and manipulate RAW images)
 SLACKBUILD NAME: rawtherapee
 SLACKBUILD LOCATION: ./rawtherapee
 SLACKBUILD FILES: doinst.sh rawtherapee.SlackBuild rawtherapee.info slack-desc
-SLACKBUILD VERSION: 4.0.12
+SLACKBUILD VERSION: 4.2
 SLACKBUILD REQUIRED: atkmm cairomm glibmm gtkmm libiptcdata libsigc++ pangomm
-SLACKBUILD DOWNLOAD: http://rawtherapee.com/shared/source/rawtherapee-4.0.12.tar.xz
-SLACKBUILD MD5SUM: abfa1545b0c79096849a804b27e373fa
+SLACKBUILD DOWNLOAD: http://rawtherapee.com/shared/source/rawtherapee-4.2.tar.xz
+SLACKBUILD MD5SUM: e6510ed56fdc35aa712b4c0f54c52ac0
 SLACKBUILD SHORT DESCRIPTION:  rawtherapee (Raw image processing software)
 
 SLACKBUILD NAME: rdup
@@ -2107,10 +2116,10 @@ SLACKBUILD SHORT DESCRIPTION:  SMTube (small youtube browser)
 SLACKBUILD NAME: snort
 SLACKBUILD LOCATION: ./snort
 SLACKBUILD FILES: SLACKWARE.README doinst.sh rc.snort slack-desc snort.SlackBuild snort.info
-SLACKBUILD VERSION: 2.9.6.1
+SLACKBUILD VERSION: 2.9.7.0
 SLACKBUILD REQUIRED: daq libdnet
-SLACKBUILD DOWNLOAD: http://www.snort.org/dl/snort-current/snort-2.9.6.1.tar.gz
-SLACKBUILD MD5SUM: 
+SLACKBUILD DOWNLOAD: https://www.snort.org/downloads/snort/snort-2.9.7.0.tar.gz
+SLACKBUILD MD5SUM: c2a45bc56441ee9456478f219dd8d1e2
 SLACKBUILD SHORT DESCRIPTION:  Snort (Intrusion Detection and Prevention System)
 
 SLACKBUILD NAME: socat
@@ -2305,10 +2314,10 @@ SLACKBUILD SHORT DESCRIPTION:  unix-privesc-check (Shell script to check for pri
 SLACKBUILD NAME: unrar
 SLACKBUILD LOCATION: ./unrar
 SLACKBUILD FILES: slack-desc unrar.1.gz unrar.SlackBuild unrar.info unrar.patch
-SLACKBUILD VERSION: 5.1.6
+SLACKBUILD VERSION: 5.2.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.rarlab.com/rar/unrarsrc-5.1.6.tar.gz
-SLACKBUILD MD5SUM: be9607c59d62c3b101a70cd62c681515
+SLACKBUILD DOWNLOAD: http://www.rarlab.com/rar/unrarsrc-5.2.1.tar.gz
+SLACKBUILD MD5SUM: 451d75ce182abccfa60b47f605aaf736
 SLACKBUILD SHORT DESCRIPTION:  unrar (unpacker for the RAR archive format)
 
 SLACKBUILD NAME: unrtf
