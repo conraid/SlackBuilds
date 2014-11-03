@@ -30,9 +30,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-opencv}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-2.4.9}
+VERSION=${VERSION:-2.4.10}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -89,8 +89,12 @@ cd $PKGNAME-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Apply patch for case sensitive path
-patch -Np1 -i $CWD/fsh.patch
+# Apply patch for pkgconfig path
+patch -Np1 -i $CWD/pkgconfig.patch
+
+# Apply patch for autobuild
+# see https://github.com/Itseez/opencv/pull/3331
+patch -Np1 -i $CWD/x86_asmfix.patch
 
 # Configure
 mkdir -p build
@@ -101,18 +105,21 @@ cmake \
   -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DLIB_SUFFIX=${LIBDIRSUFFIX} \
+  -DBUILD_SHARED_LIBS=ON \
   -DWITH_QT=On \
   -DENABLE_SSE41=OFF \
   -DENABLE_SSE42=OFF \
   -DBUILD_EXAMPLES=OFF \
   -DINSTALL_PYTHON_EXAMPLES=OFF \
   -DWITH_XINE=ON \
+  -D WITH_GSTREAMER=OFF \
   -DWITH_QT=ON \
   -DBUILD_TESTS=OFF \
-  -DBUILD_SHARED_LIBS=ON \
   -DBUILD_PERF_TESTS=OFF \
   -DBUILD_WITH_DEBUG_INFO=OFF \
   -DENABLE_PRECOMPILED_HEADERS=OFF \
+  -D WITH_OPENCL=ON \
+  -D WITH_OPENGL=ON \
   $CONFSSE ..
 
 # Build and install:
