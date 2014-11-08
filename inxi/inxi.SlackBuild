@@ -32,9 +32,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-inxi}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-2.2.15}
+VERSION=${VERSION:-2.2.16}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -73,8 +73,7 @@ install -Dm644 inxi.changelog $DOCS/ChangeLog
 install -Dm644 $CWD/gpl.txt $DOCS/COPYING
 
 # Add a slackbuild script:
-install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
-
+install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild1
 # Add slack-desc
 install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
 
