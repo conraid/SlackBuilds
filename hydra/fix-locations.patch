@@ -1,16 +1,17 @@
-diff -rud hydra-7.4.2/dpl4hydra.sh hydra-7.4.2-archlinux/dpl4hydra.sh
---- hydra-7.4.2/dpl4hydra.sh	2012-12-22 18:34:25.000000000 -0300
-+++ hydra-7.4.2-archlinux/dpl4hydra.sh	2013-02-19 18:38:15.823926436 -0300
-@@ -9,7 +9,7 @@
+diff -rud hydra-7.6/dpl4hydra.sh hydra-7.6-archlinux/dpl4hydra.sh
+--- hydra-7.6/dpl4hydra.sh	2013-11-01 10:42:36.000000000 +0000
++++ hydra-7.6-archlinux/dpl4hydra.sh	2014-01-08 00:13:34.968156934 +0000
+@@ -8,8 +8,7 @@
+ # Credits:  Thanks to van Hauser for support and fixing portability issues.
  #           "The universe is an intelligence test." -Timothy Leary (R.I.P.)
  
- INSTALLDIR=/usr/local
+-INSTALLDIR=/usr/local
 -LOCATION=etc
 +LOCATION=/etc/hydra
  
  usage ()
  {
-@@ -156,7 +156,7 @@
+@@ -156,7 +155,7 @@
  LC_ALL=C
  export LC_ALL
  DPLPATH="."
@@ -19,16 +20,15 @@ diff -rud hydra-7.4.2/dpl4hydra.sh hydra-7.4.2-archlinux/dpl4hydra.sh
  FULLFILE="$DPLPATH/dpl4hydra_full.csv"
  OLDFILE="$DPLPATH/dpl4hydra_full.old"
  LOCALFILE="$DPLPATH/dpl4hydra_local.csv"
-diff -rud hydra-7.4.2/Makefile.am hydra-7.4.2-archlinux/Makefile.am
---- hydra-7.4.2/Makefile.am	2012-12-22 18:35:58.000000000 -0300
-+++ hydra-7.4.2-archlinux/Makefile.am	2013-02-19 18:41:57.463934194 -0300
-@@ -58,8 +58,7 @@
- 	-mkdir -p $(PREFIX)$(DIR) 
- 	cp -f $(BINS) $(PREFIX)$(DIR) && cd $(PREFIX)$(DIR) && chmod 755 $(BINS)
+diff -rud hydra-7.6/Makefile.am hydra-7.6-archlinux/Makefile.am
+--- hydra-7.6/Makefile.am	2013-12-25 07:06:44.000000000 +0000
++++ hydra-7.6-archlinux/Makefile.am	2014-01-08 00:13:57.501488889 +0000
+@@ -60,7 +60,7 @@
+ 	-mkdir -p $(PREFIX)$(DIR)
+ 	cp -f hydra-wizard.sh $(BINS) $(PREFIX)$(DIR) && cd $(PREFIX)$(DIR) && chmod 755 hydra-wizard.sh $(BINS)
  	-echo OK > /dev/null && test -x xhydra && cp xhydra $(PREFIX)$(DIR) && cd $(PREFIX)$(DIR) && chmod 755 xhydra || echo OK > /dev/null
--#	-cp -f dpl4hydra.sh ($PREFIX)/dpl4hydra.sh
 -	-sed -e "s|^INSTALLDIR=.*|INSTALLDIR="$(PREFIX)"|" dpl4hydra.sh > $(PREFIX)/bin/dpl4hydra.sh
 +	-cp -f dpl4hydra.sh $(PREFIX)/bin/dpl4hydra.sh
  	-chmod 755 $(PREFIX)/bin/dpl4hydra.sh
+ 	-mkdir -p $(PREFIX)/etc/
  	-cp -f *.csv $(PREFIX)/etc/
- 	-mkdir -p $(PREFIX)/man/man1
