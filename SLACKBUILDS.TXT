@@ -235,11 +235,20 @@ SLACKBUILD SHORT DESCRIPTION:  cabextract (Extract Microsoft cabinet files)
 SLACKBUILD NAME: cairomm
 SLACKBUILD LOCATION: ./cairomm
 SLACKBUILD FILES: cairomm.SlackBuild cairomm.info slack-desc
-SLACKBUILD VERSION: 1.10.0
+SLACKBUILD VERSION: 1.11.2
 SLACKBUILD REQUIRED: libsigc++ 
-SLACKBUILD DOWNLOAD: http://cairographics.org/releases/cairomm-1.10.0.tar.gz
-SLACKBUILD MD5SUM: 9c63fb1c04c8ecd3c5e6473075b8c39f
+SLACKBUILD DOWNLOAD: http://cairographics.org/releases/cairomm-1.11.2.tar.gz
+SLACKBUILD MD5SUM: 732a3ff5b57401eb5dfeef795a2a0c52
 SLACKBUILD SHORT DESCRIPTION:  cairomm (C++ wrapper for the cairo graphics library)
+
+SLACKBUILD NAME: ccid
+SLACKBUILD LOCATION: ./ccid
+SLACKBUILD FILES: ccid.SlackBuild ccid.info slack-desc
+SLACKBUILD VERSION: 1.4.18
+SLACKBUILD REQUIRED: pcsc-lite
+SLACKBUILD DOWNLOAD: https://alioth.debian.org/frs/download.php/file/4111/ccid-1.4.18.tar.bz2
+SLACKBUILD MD5SUM: 8d57342bda53aaee706ef2d02409c4f4
+SLACKBUILD SHORT DESCRIPTION:  ccid (PC/SC driver for USB CCID smart card readers)
 
 SLACKBUILD NAME: checkit
 SLACKBUILD LOCATION: ./checkit
@@ -774,11 +783,11 @@ SLACKBUILD SHORT DESCRIPTION:  ike-scan (IPsec VPN scanning, fingerprinting and 
 
 SLACKBUILD NAME: inkscape
 SLACKBUILD LOCATION: ./inkscape
-SLACKBUILD FILES: inkscape.SlackBuild inkscape.info remove-stray-comma.diff slack-desc
-SLACKBUILD VERSION: 0.48.5
+SLACKBUILD FILES: inkscape.SlackBuild inkscape.info slack-desc
+SLACKBUILD VERSION: 0.91pre2
 SLACKBUILD REQUIRED: atkmm cairomm glibmm gsl gtkmm libsigc++ pangomm
-SLACKBUILD DOWNLOAD: http://sourceforge.net/projects/inkscape/files/inkscape/0.48.5/inkscape-0.48.5.tar.bz2
-SLACKBUILD MD5SUM: 431cda5cd40cd4fdf2b89db1bdcce61f
+SLACKBUILD DOWNLOAD: http://sourceforge.net/projects/inkscape/files/inkscape/0.91pre2/inkscape-0.91pre2.tar.bz2
+SLACKBUILD MD5SUM: c91ce258f0c21c683e4d3fc58f001c8c
 SLACKBUILD SHORT DESCRIPTION:  Open Source Scalable Vector Graphics Editor
 
 SLACKBUILD NAME: inxi
@@ -973,10 +982,10 @@ SLACKBUILD SHORT DESCRIPTION:  kiconedit (KDE Icon Editor)
 SLACKBUILD NAME: kid3
 SLACKBUILD LOCATION: ./kid3
 SLACKBUILD FILES: doinst.sh kid3.SlackBuild kid3.info slack-desc
-SLACKBUILD VERSION: 3.1.1
+SLACKBUILD VERSION: 3.1.2
 SLACKBUILD REQUIRED: id3lib libmp4v2 kde-alien
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/kid3/kid3/3.1.1/kid3-3.1.1.tar.gz
-SLACKBUILD MD5SUM: 6bfda91e2abc69682374943fb89077c6
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/kid3/kid3/3.1.2/kid3-3.1.2.tar.gz
+SLACKBUILD MD5SUM: 6ed5cc729bc17471457fb43581ce70de
 SLACKBUILD SHORT DESCRIPTION:  Kid3 (Efficient Audio Tagger)
 
 SLACKBUILD NAME: kile
@@ -1077,6 +1086,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/lensfun/0.3.0/lensfun-0.3.0.tar.bz2
 SLACKBUILD MD5SUM: c553cb37f1b781d1af05787beacf0193
 SLACKBUILD SHORT DESCRIPTION:  LensFun (Photographic lenses open source database library)
+
+SLACKBUILD NAME: libasecnsp11
+SLACKBUILD LOCATION: ./libasecnsp11
+SLACKBUILD FILES: libasecnsp11.SlackBuild libasecnsp11.info slack-desc
+SLACKBUILD VERSION: 1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://www.regione.toscana.it/documents/10180/595930/smart_card.zip
+SLACKBUILD MD5SUM: 9075a7c4ae2645906e1068d0824c32ef
+SLACKBUILD SHORT DESCRIPTION:  libasecnsp11 (PKCS#11 library of the EuropeanHealtCard)
 
 SLACKBUILD NAME: libcli
 SLACKBUILD LOCATION: ./libcli
@@ -1261,10 +1279,10 @@ SLACKBUILD SHORT DESCRIPTION:  libpgf (Image file format)
 SLACKBUILD NAME: libsigc++
 SLACKBUILD LOCATION: ./libsigc++
 SLACKBUILD FILES: libsigc++.SlackBuild libsigc++.info slack-desc
-SLACKBUILD VERSION: 2.3.1
+SLACKBUILD VERSION: 2.4.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://ftp.gnome.org/pub/GNOME/sources/libsigc++/2.3/libsigc++-2.3.1.tar.xz
-SLACKBUILD MD5SUM: 06a0569e8ba161d3428e7daa838682f8
+SLACKBUILD DOWNLOAD: http://ftp.gnome.org/pub/GNOME/sources/libsigc++/2.4/libsigc++-2.4.0.tar.xz
+SLACKBUILD MD5SUM: c6cd2259f5ef973e4c8178d0abbdbfa7
 SLACKBUILD SHORT DESCRIPTION: libsigc++: libsigc++ (typesafe callback system for standard C++)
 
 SLACKBUILD NAME: libssh2
@@ -1708,6 +1726,33 @@ SLACKBUILD DOWNLOAD: http://compression.ca/pbzip2/pbzip2-1.1.8.tar.gz
 SLACKBUILD MD5SUM: a5400b652f4d3a91d68971f0f52a5dc1
 SLACKBUILD SHORT DESCRIPTION:  PBZIP2 (Parallel BZIP2)
 
+SLACKBUILD NAME: pcsc-lite
+SLACKBUILD LOCATION: ./pcsc-lite
+SLACKBUILD FILES: SLACKWARE.README doinst.sh pcsc-lite.SlackBuild pcsc-lite.info rc.pcscd slack-desc
+SLACKBUILD VERSION: 1.8.13
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://alioth.debian.org/frs/download.php/file/4126/pcsc-lite-1.8.13.tar.bz2
+SLACKBUILD MD5SUM: 4dcd22d20a6df8810fac5480cc320b6d
+SLACKBUILD SHORT DESCRIPTION:  pcsc-lite (Middleware to access a smart card using SCard API)
+
+SLACKBUILD NAME: pcsc-perl
+SLACKBUILD LOCATION: ./pcsc-perl
+SLACKBUILD FILES: pcsc-perl.SlackBuild pcsc-perl.info slack-desc
+SLACKBUILD VERSION: 1.4.13
+SLACKBUILD REQUIRED: pcsc-lite
+SLACKBUILD DOWNLOAD: http://ludovic.rousseau.free.fr/softwares/pcsc-perl/pcsc-perl-1.4.13.tar.bz2
+SLACKBUILD MD5SUM: 758ca469b79667fa8c41422df86a088b
+SLACKBUILD SHORT DESCRIPTION:  pcsc-perl (Perl wrapper to pcsc-lite)
+
+SLACKBUILD NAME: pcsc-tools
+SLACKBUILD LOCATION: ./pcsc-tools
+SLACKBUILD FILES: pcsc-tools.SlackBuild pcsc-tools.info slack-desc
+SLACKBUILD VERSION: 1.4.23
+SLACKBUILD REQUIRED: pcsc-lite pcsc-perl
+SLACKBUILD DOWNLOAD: http://ludovic.rousseau.free.fr/softwares/pcsc-tools/pcsc-tools-1.4.23.tar.gz
+SLACKBUILD MD5SUM: be8a7da2353f7601c21f8d155a2d6fd6
+SLACKBUILD SHORT DESCRIPTION:  pcsc-tools (various tools to interact with pcsc-lite)
+
 SLACKBUILD NAME: php-apc
 SLACKBUILD LOCATION: ./php-apc
 SLACKBUILD FILES: apc.ini doinst.sh php-apc.SlackBuild php-apc.info slack-desc
@@ -2089,10 +2134,10 @@ SLACKBUILD SHORT DESCRIPTION:  smb4k
 SLACKBUILD NAME: smem
 SLACKBUILD LOCATION: ./smem
 SLACKBUILD FILES: slack-desc smem.SlackBuild smem.info
-SLACKBUILD VERSION: 1.2
+SLACKBUILD VERSION: 1.4
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.selenic.com/smem/download/smem-1.2.tar.gz
-SLACKBUILD MD5SUM: b8975840a08172ba8a1abbe7cb202dfe
+SLACKBUILD DOWNLOAD: http://www.selenic.com/smem/download/smem-1.4.tar.gz
+SLACKBUILD MD5SUM: fe79435c3930389bfdb560255c802162
 SLACKBUILD SHORT DESCRIPTION:  smem (memory reporting tool)
 
 SLACKBUILD NAME: smplayer
