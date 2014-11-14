@@ -45,9 +45,9 @@ fi
 
 if ! grep -q "^postfix:" etc/passwd; then
     if ! grep -q ":200:" etc/passwd; then
-	chroot . useradd -u 200 -d /dev/null -s /bin/false -c "Postfix" -g 200 postfix &>/dev/null
+	chroot . useradd -u 200 -d /dev/null -s /bin/false -c "Postfix" -g postfix postfix &>/dev/null
     else
-	chroot . useradd -d /dev/null -s /bin/false -c "Postfix" -g 200 postfix &>/dev/null
+	chroot . useradd -d /dev/null -s /bin/false -c "Postfix" -g postfix postfix &>/dev/null
     fi
 fi
 
