@@ -76,9 +76,9 @@ esac
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAME
-svn checkout http://unix-privesc-check.googlecode.com/svn/trunk/ unix-privesc-check
-cd $PRGNAME
+rm -rf unix-privesc-check-read-only
+svn checkout http://unix-privesc-check.googlecode.com/svn/trunk/ unix-privesc-check-read-only
+cd unix-privesc-check-read-only
 
 # Set PKGVERSION variables
 PKGVERSION=${VERSION}_$(svnversion)
