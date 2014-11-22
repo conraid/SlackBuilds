@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-mutt}
 VERSION=${VERSION:-1.5.23}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAME
@@ -80,17 +80,10 @@ cd $PRGNAME-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# patch by Lunar Linux to add sidebar support
-patch -p1 -i $CWD/patch/sidebar.patch
-# patch sidebar patch for first character lost :-) Thanks to Archlinux
-patch -p0 -i $CWD/patch/sidebar-firstchar.patch
-# patch for compose with sidebar=0. Thanks to Debian project
-patch -p1 -i $CWD/patch/sidebar-compose.patch
-# patches for trash folder from Debian project
-patch -p1 -i $CWD/patch/trash-folder.patch
-patch -p1 -i $CWD/patch/purge-message.patch
-# patch for imap trash from Debian project
-patch -p1 -i $CWD/patch/imap_fast_trash.patch
+# patch by Lunar Linux to add sidebar support and other patch by Debian and Arch
+for FILEPATCH in $CWD/patches/*.patch; do
+	patch -p1 -i $FILEPATCH
+done
 
 # Configure
 autoreconf -vfi
@@ -105,12 +98,14 @@ LDFLAGS="$SLKLDFLAGS" \
   --with-docdir=/usr/doc/$PRGNAME-$VERSION \
   --sysconfdir=/etc/mutt \
   --with-mailpath=/var/spool/mail \
+  --enable-pop \
   --enable-smtp \
   --enable-imap \
   --with-ssl \
   --with-sasl \
   --with-idn \
   --enable-hcache \
+  --enable-gpgme \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux
 
