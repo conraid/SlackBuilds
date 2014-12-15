@@ -39,7 +39,7 @@ PRGNAME=${PRGNAME:-node}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-v0.10.33}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -116,6 +116,19 @@ make DESTDIR=$PKG install
 # Make symbolic link of node-gyp
 ln -s /usr/lib${LIBDIRSUFFIX}/node_modules/npm/bin/node-gyp-bin/node-gyp ${PKG}/usr/bin/node-gyp
 
+# Add bash completion file for npm.
+install -D -m 644 deps/npm/lib/utils/completion.sh ${PKG}/usr/share/bash-completion/completions/npm
+
+# Make symbolic link of npm man pages
+mkdir -p $PKG/usr/man/{man1,man3,man5,man7}
+for DIR in man1 man3 man5 man7; do
+	cd $PKG/usr/lib${LIBDIRSUFFIX}/node_modules/npm/man/$DIR
+	for FILE in *; do
+		ln -s /usr/lib${LIBDIRSUFFIX}/node_modules/npm/man/$DIR/$FILE $PKG/usr/man/$DIR/
+	done
+	cd -
+done
+
 # Strip binaries:
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
@@ -125,9 +138,9 @@ if [ -d ${PKG}/usr/man ]; then
     find ${PKG}/usr/man -type f -exec gzip -9 {} \;
     for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
-
-# Add bash completion file for npm.
-install -D -m 644 deps/npm/lib/utils/completion.sh ${PKG}/usr/share/bash-completion/completions/npm
+if [ -d ${PKG}/usr/lib${LIBDIRSUFFIX}/node_modules/npm/man/ ]; then
+    find ${PKG}/usr/lib${LIBDIRSUFFIX}/node_modules/npm/man/ -type f -exec gzip -9 {} \;
+fi
 
 # Remove unneeded files.
 find ${PKG}/usr \( -name '.git*' -o -name '.travis.yml' \) -exec rm -f {} \;
