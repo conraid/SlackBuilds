@@ -32,16 +32,16 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-darktable}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-1.4.2}
+VERSION=${VERSION:-1.6.0}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
 # Insert document files in this variable
-DOCFILES="doc/ChangeLog doc/NEWS"
+DOCFILES="doc/ChangeLog doc/NEWS README* RELEASE*"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
@@ -100,6 +100,8 @@ cmake \
   -DBINARY_PACKAGE_BUILD=On \
   -DUSE_DARKTABLE_PROFILING=On \
   -DDONT_USE_INTERNAL_LUA=Off \
+  -DUSE_LIBSECRET=Off \
+  -DUSE_GNOME_KEYRING=On \
   ..
 
 # Build and install:
@@ -119,7 +121,7 @@ fi
 
 # Add a documentation directory:
 mv $PKG/usr/doc/$PRGNAME $DOCS
-cp -a $DOCFILES $DOCS
+cp -a $DOCFILES $DOCS || true
 
 # Add a slackbuild script:
 install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
