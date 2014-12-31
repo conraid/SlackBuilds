@@ -1834,20 +1834,20 @@ SLACKBUILD DOWNLOAD: http://ludovic.rousseau.free.fr/softwares/pcsc-tools/pcsc-t
 SLACKBUILD MD5SUM: be8a7da2353f7601c21f8d155a2d6fd6
 SLACKBUILD SHORT DESCRIPTION:  pcsc-tools (various tools to interact with pcsc-lite)
 
-SLACKBUILD NAME: php-apc
-SLACKBUILD LOCATION: ./php-apc
-SLACKBUILD FILES: apc.ini doinst.sh php-apc.SlackBuild php-apc.info slack-desc
-SLACKBUILD VERSION: 6a90406
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://git.php.net/?p=pecl/caching/apc.git;a=snapshot;h=6a904063fe753299e8c7c5b2c6658b1976a61de2;sf=tgz
-SLACKBUILD MD5SUM: 460113b9668aa312144478a7c91546f7
+SLACKBUILD NAME: php-apcu
+SLACKBUILD LOCATION: ./php-apcu
+SLACKBUILD FILES: apcu.ini doinst.sh php-apcu.SlackBuild php-apcu.info slack-desc
+SLACKBUILD VERSION: 4.0.7
+SLACKBUILD REQUIRED: php
+SLACKBUILD DOWNLOAD: http://pecl.php.net/get/apcu-4.0.7.tgz
+SLACKBUILD MD5SUM: 9feb03d3e5217242a39244964f098b52
 SLACKBUILD SHORT DESCRIPTION:  php-apc (APC Alternative PHP Cache)
 
 SLACKBUILD NAME: php-handlersocket
 SLACKBUILD LOCATION: ./php-handlersocket
 SLACKBUILD FILES: doinst.sh handlersocket.ini php-handlersocket.SlackBuild php-handlersocket.info slack-desc
 SLACKBUILD VERSION: 0.3.1
-SLACKBUILD REQUIRED: 
+SLACKBUILD REQUIRED: php
 SLACKBUILD DOWNLOAD: https://php-handlersocket.googlecode.com/files/php-handlersocket-0.3.1.tar.gz
 SLACKBUILD MD5SUM: 87689883a01fd9bc8b0467c0bd96cf6a
 SLACKBUILD SHORT DESCRIPTION:  php-handlersocket (PHP extension for Handler Socket)
@@ -1856,7 +1856,7 @@ SLACKBUILD NAME: php-memcached
 SLACKBUILD LOCATION: ./php-memcached
 SLACKBUILD FILES: doinst.sh php-memcached.SlackBuild php-memcached.info slack-desc
 SLACKBUILD VERSION: 2.2.0
-SLACKBUILD REQUIRED: libmemcached
+SLACKBUILD REQUIRED: libmemcached php
 SLACKBUILD DOWNLOAD: http://pecl.php.net/get/memcached-2.2.0.tgz
 SLACKBUILD MD5SUM: 28937c6144f734e000c6300242f44ce6
 SLACKBUILD SHORT DESCRIPTION:  PHP Memcached
@@ -1865,7 +1865,7 @@ SLACKBUILD NAME: php-oauth
 SLACKBUILD LOCATION: ./php-oauth
 SLACKBUILD FILES: doinst.sh oauth.ini php-oauth.SlackBuild php-oauth.info slack-desc
 SLACKBUILD VERSION: 1.2.3
-SLACKBUILD REQUIRED: 
+SLACKBUILD REQUIRED: php
 SLACKBUILD DOWNLOAD: http://pecl.php.net/get/oauth
 SLACKBUILD MD5SUM: 99838d9a04b78058c7360dfd69c8593b
 SLACKBUILD SHORT DESCRIPTION:  PHP OAuth (OAuth 1.0 consumer and provider extension)
@@ -1874,10 +1874,19 @@ SLACKBUILD NAME: php-xdebug
 SLACKBUILD LOCATION: ./php-xdebug
 SLACKBUILD FILES: doinst.sh php-xdebug.SlackBuild php-xdebug.info slack-desc xdebug.ini
 SLACKBUILD VERSION: 2.2.6
-SLACKBUILD REQUIRED: libedit
+SLACKBUILD REQUIRED: libedit php
 SLACKBUILD DOWNLOAD: http://xdebug.org/files/xdebug-2.2.6.tgz
 SLACKBUILD MD5SUM: f216356861e27284580d0208060ea7fa
 SLACKBUILD SHORT DESCRIPTION:  php-xdebug (debug extension for php)
+
+SLACKBUILD NAME: php
+SLACKBUILD LOCATION: ./php
+SLACKBUILD FILES: README c-client-temp/include/c-client.h c-client-temp/include/dummy.h c-client-temp/include/env.h c-client-temp/include/env_unix.h c-client-temp/include/fdstring.h c-client-temp/include/flockcyg.h c-client-temp/include/flocksim.h c-client-temp/include/flstring.h c-client-temp/include/fs.h c-client-temp/include/ftl.h c-client-temp/include/imap4r1.h c-client-temp/include/linkage.h c-client-temp/include/mail.h c-client-temp/include/misc.h c-client-temp/include/netmsg.h c-client-temp/include/newsrc.h c-client-temp/include/nl.h c-client-temp/include/nntp.h c-client-temp/include/os_a32.h c-client-temp/include/os_a41.h c-client-temp/include/os_a52.h c-client-temp/include/os_aix.h c-client-temp/include/os_aos.h c-client-temp/include/os_art.h c-client-temp/include/os_asv.h c-client-temp/include/os_aux.h c-client-temp/include/os_bsd.h c-client-temp/include/os_bsf.h c-client-temp/include/os_bsi.h c-client-temp/include/os_cvx.h c-client-temp/include/os_cyg.h c-client-temp/include/os_d-g.h c-client-temp/include/os_do4.h c-client-temp/include/os_drs.h c-client-temp/include/os_dyn.h c-client-temp/include/os_hpp.h c-client-temp/include/os_isc.h c-client-temp/include/os_lnx.h c-client-temp/include/os_lyn.h c-client-temp/include/os_mct.h c-client-temp/include/os_mnt.h c-client-temp/include/os_nto.h c-client-temp/include/os_nxt.h c-client-temp/include/os_os4.h c-client-temp/include/os_osf.h c-client-temp/include/os_osx.h c-client-temp/include/os_ptx.h c-client-temp/include/os_pyr.h c-client-temp/include/os_qnx.h c-client-temp/include/os_s40.h c-client-temp/include/os_sc5.h c-client-temp/include/os_sco.h c-client-temp/include/os_sgi.h c-client-temp/include/os_shp.h c-client-temp/include/os_slx.h c-client-temp/include/os_soln.h c-client-temp/include/os_solo.h c-client-temp/include/os_sos.h c-client-temp/include/os_sua.h c-client-temp/include/os_sun.h c-client-temp/include/os_sv2.h c-client-temp/include/os_sv4.h c-client-temp/include/os_ult.h c-client-temp/include/os_vu2.h c-client-temp/include/pseudo.h c-client-temp/include/rfc822.h c-client-temp/include/smtp.h c-client-temp/include/sslio.h c-client-temp/include/tcp.h c-client-temp/include/tcp_unix.h c-client-temp/include/unix.h c-client-temp/include/utf8.h c-client-temp/include/utf8aux.h c-client-temp/lib/c-client.a doinst.sh init.d.php-fpm.in.diff.gz mod_php.conf.example php-fpm.conf.diff.gz php.SlackBuild php.info php.ini.diff slack-desc
+SLACKBUILD VERSION: 5.6.4
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://it1.php.net/distributions/php-5.6.4.tar.xz
+SLACKBUILD MD5SUM: bf824c5e5c7f49ca5f7350d72cba4881
+SLACKBUILD SHORT DESCRIPTION:  php (HTML-embedded scripting language)
 
 SLACKBUILD NAME: pmacct
 SLACKBUILD LOCATION: ./pmacct
