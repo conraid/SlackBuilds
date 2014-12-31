@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Slackware build script for PHP extension php-handlersocket
+# Slackware build script for APCu
 #
 # Copyright 2009-2014 Corrado Franco (http://conraid.net)
 # All rights reserved.
@@ -28,19 +28,18 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=php-handlersocket
-EXTNAME=handlersocket
-PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-0.3.1}
+PRGNAME=${PRGNAME:-apcu}
+PKGNAME=${PKGNAME:-php-apcu}
+VERSION=${VERSION:-4.0.7}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-11}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
 
 # Insert document files in this variable
-DOCFILES="CREDITS ChangeLog README LICENSE handlersocket.php"
+DOCFILES="INSTALL LICENSE NOTICE README* TECHNOTES.txt TODO"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
@@ -77,9 +76,9 @@ esac
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $EXTNAME
-tar xzvf $CWD/$PRGNAME-$VERSION.tar.gz
-cd $EXTNAME
+rm -rf $PRGNAME-$VERSION
+tar xzvf $CWD/$PRGNAME-$VERSION.tgz
+cd $PRGNAME-$VERSION
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -92,11 +91,11 @@ LDFLAGS="$SLKLDFLAGS" \
 CFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr \
-  --with-libdir=lib${LIBDIRSUFFIX} \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
   --enable-static=no \
   --enable-shared=yes \
-  --disable-handlersocket-hsclient \
+  --enable-apcu \
+  --disable-valgrind-checks \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux
 
@@ -105,7 +104,7 @@ make
 make INSTALL_ROOT=$PKG install
 
 # Strip binaries:
-strip --strip-unneeded $PKG/usr/lib${LIBDIRSUFFIX}/php/extensions/$EXTNAME.so
+strip --strip-unneeded $PKG/usr/lib${LIBDIRSUFFIX}/php/extensions/apcu.so
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
@@ -117,12 +116,11 @@ cat $CWD/$PKGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
 # Add slack-desc
 install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
 
-# Add a doinst.sh
+# Add a doinst.sh, if any
 install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
 
-# Add extensione config example
-mkdir -p $PKG/etc/php
-echo 'extension=handlersocket.so' > $PKG/etc/php/$EXTNAME.ini.new
+# Add apc.ini examples
+install -Dm644 $CWD/apcu.ini $PKG/etc/php/apcu.ini.new
 
 # Create package:
 cd $PKG
