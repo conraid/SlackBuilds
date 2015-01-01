@@ -36,7 +36,7 @@ PRGNAME=${PRGNAME:-php}
 PKGNAME=${PKGNAME:-$PRGNAME}
 VERSION=${VERSION:-5.6.4}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -80,10 +80,32 @@ esac
 rm -rf $PKG
 mkdir -p $TMP $PKG
 
-# we need to get c-client.a for IMAP support:
-IMAPLIBDIR="$CWD/c-client-temp"
-mkdir -p $IMAPLIBDIR/lib${LIBDIRSUFFIX}
-ln -s $IMAPLIBDIR/lib/c-client.a $IMAPLIBDIR/lib${LIBDIRSUFFIX}/libc-client.a || true
+
+# we need to compile alpine to get c-client.a for IMAP support
+IMAPLIBDIR=/usr/local/lib${LIBDIRSUFFIX}/c-client
+if [ -e $CWD/c-client-temp-$ARCH.tar.gz ]; then
+	echo "dec"
+    mkdir -p $IMAPLIBDIR
+	tar -xf $CWD/c-client-temp-$ARCH.tar.gz -C $IMAPLIBDIR
+	ln -s $IMAPLIBDIR/lib${LIBDIRSUFFIX}/c-client.a $IMAPLIBDIR/lib${LIBDIRSUFFIX}/libc-client.a || true
+fi
+
+if [ -r $IMAPLIBDIR/lib${LIBDIRSUFFIX}/c-client.a ]; then
+  echo "Using IMAP library:"
+  ls -l $IMAPLIBDIR/lib${LIBDIRSUFFIX}/c-client.a
+  sleep 5
+else
+  ( cd $CWD/../alpine ; ./alpine.SlackBuild || exit 1 ) || exit 1
+  ( cd $TMP/alpine-${ALPINE}/imap/c-client
+    strip -g c-client.a
+    mkdir -p $IMAPLIBDIR/lib${LIBDIRSUFFIX}
+    cp c-client.a $IMAPLIBDIR/lib${LIBDIRSUFFIX}
+    ( cd $IMAPLIBDIR/lib${LIBDIRSUFFIX} ; ln -sf c-client.a libc-client.a )
+    mkdir -p $IMAPLIBDIR/include
+    cp *.h $IMAPLIBDIR/include
+  )
+fi
+
 
 # A trick from DaMouse to enable building php into $PKG.
 # We'll remove this later on.
