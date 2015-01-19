@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-squid}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-3.4.11}
+VERSION=${VERSION:-3.5.1}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -93,53 +93,53 @@ LDFLAGS="$SLKLDFLAGS" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc/squid \
-  --localstatedir=/var/log/squid \
-  --datadir=/usr/share/squid \
-  --with-pidfile=/var/run/squid \
-  --with-logdir=/var/log/squid \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --infodir=/usr/info \
-  --docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
-  --enable-static=no \
-  --enable-shared=yes \
-  --with-pidfile=/var/run/squid \
-  --with-logdir=/var/log/squid \
-  --enable-auth \
-  --enable-auth-basic="DB,MSNT,MSNT-multi-domain,NCSA,POP3,SMB,getpwnam" \
-  --enable-auth-ntlm="smb_lm" \
-  --enable-auth-digest="file" \
-  --enable-auth-negotiate \
-  --enable-external-acl-helpers="unix_group,wbinfo_group,file_userip,SQL_session" \
-  --enable-snmp \
-  --enable-linux-netfilter \
-  --enable-async-io \
-  --disable-strict-error-checking \
-  --with-large-files \
-  --disable-option-checking \
-  --with-filedescriptors=65536 \
-  --enable-icmp \
-  --enable-delay-pools \
-  --enable-inline \
-  --enable-storeio="aufs,ufs,diskd" \
-  --enable-arp-acl \
-  --enable-wccp \
-  --enable-removal-policies=lru,heap \
-  --enable-ssl \
-  --enable-ssl-crtd \
-  --disable-strict-error-checking \
-  --enable-esi \
-  --enable-useragent-log \
-  --enable-cache-digests \
-  --enable-referer-log \
-  --enable-truncate \
-  --enable-icap-client \
-  --disable-arch-native \
-  --host=$CHOST-slackware-linux \
-  --build=$CHOST-slackware-linux
+	--prefix=/usr \
+	--libdir=/usr/lib${LIBDIRSUFFIX} \
+	--sysconfdir=/etc/squid \
+	--localstatedir=/var/log/squid \
+	--datadir=/usr/share/squid \
+	--with-pidfile=/var/run/squid \
+	--with-logdir=/var/log/squid \
+	--localstatedir=/var \
+	--mandir=/usr/man \
+	--infodir=/usr/info \
+	--docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
+	--enable-static=no \
+	--enable-shared=yes \
+	--with-pidfile=/var/run/squid \
+	--with-logdir=/var/log/squid \
+	--enable-auth \
+	--enable-auth-basic \
+	--enable-auth-ntlm \
+	--enable-auth-digest \
+	--enable-auth-negotiate \
+	--enable-external-acl-helpers="unix_group,wbinfo_group,file_userip,SQL_session" \
+	--enable-snmp \
+	--enable-linux-netfilter \
+	--enable-async-io \
+	--disable-strict-error-checking \
+	--with-large-files \
+	--disable-option-checking \
+	--with-filedescriptors=65536 \
+	--enable-icmp \
+	--enable-delay-pools \
+	--enable-inline \
+	--enable-storeio="aufs,ufs,diskd" \
+	--enable-arp-acl \
+	--enable-wccp \
+	--enable-removal-policies=lru,heap \
+	--with-openssl=/usr \
+	--enable-ssl-crtd \
+	--disable-strict-error-checking \
+	--enable-esi \
+	--enable-useragent-log \
+	--enable-cache-digests \
+	--enable-referer-log \
+	--enable-truncate \
+	--enable-icap-client \
+	--disable-arch-native \
+	--host=$CHOST-slackware-linux \
+	--build=$CHOST-slackware-linux
 
 # Build and install:
 make
@@ -163,11 +163,9 @@ sed -e "s,@USER@,$SQUIDUSER," -e "s,@GROUP@,$SQUIDGROUP," $CWD/squid.logrotate >
 
 mv $PKG/etc/squid/mime.conf $PKG/etc/squid/mime.conf.new
 mv $PKG/etc/squid/cachemgr.conf $PKG/etc/squid/cachemgr.conf.new
-mv $PKG/etc/squid/msntauth.conf $PKG/etc/squid/msntauth.conf.new
-mv $PKG/etc/squid/squid.conf $PKG/etc/squid/squid.conf.original
-install -Dm644 $CWD/squid.conf $PKG/etc/squid/squid.conf.new
-install -Dm644 $CWD/squid.conf $PKG/etc/squid/squid.conf.SBo
-install -Dm644 $CWD/squid.conf.documented $PKG/etc/squid/squid.conf.documented
+mv $PKG/etc/squid/squid.conf $PKG/etc/squid/squid.conf.new
+mv $PKG/etc/squid/errorpage.css $PKG/etc/squid/errorpage.css.new
+install -Dm644 src/squid.conf.documented $PKG/etc/squid/squid.conf.documented
 
 mkdir -p $PKG/var/{cache,run}/squid
 chown $SQUIDUSER:$SQUIDGROUP $PKG/var/{cache,log,run}/squid
