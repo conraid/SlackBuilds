@@ -1,7 +1,7 @@
 #!/bin/sh
 # Slackware build script for ettercap (http://ettercap.sourceforge.net/)
 #
-# Copyright 2008-2014 Corrado Franco (http://conraid.net)
+# Copyright 2008-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -28,15 +28,17 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-ettercap}
+PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-0.8.1}
-BUILD=${BUILD:-1}
+PKGVERSION=$(echo $VERSION | tr - _)
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAME
-DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
+PKG=$TMP/package-$PKGNAME
+DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
 # Insert document files in this variable
-DOCFILES="AUTHORS BUGS COPYING* ChangeLog INSTALL NEWS README* THANKS TODO* VERSION doc/*"
+DOCFILES="AUTHORS CHANGELOG INSTALL LICENSE* README* THANKS TODO*"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we are building on:
@@ -64,8 +66,8 @@ case "$ARCH" in
 	SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
     *)
-        SLKCFLAGS="-O2"; CHOST=$ARCH
-        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    SLKCFLAGS="-O2"; CHOST=$ARCH
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
 
@@ -104,43 +106,33 @@ make
 make DESTDIR=$PKG install
 cd ..
 
+# Rename conf files
+for FILE in conf dns mdns nbns; do
+	mv $PKG/etc/ettercap/etter.$FILE $PKG/etc/ettercap/etter.$FILE.new
+done
+
 # Compress and link manpages, if any:
 if [ -d $PKG/usr/man ]; then
-( cd $PKG/usr/man
-  find . -type f -exec gzip -9 {} \;
-  for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
-)
+    find $PKG/usr/man -type f -exec gzip -9 {} \;
+    for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
-for i in ${DOCFILES}; do
-    if [ -e ${i} ]; then
-        if ! [ -L ${i} ]; then
-	    cp -a ${i} ${DOCS}
-	else
-	    cp -LRp ${i} ${DOCS}
-        fi
-    fi;
-done
-
-# Rename con file
-mv $PKG/etc/ettercap/etter.conf $PKG/etc/ettercap/etter.conf.new
-mv $PKG/etc/ettercap/etter.dns $PKG/etc/ettercap/etter.dns.new
-mv $PKG/etc/ettercap/etter.nbns $PKG/etc/ettercap/etter.nbns.new
+cp -a $DOCFILES $DOCS
+cp -a doc $DOCS/example
 
 # Add a slackbuild script:
-cat $CWD/$PRGNAME.SlackBuild > $PKG/usr/doc/$PRGNAME-$VERSION/$PRGNAME.SlackBuild
+install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
 
 # Add slack-desc
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
 
 # Add a doinst.sh
-cat $CWD/doinst.sh > $PKG/install/doinst.sh
+install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
 
 # Create package:
 cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-$BUILD$TAG.txz
+/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
 
 
