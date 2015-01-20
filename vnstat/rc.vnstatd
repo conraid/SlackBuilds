@@ -1,55 +1,53 @@
 #!/bin/sh
 # Start/Stop/Restart vnStat
-# Copyright 2009 Corrado Franco
+# Copyright 2009-2015 Corrado Franco
 #
-# READ FIRST
-# Before you run this script make sure you run:
-# vnstat -u -i eth0
-# Replace 'eth0' with the interface that should be monitored.
 
 VNSTATBIN="/usr/sbin/vnstatd"
+CONFIGFILE="/etc/vnstat.conf"
+BASEDIR="/var/lib/vnstat/"
 PIDFILE="/var/run/vnstat.pid"
+INTERFACE=$(grep Interface $CONFIGFILE | cut -d" " -f2 | cut -d'"' -f2)
+echo $INTERFACE
 
 start_vnstat() {
-    echo -n "Starting vnStat daemon: "
     if [ -e "$PIDFILE" ]; then
-	echo "Already running"
-	return 0 
-    fi
-    $VNSTATBIN -d
-    if [ $? -gt 0 ]; then
-        echo "Failed"
+		echo "Already running"
+		return 0 
     else
-	echo "Done"
-    fi
+		if [ ! -e "$BASEDIR/$INTERFACE" ]; then
+			/usr/bin/vnstat -u -i "$INTERFACE"
+			sleep 2
+			if [ $? -gt 0 ]; then
+				echo "Failed"
+				return 0 
+			fi
+		fi
+		echo -n "Starting vnStat daemon: "
+		$VNSTATBIN -d --config $CONFIGFILE
+		if [ $? -gt 0 ]; then
+			echo "Failed"
+			return 0 
+		else
+			echo "Done"
+		fi
+	fi
 }
 
 stop_vnstat() {
-    echo -n "Stopping vnStat daemon: "
     if [ ! -e "$PIDFILE" ]; then
-	echo "Not running"
-	return 0 
-    fi
-    kill $(cat $PIDFILE)
-    if [ $? -gt 0 ]; then
-        echo "Failed"
+		echo "Not running"
+		return 0 
     else
-	echo "Done"
-    fi
-}
-
-reload_vnstat() {
-    echo -n  "Reloading vnStat daemon: "
-    if [ ! -e "$PIDFILE" ]; then
-	echo "Not running"
-	return 0 
-    fi
-    kill -HUP $(cat $PIDFILE)
-    if [ $? -gt 0 ]; then
-        echo "Failed"
-    else
-	echo "Done"
-    fi
+	    echo -n "Stopping vnStat daemon: "
+		kill $(cat $PIDFILE)
+		if [ $? -gt 0 ]; then
+			echo "Failed"
+			return 0 
+		else
+			echo "Done"
+		fi
+	fi
 }
 
 case "$1" in
@@ -59,16 +57,13 @@ case "$1" in
   stop)
     stop_vnstat
     ;;
-  reload)
-    reload_vnstat
-    ;;
-  restart)
+  restart|reload)
     stop_vnstat
     sleep 2
     start_vnstat
     ;;
   *)
-    echo "usage: $0 {start|stop|restart}"
+    echo "usage: $0 {start|stop|restart|reload}"
 esac
 exit 0
 
