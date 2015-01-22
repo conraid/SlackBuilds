@@ -2,7 +2,7 @@
 #
 # Slackware build script for pmacct (http://www.pmacct.net)
 #
-# Copyright 2008-2013 Corrado Franco (http://conraid.net) 
+# Copyright 2008-2015 Corrado Franco (http://conraid.net) 
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -27,7 +27,9 @@ set -e
 
 # Set variables:
 PRGNAME=pmacct
-VERSION=${VERSION:-0.14.3}
+PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
+VERSION=${VERSION:-1.5.0}
+PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 CWD=$(pwd)
@@ -37,8 +39,9 @@ PKG=$TMP/package-$PRGNAME
 DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
 
 # Insert document files in this variable
-DOCFILES="AUTHORS CONFIG-KEYS COPYING ChangeLog EXAMPLES FAQS INSTALL KNOWN-BUGS NEWS README TOOLS TODO UPGRADE docs/* examples sql"
+DOCFILES="AUTHORS CONFIG-KEYS COPYING ChangeLog FAQS INSTALL KNOWN-BUGS NEWS QUICKSTART README TOOLS TODO UPGRADE docs examples sql"
 
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -96,30 +99,41 @@ LDFLAGS="$SLKLDFLAGS" \
   --enable-v4-mapped \
   --enable-threads \
   --enable-ulog \
-  $CHOST-slackware-linux $CONF64
+  --enable-geoip \
+  --enable-static=no \
+  --enable-shared=yes \
+  --host=$CHOST-slackware-linux \
+  --build=$CHOST-slackware-linux
 
 # Build and install:
 make
 make DESTDIR=$PKG install-strip
 
+# Install config file
+install -Dm644 examples/pmacctd-imt.conf.example ${PKG}/etc/pmacct/pmacctd.conf.new
+
+# Install database scripts
+mkdir -p ${PKG}/usr/share/pmacct/{mysql,pgsql,sqlite3,sh}
+install -Dm644 sql/*.mysql ${PKG}/usr/share/pmacct/mysql/
+install -Dm644 sql/*.pgsql ${PKG}/usr/share/pmacct/pgsql/
+install -Dm644 sql/*.sqlite3 ${PKG}/usr/share/pmacct/sqlite3/
+install -Dm744 examples/*.sh ${PKG}/usr/share/pmacct/sh/
+
+# Install rc.d script
+install -Dm755 ${CWD}/rc.pmacctd ${PKG}/etc/rc.d/rc.pmacctd.new
+
 # Add a documentation directory:
 mkdir -p ${DOCS}
-for i in ${DOCFILES}; do
-    if [ -e ${i} ]; then
-        if ! [ -L ${i} ]; then
-            cp -a ${i} ${DOCS}
-        else
-            cp -LRp ${i} ${DOCS}
-        fi
-    fi
-done
+cp -a $DOCFILES $DOCS
 
 # Add a slackbuild script:
-cat $CWD/$PRGNAME.SlackBuild > $DOCS/$PRGNAME.SlackBuild
+install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
 
 # Add slack-desc
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+
+# Add a doinst.sh
+install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
 
 # Create package:
 cd $PKG

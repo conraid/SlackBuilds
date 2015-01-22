@@ -1,0 +1,46 @@
+#!/bin/bash
+
+CONFIGFILE=/etc/pmacct/pmacctd.conf
+SBIN=/usr/sbin/pmacctd
+
+[ -f $CONF ]
+
+PID=$(pidof -o %PPID $SBIN)
+
+_start() {
+	echo -n "Starting daemon... "
+    [ -z "$PID" ] && $SBIN -D -f $CONFIGFILE
+    if [ $? -gt 0 ]; then
+		echo "Error"
+    else
+		echo "OK"
+    fi
+}
+
+_stop() {
+    echo -n "Stopping daemon... "
+    [ ! -z "$PID" ] && kill $PID &> /dev/null
+    if [ $? -gt 0 ]; then
+		echo "Error"
+    else
+		echo "OK"
+    fi
+}
+
+
+case "$1" in
+  start)
+	_start
+    ;;
+  stop)
+	_stop
+    ;;
+  restart)
+	_stop
+    sleep 1
+	_start
+    ;;
+  *)
+    echo "usage: $0 {start|stop|restart}"
+esac
+exit 0
