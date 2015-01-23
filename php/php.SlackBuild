@@ -36,9 +36,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-php}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-5.6.4}
+VERSION=${VERSION:-5.6.5}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -271,7 +271,6 @@ LDFLAGS="$SLKLDFLAGS" \
 
 make
 make install INSTALL_ROOT=$PKG
-
 mkdir -p $PKG/etc/{rc.d,php-fpm}
 cp sapi/fpm/init.d.php-fpm $PKG/etc/rc.d/rc.php-fpm.new
 chmod 644 $PKG/etc/rc.d/rc.php-fpm.new
@@ -285,6 +284,9 @@ rm -rf .channels .depdb .depdblock .filemap .lock .registry
 
 # We do not package static extension libraries:
 rm -f $PKG/usr/lib${LIBDIRSUFFIX}/php/extensions/*.a
+
+# Fix broken link
+ln -sf phar.phar ${PKG}/usr/bin/phar
 
 # Install config files
 mkdir -p $PKG/etc/httpd
