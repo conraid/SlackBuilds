@@ -4,7 +4,7 @@
 #
 # Copyright 2010 Kuroi Kenshi <kuroi_kenshi96@yahoo.com>
 # Copyright 2012-2013 Audrius Kažukauskas <audrius@neutrino.lt>
-# Copyright 2013-2014 Corrado Franco (http://conraid.net)
+# Copyright 2013-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -37,8 +37,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-redis}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-2.8.17}
+VERSION=${VERSION:-2.8.19}
 PKGVERSION=$(echo $VERSION | tr - _)
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -50,11 +51,12 @@ DOCFILES="00-RELEASENOTES BUGS CONTRIBUTING COPYING INSTALL MANIFESTO README"
 
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
+	echo $ARCH
     case "$( uname -m )" in
 	i?86) ARCH=i686 ;;
 	arm*) ARCH=arm ;;
         # Unless $ARCH is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
+    *) ARCH=$( uname -m ) ;;
     esac
 fi
 
@@ -90,9 +92,7 @@ cd $PRGNAME-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-
 # Build and install:
-
 # Use our CFLAGS.
 sed -i 's#-O3##' deps/Makefile deps/hiredis/Makefile
 # http://lists.slackbuilds.org/pipermail/slackbuilds-users/2013-January/010042.html
