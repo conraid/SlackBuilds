@@ -2,7 +2,9 @@
 #
 # Slackware build script for <prgname> (http://www.privoxy.org/)
 #
-# Copyright 2009-2014 Corrado Franco (http://conraid.net)
+# Copyright (c) 2007  alkos333 <me@alkos333.net>
+# Copyright 2009-2015 Corrado Franco (http://conraid.net)
+# Modified by Corrado Franco for slackers.it repository
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -23,16 +25,17 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Exit on most errors
-set -e
+set -eu
 
 # Set variables:
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-privoxy}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-3.0.22}
+VERSION=${VERSION:-3.0.23}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -79,8 +82,8 @@ case "$ARCH" in
 	SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
     *)
-        SLKCFLAGS="-O2"; CHOST=$ARCH
-        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    SLKCFLAGS="-O2"; CHOST=$ARCH
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
 
@@ -95,6 +98,14 @@ cd $PRGNAME-$VERSION-stable
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
+
+# Put the docs where we tell them to go.
+sed -i "/^DOC_DEST/s/= .*/= @docdir@/" GNUmakefile.in
+
+# The Makefile checks if certain config files exist, and if so, adds a
+# .new suffix.  Turn this behavior off.  We will do it below.
+# Thanks to SBo
+sed -i "s/\[ -s \"\$(CONF_DEST)\/\$\$i\" \]/false/" GNUmakefile.in
 
 # Configure
 autoheader
@@ -120,17 +131,21 @@ CXXFLAGS="$SLKCFLAGS" \
 make 
 make DESTDIR=$PKG install-strip
 
-mkdir $PKG/etc/rc.d
-cat slackware/rc.privoxy > $PKG/etc/rc.d/rc.privoxy
+# Install init script
+install -Dm755 slackware/rc.privoxy $PKG/etc/rc.d/rc.privoxy.new
 
-# Fix Path with the config file to point to right usermanual
-sed -i "s%user-manual /usr/share/doc/$PRGNAME%user-manual /usr/doc/$PRGNAME-$VERSION%" $PKG/etc/privoxy/config*
-# Make .new files so we dont clobber existing configuration
-find $PKG/etc -type f ! -name "*.new" -exec mv {} {}.new \;
+# Make .new files so we don't clobber the existing configuration.
+# Thanks to SBo
+for i in config match-all.action trust user.action user.filter; do
+  mv $PKG/etc/privoxy/$i $PKG/etc/privoxy/$i.new
+done
+
 # Don't clobber the logfile either
 mv $PKG/var/log/privoxy/logfile $PKG/var/log/privoxy/logfile.new
+
 # Remove this directory since it's empty and part of Slackware base
 rmdir $PKG/var/run
+rmdir $PKG/usr/share/
 
 # Compress and link manpages, if any:
 if [ -d $PKG/usr/man ]; then
@@ -140,24 +155,17 @@ if [ -d $PKG/usr/man ]; then
 )
 fi
 
-# Sane doc path
-mkdir -p $PKG/usr/doc
-mv $PKG/usr/share/doc/$PRGNAME $DOCS
-rm -rf $PKG/usr/share/
-find $PKG/usr/doc -type f -exec chmod 644 {} \;
-
 # Add template for TOR
-cp $CWD/config.tor.template $DOCS
+install -Dm644 $CWD/config.tor.template $DOCS/config.tor.template
 
 # Add a slackbuild script:
-cat $CWD/$PKGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
+install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
 
 # Add slack-desc
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
 
-# Add a doinst.sh, if any
-cat $CWD/doinst.sh > $PKG/install/doinst.sh
+# Add a doinst.sh
+install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
 
 # Create package:
 cd $PKG
