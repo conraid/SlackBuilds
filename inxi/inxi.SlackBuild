@@ -32,22 +32,11 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-inxi}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-REVISION=${REVISION:-r2584}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
-
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
-# Automatically determine the architecture we're building on:
-if [ -z "$ARCH" ]; then
-    case "$( uname -m )" in
-	i?86) ARCH=i686 ;;
-	arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
-    esac
-fi
+ARCH=${ARCH:="noarch"} 
 
 # Extract files
 rm -rf $PKG
@@ -56,8 +45,7 @@ cd $TMP
 rm -rf $PRGNAME
 mkdir -p $PRGNAME
 cd $PRGNAME
-svn export http://inxi.googlecode.com/svn/trunk/inxi.tar.gz@${REVISION}
-tar -xf $PRGNAME.tar.gz
+tar xvf $CWD/$PRGNAME.tar.gz
 
 # Check version
 VERSION=${VERSION:-$(grep "^####  Version:" inxi | cut -f4 -d" ")}
