@@ -34,23 +34,16 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-lynis}
+PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-1.6.4}
+PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAME
-DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
+PKG=$TMP/package-$PKGNAME
+DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
-# Automatically determine the architecture we're building on:
-if [ -z "$ARCH" ]; then
-    case "$( uname -m )" in
-        i?86) ARCH=x86 ;;
-        arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
-    esac
-fi
+ARCH=${ARCH:="noarch"}
 
 # Insert document files in this variable
 DOCFILES="CHANGELOG FAQ LICENSE README INSTALL"
@@ -60,7 +53,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $PRGNAME
-tar xzvf $CWD/$PRGNAME-$VERSION.tar.gz
+tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
 cd $PRGNAME
 
 # Make sure ownerships and permissions are sane:
@@ -71,8 +64,8 @@ chmod -R u+w,go+r-w,a-s .
 install -Dm755 lynis $PKG/usr/bin/lynis
 
 # Install plugins, include, db
-mkdir -p $PKG/usr/share/$PRGNAME
-cp -a db include plugins $PKG/usr/share/$PRGNAME
+mkdir -p $PKG/usr/share/$PKGNAME
+cp -a db include plugins $PKG/usr/share/$PKGNAME
 
 # Install config file
 install -Dm644 default.prf $PKG/etc/lynis/default.prf.new
@@ -83,14 +76,10 @@ gzip -9 $PKG/usr/man/man8/lynis.8
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
-for i in ${DOCFILES}; do
-    if [ -e ${i} ]; then
-        mv ${i} ${DOCS}
-    fi;
-done
+cp -a $DOCFILES $DOCS || true
 
 # Add a slackbuild script:
-cat $CWD/$PRGNAME.SlackBuild > $DOCS/$PRGNAME.SlackBuild
+install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
 
 # Add slack-desc
 install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
@@ -100,4 +89,4 @@ install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
 
 # Create package:
 cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-$BUILD$TAG.txz
+/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
