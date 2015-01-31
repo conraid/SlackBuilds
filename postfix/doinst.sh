@@ -60,19 +60,8 @@ if ! grep -q "^postdrop:" etc/group; then
 fi
 
 # This is an incompatability with the sendmail package
-( cd usr/lib; ln -sf /usr/sbin/sendmail sendmail)
+( cd usr/lib; rm -f sendmail )
+( cd usr/lib; ln -s /usr/sbin/sendmail sendmail)
 
 postfix set-permissions
-
-# This will set the permissions on all postfix files correctly
-echo ""
-echo "######## IMPORTANT ##########"
-echo ""
-echo "Set the permissions on all files correctly with command:"
-echo "# postfix set-permissions"
-echo ""
-echo "Check new config files with deprecated parameters"
-echo ""
-echo "#############################"
-echo ""
 

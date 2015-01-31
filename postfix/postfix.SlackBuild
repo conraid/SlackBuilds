@@ -2,7 +2,7 @@
 # Slackware build script for postfix (http://www.postfix.org)
 #
 # Copyright 2006, Alan Hicks, Lizella, GA (by slackbuilds.org)
-# Copyright 2008-2014 Corrado Franco (http://conraid.net)
+# Copyright 2008-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -43,12 +43,14 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-postfix}
+PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-2.11.3}
-BUILD=${BUILD:-1}
+PKGVERSION=$(echo $VERSION | tr - _)
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAME
-DOCS="$PKG/usr/doc/${PRGNAME}"
+PKG=$TMP/package-$PKGNAME
+DOCS="$PKG/usr/doc/${PKGNAME}"
 
  # access aliases canonical generic header_checks main.cf main.cf.default \
  # makedefs.out master.cf postfix-files relocated transport virtual"
@@ -109,11 +111,10 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
-
 make makefiles \
+  shared="yes" dynamicmaps="yes" \
   OPT="$SLKCFLAGS" \
-  CCARGS='-DUSE_SASL_AUTH \
-          -DUSE_CYRUS_SASL -I/usr/include/sasl \
+  CCARGS='-DUSE_SASL_AUTH -DUSE_CYRUS_SASL -I/usr/include/sasl \
           -DUSE_TLS -DHAS_MYSQL -I/usr/include/mysql \
           -DHAS_SQLITE \
           -DDEF_MANPAGE_DIR=\"/usr/man\" \
@@ -131,7 +132,7 @@ make makefiles \
            -lsasl2 -lssl -lcrypto \
            -L/usr/lib${LIBDIRSUFFIX}/mysql -lmysqlclient \
            -lz -lm -lsqlite3 -lpthread"
-make
+make 
 make non-interactive-package \
   install_root=$PKG \
   tempdir=$TMP/$PRGNAME-temp \
@@ -139,24 +140,16 @@ make non-interactive-package \
   setgid_group=$setgid_group
 
 # Add auxiliary files
-install -Dm 755 auxiliary/qshape/qshape.pl $PKG/usr/sbin/qshape
-install -Dm 755 auxiliary/rmail/rmail $PKG/usr/sbin/rmail
+install -Dm755 auxiliary/qshape/qshape.pl $PKG/usr/sbin/qshape
+install -Dm755 auxiliary/rmail/rmail $PKG/usr/sbin/rmail
+for NAME in posttls-finger {smtp,qmqp}-{sink,source}; do
+  install -Dm644 man/man1/${NAME}.1 ${PKG}/usr/man/man1/${NAME}.1
+  install -Dm755 bin/${NAME} ${PKG}/usr/sbin/${NAME}
+done
 
 # Strip binaries:
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
-
-# Add a documentation directory:
-mkdir -p $DOCS
-for i in ${DOCFILES}; do
-    if [ -e ${i} ]; then
-        if ! [ -L ${i} ]; then
-	    cp -a ${i} ${DOCS}
-	else
-	    cp -LRp ${i} ${DOCS}
-        fi
-    fi;
-done
 
 # Compress and link manpages, if any:
 if [ -d $PKG/usr/man ]; then
@@ -166,26 +159,25 @@ if [ -d $PKG/usr/man ]; then
 )
 fi
 
+# Fix man filename for set-permissions
+sed 's#^\(\$manpage[^:]*\):#\1.gz:#' -i $PKG/usr/libexec/postfix/postfix-files
+
 # Add rc.postfix
 install -m 0755 -D $CWD/rc.postfix $PKG/etc/rc.d/rc.postfix.new
 
+# Add a documentation directory:
+mkdir -p ${DOCS}
+cp -a $DOCFILES $DOCS || true
+install -Dm644 $DOCS/RELEASE_NOTES $DOCS/README_FILES/RELEASE_NOTES
+
 # Add a slackbuild script:
-cat $CWD/$PRGNAME.SlackBuild > $DOCS/$PRGNAME.SlackBuild
+install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
 
 # Add slack-desc
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
 
 # Add a doinst.sh
-cat $CWD/doinst.sh > $PKG/install/doinst.sh
-
-# Since we gzip the manpages, let's fix the postfix-files to reflect that
-# so it won't throw errors during post-install
-cd $PKG/usr/libexec/postfix
-grep manpage postfix-files | while read line;
-do MANPAGE="$(echo "$line" | cut -d: -f1)"
-  sed -i s%"$MANPAGE"%"$MANPAGE.gz"% postfix-files
-done
+install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
 
 # Create .new files
 cd $PKG/etc/postfix
@@ -195,4 +187,4 @@ done
 
 # Create package:
 cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
