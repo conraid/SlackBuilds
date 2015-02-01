@@ -9,7 +9,7 @@ SLACKBUILD SHORT DESCRIPTION:  acpiclient (an acpi client for linux)
 
 SLACKBUILD NAME: acpitool
 SLACKBUILD LOCATION: ./acpitool
-SLACKBUILD FILES: acpitool-0.5-add_string.h.patch acpitool.SlackBuild acpitool.info arch.temp linux-3.0.patch slack-desc ssd sysfs-battery.patch
+SLACKBUILD FILES: acpitool-0.5-add_string.h.patch acpitool.SlackBuild acpitool.info arch.temp linux-3.0.patch slack-desc sysfs-battery.patch
 SLACKBUILD VERSION: 0.5.1
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/acpitool/acpitool/0.5.1/acpitool-0.5.1.tar.bz2
@@ -69,15 +69,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://www.arpalert.org/src/arpalert-2.0.11.tar.gz
 SLACKBUILD MD5SUM: 4b2b7682b27c7f260716f59ecfa50ecc
 SLACKBUILD SHORT DESCRIPTION:  arpalert (monitoring ethernet networks)
-
-SLACKBUILD NAME: arptools
-SLACKBUILD LOCATION: ./arptools
-SLACKBUILD FILES: arptools.SlackBuild arptools.info slack-desc
-SLACKBUILD VERSION: 1.0.2
-SLACKBUILD REQUIRED: libnet 
-SLACKBUILD DOWNLOAD: http://www.burghardt.pl/files/arptools-1.0.2.tar.gz
-SLACKBUILD MD5SUM: e061a7f20e42f75105735a9b82de6b4d
-SLACKBUILD SHORT DESCRIPTION:  ARP Tools
 
 SLACKBUILD NAME: arpwatch
 SLACKBUILD LOCATION: ./arpwatch
@@ -448,15 +439,6 @@ SLACKBUILD DOWNLOAD: http://os.ghalkes.nl/dist/dwdiff-2.0.9.tgz
 SLACKBUILD MD5SUM: f8364e1257011cc9dfe349775a651606
 SLACKBUILD SHORT DESCRIPTION:  dwdiff (word-level diff program)
 
-SLACKBUILD NAME: easywake
-SLACKBUILD LOCATION: ./easywake
-SLACKBUILD FILES: doinst.sh easywake.SlackBuild easywake.desktop easywake.info slack-desc
-SLACKBUILD VERSION: 3.0
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.blural-development.de/download/download.php?id=9
-SLACKBUILD MD5SUM: 3a7179a6a0fc5d5d4c14f3d8e238d28c
-SLACKBUILD SHORT DESCRIPTION:  EasyWake (Qt Wake-on-Lan utility)
-
 SLACKBUILD NAME: ecryptfs-utils
 SLACKBUILD LOCATION: ./ecryptfs-utils
 SLACKBUILD FILES: ecryptfs-utils.SlackBuild ecryptfs-utils.info slack-desc
@@ -466,18 +448,9 @@ SLACKBUILD DOWNLOAD: https://launchpad.net/ecryptfs/trunk/104/+download/ecryptfs
 SLACKBUILD MD5SUM: 6ae93822bcf0d15470516c30a3deee32
 SLACKBUILD SHORT DESCRIPTION:  ecryptfs-utils (ecryptfs cryptographic filesystem utilities)
 
-SLACKBUILD NAME: etherdump
-SLACKBUILD LOCATION: ./etherdump
-SLACKBUILD FILES: etherdump.SlackBuild etherdump.info slack-desc
-SLACKBUILD VERSION: 2.11
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://psydev.syw4e.info/new/etherdump/etherdump-2.11.tar.gz
-SLACKBUILD MD5SUM: 74013efee212baa8860eda10187aed78
-SLACKBUILD SHORT DESCRIPTION:  etherdump (small packet sniffer)
-
 SLACKBUILD NAME: etherwake
 SLACKBUILD LOCATION: ./etherwake
-SLACKBUILD FILES: etherwake.SlackBuild etherwake.info slack-desc
+SLACKBUILD FILES: etherwake-1.09.tar.gz etherwake.SlackBuild etherwake.info slack-desc
 SLACKBUILD VERSION: 1.09
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: etherwake-1.09.tar.gz
@@ -496,10 +469,10 @@ SLACKBUILD SHORT DESCRIPTION:  ettercap (Program for sniff and monitoring the ne
 SLACKBUILD NAME: filezilla
 SLACKBUILD LOCATION: ./filezilla
 SLACKBUILD FILES: doinst.sh filezilla.SlackBuild filezilla.info slack-desc
-SLACKBUILD VERSION: 3.10.1
+SLACKBUILD VERSION: 3.10.1.1
 SLACKBUILD REQUIRED: wxgtk
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/filezilla/FileZilla_Client/3.10.1/FileZilla_3.10.1_src.tar.bz2
-SLACKBUILD MD5SUM: 6dbe9f9d60aa925fa1ddfcd8568bfe32
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/filezilla/FileZilla_Client/3.10.1.1/FileZilla_3.10.1.1_src.tar.bz2
+SLACKBUILD MD5SUM: 5cefd40699388d66d27c0b04bd3e3f40
 SLACKBUILD SHORT DESCRIPTION:  filezilla (the free FTP solution)
 
 SLACKBUILD NAME: flickcurl
@@ -687,8 +660,8 @@ SLACKBUILD LOCATION: ./gsl
 SLACKBUILD FILES: gsl.SlackBuild gsl.info slack-desc
 SLACKBUILD VERSION: 1.16
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: ftp://mirrors.kernel.org/gnu/gsl/gsl-1.16.tar.gz
-SLACKBUILD MD5SUM: 
+SLACKBUILD DOWNLOAD: ftp://ftp.gnu.org/gnu/gsl/gsl-1.16.tar.gz
+SLACKBUILD MD5SUM: e49a664db13d81c968415cd53f62bc8b
 SLACKBUILD SHORT DESCRIPTION:  GSL (a numerical library for C and C++ programmers)
 
 SLACKBUILD NAME: gtkimageview
@@ -828,11 +801,11 @@ SLACKBUILD SHORT DESCRIPTION:  ike-scan (IPsec VPN scanning, fingerprinting and 
 
 SLACKBUILD NAME: inkscape
 SLACKBUILD LOCATION: ./inkscape
-SLACKBUILD FILES: inkscape.SlackBuild inkscape.info slack-desc
-SLACKBUILD VERSION: 0.48.5
+SLACKBUILD FILES: doinst.sh inkscape.SlackBuild inkscape.info slack-desc
+SLACKBUILD VERSION: 0.91
 SLACKBUILD REQUIRED: atkmm cairomm glibmm gsl gtkmm libsigc++ pangomm
-SLACKBUILD DOWNLOAD: http://sourceforge.net/projects/inkscape/files/inkscape/0.48.5/inkscape-0.48.5.tar.bz2
-SLACKBUILD MD5SUM: 431cda5cd40cd4fdf2b89db1bdcce61f
+SLACKBUILD DOWNLOAD: https://inkscape.global.ssl.fastly.net/media/resources/file/inkscape-0.91.tar.bz2
+SLACKBUILD MD5SUM: 278dfa4514adcde23546370ec2c84581
 SLACKBUILD SHORT DESCRIPTION:  Open Source Scalable Vector Graphics Editor
 
 SLACKBUILD NAME: inxi
@@ -886,7 +859,7 @@ SLACKBUILD FILES: iproute2-dev.SlackBuild iproute2-dev.info slack-desc
 SLACKBUILD VERSION: 3.10.0
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: ftp://ftp.slackware.com/pub/slackware/slackware-current/source/n/iproute2/iproute2-3.10.0.tar.xz
-SLACKBUILD MD5SUM: 
+SLACKBUILD MD5SUM: 45fb5427fc723a0001c72b92c931ba02
 SLACKBUILD SHORT DESCRIPTION:  iproute2-dev (iproute development files)
 
 SLACKBUILD NAME: iptstate
@@ -963,7 +936,7 @@ SLACKBUILD SHORT DESCRIPTION:  k9copy
 
 SLACKBUILD NAME: kaffeine
 SLACKBUILD LOCATION: ./kaffeine
-SLACKBUILD FILES: doinst.sh kaffeine.SlackBuild kaffeine.info slack-desc
+SLACKBUILD FILES: doinst.sh kaffeine-1.2.2-gcc4.7.patch kaffeine.SlackBuild kaffeine.info slack-desc
 SLACKBUILD VERSION: 1.2.2
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/kaffeine/current/kaffeine-1.2.2.tar.gz
@@ -1000,7 +973,7 @@ SLACKBUILD SHORT DESCRIPTION:  kdiff3 (A compare and merge tool for KDE. From KD
 SLACKBUILD NAME: keepassx
 SLACKBUILD LOCATION: ./keepassx
 SLACKBUILD FILES: doinst.sh keepassx.1.gz keepassx.SlackBuild keepassx.info slack-desc
-SLACKBUILD VERSION: 
+SLACKBUILD VERSION: 0.4.3
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://downloads.sourceforge.net/project/keepassx/KeePassX/0.4.3/keepassx-0.4.3.tar.gz
 SLACKBUILD MD5SUM: 1df67bb22b2e08df49f09e61d156f508
