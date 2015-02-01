@@ -2,7 +2,7 @@
 #
 # Slackware build script for kaffeine (http://kaffeine.kde.org)
 #
-# Copyright 2009-2012 Corrado Franco (http://conraid.net)
+# Copyright 2009-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -32,7 +32,7 @@ PRGNAME=${PRGNAME:-kaffeine}
 PKGNAME=${PKGNAME:-$PRGNAME}
 VERSION=${VERSION:-1.2.2}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -78,6 +78,9 @@ cd $TMP
 rm -rf $PKGNAME-$VERSION
 tar xzvf $CWD/$PRGNAME-$VERSION.tar.gz
 cd $PRGNAME-$VERSION
+
+# Apply patch for gcc 4.7
+patch -p1 -i $CWD/kaffeine-1.2.2-gcc4.7.patch
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
