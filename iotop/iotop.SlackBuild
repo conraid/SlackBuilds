@@ -2,7 +2,7 @@
 #
 # Slackware build script for iotop
 #
-# Copyright 2013 Corrado Franco (http://conraid.net)
+# Copyright 2013-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -34,7 +34,7 @@ PRGNAME=${PRGNAME:-iotop}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-0.6}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -66,7 +66,7 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Sane man path
-sed -i 's#share/man/man1#man/man1#' setup.py
+sed -i 's#share/man/man#man/man#' setup.py
 
 # Build
 python setup.py install --root=$PKG

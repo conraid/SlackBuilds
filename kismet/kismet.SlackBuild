@@ -2,7 +2,7 @@
 #
 # Slackware build script for kismet
 #
-# Copyright 2011-2013 Corrado Franco (http://conraid.net)
+# Copyright 2011-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -29,7 +29,7 @@
 #  Must have a kismet group to run this script
 #  Otherwise your permissions will be FUBAR
 #
-# groupadd -g 234 postfix
+# groupadd -g 234 kismet
 #
 # ID 234 by slackbuilds.org
 
@@ -43,16 +43,15 @@ PRGNAME=${PRGNAME:-kismet}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-2013-03-R1b}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-SOURCE="http://kismetwireless.net/code/${PRGNAME}-${VERSION}.tar.gz"
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
 # Insert document files in this variable
 DOCFILES="CHANGELOG GPL README* docs/* *.txt"
-
 
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
@@ -110,13 +109,12 @@ CXXFLAGS="$SLKCFLAGS" \
   --mandir=/usr/man \
   --infodir=/usr/info \
   --docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
-  --host=$CHOST-slackware-linux \
-  --build=$CHOST-slackware-linux
+  --build=$CHOST-slackware-linux 
 
 # Build and install:
 make dep
 make
-make plugins
+make plugins -j1
 make suidinstall MANGRP=root DESTDIR=$PKG
 make plugins-install MANGRP=root DESTDIR=$PKG
 
