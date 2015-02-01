@@ -2,7 +2,7 @@
 #
 # Slackware build script for inkscape (http://inkscape.org)
 #
-# Copyright 2008-2014 Corrado Franco (http://conraid.net)
+# Copyright 2008-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -29,17 +29,19 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-inkscape}
-VERSION=${VERSION:-0.48.5}
+VERSION=${VERSION:-0.91}
+PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
+PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAME
-DOCS="${PKG}/usr/doc/${PRGNAME}-${VERSION}"
+PKG=$TMP/package-$PKGNAME
+DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
 # Insert document files in this variable
 DOCFILES="AUTHORS ChangeLog COPYING* INSTALL NEWS README"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we are building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -100,6 +102,8 @@ CXX='ccache g++' \
   --enable-lcms \
   --enable-poppler-cairo \
   --without-gnome-vfs \
+  --enable-static=no \
+  --enable-shared=yes \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux
 
@@ -108,23 +112,8 @@ make
 make DESTDIR=$PKG install
 
 # Strip binaries:
-( cd $PKG
-  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
-  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
-  find . | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
-)
-
-# Add a documentation directory:
-mkdir -p ${DOCS}
-for i in ${DOCFILES}; do
-    if [ -e ${i} ]; then
-        if ! [ -L ${i} ]; then
-	    cp -a ${i} ${DOCS}
-	else
-	    cp -LRp ${i} ${DOCS}
-        fi
-    fi;
-done
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 # Compress and link manpages, if any:
 if [ -d $PKG/usr/man ]; then
@@ -134,15 +123,21 @@ if [ -d $PKG/usr/man ]; then
 )
 fi
 
+# Add a documentation directory:
+mkdir -p ${DOCS}
+cp -a $DOCFILES $DOCS || true
+
 # Add a slackbuild script:
-cat $CWD/$PRGNAME.SlackBuild > $DOCS/$PRGNAME.SlackBuild
+install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
 
 # Add slack-desc
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+
+# Add a doinst.sh
+install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
 
 # Create package:
 cd $PKG
-/sbin/makepkg -l y -c n ${CWD}/${PRGNAME}-${VERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
 
 
