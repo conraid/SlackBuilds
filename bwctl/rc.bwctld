@@ -1,0 +1,32 @@
+#!/bin/bash
+
+PID=$(pidof -o %PPID /usr/bin/bwctld)
+case "$1" in
+  start)
+    echo "Starting bwctld Bandwidth Test Controller daemon... "
+    if [ -z "$PID" ]; then 
+       /usr/bin/bwctld -c /etc/bwctl/ -R /var/run/bwctl &> /dev/null
+    fi
+    if [ ! -z "$PID" -o $? -gt 0 ]; then
+      echo "Error"
+    else
+      echo "OK"
+    fi
+    ;;
+  stop)
+    echo "Stopping bwctld Bandwidth Test Controller daemon... "
+    [ ! -z "$PID" ] && kill $PID &>/dev/null
+    if [ $? -gt 0 ]; then
+      echo "Error"
+    else
+      echo "OK"
+    fi
+    ;;
+  restart)
+    $0 stop
+    sleep 1
+    $0 start
+    ;;
+  *)
+    echo "usage: $0 {start|stop|restart}"  
+esac
