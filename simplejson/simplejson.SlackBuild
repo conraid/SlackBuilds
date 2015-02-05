@@ -95,7 +95,7 @@ find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r st
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
-cp -a $DOCFILES $DOCS || more
+cp -a $DOCFILES $DOCS || true
 
 # Add a slackbuild script:
 install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild

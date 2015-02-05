@@ -138,7 +138,7 @@ find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r st
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
-cp -a $DOCFILES $DOCS || more
+cp -a $DOCFILES $DOCS || true
 install -Dm644 owasp-modsecurity-crs-${CRSVERSION}/INSTALL $DOCS/crs.txt
 install -Dm644 mlogc/INSTALL $DOCS/mlogc.txt
 install -Dm644 mlogc/mlogc-default.conf $DOCS/mlogc-default.conf
