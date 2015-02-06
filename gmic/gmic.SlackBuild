@@ -2,7 +2,7 @@
 #
 # Slackware build script for Gimp G'MIC plugin
 #
-# Copyright 2011-2014 Corrado Franco (http://conraid.net)
+# Copyright 2011-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-gmic}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-1.6.0.3}
+VERSION=${VERSION:-1.6.0.4}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -83,7 +83,7 @@ cd $PRGNAME-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Change Makefile for lib64 path
+# Change Makefile for lib64 and man pages path
 if [ $ARCH == 'x86_64' ]; then
     sed -e 's#/lib/#/lib64/#g' -e 's#/lib #/lib64 #g' -e 's#/lib$#/lib64#g' -i src/Makefile
 fi
@@ -92,19 +92,32 @@ sed -i 's#/share/man/#/man/#g' src/Makefile
 # Change Makefile for qmake command
 sed -i 's/qmake-qt4 zart.pro/qmake zart.pro/' src/Makefile
 
-# Build and install:
+# Build and install gmic:
 make -C src LIB=lib64 OPT_CFLAGS="$SLKCFLAGS" OPT_LDFLAGS="$SLKLDFLAGS" all
 make -C src install LIB=lib64 DESTDIR="$PKG" USR="/usr"
+
+# Build and install zart:
+cd zart
+qmake PREFIX=/usr QMAKE_LIBS="$SLKLDFLAGS" QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" -o Makefile zart.pro
+make 
+install -Dsm755 zart "${PKG}/usr/bin/zart"
+cd -
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
 cp -a COPYING README $DOCS
+install -Dm644 zart/README $DOCS/zart/zart.txt
 
 # Add a slackbuild script:
 install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
 
 # Add slack-desc
 install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+
+# Remove empty dir
+if ! [ "$(ls -A $PKG/usr/share)" ]; then
+  rmdir $PKG/usr/share
+fi
 
 # Create package:
 cd $PKG
