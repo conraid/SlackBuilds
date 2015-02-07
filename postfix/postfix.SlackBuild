@@ -44,29 +44,23 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-postfix}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-2.11.3}
+VERSION=${VERSION:-3.0.0-RC1}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PKGNAME
+PKG=$TMP/package-$PRGNAME
 DOCS="$PKG/usr/doc/${PKGNAME}"
-
- # access aliases canonical generic header_checks main.cf main.cf.default \
- # makedefs.out master.cf postfix-files relocated transport virtual"
-NEWFILES="access aliases canonical generic header_checks main.cf \
-  makedefs.out master.cf relocated transport virtual"
 
 
 # Insert document files in this variable
 DOCFILES="AAAREADME COMPATIBILITY COPYRIGHT HISTORY IPv6-ChangeLog LICENSE \
   PORTING RELEASE_NOTES* TLS_ACKNOWLEDGEMENTS TLS_CHANGES TLS_LICENSE \
   US_PATENT_6321267 implementation-notes examples README_FILES html"
-
-mail_owner=postfix
-setgid_group=postdrop
-
-
+  
+NEWFILES="access aliases canonical dynamicmaps.cf generic header_checks main.cf \
+          main.cf.proto master.cf master.cf.proto relocated transport virtual"
+  
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
@@ -110,35 +104,31 @@ cd $PRGNAME-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
+# Set config parameters (Default values for the other parameters are fine)
+CONFIG_PARAMS="shlib_directory=/usr/lib${LIBDIRSUFFIX}/postfix \
+manpage_directory=/usr/man \
+readme_directory=/usr/doc/postfix/README_FILES \
+html_directory=/usr/doc/postfix/html \
+mail_owner=postfix \
+setgid_group=postdrop"
+
 # Build and install:
 make makefiles \
-  shared="yes" dynamicmaps="yes" \
-  OPT="$SLKCFLAGS" \
-  CCARGS='-DUSE_SASL_AUTH -DUSE_CYRUS_SASL -I/usr/include/sasl \
-          -DUSE_TLS -DHAS_MYSQL -I/usr/include/mysql \
-          -DHAS_SQLITE \
-          -DDEF_MANPAGE_DIR=\"/usr/man\" \
-          -DDEF_DAEMON_DIR=\"/usr/libexec/postfix\" \
-          -DDEF_COMMAND_DIR=\"/usr/sbin\" \
-          -DDEF_CONFIG_DIR=\"/etc/postfix\" \
-          -DDEF_DATA_DIR=\"/var/lib/postfix\" \
-          -DDEF_MAILQ_PATH=\"/usr/bin/mailq\" \
-          -DDEF_HTML_DIR=\"/usr/doc/postfix/html\" \
-          -DDEF_NEWALIAS_PATH=\"/usr/bin/newaliases\" \
-          -DDEF_QUEUE_DIR=\"/var/spool/postfix\" \
-          -DDEF_README_DIR=\"/usr/doc/postfix/README_FILES\" \
-          -DDEF_SENDMAIL_PATH=\"/usr/sbin/sendmail\"' \
-  AUXLIBS="-L/lib${LIBDIRSUFFIX} -L/usr/lib${LIBDIRSUFFIX} \
-           -lsasl2 -lssl -lcrypto \
-           -L/usr/lib${LIBDIRSUFFIX}/mysql -lmysqlclient \
-           -lz -lm -lsqlite3 -lpthread"
+     shared="yes" dynamicmaps="yes" $CONFIG_PARAMS \
+     OPT="$SLKCFLAGS" \
+     CCARGS='-DUSE_SASL_AUTH' \
+     CCARGS+='-DUSE_CYRUS_SASL -I/usr/include/sasl -DUSE_TLS' \
+     CCARGS+='-DHAS_MYSQL -I/usr/include/mysql' \
+     CCARGS+='-DHAS_SQLITE' \
+     AUXLIBS="-L/lib${LIBDIRSUFFIX} -L/usr/lib${LIBDIRSUFFIX} \
+           -lsasl2 -lssl -lcrypto" \
+     AUXLIBS_MYSQL="-L/usr/lib${LIBDIRSUFFIX}/mysql -lmysqlclient -lz -lm" \
+     AUXLIBS_SQLITE="-L/usr/lib${LIBDIRSUFFIX} -lsqlite3 -lpthread"
 make 
 make non-interactive-package \
-  install_root=$PKG \
-  tempdir=$TMP/$PRGNAME-temp \
-  mail_owner=$mail_owner \
-  setgid_group=$setgid_group
-
+     install_root=$PKG \
+     tempdir=$TMP/$PRGNAME-temp
+  
 # Add auxiliary files
 install -Dm755 auxiliary/qshape/qshape.pl $PKG/usr/sbin/qshape
 install -Dm755 auxiliary/rmail/rmail $PKG/usr/sbin/rmail
@@ -153,14 +143,15 @@ find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r st
 
 # Compress and link manpages, if any:
 if [ -d $PKG/usr/man ]; then
-( cd $PKG/usr/man
-  find . -type f -exec gzip -9 {} \;
-  for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
-)
+    find $PKG/usr/man -type f -exec gzip -9 {} \;
+    for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
-# Fix man filename for set-permissions
-sed 's#^\(\$manpage[^:]*\):#\1.gz:#' -i $PKG/usr/libexec/postfix/postfix-files
+# Fix man files for postfix set-permissions
+sed 's#^\(\$manpage[^:]*\):#\1.gz:#' -i $PKG/etc/postfix/postfix-files
+
+# Let the sysadmin decide when to change the compatibility_level (thanks to Gentoo)
+sed /^compatibility_level/"s/^/#/" -i ${PKG}/etc/postfix/main.cf
 
 # Add rc.postfix
 install -m 0755 -D $CWD/rc.postfix $PKG/etc/rc.d/rc.postfix.new
@@ -168,7 +159,6 @@ install -m 0755 -D $CWD/rc.postfix $PKG/etc/rc.d/rc.postfix.new
 # Add a documentation directory:
 mkdir -p ${DOCS}
 cp -a $DOCFILES $DOCS || true
-install -Dm644 $DOCS/RELEASE_NOTES $DOCS/README_FILES/RELEASE_NOTES
 
 # Add a slackbuild script:
 install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
@@ -180,11 +170,16 @@ install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
 install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
 
 # Create .new files
-cd $PKG/etc/postfix
-for i in $NEWFILES; do
-    mv ${i} ${i}.new ;
+for FILE in $NEWFILES; do
+   mv $PKG/etc/postfix/${FILE} $PKG/etc/postfix/${FILE}.new ;
 done
+
+# Add config files in doinst.sh (thanks to SBo)
+for NEW in $PKG/etc/postfix/*.new; do
+     echo $NEW | sed 's/.*etc/config etc/' >> $PKG/install/doinst.sh
+done
+echo "postfix set-permissions" >> $PKG/install/doinst.sh
 
 # Create package:
 cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n $CWD/$PRGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
