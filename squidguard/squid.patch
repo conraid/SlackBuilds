@@ -1,0 +1,198 @@
+diff -Naupr squidGuard-1.4.orig/samples/babel.ru squidGuard-1.4/samples/babel.ru
+--- squidGuard-1.4.orig/samples/babel.ru	1970-01-01 01:00:00.000000000 +0100
++++ squidGuard-1.4/samples/babel.ru	2010-09-09 12:34:32.000000000 +0200
+@@ -0,0 +1,20 @@
++﻿Unknown=неизвестный
++Title=403  Доступ запрещен
++Msg=Доступ к данному сайту заблокирован
++Tabclientname=Имя клиента
++Tabcaption=Дополнительная информация
++TabIP=Адрес клиента
++Tabclientuser=Пользователь клиента
++Tabclientgroup=Группа клиента
++Taburl=URL
++Tabtargetgroup=Категория заблокированного сайта
++msgproxymaster=Если Вы считаете, что это ошибка, отправьте <U>эту страницу</U> на
++msgrefresh=Возможно, Вам придется нажать кнопку&lt;Обновить&gt; Вашего браузера<BR> или кнопку &lt;Shift&gt;+&lt;Browser Reload&gt;<BR> для того, чтобы получить доступ к нужной странице после обновления правил блокирования
++msgtimerefresh=Возможно, Вам придется нажать кнопку&lt;Обновить&gt; Вашего браузера<BR> или кнопку &lt;Shift&gt;+&lt;Browser Reload&gt;<BR> Для того, чтобы получить доступ к нужной странице после выхода<BR> из временного отрезка с ограничениями доступа
++msgunknown=Доступ запрещен потому,<BR> что Ваш клиент<BR> неизвестен на
++msginaddr=Доступ к сайтам по <U>IP-адресам</U><BR> запрещен для Вашего клиента<BR> из соображений безопасности
++msgalternatives=Найдены следующие возможные альтернативы:
++msgnoalternatives=Не найдено альтернтивных доменных имен<BR> для сервера <U>$address</U>
++msgreferermaster=Присылайте Ваши жалобы на webmaster </A><BR> of <A HREF="$referer">$referer</A><BR> и попросите его исправить ссылку(и), которые указывают на $url<BR> in <A HREF="$referer">$referer</A>,<BR> с предположительно правильной альтернативой выше
++msgwebmaster= Присылайте Ваши жалобы на <U>webmaster</U> for <U>$protocol://$address</U><BR> с запросом на <EM>доменное имя</EM> для сервера
++msgdeflang=Это сообщение выводится на русском языке потому, что "ru" - это первый из поддерживаемых языков<BR> среди тех, на которые настроен Ваш браузер<BR> Поддерживаемые языки
+diff -Naupr squidGuard-1.4.orig/samples/dest/README,D squidGuard-1.4/samples/dest/README,D
+--- squidGuard-1.4.orig/samples/dest/README,D	1970-01-01 01:00:00.000000000 +0100
++++ squidGuard-1.4/samples/dest/README,D	2009-03-08 14:41:46.000000000 +0100
+@@ -0,0 +1,16 @@
++--- /dev/null	2009-01-29 11:38:32.048287707 +0100
+++++ /home/squidguard/devel/squidGuard/branch.1/branch.5/delta29919.001/prog/samples/dest/README	2009-03-08 14:41:23.000000000 +0100
++@@ -0,0 +1,13 @@
+++
+++!!! WARNING WARNING WARNING WARNING WARNING  WARNING WARNING WARNING WARNING !!!
+++!!!									     !!!
+++!!! The blacklists are entierly products of a dumb robot (squidGuardRobot).  !!!
+++!!! They are meant for testing purposes only. Do not use them in production. !!!
+++!!! Don't blame us if there are mistakes. 				     !!!
+++!!!									     !!!
+++!!! WARNING WARNING WARNING WARNING WARNING  WARNING WARNING WARNING WARNING !!!
+++
+++To unpack the blacklists run the following command in this directory:
+++
+++gunzip < blacklists.tar.gz | tar xvpf -
+++
+diff -Naupr squidGuard-1.4.orig/samples/squidGuard-simple-de.cgi.in squidGuard-1.4/samples/squidGuard-simple-de.cgi.in
+--- squidGuard-1.4.orig/samples/squidGuard-simple-de.cgi.in	2007-11-16 17:58:32.000000000 +0100
++++ squidGuard-1.4/samples/squidGuard-simple-de.cgi.in	2015-02-01 19:57:01.000000000 +0100
+@@ -47,6 +47,8 @@ if ($url =~ /\.(gif|jpg|jpeg|mpg|mpeg|av
+   }
+   close(GIF)
+ } else {
++  $url =~ s/</&lt;/g ;
++  $url =~ s/>/&gt;/g ;
+   print "Content-type: text/html\n";
+   ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime($time);
+   printf "Expires: %s, %02d-%s-%02d %02d:%02d:%02d GMT\n\n", $day[$wday],$mday,$month[$mon],$year,$hour,$min,$sec;
+diff -Naupr squidGuard-1.4.orig/samples/squidGuard-simple.cgi.in squidGuard-1.4/samples/squidGuard-simple.cgi.in
+--- squidGuard-1.4.orig/samples/squidGuard-simple.cgi.in	2007-11-16 17:58:32.000000000 +0100
++++ squidGuard-1.4/samples/squidGuard-simple.cgi.in	2015-02-01 19:57:26.000000000 +0100
+@@ -47,6 +47,8 @@ if ($url =~ /\.(gif|jpg|jpeg|mpg|mpeg|av
+   }
+   close(GIF)
+ } else {
++  $url =~ s/</&lt;/g ;
++  $url =~ s/>/&gt;/g ;
+   print "Content-type: text/html\n";
+   ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime($time);
+   printf "Expires: %s, %02d-%s-%02d %02d:%02d:%02d GMT\n\n", $day[$wday],$mday,$month[$mon],$year,$hour,$min,$sec;
+diff -Naupr squidGuard-1.4.orig/samples/squidGuard.cgi.in squidGuard-1.4/samples/squidGuard.cgi.in
+--- squidGuard-1.4.orig/samples/squidGuard.cgi.in	2008-12-23 22:08:35.000000000 +0100
++++ squidGuard-1.4/samples/squidGuard.cgi.in	2015-02-01 19:58:34.000000000 +0100
+@@ -6,7 +6,8 @@
+ # French texts thanks to Fabrice Prigent (fabrice.prigent@univ-tlse1.fr)
+ # Dutch texts thanks to Anneke Sicherer-Roetman (sicherer@sichemsoft.nl)
+ # German texts thanks to Buergernetz Pfaffenhofen (http://www.bn-paf.de/filter/)
+-# Spanish texts thanks to Samuel García).
++# Spanish texts thanks to Samuel García.
++# Russian texts thanks to Vladimir Ipatov.
+ # Rewrite by Christine Kronberg, 2008, to enable an easier integration of
+ # other languages.
+ #
+@@ -57,14 +58,15 @@ sub showinaddr($$$$$);
+ #
+ # CONFIGURABLE OPTIONS:
+ #
+-# (Currently: "en", "fr", "de", "es", "nl", "no")
++# (Currently: "en", "fr", "de", "es", "nl", "no", "ru")
+ @supported   = (
+ 		"en (English), ",
+-		"fr (Fran�ais), ",
++		"fr (Fran&#231;ais), ",
+ 		"de (Deutsch), ",
+-		"es (Espa�ol), ",
++		"es (Espa&#241;ol), ",
+ 		"nl (Nederlands), ",
+-		"no (Norsk)."
++		"no (Norsk), ",
++		"ru (Russian)."
+ 	       );
+ #
+ # Modifiy the values below to reflect you environment
+@@ -142,7 +144,7 @@ sub parsequery($) {
+ }
+ 
+ #
+-# PRINT HTTP STATUS HEARER:
++# PRINT HTTP STATUS HEADER:
+ #
+ sub status($) {
+   my $status = shift;
+@@ -150,7 +152,7 @@ sub status($) {
+ }
+ 
+ #
+-# PRINT HTTP LOCATION HEARER:
++# PRINT HTTP LOCATION HEADER:
+ #
+ sub redirect($) {
+   my $location = shift;
+@@ -317,6 +319,9 @@ if ($targetgroup eq "in-addr") {
+    showinaddr($targetgroup,$protocol,$address,$port,$path);
+ }
+ 
++$url =~ s/</&lt;/g ;
++$url =~ s/>/&gt;/g ;
++
+ status("403 Forbidden");
+ expires(0);
+ print "Content-type: text/html\n\n";
+diff -Naupr squidGuard-1.4.orig/src/sg.h.in squidGuard-1.4/src/sg.h.in
+--- squidGuard-1.4.orig/src/sg.h.in	2007-11-16 17:58:32.000000000 +0100
++++ squidGuard-1.4/src/sg.h.in	2009-10-19 21:25:23.000000000 +0200
+@@ -73,7 +73,7 @@ int tolower();
+ #define REQUEST_TYPE_REDIRECT   2
+ #define REQUEST_TYPE_PASS       3
+ 
+-#define MAX_BUF 4096
++#define MAX_BUF 12288
+ 
+ #define DEFAULT_LOGFILE "squidGuard.log"
+ #define WARNING_LOGFILE "squidGuard.log"
+diff -Naupr squidGuard-1.4.orig/src/sgDiv.c.in squidGuard-1.4/src/sgDiv.c.in
+--- squidGuard-1.4.orig/src/sgDiv.c.in	2008-07-14 18:02:43.000000000 +0200
++++ squidGuard-1.4/src/sgDiv.c.in	2009-10-19 21:26:04.000000000 +0200
+@@ -745,7 +745,7 @@ char *sgParseRedirect(redirect, req, acl
+       p++;
+       break;
+     case 'u': /* Requested URL */
+-      strcat(buf, req->orig);
++      strncat(buf, req->orig, 2048);
+       p++;
+       break;
+     default:
+diff -Naupr squidGuard-1.4.orig/src/sgLog.c squidGuard-1.4/src/sgLog.c
+--- squidGuard-1.4.orig/src/sgLog.c	2007-11-16 17:58:32.000000000 +0100
++++ squidGuard-1.4/src/sgLog.c	2009-10-15 21:25:14.000000000 +0200
+@@ -2,7 +2,7 @@
+   By accepting this notice, you agree to be bound by the following
+   agreements:
+   
+-  This software product, squidGuard, is copyrighted (C) 1998-2007
++  This software product, squidGuard, is copyrighted (C) 1998-2009
+   by Christine Kronberg, Shalla Secure Services. All rights reserved.
+  
+   This program is free software; you can redistribute it and/or modify it
+@@ -55,8 +55,8 @@ void sgLog(log, format, va_alist)
+   char msg[MAX_BUF];
+   va_list ap;
+   VA_START(ap, format);
+-  if(vsprintf(msg, format, ap) > (MAX_BUF - 1)) 
+-    fprintf(stderr,"overflow in vsprintf (sgLog): %s",strerror(errno));
++  if(vsnprintf(msg, MAX_BUF, format, ap) > (MAX_BUF - 1)) 
++    fprintf(stderr,"overflow in vsnprintf (sgLog): %s",strerror(errno));
+   va_end(ap);
+   date = niso(0);
+   if(globalDebug || log == NULL) {
+@@ -87,8 +87,8 @@ void sgLogError(format, va_alist)
+   char msg[MAX_BUF];
+   va_list ap;
+   VA_START(ap, format);
+-  if(vsprintf(msg, format, ap) > (MAX_BUF - 1)) 
+-    sgLogFatalError("overflow in vsprintf (sgLogError): %s",strerror(errno));
++  if(vsnprintf(msg, MAX_BUF, format, ap) > (MAX_BUF - 1)) 
++    sgLog(globalErrorLog, "overflow in vsnprintf (sgLogError): %s",strerror(errno));
+   va_end(ap);
+   sgLog(globalErrorLog,"%s",msg);
+ }
+@@ -104,8 +104,8 @@ void sgLogFatalError(format, va_alist)
+   char msg[MAX_BUF];
+   va_list ap;
+   VA_START(ap, format);
+-  if(vsprintf(msg, format, ap) > (MAX_BUF - 1)) 
+-    return;
++  if(vsnprintf(msg, MAX_BUF, format, ap) > (MAX_BUF - 1)) 
++    sgLog(globalErrorLog, "overflow in vsnprintf (sgLogError): %s",strerror(errno));
+   va_end(ap);
+   sgLog(globalErrorLog,"%s",msg);
+   sgEmergency();
