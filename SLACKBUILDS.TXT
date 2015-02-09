@@ -1990,10 +1990,10 @@ SLACKBUILD SHORT DESCRIPTION:  PokerTH (A poker game)
 SLACKBUILD NAME: postfix
 SLACKBUILD LOCATION: ./postfix
 SLACKBUILD FILES: PKGNOTE doinst.sh postfix.SlackBuild postfix.info rc.postfix slack-desc
-SLACKBUILD VERSION: 3.0.0-RC1
+SLACKBUILD VERSION: 3.0.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://cdn.postfix.johnriley.me/mirrors/postfix-release/official/postfix-3.0.0-RC1.tar.gz
-SLACKBUILD MD5SUM: f4866bf285bc76b50c545f445050524a
+SLACKBUILD DOWNLOAD: http://cdn.postfix.johnriley.me/mirrors/postfix-release/official/postfix-3.0.0.tar.gz
+SLACKBUILD MD5SUM: a4a83f8d729f31c803bf9c2277701d56
 SLACKBUILD SHORT DESCRIPTION:  postfix (alternative to the widely-used Sendmail program)
 
 SLACKBUILD NAME: privoxy
@@ -2374,6 +2374,15 @@ SLACKBUILD DOWNLOAD: http://www.squid-cache.org/Versions/v3/3.5/squid-3.5.1.tar.
 SLACKBUILD MD5SUM: b3c9d9726314c1136b7a4c06447db24b
 SLACKBUILD SHORT DESCRIPTION:  Squid (a popular free and open source Web proxy server and web cache)
 
+SLACKBUILD NAME: squidguard
+SLACKBUILD LOCATION: ./squidguard
+SLACKBUILD FILES: PKGNOTE doinst.sh slack-desc squid.patch squidguard.SlackBuild squidguard.info
+SLACKBUILD VERSION: 1.4
+SLACKBUILD REQUIRED: squid
+SLACKBUILD DOWNLOAD: http://www.squidguard.org/Downloads/squidGuard-1.4.tar.gz
+SLACKBUILD MD5SUM: de834150998c1386c30feae196f16b06
+SLACKBUILD SHORT DESCRIPTION:  squidguard (URL redirector)
+
 SLACKBUILD NAME: sshfs-fuse
 SLACKBUILD LOCATION: ./sshfs-fuse
 SLACKBUILD FILES: slack-desc sshfs-fuse.SlackBuild sshfs-fuse.info
@@ -2556,9 +2565,9 @@ SLACKBUILD SHORT DESCRIPTION:  unix-privesc-check (Shell script to check for pri
 
 SLACKBUILD NAME: unoconv
 SLACKBUILD LOCATION: ./unoconv
-SLACKBUILD FILES: git.patch slack-desc unoconv.SlackBuild unoconv.info
+SLACKBUILD FILES: PKGNOTE git.patch slack-desc unoconv.SlackBuild unoconv.info
 SLACKBUILD VERSION: 0.6
-SLACKBUILD REQUIRED: 
+SLACKBUILD REQUIRED: libreoffice
 SLACKBUILD DOWNLOAD: http://dag.wieers.com/home-made/unoconv/unoconv-0.6.tar.gz
 SLACKBUILD MD5SUM: eeda0d358ce4bacd5dd84303012c416d
 SLACKBUILD SHORT DESCRIPTION:  unoconv (Universal Office Converter)
