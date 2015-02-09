@@ -1,38 +1,29 @@
-#!/bin/sh
-
 config() {
   NEW="$1"
   OLD="$(dirname $NEW)/$(basename $NEW .new)"
   # If there's no config file by that name, mv it over:
   if [ ! -r $OLD ]; then
     mv $NEW $OLD
-  elif [ "$(cat $OLD | md5sum)" = "$(cat $NEW | md5sum)" ]; then # toss the redundant copy
+  elif [ "$(cat $OLD | md5sum)" = "$(cat $NEW | md5sum)" ]; then
+    # toss the redundant copy
     rm $NEW
   fi
   # Otherwise, we leave the .new copy for the admin to consider...
 }
 
-# Keep same perms on rc.postfix.new:
-if [ -e etc/rc.d/rc.postfix ]; then
-  cp -a etc/rc.d/rc.postfix etc/rc.d/rc.postfix.new.incoming
-  cat etc/rc.d/rc.postfix.new > etc/rc.d/rc.postfix.new.incoming
-  mv etc/rc.d/rc.postfix.new.incoming etc/rc.d/rc.postfix.new
-else 
-  chmod 0755 etc/rc.d/rc.postfix.new
-fi
+perms() {
+    # Keep same perms on file
+    NEW="$1"
+    OLD="$(dirname $NEW)/$(basename $NEW .new)"
+    if [ -e $OLD ]; then
+	cp -a $OLD $NEW.incoming
+	cat $NEW > $NEW.incoming
+	mv $NEW.incoming $NEW
+    fi
+    config $NEW
+}
 
-config etc/postfix/access.new
-config etc/postfix/aliases.new
-config etc/postfix/canonical.new
-config etc/postfix/generic.new
-config etc/postfix/header_checks.new
-config etc/postfix/main.cf.new
-config etc/postfix/makedefs.out.new
-config etc/postfix/master.cf.new
-config etc/postfix/relocated.new
-config etc/postfix/transport.new
-config etc/postfix/virtual.new
-config etc/rc.d/rc.postfix.new
+perms etc/rc.d/rc.postfix.new
 
 # Add user and group
 if ! grep -q "^postfix:" etc/group; then
@@ -63,5 +54,7 @@ fi
 ( cd usr/lib; rm -f sendmail )
 ( cd usr/lib; ln -s /usr/sbin/sendmail sendmail)
 
-postfix set-permissions
-
+# Set compatibility_level if UPGRADE or INSTALL.
+if [ -e etc/postfix/main.cf ]; then
+  sed /^compatibility_level/"s/^/#/" -i etc/postfix/main.cf.new
+fi

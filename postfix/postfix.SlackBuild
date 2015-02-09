@@ -44,7 +44,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-postfix}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-3.0.0-RC1}
+VERSION=${VERSION:-3.0.0}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -150,15 +150,12 @@ fi
 # Fix man files for postfix set-permissions
 sed 's#^\(\$manpage[^:]*\):#\1.gz:#' -i $PKG/etc/postfix/postfix-files
 
-# Let the sysadmin decide when to change the compatibility_level (thanks to Gentoo)
-sed /^compatibility_level/"s/^/#/" -i ${PKG}/etc/postfix/main.cf
-
 # Add rc.postfix
 install -m 0755 -D $CWD/rc.postfix $PKG/etc/rc.d/rc.postfix.new
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
-cp -a $DOCFILES $DOCS || true
+cp -aL $DOCFILES $DOCS || true
 
 # Add a slackbuild script:
 install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
