@@ -2,7 +2,7 @@
 #
 # Slackware build script for p7zip
 #
-# Copyright 2009-2012 Corrado Franco (http://conraid.net)
+# Copyright 2009-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -23,16 +23,17 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Exit on most errors
-set -e
+set -eu
 
 # Set variables:
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-p7zip}
 PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-9.20.1}
+VERSION=${VERSION:-9.38}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -72,7 +73,7 @@ esac
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAME-$VERSION
+rm -rf ${PRGNAME}_${VERSION}
 tar xvf $CWD/p7zip_${VERSION}_src_all.tar.bz2
 cd ${PRGNAME}_${VERSION}
 
@@ -86,44 +87,66 @@ if [ "$CHOST" == "x86_64" ]; then
 else
     cp -f makefile.linux_x86_asm_gcc_4.X makefile.machine
 fi
-sed -i "s#OPTFLAGS=-O#OPTFLAGS=$SLKCFLAGS $SLKLDFLAGS#" makefile.machine
+
+# Build GUI if find wxwidgets 
+if type -P wx-config &>/dev/null; then
+  ALL=all4
+  # Fix setup.h include
+  sed "s#/lib/x86_64-linux-gnu/#/lib${LIBDIRSUFFIX}/#g" -i CPP/7zip/*/*/makefile.depend 
+  # Fix gtk3 include
+  [ "$(wx-config --query-toolkit)" == "gtk3" ] && sed "s/gtk2/gtk3/g" -i CPP/7zip/*/*/makefile.depend  
+else
+  ALL=all3
+fi
 
 # Build and install:
-make all3 \
-    OPTFLAGS="$SLKCFLAGS" \
-    DEST_HOME=/usr \
-    DEST_SHARE_DOC=/usr/doc/$PRGNAME-$VERSION \
-    DEST_SHARE=/usr/lib$LIBDIRSUFFIX/p7zip \
-    DEST_DIR=$PKG
+make $ALL OPTFLAGS="$SLKCFLAGS"
 
 make install \
-    OPTFLAGS="$SLKCFLAGS" \
     DEST_HOME=/usr \
     DEST_SHARE_DOC=/usr/doc/$PRGNAME-$VERSION \
-    DEST_SHARE=/usr/lib$LIBDIRSUFFIX/p7zip \
+    DEST_MAN=/usr/man \
+    DEST_SHARE=/usr/lib${LIBDIRSUFFIX}/p7zip \
     DEST_DIR=$PKG
-
-# install midnight commander vfs add on
-install -Dm755 contrib/VirtualFileSystemForMidnightCommander/u7z $PKG/usr/share/mc/extfs/u7z
 
 # Strip binaries:
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
+# install midnight commander vfs add on
+install -Dm755 contrib/VirtualFileSystemForMidnightCommander/u7z $PKG/usr/share/mc/extfs/u7z
+
+# install gzip like wrapper
+install -Dm755 contrib/gzip-like_CLI_wrapper_for_7z/p7zip $PKG/usr/bin/p7zip
+install -Dm644 contrib/gzip-like_CLI_wrapper_for_7z/man1/p7zip.1 $PKG/usr/man/man1/p7zip.1
+
+# Install GUI help files
+cp -a GUI/help $PKG/usr/lib$LIBDIRSUFFIX/p7zip/help
+find $PKG/usr/lib$LIBDIRSUFFIX/p7zip/help -type d -exec chmod 555 {} \;
+find $PKG/usr/lib$LIBDIRSUFFIX/p7zip/help -type f -exec chmod 444 {} \;
+
 # Compress and link manpages, if any:
 if [ -d $PKG/usr/man ]; then
-( cd $PKG/usr/man
-  find . -type f -exec gzip -9 {} \;
-  for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
-)
+    find $PKG/usr/man -type f -exec gzip -9 {} \;
+    for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Add a slackbuild script:
-cat $CWD/$PKGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
+install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
 
 # Add slack-desc
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+
+# Install icon
+install -m 444 -D GUI/p7zip_16_ok.png $PKG/usr/share/icons/hicolor/16x16/apps/p7zip.png
+
+# Install desktop files
+mkdir -p $PKG/usr/share/kde4/services/ServiceMenus
+cp GUI/kde4/*.desktop $PKG/usr/share/kde4/services/ServiceMenus/
+install -Dm644 $CWD/7zFM.desktop $PKG/usr/share/applications/7zFM.desktop
+
+# Add a doinst.sh
+install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
 
 # Create package:
 cd $PKG
