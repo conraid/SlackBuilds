@@ -1,0 +1,95 @@
+#!/bin/sh
+#
+# Slackware build script for shorewall6
+#
+# Copyright 2015 Corrado Franco (http://conraid.net)
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Latest version of this SlackBuild at http://slackers.it/repository
+
+# Exit on most errors
+set -eu
+
+# Set variables:
+CWD=$(pwd)
+
+PRGNAME=${PRGNAME:-shorewall6}
+PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
+VERSION=${VERSION:-4.6.6.2}
+PKGVERSION=$(echo $VERSION | tr - _)
+BUILD=${BUILD:-1}
+ARCH=${ARCH:="noarch"}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+PKG=$TMP/package-$PKGNAME
+DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
+
+# Insert document files in this variable
+DOCFILES="COPYING INSTALL *.txt Samples6 tunnel ipsecvpn"
+
+# Extract source and prepare:
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAME-$VERSION
+tar xvf $CWD/$PRGNAME-$VERSION.tar.bz2
+cd $PRGNAME-$VERSION
+
+# Make sure ownerships and permissions are sane:
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
+
+# Configure
+./configure
+
+# install:
+DESTDIR=$PKG ./install.sh
+
+# Remove empty directories
+rm -rf $PKG/usr/share/shorewall
+
+# Rename script and configuration files
+mv $PKG/etc/rc.d/rc.shorewall6 $PKG/etc/rc.d/rc.shorewall6.new
+mv $PKG/etc/logrotate.d/shorewall6 $PKG/etc/logrotate.d/shorewall6.new
+for FILE in $(ls $PKG/etc/shorewall6/[a-z]*) ; do
+    mv $FILE $FILE.new
+done
+
+# Add a documentation directory:
+mkdir -p ${DOCS}
+cp -a $DOCFILES $DOCS || true
+
+# Add a slackbuild script:
+install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
+
+# Add slack-desc
+install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+
+# Add a doinst.sh
+install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
+
+# Add config files in doinst.sh (thanks to SBo)
+for NEW in $PKG/etc/shorewall6/*.new; do
+     echo $NEW | sed 's/.*etc/config etc/' >> $PKG/install/doinst.sh
+done
+
+# Create package:
+cd $PKG
+/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
