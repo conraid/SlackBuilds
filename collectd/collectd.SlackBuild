@@ -2,7 +2,7 @@
 #
 # Slackware build script for collectd (http://collectd.org)
 #
-# Copyright 2009-2014 Corrado Franco (http://conraid.net)
+# Copyright 2009-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -32,7 +32,7 @@ PRGNAME=${PRGNAME:-collectd}
 PKGNAME=${PKGNAME:-$PRGNAME}
 VERSION=${VERSION:-5.4.1}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -86,7 +86,8 @@ chmod -R u+w,go+r-w,a-s .
 
 # Apply patch for libstatgrab > 0.9*
 # See https://github.com/collectd/collectd/issues/445
-patch -p0 -i $CWD/statgrab.patch
+patch -p1 -i $CWD/libstatgrab.patch
+patch -p1 -i $CWD/libstatgrab2.patch
 
 # Configure
 sed -i "s:@prefix@/var:/var:g" src/collectd.conf.in
@@ -129,27 +130,11 @@ rm -rf $PKG/usr/lib/perl5/5.*
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
-for i in ${DOCFILES}; do
-    if [ -e "${i}" ]; then
-        if ! [ -L "${i}" ]; then
-	    cp -a "${i}" ${DOCS}
-	else
-	    cp -LRp "${i}" ${DOCS}
-        fi
-    fi;
-done
+cp -a $DOCFILES $DOCS || true
 
 # Add a sample directory:
 mkdir -p ${DOCS}/examples
-for i in ${EXAMPLES}; do
-    if [ -e "${i}" ]; then
-        if ! [ -L "${i}" ]; then
-	    cp -a "${i}" ${DOCS}/examples
-	else
-	    cp -LRp "${i}" ${DOCS}/examples
-        fi
-    fi;
-done
+cp -a ${EXAMPLES} ${DOCS}/examples || true
 
 # Add or move config files
 install -Dpm644 $CWD/rc.collectd $PKG/etc/rc.d/rc.collectd.new
@@ -158,14 +143,13 @@ cat contrib/collection.conf | sed 's%/opt/collectd/%/usr/%g;s%/usr/var/%/var/%' 
 mv $PKG/etc/collectd/collectd.conf  $PKG/etc/collectd/collectd.conf.new
 
 # Add a slackbuild script:
-cat $CWD/$PKGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
+install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
 
 # Add slack-desc
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
 
 # Add a doinst.sh
-cat $CWD/doinst.sh > $PKG/install/doinst.sh
+install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
 
 # Create package:
 cd $PKG

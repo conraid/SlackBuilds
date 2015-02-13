@@ -1,0 +1,81 @@
+From 2bd9ed649bc73acdd12fd1a59ddf5eaf59a59413 Mon Sep 17 00:00:00 2001
+From: Vincent Bernat <vincent@bernat.im>
+Date: Fri, 7 Nov 2014 23:46:45 +0100
+Subject: [PATCH] libstatgrab: fix sg_init() invocation for libstatgrab >= 0.9
+
+In those versions, `sg_init()` need to be invoked with an additional
+argument. The need for such an argument is detected at configure-time.
+
+Fixes: #445
+---
+ configure.ac          | 32 ++++++++++++++++++++++++++++++++
+ src/daemon/collectd.c |  6 +++++-
+ 2 files changed, 37 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index a00eebb..35f8946 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -4077,6 +4077,34 @@ then
+   LDFLAGS="$SAVE_LDFLAGS"
+ fi
+ 
++if test "x$with_libstatgrab" = "xyes"
++then
++  SAVE_CFLAGS="$CFLAGS"
++  SAVE_LDFLAGS="$LDFLAGS"
++
++  CFLAGS="$CFLAGS $with_libstatgrab_cflags"
++  LDFLAGS="$LDFLAGS $with_libstatgrab_ldflags"
++
++  AC_CACHE_CHECK([if sg_init() requires an argument],
++          [c_cv_have_libstatgrab_init_arg],
++          AC_LINK_IFELSE([AC_LANG_PROGRAM(
++[[[
++#include <stdio.h>
++#include <statgrab.h>
++]]],
++[[[
++      if (sg_init()) return 0;
++]]]
++    )],
++    [c_cv_have_libstatgrab_init_arg="no"],
++    [c_cv_have_libstatgrab_init_arg="yes"]
++          )
++  )
++
++  CFLAGS="$SAVE_CFLAGS"
++  LDFLAGS="$SAVE_LDFLAGS"
++fi
++
+ AM_CONDITIONAL(BUILD_WITH_LIBSTATGRAB, test "x$with_libstatgrab" = "xyes")
+ if test "x$with_libstatgrab" = "xyes"
+ then
+@@ -4085,6 +4113,10 @@ then
+   BUILD_WITH_LIBSTATGRAB_LDFLAGS="$with_libstatgrab_ldflags"
+   AC_SUBST(BUILD_WITH_LIBSTATGRAB_CFLAGS)
+   AC_SUBST(BUILD_WITH_LIBSTATGRAB_LDFLAGS)
++  if test "x$c_cv_have_libstatgrab_init_arg" = "xyes"
++  then
++        AC_DEFINE(HAVE_LIBSTATGRAB_INIT_ARG, 1, [Define to 1 if sg_init does require an argument])
++  fi
+ fi
+ # }}}
+ 
+diff --git a/src/collectd.c b/src/collectd.c
+index 2e2d821..8c4d6e6 100644
+--- a/src/collectd.c
++++ b/src/collectd.c
+@@ -307,7 +307,11 @@ static int do_init (void)
+ #endif
+ 
+ #if HAVE_LIBSTATGRAB
+-	if (sg_init ())
++	if (sg_init (
++# if HAVE_LIBSTATGRAB_INIT_ARG
++		    0
++# endif
++		    ))
+ 	{
+ 		ERROR ("sg_init: %s", sg_str_error (sg_get_error ()));
+ 		return (-1);
