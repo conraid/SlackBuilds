@@ -2,7 +2,7 @@
 #
 # Slackware build script for ostinato
 #
-# Copyright 2011-2014 Corrado Franco (http://conraid.net)
+# Copyright 2011-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -25,7 +25,7 @@
 # Latest version of this SlackBuild at http://slackers.it/repository
 #
 # Exit on most errors
-set -e
+set -eu
 
 # Set variables:
 CWD=$(pwd)
@@ -34,7 +34,8 @@ PRGNAME=${PRGNAME:-ostinato}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-0.6}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -94,7 +95,8 @@ install -Dsm755 client/ostinato $PKG/usr/bin/ostinato
 install -Dsm755 server/drone $PKG/usr/bin/drone
 
 # Add a documentation directory:
-install -Dm644 COPYING $DOCS/COPYING
+mkdir -p ${DOCS}
+cp -a $DOCFILES $DOCS || true
 
 # Add a slackbuild script:
 install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
