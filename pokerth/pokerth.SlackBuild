@@ -2,7 +2,7 @@
 #
 # Slackware build script for PokerTH
 #
-# Copyright 2013-2014 Corrado Franco (http://conraid.net)
+# Copyright 2013-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -34,7 +34,7 @@ PRGNAME=${PRGNAME:-PokerTH}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-1.1.1}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -120,15 +120,7 @@ fi
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
-for i in ${DOCFILES}; do
-    if [ -e "${i}" ]; then
-        if ! [ -L "${i}" ]; then
-	    cp -a "${i}" ${DOCS}
-	else
-	    cp -LRp "${i}" ${DOCS}
-        fi
-    fi;
-done
+cp -a $DOCFILES $DOCS || true
 
 # Add a slackbuild script:
 install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
