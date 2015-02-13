@@ -2,7 +2,7 @@
 #
 # Slackware build script for protobuf-c
 #
-# Copyright 2014 Corrado Franco (http://conraid.net)
+# Copyright 2014-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -25,25 +25,25 @@
 # Latest version of this SlackBuild at http://slackers.it/repository
 #
 # Exit on most errors
-set -e
+set -eu
 
 # Set variables:
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-protobuf-c}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-0.15}
+VERSION=${VERSION:-1.1.0}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
 DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
 # Insert document files in this variable
-DOCFILES="ChangeLog README TODO"
+DOCFILES="ChangeLog LICENSE README* TODO"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
     case "$( uname -m )" in
@@ -119,7 +119,7 @@ fi
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
-cp -a $DOCFILES $DOCS
+cp -a $DOCFILES $DOCS || true
 
 # Add a slackbuild script:
 install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
