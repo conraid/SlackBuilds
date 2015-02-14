@@ -37,7 +37,7 @@ PRGNAME=${PRGNAME:-lynis}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-1.6.4}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -73,6 +73,9 @@ install -Dm644 default.prf $PKG/etc/lynis/default.prf.new
 # Install and compress manpage
 install -Dm644 lynis.8 $PKG/usr/man/man8/lynis.8
 gzip -9 $PKG/usr/man/man8/lynis.8
+
+# Install bash completion file
+install -Dm644 extras/bash_completion.d/lynis $PKG/etc/bash-completion.d/completions/lynis
 
 # Add a documentation directory:
 mkdir -p ${DOCS}
