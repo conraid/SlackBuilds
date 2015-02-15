@@ -12,12 +12,12 @@ To make package from slackbuild do
 
 Download source code:
 # source <program>.info
-# wget -c $DOWNLOAD
-if exists SOURCE variable, do instead
-# wget -c $DOWNLOAD -O $SOURCE
+# wget --no-check-certificate --content-disposition -c $DOWNLOAD
 
-if exists EXTRAFILE variables, do also
-# wget -c $EXTRAFILE1 [$EXTRAFILE2]
+If exists SOURCE variable means that it contains the filename.
+
+if exists DOWNLOAD extra variables, do also
+# wget --no-check-certificate --content-disposition -c $DOWNLOAD_XXX [$EXTRAFILE_YYY]
 
 Build:
 # sh <program>.SlackBuild
@@ -29,4 +29,5 @@ you can contact me at slackers.it (at) gmail (dot) com
 
 Packaged by Corrado Franco (http://conraid.net)
 
-Compiled packages are on http://slackers.it/repository
+Compiled packages are on http://slackers.it/repository 
+or in https://sourceforge.net/projects/slackers/
