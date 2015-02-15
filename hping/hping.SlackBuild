@@ -2,7 +2,7 @@
 #
 # Slackware build script for hping
 #
-# Copyright 2014 Corrado Franco (http://conraid.net)
+# Copyright 2014-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -30,18 +30,18 @@ set -e
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-hping3}
+PRGNAME=${PRGNAME:-hping}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-20051105}
+VERSION=${VERSION:-3.0.0-git$(date +%Y%m%d)}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
-DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
+DOCDIR="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
 
 # Insert document files in this variable
-DOCFILES="docs/*-* docs/*.*"
+DOCFILES="docs/*-* docs/*.txt docs/hping2rc.example"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 # Automatically determine the architecture we're building on:
@@ -78,21 +78,18 @@ esac
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf ${PRGNAME}-${VERSION}
-tar xvf $CWD/${PRGNAME}-${VERSION}.tar.gz
-cd ${PRGNAME}-${VERSION}
+rm -rf ${PRGNAME}-master
+tar xvf $CWD/master.tar.gz
+cd ${PRGNAME}-master
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Add some of Debian's patchset (thanks to Debian and SBo)
-patch -p1 -i $CWD/patches/libpcap0.8.diff
-patch -p1 -i $CWD/patches/bytesex.diff
-patch -p1 -i $CWD/patches/spelling.diff
-patch -p1 -i $CWD/patches/personality.diff
-patch -p1 -i $CWD/patches/tcl.diff
-patch -p1 -i $CWD/patches/ip_id_field.diff
+for PATCH in $CWD/patches/*.diff; do
+	patch -p1 -i $PATCH
+done
 
 # Patch Makefile.in
 patch -p1 -i $CWD/patches/Makefile.in.patch
@@ -115,7 +112,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --host=$CHOST-slackware-linux \
   --build=$CHOST-slackware-linux
 
-
 # Build and install:
 make
 make DESTDIR=$PKG install
@@ -131,11 +127,11 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
-cp -a $DOCFILES $DOCS
+mkdir -p ${DOCDIR}
+cp -a $DOCFILES $DOCDIR
 
 # Add a slackbuild script:
-install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
+install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCDIR/$PKGNAME.SlackBuild
 
 # Add slack-desc
 install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
