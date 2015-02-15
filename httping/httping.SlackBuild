@@ -2,7 +2,7 @@
 #
 # Slackware build script for httping (http://www.vanheusden.com/httping/)
 #
-# Copyright 2008-2014 Corrado Franco (http://conraid.net)
+# Copyright 2008-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -23,12 +23,13 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Exit on most errors
-set -e
+set -eu
 
 # Set variables:
 PRGNAME=httping
-VERSION=${VERSION:-2.3.4}
+VERSION=${VERSION:-2.4}
 BUILD=${BUILD:-1}
+ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 TAG=${TAG:-cf}
 CWD=$(pwd)
 TMP=${TMP:-/tmp/pkg}
@@ -77,21 +78,20 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
-sed -i 's%-DVERSION=\\"$(VERSION)\\"%-DVERSION=\\"$(VERSION)\\" -D_GNU_SOURCE%' Makefile
-sed -i 's/0644/0644 -D/g' Makefile
+sed -i 's/\(INSTALL.*0644\)/\1 -D/g' Makefile
 ./configure \
 --with-tfo \
 --with-ncurses \
 --with-openssl \
 --with-fftw3 \
 
-make OFLAGS="$SLKCFLAGS" MANDIR="/usr/man/" DOCDIR="/usr/doc/$PRGNAME-$VERSION" DEBUG="no"
+make OFLAGS="$SLKCFLAGS" DEBUG="no"
 make DESTDIR="$PKG" MANDIR="/usr/man/" DOCDIR="/usr/doc/$PRGNAME-$VERSION" install
 
 strip --strip-unneeded $PKG/usr/bin/httping
 
-# Compress man page
-gzip -9 $PKG/usr/man/man1/httping.1
+# Compress manpages
+find $PKG/usr/man -type f -exec gzip -9 {} \;
 
 # Add a slackbuild script:
 install -Dm644 $CWD/$PRGNAME.SlackBuild $PKG/usr/doc/$PRGNAME-$VERSION/$PRGNAME.SlackBuild
