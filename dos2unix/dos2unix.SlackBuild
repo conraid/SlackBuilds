@@ -2,7 +2,7 @@
 #
 # Slackware build script for dos2unix
 #
-# Copyright 2009-2014 Corrado Franco (http://conraid.net)
+# Copyright 2009-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -30,13 +30,13 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-dos2unix}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-7.1}
+VERSION=${VERSION:-7.2}
 PKGVERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
-DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
+DOCDIR="$PKG/usr/doc/$PKGNAME-$VERSION"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we are building on:
@@ -54,18 +54,18 @@ case "$ARCH" in
     i486)
 	SLKCFLAGS="-O2 -march=i486 -mtune=i686 -D_LARGEFILE_SOURCE"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+	;;
     i686)
 	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer -D_LARGEFILE_SOURCE"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+	;;
     x86_64)
 	SLKCFLAGS="-O2 -pipe -fomit-frame-pointer -D_LARGEFILE_SOURCE"; CHOST="x86_64"
 	SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
+	;;
     *)
-        SLKCFLAGS="-O2"; CHOST=$ARCH
-        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	SLKCFLAGS="-O2"; CHOST=$ARCH
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
 
@@ -91,19 +91,16 @@ find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cu
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true
 
 # Compress and link manpages, if any:
-if [ -d $PKG/usr/man ]; then
-( cd $PKG/usr/man
+( cd ${PKG}/usr/man
   find . -type f -exec gzip -9 {} \;
   for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 )
-fi
 
 # Add a slackbuild script:
-cat $CWD/$PKGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Create package:
 cd $PKG
