@@ -31,14 +31,14 @@ set -euu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-squid}
-PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-3.5.1}
-PKGVERSION=$(echo $VERSION | tr - _)
+PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
+VERSION=${VERSION:-3.5.2}
+PKGVERSION=$(echo ${VERSION} | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PKGNAME
-DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
+PKG=${TMP}/package-${PKGNAME}
+DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 SQUIDUSER=${SQUIDUSER:-nobody}
 SQUIDGROUP=${SQUIDGROUP:-nobody}
 
@@ -47,17 +47,17 @@ DOCFILES="CONTRIBUTORS COPYING COPYRIGHT CREDITS ChangeLog INSTALL QUICKSTART RE
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
-if [ -z "$ARCH" ]; then
+if [ -z "${ARCH}" ]; then
     case "$( uname -m )" in
 	i?86) ARCH=i686 ;;
 	arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
+        # Unless ${ARCH} is already set, use uname -m for all other archs:
         *) ARCH=$( uname -m ) ;;
     esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
+case "${ARCH}" in
     i[3-5]86)
         SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
@@ -71,27 +71,27 @@ case "$ARCH" in
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
     *)
-	SLKCFLAGS="-O2"; CHOST=$ARCH
+	SLKCFLAGS="-O2"; CHOST=${ARCH}
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
 
 # Extract source and prepare:
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
-rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-$VERSION.tar.xz
-cd $PRGNAME-$VERSION
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
+rm -rf ${PRGNAME}-${VERSION}
+tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.xz
+cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure
-LDFLAGS="$SLKLDFLAGS" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
+LDFLAGS="${SLKLDFLAGS}" \
+CFLAGS="${SLKCFLAGS}" \
+CXXFLAGS="${SLKCFLAGS}" \
 ./configure \
 	--prefix=/usr \
 	--libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -108,86 +108,85 @@ CXXFLAGS="$SLKCFLAGS" \
 	--enable-shared=yes \
 	--with-pidfile=/var/run/squid \
 	--with-logdir=/var/log/squid \
+	--enable-arp-acl \
+	--enable-async-io \
 	--enable-auth \
 	--enable-auth-basic \
-	--enable-auth-ntlm \
 	--enable-auth-digest \
 	--enable-auth-negotiate \
-	--enable-external-acl-helpers="unix_group,wbinfo_group,file_userip,SQL_session" \
-	--enable-snmp \
-	--enable-linux-netfilter \
-	--enable-async-io \
-	--disable-strict-error-checking \
-	--with-large-files \
-	--disable-option-checking \
-	--with-filedescriptors=65536 \
-	--enable-icmp \
-	--enable-delay-pools \
-	--enable-inline \
-	--enable-storeio="aufs,ufs,diskd" \
-	--enable-arp-acl \
-	--enable-wccp \
-	--enable-removal-policies=lru,heap \
-	--with-openssl=/usr \
-	--enable-ssl-crtd \
-	--disable-strict-error-checking \
-	--enable-esi \
-	--enable-useragent-log \
+	--enable-auth-ntlm \
 	--enable-cache-digests \
-	--enable-referer-log \
-	--enable-truncate \
+	--enable-delay-pools \
+	--enable-esi \
+	--enable-external-acl-helpers="unix_group,wbinfo_group,file_userip,SQL_session" \
 	--enable-icap-client \
+	--enable-icmp \
+	--enable-inline \
+	--enable-linux-netfilter \
+	--enable-referer-log \
+	--enable-removal-policies=lru,heap \
+	--enable-snmp \
+	--enable-ssl-crtd \
+	--enable-storeio="aufs,ufs,diskd" \
+	--enable-truncate \
+	--enable-useragent-log \
+	--enable-wccp \
+	--with-filedescriptors=65536 \
+	--with-large-files \
+	--with-openssl=/usr \
 	--disable-arch-native \
-	--host=$CHOST-slackware-linux \
-	--build=$CHOST-slackware-linux
+	--disable-option-checking \
+	--disable-strict-error-checking \
+	--host=${CHOST}-slackware-linux \
+	--build=${CHOST}-slackware-linux
 
 # Build and install:
 make
-make DESTDIR=$PKG install
+make DESTDIR=${PKG} install
 
 # Strip binaries:
-find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
-find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 # Compress and link manpages, if any:
-if [ -d $PKG/usr/man ]; then
-    find $PKG/usr/man -type f -exec gzip -9 {} \;
-    for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+if [ -d ${PKG}/usr/man ]; then
+    find ${PKG}/usr/man -type f -exec gzip -9 {} \;
+    for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Make directory and configuration files (thanks to SBo)
-mkdir -p $PKG/etc/{logrotate.d,rc.d} 
-install -Dm644 $CWD/rc.squid $PKG/etc/rc.d/rc.squid.new
+mkdir -p ${PKG}/etc/{logrotate.d,rc.d} 
+install -Dm644 ${CWD}/rc.squid ${PKG}/etc/rc.d/rc.squid.new
 
-sed -e "s,@USER@,$SQUIDUSER," -e "s,@GROUP@,$SQUIDGROUP," $CWD/squid.logrotate > $PKG/etc/logrotate.d/squid.new
+sed -e "s,@USER@,$SQUIDUSER," -e "s,@GROUP@,$SQUIDGROUP," ${CWD}/squid.logrotate > ${PKG}/etc/logrotate.d/squid.new
 
-mv $PKG/etc/squid/mime.conf $PKG/etc/squid/mime.conf.new
-mv $PKG/etc/squid/cachemgr.conf $PKG/etc/squid/cachemgr.conf.new
-mv $PKG/etc/squid/squid.conf $PKG/etc/squid/squid.conf.new
-mv $PKG/etc/squid/errorpage.css $PKG/etc/squid/errorpage.css.new
-install -Dm644 src/squid.conf.documented $PKG/etc/squid/squid.conf.documented
+mv ${PKG}/etc/squid/mime.conf $PKG/etc/squid/mime.conf.new
+mv ${PKG}/etc/squid/cachemgr.conf $PKG/etc/squid/cachemgr.conf.new
+mv ${PKG}/etc/squid/squid.conf $PKG/etc/squid/squid.conf.new
+mv ${PKG}/etc/squid/errorpage.css $PKG/etc/squid/errorpage.css.new
+install -Dm644 src/squid.conf.documented ${PKG}/etc/squid/squid.conf.documented
 
-mkdir -p $PKG/var/{cache,run}/squid
-chown $SQUIDUSER:$SQUIDGROUP $PKG/var/{cache,log,run}/squid
+mkdir -p ${PKG}/var/{cache,run}/squid
+chown $SQUIDUSER:$SQUIDGROUP ${PKG}/var/{cache,log,run}/squid
 
 ## Edit the config file to set the user and group to run as
-sed -i -e 's%^cache_effective_user nobody%cache_effective_user '"$SQUIDUSER"'%g' $PKG/etc/squid/squid.conf.new
-sed -i -e 's%^cache_effective_group nobody%cache_effective_group '"$SQUIDGROUP"'%g' $PKG/etc/squid/squid.conf.new
+sed -i -e 's%^cache_effective_user nobody%cache_effective_user '"$SQUIDUSER"'%g' ${PKG}/etc/squid/squid.conf.new
+sed -i -e 's%^cache_effective_group nobody%cache_effective_group '"$SQUIDGROUP"'%g' ${PKG}/etc/squid/squid.conf.new
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
-cp -a $DOCFILES $DOCS || true
-install -Dm644 $CWD/SLACKWARE.README $DOCS/README.SLACKWARE
+mkdir -p ${DOCDIR}
+cp -a ${DOCFILES} ${DOCDIR} || true
+install -Dm644 ${CWD}/SLACKWARE.README ${DOCDIR}/README.SLACKWARE
 
 # Add a slackbuild script:
-install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
-install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Add a doinst.sh
-install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
+install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz

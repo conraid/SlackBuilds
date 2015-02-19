@@ -23,9 +23,7 @@ perms() {
 }
 
 perms etc/rc.d/rc.squid.new
-config etc/squid/mime.conf.new
-config etc/squid/squid.conf.new
-config etc/squid/cachemgr.conf.new
-config etc/squid/msntauth.conf.new
-config etc/logrotate.d/squid.new
+for NEW in etc/squid/*.new; do
+	config $NEW
+done
 
