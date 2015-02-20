@@ -31,45 +31,45 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-inxi}
-PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
+PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PKGNAME
+PKG=${TMP}/package-${PKGNAME}
 ARCH=${ARCH:="noarch"} 
 
 # Extract files
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
-rm -rf $PRGNAME
-mkdir -p $PRGNAME
-cd $PRGNAME
-tar xvf $CWD/$PRGNAME.tar.gz
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
+rm -rf ${PRGNAME}
+mkdir -p ${PRGNAME}
+cd ${PRGNAME}
+tar xvf ${CWD}/${PRGNAME}.tar.gz
 
 # Check version
 VERSION=${VERSION:-$(grep "^####  Version:" inxi | cut -f4 -d" ")}
-PKGVERSION=$(echo $VERSION | tr - _)
-DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
+PKGVERSION=$(echo ${VERSION} | tr - _)
+DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 # Install:
-install -Dm755 inxi $PKG/usr/bin/inxi
+install -Dm755 inxi ${PKG}/usr/bin/inxi
 
 # Install man page:
-install -Dm644 inxi.1.gz $PKG/usr/man/man1/inxi.1.gz
+install -Dm644 inxi.1.gz ${PKG}/usr/man/man1/inxi.1.gz
 
 # Install changelog
-install -Dm644 inxi.changelog $DOCS/ChangeLog
+install -Dm644 inxi.changelog ${DOCDIR}/ChangeLog
 
 # Install Copyright files
-install -Dm644 $CWD/gpl.txt $DOCS/COPYING
+install -Dm644 ${CWD}/gpl.txt ${DOCDIR}/COPYING
 
 # Add a slackbuild script:
-install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild1
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
-install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
