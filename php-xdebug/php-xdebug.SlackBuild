@@ -29,31 +29,31 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-xdebug}
-PKGNAME=${PKGNAME:-php-$PRGNAME}
+PKGNAME=${PKGNAME:-php-${PRGNAME}}
 VERSION=${VERSION:-2.2.7}
-PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+PKGVERSION=$(echo ${VERSION} | tr - _)
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PKGNAME
-DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
+PKG=${TMP}/package-${PKGNAME}
+DOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
 
 # Insert document files in this variable
 DOCFILES="CREDITS ChangeLog LICENSE NEWS README"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
-if [ -z "$ARCH" ]; then
+if [ -z "${ARCH}" ]; then
     case "$( uname -m )" in
 	i?86) ARCH=i686 ;;
 	arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
+        # Unless ${ARCH} is already set, use uname -m for all other archs:
         *) ARCH=$( uname -m ) ;;
     esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
+case "${ARCH}" in
     i486)
 	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
@@ -67,18 +67,18 @@ case "$ARCH" in
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
     *)
-	SLKCFLAGS="-O2"; CHOST=$ARCH
+	SLKCFLAGS="-O2"; CHOST=${ARCH}
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
 
 # Extract source and prepare:
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
-rm -rf $PRGNAME-$VERSION
-tar xzvf $CWD/$PRGNAME-$VERSION.tgz
-cd $PRGNAME-$VERSION
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
+rm -rf ${PRGNAME}-${VERSION}
+tar xzvf ${CWD}/${PRGNAME}-${VERSION}.tgz
+cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -87,56 +87,56 @@ chmod -R u+w,go+r-w,a-s .
 # Configure
 phpize --clean
 phpize
-LDFLAGS="$SLKLDFLAGS" \
-CFLAGS="$SLKCFLAGS" \
+LDFLAGS="${SLKLDFLAGS}" \
+CFLAGS="${SLKCFLAGS}" \
 ./configure \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
   --enable-xdebug \
   --disable-static \
-  --host=$CHOST-slackware-linux \
-  --build=$CHOST-slackware-linux
+  --host=${CHOST}-slackware-linux \
+  --build=${CHOST}-slackware-linux
 
 # Build and install debugclient:
 make
-make INSTALL_ROOT=$PKG install
-strip --strip-unneeded $PKG/usr/lib${LIBDIRSUFFIX}/php/extensions/xdebug.so
+make INSTALL_ROOT=${PKG} install
+strip --strip-unneeded ${PKG}/usr/lib${LIBDIRSUFFIX}/php/extensions/xdebug.so
 
 # Configure debugclient
 cd debugclient
 ./buildconf
-LDFLAGS="$SLKLDFLAGS" \
-CFLAGS="$SLKCFLAGS" \
+LDFLAGS="${SLKLDFLAGS}" \
+CFLAGS="${SLKCFLAGS}" \
 ./configure \
   --prefix=/usr \
   --with-libedit \
-  --host=$CHOST-slackware-linux \
-  --build=$CHOST-slackware-linux
+  --host=${CHOST}-slackware-linux \
+  --build=${CHOST}-slackware-linux
 
 # Build and install debugclient:
 make
-make DESTDIR=$PKG install-strip
+make DESTDIR=${PKG} install-strip
 cd -
 
 # Add a documentation directory:
-mkdir -p ${DOCS}/debugclient
-cp -a ${DOCFILES} ${DOCS} || true
+mkdir -p ${DOCDIR}/debugclient
+cp -a ${DOCFILES} ${DOCDIR} || true
 
 # Add debgclient document
-cp -a debugclient/INSTALL debugclient/LICENSE $DOCS/debugclient
+cp -a debugclient/INSTALL debugclient/LICENSE ${DOCDIR}/debugclient
 
 # Copy config files
-mkdir -p $PKG/etc/php
-sed -e "s#/usr/lib/php#/usr/lib${LIBDIRSUFFIX}/php#" $CWD/xdebug.ini > $PKG/etc/php/xdebug.ini.new
+mkdir -p ${PKG}/etc/php
+sed -e "s#/usr/lib/php#/usr/lib${LIBDIRSUFFIX}/php#" ${CWD}/xdebug.ini > ${PKG}/etc/php/xdebug.ini.new
 
 # Add a slackbuild script:
-install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
-install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Add a doinst.sh
-install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
+install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz

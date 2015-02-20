@@ -30,31 +30,31 @@ CWD=$(pwd)
 
 PRGNAME=php-handlersocket
 EXTNAME=handlersocket
-PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
+PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-0.3.1}
-PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-13}
+PKGVERSION=$(echo ${VERSION} | tr - _)
+BUILD=${BUILD:-14}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PKGNAME
-DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
+PKG=${TMP}/package-${PKGNAME}
+DOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
 
 # Insert document files in this variable
 DOCFILES="CREDITS ChangeLog README LICENSE handlersocket.php"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
-if [ -z "$ARCH" ]; then
+if [ -z "${ARCH}" ]; then
     case "$( uname -m )" in
 	i?86) ARCH=i686 ;;
 	arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
+        # Unless ${ARCH} is already set, use uname -m for all other archs:
         *) ARCH=$( uname -m ) ;;
     esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
+case "${ARCH}" in
     i486)
 	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
@@ -68,17 +68,17 @@ case "$ARCH" in
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
     *)
-	SLKCFLAGS="-O2"; CHOST=$ARCH
+	SLKCFLAGS="-O2"; CHOST=${ARCH}
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
 
 # Extract source and prepare:
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
 rm -rf $EXTNAME
-tar xzvf $CWD/$PRGNAME-$VERSION.tar.gz
+tar xzvf ${CWD}/${PRGNAME}-${VERSION}.tar.gz
 cd $EXTNAME
 
 # Make sure ownerships and permissions are sane:
@@ -88,8 +88,8 @@ chmod -R u+w,go+r-w,a-s .
 # Configure
 phpize --clean
 phpize
-LDFLAGS="$SLKLDFLAGS" \
-CFLAGS="$SLKCFLAGS" \
+LDFLAGS="${SLKLDFLAGS}" \
+CFLAGS="${SLKCFLAGS}" \
 ./configure \
   --prefix=/usr \
   --with-libdir=lib${LIBDIRSUFFIX} \
@@ -97,33 +97,33 @@ CFLAGS="$SLKCFLAGS" \
   --enable-static=no \
   --enable-shared=yes \
   --disable-handlersocket-hsclient \
-  --host=$CHOST-slackware-linux \
-  --build=$CHOST-slackware-linux
+  --host=${CHOST}-slackware-linux \
+  --build=${CHOST}-slackware-linux
 
 # Build and install:
 make
-make INSTALL_ROOT=$PKG install
+make INSTALL_ROOT=${PKG} install
 
 # Strip binaries:
-strip --strip-unneeded $PKG/usr/lib${LIBDIRSUFFIX}/php/extensions/$EXTNAME.so
+strip --strip-unneeded ${PKG}/usr/lib${LIBDIRSUFFIX}/php/extensions/$EXTNAME.so
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
-cp -a $DOCFILES $DOCS || true
+mkdir -p ${DOCDIR}
+cp -a ${DOCFILES} ${DOCDIR} || true
 
 # Add a slackbuild script:
-cat $CWD/$PKGNAME.SlackBuild > $DOCS/$PKGNAME.SlackBuild
+cat ${CWD}/${PKGNAME}.SlackBuild > ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
-install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Add a doinst.sh
-install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
+install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Add extensione config example
-mkdir -p $PKG/etc/php
-echo 'extension=handlersocket.so' > $PKG/etc/php/$EXTNAME.ini.new
+mkdir -p ${PKG}/etc/php
+echo 'extension=handlersocket.so' > ${PKG}/etc/php/$EXTNAME.ini.new
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
