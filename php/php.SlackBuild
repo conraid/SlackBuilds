@@ -29,7 +29,7 @@
 
 
 # Exit on most errors
-set -e
+set -eu
 
 # Set variables:
 CWD=$(pwd)
@@ -38,7 +38,7 @@ PRGNAME=${PRGNAME:-php}
 PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
 VERSION=${VERSION:-5.6.6}
 PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAME
@@ -256,7 +256,7 @@ LDFLAGS="$SLKLDFLAGS" \
   --with-snmp=shared,/usr \
   --with-sqlite3=shared \
   --with-t1lib=/usr \
-  --with-tidy=shared \
+  --with-tidy=/usr \
   --with-tsrm-pthreads \
   --with-xmlrpc=shared \
   --with-xpm-dir=/usr \
