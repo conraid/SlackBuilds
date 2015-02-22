@@ -7,7 +7,7 @@ SBIN=/usr/sbin/pmacctd
 
 PID=$(pidof -o %PPID $SBIN)
 
-_start() {
+pmacct_start() {
 	echo -n "Starting daemon... "
     [ -z "$PID" ] && $SBIN -D -f $CONFIGFILE
     if [ $? -gt 0 ]; then
@@ -17,7 +17,7 @@ _start() {
     fi
 }
 
-_stop() {
+pmacct_stop() {
     echo -n "Stopping daemon... "
     [ ! -z "$PID" ] && kill $PID &> /dev/null
     if [ $? -gt 0 ]; then
@@ -30,15 +30,15 @@ _stop() {
 
 case "$1" in
   start)
-	_start
+	pmacct_start
     ;;
   stop)
-	_stop
+	pmacct_stop
     ;;
   restart)
-	_stop
+	pmacct_stop
     sleep 1
-	_start
+	pmacct_start
     ;;
   *)
     echo "usage: $0 {start|stop|restart}"
