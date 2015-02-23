@@ -1,0 +1,60 @@
+diff -Naupr p7zip_9.38-orig/CPP/Common/StringConvert.cpp p7zip_9.38/CPP/Common/StringConvert.cpp
+--- p7zip_9.38-orig/CPP/Common/StringConvert.cpp	2014-12-31 18:36:17.000000000 +0100
++++ p7zip_9.38/CPP/Common/StringConvert.cpp	2015-02-22 18:30:51.000000000 +0100
+@@ -15,34 +15,32 @@ int global_use_utf16_conversion = 0;
+ #include <CoreFoundation/CoreFoundation.h>
+ #undef UInt32
+ 
+-UString MultiByteToUnicodeString(const AString &srcString, UINT codePage)
++UString MultiByteToUnicodeString(const AString &srcString, UINT /* codePage */ )
+ {
+-  if (!srcString.IsEmpty())
++#ifdef ENV_HAVE_MBSTOWCS
++  if ((global_use_utf16_conversion) && (!srcString.IsEmpty()))
+   {
+     UString resultString;
+-    const char * path = &srcString[0];
+-
+-// FIXME    size_t n = strlen(path);
+-
+-    CFStringRef cfpath = CFStringCreateWithCString(NULL,path,kCFStringEncodingUTF8);
+-
+-    if (cfpath)
+-    {
+-
+-       CFMutableStringRef cfpath2 = CFStringCreateMutableCopy(NULL,0,cfpath);
+-       CFRelease(cfpath);
+-       CFStringNormalize(cfpath2,kCFStringNormalizationFormC);
+-    
+-       size_t n = CFStringGetLength(cfpath2);
+-       for(size_t i =   0 ; i< n ;i++) {
+-         resultString += CFStringGetCharacterAtIndex(cfpath2,i);
+-       }
+-
+-       CFRelease(cfpath2);  
+-
+-       return resultString;
++    int numChars = mbstowcs(resultString.GetBuffer(srcString.Len()),srcString,srcString.Len()+1);
++    if (numChars >= 0) {
++        resultString.ReleaseBuffer(numChars);  // this line is now here
++
++#if WCHAR_MAX > 0xffff
++      for (int i = numChars; i >= 0; i--) {
++        if (resultString[i] > 0xffff) {
++          wchar_t c = resultString[i] - 0x10000;
++          resultString.Delete(i);
++          resultString.Insert(i, ((c >> 10) & 0x3ff) + 0xd800);
++          resultString.Insert(i + 1, (c & 0x3ff) + 0xdc00);
++          numChars++;
++        }
++      }
++#endif
++        // before : resultString.ReleaseBuffer(numChars); was here
++      return resultString;
+     }
+   }
++#endif
+ 
+   UString resultString;
+   for (int i = 0; i < srcString.Len(); i++)
+
