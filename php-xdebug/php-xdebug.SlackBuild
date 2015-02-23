@@ -30,16 +30,16 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-xdebug}
 PKGNAME=${PKGNAME:-php-${PRGNAME}}
-VERSION=${VERSION:-2.2.7}
+VERSION=${VERSION:-2.3.0}
 PKGVERSION=$(echo ${VERSION} | tr - _)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
 DOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
 
 # Insert document files in this variable
-DOCFILES="CREDITS ChangeLog LICENSE NEWS README"
+DOCFILES="CREDITS LICENSE NEWS README contrib"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
@@ -96,7 +96,7 @@ CFLAGS="${SLKCFLAGS}" \
   --host=${CHOST}-slackware-linux \
   --build=${CHOST}-slackware-linux
 
-# Build and install debugclient:
+# Build and install xdebug:
 make
 make INSTALL_ROOT=${PKG} install
 strip --strip-unneeded ${PKG}/usr/lib${LIBDIRSUFFIX}/php/extensions/xdebug.so
@@ -118,13 +118,10 @@ make DESTDIR=${PKG} install-strip
 cd -
 
 # Add a documentation directory:
-mkdir -p ${DOCDIR}/debugclient
+mkdir -p ${DOCDIR}
 cp -a ${DOCFILES} ${DOCDIR} || true
 
-# Add debgclient document
-cp -a debugclient/INSTALL debugclient/LICENSE ${DOCDIR}/debugclient
-
-# Copy config files
+# Copy config example file
 mkdir -p ${PKG}/etc/php
 sed -e "s#/usr/lib/php#/usr/lib${LIBDIRSUFFIX}/php#" ${CWD}/xdebug.ini > ${PKG}/etc/php/xdebug.ini.new
 
