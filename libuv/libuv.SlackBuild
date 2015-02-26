@@ -34,7 +34,7 @@ PRGNAME=${PRGNAME:-libuv}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-1.4.1}
 PKGVERSION=$(echo ${VERSION} | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -111,6 +111,9 @@ make DESTDIR=${PKG} install
 # Strip binaries:
 find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+
+# Add man page
+install -Dm644 ${CWD}/libuv.1.gz ${PKG}/usr/man/man1/libuv.1.gz
 
 # Add a documentation directory:
 mkdir -p ${DOCDIR}
