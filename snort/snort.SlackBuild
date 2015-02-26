@@ -2,7 +2,7 @@
 #
 # Slackware build script for snort
 #
-# Copyright 2011-2014 Corrado Franco (http://conraid.net)
+# Copyright 2011-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -31,31 +31,31 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-snort}
-PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
+PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-2.9.7.0}
-PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+PKGVERSION=$(echo ${VERSION} | tr - _)
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PKGNAME
-DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
+PKG=${TMP}/package-${PKGNAME}
+DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 # Insert document files in this variable
 DOCFILES="COPYING ChangeLog LICENSE RELEASE.NOTES"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
-if [ -z "$ARCH" ]; then
+if [ -z "${ARCH}" ]; then
     case "$( uname -m )" in
 	i?86) ARCH=i686 ;;
 	arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
+        # Unless ${ARCH} is already set, use uname -m for all other archs:
         *) ARCH=$( uname -m ) ;;
     esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
+case "${ARCH}" in
     i486)
 	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
@@ -69,18 +69,18 @@ case "$ARCH" in
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
     *)
-	SLKCFLAGS="-O2"; CHOST=$ARCH
+	SLKCFLAGS="-O2"; CHOST=${ARCH}
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
 
 # Extract source and prepare:
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
-rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
-cd $PRGNAME-$VERSION
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
+rm -rf ${PRGNAME}-${VERSION}
+tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.gz
+cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -92,12 +92,12 @@ for MF in $( find src/ -name Makefile.in ) ; do
 done
 
 # Sane --docdir in /doc/Makefile.in
-sed -i 's#${datadir}/doc/${PACKAGE}#@docdir@#g' doc/Makefile.in
+sed 's#${datadir}/doc/${PACKAGE}#@docdir@#g' -i {doc,tools/u2boat}/Makefile.in 
 
 # Configure
-LDFLAGS="$SLKLDFLAGS" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
+LDFLAGS="${SLKLDFLAGS}" \
+CFLAGS="${SLKCFLAGS}" \
+CXXFLAGS="${SLKCFLAGS}" \
 ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -110,33 +110,23 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-shared=yes \
   --enable-linux-smp-stats \
   --enable-pthread \
-  --enable-zlib \
-  --host=$CHOST-slackware-linux \
-  --build=$CHOST-slackware-linux
+  --disable-static-daq \
+  --host=${CHOST}-slackware-linux \
+  --build=${CHOST}-slackware-linux
 
 # Build and install:
 make
-make DESTDIR=$PKG install-strip
+make DESTDIR=${PKG} install-strip
 
 # Compress and link manpages, if any:
-if [ -d $PKG/usr/man ]; then
-    ( cd $PKG/usr/man
-    find -type f -exec gzip -9 {} \;
-    for i in $(find -type l); do ln -s $(readlink $i).gz $i.gz; rm $i; done
-    )
+if [ -d ${PKG}/usr/man ]; then
+    find ${PKG}/usr/man -type f -exec gzip -9 {} \;
+    for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
-for i in ${DOCFILES}; do
-    if [ -e "${i}" ]; then
-        if ! [ -L "${i}" ]; then
-	    cp -a "${i}" ${DOCS}
-	else
-	    cp -LRp "${i}" ${DOCS}
-        fi
-    fi;
-done
+mkdir -p ${DOCDIR}
+cp -a ${DOCFILES} ${DOCDIR} || true
 
 ### Set directory for snort. Thanks to SBo and archlinux
 mkdir -p "${PKG}/"{etc/rc.d,etc/snort/rules,etc/snort/preproc_rules,var/log/snort,/usr/lib${LIBDIRSUFFIX}/snort_dynamicrules}
@@ -146,30 +136,29 @@ mkdir -p "${PKG}/"{etc/rc.d,etc/snort/rules,etc/snort/preproc_rules,var/log/snor
 sed -e "s|usr/local/lib|usr/lib${LIBDIRSUFFIX}|g" \
     -e "s|PATH ../|PATH |g" \
     -e "/^# output unified2*/aoutput unified2: filename snort.log, limit 128" \
-    etc/snort.conf > $PKG/etc/snort/snort.conf.new
-cat etc/threshold.conf > $PKG/etc/snort/threshold.conf.new
-cat etc/reference.config > $PKG/etc/snort/reference.config.new
-cat etc/classification.config > $PKG/etc/snort/classification.config.new
-cat etc/attribute_table.dtd > $PKG/etc/snort/attribute_table.dtd.new
-cat etc/gen-msg.map > $PKG/etc/snort/gen-msg.map.new
-cat etc/unicode.map > $PKG/etc/snort/unicode.map.new
+    etc/snort.conf > ${PKG}/etc/snort/snort.conf.new
+cat etc/threshold.conf > ${PKG}/etc/snort/threshold.conf.new
+cat etc/reference.config > ${PKG}/etc/snort/reference.config.new
+cat etc/classification.config > ${PKG}/etc/snort/classification.config.new
+cat etc/attribute_table.dtd > ${PKG}/etc/snort/attribute_table.dtd.new
+cat etc/gen-msg.map > ${PKG}/etc/snort/gen-msg.map.new
+cat etc/unicode.map > ${PKG}/etc/snort/unicode.map.new
 
-# Create directories for schemas and signatures
-mkdir -p $DOCS/{schemas,signatures}
-cat $CWD/SLACKWARE.README > $DOCS/README.SLACKWARE
+# Install Slackware Readme
+install -Dm644 ${CWD}/SLACKWARE.README ${DOCDIR}/README.SLACKWARE
 
 # Include the rc.snort file.
-install -Dm755 $CWD/rc.snort $PKG/etc/rc.d/rc.snort.new
+install -Dm755 ${CWD}/rc.snort ${PKG}/etc/rc.d/rc.snort.new
 
 # Add a slackbuild script:
-install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
-install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Add a doinst.sh
-install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
+install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
