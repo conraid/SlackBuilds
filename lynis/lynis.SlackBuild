@@ -34,62 +34,62 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-lynis}
-PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-1.6.4}
-PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-3}
+PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
+VERSION=${VERSION:-2.0.0}
+PKGVERSION=$(echo ${VERSION} | tr - _)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PKGNAME
-DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
+PKG=${TMP}/package-${PKGNAME}
+DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 ARCH=${ARCH:="noarch"}
 
 # Insert document files in this variable
-DOCFILES="CHANGELOG FAQ LICENSE README INSTALL"
+DOCFILES="CHANGELOG CONTRIBUTORS FAQ INSTALL LICENSE README"
 
 # Extract source and prepare:
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
-rm -rf $PRGNAME
-tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
-cd $PRGNAME
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
+rm -rf ${PRGNAME}
+tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.gz
+cd ${PRGNAME}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Install binary file
-install -Dm755 lynis $PKG/usr/bin/lynis
+install -Dm755 lynis ${PKG}/usr/bin/lynis
 
 # Install plugins, include, db
-mkdir -p $PKG/usr/share/$PKGNAME
-cp -a db include plugins $PKG/usr/share/$PKGNAME
+mkdir -p ${PKG}/usr/share/${PKGNAME}
+cp -a db include plugins ${PKG}/usr/share/${PKGNAME}
 
 # Install config file
-install -Dm644 default.prf $PKG/etc/lynis/default.prf.new
+install -Dm644 default.prf ${PKG}/etc/lynis/default.prf.new
 
 # Install and compress manpage
-install -Dm644 lynis.8 $PKG/usr/man/man8/lynis.8
-gzip -9 $PKG/usr/man/man8/lynis.8
+install -Dm644 lynis.8 ${PKG}/usr/man/man8/lynis.8
+gzip -9 ${PKG}/usr/man/man8/lynis.8
 
 # Install bash completion file
-install -Dm644 extras/bash_completion.d/lynis $PKG/etc/bash_completion.d/lynis
+install -Dm644 extras/bash_completion.d/lynis ${PKG}/etc/bash_completion.d/lynis
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
-cp -a $DOCFILES $DOCS || true
+mkdir -p ${DOCDIR}
+cp -a ${DOCFILES} ${DOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
-install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Add doinst.sh
-install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
+install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
