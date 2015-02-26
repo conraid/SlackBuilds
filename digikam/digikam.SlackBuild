@@ -28,31 +28,31 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-digikam}
-PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-4.7.0}
-PKGVERSION=$(echo $VERSION | tr - _)
+PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
+VERSION=${VERSION:-4.8.0}
+PKGVERSION=$(echo ${VERSION} | tr - _)
 BUILD=${BUILD:-1}
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PKGNAME
-DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
+PKG=${TMP}/package-${PKGNAME}
+DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 # Insert document files in this variable
 DOCFILES="COPYING* core/NEWS README*"
 
 # Automatically determine the architecture we are building on:
-if [ -z "$ARCH" ]; then
+if [ -z "${ARCH}" ]; then
     case "$( uname -m )" in
         i?86) ARCH=i686 ;;
         arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
+        # Unless ${ARCH} is already set, use uname -m for all other archs:
         *) ARCH=$( uname -m ) ;;
     esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
+case "${ARCH}" in
     i486)
 	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
@@ -66,17 +66,17 @@ case "$ARCH" in
 	SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
     *)
-        SLKCFLAGS="-O2"; CHOST=$ARCH
+        SLKCFLAGS="-O2"; CHOST=${ARCH}
         SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
 
 # Extract source and prepare:
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
 rm -rf ${PRGNAME}-${VERSION}
-tar xvf ${CWD}/${PRGNAME}-${VERSION}-1.tar.bz2
+tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.bz2
 cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
@@ -87,15 +87,17 @@ chmod -R u+w,go+r-w,a-s .
 mkdir build
 cd build
 cmake \
--DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
--DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
+-DCMAKE_C_FLAGS:STRING="${SLKCFLAGS}" \
+-DCMAKE_CXX_FLAGS:STRING="${SLKCFLAGS}" \
 -DCMAKE_INSTALL_PREFIX=/usr \
 -DSYSCONF_INSTALL_DIR=/etc/kde \
--DLIB_SUFFIX="$LIBDIRSUFFIX" \
+-DLIB_SUFFIX="${LIBDIRSUFFIX}" \
 -DCMAKE_BUILD_TYPE=None \
+-DHTML_INSTALL_DIR=/usr/doc/HTML \
 -DImageMagick_MagickCore_INCLUDE_DIR:PATH=/usr/include/ImageMagick-6 \
 -DImageMagick_MagickCore_LIBRARY:FILEPATH=/usr/lib${LIBDIRSUFFIX}/libMagickCore-6.Q16.so \
 -DENABLE_LCMS2=ON \
+-DENABLE_MYSQLSUPPORT=ON \
 -DDIGIKAMSC_COMPILE_LIBKDCRAW=ON \
 -DDIGIKAMSC_COMPILE_LIBKFACE=ON \
 -DDIGIKAMSC_COMPILE_LIBKGEOMAP=ON \
@@ -113,31 +115,31 @@ cd ..
 rm ${PKG}/usr/share/locale/*/LC_MESSAGES/libkipi.mo
 
 # Strip binaries:
-find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
-find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 # Compress and link manpages, if any:
-if [ -d $PKG/usr/man ]; then
-( cd $PKG/usr/man
+if [ -d ${PKG}/usr/man ]; then
+( cd ${PKG}/usr/man
   find . -type f -exec gzip -9 {} \;
   for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 )
 fi
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
-cp -a $DOCFILES ${DOCS} || true
+mkdir -p ${DOCDIR}
+cp -a ${DOCFILES} ${DOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 $CWD/$PKGNAME.SlackBuild ${DOCS}/$PKGNAME.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
-install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Add a doinst.sh
-install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
+install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
 
