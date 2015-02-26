@@ -1,0 +1,62 @@
+#!/bin/sh
+# Start/stop/restart suricata
+# This file written from James Bond <evanton@tut.by>
+# Modified by Corrado Franco <conraid(at)linux(dot).it>
+
+set -eu
+
+# Binary path
+BIN=/usr/bin/suricata
+
+# This tell suricata which interface to listen on (any for every interface)
+IFACE=${IFACE:-eth0}
+
+# Make sure this matches your IFACE
+PIDFILE=/var/run/suricata_$IFACE.pid
+
+# Probably not this either
+CONF=/etc/suricata/suricata.yaml
+
+# Start suricata:
+suricata_start() {
+	if [ -f $PIDFILE ]; then
+		PID1=$(cat $PIDFILE)
+		if kill -0 "$PID1" 2>/dev/null; then
+			echo "Suricata is already running with PID $PID1"
+			exit 0
+		fi
+	fi
+	echo "Starting Suricata daemon:"
+	$BIN -D -i $IFACE --pidfile $PIDFILE -c $CONF
+	echo
+}
+
+# Stop suricata:
+suricata_stop() {
+  echo -n "Stopping Suricata daemon ($IFACE)..."
+	kill $(cat $PIDFILE)
+	echo
+	sleep 1
+	rm -f $PIDFILE
+}
+
+# Restart suricata:
+suricata_restart() {
+	suricata_stop
+	sleep 1
+	suricata_start
+}
+
+case "$1" in
+	'start')
+	suricata_start
+	;;
+	'stop')
+	suricata_stop
+	;;
+	'restart')
+	suricata_restart
+	;;
+	*)
+	echo "usage $0 start|stop|restart"
+esac

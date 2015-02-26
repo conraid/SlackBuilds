@@ -10,9 +10,19 @@ config() {
   fi
   # Otherwise, we leave the .new copy for the admin to consider...
 }
+perms() {
+	# Keep same perms on file
+	NEW="$1"
+	OLD="$(dirname $NEW)/$(basename $NEW .new)"
+	if [ -e $OLD ]; then
+	cp -a $OLD $NEW.incoming
+	cat $NEW > $NEW.incoming
+	mv $NEW.incoming $NEW
+	fi
+	config $NEW
+}
 
-config etc/suricata/classification.config.new
-config etc/suricata/reference.config.new
-config etc/suricata/suricata.yaml.new
-config etc/suricata/threshold.config.new
-
+for NEW in etc/suricata/*.new; do
+	config $NEW
+done
+perms etc/rc.d/rc.suricata.new
