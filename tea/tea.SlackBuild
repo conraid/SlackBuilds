@@ -34,7 +34,7 @@ PRGNAME=${PRGNAME:-tea}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-40.0.0}
 PKGVERSION=$(echo ${VERSION} | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -87,7 +87,8 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure
-qmake PREFIX=/usr QMAKE_LIBS="${SLKLDFLAGS}" QMAKE_CFLAGS="${SLKCFLAGS}" QMAKE_CXXFLAGS="${SLKCFLAGS}" -o Makefile src.pro
+sed -i 's#/usr/local#/usr#g' src.pro # Don't honor PREFIX
+qmake PREFIX="/usr/bin" QMAKE_LIBS="${SLKLDFLAGS}" QMAKE_CFLAGS="${SLKCFLAGS}" QMAKE_CXXFLAGS="${SLKCFLAGS}" -o Makefile src.pro
 
 # Build and install:
 make
