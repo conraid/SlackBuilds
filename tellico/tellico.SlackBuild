@@ -32,7 +32,7 @@ PRGNAME=${PRGNAME:-tellico}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-2.3.10}
 PKGVERSION=$(echo ${VERSION} | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -40,7 +40,7 @@ PKG=${TMP}/package-${PKGNAME}
 DOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
 
 # Insert document files in this variable
-DOCFILES="AUTHORS COPYING* ChangeLog"
+DOCFILES="AUTHORS COPYING* ChangeLog README"
 
 # Automatically determine the architecture we're building on:
 if [ -z "${ARCH}" ]; then
@@ -95,11 +95,13 @@ cmake \
   -DMAN_INSTALL_DIR=/usr/man \
   -DSYSCONF_INSTALL_DIR=/etc \
   -DLIB_SUFFIX=${LIBDIRSUFFIX} \
+  -DHTML_INSTALL_DIR=/usr/doc/HTML \
   ..
 
 # Build and install
 make
 make DESTDIR=${PKG} install/strip
+cd ..
 
 # Compress and link manpages, if any:
 if [ -d ${PKG}/usr/man ]; then

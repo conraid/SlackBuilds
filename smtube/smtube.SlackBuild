@@ -31,33 +31,30 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-smtube}
-PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
+PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-15.1.0}
-PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+PKGVERSION=$(echo ${VERSION} | tr - _)
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PKGNAME
-DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
-
-# Insert document files in this variable
-DOCFILES="Changelog *.txt"
+PKG=${TMP}/package-${PKGNAME}
+DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
-if [ -z "$ARCH" ]; then
+if [ -z "${ARCH}" ]; then
     case "$( uname -m )" in
 	i?86) ARCH=i686 ;;
 	arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
+        # Unless ${ARCH} is already set, use uname -m for all other archs:
         *) ARCH=$( uname -m ) ;;
     esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
+case "${ARCH}" in
     i[3-5]86)
-        SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
         ;;
     i686)
@@ -69,18 +66,18 @@ case "$ARCH" in
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
     *)
-	SLKCFLAGS="-O2"; CHOST=$ARCH
+	SLKCFLAGS="-O2"; CHOST=${ARCH}
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
 
 # Extract source and prepare:
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
-rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-$VERSION.tar.bz2
-cd $PRGNAME-$VERSION
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
+rm -rf ${PRGNAME}-${VERSION}
+tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.bz2
+cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -88,28 +85,24 @@ chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
 cd src
-qmake PREFIX=/usr QMAKE_LIBS="$SLKLDFLAGS" QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" -o Makefile ${PRGNAME}.pro
+qmake PREFIX=/usr QMAKE_LIBS="${SLKLDFLAGS}" QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="${SLKCFLAGS}" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" -o Makefile ${PRGNAME}.pro
 cd ..
-make PREFIX="/usr"
-make PREFIX="/usr" DESTDIR=$PKG install
+make PREFIX="/usr" 
+make PREFIX="/usr" DOC_PATH="/usr/doc/${PKGNAME}-${PKGVERSION}" DESTDIR=${PKG} install
 
 # Strip binaries:
-find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
-find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
-
-# Add a documentation directory:
-mkdir -p ${DOCS}
-cp -a $DOCFILES $DOCS
+find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 # Add a doinst.sh
-install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
+install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Add a slackbuild script:
-install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
-install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
