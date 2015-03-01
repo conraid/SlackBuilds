@@ -29,32 +29,31 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-collectd}
-PKGNAME=${PKGNAME:-$PRGNAME}
-VERSION=${VERSION:-5.4.1}
-PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-3}
+PKGNAME=${PKGNAME:-${PRGNAME}}
+VERSION=${VERSION:-5.4.2}
+PKGVERSION=${VERSION/-/_}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PKGNAME
-DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
+PKG=${TMP}/package-${PKGNAME}
+DOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
 
 # Insert document files in this variable
 DOCFILES="AUTHORS COPYING ChangeLog INSTALL NEWS README TODO"
 EXAMPLES="contrib/iptables contrib/SpamAssassin contrib/php-collection contrib/[a-z]*"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
-if [ -z "$ARCH" ]; then
+if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
         i?86) ARCH=i686 ;;
         arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
+        # Unless ${ARCH} is already set, use uname -m for all other archs:
         *) ARCH=$( uname -m ) ;;
     esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
+case "${ARCH}" in
     i486)
 	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
@@ -68,17 +67,17 @@ case "$ARCH" in
 	SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"
         ;;
     *)
-	SLKCFLAGS="-O2"; CHOST="$ARCH"
+	SLKCFLAGS="-O2"; CHOST="${ARCH}"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 esac
 
 # Extract source and prepare:
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
-rm -rf $PRGNAME-$VERSION
-tar xjvf $CWD/$PRGNAME-$VERSION.tar.bz2
-cd $PRGNAME-$VERSION
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
+rm -rf ${PRGNAME}-${VERSION}
+tar xjvf ${CWD}/${PRGNAME}-${VERSION}.tar.bz2
+cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -86,19 +85,18 @@ chmod -R u+w,go+r-w,a-s .
 
 # Apply patch for libstatgrab > 0.9*
 # See https://github.com/collectd/collectd/issues/445
-patch -p1 -i $CWD/libstatgrab.patch
-patch -p1 -i $CWD/libstatgrab2.patch
+patch -p1 -i ${CWD}/libstatgrab.patch
+patch -p1 -i ${CWD}/libstatgrab2.patch
 
 # Configure
-sed -i "s:@prefix@/var:/var:g" src/collectd.conf.in
-sed -i 's/-Werror//g' src/Makefile.in
-sed -i 's/-Werror//g' src/libcollectdclient/Makefile.in
+sed 's#@prefix@/var#/var#g' -i src/collectd.conf.*
+sed 's/-Werror//g' -i *.ac */*.{am,in} */*/*.{am,in}
 
-LDFLAGS="$SLKLDFLAGS" \
+LDFLAGS="${SLKLDFLAGS}" \
 KERNEL_CFLAGS="-I/usr/include" \
 KERNEL_DIR="/usr/src/linux" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
+CFLAGS="${SLKCFLAGS}" \
+CXXFLAGS="${SLKCFLAGS}" \
 LIBS="-lpthread" \
   ./configure \
   --prefix=/usr \
@@ -109,48 +107,46 @@ LIBS="-lpthread" \
   --disable-static \
   --disable-java \
   --with-perl-bindings="INSTALLDIRS=vendor INSTALLVENDORMAN3DIR=/usr/man/man3" \
-  --host=$CHOST-slackware-linux \
-  --build=$CHOST-slackware-linux
+  --host=${CHOST}-slackware-linux \
+  --build=${CHOST}-slackware-linux
 
 # Build and install:
 make
-make DESTDIR=$PKG install-strip
+make DESTDIR=${PKG} install-strip
 
 # Compress and link manpages, if any:
-if [ -d $PKG/usr/man ]; then
-( cd $PKG/usr/man
-  find . -type f -exec gzip -9 {} \;
-  for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
-)
+if [ -d ${PKG}/usr/man ]; then
+    find ${PKG}/usr/man -type f -exec gzip -9 {} \;
+    for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Remove perllocal.pod
-find $PKG -name perllocal.pod | xargs -r rm -f
-rm -rf $PKG/usr/lib/perl5/5.*
+find ${PKG} -name perllocal.pod | xargs -r rm -f
+rm -rf ${PKG}/usr/lib/perl5/5.*
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
-cp -a $DOCFILES $DOCS || true
+mkdir -p ${DOCDIR}
+cp -a ${DOCFILES} ${DOCDIR} || true
 
 # Add a sample directory:
-mkdir -p ${DOCS}/examples
-cp -a ${EXAMPLES} ${DOCS}/examples || true
+mkdir -p ${DOCDIR}/examples
+cp -a ${EXAMPLES} ${DOCDIR}/examples || true
 
 # Add or move config files
-install -Dpm644 $CWD/rc.collectd $PKG/etc/rc.d/rc.collectd.new
-mkdir -p $PKG/etc/collectd
-cat contrib/collection.conf | sed 's%/opt/collectd/%/usr/%g;s%/usr/var/%/var/%' > $PKG/etc/collectd/collection.conf.new
-mv $PKG/etc/collectd/collectd.conf  $PKG/etc/collectd/collectd.conf.new
+install -Dpm644 ${CWD}/rc.collectd ${PKG}/etc/rc.d/rc.collectd.new
+mkdir -p ${PKG}/etc/collectd
+cat contrib/collection.conf | sed 's%/opt/collectd/%/usr/%g;s%/usr/var/%/var/%' > ${PKG}/etc/collectd/collection.conf.new
+mv ${PKG}/etc/collectd/collectd.conf  $PKG/etc/collectd/collectd.conf.new
 
 # Add a slackbuild script:
-install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
-install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Add a doinst.sh
-install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
+install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
