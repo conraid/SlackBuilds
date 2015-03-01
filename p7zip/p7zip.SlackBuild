@@ -30,20 +30,16 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-p7zip}
 PKGNAME=${PKGNAME:-${PRGNAME}}
-VERSION=${VERSION:-9.38}
-PKGVERSION=$(echo ${VERSION} | tr - _)
-BUILD=${BUILD:-3}
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
+VERSION=${VERSION:-9.38.1}
+PKGVERSION=${VERSION/-/_}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
 DOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
 
-# Insert document files in this variable
-DOCFILES="DOC/*"
-
 # Automatically determine the architecture we are building on:
-if [ -z "${ARCH}" ]; then
+if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
         i?86) ARCH=i686 ;;
         arm*) ARCH=arm ;;
@@ -109,8 +105,8 @@ else
 fi
 
 # Build and install:
+sed -e s'#cp -r DOC#cp -r DOC/*#' -e 's#${DEST_SHARE_DOC}/DOC#${DEST_SHARE_DOC}#g' -i install.sh
 make $ALL OPTFLAGS="${SLKCFLAGS}"
-
 make install \
     DEST_HOME=/usr \
     DEST_SHARE_DOC=/usr/doc/${PRGNAME}-${VERSION} \
@@ -139,10 +135,6 @@ if [ -d ${PKG}/usr/man ]; then
     find ${PKG}/usr/man -type f -exec gzip -9 {} \;
     for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
-
-# Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
 
 # Add a slackbuild script:
 install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
