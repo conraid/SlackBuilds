@@ -11,5 +11,5 @@ config() {
   # Otherwise, we leave the .new copy for the admin to consider...
 }
 
-config etc/openvas/gsad_log.conf.new
-
+config etc/openvas/openvasmd_log.conf.new
+config etc/openvas/pwpolicy.conf.new
