@@ -12,12 +12,15 @@ To make package from slackbuild do
 
 Download source code:
 # source <program>.info
-# wget [--no-check-certificate] [--content-disposition] -c $DOWNLOAD
+# curl -JOL $DOWNLOAD
+or
+# wget [--no-check-certificate] [--content-disposition] $DOWNLOAD
+wget, with some servers, doesn't set the correct filename
 
 If exists FILENAME variable means that it contains the filename.
 
 if exists DOWNLOAD extra variables, do also
-# wget --no-check-certificate --content-disposition -c $DOWNLOAD_XXX [$EXTRAFILE_YYY]
+# wget --no-check-certificate --content-disposition $DOWNLOAD_XXX [$DOWNLOAD_YYY]
 
 Build:
 # sh <program>.SlackBuild
