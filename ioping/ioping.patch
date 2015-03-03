@@ -1,0 +1,101 @@
+diff -Naupr ioping-v0.9/ioping.c ioping-c23390398195/ioping.c
+--- ioping-v0.9/ioping.c	2014-10-06 07:43:48.000000000 +0200
++++ ioping-c23390398195/ioping.c	2015-01-02 17:25:12.000000000 +0100
+@@ -419,7 +419,8 @@ long long interval = 1000000;
+ struct timespec interval_ts;
+ long long deadline = 0;
+ 
+-ssize_t size = 1<<12;
++ssize_t default_size = 1<<12;
++ssize_t size = 0;
+ off_t wsize = 0;
+ off_t temp_wsize = 1<<20;
+ 
+@@ -452,7 +453,7 @@ void parse_options(int argc, char **argv
+ 				exit(0);
+ 			case 'L':
+ 				randomize = 0;
+-				size = 1<<18;
++				default_size = 1<<18;
+ 				break;
+ 			case 'R':
+ 				interval = 0;
+@@ -528,6 +529,7 @@ void parse_device(dev_t dev)
+ 	struct stat st;
+ 	size_t len;
+ 	FILE *file;
++	char *real;
+ 
+ 	/* since v2.6.26 */
+ 	file = fopen("/proc/self/mountinfo", "r");
+@@ -560,6 +562,11 @@ old:
+ out:
+ 	free(buf);
+ 	fclose(file);
++	real = realpath(device, NULL);
++	if (real) {
++		free(device);
++		device = real;
++	}
+ }
+ 
+ #elif defined(__APPLE__) || defined(__OpenBSD__) \
+@@ -908,7 +915,7 @@ int main (int argc, char **argv)
+ 	int ret, flags;
+ 
+ 	int part_request;
+-	long long this_time, time_total;
++	long long this_time;
+ 	double part_min, part_max, time_min, time_max;
+ 	double time_sum, time_sum2, time_mdev, time_avg;
+ 	double part_sum, part_sum2, part_mdev, part_avg;
+@@ -921,14 +928,17 @@ int main (int argc, char **argv)
+ 	interval_ts.tv_sec = interval / 1000000;
+ 	interval_ts.tv_nsec = (interval % 1000000) * 1000;
+ 
++	if (!size)
++		size = default_size;
++
++	if (size <= 0)
++		errx(1, "request size must be greather than zero");
++
+ 	if (wsize)
+ 		temp_wsize = wsize;
+ 	else if (size > temp_wsize)
+ 		temp_wsize = size;
+ 
+-	if (size <= 0)
+-		errx(1, "request size must be greather than zero");
+-
+ 	flags = O_RDONLY;
+ 
+ #if !defined(HAVE_POSIX_FADVICE) && !defined(HAVE_NOCACHE_IO)
+@@ -1070,7 +1080,6 @@ skip_preparation:
+ 	part_sum2 = time_sum2 = 0;
+ 
+ 	time_now = now();
+-	time_total = time_now;
+ 	period_deadline = time_now + period_time;
+ 
+ 	while (!exiting) {
+@@ -1165,8 +1174,6 @@ skip_preparation:
+ 			nanosleep(&interval_ts, NULL);
+ 	}
+ 
+-	time_total = now() - time_total;
+-
+ 	time_sum += part_sum;
+ 	time_sum2 += part_sum2;
+ 	if (part_min < time_min)
+@@ -1191,8 +1198,10 @@ skip_preparation:
+ 		printf(") ioping statistics ---\n");
+ 		print_int(request);
+ 		printf(" requests completed in ");
+-		print_time(time_total);
++		print_time(time_sum);
+ 		printf(", ");
++		print_size(request * size);
++		printf(" %s, ", write_test ? "written" : "read");
+ 		print_int(1000000. * request / time_sum);
+ 		printf(" iops, ");
+ 		print_size(1000000. * request * size / time_sum);
