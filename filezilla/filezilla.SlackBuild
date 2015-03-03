@@ -29,65 +29,68 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-filezilla}
-PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-3.10.1.1}
-PKGVERSION=$(echo $VERSION | tr - _)
+PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
+VERSION=${VERSION:-3.10.2}
+PKGVERSION=${VERSION/-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PKGNAME
-DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
+PKG=${TMP}/package-${PKGNAME}
+DOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
 
 # Insert document files in this variable
 DOCFILES="AUTHORS COPYING ChangeLog GPL* INSTALL NEWS README"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
-if [ -z "$ARCH" ]; then
+if [ -z "${ARCH}" ]; then
     case "$( uname -m )" in
-	i?86) ARCH=i686 ;;
-	arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
+		i?86) ARCH=i686 ;;
+		arm*) ARCH=arm ;;
+		# Unless ${ARCH} is already set, use uname -m for all other archs:
+		*) ARCH=$( uname -m ) ;;
     esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
-    i486)
+case "${ARCH}" in
+	i486)
 	SLKCFLAGS="-O2 -march=i486 -mtune=i686 -ldl"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    i686)
+	;;
+	i686)
 	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer -ldl"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    x86_64)
+	;;
+	x86_64)
 	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer -ldl"; CHOST="x86_64"
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
-    *)
-	SLKCFLAGS="-O2 -ldl"; CHOST=$ARCH
+	;;
+	*)
+	SLKCFLAGS="-O2 -ldl"; CHOST=${ARCH}
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
 
 # Extract source and prepare:
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
-rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/FileZilla_${VERSION}_src.tar.bz2
-cd $PRGNAME-$VERSION
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
+rm -rf ${PRGNAME}-${VERSION}
+tar xvf ${CWD}/FileZilla_${VERSION}_src.tar.bz2
+cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
+# Patch for wxTimerEvent error
+patch -p1 -i $CWD/filezilla-wxtimer.patch
+
 # Configure
-LDFLAGS="$SLKLDFLAGS" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
+LDFLAGS="${SLKLDFLAGS}" \
+CFLAGS="${SLKCFLAGS}" \
+CXXFLAGS="${SLKCFLAGS}" \
 ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -98,35 +101,35 @@ CXXFLAGS="$SLKCFLAGS" \
   --docdir=/usr/doc/${PKGNAME}-${VERSION} \
   --enable-static=no \
   --enable-shared=yes \
-  --disable-manualupdatecheck \
   --with-tinyxml=builtin \
   --disable-autoupdatecheck \
+  --disable-manualupdatecheck \
   --enable-locales \
-  --host=$CHOST-slackware-linux \
-  --build=$CHOST-slackware-linux
+  --host=${CHOST}-slackware-linux \
+  --build=${CHOST}-slackware-linux
 
 # Build and install:
 make
-make DESTDIR=$PKG install-strip
+make DESTDIR=${PKG} install-strip
 
 # Compress and link manpages, if any:
-if [ -d $PKG/usr/man ]; then
-  find $PKG/usr/man -type f -exec gzip -9 {} \;
+if [ -d ${PKG}/usr/man ]; then
+  find ${PKG}/usr/man -type f -exec gzip -9 {} \;
 fi
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
-cp -a $DOCFILES $DOCS || true
+mkdir -p ${DOCDIR}
+cp -a ${DOCFILES} ${DOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
-install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Add a doinst.sh
-install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
+install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz

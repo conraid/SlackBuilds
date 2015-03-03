@@ -1,0 +1,11 @@
+--- filezilla-3.10.2-orig/src/interface/Mainfrm.h	2014-12-28 18:48:10.000000000 +0100
++++ filezilla-3.10.2/src/interface/Mainfrm.h	2015-03-03 16:14:02.441945287 +0100
+@@ -28,6 +28,8 @@ class CWindowStateManager;
+ 
+ #if FZ_MANUALUPDATECHECK
+ #include "updater.h"
++#else
++#include "wx/timer.h"
+ #endif
+ class CWindowStateManager;
+ 
