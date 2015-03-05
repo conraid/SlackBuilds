@@ -316,10 +316,10 @@ SLACKBUILD SHORT DESCRIPTION:  collectd (system statistics collection daemon)
 SLACKBUILD NAME: converseen
 SLACKBUILD LOCATION: ./converseen
 SLACKBUILD FILES: converseen.SlackBuild converseen.info doinst.sh slack-desc
-SLACKBUILD VERSION: 0.9.0
+SLACKBUILD VERSION: 0.9.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/converseen/Converseen/Converseen%200.9/converseen-0.9.0.tar.bz2
-SLACKBUILD MD5SUM: 64c82e30ad929d2ffe2a630fd8974709
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/converseen/Converseen/Converseen%200.9/converseen-0.9.1.tar.bz2
+SLACKBUILD MD5SUM: b0cea29797f8b43c0b3d9aeea437db4d
 SLACKBUILD SHORT DESCRIPTION:  converseen
 
 SLACKBUILD NAME: cowpatty
@@ -780,6 +780,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://github.com/antirez/hping/archive/master.tar.gz
 SLACKBUILD MD5SUM: d65aa6349bab6269cfee8c3c91c3923a
 SLACKBUILD SHORT DESCRIPTION:  hping (TCP/IP packet assembler/analyzer)
+
+SLACKBUILD NAME: hstr
+SLACKBUILD LOCATION: ./hstr
+SLACKBUILD FILES: hstr.SlackBuild hstr.info slack-desc
+SLACKBUILD VERSION: 1.16
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/dvorka/hstr/archive/1.16.tar.gz
+SLACKBUILD MD5SUM: 5eb8737127e538b9f557ab2513df0890
+SLACKBUILD SHORT DESCRIPTION:  hstr (Shell history suggest box)
 
 SLACKBUILD NAME: ht
 SLACKBUILD LOCATION: ./ht
@@ -2430,7 +2439,7 @@ SLACKBUILD SHORT DESCRIPTION:  skdet
 
 SLACKBUILD NAME: sleuthkit
 SLACKBUILD LOCATION: ./sleuthkit
-SLACKBUILD FILES: slack-desc sleuthkit.SlackBuild sleuthkit.info
+SLACKBUILD FILES: patches/01-logger.patch patches/02-system.patch patches/04-widestring.patch patches/05-memoryleak.patch patches/tsk4.1.3_external_type.patch slack-desc sleuthkit.SlackBuild sleuthkit.info
 SLACKBUILD VERSION: 4.1.3
 SLACKBUILD REQUIRED: afflib libewf
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/sourceforge/sleuthkit/4.1.3/sleuthkit-4.1.3.tar.gz
