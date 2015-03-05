@@ -1,0 +1,36 @@
+From ea18b620a635e25b12e7f6e397a91c6df5aecf55 Mon Sep 17 00:00:00 2001
+From: Petrea Corneliu Stefan <stefan@garage-coding.com>
+Date: Fri, 2 May 2014 07:27:03 +0300
+Subject: [PATCH] fixing memory leak
+
+---
+ tsk/fs/tsk_fs.h | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/tsk/fs/tsk_fs.h b/tsk/fs/tsk_fs.h
+index 39e0608..db4ef85 100644
+--- a/tsk/fs/tsk_fs.h
++++ b/tsk/fs/tsk_fs.h
+@@ -2655,6 +2655,7 @@ class TskFsMeta {
+ * undefined. See TSK_FS_FILE for more details. 
+ */
+ class TskFsFile {
++  friend class TskFsDir;
+   private:
+     TSK_FS_FILE * m_fsFile;
+     bool m_opened;
+@@ -2972,9 +2973,11 @@ class TskFsDir {
+      */
+     TskFsFile *getFile(size_t a_idx) const {
+         TSK_FS_FILE *fs_file = tsk_fs_dir_get(m_fsDir, a_idx);
+-        if (fs_file != NULL)
+-             return new TskFsFile(fs_file);
+-        else
++        if (fs_file != NULL) {
++             TskFsFile *f = new TskFsFile(fs_file);
++             f->m_opened = true;
++             return f;
++        } else
+              return NULL;
+     };
+ 

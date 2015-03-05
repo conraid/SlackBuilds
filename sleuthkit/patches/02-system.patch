@@ -1,0 +1,24 @@
+From e22b5d2d5bc7b9fa97cc5b84e0903f08f6f6410d Mon Sep 17 00:00:00 2001
+From: esaunders <esaunders@basistech.com>
+Date: Fri, 28 Mar 2014 10:53:41 -0400
+Subject: [PATCH] Fixed bug in system properties where it wasn't returning a
+ value for #IMAGE_FILE#
+
+---
+ framework/tsk/framework/services/TskSystemProperties.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/framework/tsk/framework/services/TskSystemProperties.cpp b/framework/tsk/framework/services/TskSystemProperties.cpp
+index c200c88..ee1ade3 100644
+--- a/framework/tsk/framework/services/TskSystemProperties.cpp
++++ b/framework/tsk/framework/services/TskSystemProperties.cpp
+@@ -205,7 +205,8 @@ std::string TskSystemProperties::get(PredefinedProperty prop) const
+             const std::vector<std::string> imgNames = TskServices::Instance().getImgDB().getImageNames();
+             if (!imgNames.empty())
+             {
+-                const_cast<TskSystemProperties*>(this)->set(prop, imgNames[0]);
++                value = imgNames[0];
++                const_cast<TskSystemProperties*>(this)->set(prop, value);
+             }
+         }
+         else
