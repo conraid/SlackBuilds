@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-etherpoke}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-2.1.2}
+VERSION=${VERSION:-2.2.0}
 PKGVERSION=${VERSION/-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -98,9 +98,6 @@ install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
-
-# Add a doinst.sh
-install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Create package:
 cd ${PKG}
