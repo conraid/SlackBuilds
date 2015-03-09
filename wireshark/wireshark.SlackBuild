@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-wireshark}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-1.99.2}
+VERSION=${VERSION:-1.99.3}
 PKGVERSION=${VERSION/-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -59,11 +59,11 @@ case "${ARCH}" in
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 	i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
+	SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 	x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
+	SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
 	;;
 	*)
