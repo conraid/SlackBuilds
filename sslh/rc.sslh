@@ -13,34 +13,32 @@ fi
 
 DAEMON=/usr/sbin/sslh
 
-start()
-{
-        echo "Start services: sslh"
-        $DAEMON --user ${USER} --pidfile ${PID} --listen ${LISTEN} --ssh ${SSH} --ssl ${SSL}
+start() {
+	echo "Start services: sslh"
+	$DAEMON --user ${USER} --pidfile ${PID} --listen ${LISTEN} --ssh ${SSH} --ssl ${SSL}
 }
 
-stop()
-{
-        echo "Stop services: sslh"
+stop() {
+	echo "Stop services: sslh"
 	killall $DAEMON
 }
 
 
 case "$1" in
-	  start)
-		    start
-		    ;;
-	  stop)
-		    stop
-		    ;;
-    restart)
-		    stop
-		    sleep 5
-		    start
-		    ;;
-	  *)
-		    echo "Usage: /etc/init.d/sslh {start|stop|restart}" >&2
-		    ;;
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	restart)
+		stop
+		sleep 5
+		start
+		;;
+	*)
+		echo "Usage: /etc/init.d/sslh {start|stop|restart}" >&2
+		;;
 esac
 
 exit 0

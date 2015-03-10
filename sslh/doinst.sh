@@ -1,33 +1,29 @@
-#!/bin/sh
+config() {
+	NEW="$1"
+	OLD="$(dirname $NEW)/$(basename $NEW .new)"
+	# If there's no config file by that name, mv it over:
+	if [ ! -r $OLD ]; then
+	mv $NEW $OLD
+	elif [ "$(cat $OLD | md5sum)" = "$(cat $NEW | md5sum)" ]; then
+	# toss the redundant copy
+	rm $NEW
+	fi
+	# Otherwise, we leave the .new copy for the admin to consider...
+}
 
-perm() {
-    # Keep same perms on file
-    NEW="$1"
-    OLD="$(dirname $NEW)/$(basename $NEW .new)"
-    if [ -e $OLD ]; then
+perms() {
+	# Keep same perms on file
+	NEW="$1"
+	OLD="$(dirname $NEW)/$(basename $NEW .new)"
+	if [ -e $OLD ]; then
 	cp -a $OLD $NEW.incoming
 	cat $NEW > $NEW.incoming
 	mv $NEW.incoming $NEW
-    else 
-	chmod 0755 $NEW
-    fi
+	fi
+	config $NEW
 }
 
-config() {
-  NEW="$1"
-  OLD="$(dirname $NEW)/$(basename $NEW .new)"
-  # If there's no config file by that name, mv it over:
-  if [ ! -r $OLD ]; then
-    mv $NEW $OLD
-  elif [ "$(cat $OLD | md5sum)" = "$(cat $NEW | md5sum)" ]; then
-    # toss the redundant copy
-    rm $NEW
-  fi
-  # Otherwise, we leave the .new copy for the admin to consider...
-}
-
-perm etc/rc.d/rc.sslh.new
-config etc/rc.d/rc.sslh.new
+perms etc/rc.d/rc.sslh.new
 config etc/default/sslh.new
 
 
