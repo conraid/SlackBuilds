@@ -31,26 +31,26 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-shorewall-core}
-PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-4.6.6.2}
-PKGVERSION=$(echo $VERSION | tr - _)
+PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
+VERSION=${VERSION:-4.6.7}
+PKGVERSION=${VERSION/-/_}
 BUILD=${BUILD:-1}
 ARCH=${ARCH:="noarch"}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PKGNAME
-DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
+PKG=${TMP}/package-${PKGNAME}
+DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 # Insert document files in this variable
 DOCFILES="COPYING INSTALL *.txt"
 
 # Extract source and prepare:
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
-rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-$VERSION.tar.bz2
-cd $PRGNAME-$VERSION
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
+rm -rf ${PRGNAME}-${VERSION}
+tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.bz2
+cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -60,27 +60,27 @@ chmod -R u+w,go+r-w,a-s .
 ./configure
 
 # install:
-DESTDIR=$PKG ./install.sh
+DESTDIR=${PKG} ./install.sh
 
 # Remove empty directories
-find $PKG -depth -type d -empty -delete || true
+find ${PKG} -depth -type d -empty -delete || true
 
 # Rename init script
-mv $PKG/etc/rc.d/rc.firewall $PKG/etc/rc.d/rc.firewall.new
+mv ${PKG}/etc/rc.d/rc.firewall $PKG/etc/rc.d/rc.firewall.new
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
-cp -a $DOCFILES $DOCS || true
+mkdir -p ${DOCDIR}
+cp -a ${DOCFILES} ${DOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
-install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Add a doinst.sh
-install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
+install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
