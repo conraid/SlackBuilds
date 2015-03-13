@@ -32,9 +32,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-snort}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-2.9.7.0}
+VERSION=${VERSION:-2.9.7.2}
 PKGVERSION=$(echo ${VERSION} | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -46,29 +46,29 @@ DOCFILES="COPYING ChangeLog LICENSE RELEASE.NOTES"
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
 if [ -z "${ARCH}" ]; then
-    case "$( uname -m )" in
+	case "$( uname -m )" in
 	i?86) ARCH=i686 ;;
 	arm*) ARCH=arm ;;
-        # Unless ${ARCH} is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
-    esac
+		# Unless ${ARCH} is already set, use uname -m for all other archs:
+		*) ARCH=$( uname -m ) ;;
+	esac
 fi
 
 # Set compiling FLAGS
 case "${ARCH}" in
-    i486)
+	i486)
 	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    i686)
+	;;
+	i686)
 	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    x86_64)
+	;;
+	x86_64)
 	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
-    *)
+	;;
+	*)
 	SLKCFLAGS="-O2"; CHOST=${ARCH}
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
@@ -87,7 +87,7 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Sane --libdir setting on Slackware64.
-for MF in $( find src/ -name Makefile.in ) ; do
+for MF in $(find src/ -name Makefile.in) ; do
   sed -i 's#${exec_prefix}/lib/snort_dynamic#@libdir@/snort_dynamic#g' $MF
 done
 
@@ -99,20 +99,20 @@ LDFLAGS="${SLKLDFLAGS}" \
 CFLAGS="${SLKCFLAGS}" \
 CXXFLAGS="${SLKCFLAGS}" \
 ./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc/snort \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --infodir=/usr/info \
-  --docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
-  --enable-static=no \
-  --enable-shared=yes \
-  --enable-linux-smp-stats \
-  --enable-pthread \
-  --disable-static-daq \
-  --host=${CHOST}-slackware-linux \
-  --build=${CHOST}-slackware-linux
+ --prefix=/usr \
+ --libdir=/usr/lib${LIBDIRSUFFIX} \
+ --sysconfdir=/etc/snort \
+ --localstatedir=/var \
+ --mandir=/usr/man \
+ --infodir=/usr/info \
+ --docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
+ --enable-static=no \
+ --enable-shared=yes \
+ --enable-linux-smp-stats \
+ --enable-pthread \
+ --disable-static-daq \
+ --host=${CHOST}-slackware-linux \
+ --build=${CHOST}-slackware-linux
 
 # Build and install:
 make
@@ -120,13 +120,14 @@ make DESTDIR=${PKG} install-strip
 
 # Compress and link manpages, if any:
 if [ -d ${PKG}/usr/man ]; then
-    find ${PKG}/usr/man -type f -exec gzip -9 {} \;
-    for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+	find ${PKG}/usr/man -type f -exec gzip -9 {} \;
+	for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Add a documentation directory:
 mkdir -p ${DOCDIR}
 cp -a ${DOCFILES} ${DOCDIR} || true
+install -Dm644 ${CWD}/SLACKWARE.README ${DOCDIR}/README.SLACKWARE
 
 ### Set directory for snort. Thanks to SBo and archlinux
 mkdir -p "${PKG}/"{etc/rc.d,etc/snort/rules,etc/snort/preproc_rules,var/log/snort,/usr/lib${LIBDIRSUFFIX}/snort_dynamicrules}
@@ -134,18 +135,15 @@ mkdir -p "${PKG}/"{etc/rc.d,etc/snort/rules,etc/snort/preproc_rules,var/log/snor
 # Fix paths for libraries in snort.conf, also 64-bits and rules paths...
 # also set "unified2" as standard output, without special options
 sed -e "s|usr/local/lib|usr/lib${LIBDIRSUFFIX}|g" \
-    -e "s|PATH ../|PATH |g" \
-    -e "/^# output unified2*/aoutput unified2: filename snort.log, limit 128" \
-    etc/snort.conf > ${PKG}/etc/snort/snort.conf.new
+	-e "s|PATH ../|PATH |g" \
+	-e "/^# output unified2*/aoutput unified2: filename snort.log, limit 128" \
+	etc/snort.conf > ${PKG}/etc/snort/snort.conf.new
 cat etc/threshold.conf > ${PKG}/etc/snort/threshold.conf.new
 cat etc/reference.config > ${PKG}/etc/snort/reference.config.new
 cat etc/classification.config > ${PKG}/etc/snort/classification.config.new
 cat etc/attribute_table.dtd > ${PKG}/etc/snort/attribute_table.dtd.new
 cat etc/gen-msg.map > ${PKG}/etc/snort/gen-msg.map.new
 cat etc/unicode.map > ${PKG}/etc/snort/unicode.map.new
-
-# Install Slackware Readme
-install -Dm644 ${CWD}/SLACKWARE.README ${DOCDIR}/README.SLACKWARE
 
 # Include the rc.snort file.
 install -Dm755 ${CWD}/rc.snort ${PKG}/etc/rc.d/rc.snort.new
