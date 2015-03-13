@@ -29,7 +29,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-encfs}
-VERSION=${VERSION:-1.8-rc1}
+VERSION=${VERSION:-1.8}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 PKGVERSION=${VERSION/-/_}
 BUILD=${BUILD:-1}
@@ -84,7 +84,7 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure
-autoreconf -i
+autoreconf -if
 LDFLAGS="${SLKLDFLAGS}" \
 CFLAGS="${SLKCFLAGS}" \
 CXXFLAGS="${SLKCFLAGS}" \
@@ -101,13 +101,13 @@ CXXFLAGS="${SLKCFLAGS}" \
   --build=${CHOST}-slackware-linux
 
 # Build and install:
-make 
+make
 make DESTDIR=${PKG} install-strip
 
 # Compress and link manpages, if any:
 if [ -d ${PKG}/usr/man ]; then
-    find ${PKG}/usr/man -type f -exec gzip -9 {} \;
-    for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+	find ${PKG}/usr/man -type f -exec gzip -9 {} \;
+	for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Add a documentation directory:
