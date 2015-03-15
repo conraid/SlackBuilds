@@ -25,75 +25,73 @@
 # Latest version of this SlackBuild at http://slackers.it/repository
 #
 # Exit on most errors
-set -e
+set -eu
 
 # Set variables:
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-qxmledit}
-PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-0.8.12}
-PKGVERSION=$(echo $VERSION | tr - _)
+PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
+VERSION=${VERSION:-0.8.13}
+PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PKGNAME
-DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
+PKG=${TMP}/package-${PKGNAME}
+DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 # Insert document files in this variable
 DOCFILES="AUTHORS COPYING DISTRIBUTING *GPL*.txt INSTALL NEWS README TODO"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 # Automatically determine the architecture we're building on:
-if [ -z "$ARCH" ]; then
-    case "$( uname -m )" in
+if [ -z ${ARCH:=""} ]; then
+	case "$( uname -m )" in
 	i?86) ARCH=i686 ;;
 	arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
-    esac
+	# Unless ${ARCH} is already set, use uname -m for all other archs:
+	*) ARCH=$( uname -m ) ;;
+	esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
-    i[3-5]86)
-        SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+case "${ARCH}" in
+	i[3-5]86)
+	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
+	;;
+	i686)
+	SLKCFLAGS="-O2 -march=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
+	;;
+	x86_64)
+	SLKCFLAGS="-O2 -fPIC"; CHOST="x86_64"
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
-    *)
-	SLKCFLAGS="-O2"; CHOST=$ARCH
+	;;
+	*)
+	SLKCFLAGS="-O2"; CHOST=${ARCH}
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
 
 # Extract source and prepare:
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
-rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-$VERSION-src.tgz
-cd $PRGNAME-$VERSION
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
+rm -rf ${PRGNAME}-${VERSION}
+tar xvf ${CWD}/${PRGNAME}-${VERSION}-src.tgz
+cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure
-
 # fix desktop file
 sed -e '1i[Desktop Entry]' \
 -e '/Encoding/d;/#/d' \
 -i install_scripts/environment/desktop/QXmlEdit.desktop
 
-# dot not install to /opt 
+# dot not install to /opt (don't honor qmake parameters)
 sed -e "s|\(INST_DIR = /\).*|\1usr/bin|" \
 -e "s|\(INST_DATA_DIR = /\).*|\1usr/share/${PKGNAME}|" \
 -e "s|\(INST_DOC_DIR = /\).*|\1usr/doc/${PKGNAME}-${VERSION}|" \
@@ -101,45 +99,42 @@ sed -e "s|\(INST_DIR = /\).*|\1usr/bin|" \
 -e "s|\(INST_LIB_DIR = /\).*|\1usr/lib${LIBDIRSUFFIX}|" \
 -i $(find . -name "*.pro")
 
-qmake \
-PREFIX=/usr \
-QMAKE_LIBS="$SLKLDFLAGS" \
-QMAKE_CFLAGS="$SLKCFLAGS" QMAKE_CXXFLAGS="$SLKCFLAGS" \
-QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" \
-QXMLEDIT_INST_DATA_DIR3="/usr/share/$PKGNAME/" \
+# error with SLKCFLAGS :-/
+qmake PREFIX=/usr \
+QXMLEDIT_INST_DATA_DIR3="/usr/share/${PKGNAME}/" \
 QXMLEDIT_INST_DIR=="/usr/bin/" \
-QXMLEDIT_INST_DOC_DIR="/usr/doc/$PKGNAME-$VERSION/" \
+QXMLEDIT_INST_DOC_DIR="/usr/doc/${PKGNAME}-${VERSION}/" \
 QXMLEDIT_INST_LIB_DIR="/usr/lib${LIBDIRSUFFIX}/" \
-QXMLEDIT_INST_INCLUDE_DIR="/usr/include/$PKGNAME/" \
+QXMLEDIT_INST_INCLUDE_DIR="/usr/include/${PKGNAME}/" \
 -o Makefile
 
 # Build and install:
 make
-make INSTALL_ROOT=$PKG install
+make INSTALL_ROOT=${PKG} install
 
 # Strip binaries:
-find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
-find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
-cp -a $DOCFILES $DOCS
+mkdir -p ${DOCDIR}
+cp -a ${DOCFILES} ${DOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
-install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Add a doinst.sh
-install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
+install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Add a desktop file
-install -Dm644 install_scripts/environment/desktop/QXmlEdit.desktop $PKG/usr/share/applications/$PKGNAME.desktop
+install -Dm644 install_scripts/environment/desktop/QXmlEdit.desktop ${PKG}/usr/share/applications/${PKGNAME}.desktop
 
 # Add an icon
-install -Dm644 install_scripts/environment/icon/qxmledit_48x48.png $PKG/usr/share/pixmaps/$PKGNAME.png
+install -Dm644 install_scripts/environment/icon/qxmledit_48x48.png ${PKG}/usr/share/pixmaps/${PKGNAME}.png
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
