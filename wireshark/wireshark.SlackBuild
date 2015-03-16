@@ -32,7 +32,7 @@ PRGNAME=${PRGNAME:-wireshark}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-1.99.3}
 PKGVERSION=${VERSION/-/_}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PRGNAME}
@@ -85,8 +85,10 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # configure
-libtoolize --force
-autoreconf -vif
+LDFLAGS="${SLKLDFLAGS}" \
+CFLAGS="${SLKCFLAGS}" \
+CXXFLAGS="${SLKCFLAGS}" \
+./autogen.sh
 LDFLAGS="${SLKLDFLAGS}" \
 CFLAGS="${SLKCFLAGS}" \
 CXXFLAGS="${SLKCFLAGS}" \
@@ -100,12 +102,16 @@ CXXFLAGS="${SLKCFLAGS}" \
   --disable-usr-local \
   --enable-wireshark \
   --enable-packet-editor \
+  --enable-tfshark \
+  --enable-setuid-install \
   --with-lua \
   --with-ssl=/usr/lib${LIBDIRSUFFIX} \
   --with-c-ares \
   --with-geoip \
-  --with-adns \
   --with-plugins \
+  --with-gtk2=yes \
+  --with-gtk3=no \
+  --with-qt=yes \
   --docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
   --host=${CHOST}-slackware-linux \
   --build=${CHOST}-slackware-linux
