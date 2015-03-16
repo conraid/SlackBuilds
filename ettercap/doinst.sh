@@ -11,6 +11,14 @@ config() {
   fi
   # Otherwise, we leave the .new copy for the admin to consider...
 }
-config /etc/ettercap/etter.conf.new
-config /etc/ettercap/etter.dns.new
-config /etc/ettercap/etter.nbns.new
+
+# Update the desktop database:
+if [ -x usr/bin/update-desktop-database ]; then
+	chroot . /usr/bin/update-desktop-database -q /usr/share/applications > /dev/null 2>&1
+fi
+
+config etc/ettercap/etter.conf.new
+config etc/ettercap/etter.dns.new
+config etc/ettercap/etter.mdns.new
+config etc/ettercap/etter.nbns.new
+
