@@ -2,7 +2,7 @@
 #
 # Slackware build script for ecryptfs-utils (https://launchpad.net/ecryptfs)
 #
-# Copyright 2008-2014 Corrado Franco (http://conraid.net)
+# Copyright 2008-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -29,61 +29,61 @@ set -e
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-ecryptfs-utils}
-VERSION=${VERSION:-104}
+VERSION=${VERSION:-106}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAME
-DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
+PKG=${TMP}/package-${PRGNAME}
+DOCDIR="${PKG}/usr/doc/${PRGNAME}-${VERSION}"
 
 # Insert document files in this variable
 DOCFILES="AUTHORS COPYING ChangeLog INSTALL NEWS README THANKS"
 
 # Automatically determine the architecture we are building on:
-if [ -z "$ARCH" ]; then
-    case "$( uname -m )" in
-        i?86) ARCH=i686 ;;
-        arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
-    esac
+if [ -z "${ARCH}" ]; then
+	case "$( uname -m )" in
+		i?86) ARCH=i686 ;;
+		arm*) ARCH=arm ;;
+		# Unless ${ARCH} is already set, use uname -m for all other archs:
+		*) ARCH=$( uname -m ) ;;
+	esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
-    i486)
+case "${ARCH}" in
+	i486)
 	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
+	;;
+	i686)
+	SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    x86_64)
-	SLKCFLAGS="-O2 -pipe -fomit-frame-pointer"; CHOST="x86_64"
+	;;
+	x86_64)
+	SLKCFLAGS="-O2 -fomit-frame-pointer"; CHOST="x86_64"
 	SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
-    *)
-        SLKCFLAGS="-O2"; CHOST=$ARCH
-        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+	;;
+	*)
+	SLKCFLAGS="-O2"; CHOST=${ARCH}
+	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
 
 # Extract source and prepare:
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
-rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/ecryptfs-utils_$VERSION.orig.tar.gz
-cd $PRGNAME-$VERSION
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
+rm -rf ${PRGNAME}-${VERSION}
+tar xvf ${CWD}/ecryptfs-utils_${VERSION}.orig.tar.gz
+cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure
-LDFLAGS="$SLKLDFLAGS" \
-CFLAGS="$SLKCFLAGS -D_FILE_OFFSET_BITS=64" \
+LDFLAGS="${SLKLDFLAGS}" \
+CFLAGS="${SLKCFLAGS} -D_FILE_OFFSET_BITS=64" \
 ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -96,45 +96,36 @@ CFLAGS="$SLKCFLAGS -D_FILE_OFFSET_BITS=64" \
   --enable-gui \
   --disable-pam \
   --enable-docs \
-  --host=$CHOST-slackware-linux \
-  --build=$CHOST-slackware-linux
+  --enable-static=no \
+  --enable-shared=yes \
+  --host=${CHOST}-slackware-linux \
+  --build=${CHOST}-slackware-linux
 
 # Build and install:
 make 
-make DESTDIR=$PKG install
+make DESTDIR=${PKG} install
 
 # Strip binaries:
-find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
-find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true
+find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
+find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true
 
 # Compress and link manpages, if any:
-if [ -d $PKG/usr/man ]; then
-( cd $PKG/usr/man
-  find . -type f -exec gzip -9 {} \;
-  for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
-)
+if [ -d ${PKG}/usr/man ]; then
+    find ${PKG}/usr/man -type f -exec gzip -9 {} \;
+    for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
-for i in ${DOCFILES}; do
-    if [ -e ${i} ]; then
-        if ! [ -L ${i} ]; then
-	    cp -a ${i} ${DOCS}
-	else
-	    cp -LRp ${i} ${DOCS}
-        fi
-    fi;
-done
+mkdir -p ${DOCDIR}
+cp -a ${DOCFILES} ${DOCDIR} || true
 
 # Add a slackbuild script:
-cat $CWD/$PRGNAME.SlackBuild > $DOCS/$PRGNAME.SlackBuild
+install -Dm644 ${CWD}/${PRGNAME}.SlackBuild ${DOCDIR}/${PRGNAME}.SlackBuild
 
 # Add slack-desc
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PRGNAME}-${VERSION}-${ARCH}-${BUILD}${TAG}.txz
 
