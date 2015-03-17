@@ -30,44 +30,43 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-kid3}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-3.1.2}
-PKGVERSION=$(echo ${VERSION} | tr - _)
-BUILD=${BUILD:-2}
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
+VERSION=${VERSION:-3.2.0}
+PKGVERSION=${VERSION//-/_}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PRGNAME}
 DOCDIR="${PKG}/usr/doc/${PRGNAME}-${VERSION}"
 
 # Insert document files in this variable
-DOCFILES="AUTHORS COPYING NEWS LICENSE ChangeLog INSTALL README"
+DOCFILES="AUTHORS COPYING ChangeLog INSTALL LICENSE NEWS README"
 
 # Automatically determine the architecture we're building on:
-if [ -z "$ARCH" ]; then
-    case "$( uname -m )" in
+if [ -z ${ARCH:=""} ]; then
+	case "$( uname -m )" in
 	i?86) ARCH=i686 ;;
 	arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
-    esac
+		# Unless ${ARCH} is already set, use uname -m for all other archs:
+		*) ARCH=$( uname -m ) ;;
+	esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
-    i[3-5]86)
+case "${ARCH}" in
+	i[3-5]86)
 	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
+	;;
+	i686)
+	SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
+	;;
+	x86_64)
+	SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
-    *)
-	SLKCFLAGS="-O2"; CHOST=$ARCH
+	;;
+	*)
+	SLKCFLAGS="-O2"; CHOST=${ARCH}
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
@@ -85,7 +84,7 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure
-sed -e "s#share/doc/kid3-qt#doc/${PKGNAME}-${PKGVERSION}#" -e 's#\${WITH_DATAROOTDIR}/man#man#' -i CMakeLists.txt
+sed -e "s#share/doc/kid3-qt#doc/kid3-${PKGVERSION}#" -e 's#\${WITH_DATAROOTDIR}/man#man#' -i CMakeLists.txt
 mkdir build
 cd build
 cmake \
@@ -96,9 +95,15 @@ cmake \
 -DSYSCONF_INSTALL_DIR=/etc \
 -DCMAKE_BUILD_TYPE=none \
 -DHTML_INSTALL_DIR=/usr/doc/HTML \
+-DWITH_APPS="Qt;CLI;KDE" \
+-DLIB_SUFFIX=${LIBDIRSUFFIX} \
+-DLIB_INSTALL_DIR=/usr/lib${LIBDIRSUFFIX} \
+-DBUILD_SHARED_LIBS=ON \
 -DWITH_CHROMAPRINT=OFF \
 -DWITH_MP4V2=ON \
--DWITH_APPS="Qt;CLI;KDE" \
+-DWITH_PHONON=OFF \
+-DWITH_QT4=ON \
+-DWITH_QT5=OFF \
 ..
 
 # Build and install:
