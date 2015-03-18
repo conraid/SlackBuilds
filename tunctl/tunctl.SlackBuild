@@ -30,40 +30,39 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-tunctl}
 PKGNAME=${PKGNAME:-${PRGNAME}}
-VERSION=${VERSION:-$(echo ${PRGNAME}-*.tar.?z* | rev | cut -f3- -d. | cut -f1 -d- | rev)}
-PKGVERSION=$(echo ${VERSION} | tr - _)
-BUILD=${BUILD:-3}
+VERSION=${VERSION:-1.5}
+PKGVERSION=${VERSION//-/_}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
 DOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
-if [ -z "${ARCH}" ]; then
-    case "$( uname -m )" in
-        i?86) ARCH=i686 ;;
-        arm*) ARCH=arm ;;
-        # Unless ${ARCH} is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
-    esac
+if [ -z ${ARCH:=""} ]; then
+	case "$( uname -m )" in
+		i?86) ARCH=i686 ;;
+		arm*) ARCH=arm ;;
+		# Unless ${ARCH} is already set, use uname -m for all other archs:
+		*) ARCH=$( uname -m ) ;;
+	esac
 fi
 
 # Set compiling FLAGS
 case "${ARCH}" in
-    i486)
+	i486)
 	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
+	;;
+	i686)
+	SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
+	;;
+	x86_64)
+	SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
-    *)
+	;;
+	*)
 	SLKCFLAGS="-O2"; CHOST=${ARCH}
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
@@ -89,22 +88,22 @@ CFLAGS="${SLKCFLAGS}" \
 CXXFLAGS="${SLKCFLAGS}"
 make DESTDIR=${PKG} install
 
-# Strip binaries:
+# Strip binary
 strip ${PKG}/usr/sbin/tunctl
 
-# Compress and link manpages, if any:
+# Compress and change permissions manpage
+chmod 644 ${PKG}/usr/man/man8/tunctl.8
 gzip -9 ${PKG}/usr/man/man8/tunctl.8
 
 # Add a documentation directory:
 mkdir -p ${DOCDIR}
-cp ChangeLog ${DOCDIR} || true
+install -m644 ChangeLog ${DOCDIR} || true
 
 # Add a slackbuild script:
 install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
-
 
 # Create package:
 cd ${PKG}
