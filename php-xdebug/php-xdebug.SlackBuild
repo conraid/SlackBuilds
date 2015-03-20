@@ -31,8 +31,8 @@ CWD=$(pwd)
 PRGNAME=${PRGNAME:-xdebug}
 PKGNAME=${PKGNAME:-php-${PRGNAME}}
 VERSION=${VERSION:-2.3.1}
-PKGVERSION=$(echo ${VERSION} | tr - _)
-BUILD=${BUILD:-2}
+PKGVERSION=${VERSION//-/_}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -43,7 +43,7 @@ DOCFILES="CREDITS LICENSE NEWS README contrib"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
-if [ -z "${ARCH}" ]; then
+if [ -z ${ARCH:=""} ]; then
 	case "$( uname -m )" in
 	i?86) ARCH=i686 ;;
 	arm*) ARCH=arm ;;
@@ -59,11 +59,11 @@ case "${ARCH}" in
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 	i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
+	SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 	x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
+	SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
 	;;
 	*)
@@ -123,7 +123,7 @@ cd -
 
 # Add a documentation directory:
 mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
+install -m644 ${DOCFILES} ${DOCDIR} || true
 
 # Copy config example file
 mkdir -p ${PKG}/etc/php

@@ -33,8 +33,8 @@ CWD=$(pwd)
 PRGNAME=${PRGNAME:-PHP_CodeSniffer}
 PKGNAME=${PKGNAME:-php-codesniffer}
 VERSION=${VERSION:-2.3.0}
-PKGVERSION=${VERSION/-/_}
-BUILD=${BUILD:-1}
+PKGVERSION=${VERSION//-/_}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -48,13 +48,13 @@ if [ -z ${ARCH:=""} ]; then
 	case "$( uname -m )" in
 		i?86) ARCH=i686 ;;
 		arm*) ARCH=arm ;;
-		# Unless $ARCH is already set, use uname -m for all other archs:
+		# Unless ${ARCH} is already set, use uname -m for all other archs:
 		*) ARCH=$( uname -m ) ;;
 	esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
+case "${ARCH}" in
 	i[3-5]86)
 	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
@@ -68,7 +68,7 @@ case "$ARCH" in
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
 	;;
 	*)
-	SLKCFLAGS="-O2"; CHOST=$ARCH
+	SLKCFLAGS="-O2"; CHOST=${ARCH}
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
@@ -86,7 +86,7 @@ rm -r $(ls -A | grep '^\.')
 
 # Add a documentation directory:
 mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
+install -m644 ${DOCFILES} ${DOCDIR} || true
 
 # Add a slackbuild script:
 install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
