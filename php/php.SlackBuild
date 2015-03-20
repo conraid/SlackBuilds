@@ -5,7 +5,7 @@
 # by:  David Cantrell <david@slackware.com>
 # Modified for PHP 4-5 by volkerdi@slackware.com
 # Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2013  Patrick Volkerding, Sebeka, MN, USA
-# Modified for PHP 5.6 in slackers repository by conraid(at)linux.it
+# Modified for PHP 5.6 in slackers.it repository by conraid(at)linux.it
 # Copyright 2014-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
@@ -35,52 +35,52 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-php}
-PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-5.6.6}
-PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
+VERSION=${VERSION:-5.6.7}
+PKGVERSION=${VERSION//-/_}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PKGNAME
-DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
+PKG=${TMP}/package-${PKGNAME}
+DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 # Insert document files in this variable
 DOCFILES="CODING_STANDARDS CREDITS EXTENSIONS INSTALL LICENSE NEWS README* sapi/cgi/README.FastCGI UPGRADING"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 # Automatically determine the architecture we're building on:
-if [ -z "$ARCH" ]; then
-    case "$( uname -m )" in
+if [ -z ${ARCH:=""} ]; then
+	case "$( uname -m )" in
 	i?86) ARCH=i686 ;;
 	arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
-    esac
+		# Unless ${ARCH} is already set, use uname -m for all other archs:
+		*) ARCH=$( uname -m ) ;;
+	esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
-    i[3-5]86)
+case "${ARCH}" in
+	i[3-5]86)
 	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
+	;;
+	i686)
+	SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
+	;;
+	x86_64)
+	SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
-    *)
-	SLKCFLAGS="-O2"; CHOST=$ARCH
+	;;
+	*)
+	SLKCFLAGS="-O2"; CHOST=${ARCH}
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
 
 # Make temp directory
-rm -rf $PKG
-mkdir -p $TMP $PKG
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
 
 # Delete IMAPDIR on EXIT
 delete_imapdir() {
@@ -93,9 +93,9 @@ trap delete_imapdir EXIT
 
 # we need to compile alpine to get c-client.a for IMAP support
 IMAPLIBDIR=/usr/local/lib${LIBDIRSUFFIX}/c-client
-if [ -e $CWD/c-client-temp-$ARCH.tar.gz ]; then
+if [ -e ${CWD}/c-client-temp-${ARCH}.tar.gz ]; then
     mkdir -p $IMAPLIBDIR
-	tar -xf $CWD/c-client-temp-$ARCH.tar.gz -C $IMAPLIBDIR
+	tar -xf ${CWD}/c-client-temp-${ARCH}.tar.gz -C $IMAPLIBDIR
 	ln -s $IMAPLIBDIR/lib${LIBDIRSUFFIX}/c-client.a $IMAPLIBDIR/lib${LIBDIRSUFFIX}/libc-client.a || true
 fi
 
@@ -104,8 +104,8 @@ if [ -r $IMAPLIBDIR/lib${LIBDIRSUFFIX}/c-client.a ]; then
   ls -l $IMAPLIBDIR/lib${LIBDIRSUFFIX}/c-client.a
   sleep 5
 else
-  ( cd $CWD/../alpine ; ./alpine.SlackBuild || exit 1 ) || exit 1
-  ( cd $TMP/alpine-${ALPINE}/imap/c-client
+  ( cd ${CWD}/../alpine ; ./alpine.SlackBuild || exit 1 ) || exit 1
+  ( cd ${TMP}/alpine-${ALPINE}/imap/c-client
     strip -g c-client.a
     mkdir -p $IMAPLIBDIR/lib${LIBDIRSUFFIX}
     cp c-client.a $IMAPLIBDIR/lib${LIBDIRSUFFIX}
@@ -115,30 +115,30 @@ else
   )
 fi
 
-# A trick from DaMouse to enable building php into $PKG.
+# A trick from DaMouse to enable building php into ${PKG}.
 # We'll remove this later on.
-mkdir -p $PKG/etc/httpd
-mkdir -p $PKG/etc/php
-cat /etc/httpd/original/httpd.conf > $PKG/etc/httpd/httpd.conf
+mkdir -p ${PKG}/etc/httpd
+mkdir -p ${PKG}/etc/php
+cat /etc/httpd/original/httpd.conf > ${PKG}/etc/httpd/httpd.conf
 if [ ! -e /etc/httpd/original/httpd.conf ]; then
   echo "FATAL: no /etc/httpd/original/httpd.conf found."
   exit 1
 fi
 
 # Extract source and prepare:
-cd $TMP
-tar xvf $CWD/$PRGNAME-$VERSION.tar.xz
-cd $PRGNAME-$VERSION
+cd ${TMP}
+tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.xz
+cd ${PRGNAME}-${VERSION}
 
-zcat $CWD/init.d.php-fpm.in.diff.gz | patch -p1 --verbose || exit 1
+zcat ${CWD}/init.d.php-fpm.in.diff.gz | patch -p1 --verbose || exit 1
 
 # cleanup:
 find . -name "*.orig" -delete
 
 # Add missing(?) PEAR modules back:
-if [ -d php-$VERSION/pear/packages ]; then
-  ( cd php-$VERSION/pear/packages
-    cp -a $CWD/pear/*.bz2 . 2> /dev/null
+if [ -d php-${VERSION}/pear/packages ]; then
+  ( cd php-${VERSION}/pear/packages
+    cp -a ${CWD}/pear/*.bz2 . 2> /dev/null
     bzip2 -d *.bz2 2> /dev/null
   )
 fi
@@ -153,12 +153,12 @@ find . -name "*.h" -exec chmod 644 {} \;
 find . -name "*.orig" -exec rm {} \;
 
 # Patch ini files:
-zcat $CWD/php-fpm.conf.diff.gz | patch -p1 --verbose
-cat $CWD/php.ini.diff \
+zcat ${CWD}/php-fpm.conf.diff.gz | patch -p1 --verbose
+cat ${CWD}/php.ini.diff \
   | sed -e "s#usr/lib/php#usr/lib${LIBDIRSUFFIX}/php#" \
   | patch -p1 --verbose --backup --suffix=.orig
 
-# Install the build folder into /usr/lib$LIBDIRSUFFIX/php/build
+# Install the build folder into /usr/lib${LIBDIRSUFFIX}/php/build
 # and adapt phpize accordingly:
 sed -i "s|build$|php/build|" scripts/Makefile.frag
 sed -i "s|build\"$|php/build\"|" scripts/phpize.in
@@ -166,8 +166,8 @@ sed -i "s|build\"$|php/build\"|" scripts/phpize.in
 # Generic "kitchen sink" configure function, with as many things as possible (and
 # maybe then some ;-) compiled as shared extensions:
 EXTENSION_DIR=/usr/lib${LIBDIRSUFFIX}/php/extensions \
-CFLAGS="$SLKCFLAGS" \
-LDFLAGS="$SLKLDFLAGS" \
+CFLAGS="${SLKCFLAGS}" \
+LDFLAGS="${SLKLDFLAGS}" \
 ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -263,68 +263,68 @@ LDFLAGS="$SLKLDFLAGS" \
   --with-xsl=shared,/usr \
   --with-zlib-dir=/usr \
   --with-zlib=shared,/usr \
-  --build=$ARCH-slackware-linux
+  --build=${ARCH}-slackware-linux
 
 # Libzip in Slackware -current is old for php 5.6
 #  --enable-zip \
 #  --with-libzip \
 
 make
-make install INSTALL_ROOT=$PKG
-mkdir -p $PKG/etc/{rc.d,php-fpm}
-cp sapi/fpm/init.d.php-fpm $PKG/etc/rc.d/rc.php-fpm.new
-chmod 644 $PKG/etc/rc.d/rc.php-fpm.new
-mv $PKG/etc/php-fpm.conf.default $PKG/etc/php-fpm
-chmod 644 $PKG/etc/php-fpm/php-fpm.conf.default
+make install INSTALL_ROOT=${PKG}
+mkdir -p ${PKG}/etc/{rc.d,php-fpm}
+cp sapi/fpm/init.d.php-fpm ${PKG}/etc/rc.d/rc.php-fpm.new
+chmod 644 ${PKG}/etc/rc.d/rc.php-fpm.new
+mv ${PKG}/etc/php-fpm.conf.default $PKG/etc/php-fpm
+chmod 644 ${PKG}/etc/php-fpm/php-fpm.conf.default
 
 # PHP sometimes puts junk in the root directory:
-( cd $PKG
+( cd ${PKG}
 rm -rf .channels .depdb .depdblock .filemap .lock .registry
 )
 
 # We do not package static extension libraries:
-rm -f $PKG/usr/lib${LIBDIRSUFFIX}/php/extensions/*.a
+rm -f ${PKG}/usr/lib${LIBDIRSUFFIX}/php/extensions/*.a
 
 # Fix broken link
 ln -sf phar.phar ${PKG}/usr/bin/phar
 
 # Install config files
-mkdir -p $PKG/etc/httpd
-cp -a php.ini-development php.ini-production $PKG/etc/httpd
-cat $CWD/mod_php.conf.example | sed -e "s#lib/httpd#lib${LIBDIRSUFFIX}/httpd#" \
-  > $PKG/etc/httpd/mod_php.conf.example
-chmod 644 $PKG/etc/httpd/*
-chown root:root $PKG/etc/httpd/*
+mkdir -p ${PKG}/etc/httpd
+cp -a php.ini-development php.ini-production ${PKG}/etc/httpd
+cat ${CWD}/mod_php.conf.example | sed -e "s#lib/httpd#lib${LIBDIRSUFFIX}/httpd#" \
+  > ${PKG}/etc/httpd/mod_php.conf.example
+chmod 644 ${PKG}/etc/httpd/*
+chown root:root ${PKG}/etc/httpd/*
 
 # Remove httpd.conf. This can go now.
-rm -f $PKG/etc/httpd/httpd*
+rm -f ${PKG}/etc/httpd/httpd*
 
 # Session directory for PHP:
-mkdir -p $PKG/var/lib/php
-chmod 770 $PKG/var/lib/php
-chown root:apache $PKG/var/lib/php
+mkdir -p ${PKG}/var/lib/php
+chmod 770 ${PKG}/var/lib/php
+chown root:apache ${PKG}/var/lib/php
 
 # Strip ELF objects.
-find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF \
+find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF \
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 
 # Compress man pages
-gzip -9 $PKG/usr/man/man?/*.?
+gzip -9 ${PKG}/usr/man/man?/*.?
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
-cp -a $DOCFILES $DOCS || true
+mkdir -p ${DOCDIR}
+install -m644 ${DOCFILES} ${DOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
-install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Add a doinst.sh
-install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
+install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
 
