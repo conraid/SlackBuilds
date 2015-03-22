@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-setuptools}
 PKGNAME=${PKGNAME:-python-setuptools}
-VERSION=${VERSION:-14.1.1}
+VERSION=${VERSION:-14.3.1}
 PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -101,7 +101,7 @@ fi
 
 # Add a documentation directory:
 mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
+install -m644 ${DOCFILES} ${DOCDIR} || true
 
 # Add a slackbuild script:
 install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
