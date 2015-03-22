@@ -30,9 +30,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-xdebug}
 PKGNAME=${PKGNAME:-php-${PRGNAME}}
-VERSION=${VERSION:-2.3.1}
+VERSION=${VERSION:-2.3.2}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -81,12 +81,8 @@ tar xzvf ${CWD}/${PRGNAME}-${VERSION}.tgz
 cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
-chown -R root:root .
-chmod -R u+w,go+r-w,a-s .
-
-# Apply patch from git
-# https://github.com/xdebug/xdebug/commit/a71762d4ded9ebd8121dfdc8d2af2dbebb5cc3c7
-patch -p1 -i ${CWD}/1117.patch
+chown -R root:root ${PKG}
+chmod -R u+w,go+r-w,a-s ${PKG}
 
 # Configure
 phpize --clean
