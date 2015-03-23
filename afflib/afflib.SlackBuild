@@ -32,7 +32,7 @@ PRGNAME=${PRGNAME:-AFFLIB}
 VERSION=${VERSION:-3.7.4}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -81,7 +81,7 @@ tar xzvf ${CWD}/${PRGNAME}v3-${VERSION}.tar.gz
 cd ${PRGNAME}v3-${VERSION}
 
 # Make sure ownerships and permissions are sane:
-chown -R root:root ${PKG}
+chown -R root:root .
 find . \
  \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
  -exec chmod 755 {} \; -o \

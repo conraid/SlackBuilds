@@ -35,7 +35,7 @@ PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-2.1-git22f5d}
 PKGVERSION=${VERSION//-/_}
 COMMIT="22f5dfde5b06b5e2f2ef0621a5e06ca698dc4a97"
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -83,8 +83,8 @@ tar xf ${CWD}/${PRGNAME}-${COMMIT}.tar.gz
 cd ${PRGNAME}-${COMMIT}
 
 # Make sure ownerships and permissions are sane:
-chown -R root:root ${PKG}
-chmod -R u+w,go+r-w,a-s ${PKG}
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
 
 # Install:
 touch {files,privileged}_cache.temp

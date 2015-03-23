@@ -32,7 +32,7 @@ PRGNAME=openal-soft
 PKGNAME=openal
 VERSION=${VERSION:-1.16.0}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -80,8 +80,8 @@ tar xvf ${CWD}/openal-soft-${VERSION}.tar.bz2
 cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
-chown -R root:root ${PKG}
-chmod -R u+w,go+r-w,a-s ${PKG}
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
 
 # Configure
 mkdir -p build

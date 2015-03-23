@@ -31,67 +31,67 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-wifite}
-PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
+PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-git$(date +%Y%m%d)}
-PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+PKGVERSION=${VERSION//-/_}
+COMMIT="fd486ba7d4714cc79405eb895d3808b0f9928472"
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PKGNAME
-DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
+PKG=${TMP}/package-${PKGNAME}
+DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
-# Automatically determine the architecture we're building on:
-if [ -z "$ARCH" ]; then
-    case "$( uname -m )" in
-	i?86) ARCH=i686 ;;
-	arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
-    esac
-fi
+# Insert document files in this variable
+DOCFILES="readme*"
+
+ARCH=noarch
 
 # Set compiling FLAGS
-case "$ARCH" in
-    i[3-5]86)
-        SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+case "${ARCH}" in
+	i[3-5]86)
+	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
+	;;
+	i686)
+	SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
+	;;
+	x86_64)
+	SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
-    *)
-	SLKCFLAGS="-O2"; CHOST=$ARCH
+	;;
+	*)
+	SLKCFLAGS="-O2"; CHOST=${ARCH}
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 esac
 
-# Prepare package
-rm -rf $PKG
-mkdir -p $PKG
-
-# Install:
-install -Dm755 $CWD/wifite.py $PKG/usr/bin/wifite
-
-# Add a documentation directory:
-mkdir -p ${DOCS}
-install -Dm644 $CWD/gpl-2.0.txt $DOCS/COPYING
+# Extract source and prepare:
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
+rm -rf ${PRGNAME}-${COMMIT}
+tar xf ${CWD}/${PRGNAME}-${COMMIT}.tar.gz
+cd ${PRGNAME}-${COMMIT}
 
 # Make sure ownerships and permissions are sane:
-chown -R root:root $PKG
-chmod -R u+w,go+r-w,a-s $PKG
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
+
+# Install:
+install -Dm755 wifite.py ${PKG}/usr/bin/wifite
+
+# Add a documentation directory:
+mkdir -p ${DOCDIR}
+install -m644 ${DOCFILES} ${DOCDIR} || true
+install -m644 ${CWD}/gpl-2.0.txt ${DOCDIR}/COPYING
 
 # Add a slackbuild script:
-install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
-install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz

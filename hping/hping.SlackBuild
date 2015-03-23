@@ -35,7 +35,7 @@ PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-3.0.0-git3547c}
 PKGVERSION=${VERSION//-/_}
 COMMIT="3547c7691742c6eaa31f8402e0ccbb81387c1b99"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -84,8 +84,8 @@ tar xvf ${CWD}/${PRGNAME}-${COMMIT}.tar.gz
 cd ${PRGNAME}-${COMMIT}
 
 # Make sure ownerships and permissions are sane:
-chown -R root:root ${PKG}
-chmod -R u+w,go+r-w,a-s ${PKG}
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
 
 # Add some of Debian's patchset (thanks to Debian and SBo)
 for PATCH in ${CWD}/patches/*.diff; do

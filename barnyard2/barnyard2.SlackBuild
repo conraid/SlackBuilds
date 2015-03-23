@@ -34,7 +34,7 @@ PRGNAME=${PRGNAME:-barnyard2}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-2-1.13}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -82,8 +82,8 @@ tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.gz
 cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
-chown -R root:root ${PKG}
-chmod -R u+w,go+r-w,a-s ${PKG}
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
 
 # Configure
 ./autogen.sh
@@ -110,7 +110,7 @@ CXXFLAGS="${SLKCFLAGS}" \
 make
 make DESTDIR=${PKG} install-strip
 
-mv ${PKG}/etc/${PRGNAME}.conf $PKG/etc/${PRGNAME}.conf.new
+mv ${PKG}/etc/${PRGNAME}.conf ${PKG}/etc/${PRGNAME}.conf.new
 
 # Include rc.barnyard2 file
 mkdir -p ${PKG}/etc/rc.d

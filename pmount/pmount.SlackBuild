@@ -37,7 +37,7 @@ PRGNAME=${PRGNAME:-pmount}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-0.9.23}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PRGNAME}
@@ -85,8 +85,8 @@ tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.bz2
 cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
-chown -R root:root ${PKG}
-chmod -R u+w,go+r-w,a-s ${PKG}
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
 
 # Configure:
 LDFLAGS="${SLKLDFLAGS}" \
@@ -108,11 +108,11 @@ make
 make install-strip DESTDIR=${PKG}
 
 # Give pmount/pumount suid bit.
-chown root.plugdev ${PKG}/usr/bin/pmount $PKG/usr/bin/pumount
-chmod 4750 ${PKG}/usr/bin/pmount $PKG/usr/bin/pumount
+chown root.plugdev ${PKG}/usr/bin/pmount ${PKG}/usr/bin/pumount
+chmod 4750 ${PKG}/usr/bin/pmount ${PKG}/usr/bin/pumount
 
 # Let's not clobber the config file
-mv ${PKG}/etc/pmount.allow $PKG/etc/pmount.allow.new
+mv ${PKG}/etc/pmount.allow ${PKG}/etc/pmount.allow.new
 
 # Compress and link manpages, if any:
 if [ -d ${PKG}/usr/man ]; then

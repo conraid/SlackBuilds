@@ -81,8 +81,8 @@ tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.gz
 cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
-chown -R root:root ${PKG}
-chmod -R u+w,go+r-w,a-s ${PKG}
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
 
 # Configure
 LDFLAGS="${SLKLDFLAGS}" \
