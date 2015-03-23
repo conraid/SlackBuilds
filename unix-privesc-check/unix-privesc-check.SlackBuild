@@ -32,7 +32,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-unix-privesc-check}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-2.1}
+VERSION=${VERSION:-2.1-git22f5d}
+PKGVERSION=${VERSION//-/_}
+COMMIT="22f5dfde5b06b5e2f2ef0621a5e06ca698dc4a97"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -59,11 +61,11 @@ case "${ARCH}" in
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 	i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
+	SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
 	SLKLDFLAGS=""; LIBDIRSUFFIX=""
 	;;
 	x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
+	SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
 	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
 	;;
 	*)
@@ -76,16 +78,13 @@ esac
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf unix-privesc-check-read-only
-svn checkout http://unix-privesc-check.googlecode.com/svn/trunk/ unix-privesc-check-read-only
-cd unix-privesc-check-read-only
-
-# Set PKGVERSION variables
-PKGVERSION=${VERSION}_$(svnversion)
+rm -rf ${PRGNAME}-${COMMIT}
+tar xf ${CWD}/${PRGNAME}-${COMMIT}.tar.gz
+cd ${PRGNAME}-${COMMIT}
 
 # Make sure ownerships and permissions are sane:
-chown -R root:root .
-chmod -R u+w,go+r-w,a-s .
+chown -R root:root ${PKG}
+chmod -R u+w,go+r-w,a-s ${PKG}
 
 # Install:
 touch {files,privileged}_cache.temp
@@ -96,7 +95,7 @@ cp -a upc.sh lib tools ${PKG}/usr/share/${PRGNAME}
 
 # Add a documentation directory:
 mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR}
+install -m644 ${DOCFILES} ${DOCDIR} || true
 
 # Add a slackbuild script:
 install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
