@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-converseen}
 PKGNAME=${PKGNAME:-${PRGNAME}}
-VERSION=${VERSION:-0.9.1}
+VERSION=${VERSION:-0.9.2}
 PKGVERSION=${VERSION/-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -99,7 +99,7 @@ cd ..
 
 # Add a documentation directory:
 mkdir -p ${DOCDIR}
-cp COPYING INSTALL ${DOCDIR}
+cp COPYING INSTALL ${DOCDIR} || true
 
 # Add a slackbuild script:
 install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
