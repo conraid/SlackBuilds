@@ -32,7 +32,7 @@ PRGNAME=${PRGNAME:-xdebug}
 PKGNAME=${PKGNAME:-php-${PRGNAME}}
 VERSION=${VERSION:-2.3.2}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -81,8 +81,8 @@ tar xzvf ${CWD}/${PRGNAME}-${VERSION}.tgz
 cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
-chown -R root:root ${PKG}
-chmod -R u+w,go+r-w,a-s ${PKG}
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
 
 # Configure
 phpize --clean
@@ -119,7 +119,7 @@ cd -
 
 # Add a documentation directory:
 mkdir -p ${DOCDIR}
-install -m644 ${DOCFILES} ${DOCDIR} || true
+cp -a ${DOCFILES} ${DOCDIR} || true
 
 # Copy config example file
 mkdir -p ${PKG}/etc/php
