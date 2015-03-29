@@ -32,9 +32,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-squid}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-3.5.2}
-PKGVERSION=$(echo ${VERSION} | tr - _)
-BUILD=${BUILD:-2}
+VERSION=${VERSION:-3.5.3}
+PKGVERSION=${VERSION//-/_}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -47,32 +47,32 @@ DOCFILES="CONTRIBUTORS COPYING COPYRIGHT CREDITS ChangeLog INSTALL QUICKSTART RE
 
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
-	case "$( uname -m )" in
-	i?86) ARCH=i686 ;;
-	arm*) ARCH=arm ;;
-		# Unless ${ARCH} is already set, use uname -m for all other archs:
-		*) ARCH=$( uname -m ) ;;
-	esac
+    case "$( uname -m )" in
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+        # Unless ${ARCH} is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
 fi
 
 # Set compiling FLAGS
 case "${ARCH}" in
-	i[3-5]86)
-	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
-	i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
-	x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-	;;
-	*)
-	SLKCFLAGS="-O2"; CHOST=${ARCH}
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    i[3-5]86)
+    SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
+    i686)
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
+    x86_64)
+    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
+    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+    ;;
+    *)
+    SLKCFLAGS="-O2"; CHOST=${ARCH}
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
 esac
 
 # Extract source and prepare:
@@ -92,39 +92,39 @@ LDFLAGS="${SLKLDFLAGS}" \
 CFLAGS="${SLKCFLAGS}" \
 CXXFLAGS="${SLKCFLAGS}" \
 ./configure \
-	--prefix=/usr \
-	--libdir=/usr/lib${LIBDIRSUFFIX} \
-	--sysconfdir=/etc/squid \
-	--localstatedir=/var/log/squid \
-	--datadir=/usr/share/squid \
-	--with-pidfile=/var/run/squid \
-	--with-logdir=/var/log/squid \
-	--localstatedir=/var \
-	--mandir=/usr/man \
-	--infodir=/usr/info \
-	--docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
-	--enable-static=no \
-	--enable-shared=yes \
-	--with-pidfile=/var/run/squid \
-	--with-logdir=/var/log/squid \
-	--enable-auth \
-	--enable-auth-basic="DB,LDAP,NCSA,NIS,POP3,RADIUS,SASL,SMB,getpwnam" \
-	--enable-auth-digest="LDAP,file" \
-	--enable-cache-digests \
-	--enable-delay-pools \
-	--enable-external-acl-helpers="LDAP_group,unix_group,wbinfo_group,file_userip,SQL_session,session,time_quota" \
-	--enable-icmp \
-	--enable-linux-netfilter \
-	--enable-removal-policies="lru,heap" \
-	--enable-ssl-crtd \
-	--enable-storeio="aufs,ufs,diskd" \
-	--with-filedescriptors=65536 \
-	--with-large-files \
-	--with-openssl=/usr \
-	--disable-arch-native \
-	--disable-strict-error-checking \
-	--host=${CHOST}-slackware-linux \
-	--build=${CHOST}-slackware-linux
+    --prefix=/usr \
+    --libdir=/usr/lib${LIBDIRSUFFIX} \
+    --sysconfdir=/etc/squid \
+    --localstatedir=/var/log/squid \
+    --datadir=/usr/share/squid \
+    --with-pidfile=/var/run/squid \
+    --with-logdir=/var/log/squid \
+    --localstatedir=/var \
+    --mandir=/usr/man \
+    --infodir=/usr/info \
+    --docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
+    --enable-static=no \
+    --enable-shared=yes \
+    --with-pidfile=/var/run/squid \
+    --with-logdir=/var/log/squid \
+    --enable-auth \
+    --enable-auth-basic="DB,LDAP,NCSA,NIS,POP3,RADIUS,SASL,SMB,getpwnam" \
+    --enable-auth-digest="LDAP,file" \
+    --enable-cache-digests \
+    --enable-delay-pools \
+    --enable-external-acl-helpers="LDAP_group,unix_group,wbinfo_group,file_userip,SQL_session,session,time_quota" \
+    --enable-icmp \
+    --enable-linux-netfilter \
+    --enable-removal-policies="lru,heap" \
+    --enable-ssl-crtd \
+    --enable-storeio="aufs,ufs,diskd" \
+    --with-filedescriptors=65536 \
+    --with-large-files \
+    --with-openssl=/usr \
+    --disable-arch-native \
+    --disable-strict-error-checking \
+    --host=${CHOST}-slackware-linux \
+    --build=${CHOST}-slackware-linux
 
 # Build and install:
 make
@@ -136,7 +136,7 @@ find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r 
 
 # Compress and link manpages, if any:
 if [ -d ${PKG}/usr/man ]; then
-    find ${PKG}/usr/man -type f -exec gzip -9 {} \;
+    find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
     for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
@@ -146,10 +146,10 @@ install -Dm644 ${CWD}/rc.squid ${PKG}/etc/rc.d/rc.squid.new
 
 sed -e "s,@USER@,$SQUIDUSER," -e "s,@GROUP@,$SQUIDGROUP," ${CWD}/squid.logrotate > ${PKG}/etc/logrotate.d/squid.new
 
-mv ${PKG}/etc/squid/mime.conf $PKG/etc/squid/mime.conf.new
-mv ${PKG}/etc/squid/cachemgr.conf $PKG/etc/squid/cachemgr.conf.new
-mv ${PKG}/etc/squid/squid.conf $PKG/etc/squid/squid.conf.new
-mv ${PKG}/etc/squid/errorpage.css $PKG/etc/squid/errorpage.css.new
+mv ${PKG}/etc/squid/mime.conf ${PKG}/etc/squid/mime.conf.new
+mv ${PKG}/etc/squid/cachemgr.conf ${PKG}/etc/squid/cachemgr.conf.new
+mv ${PKG}/etc/squid/squid.conf ${PKG}/etc/squid/squid.conf.new
+mv ${PKG}/etc/squid/errorpage.css ${PKG}/etc/squid/errorpage.css.new
 install -Dm644 src/squid.conf.documented ${PKG}/etc/squid/squid.conf.documented
 
 mkdir -p ${PKG}/var/{cache,run}/squid
