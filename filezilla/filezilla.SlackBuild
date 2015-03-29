@@ -30,9 +30,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-filezilla}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-3.10.2}
-PKGVERSION=${VERSION/-/_}
-BUILD=${BUILD:-2}
+VERSION=${VERSION:-3.10.3}
+PKGVERSION=${VERSION//-/_}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -43,33 +43,33 @@ DOCFILES="AUTHORS COPYING ChangeLog GPL* INSTALL NEWS README"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
-if [ -z "${ARCH}" ]; then
+if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
-		i?86) ARCH=i686 ;;
-		arm*) ARCH=arm ;;
-		# Unless ${ARCH} is already set, use uname -m for all other archs:
-		*) ARCH=$( uname -m ) ;;
+        i?86) ARCH=i686 ;;
+        arm*) ARCH=arm ;;
+        # Unless ${ARCH} is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
     esac
 fi
 
 # Set compiling FLAGS
 case "${ARCH}" in
-	i486)
-	SLKCFLAGS="-O2 -march=i486 -mtune=i686 -ldl"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
-	i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer -ldl"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
-	x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer -ldl"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-	;;
-	*)
-	SLKCFLAGS="-O2 -ldl"; CHOST=${ARCH}
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    i486)
+    SLKCFLAGS="-O2 -march=i486 -mtune=i686 -ldl"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
+    i686)
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer -ldl"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
+    x86_64)
+    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer -ldl"; CHOST="x86_64"
+    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+    ;;
+    *)
+    SLKCFLAGS="-O2 -ldl"; CHOST=${ARCH}
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
 esac
 
 # Extract source and prepare:
@@ -83,9 +83,6 @@ cd ${PRGNAME}-${VERSION}
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
-
-# Patch for wxTimerEvent error
-patch -p1 -i $CWD/filezilla-wxtimer.patch
 
 # Configure
 LDFLAGS="${SLKLDFLAGS}" \
@@ -114,7 +111,7 @@ make DESTDIR=${PKG} install-strip
 
 # Compress and link manpages, if any:
 if [ -d ${PKG}/usr/man ]; then
-  find ${PKG}/usr/man -type f -exec gzip -9 {} \;
+  find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
 fi
 
 # Add a documentation directory:
