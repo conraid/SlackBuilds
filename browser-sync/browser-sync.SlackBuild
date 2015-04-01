@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-browser-sync}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-2.4.0}
+VERSION=${VERSION:-2.5.2}
 PKGVERSION=${VERSION/-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -86,7 +86,7 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
-DESTDIR=$PKG npm install -g ${PKGNAME}
+DESTDIR=${PKG} npm install --user root -g ${PKGNAME}
 
 # Strip binaries:
 find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
