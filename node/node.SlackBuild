@@ -37,7 +37,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-node}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-v0.12.1}
+VERSION=${VERSION:-v0.12.2}
 PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -46,7 +46,7 @@ PKG=${TMP}/package-${PKGNAME}
 DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 # Insert document files in this variable
-DOCFILES="AUTHORS ChangeLog LICENSE doc/*"
+DOCFILES="AUTHORS CONTRIBUTING* ChangeLog LICENSE README doc/*"
 
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
@@ -91,13 +91,13 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Fix man page path.
-sed -i 's|share/||' tools/install.py
-sed -i '/var manRoot/ s/"share",//' deps/npm/lib/{,un}build.js
+sed 's|share/man|/man|' -i tools/install.py
+sed '/var manRoot/ s|"share",||' -i deps/npm/lib/{,un}build.js
 
 # Fix libdir for 64-bit.
-sed -i "s|lib/|lib${LIBDIRSUFFIX}/|g" tools/install.py
-sed -i "s/'lib'/'lib${LIBDIRSUFFIX}'/" lib/module.js
-sed -i "s|\"lib\"|\"lib${LIBDIRSUFFIX}\"|" deps/npm/lib/npm.js
+sed "s|\(['/]\)lib/|\1lib${LIBDIRSUFFIX}/|g" -i tools/install.py
+sed "s|'lib'|'lib${LIBDIRSUFFIX}'|" -i lib/module.js
+sed "s|\"lib\"|\"lib${LIBDIRSUFFIX}\"|" -i deps/npm/lib/npm.js
 
 # Configure
 LDFLAGS="${SLKLDFLAGS}" \
