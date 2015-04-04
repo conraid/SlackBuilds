@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-wine}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-1.7.39}
+VERSION=${VERSION:-1.7.40}
 PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -45,32 +45,32 @@ DOCFILES="ANNOUNCE AUTHORS COPYING.LIB LICENSE* README VERSION"
 
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
-	case "$( uname -m )" in
-		i?86) ARCH=i686 ;;
-		arm*) ARCH=arm ;;
-		# Unless $ARCH is already set, use uname -m for all other archs:
-		*) ARCH=$( uname -m ) ;;
-	esac
+    case "$( uname -m )" in
+        i?86) ARCH=i686 ;;
+        arm*) ARCH=arm ;;
+        # Unless ${ARCH} is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
-	i[3-5]86)
-	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""; WINE64="disable"
-	;;
-	i686)
-	SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""; WINE64="disable"
-	;;
-	x86_64)
-	SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"; WINE64="enable"
-	;;
-	*)
-	SLKCFLAGS="-O2"; CHOST=$ARCH
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""; WINE64="disable"
-	;;
+case "${ARCH}" in
+    i[3-5]86)
+    SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""; WINE64="disable"
+    ;;
+    i686)
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""; WINE64="disable"
+    ;;
+    x86_64)
+    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
+    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"; WINE64="enable"
+    ;;
+    *)
+    SLKCFLAGS="-O2"; CHOST=${ARCH}
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""; WINE64="disable"
+    ;;
 esac
 
 # Extract source and prepare:
@@ -126,7 +126,7 @@ fi
 
 # Add a documentation directory:
 mkdir -p ${DOCDIR}
-install -m644 ${DOCFILES} ${DOCDIR} || true
+cp -a ${DOCFILES} ${DOCDIR} || true
 
 # Add a slackbuild script:
 install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
