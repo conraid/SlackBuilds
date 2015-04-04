@@ -37,10 +37,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-redis}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-2.8.19}
-PKGVERSION=$(echo ${VERSION} | tr - _)
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
-BUILD=${BUILD:-2}
+VERSION=${VERSION:-3.0.0}
+PKGVERSION=${VERSION//-/_}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -50,11 +49,11 @@ DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 DOCFILES="00-RELEASENOTES BUGS CONTRIBUTING COPYING INSTALL MANIFESTO README"
 
 # Automatically determine the architecture we're building on:
-if [ -z "${ARCH}" ]; then
-	echo ${ARCH}
+if [ -z ${ARCH:=""} ]; then
+    echo ${ARCH}
     case "$( uname -m )" in
-	i?86) ARCH=i686 ;;
-	arm*) ARCH=arm ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
         # Unless ${ARCH} is already set, use uname -m for all other archs:
     *) ARCH=$( uname -m ) ;;
     esac
@@ -63,21 +62,21 @@ fi
 # Set compiling FLAGS
 case "${ARCH}" in
     i[3-5]86)
-        SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
+    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
+    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+    ;;
     *)
-	SLKCFLAGS="-O2"; CHOST=${ARCH}
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    SLKCFLAGS="-O2"; CHOST=${ARCH}
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
 esac
 
 # Extract source and prepare:
@@ -93,11 +92,8 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
-# Use our CFLAGS.
-sed -i 's#-O3##' deps/Makefile deps/hiredis/Makefile
-# http://lists.slackbuilds.org/pipermail/slackbuilds-users/2013-January/010042.html
-# Thanks to SBo
-( unset ARCH ; CFLAGS="${SLKCFLAGS}" make MALLOC=libc CFLAGS="$SLKCFLAGS" PREFIX=/usr)
+sed -i 's/-O3//' deps/Makefile deps/hiredis/Makefile
+CFLAGS="${SLKCFLAGS}" make MALLOC=libc CFLAGS="${SLKCFLAGS}" PREFIX=/usr
 mkdir -p ${PKG}/usr/bin
 make INSTALL_BIN="${PKG}/usr/bin" PREFIX=/usr install
 cd deps/hiredis
@@ -132,7 +128,7 @@ install -Dm644 ${CWD}/redis.logrotate ${PKG}/etc/logrotate.d/redis.new
 
 # Add a documentation directory:
 mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR}
+cp -a ${DOCFILES} ${DOCDIR} || true
 
 # Add a slackbuild script:
 install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
