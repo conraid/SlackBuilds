@@ -32,8 +32,8 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-shorewall6}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-4.6.7}
-PKGVERSION=${VERSION/-/_}
+VERSION=${VERSION:-4.6.8}
+PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 ARCH=${ARCH:="noarch"}
 TAG=${TAG:-cf}
@@ -66,8 +66,8 @@ DESTDIR=${PKG} ./install.sh
 rm -rf ${PKG}/usr/share/shorewall
 
 # Rename script and configuration files
-mv ${PKG}/etc/rc.d/rc.shorewall6 $PKG/etc/rc.d/rc.shorewall6.new
-mv ${PKG}/etc/logrotate.d/shorewall6 $PKG/etc/logrotate.d/shorewall6.new
+mv ${PKG}/etc/rc.d/rc.shorewall6 ${PKG}/etc/rc.d/rc.shorewall6.new
+mv ${PKG}/etc/logrotate.d/shorewall6 ${PKG}/etc/logrotate.d/shorewall6.new
 for FILE in $(ls ${PKG}/etc/shorewall6/[a-z]*) ; do
     mv $FILE $FILE.new
 done

@@ -32,8 +32,8 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-shorewall-core}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-4.6.7}
-PKGVERSION=${VERSION/-/_}
+VERSION=${VERSION:-4.6.8}
+PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 ARCH=${ARCH:="noarch"}
 TAG=${TAG:-cf}
@@ -66,7 +66,7 @@ DESTDIR=${PKG} ./install.sh
 find ${PKG} -depth -type d -empty -delete || true
 
 # Rename init script
-mv ${PKG}/etc/rc.d/rc.firewall $PKG/etc/rc.d/rc.firewall.new
+mv ${PKG}/etc/rc.d/rc.firewall ${PKG}/etc/rc.d/rc.firewall.new
 
 # Add a documentation directory:
 mkdir -p ${DOCDIR}
