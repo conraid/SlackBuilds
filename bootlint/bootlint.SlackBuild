@@ -34,7 +34,7 @@ PRGNAME=${PRGNAME:-bootlint}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-0.12.0}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -86,7 +86,10 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
-DESTDIR=${PKG} npm install --user root -g ${PKGNAME}
+DESTDIR=${PKG} npm install --user root -g
+
+# Remove empty /usr/etc dir
+rmdir ${PKG}/usr/etc
 
 # Strip binaries:
 find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
