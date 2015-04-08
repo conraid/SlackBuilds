@@ -32,8 +32,8 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-darktable}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-1.6.3}
-PKGVERSION=${VERSION/-/_}
+VERSION=${VERSION:-1.6.4}
+PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -46,31 +46,31 @@ DOCFILES="doc/ChangeLog doc/NEWS README* RELEASE*"
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
-		i?86) ARCH=i686 ;;
-		arm*) ARCH=arm ;;
-		# Unless ${ARCH} is already set, use uname -m for all other archs:
-		*) ARCH=$( uname -m ) ;;
+        i?86) ARCH=i686 ;;
+        arm*) ARCH=arm ;;
+        # Unless ${ARCH} is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
     esac
 fi
 
 # Set compiling FLAGS
 case "${ARCH}" in
-	i[3-5]86)
-	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
-	i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
-	x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-	;;
-	*)
-	SLKCFLAGS="-O2"; CHOST=${ARCH}
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    i[3-5]86)
+    SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
+    i686)
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
+    x86_64)
+    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
+    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+    ;;
+    *)
+    SLKCFLAGS="-O2"; CHOST=${ARCH}
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
 esac
 
 # Extract source and prepare:
@@ -88,7 +88,7 @@ chmod -R u+w,go+r-w,a-s .
 # Configure
 sed -e "s#share/doc/darktable#doc/darktable-${VERSION}#" \
     -e "s#\${SHARE_INSTALL}/doc/darktable/#./doc/darktable-${VERSION}#" \
-	-i doc/CMakeLists.txt
+    -i doc/CMakeLists.txt
 mkdir -p build
 cd build
 cmake \
@@ -108,7 +108,13 @@ cmake \
 # Build and install:
 make
 make DESTDIR=${PKG} install
-cd ..
+cd -
+
+# Build and install basecurve
+cd tools/basecurve
+make
+install -m0755 dt-curve-tool{,-helper} ${PKG}/usr/bin/
+cd -
 
 # Strip binaries:
 find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
@@ -116,13 +122,14 @@ find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r 
 
 # Compress and link manpages, if any:
 if [ -d ${PKG}/usr/man ]; then
-    find ${PKG}/usr/man -type f -exec gzip -9 {} \;
+    find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
     for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Add a documentation directory:
 mkdir -p $DOCDIR
 cp -a ${DOCFILES} ${DOCDIR} || true
+install -Dm0755 tools/basecurve/README.md ${DOCDIR}/basecurve.md
 
 # Add a slackbuild script:
 install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
