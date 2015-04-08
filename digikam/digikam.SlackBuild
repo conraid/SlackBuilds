@@ -29,8 +29,8 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-digikam}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-4.8.0}
-PKGVERSION=$(echo ${VERSION} | tr - _)
+VERSION=${VERSION:-4.9.0}
+PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 TAG=${TAG:-cf}
@@ -42,7 +42,7 @@ DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 DOCFILES="COPYING* core/NEWS README*"
 
 # Automatically determine the architecture we are building on:
-if [ -z "${ARCH}" ]; then
+if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
         i?86) ARCH=i686 ;;
         arm*) ARCH=arm ;;
@@ -54,21 +54,21 @@ fi
 # Set compiling FLAGS
 case "${ARCH}" in
     i486)
-	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
+    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
+    SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"
+    ;;
     *)
-        SLKCFLAGS="-O2"; CHOST=${ARCH}
-        SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    SLKCFLAGS="-O2"; CHOST=${ARCH}
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
 esac
 
 # Extract source and prepare:
@@ -109,7 +109,7 @@ cmake \
 # Build and install:
 make
 make install DESTDIR=${PKG}
-cd ..
+cd -
 
 # Fix conflicts with kde-l10n-*
 rm ${PKG}/usr/share/locale/*/LC_MESSAGES/libkipi.mo
@@ -120,10 +120,8 @@ find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r 
 
 # Compress and link manpages, if any:
 if [ -d ${PKG}/usr/man ]; then
-( cd ${PKG}/usr/man
-  find . -type f -exec gzip -9 {} \;
-  for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
-)
+    find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+    for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Add a documentation directory:
