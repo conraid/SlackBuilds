@@ -31,8 +31,8 @@ CWD=$(pwd)
 PRGNAME=${PRGNAME:-p7zip}
 PKGNAME=${PKGNAME:-${PRGNAME}}
 VERSION=${VERSION:-9.38.1}
-PKGVERSION=${VERSION/-/_}
-BUILD=${BUILD:-5}
+PKGVERSION=${VERSION//-/_}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -51,21 +51,21 @@ fi
 # Set compiling FLAGS
 case "${ARCH}" in
     i486)
-	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-	;;
-	*)
-	SLKCFLAGS="-O2"; CHOST=${ARCH}
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
+    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+    ;;
+    *)
+    SLKCFLAGS="-O2"; CHOST=${ARCH}
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
 esac
 
 # Extract source and prepare:
@@ -104,6 +104,12 @@ else
   ALL=all3
 fi
 
+sed \
+  -e '/Rar/d' \
+  -e '/RAR/d' \
+  -i makefile* CPP/7zip/Bundles/Format7zFree/makefile
+rm -rf CPP/7zip/Compress/Rar
+
 # Build and install:
 sed -e s'#cp -r DOC#cp -r DOC/*#' -e 's#${DEST_SHARE_DOC}/DOC#${DEST_SHARE_DOC}#g' -i install.sh
 make $ALL OPTFLAGS="${SLKCFLAGS}"
@@ -120,6 +126,8 @@ find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r 
 
 # install midnight commander vfs add on
 install -Dm755 contrib/VirtualFileSystemForMidnightCommander/u7z ${PKG}/usr/share/mc/extfs/u7z
+mkdir -p ${DOCDIR}/mc-vfs/
+install -m644 contrib/VirtualFileSystemForMidnightCommander/readme* ${DOCDIR}/mc-vfs/
 
 # install gzip like wrapper
 install -Dm755 contrib/gzip-like_CLI_wrapper_for_7z/p7zip ${PKG}/usr/bin/p7zip
@@ -132,7 +140,7 @@ find ${PKG}/usr/lib${LIBDIRSUFFIX}/p7zip/help -type f -exec chmod 644 {} \;
 
 # Compress and link manpages, if any:
 if [ -d ${PKG}/usr/man ]; then
-    find ${PKG}/usr/man -type f -exec gzip -9 {} \;
+    find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
     for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
