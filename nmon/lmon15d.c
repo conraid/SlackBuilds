@@ -388,6 +388,7 @@ int	show_verbose = 0;
 int	show_jfs     = 0;
 int	flash_on     = 0;
 int	first_huge   = 1;
+int	first_steal  = 1;
 long	huge_peak    = 0;
 int	welcome      = 1;
 int	dotline      = 0;
@@ -2091,7 +2092,7 @@ void plot_snap(WINDOW *pad)
 int i;
 int j;
 	if (cursed) {
-		mvwprintw(pad,0, 0, " CPU +-------------------------------------------------------------------------+");
+		mvwprintw(pad,0, 0, " CPU +---Long-Term-------------------------------------------------------------+");
 		mvwprintw(pad,1, 0,"100%%-|");
 		mvwprintw(pad,2, 1, "95%%-|");
 		mvwprintw(pad,3, 1, "90%%-|");
@@ -2116,13 +2117,13 @@ int j;
 		mvwprintw(pad,21, 4, " +-------------------------------------------------------------------------+");
  		if (colour){
  			COLOUR wattrset(pad, COLOR_PAIR(2));
- 			mvwprintw(pad,0, 16, "User%%");
+ 			mvwprintw(pad,0, 26, "User%%");
  			COLOUR wattrset(pad, COLOR_PAIR(1));
- 			mvwprintw(pad,0, 26, "System%%");
+ 			mvwprintw(pad,0, 36, "System%%");
  			COLOUR wattrset(pad, COLOR_PAIR(4));
- 			mvwprintw(pad,0, 39, "Wait%%");
+ 			mvwprintw(pad,0, 49, "Wait%%");
  			COLOUR wattrset(pad, COLOR_PAIR(5));
- 			mvwprintw(pad,0, 49, "Steal%%");
+ 			mvwprintw(pad,0, 59, "Steal%%");
  			COLOUR wattrset(pad, COLOR_PAIR(0));
 		} 
 
@@ -2268,7 +2269,11 @@ void plot_smp(WINDOW *pad, int cpu_no, int row, double user, double kernel, doub
 		if( user < 0.0 || kernel < 0.0 || iowait < 0.0 || idle < 0.0 || idle >100.0 || steal <0 ) {
 			user = kernel = iowait = idle = steal = 0;
 		}
-		
+	
+		if(first_steal && steal >0 ) {
+			fprintf(fp,"AAA,steal,1\n");
+			first_steal=0;
+		}	
 		if(cpu_no == 0)
 			fprintf(fp,"CPU_ALL,%s,%.1lf,%.1lf,%.1lf,%.1f,%.1lf,,%d\n", LOOP,
 			    user, kernel, iowait, idle, steal, cpus);
@@ -4525,6 +4530,7 @@ mvwprintw(padcpu,8, 4, "cpuinfo: Hyperthreads  =%d VirtualCPUs =%d", hyperthread
 				cpu_wait = p->cpu_total.wait - q->cpu_total.wait; 
 				cpu_idle = p->cpu_total.idle - q->cpu_total.idle; 
 				cpu_steal= p->cpu_total.steal- q->cpu_total.steal; 
+ /* DEBUG inject steal       cpu_steal = cpu_sys; */
 				cpu_sum = cpu_idle + cpu_user + cpu_sys + cpu_wait + cpu_steal;
 
 				save_snap(
@@ -4576,7 +4582,7 @@ mvwprintw(padcpu,8, 4, "cpuinfo: Hyperthreads  =%d VirtualCPUs =%d", hyperthread
 					mvwprintw(padsmp,2, 9, "  Sys%%");
 					COLOUR wattrset(padsmp, COLOR_PAIR(4));
 					mvwprintw(padsmp,2, 15, " Wait%%");
-					if(p->cpuN[i].steal- q->cpuN[i].steal){
+					if(p->cpu_total.steal != q->cpu_total.steal){
 						COLOUR wattrset(padsmp, COLOR_PAIR(5));
 						mvwprintw(padsmp,2, 22, "Steal");
 					} else {
@@ -4624,6 +4630,7 @@ mvwprintw(padcpu,8, 4, "cpuinfo: Hyperthreads  =%d VirtualCPUs =%d", hyperthread
 					cpu_wait = p->cpuN[i].wait - q->cpuN[i].wait;
 					cpu_idle = p->cpuN[i].idle - q->cpuN[i].idle;
 					cpu_steal= p->cpuN[i].steal- q->cpuN[i].steal;
+/* DEBUG inject steal       cpu_steal = cpu_sys; */
 					cpu_sum = cpu_idle + cpu_user + cpu_sys + cpu_wait + cpu_steal;
 					/* Check if we had a CPU # change and have to set idle to 100 */
 					if( cpu_sum == 0)
@@ -4707,6 +4714,7 @@ mvwprintw(padcpu,8, 4, "cpuinfo: Hyperthreads  =%d VirtualCPUs =%d", hyperthread
 				cpu_wait = p->cpu_total.wait - q->cpu_total.wait;
 				cpu_idle = p->cpu_total.idle - q->cpu_total.idle;
 				cpu_steal= p->cpu_total.steal- q->cpu_total.steal;
+/* DEBUG inject steal       cpu_steal = cpu_sys; */
 				cpu_sum = cpu_idle + cpu_user + cpu_sys + cpu_wait + cpu_steal;
 
 				/* Check if we had a CPU # change and have to set idle to 100 */
