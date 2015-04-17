@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-gmic}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-1.6.1.0}
+VERSION=${VERSION:-1.6.2.0}
 PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -42,32 +42,32 @@ DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
-	case "$( uname -m )" in
-	i?86) ARCH=i686 ;;
-	arm*) ARCH=arm ;;
-	# Unless ${ARCH} is already set, use uname -m for all other archs:
-	*) ARCH=$( uname -m ) ;;
-	esac
+    case "$( uname -m )" in
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    # Unless ${ARCH} is already set, use uname -m for all other archs:
+    *) ARCH=$( uname -m ) ;;
+    esac
 fi
 
 # Set compiling FLAGS
 case "${ARCH}" in
-	i[3-5]86)
-	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
-	i686)
-	SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
-	x86_64)
-	SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-	;;
-	*)
-	SLKCFLAGS="-O2"; CHOST=${ARCH}
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    i[3-5]86)
+    SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
+    i686)
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
+    x86_64)
+    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
+    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+    ;;
+    *)
+    SLKCFLAGS="-O2"; CHOST=${ARCH}
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
 esac
 
 # Extract source and prepare:
@@ -82,7 +82,6 @@ cd ${PRGNAME}-${VERSION}
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-
 # Change Makefile for lib64, man pages and qmake path
 if [ ${ARCH} == 'x86_64' ]; then
     sed -e 's/^LIB=lib/LIB=lib64/g' -e 's#/lib\([\/ ]\)#/lib64\1#g' -i src/Makefile
@@ -90,12 +89,12 @@ fi
 sed -e 's#/share/man/#/man/#g' -e 's/qmake-qt4/qmake/' -i src/Makefile
 
 # Build and install gmic:
-make -C src LIB=lib64 OPT_CFLAGS="${SLKCFLAGS}" OPT_LDFLAGS="${SLKLDFLAGS}" all
-make -C src install LIB=lib64 DESTDIR="${PKG}" USR="/usr"
+make -C src LIB=lib${LIBDIRSUFFIX} OPT_CFLAGS="${SLKCFLAGS}" OPT_LDFLAGS="${SLKLDFLAGS}" all
+make -C src install LIB=lib${LIBDIRSUFFIX} DESTDIR="${PKG}" USR="/usr"
 
 # Build and install zart:
 cd zart
-qmake PREFIX=/usr QMAKE_LIBS="${SLKLDFLAGS}" QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="${SLKCFLAGS}" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" -o Makefile zart.pro
+qmake PREFIX=/usr QMAKE_LIBS="${SLKLDFLAGS}" QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="${SLKCFLAGS}" QMAKE_CXXFLAGS_RELEASE="${SLKCFLAGS}" -o Makefile zart.pro
 make 
 install -Dsm755 zart "${PKG}/usr/bin/zart"
 cd -
