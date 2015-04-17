@@ -5,7 +5,7 @@
 # by:  David Cantrell <david@slackware.com>
 # Modified for PHP 4-5 by volkerdi@slackware.com
 # Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2013  Patrick Volkerding, Sebeka, MN, USA
-# Modified for PHP 5.6 in slackers.it repository by conraid(at)linux.it
+# Modified for PHP 5.6 to slackers.it repository by conraid(at)linux.it
 # Copyright 2014-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
@@ -27,7 +27,6 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-
 # Exit on most errors
 set -eu
 
@@ -36,9 +35,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-php}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-5.6.7}
+VERSION=${VERSION:-5.6.8}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -50,32 +49,32 @@ DOCFILES="CODING_STANDARDS CREDITS EXTENSIONS INSTALL LICENSE NEWS README* sapi/
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
-	case "$( uname -m )" in
-	i?86) ARCH=i686 ;;
-	arm*) ARCH=arm ;;
-		# Unless ${ARCH} is already set, use uname -m for all other archs:
-		*) ARCH=$( uname -m ) ;;
-	esac
+    case "$( uname -m )" in
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+        # Unless ${ARCH} is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
 fi
 
 # Set compiling FLAGS
 case "${ARCH}" in
-	i[3-5]86)
-	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
-	i686)
-	SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
-	x86_64)
-	SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-	;;
-	*)
-	SLKCFLAGS="-O2"; CHOST=${ARCH}
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    i[3-5]86)
+    SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
+    i686)
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
+    x86_64)
+    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
+    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+    ;;
+    *)
+    SLKCFLAGS="-O2"; CHOST=${ARCH}
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
 esac
 
 # Make temp directory
@@ -84,10 +83,10 @@ mkdir -p ${TMP} ${PKG}
 
 # Delete IMAPDIR on EXIT
 delete_imapdir() {
-	if [ -d "$IMAPLIBDIR" ]; then
-	( cd $IMAPLIBDIR && rm -rf * )
-	rmdir $IMAPLIBDIR
-	fi
+    if [ -d "$IMAPLIBDIR" ]; then
+    ( cd $IMAPLIBDIR && rm -rf * )
+    rmdir $IMAPLIBDIR
+    fi
 }
 trap delete_imapdir EXIT
 
@@ -95,8 +94,8 @@ trap delete_imapdir EXIT
 IMAPLIBDIR=/usr/local/lib${LIBDIRSUFFIX}/c-client
 if [ -e ${CWD}/c-client-temp-${ARCH}.tar.gz ]; then
     mkdir -p $IMAPLIBDIR
-	tar -xf ${CWD}/c-client-temp-${ARCH}.tar.gz -C $IMAPLIBDIR
-	ln -s $IMAPLIBDIR/lib${LIBDIRSUFFIX}/c-client.a $IMAPLIBDIR/lib${LIBDIRSUFFIX}/libc-client.a || true
+    tar -xf ${CWD}/c-client-temp-${ARCH}.tar.gz -C $IMAPLIBDIR
+    ln -s $IMAPLIBDIR/lib${LIBDIRSUFFIX}/c-client.a $IMAPLIBDIR/lib${LIBDIRSUFFIX}/libc-client.a || true
 fi
 
 if [ -r $IMAPLIBDIR/lib${LIBDIRSUFFIX}/c-client.a ]; then
@@ -274,7 +273,7 @@ make install INSTALL_ROOT=${PKG}
 mkdir -p ${PKG}/etc/{rc.d,php-fpm}
 cp sapi/fpm/init.d.php-fpm ${PKG}/etc/rc.d/rc.php-fpm.new
 chmod 644 ${PKG}/etc/rc.d/rc.php-fpm.new
-mv ${PKG}/etc/php-fpm.conf.default $PKG/etc/php-fpm
+mv ${PKG}/etc/php-fpm.conf.default ${PKG}/etc/php-fpm
 chmod 644 ${PKG}/etc/php-fpm/php-fpm.conf.default
 
 # PHP sometimes puts junk in the root directory:
@@ -313,7 +312,7 @@ gzip -9 ${PKG}/usr/man/man?/*.?
 
 # Add a documentation directory:
 mkdir -p ${DOCDIR}
-install -m644 ${DOCFILES} ${DOCDIR} || true
+cp -a ${DOCFILES} ${DOCDIR} || true
 
 # Add a slackbuild script:
 install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
