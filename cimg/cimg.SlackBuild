@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-CImg}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-1.6.1}
+VERSION=${VERSION:-1.6.2}
 PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -43,12 +43,12 @@ DOCFILES="CHANGES.txt Licence* README.txt examples html pippo"
 
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
-	case "$( uname -m )" in
-	i?86) ARCH=x86 ;;
-	arm*) ARCH=arm ;;
-	# Unless ${ARCH} is already set, use uname -m for all other archs:
-	*) ARCH=$( uname -m ) ;;
-	esac
+    case "$( uname -m )" in
+    i?86) ARCH=x86 ;;
+    arm*) ARCH=arm ;;
+    # Unless ${ARCH} is already set, use uname -m for all other archs:
+    *) ARCH=$( uname -m ) ;;
+    esac
 fi
 
 # Extract source and prepare:
