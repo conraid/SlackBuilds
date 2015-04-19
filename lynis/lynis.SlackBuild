@@ -35,8 +35,8 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-lynis}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-2.0.0}
-PKGVERSION=$(echo ${VERSION} | tr - _)
+VERSION=${VERSION:-2.1.0}
+PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -52,9 +52,9 @@ DOCFILES="CHANGELOG CONTRIBUTORS FAQ INSTALL LICENSE README"
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAME}
+rm -rf ${PRGNAME}-${VERSION}
 tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.gz
-cd ${PRGNAME}
+cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
