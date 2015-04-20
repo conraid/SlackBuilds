@@ -39,7 +39,7 @@ PRGNAME=${PRGNAME:-redis}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-3.0.0}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -109,13 +109,15 @@ find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | 
 find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 # Use sample config and set some sane defaults.
-install -D -m 0644 redis.conf ${PKG}/etc/redis.conf.new
-sed -i \
-  -e 's|^daemonize no|daemonize yes|' \
+mkdir -p ${PKG}/etc
+sed -e 's|^daemonize no|daemonize yes|' \
   -e 's|^dir \.|dir /var/lib/redis|' \
   -e 's|^logfile stdout|logfile /var/log/redis.log|' \
   -e 's|^# bind 127.0.0.1|bind 127.0.0.1|' \
-  ${PKG}/etc/redis.conf.new
+  -e 's|^tcp-keepalive 0|tcp-keepalive 60|' \
+  -e 's|^#unixsocket /tmp/redis.sock|unixsocket /tmp/redis.sock|' \
+  -e 's|^#unixsocketperm 700|unixsocketperm 700|' \
+  redis.conf > ${PKG}/etc/redis.conf.new
 
 # Create data directory.
 install -dm0700 ${PKG}/var/lib/redis
