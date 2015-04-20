@@ -1,0 +1,14 @@
+###### Upgrade Instructions ######
+
+Before running openvas, you'll need to migrate the openvas-manager database.
+Simply run:
+# openvasmd --migrate
+
+###### Installation Instructions ######
+
+You must install all openvas packages and related dependencies 
+(redis, libmicrohttpd and libssh from alien ktown repository)
+
+Then you can try running the openvas-check-setup script 
+# openvas-check-setup
+or follow the instructions in /usr/doc/openvas-gsa/README.SLACKWARE
