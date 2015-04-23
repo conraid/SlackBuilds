@@ -32,7 +32,7 @@ PRGNAME=${PRGNAME:-memcached}
 PKGNAME=${PKGNAME:-php-memcached}
 VERSION=${VERSION:-2.2.0}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-12}
+BUILD=${BUILD:-13}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -101,7 +101,7 @@ CFLAGS="${SLKCFLAGS}" \
 # Build and install debugclient:
 make
 make INSTALL_ROOT=${PKG} install
-strip --strip-unneeded ${PKG}/usr/lib${LIBDIRSUFFIX}/php/extensions/memcached.so
+strip --strip-unneeded ${PKG}/usr/lib${LIBDIRSUFFIX}/php.d/extensions/memcached.so
 
 # Add a documentation directory:
 mkdir -p ${DOCDIR}

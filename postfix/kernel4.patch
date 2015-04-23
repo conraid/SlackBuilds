@@ -1,0 +1,29 @@
+diff -Naupr postfix-3.0.1-orig/makedefs postfix-3.0.1/makedefs
+--- postfix-3.0.1-orig/makedefs	2015-02-08 20:25:15.000000000 +0100
++++ postfix-3.0.1/makedefs	2015-04-22 16:40:35.147070379 +0200
+@@ -500,7 +500,12 @@ EOF
+ 		: ${SHLIB_ENV="LD_LIBRARY_PATH=`pwd`/lib"}
+ 		: ${PLUGIN_LD="${CC-gcc} -shared"}
+ 		;;
+-    Linux.3*)	SYSTYPE=LINUX3
++    Linux.[34]*)
++	    case "$RELEASE" in
++		3.*) SYSTYPE=LINUX3;;
++		4.*) SYSTYPE=LINUX4;;
++		*) error "Unknown Linux version";;
++	    esac
+ 		case "$CCARGS" in
+ 		 *-DNO_DB*) ;;
+ 		 *-DHAS_DB*) ;;
+diff -Naupr postfix-3.0.1-orig/src/util/sys_defs.h postfix-3.0.1/src/util/sys_defs.h
+--- postfix-3.0.1-orig/src/util/sys_defs.h	2014-12-25 23:33:02.000000000 +0100
++++ postfix-3.0.1/src/util/sys_defs.h	2015-04-22 16:42:06.123933011 +0200
+@@ -756,7 +756,7 @@ extern int initgroups(const char *, int)
+  /*
+   * LINUX.
+   */
+-#if defined(LINUX2) || defined(LINUX3)
++#if defined(LINUX2) || defined(LINUX3) || defined(LINUX4)
+ #define SUPPORTED
+ #include <sys/types.h>
+ #define UINT32_TYPE	unsigned int

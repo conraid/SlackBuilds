@@ -2,7 +2,7 @@
 #
 # Slackware build script for gtkmm (http://www.gtkmm.org/)
 #
-# Copyright 2011-2014 Corrado Franco (http://www.conraid.net)
+# Copyright 2011-2015 Corrado Franco (http://www.conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -30,62 +30,62 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-gtkmm}
 VERSION=${VERSION:-2.24.4}
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAME
-DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
+PKG=${TMP}/package-${PRGNAME}
+DOCDIR="${PKG}/usr/doc/${PRGNAME}-${VERSION}"
 
 # Insert document files in this variable
 DOCFILES="AUTHORS COPYING ChangeLog INSTALL NEWS README"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we are building on:
-if [ -z "$ARCH" ]; then
+if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
         i?86) ARCH=i686 ;;
         arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
+        # Unless ${ARCH} is already set, use uname -m for all other archs:
         *) ARCH=$( uname -m ) ;;
     esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
+case "${ARCH}" in
     i486)
-	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     x86_64)
-	SLKCFLAGS="-O2 -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
+    SLKCFLAGS="-O2 -fomit-frame-pointer"; CHOST="x86_64"
+    SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"
+    ;;
     *)
-        SLKCFLAGS="-O2"; CHOST=$ARCH
-        SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    SLKCFLAGS="-O2"; CHOST=${ARCH}
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
 esac
 
 # Extract source and prepare:
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
-rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-$VERSION.tar.xz
-cd $PRGNAME-$VERSION
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
+rm -rf ${PRGNAME}-${VERSION}
+tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.xz
+cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure
-LDFLAGS="$SLKLDFLAGS" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
+LDFLAGS="${SLKLDFLAGS}" \
+CFLAGS="${SLKCFLAGS}" \
+CXXFLAGS="${SLKCFLAGS}" \
 ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -95,45 +95,35 @@ CXXFLAGS="$SLKCFLAGS" \
   --infodir=/usr/info \
   --docdir=/usr/doc/${PRGNAME}-${VERSION} \
   --disable-static \
-  --host=$CHOST-slackware-linux \
-  --build=$CHOST-slackware-linux
+  --host=${CHOST}-slackware-linux \
+  --build=${CHOST}-slackware-linux
 
 # Build and install:
 make 
 sed -i 's/^doc_subdirs/#doc_subdirs/' Makefile
-make DESTDIR=$PKG install-strip
+make DESTDIR=${PKG} install-strip
 
 # Compress and link manpages, if any:
-if [ -d $PKG/usr/man ]; then
-( cd $PKG/usr/man
-  find . -type f -exec gzip -9 {} \;
-  for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
-)
+if [ -d ${PKG}/usr/man ]; then
+  find  ${PKG}/usr/man -type f -exec gzip -9 {} \;
+  for i in $( find  ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
-for i in ${DOCFILES}; do
-    if [ -e ${i} ]; then
-        if ! [ -L ${i} ]; then
-	    cp -a ${i} ${DOCS}
-	else
-	    cp -LRp ${i} ${DOCS}
-        fi
-    fi;
-done
+mkdir -p ${DOCDIR}
+cp -a ${DOCFILES} ${DOCDIR} || true
+
 # Remove examples, tutorials, devhelp
-rm -rf $PKG/usr/share/devhelp
-rm -rf $PKG/usr/share/doc
+rm -rf ${PKG}/usr/share/devhelp
+rm -rf ${PKG}/usr/share/doc
 
 # Add a slackbuild script:
-cat $CWD/$PRGNAME.SlackBuild > $DOCS/$PRGNAME.SlackBuild
+install -Dm644 ${CWD}/${PRGNAME}.SlackBuild ${DOCDIR}/${PRGNAME}.SlackBuild
 
 # Add slack-desc
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PRGNAME}-${VERSION}-${ARCH}-${BUILD}${TAG}.txz
 

@@ -34,7 +34,7 @@ PRGNAME=${PRGNAME:-greenbone-security-assistant}
 PKGNAME=${PKGNAME:-openvas-gsa}
 VERSION=${VERSION:-6.0.1}
 PKGVERSION=$(echo ${VERSION} | tr + _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -130,7 +130,7 @@ install -Dm644 ${CWD}/slackware.README ${DOCDIR}/SLACKWARE.README
 install -Dm755 ${CWD}/openvas-check-setup.sh ${PKG}/usr/sbin/openvas-check-setup
 
 # Install rc script (thanks to SBo)
-install -Dm644 ${CWD}/rc.gsad $PKG/etc/rc.d/rc.gsad.new
+install -Dm644 ${CWD}/rc.gsad ${PKG}/etc/rc.d/rc.gsad.new
 
 # Add a slackbuild script:
 install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild

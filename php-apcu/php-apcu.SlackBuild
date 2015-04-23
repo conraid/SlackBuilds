@@ -32,7 +32,7 @@ PRGNAME=${PRGNAME:-apcu}
 PKGNAME=${PKGNAME:-php-apcu}
 VERSION=${VERSION:-4.0.7}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-7}
+BUILD=${BUILD:-8}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -119,7 +119,7 @@ install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Add apc.ini examples
-install -Dm644 ${CWD}/apcu.ini ${PKG}/etc/php/apcu.ini.new
+install -Dm644 ${CWD}/apcu.ini ${PKG}/etc/php.d/apcu.ini.new
 
 # Create package:
 cd ${PKG}

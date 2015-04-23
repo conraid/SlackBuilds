@@ -51,7 +51,7 @@ PRGNAME=${PRGNAME:-postfix}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-3.0.1}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PRGNAME}
@@ -117,6 +117,9 @@ sample_directory=/etc/postfix/sample \
 html_directory=/usr/doc/postfix/html \
 mail_owner=postfix \
 setgid_group=postdrop"
+
+# Apply patch for kernel 4.0
+patch -p1 -i ${CWD}/kernel4.patch
 
 # Build and install:
 make makefiles \

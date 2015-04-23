@@ -31,8 +31,8 @@ CWD=$(pwd)
 PRGNAME=${PRGNAME:-opencv}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-2.4.11}
-PKGVERSION=${VERSION/-/_}
-BUILD=${BUILD:-1}
+PKGVERSION=${VERSION//-/_}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -45,36 +45,36 @@ DOCFILES="LICENSE README*"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we are building on:
-if [ -z "${ARCH}" ]; then
-	case "$( uname -m )" in
-		i?86) ARCH=i686 ;;
-		arm*) ARCH=arm ;;
-		# Unless ${ARCH} is already set, use uname -m for all other archs:
-		*) ARCH=$( uname -m ) ;;
-	esac
+if [ -z ${ARCH:=""} ]; then
+    case "$( uname -m )" in
+        i?86) ARCH=i686 ;;
+        arm*) ARCH=arm ;;
+        # Unless ${ARCH} is already set, use uname -m for all other archs:
+        *) ARCH=$( uname -m ) ;;
+    esac
 fi
 
 # Set compiling FLAGS
 case "${ARCH}" in
-	i486)
-	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	CONFSSE="-DENABLE_SSE3=OFF -DENABLE_SSE2=OFF -DENABLE_SSE=OFF"
-	;;
-	i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	CONFSSE="-DENABLE_SSE3=OFF -DENABLE_SSE2=${SSE2} -DENABLE_SSE=ON"
-	;;
-	x86_64)
-	SLKCFLAGS="-O2 -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-	CONFSSE="-DENABLE_SSE3=${SSE3} -DENABLE_SSE2=ON -DENABLE_SSE=ON"
-	;;
-	*)
-	SLKCFLAGS="-O2"; CHOST=${ARCH}
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    i486)
+    SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    CONFSSE="-DENABLE_SSE3=OFF -DENABLE_SSE2=OFF -DENABLE_SSE=OFF"
+    ;;
+    i686)
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    CONFSSE="-DENABLE_SSE3=OFF -DENABLE_SSE2=${SSE2} -DENABLE_SSE=ON"
+    ;;
+    x86_64)
+    SLKCFLAGS="-O2 -fomit-frame-pointer"; CHOST="x86_64"
+    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+    CONFSSE="-DENABLE_SSE3=${SSE3} -DENABLE_SSE2=ON -DENABLE_SSE=ON"
+    ;;
+    *)
+    SLKCFLAGS="-O2"; CHOST=${ARCH}
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
 esac
 
 # Extract source and prepare:
@@ -90,31 +90,31 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Apply patche for path
-patch -p1 -i $CWD/opencv.patch
+patch -p1 -i ${CWD}/opencv.patch
 
 # Configure
 mkdir -p build
 cd build
 cmake \
-	-DCMAKE_BUILD_TYPE=None \
-	-DCMAKE_C_FLAGS:STRING="${SLKCFLAGS}" \
-	-DCMAKE_CXX_FLAGS:STRING="${SLKCFLAGS}" \
-	-DCMAKE_INSTALL_PREFIX=/usr \
-	-DLIB_SUFFIX=${LIBDIRSUFFIX} \
-	-DBUILD_EXAMPLES=OFF \
-	-DBUILD_PERF_TESTS=OFF \
-	-DBUILD_SHARED_LIBS=ON \
-	-DBUILD_TESTS=OFF \
-	-DBUILD_WITH_DEBUG_INFO=OFF \
-	-DENABLE_PRECOMPILED_HEADERS=OFF \
-	-DENABLE_SSE41=OFF \
-	-DENABLE_SSE42=OFF \
-	-DINSTALL_PYTHON_EXAMPLES=OFF \
-	-DWITH_GSTREAMER=OFF \
-	-DWITH_OPENCL=ON \
-	-DWITH_QT=ON \
-	-DWITH_XINE=ON \
-	$CONFSSE ..
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_C_FLAGS:STRING="${SLKCFLAGS}" \
+    -DCMAKE_CXX_FLAGS:STRING="${SLKCFLAGS}" \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DLIB_SUFFIX=${LIBDIRSUFFIX} \
+    -DBUILD_EXAMPLES=OFF \
+    -DBUILD_PERF_TESTS=OFF \
+    -DBUILD_SHARED_LIBS=ON \
+    -DBUILD_TESTS=OFF \
+    -DBUILD_WITH_DEBUG_INFO=OFF \
+    -DENABLE_PRECOMPILED_HEADERS=OFF \
+    -DENABLE_SSE41=OFF \
+    -DENABLE_SSE42=OFF \
+    -DINSTALL_PYTHON_EXAMPLES=OFF \
+    -DWITH_GSTREAMER=OFF \
+    -DWITH_OPENCL=ON \
+    -DWITH_QT=ON \
+    -DWITH_XINE=ON \
+    $CONFSSE ..
 
 # Build and install:
 make
@@ -123,7 +123,7 @@ cd ..
 
 # Compress and link manpages, if any:
 if [ -d ${PKG}/usr/man ]; then
-    find ${PKG}/usr/man -type f -exec gzip -9 {} \;
+    find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
     for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 

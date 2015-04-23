@@ -31,8 +31,8 @@ CWD=$(pwd)
 PRGNAME=${PRGNAME:-vnstat}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-1.13}
-PKGVERSION=$(echo ${VERSION} | tr - _)
-BUILD=${BUILD:-3}
+PKGVERSION=${VERSION//-/_}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 SOURCE="http://humdi.net/vnstat/vnstat-${VERSION}.tar.gz"
@@ -54,42 +54,41 @@ cd ${PRGNAME}-${VERSION}
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 # Automatically determine the architecture we're building on:
-if [ -z "${ARCH}" ]; then
+if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
-	i?86) ARCH=i686 ;;
-	arm*) ARCH=arm ;;
-	# Unless ${ARCH} is already set, use uname -m for all other archs:
-	*) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    # Unless ${ARCH} is already set, use uname -m for all other archs:
+    *) ARCH=$( uname -m ) ;;
     esac
 fi
 
 # Set compiling FLAGS
 case "${ARCH}" in
     i[3-5]86)
-	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
+    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
+    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+    ;;
     *)
-	SLKCFLAGS="-O2"; CHOST=${ARCH}
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    SLKCFLAGS="-O2"; CHOST=${ARCH}
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
 esac
 
 # Fix man path
 sed -i 's#/usr/share/man#/usr/man#g' Makefile
 
 # Build and install:
-LDFLAGS="${SLKLDFLAGS}" CFLAGS="${SLKCFLAGS}" CXXFLAGS="$SLKCFLAGS" make all
+LDFLAGS="${SLKLDFLAGS}" CFLAGS="${SLKCFLAGS}" CXXFLAGS="${SLKCFLAGS}" make all
 make DESTDIR=${PKG} install
 
 # Strip binaries:
@@ -97,14 +96,12 @@ find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | 
 
 # Compress and link manpages, if any:
 if [ -d ${PKG}/usr/man ]; then
-( cd ${PKG}/usr/man
-  find . -type f -exec gzip -9 {} \;
-  for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
-)
+    find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+    for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Rename conf files
-mv ${PKG}/etc/vnstat.conf $PKG/etc/vnstat.conf.new
+mv ${PKG}/etc/vnstat.conf ${PKG}/etc/vnstat.conf.new
 
 # Add rc.vnstatd
 install -Dm644 ${CWD}/rc.vnstatd ${PKG}/etc/rc.d/rc.vnstatd.new

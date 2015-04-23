@@ -25,18 +25,20 @@
 # Thanks to slackbuilds.org team for "perl install"
 
 # Exit on most errors
-set -e
+set -eu
 
 # Set variables:
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-rrdtool}
-VERSION=${VERSION:-1.4.9}
-BUILD=${BUILD:-2}
+VERSION=${VERSION:-1.5.1}
+PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
+PKGVERSION=${VERSION//-/_}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAME
-DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
+PKG=${TMP}/package-${PRGNAME}
+DOCDIR="${PKG}/usr/doc/${PRGNAME}-${VERSION}"
 
 PYTHON=$( python -c 'import sys; print sys.version[:3]' )
 PERL=$( eval "`perl -V:version`"; echo $version )
@@ -45,41 +47,41 @@ PERL=$( eval "`perl -V:version`"; echo $version )
 DOCFILES="ABOUT-NLS CONTRIBUTORS COPYRIGHT README TODO CHANGES COPYING NEWS THREADS"
 
 # Automatically determine the architecture we're building on:
-if [ -z "$ARCH" ]; then
+if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
-	i?86) ARCH=i686 ;;
-	arm*) ARCH=arm ;;
-	# Unless $ARCH is already set, use uname -m for all other archs:
-	*) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    # Unless ${ARCH} is already set, use uname -m for all other archs:
+    *) ARCH=$( uname -m ) ;;
     esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
+case "${ARCH}" in
     i486)
-        SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
-        SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     i686)
-        SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-        SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     x86_64)
-        SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
-        SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
+    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
+    SLKLDFLAGS="-L/usr/lib64"; LIBDIRSUFFIX="64"
+    ;;
     *)
-        SLKCFLAGS="-O2"; CHOST="$ARCH"
-        SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    SLKCFLAGS="-O2"; CHOST="${ARCH}"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
 esac
 
 # Extract source and prepare:
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
-rm -rf $PRGNAME-$VERSION
-tar xzvf $CWD/$PRGNAME-$VERSION.tar.gz
-cd $PRGNAME-$VERSION
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
+rm -rf ${PRGNAME}-${VERSION}
+tar xzvf ${CWD}/${PRGNAME}-${VERSION}.tar.gz
+cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -94,9 +96,9 @@ find . \
 sed -i "s|/lib/lua|/lib${LIBDIRSUFFIX}/lua|g" configure
 
 # Configure
-LDFLAGS="$SLKLDFLAGS" \
-CFLAGS="$SLKCFLAGS -I/usr/include/glib-2.0" \
-CXXFLAGS="$SLKCFLAGS" \
+LDFLAGS="${SLKLDFLAGS}" \
+CFLAGS="${SLKCFLAGS} -I/usr/include/glib-2.0" \
+CXXFLAGS="${SLKCFLAGS}" \
 RRDDOCDIR="/usr/doc/${PRGNAME}-${VERSION}" \
 ./configure \
   --prefix=/usr \
@@ -112,8 +114,8 @@ RRDDOCDIR="/usr/doc/${PRGNAME}-${VERSION}" \
   --enable-lua \
   --with-perl-options='INSTALLDIRS=vendor' \
   --with-ruby-options="sitedir=\${DESTDIR}/usr/lib${LIBDIRSUFFIX}/ruby/vendor_ruby" \
-  --docdir=$PKG/usr/doc/rrdtool-$VERSION \
-  --build=$CHOST-slackware-linux
+  --docdir=${PKG}/usr/doc/rrdtool-${VERSION} \
+  --build=${CHOST}-slackware-linux
 
 # Build and install:
 make LIBS+="-lglib-2.0"
@@ -122,18 +124,16 @@ make LIBS+="-lglib-2.0"
 sed -r -i 's|/usr/share/man|/usr/man|g' bindings/perl-piped/Makefile
 sed -r -i 's|/usr/share/man|/usr/man|g' bindings/perl-shared/Makefile
 
-make install-strip DESTDIR=$PKG
+make install-strip DESTDIR=${PKG}
 
 # Compress and link manpages, if any:
-if [ -d $PKG/usr/man ]; then
-( cd $PKG/usr/man
-  find . -type f -exec gzip -9 {} \;
-  for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
-)
+if [ -d ${PKG}/usr/man ]; then
+    find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+    for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Remove perllocal.pod and other special files
-( cd $PKG
+( cd ${PKG}
  find . -name perllocal.pod \
     -o -name ".packlist" \
     -o -name "*.bs" \
@@ -141,36 +141,27 @@ fi
 )
 
 # And remove the directory leftovers
-rm -rf $PKG/usr/lib/perl5/${PERL}
-rm -rf $PKG/usr/lib/perl5/site_perl/${PERL}/i486-linux-thread-multi/auto/RRDp
+rm -rf ${PKG}/usr/lib/perl5/${PERL}
+rm -rf ${PKG}/usr/lib/perl5/site_perl/${PERL}/i486-linux-thread-multi/auto/RRDp
 
 # Set correct permissions (mostly on the Perl bindings)
-( cd $PKG
+( cd ${PKG}
   find . -perm 444 -exec chmod 0644 {} \;
   find . -perm 555 -exec chmod 0755 {} \;
 )
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
-for i in ${DOCFILES}; do
-    if [ -e ${i} ]; then
-        if ! [ -L ${i} ]; then
-	    cp -a ${i} ${DOCS}
-	else
-	    cp -LRp ${i} ${DOCS}
-        fi
-    fi;
-done
-mv $PKG/usr/share/rrdtool/examples $DOCS
-rm -rf $PKG/usr/share
+mkdir -p ${DOCDIR}
+cp -a ${DOCFILES} ${DOCDIR} || true
+mv ${PKG}/usr/share/rrdtool/examples ${DOCDIR}
+rm -rf ${PKG}/usr/share
 
 # Add a slackbuild script:
-cat $CWD/$PRGNAME.SlackBuild > $DOCS/$PRGNAME.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-$BUILD$TAG.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PRGNAME}-${VERSION}-${ARCH}-${BUILD}${TAG}.txz

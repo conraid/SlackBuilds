@@ -34,7 +34,7 @@ PRGNAME=${PRGNAME:-imagick}
 PKGNAME=php-$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-3.3.0RC1}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -108,7 +108,7 @@ find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | 
 find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 # Install config file
-install -Dm644 ${CWD}/imagick.ini  ${PKG}/etc/php/imagick.ini.new
+install -Dm644 ${CWD}/imagick.ini  ${PKG}/etc/php.d/imagick.ini.new
 
 # Add a documentation directory:
 mkdir -p ${DOCDIR}

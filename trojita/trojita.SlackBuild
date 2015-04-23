@@ -34,7 +34,7 @@ PRGNAME=${PRGNAME:-trojita}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-0.5}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -45,32 +45,32 @@ DOCFILES="LICENSE README"
 
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
-	case "$( uname -m )" in
-	i?86) ARCH=i686 ;;
-	arm*) ARCH=arm ;;
-		# Unless ${ARCH} is already set, use uname -m for all other archs:
-		*) ARCH=$( uname -m ) ;;
-	esac
+    case "$( uname -m )" in
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    # Unless ${ARCH} is already set, use uname -m for all other archs:
+    *) ARCH=$( uname -m ) ;;
+    esac
 fi
 
 # Set compiling FLAGS
 case "${ARCH}" in
-	i[3-5]86)
-	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
-	i686)
-	SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
-	x86_64)
-	SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-	;;
-	*)
-	SLKCFLAGS="-O2"; CHOST=${ARCH}
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    i[3-5]86)
+    SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
+    i686)
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
+    x86_64)
+    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
+    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+    ;;
+    *)
+    SLKCFLAGS="-O2"; CHOST=${ARCH}
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
 esac
 
 # Extract source and prepare:
@@ -89,14 +89,14 @@ chmod -R u+w,go+r-w,a-s .
 mkdir -p build
 cd build
 cmake \
-	-DCMAKE_C_FLAGS:STRING="${SLKCFLAGS}" \
-	-DCMAKE_CXX_FLAGS:STRING="${SLKCFLAGS}" \
-	-DCMAKE_BUILD_TYPE=none \
-	-DCMAKE_INSTALL_PREFIX=/usr \
-	-DLIB_SUFFIX=${LIBDIRSUFFIX} \
-	-DWITH_CLEARTEXT_PLUGIN=ON \
-	-DWITH_QTKEYCHAIN_PLUGIN=ON \
-	..
+    -DCMAKE_C_FLAGS:STRING="${SLKCFLAGS}" \
+    -DCMAKE_CXX_FLAGS:STRING="${SLKCFLAGS}" \
+    -DCMAKE_BUILD_TYPE=none \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DLIB_SUFFIX=${LIBDIRSUFFIX} \
+    -DWITH_CLEARTEXT_PLUGIN=ON \
+    -DWITH_QTKEYCHAIN_PLUGIN=ON \
+    ..
 
 # Build and install:
 make
@@ -109,7 +109,7 @@ find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r 
 
 # Compress and link manpages, if any:
 if [ -d ${PKG}/usr/man ]; then
-    find ${PKG}/usr/man -type f -exec gzip -9 {} \;
+    find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
     for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 

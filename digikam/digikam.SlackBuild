@@ -31,8 +31,7 @@ PRGNAME=${PRGNAME:-digikam}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-4.9.0}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-1}
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
