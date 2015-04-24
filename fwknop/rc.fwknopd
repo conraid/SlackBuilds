@@ -3,44 +3,47 @@
 set -e
 FWKNOPD_BIN=/usr/sbin/fwknopd
 
-start() {
-	$FWKNOPD_BIN
+fwk_start() {
+    $FWKNOPD_BIN
 }
 
-stop() {
-	$FWKNOPD_BIN -K
+fwk_stop() {
+    $FWKNOPD_BIN -K
 }
 
-restart() {
-    stop;
+fwk_restart() {
+    fwk_stop;
     sleep 2;
-    start;
+    fwk_start;
 }
 
-reload() {
-	$FWKNOPD_BIN -R
+fwk_reload() {
+    $FWKNOPD_BIN -R
 }
 
-status() {
-	$FWKNOPD_BIN -S
+fwk_status() {
+    $FWKNOPD_BIN -S
 }
+
 case "$1" in
-  start)
-	start
-	;;
-  stop)
-	stop
-	;;
-  restart)
-	restart
-	;;
-  reload)
-	reload
-	;;
-  status)
-	status
-  *)
-	echo "Usage: $0 {start|stop|restart|reload|status}"
+    'start')
+    fwk_start
+    ;;
+    'stop')
+    fwk_stop
+    ;;
+    'restart')
+    fwk_restart
+    ;;
+    'reload')
+    fwk_reload
+    ;;
+    'status')
+    fwk_status
+    ;;
+    *)
+    echo "Usage: $0 {start|stop|restart|reload|status}"
+    ;;
 esac
 exit
 
