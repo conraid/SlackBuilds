@@ -30,9 +30,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-testdisk}
 PKGNAME=${PKGNAME:-${PRGNAME}}
-VERSION=${VERSION:-6.14}
+VERSION=${VERSION:-7.0}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -82,7 +82,6 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure
-sed 's|$(DESTDIR)$(datadir)/doc|$(DESTDIR)/usr/doc|g' -i Makefile.in
 LDFLAGS="${SLKLDFLAGS}" \
 CFLAGS="${SLKCFLAGS}" \
 CXXFLAGS="${SLKCFLAGS}" \
