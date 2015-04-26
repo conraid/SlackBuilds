@@ -23,28 +23,28 @@
 # Modified by Corrado Franco for dev package
 
 # Build this against 3.x kernel source and headers...
-set -e
+set -eu
 
-VERSION=3.10.0
-BUILD=${BUILD:-2}
+VERSION=3.18.0
+BUILD=${BUILD:-1}
 
 # Automatically determine the architecture we're building on:
-if [ -z "$ARCH" ]; then
+if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
     i?86) export ARCH=i486 ;;
     arm*) export ARCH=arm ;;
-    # Unless $ARCH is already set, use uname -m for all other archs:
-       *) export ARCH=$( uname -m ) ;;
+    # Unless ${ARCH} is already set, use uname -m for all other archs:
+    *) export ARCH=$( uname -m ) ;;
   esac
 fi
 
-if [ "$ARCH" = "i486" ]; then
+if [ "${ARCH}" = "i486" ]; then
   SLKCFLAGS="-O2 -march=i486 -mtune=i686"
   LIBDIRSUFFIX=""
-elif [ "$ARCH" = "s390" ]; then
+elif [ "${ARCH}" = "s390" ]; then
   SLKCFLAGS="-O2"
   LIBDIRSUFFIX=""
-elif [ "$ARCH" = "x86_64" ]; then
+elif [ "${ARCH}" = "x86_64" ]; then
   SLKCFLAGS="-O2 -fPIC"
   LIBDIRSUFFIX="64"
 else
@@ -54,14 +54,14 @@ fi
 
 CWD=$(pwd)
 TMP=${TMP:-/tmp}
-PKG=$TMP/package-iproute2
+PKG=${TMP}/pkg/package-iproute2-dev
 
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
-rm -rf iproute2-$VERSION
-tar xvf $CWD/iproute2-$VERSION.tar.xz # Source are in a mirror of Slackware -current
-cd iproute2-$VERSION
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
+rm -rf iproute2-${VERSION}
+tar xvf ${CWD}/iproute2-${VERSION}.tar.xz # Source are in a mirror of Slackware -current
+cd iproute2-${VERSION}
 
 chown -R root:root .
 find . \
@@ -72,19 +72,19 @@ find . \
 
 ./configure  # This is okay, really :-)
 make \
-  CCOPTS="$SLKCFLAGS" \
+  CCOPTS="${SLKCFLAGS}" \
   LIBDIR=/usr/lib${LIBDIRSUFFIX} \
   CONFDIR=/etc/iproute2 \
-  DOCDIR=/usr/doc/iproute2-$VERSION \
+  DOCDIR=/usr/doc/iproute2-dev-${VERSION} \
   MANDIR=/usr/man \
   DBM_INCLUDE=/usr/include/db48
 
-install -Dm644 include/libnetlink.h $PKG/usr/include/libnetlink.h
-install -Dm644 lib/libnetlink.a $PKG/usr/lib${LIBDIRSUFFIX}/libnetlink.a
+install -Dm644 include/libnetlink.h ${PKG}/usr/include/libnetlink.h
+install -Dm644 lib/libnetlink.a ${PKG}/usr/lib${LIBDIRSUFFIX}/libnetlink.a
 
-install -Dm644 COPYING $PKG/usr/doc/iproute2-dev-$VERSION/COPYING
+install -Dm644 COPYING ${PKG}/usr/doc/iproute2-dev-${VERSION}/COPYING
 
-install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/iproute2-dev-$(echo $VERSION | tr - _)-$ARCH-${BUILD}cf.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/iproute2-dev-$(echo ${VERSION} | tr - _)-${ARCH}-${BUILD}cf.txz
