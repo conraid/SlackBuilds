@@ -13,4 +13,4 @@ config() {
   # Otherwise, we leave the .new copy for the admin to consider...
 }
 
-config etc/php/memcached.ini.new
+config etc/php.d/memcached.ini.new

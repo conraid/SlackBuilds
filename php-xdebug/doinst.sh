@@ -13,4 +13,4 @@ config() {
   # Otherwise, we leave the .new copy for the admin to consider...
 }
 
-config etc/php/xdebug.ini.new
+config etc/php.d/xdebug.ini.new

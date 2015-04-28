@@ -101,16 +101,16 @@ CFLAGS="${SLKCFLAGS}" \
 # Build and install debugclient:
 make
 make INSTALL_ROOT=${PKG} install
-strip --strip-unneeded ${PKG}/usr/lib${LIBDIRSUFFIX}/php.d/extensions/memcached.so
+strip --strip-unneeded ${PKG}/usr/lib${LIBDIRSUFFIX}/php/extensions/memcached.so
 
 # Add a documentation directory:
 mkdir -p ${DOCDIR}
 cp -a ${DOCFILES} ${DOCDIR} || true
 
 # Copy base config files (for options read memcached.ini in doc directory)
-mkdir -p ${PKG}/etc/php/
-echo ';extension=memcached.so' > ${PKG}/etc/php/memcached.ini.new
-grep "^memcached" memcached.ini | sed 's/igbinary/php/' >> ${PKG}/etc/php/memcached.ini.new
+mkdir -p ${PKG}/etc/php.d/
+echo ';extension=memcached.so' > ${PKG}/etc/php.d/memcached.ini.new
+grep "^memcached" memcached.ini | sed 's/igbinary/php/' >> ${PKG}/etc/php.d/memcached.ini.new
 
 # Add a slackbuild script:
 install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild

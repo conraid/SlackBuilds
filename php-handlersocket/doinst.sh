@@ -13,4 +13,4 @@ config() {
   # Otherwise, we leave the .new copy for the admin to consider...
 }
 
-config etc/php/handlersocket.ini.new
+config etc/php.d/handlersocket.ini.new
