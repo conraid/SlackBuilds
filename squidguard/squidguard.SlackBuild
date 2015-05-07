@@ -31,71 +31,72 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-squidGuard}
-PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
+PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-1.4}
-PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
+PKGVERSION=${VERSION//-/_}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PKGNAME
-DOCS="$PKG/usr/doc/$PKGNAME-$PKGVERSION"
+PKG=${TMP}/package-${PKGNAME}
+DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 # Insert document files in this variable
 DOCFILES="ANNOUNCE CHANGELOG CONFIGURATION COPYING FAQ GPL INSTALL ISSUES.txt README* samples/ doc/"
 
 # Automatically determine the architecture we're building on:
-if [ -z "$ARCH" ]; then
+if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
-	i?86) ARCH=i686 ;;
-	arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    # Unless ${ARCH} is already set, use uname -m for all other archs:
+    *) ARCH=$( uname -m ) ;;
     esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
+case "${ARCH}" in
     i[3-5]86)
-	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
+    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
+    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+    ;;
     *)
-	SLKCFLAGS="-O2"; CHOST=$ARCH
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    SLKCFLAGS="-O2"; CHOST=${ARCH}
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
 esac
 
 # Extract source and prepare:
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
-rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
-cd $PRGNAME-$VERSION
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
+rm -rf ${PRGNAME}-${VERSION}
+tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.gz
+cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Apply patch (from http://www.squidguard.org/)
-patch -p1 -i $CWD/squid.patch
+# Apply patches (from http://www.squidguard.org/)
+for PATCH in ${CWD}/patches/*.patch; do
+    patch -p1 -i $PATCH
+done
 
 # Fix configure for mysql patch in Slackware64
-[ "$LIBDIRSUFFIX" == "64" ] && sed 's#for i in lib lib/mysql#for i in lib64 lib64/mysql#g' -i configure
+[ "${LIBDIRSUFFIX}" == "64" ] && sed 's#for i in lib lib/mysql#for i in lib64 lib64/mysql#g' -i configure
 
 # Configure
-LDFLAGS="$SLKLDFLAGS" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
+LDFLAGS="${SLKLDFLAGS}" \
+CFLAGS="${SLKCFLAGS}" \
+CXXFLAGS="${SLKCFLAGS}" \
 ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -112,32 +113,33 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-squiduser=nobody \
   --with-db-inc=/usr/include/db48/ \
   --with-mysql \
-  --host=$CHOST-slackware-linux \
-  --build=$CHOST-slackware-linux
+  --host=${CHOST}-slackware-linux \
+  --build=${CHOST}-slackware-linux
 
 # Build:
 make
 
 # Install (Makefile not honor DESTDIR or prefix)
-install -Dsm755 src/squidGuard $PKG/usr/bin/squidGuard
-install -Dm644 samples/sample.conf $PKG/etc/squidguard/squidguard.conf.new
-mkdir -p $PKG/var/{lib,log}/squidguard
-chown nobody:nobody $PKG/var/{lib,log}/squidguard
+install -Dsm755 src/squidGuard ${PKG}/usr/bin/squidGuard
+install -Dm644 samples/sample.conf ${PKG}/etc/squidguard/squidguard.conf.new
+mkdir -p ${PKG}/var/{lib,log}/squidguard
+chown nobody:nobody ${PKG}/var/{lib,log}/squidguard
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
-cp -a $DOCFILES $DOCS || true
-rm -f $DOCS/samples/*.in $DOCS/samples/Makefile
+mkdir -p ${DOCDIR}
+cp -a ${DOCFILES} ${DOCDIR} || true
+rm -f ${DOCDIR}/samples/*.in ${DOCDIR}/samples/Makefile
+find ${DOCDIR} -type d -exec chmod 755 {} \;
 
 # Add a slackbuild script:
-install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
-install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Add a doinst.sh
-install -Dm644 $CWD/doinst.sh $PKG/install/doinst.sh
+install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PKGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
