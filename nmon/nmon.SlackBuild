@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-nmon}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-15d}
+VERSION=${VERSION:-15e}
 PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -85,7 +85,7 @@ chmod -R u+w,go+r-w,a-s .
 # Build and install:
 gcc -o nmon \
     ${PRGNAME}.c ${SLKCFLAGS} ${SLKLDFLAGS} \
-    -DJFS -DGETUSER -Wall -DLARGEMEM -lncurses -g -DX86
+    -DJFS -DGETUSER -Wall -DLARGEMEM -lncurses -lm -DX86
 install -Dsm755 ${PRGNAME} ${PKG}/usr/bin/nmon
 
 # Add a documentation directory and man file
