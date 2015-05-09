@@ -32,7 +32,7 @@ PRGNAME=${PRGNAME:-filezilla}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-3.10.3}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -55,15 +55,15 @@ fi
 # Set compiling FLAGS
 case "${ARCH}" in
     i486)
-    SLKCFLAGS="-O2 -march=i486 -mtune=i686 -ldl"; CHOST="i486"
+    SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
     SLKLDFLAGS=""; LIBDIRSUFFIX=""
     ;;
     i686)
-    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer -ldl"; CHOST="i486"
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
     SLKLDFLAGS=""; LIBDIRSUFFIX=""
     ;;
     x86_64)
-    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer -ldl"; CHOST="x86_64"
+    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
     SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
     ;;
     *)
@@ -84,10 +84,15 @@ cd ${PRGNAME}-${VERSION}
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
+# Apply patches
+for PATCH in ${CWD}/patches/*.patch; do
+    patch -p1 -i $PATCH
+done
+
 # Configure
 LDFLAGS="${SLKLDFLAGS}" \
-CFLAGS="${SLKCFLAGS}" \
-CXXFLAGS="${SLKCFLAGS}" \
+CFLAGS="${SLKCFLAGS} -ldl" \
+CXXFLAGS="${SLKCFLAGS} -ldl" \
 ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
