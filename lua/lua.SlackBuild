@@ -3,6 +3,7 @@
 # Slackware build script for lua (http://www.lua.org/)
 #
 # Copyright 2008 Menno Duursma from SlackBuilds.org
+# Copyright 2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -27,127 +28,112 @@
 # Modified by Corrado Franco <http://conraid.net>
 
 # Exit on most errors
-set -e
+set -eu
 
 # Set variables:
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-lua}
-MAINVERSION=5.1
-VERSION=${VERSION:-5.1.5}
+VERSION=${VERSION:-5.3.0}
+MAINVERSION=${VERSION%.*}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAME
-DOCS="$PKG/usr/doc/$PRGNAME-$VERSION"
+PKG=${TMP}/package-${PRGNAME}
+DOCDIR="${PKG}/usr/doc/${PRGNAME}-${VERSION}"
 
 # Insert document files in this variable
-DOCFILES="COPYRIGHT HISTORY INSTALL README etc test" 
+DOCFILES="README doc/*"
 
 # Automatically determine the architecture we are building on:
-if [ -z "$ARCH" ]; then
+if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
         i?86) ARCH=i686 ;;
         arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
+        # Unless ${ARCH} is already set, use uname -m for all other archs:
         *) ARCH=$( uname -m ) ;;
     esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
+case "${ARCH}" in
     i486)
-	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS=""; LIBDIRSUFFIX="64"
-        ;;
+    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
+    SLKLDFLAGS=""; LIBDIRSUFFIX="64"
+    ;;
     *)
-        SLKCFLAGS="-O2"; CHOST=$ARCH
-        SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    SLKCFLAGS="-O2"; CHOST=${ARCH}
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
 esac
 
 # Extract source and prepare:
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
-rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
-cd $PRGNAME-$VERSION
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
+rm -rf ${PRGNAME}-${VERSION}
+tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.gz
+cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Fix up a to-be-installed header and the pkgconfig file
-sed -i "s|lib/lua|lib$LIBDIRSUFFIX/lua|" src/luaconf.h
-sed -i "s|/usr/local|/usr|" src/luaconf.h
-sed -i "s|/usr/local|/usr|" etc/lua.pc
-sed -i "s|prefix}/lib|prefix}/lib${LIBDIRSUFFIX}|g" etc/lua.pc
+sed -i "s|lib/lua|lib${LIBDIRSUFFIX}/lua|" src/luaconf.h
 
 # Apply patch for shared libraries
-patch -p1 -i "$CWD/liblua.so.patch"
+patch -p1 -i "${CWD}/liblua.so.patch"
 
 # Build and install
-sed -i 's/V.1/V.2/' Makefile
-make CFLAGS="$SLKCFLAGS \$(MYCFLAGS)" \
-MYCFLAGS="$SLKCFLAGS" MYLDFLAGS="$SLKLDFLAGS" \
+make MYCFLAGS="${SLKCFLAGS}" MYLDFLAGS="${SLKLDFLAGS}" \
 MYLIBS="-ltermcap" \
 linux
 
 make \
-TO_LIB="liblua.a liblua.so liblua.so.$MAINVERSION liblua.so.$VERSION" \
+TO_LIB="liblua.a liblua.so liblua.so.$MAINVERSION liblua.so.${VERSION}" \
 INSTALL_DATA="cp -d" \
-INSTALL_TOP="$PKG/usr" \
-INSTALL_LIB=$PKG/usr/lib${LIBDIRSUFFIX} \
-INSTALL_CMOD=$PKG/usr/lib${LIBDIRSUFFIX}/lua/$MAINVERSION \
+INSTALL_TOP="${PKG}/usr" \
+INSTALL_LIB=${PKG}/usr/lib${LIBDIRSUFFIX} \
+INSTALL_CMOD=${PKG}/usr/lib${LIBDIRSUFFIX}/lua/$MAINVERSION \
 linux install
 
 # Install the pkg-config file so other apps can find LUA
-install -Dm644 etc/lua.pc $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/lua.pc
+mkdir -p ${PKG}/usr/lib${LIBDIRSUFFIX}/pkgconfig
+sed -e "s|prefix}/lib|prefix}/lib${LIBDIRSUFFIX}|g" \
+    -e "s/%VER%/${MAINVERSION}/g;s/%REL%/${VERSION}/g" \
+    ${CWD}/lua.pc > ${PKG}/usr/lib${LIBDIRSUFFIX}/pkgconfig/lua.pc
 
 # Strip binaries:
-find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true                                                                                                                                         
-find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true
-strip -g $PKG/usr/lib${LIBDIRSUFFIX}/*.a
+find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true                                                                                                                                         
+find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true
 
 # Compress and link manpages, if any:
-if [ -d $PKG/usr/man ]; then
-( cd $PKG/usr/man
-  find . -type f -exec gzip -9 {} \;
-  for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
-)
+if [ -d ${PKG}/usr/man ]; then
+    find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+    for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
-for i in ${DOCFILES}; do
-    if [ -e ${i} ]; then
-        if ! [ -L ${i} ]; then
-	    cp -a ${i} ${DOCS}
-	else
-	    cp -LRp ${i} ${DOCS}
-        fi
-    fi;
-done
-mkdir $DOCS/html
-cp -a doc/*.html doc/logo.gif doc/lua.css $DOCS/html
+mkdir -p ${DOCDIR}
+cp -a ${DOCFILES} ${DOCDIR} || true
 
 # Add a slackbuild script:
-cat $CWD/$PRGNAME.SlackBuild > $DOCS/$PRGNAME.SlackBuild
+cat ${CWD}/${PRGNAME}.SlackBuild > ${DOCDIR}/${PRGNAME}.SlackBuild
 
 # Add slack-desc
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+mkdir -p ${PKG}/install
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PRGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PRGNAME}-${VERSION}-${ARCH}-${BUILD}${TAG}.txz
 
