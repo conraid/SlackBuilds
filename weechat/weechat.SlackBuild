@@ -30,9 +30,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-weechat}
 PKGNAME=${PKGNAME:-${PRGNAME}}
-VERSION=${VERSION:-1.1.1}
+VERSION=${VERSION:-1.2}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -102,8 +102,10 @@ cd -
 
 # Compress and link manpages, if any:
 if [ -d ${PKG}/usr/man ]; then
-    find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
-    for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+( cd ${PKG}/usr/man
+    find . -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+    for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+)
 fi
 
 # Add a documentation directory:
