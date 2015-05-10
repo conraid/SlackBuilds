@@ -31,7 +31,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-rrdtool}
-VERSION=${VERSION:-1.5.1}
+VERSION=${VERSION:-1.5.3}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
@@ -111,7 +111,7 @@ RRDDOCDIR="/usr/doc/${PRGNAME}-${VERSION}" \
   --enable-tcl-site \
   --disable-nls \
   --disable-static \
-  --enable-lua \
+  --disable-lua \
   --with-perl-options='INSTALLDIRS=vendor' \
   --with-ruby-options="sitedir=\${DESTDIR}/usr/lib${LIBDIRSUFFIX}/ruby/vendor_ruby" \
   --docdir=${PKG}/usr/doc/rrdtool-${VERSION} \
