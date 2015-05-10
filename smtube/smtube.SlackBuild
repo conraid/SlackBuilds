@@ -32,9 +32,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-smtube}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-15.1.0}
-PKGVERSION=$(echo ${VERSION} | tr - _)
-BUILD=${BUILD:-2}
+VERSION=${VERSION:-15.5.7-2}
+PKGVERSION=${VERSION//-/_}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -42,33 +42,33 @@ DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
-if [ -z "${ARCH}" ]; then
+if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
-	i?86) ARCH=i686 ;;
-	arm*) ARCH=arm ;;
-        # Unless ${ARCH} is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    # Unless ${ARCH} is already set, use uname -m for all other archs:
+    *) ARCH=$( uname -m ) ;;
     esac
 fi
 
 # Set compiling FLAGS
 case "${ARCH}" in
     i[3-5]86)
-	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
+    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
+    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+    ;;
     *)
-	SLKCFLAGS="-O2"; CHOST=${ARCH}
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    SLKCFLAGS="-O2"; CHOST=${ARCH}
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
 esac
 
 # Extract source and prepare:
@@ -76,7 +76,7 @@ rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
 rm -rf ${PRGNAME}-${VERSION}
-tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.bz2
+7z x ${CWD}/${PRGNAME}-${VERSION}.7z
 cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
@@ -85,7 +85,7 @@ chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
 cd src
-qmake PREFIX=/usr QMAKE_LIBS="${SLKLDFLAGS}" QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="${SLKCFLAGS}" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" -o Makefile ${PRGNAME}.pro
+qmake PREFIX=/usr QMAKE_LIBS="${SLKLDFLAGS}" QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="${SLKCFLAGS}" QMAKE_CXXFLAGS_RELEASE="${SLKCFLAGS}" -o Makefile ${PRGNAME}.pro
 cd ..
 make PREFIX="/usr" 
 make PREFIX="/usr" DOC_PATH="/usr/doc/${PKGNAME}-${PKGVERSION}" DESTDIR=${PKG} install
