@@ -33,9 +33,9 @@ CWD=$(pwd)
 PRGNAME=${PRGNAME:-modsecurity}
 PKGNAME=${PKGNAME:-modsecurity-apache}
 VERSION=${VERSION:-2.9.0}
-PKGVERSION=$(echo ${VERSION} | tr - _)
+PKGVERSION=${VERSION//-/_}
 CRSVERSION=${CRSVERSION:-2.2.9}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -47,31 +47,31 @@ DOCFILES="CHANGES LICENSE NOTICE README* *.txt"
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
-	i?86) ARCH=i686 ;;
-	arm*) ARCH=arm ;;
-        # Unless ${ARCH} is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    # Unless ${ARCH} is already set, use uname -m for all other archs:
+    *) ARCH=$( uname -m ) ;;
     esac
 fi
 
 # Set compiling FLAGS
 case "${ARCH}" in
     i[3-5]86)
-	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
+    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
+    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+    ;;
     *)
-	SLKCFLAGS="-O2"; CHOST=${ARCH}
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    SLKCFLAGS="-O2"; CHOST=${ARCH}
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
 esac
 
 # Extract source and prepare:
@@ -82,19 +82,27 @@ rm -rf ${PRGNAME}-${VERSION}
 tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.gz
 
 cd ${PRGNAME}-${VERSION}
-tar xvf ${CWD}/owasp-modsecurity-crs-${CRSVERSION}.tar.gz
+tar xvf ${CWD}/owasp-modsecurity-crs-${CRSVERSION}.tar.gz || tar xvf ${CWD}/${CRSVERSION}.tar.gz
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
+# Apply patches
+for PATCH in ${CWD}/patches/*.patch; do
+    patch -p1 -i $PATCH
+done
+
 # Configure
+sed "s|^pkglibdir = .*/lib|&${LIBDIRSUFFIX}|" -i */Makefile.in
+
 LDFLAGS="${SLKLDFLAGS}" \
 CFLAGS="${SLKCFLAGS}" \
 CXXFLAGS="${SLKCFLAGS}" \
 ./configure \
   --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --libdir=/usr/lib${LIBDIRSUFFIX}/modsecurity \
+  --includedir=/usr/include/modsecurity \
   --sysconfdir=/etc \
   --localstatedir=/var \
   --mandir=/usr/man \
@@ -107,16 +115,17 @@ CXXFLAGS="${SLKCFLAGS}" \
   --enable-htaccess-config \
   --enable-performance-measurement \
   --enable-alp2 \
+  --enable-lua-cache \
   --host=${CHOST}-slackware-linux \
   --build=${CHOST}-slackware-linux
 
 # Build and install:
 make
-make DESTDIR=${PKG} install-strip
-rm ${PKG}/usr/lib/*.so
-if ! [ "$(ls -A ${PKG}/usr/lib)" ]; then
-  rmdir ${PKG}/usr/lib/
-fi
+make DESTDIR=${PKG} install
+rm ${PKG}/usr/lib${LIBDIRSUFFIX}/*.so
+
+# Make var cache DIR
+install -dm770 -o apache -g apache ${PKG}/var/cache/modsecurity
 
 # Install Core Rule Set
 cd owasp-modsecurity-crs-${CRSVERSION}
@@ -130,6 +139,8 @@ cd -
 # Install config files
 install -Dm644 modsecurity.conf-recommended ${PKG}/etc/httpd/extra/modsecurity-recommended.conf.new
 install -Dm644 unicode.mapping ${PKG}/etc/httpd/extra/unicode.mapping
+install -Dm644 mlogc/mlogc-default.conf ${PKG}/etc/modsecurity/mlogc.conf.new
+install -Dm644 tools/rules-updater-example.conf ${PKG}/etc/modsecurity/update.conf.new
 
 # Strip binaries:
 find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
