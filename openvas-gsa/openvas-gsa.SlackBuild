@@ -32,13 +32,13 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-greenbone-security-assistant}
 PKGNAME=${PKGNAME:-openvas-gsa}
-VERSION=${VERSION:-6.0.1}
+VERSION=${VERSION:-6.0.3}
 PKGVERSION=$(echo ${VERSION} | tr + _)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 # Insert document files in this variable
 DOCFILES="CHANGES COPYING* ChangeLog INSTALL README*"
@@ -98,7 +98,6 @@ cmake \
   -DCMAKE_C_FLAGS:STRING="${SLKCFLAGS}" \
   -DCMAKE_BUILD_TYPE=none \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DSYSCONF_INSTALL_DIR=/etc \
   -DLOCALSTATEDIR=/var \
   ..
 
@@ -121,9 +120,9 @@ fi
 mv ${PKG}/etc/openvas/gsad_log.conf ${PKG}/etc/openvas/gsad_log.conf.new
 
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
-install -Dm644 ${CWD}/slackware.README ${DOCDIR}/SLACKWARE.README
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR} || true
+install -Dm644 ${CWD}/slackware.README ${PKGDOCDIR}/SLACKWARE.README
 
 # Install utility check script
 # https://svn.wald.intevation.org/svn/openvas/trunk/tools/openvas-check-setup
@@ -133,7 +132,7 @@ install -Dm755 ${CWD}/openvas-check-setup.sh ${PKG}/usr/sbin/openvas-check-setup
 install -Dm644 ${CWD}/rc.gsad ${PKG}/etc/rc.d/rc.gsad.new
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc

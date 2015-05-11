@@ -14,7 +14,7 @@
 
 GSAD_PATH=/usr/sbin
 GSAD_BIN=gsad
-GSAD_OPTIONS="-p 9392 --timeout=60 --gnutls-priorities=SECURE128:-VERS-SSL3.0"
+GSAD_OPTIONS="-p 9392 --timeout=60 --gnutls-priorities=SECURE128:-VERS-SSL3.0 --listen=127.0.0.1"
 GSAD_CMD="$GSAD_PATH/$GSAD_BIN $GSAD_OPTIONS"
 
 gsad_start() {
