@@ -36,7 +36,7 @@ CWD=$(pwd)
 PRGNAME=${PRGNAME:-lua}
 VERSION=${VERSION:-5.3.0}
 MAINVERSION=${VERSION%.*}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PRGNAME}
@@ -93,8 +93,8 @@ sed -i "s|lib/lua|lib${LIBDIRSUFFIX}/lua|" src/luaconf.h
 # Apply patch for shared libraries
 patch -p1 -i "${CWD}/liblua.so.patch"
 
-# Build and install
-make MYCFLAGS="${SLKCFLAGS}" MYLDFLAGS="${SLKLDFLAGS}" \
+# Build and install 
+make MYCFLAGS="${SLKCFLAGS} -DLUA_COMPAT_5_2 -DLUA_COMPAT_5_1" MYLDFLAGS="${SLKLDFLAGS}" \
 MYLIBS="-ltermcap" \
 linux
 
