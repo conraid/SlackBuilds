@@ -49,8 +49,8 @@ tar xvf ${CWD}/${PRGNAME}.tar.gz
 
 # Check version
 VERSION=${VERSION:-$(grep "^####  Version:" inxi | cut -f4 -d" ")}
-PKGVERSION=$(echo ${VERSION} | tr - _)
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
+PKGVERSION=${VERSION//-/_}
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 # Install:
 install -Dm755 inxi ${PKG}/usr/bin/inxi
@@ -59,13 +59,13 @@ install -Dm755 inxi ${PKG}/usr/bin/inxi
 install -Dm644 inxi.1.gz ${PKG}/usr/man/man1/inxi.1.gz
 
 # Install changelog
-install -Dm644 inxi.changelog ${DOCDIR}/ChangeLog
+install -Dm644 inxi.changelog ${PKGDOCDIR}/ChangeLog
 
 # Install Copyright files
-install -Dm644 ${CWD}/gpl.txt ${DOCDIR}/COPYING
+install -Dm644 ${CWD}/gpl.txt ${PKGDOCDIR}/COPYING
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
