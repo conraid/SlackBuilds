@@ -29,13 +29,13 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-digikam}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-4.9.0}
+VERSION=${VERSION:-4.10.0}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 # Insert document files in this variable
 DOCFILES="COPYING* core/NEWS README*"
@@ -86,15 +86,13 @@ chmod -R u+w,go+r-w,a-s .
 mkdir build
 cd build
 cmake \
--DCMAKE_C_FLAGS:STRING="${SLKCFLAGS}" \
--DCMAKE_CXX_FLAGS:STRING="${SLKCFLAGS}" \
+-DCMAKE_C_FLAGS:STRING="${SLKCFLAGS} -DNDEBUG -DQT_NO_DEBUG -Wno-dev" \
+-DCMAKE_CXX_FLAGS:STRING="${SLKCFLAGS} -DNDEBUG -DQT_NO_DEBUG -Wno-dev" \
 -DCMAKE_INSTALL_PREFIX=/usr \
 -DSYSCONF_INSTALL_DIR=/etc/kde \
 -DLIB_SUFFIX="${LIBDIRSUFFIX}" \
 -DCMAKE_BUILD_TYPE=None \
 -DHTML_INSTALL_DIR=/usr/doc/HTML \
--DImageMagick_MagickCore_INCLUDE_DIR:PATH=/usr/include/ImageMagick-6 \
--DImageMagick_MagickCore_LIBRARY:FILEPATH=/usr/lib${LIBDIRSUFFIX}/libMagickCore-6.Q16.so \
 -DENABLE_LCMS2=ON \
 -DENABLE_MYSQLSUPPORT=ON \
 -DDIGIKAMSC_COMPILE_LIBKDCRAW=ON \
@@ -103,6 +101,7 @@ cmake \
 -DDIGIKAMSC_COMPILE_LIBKIPI=ON \
 -DDIGIKAMSC_COMPILE_LIBKSANE=ON \
 -DDIGIKAMSC_COMPILE_LIBMEDIAWIKI=ON \
+-DDIGIKAMSC_COMPILE_LIBKEXIV2=ON \
 ..
 
 # Build and install:
@@ -124,11 +123,11 @@ if [ -d ${PKG}/usr/man ]; then
 fi
 
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
