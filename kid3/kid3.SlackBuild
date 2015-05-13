@@ -30,13 +30,13 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-kid3}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-3.2.0}
+VERSION=${VERSION:-3.2.1}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PRGNAME}
-DOCDIR="${PKG}/usr/doc/${PRGNAME}-${VERSION}"
+PKGDOCDIR="${PKG}/usr/doc/${PRGNAME}-${VERSION}"
 
 # Insert document files in this variable
 DOCFILES="AUTHORS COPYING ChangeLog INSTALL LICENSE NEWS README"
@@ -84,7 +84,6 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure
-sed -e "s#share/doc/kid3-qt#doc/kid3-${PKGVERSION}#" -e 's#\${WITH_DATAROOTDIR}/man#man#' -i CMakeLists.txt
 mkdir build
 cd build
 cmake \
@@ -94,11 +93,13 @@ cmake \
 -DCMAKE_INSTALL_PREFIX=/usr \
 -DSYSCONF_INSTALL_DIR=/etc \
 -DCMAKE_BUILD_TYPE=none \
+-DBUILD_SHARED_LIBS=ON \
 -DHTML_INSTALL_DIR=/usr/doc/HTML \
--DWITH_APPS="Qt;CLI;KDE" \
 -DLIB_SUFFIX=${LIBDIRSUFFIX} \
 -DLIB_INSTALL_DIR=/usr/lib${LIBDIRSUFFIX} \
--DBUILD_SHARED_LIBS=ON \
+-DWITH_MANDIR=man \
+-DWITH_DOCDIR=doc/kid3-${PKGVERSION} \
+-DWITH_APPS="Qt;CLI;KDE" \
 -DWITH_CHROMAPRINT=OFF \
 -DWITH_MP4V2=ON \
 -DWITH_PHONON=ON \
@@ -112,11 +113,11 @@ make DESTDIR=${PKG} install/strip
 cd ..
 
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
