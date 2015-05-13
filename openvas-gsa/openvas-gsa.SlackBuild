@@ -34,7 +34,7 @@ PRGNAME=${PRGNAME:-greenbone-security-assistant}
 PKGNAME=${PKGNAME:-openvas-gsa}
 VERSION=${VERSION:-6.0.3}
 PKGVERSION=$(echo ${VERSION} | tr + _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -118,6 +118,9 @@ fi
 
 # Rename config files
 mv ${PKG}/etc/openvas/gsad_log.conf ${PKG}/etc/openvas/gsad_log.conf.new
+
+# Add init config file
+install -Dm644 ${CWD}/gsad.conf ${PKG}/etc/openvas/gsad.conf.new
 
 # Add a documentation directory:
 mkdir -p ${PKGDOCDIR}

@@ -24,3 +24,4 @@ perms() {
 
 perms etc/rc.d/rc.gsad.new
 config etc/openvas/gsad_log.conf.new
+config etc/openvas/gsad.conf.new

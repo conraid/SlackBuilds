@@ -1620,11 +1620,11 @@ SLACKBUILD SHORT DESCRIPTION:  lshw (Hardware Lister)
 
 SLACKBUILD NAME: lua
 SLACKBUILD LOCATION: ./lua
-SLACKBUILD FILES: liblua.so.patch lua.SlackBuild lua.info slack-desc
-SLACKBUILD VERSION: 5.1.5
+SLACKBUILD FILES: liblua.so.patch lua.SlackBuild lua.info lua.pc slack-desc
+SLACKBUILD VERSION: 5.3.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.lua.org/ftp/lua-5.1.5.tar.gz
-SLACKBUILD MD5SUM: 2e115fe26e435e33b0d5c022e4490567
+SLACKBUILD DOWNLOAD: http://www.lua.org/ftp/lua-5.3.0.tar.gz
+SLACKBUILD MD5SUM: a1b0a7e92d0c85bbff7a8d27bf29f8af
 SLACKBUILD SHORT DESCRIPTION:  Lua (a powerful, fast, light-weight, embeddable scripting language)
 
 SLACKBUILD NAME: luckybackup
@@ -1689,6 +1689,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/M/Markdown/Markdown-2.6.2.tar.gz
 SLACKBUILD MD5SUM: 256d19afcc564dc4ce4c229bb762f7ae
 SLACKBUILD SHORT DESCRIPTION:  markdown (Python implementation of Markdown)
+
+SLACKBUILD NAME: mcelog
+SLACKBUILD LOCATION: ./mcelog
+SLACKBUILD FILES: doinst.sh mcelog.SlackBuild mcelog.info slack-desc
+SLACKBUILD VERSION: 117
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/andikleen/mcelog/archive/v117.tar.gz
+SLACKBUILD MD5SUM: 0be60681c543fa3915144c38ce3b8598
+SLACKBUILD SHORT DESCRIPTION:  mcelog (Advanced hardware error handling for x86 Linux)
 
 SLACKBUILD NAME: memcached
 SLACKBUILD LOCATION: ./memcached
@@ -1915,6 +1924,15 @@ SLACKBUILD DOWNLOAD: https://github.com/less/less.js/archive/v2.5.0.tar.gz
 SLACKBUILD MD5SUM: f447d7329bf3a317b444910c54975a0f
 SLACKBUILD SHORT DESCRIPTION:  npm-less (A standalone compiler for the LESS CSS language)
 
+SLACKBUILD NAME: nsoq
+SLACKBUILD LOCATION: ./nsoq
+SLACKBUILD FILES: nsoq.SlackBuild nsoq.info slack-desc
+SLACKBUILD VERSION: 1.9.5
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://www.nsoq.org/downloads/nsoq-1.9.5.tar.gz
+SLACKBUILD MD5SUM: 0c47c6d3165c56fe464ad34c49001d43
+SLACKBUILD SHORT DESCRIPTION:  nsoq (Network Security over a 'Q'rawler and RSOI Handler)
+
 SLACKBUILD NAME: nted
 SLACKBUILD LOCATION: ./nted
 SLACKBUILD FILES: doinst.sh nted.SlackBuild nted.desktop nted.info slack-desc
@@ -1999,37 +2017,37 @@ SLACKBUILD SHORT DESCRIPTION:  openvas-cli (The OpenVAS Command-Line Interface)
 SLACKBUILD NAME: openvas-gsa
 SLACKBUILD LOCATION: ./openvas-gsa
 SLACKBUILD FILES: PKGNOTE doinst.sh openvas-check-setup.sh openvas-gsa.SlackBuild openvas-gsa.info rc.gsad slack-desc slackware.README
-SLACKBUILD VERSION: 6.0.1
-SLACKBUILD REQUIRED: libmicrohttpd openvas-libraries 
-SLACKBUILD DOWNLOAD: http://wald.intevation.org/frs/download.php/2018/greenbone-security-assistant-6.0.1.tar.gz
-SLACKBUILD MD5SUM: 907eb7afd1734463abc2530a35dd6f39
+SLACKBUILD VERSION: 6.0.3
+SLACKBUILD REQUIRED: libmicrohttpd openvas-libraries
+SLACKBUILD DOWNLOAD: http://wald.intevation.org/frs/download.php/2079/greenbone-security-assistant-6.0.3.tar.gz
+SLACKBUILD MD5SUM: 66a55d20ab7b81b690977b3681222427
 SLACKBUILD SHORT DESCRIPTION:  openvas-gsa (greenbone-security-assistant: OpenVAS web frontend)
 
 SLACKBUILD NAME: openvas-libraries
 SLACKBUILD LOCATION: ./openvas-libraries
 SLACKBUILD FILES: openvas-libraries.SlackBuild openvas-libraries.info slack-desc
-SLACKBUILD VERSION: 8.0.1
+SLACKBUILD VERSION: 8.0.3
 SLACKBUILD REQUIRED: redis 
-SLACKBUILD DOWNLOAD: http://wald.intevation.org/frs/download.php/2015/openvas-libraries-8.0.1.tar.gz
-SLACKBUILD MD5SUM: 57990a7d8666387d7a2fccc65effa5b8
+SLACKBUILD DOWNLOAD: http://wald.intevation.org/frs/download.php/2067/openvas-libraries-8.0.3.tar.gz
+SLACKBUILD MD5SUM: 6e0cb62dadbeaf85a4522484e7e5ce4c
 SLACKBUILD SHORT DESCRIPTION:  openvas-libraries (The OpenVAS libraries)
 
 SLACKBUILD NAME: openvas-manager
 SLACKBUILD LOCATION: ./openvas-manager
 SLACKBUILD FILES: doinst.sh openvas-manager.SlackBuild openvas-manager.info rc.openvasmd slack-desc
-SLACKBUILD VERSION: 6.0.1
-SLACKBUILD REQUIRED: openvas-libraries 
-SLACKBUILD DOWNLOAD: http://wald.intevation.org/frs/download.php/2017/openvas-manager-6.0.1.tar.gz
-SLACKBUILD MD5SUM: 04d9648962975a5c969b80a1dcbc5459
+SLACKBUILD VERSION: 6.0.3
+SLACKBUILD REQUIRED: openvas-libraries
+SLACKBUILD DOWNLOAD: http://wald.intevation.org/frs/download.php/2075/openvas-manager-6.0.3.tar.gz
+SLACKBUILD MD5SUM: 28c51a13e369cb0da852f5b4673529d5
 SLACKBUILD SHORT DESCRIPTION:  openvas-manager (A layer between the OpenVAS Scanner and client)
 
 SLACKBUILD NAME: openvas-scanner
 SLACKBUILD LOCATION: ./openvas-scanner
 SLACKBUILD FILES: doinst.sh openvas-scanner.SlackBuild openvas-scanner.info rc.openvassd slack-desc
-SLACKBUILD VERSION: 5.0.1
-SLACKBUILD REQUIRED: openvas-libraries 
-SLACKBUILD DOWNLOAD: http://wald.intevation.org/frs/download.php/2016/openvas-scanner-5.0.1.tar.gz
-SLACKBUILD MD5SUM: ed1cd36a642bfcf06eb2dad071f83135
+SLACKBUILD VERSION: 5.0.3
+SLACKBUILD REQUIRED: openvas-libraries
+SLACKBUILD DOWNLOAD: http://wald.intevation.org/frs/download.php/2071/openvas-scanner-5.0.3.tar.gz
+SLACKBUILD MD5SUM: b36ada767fdfc4f2617844fb8693ee7c
 SLACKBUILD SHORT DESCRIPTION:  openvas-scanner (The OpenVAS scanning daemon)
 
 SLACKBUILD NAME: optipng
@@ -2386,19 +2404,19 @@ SLACKBUILD SHORT DESCRIPTION:  qtkeychain (Qt API for storing passwords securely
 SLACKBUILD NAME: qwt
 SLACKBUILD LOCATION: ./qwt
 SLACKBUILD FILES: qwt.SlackBuild qwt.info qwtconfig.pri.patch slack-desc
-SLACKBUILD VERSION: 6.1.0
+SLACKBUILD VERSION: 6.1.2
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://downloads.sourceforge.net/project/qwt/qwt/6.1.0/qwt-6.1.0.tar.bz2
-SLACKBUILD MD5SUM: aef0437b37f191067a6a9dc01c30ba64
+SLACKBUILD DOWNLOAD: https://downloads.sourceforge.net/project/qwt/qwt/6.1.2/qwt-6.1.2.tar.bz2
+SLACKBUILD MD5SUM: 9c88db1774fa7e3045af063bbde44d7d
 SLACKBUILD SHORT DESCRIPTION:  Qwt (GUI Components & utility for programs with technical background)
 
 SLACKBUILD NAME: qxmledit
 SLACKBUILD LOCATION: ./qxmledit
 SLACKBUILD FILES: doinst.sh qxmledit.SlackBuild qxmledit.info slack-desc
-SLACKBUILD VERSION: 0.8.13
+SLACKBUILD VERSION: 0.8.14
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/qxmledit/QXmlEdit-0.8.13/qxmledit-0.8.13-src.tgz
-SLACKBUILD MD5SUM: 5b2f4843a7c222619aa295dfa7413bfa
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/qxmledit/QXmlEdit-0.8.14/qxmledit-0.8.14-src.tgz
+SLACKBUILD MD5SUM: 1fe8296c200a36229a512ee0e97fbbdf
 SLACKBUILD SHORT DESCRIPTION:  QXmlEdit (Simple qt4 XML editor and XSD viewer)
 
 SLACKBUILD NAME: rawtherapee
@@ -2458,10 +2476,10 @@ SLACKBUILD SHORT DESCRIPTION:  rlog
 SLACKBUILD NAME: rrdtool
 SLACKBUILD LOCATION: ./rrdtool
 SLACKBUILD FILES: pango.diff rrdtool.SlackBuild rrdtool.info slack-desc
-SLACKBUILD VERSION: 1.5.1
+SLACKBUILD VERSION: 1.5.3
 SLACKBUILD REQUIRED: libdbi lua
-SLACKBUILD DOWNLOAD: http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.5.1.tar.gz
-SLACKBUILD MD5SUM: 422e82e4c4c7251177ee155a1eb5714b
+SLACKBUILD DOWNLOAD: http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.5.3.tar.gz
+SLACKBUILD MD5SUM: 868a828cc6b10654c440a85054240ae2
 SLACKBUILD SHORT DESCRIPTION:  RRDtool
 
 SLACKBUILD NAME: safecopy
@@ -2665,19 +2683,19 @@ SLACKBUILD SHORT DESCRIPTION:  smem (memory reporting tool)
 SLACKBUILD NAME: smplayer
 SLACKBUILD LOCATION: ./smplayer
 SLACKBUILD FILES: doinst.sh slack-desc smplayer.SlackBuild smplayer.info
-SLACKBUILD VERSION: 14.9.0
+SLACKBUILD VERSION: 14.9.0.6887
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/smplayer/SMPlayer/14.9.0/smplayer-14.9.0.tar.bz2
-SLACKBUILD MD5SUM: 34bd6762f684064bafdaea0afa4e2d40
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/smplayer/SMPlayer/14.9.0/smplayer-14.9.0.6887.tar.bz2
+SLACKBUILD MD5SUM: bd4675c42ca8191a4ee328a13e6a4176
 SLACKBUILD SHORT DESCRIPTION:  SMplayer (Qt4 Mplayer front-end)
 
 SLACKBUILD NAME: smtube
 SLACKBUILD LOCATION: ./smtube
 SLACKBUILD FILES: doinst.sh slack-desc smtube.SlackBuild smtube.info
-SLACKBUILD VERSION: 15.1.0
+SLACKBUILD VERSION: 15.5.7-2
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/smplayer/SMTube/15.1.0/smtube-15.1.0.tar.bz2
-SLACKBUILD MD5SUM: 7ae4a5b6380f25a74cea1562bb4a5d92
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/smplayer/SMTube/15.5/smtube-15.5.7-2.7z
+SLACKBUILD MD5SUM: 85641811e893e729852e7305b91b13f7
 SLACKBUILD SHORT DESCRIPTION:  SMTube (small youtube browser)
 
 SLACKBUILD NAME: snort
@@ -2719,10 +2737,10 @@ SLACKBUILD SHORT DESCRIPTION:  soundKonverter (kde frontend to audio converters)
 SLACKBUILD NAME: sqlitebrowser
 SLACKBUILD LOCATION: ./sqlitebrowser
 SLACKBUILD FILES: doinst.sh slack-desc sqlitebrowser.SlackBuild sqlitebrowser.info
-SLACKBUILD VERSION: 3.5.1
+SLACKBUILD VERSION: 3.6.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/sqlitebrowser/sqlitebrowser/archive/v3.5.1.tar.gz
-SLACKBUILD MD5SUM: 9d0caa52f15dacecaf593ae20e2f9fe4
+SLACKBUILD DOWNLOAD: https://github.com/sqlitebrowser/sqlitebrowser/archive/v3.6.0.tar.gz
+SLACKBUILD MD5SUM: c33986560fe7a137ac7dc20ba3c4b113
 SLACKBUILD SHORT DESCRIPTION:  sqlitebrowser (QT GUI editor for SQLite databases)
 
 SLACKBUILD NAME: squid
@@ -2809,10 +2827,10 @@ SLACKBUILD SHORT DESCRIPTION:  Subtitle Composer (KDE/QT Subtitle Editor9
 SLACKBUILD NAME: suricata
 SLACKBUILD LOCATION: ./suricata
 SLACKBUILD FILES: doinst.sh rc.suricata slack-desc suricata.SlackBuild suricata.info suricata.yaml.patch
-SLACKBUILD VERSION: 2.0.7
+SLACKBUILD VERSION: 2.0.8
 SLACKBUILD REQUIRED: geoip jansson libcap-ng libnet lua
-SLACKBUILD DOWNLOAD: http://www.openinfosecfoundation.org/download/suricata-2.0.7.tar.gz
-SLACKBUILD MD5SUM: 43cd7dd958d434c580426020079914d7
+SLACKBUILD DOWNLOAD: http://www.openinfosecfoundation.org/download/suricata-2.0.8.tar.gz
+SLACKBUILD MD5SUM: a9553ccf942c0c4aa1e1a188ec1f7d93
 SLACKBUILD SHORT DESCRIPTION:  suricata (Network Security Monitoring)
 
 SLACKBUILD NAME: tcpflow
@@ -2944,10 +2962,10 @@ SLACKBUILD SHORT DESCRIPTION:  tunctl  (tool for controlling the TUN/TAP driver 
 SLACKBUILD NAME: twitter
 SLACKBUILD LOCATION: ./twitter
 SLACKBUILD FILES: slack-desc twitter.SlackBuild twitter.info
-SLACKBUILD VERSION: 1.16.0
+SLACKBUILD VERSION: 1.17.0
 SLACKBUILD REQUIRED: python-setuptools
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/twitter/twitter-1.16.0.tar.gz
-SLACKBUILD MD5SUM: 964b83350fc0bf7234150a31bf024e41
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/twitter/twitter-1.17.0.tar.gz
+SLACKBUILD MD5SUM: f5e412264759dd6ebde16c6554b8cf34
 SLACKBUILD SHORT DESCRIPTION:  twitter (Python Twitter API and command-line toolset)
 
 SLACKBUILD NAME: ufraw
@@ -3052,10 +3070,10 @@ SLACKBUILD SHORT DESCRIPTION:  wacomtablet (Wacom tablet KDE 4 KCModule)
 SLACKBUILD NAME: weechat
 SLACKBUILD LOCATION: ./weechat
 SLACKBUILD FILES: slack-desc weechat.SlackBuild weechat.info
-SLACKBUILD VERSION: 1.1.1
+SLACKBUILD VERSION: 1.2
 SLACKBUILD REQUIRED: lua
-SLACKBUILD DOWNLOAD: http://www.weechat.org/files/src/weechat-1.1.1.tar.bz2
-SLACKBUILD MD5SUM: 3bb8d27301262bc434de9bcf7d77dce7
+SLACKBUILD DOWNLOAD: http://www.weechat.org/files/src/weechat-1.2.tar.bz2
+SLACKBUILD MD5SUM: 3458efd51cdc1abfb6a5c33cc5ef7713
 SLACKBUILD SHORT DESCRIPTION:  WeeChat (fast, light & extensible chat client)
 
 SLACKBUILD NAME: whowatch
@@ -3070,10 +3088,10 @@ SLACKBUILD SHORT DESCRIPTION:  Whowatch (interactive who-like program)
 SLACKBUILD NAME: wifite
 SLACKBUILD LOCATION: ./wifite
 SLACKBUILD FILES: gpl-2.0.txt slack-desc wifite.SlackBuild wifite.info
-SLACKBUILD VERSION: gitfd486
+SLACKBUILD VERSION: git-20150506
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/derv82/wifite/archive/fd486.tar.gz
-SLACKBUILD MD5SUM: d08fcfda2bb2a371008f4a4b06704690
+SLACKBUILD DOWNLOAD: https://github.com/derv82/wifite/archive/c6124.tar.gz
+SLACKBUILD MD5SUM: 19e8f0b0361e651099c2a61f6fab6138
 SLACKBUILD SHORT DESCRIPTION:  wifite (automated wireless auditor)
 
 SLACKBUILD NAME: wine
@@ -3096,7 +3114,7 @@ SLACKBUILD SHORT DESCRIPTION:  wipe (a secure file wiping utility)
 
 SLACKBUILD NAME: wireshark
 SLACKBUILD LOCATION: ./wireshark
-SLACKBUILD FILES: doinst.sh slack-desc wireshark.SlackBuild wireshark.info
+SLACKBUILD FILES: doinst.sh patches/lua53.patch slack-desc wireshark.SlackBuild wireshark.info
 SLACKBUILD VERSION: 1.99.5
 SLACKBUILD REQUIRED: c-ares geoip lua
 SLACKBUILD DOWNLOAD: https://www.wireshark.org/download/src/wireshark-1.99.5.tar.bz2
@@ -3205,19 +3223,19 @@ SLACKBUILD SHORT DESCRIPTION:  yakuake (Yet Another Kuake, KDE terminal emulator
 SLACKBUILD NAME: yapet
 SLACKBUILD LOCATION: ./yapet
 SLACKBUILD FILES: slack-desc yapet.SlackBuild yapet.info
-SLACKBUILD VERSION: 0.7
+SLACKBUILD VERSION: 1.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.guengel.ch/myapps/yapet/downloads/yapet-0.7.tar.bz2
-SLACKBUILD MD5SUM: 2d70b470b40b9c662988f4b8f8d4b333
+SLACKBUILD DOWNLOAD: http://www.guengel.ch/myapps/yapet/downloads/yapet-1.0.tar.bz2
+SLACKBUILD MD5SUM: a3cf3c274abefdbee15acd74dbdbb1ee
 SLACKBUILD SHORT DESCRIPTION:  yapet
 
 SLACKBUILD NAME: yersinia
 SLACKBUILD LOCATION: ./yersinia
-SLACKBUILD FILES: slack-desc yersinia.SlackBuild yersinia.info yersinia.log
-SLACKBUILD VERSION: 0.7.2svn
+SLACKBUILD FILES: slack-desc yersinia.SlackBuild yersinia.info
+SLACKBUILD VERSION: 0.7.2
 SLACKBUILD REQUIRED: libnet
-SLACKBUILD DOWNLOAD: http://www.yersinia.net/download/yersinia-snapshot.tgz
-SLACKBUILD MD5SUM: 43a1a3c3dfb10e15b9d74c912123a478
+SLACKBUILD DOWNLOAD: http://www.yersinia.net/download/yersinia-0.7.3.tar.gz
+SLACKBUILD MD5SUM: 53ca82d6cb463810b6a205d0e2362784
 SLACKBUILD SHORT DESCRIPTION:  yersinia 
 
 SLACKBUILD NAME: zmap

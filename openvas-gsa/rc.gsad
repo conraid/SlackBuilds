@@ -12,10 +12,26 @@
 # fi
 #
 
+set -e
+
+# Read config
+[ -r /etc/openvas/gsad.conf ] && . /etc/openvas/gsad.conf
+
+[ "$GSA_ADDRESS" ] && GSAD_OPTIONS="--listen=$GSA_ADDRESS" || GSAD_OPTIONS="--listen=127.0.0.1"
+[ "$GSA_PORT" ] && GSAD_OPTIONS="$GSAD_OPTIONS --port=$GSA_PORT" || GSAD_OPTIONS="--port=9392"
+[ "$GSA_SSL_PRIVATE_KEY" ] && GSAD_OPTIONS="$GSAD_OPTIONS --ssl-private-key=$GSA_SSL_PRIVATE_KEY"
+[ "$GSA_SSL_CERTIFICATE" ] && GSAD_OPTIONS="$GSAD_OPTIONS --ssl-certificate=$GSA_SSL_CERTIFICATE"
+[ "$GSA_TLS_PRIORITIES" ] && GSAD_OPTIONS="$GSAD_OPTIONS --gnutls-priorities=$GSA_TLS_PRIORITIES" 
+[ "$GSA_REDIRECT" ] && [ "$GSA_REDIRECT" == 0 ] && GSAD_OPTIONS="$GSAD_OPTIONS --no-redirect"
+[ "$GSA_REDIRECT_PORT" ] && [ "$GSA_REDIRECT" != 0 ] && GSAD_OPTIONS="$GSAD_OPTIONS --rport=$GSA_REDIRECT_PORT"
+[ "$MANAGER_ADDRESS" ] && GSAD_OPTIONS="$GSAD_OPTIONS --mlisten=$MANAGER_ADDRESS"
+[ "$MANAGER_PORT" ] && GSAD_OPTIONS="$GSAD_OPTIONS --mport=$MANAGER_PORT"
+
+
 GSAD_PATH=/usr/sbin
 GSAD_BIN=gsad
-GSAD_OPTIONS="-p 9392 --timeout=60 --gnutls-priorities=SECURE128:-VERS-SSL3.0 --listen=127.0.0.1"
-GSAD_CMD="$GSAD_PATH/$GSAD_BIN $GSAD_OPTIONS"
+PIDFILE=/var/run/gsad.pid
+GSAD_CMD="$GSAD_PATH/$GSAD_BIN $GSAD_OPTIONS --timeout=60"
 
 gsad_start() {
   echo Starting Greenbone Security Assistant: $GSAD_CMD
@@ -27,11 +43,6 @@ gsad_stop() {
   /bin/killall $GSAD_BIN
 }
 
-gsad_restart() {
-  gsad_stop
-  gsad_start
-}
-
 case "$1" in
 'start')
   gsad_start
@@ -40,7 +51,9 @@ case "$1" in
   gsad_stop
   ;;
 'restart')
-  gsad_restart
+  gsad_stop
+  sleep 5
+  gsad_start
   ;;
 *)
   echo "usage $0 start|stop|restart"
