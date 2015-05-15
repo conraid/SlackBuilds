@@ -37,16 +37,16 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-node}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-v0.12.2}
+VERSION=${VERSION:-v0.12.3}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 # Insert document files in this variable
-DOCFILES="AUTHORS CONTRIBUTING* ChangeLog LICENSE README doc/*"
+DOCFILES="AUTHORS CONTRIBUTING* ChangeLog LICENSE README* doc/*"
 
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
@@ -92,12 +92,10 @@ chmod -R u+w,go+r-w,a-s .
 
 # Fix man page path.
 sed 's|share/man|/man|' -i tools/install.py
-sed '/var manRoot/ s|"share",||' -i deps/npm/lib/{,un}build.js
 
 # Fix libdir for 64-bit.
 sed "s|\(['/]\)lib/|\1lib${LIBDIRSUFFIX}/|g" -i tools/install.py
 sed "s|'lib'|'lib${LIBDIRSUFFIX}'|" -i lib/module.js
-sed "s|\"lib\"|\"lib${LIBDIRSUFFIX}\"|" -i deps/npm/lib/npm.js
 
 # Configure
 LDFLAGS="${SLKLDFLAGS}" \
@@ -108,27 +106,12 @@ CXXFLAGS="${SLKCFLAGS}" \
   --shared-openssl \
   --shared-zlib \
   --shared-libuv \
+  --without-npm \
   --with-intl=system-icu
 
 # Build and install:
 make CFLAGS="${SLKCFLAGS}" CXXFLAGS="${SLKCFLAGS}" LDFLAGS="${SLKLDFLAGS}"
 make DESTDIR=${PKG} install
-
-# Make symbolic link of node-gyp
-ln -s /usr/lib${LIBDIRSUFFIX}/node_modules/npm/bin/node-gyp-bin/node-gyp ${PKG}/usr/bin/node-gyp
-
-# Add bash completion file for npm.
-install -D -m 644 deps/npm/lib/utils/completion.sh ${PKG}/usr/share/bash-completion/completions/npm
-
-# Make symbolic link of npm man pages
-mkdir -p ${PKG}/usr/man/{man1,man3,man5,man7}
-for DIR in man1 man3 man5 man7; do
-    cd ${PKG}/usr/lib${LIBDIRSUFFIX}/node_modules/npm/man/$DIR
-    for FILE in *; do
-        ln -s /usr/lib${LIBDIRSUFFIX}/node_modules/npm/man/$DIR/$FILE ${PKG}/usr/man/$DIR/
-    done
-    cd -
-done
 
 # Strip binaries:
 find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
@@ -138,9 +121,6 @@ find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r 
 if [ -d ${PKG}/usr/man ]; then
     find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
     for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
-fi
-if [ -d ${PKG}/usr/lib${LIBDIRSUFFIX}/node_modules/npm/man/ ]; then
-    find ${PKG}/usr/lib${LIBDIRSUFFIX}/node_modules/npm/man/ -type f -exec gzip -9 {} \;
 fi
 
 # Remove unneeded files.
@@ -159,11 +139,11 @@ EOF
 chmod 0755 ${PKG}/etc/profile.d/*
 
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
