@@ -34,11 +34,11 @@ PRGNAME=${PRGNAME:-darktable}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-1.6.6}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 # Insert document files in this variable
 DOCFILES="doc/ChangeLog doc/NEWS README* RELEASE*"
@@ -100,7 +100,7 @@ cmake \
   -DLIB_SUFFIX=${LIBDIRSUFFIX} \
   -DBINARY_PACKAGE_BUILD=On \
   -DUSE_DARKTABLE_PROFILING=On \
-  -DDONT_USE_INTERNAL_LUA=Off \
+  -DUSE_LUA=Off \
   -DUSE_LIBSECRET=Off \
   -DUSE_GNOME_KEYRING=On \
   ..
@@ -127,12 +127,12 @@ if [ -d ${PKG}/usr/man ]; then
 fi
 
 # Add a documentation directory:
-mkdir -p $DOCDIR
-cp -a ${DOCFILES} ${DOCDIR} || true
-install -Dm0755 tools/basecurve/README.md ${DOCDIR}/basecurve.md
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR} || true
+install -Dm0755 tools/basecurve/README.md ${PKGDOCDIR}/basecurve.md
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
