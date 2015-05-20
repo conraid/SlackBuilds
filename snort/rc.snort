@@ -15,9 +15,9 @@ CONF=/etc/snort/snort.conf
 
 # Start snort:
 snort_start() {
-  CMDLINE="/usr/bin/snort -d -D -i $IFACE"
+  CMDLINE="/usr/bin/snort -d -D --daq-dir /usr/lib64/daq -i $IFACE"
   echo "Starting Snort daemon:  $CMDLINE"
-  $CMDLINE --pid-path /var/run --create-pidfile -l $LOGDIR -c $CONF
+  echo $CMDLINE --pid-path /var/run --create-pidfile -l $LOGDIR -c $CONF
   echo
 }
 
