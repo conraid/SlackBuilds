@@ -1,5 +1,3 @@
-#!/bin/sh
-
 config() {
   NEW="$1"
   OLD="$(dirname $NEW)/$(basename $NEW .new)"
@@ -29,18 +27,19 @@ perms etc/rc.d/rc.tor.new
 config etc/tor/torrc.new
 config etc/logrotate.d/tor.new
 
-# Bail if user isn't valid on your system
-if ! grep -q "^tor:" etc/group ; then
-    if ! grep -q ":220:" etc/group ; then
-	chroot . groupadd -g 220 tor &>/dev/null
+# Add user and group (uid=220 and gid=220 are SBo suggest)
+if ! getent group tor 2>&1 > /dev/null; then
+    if ! getent group 220 2>&1 > /dev/null; then
+        chroot . groupadd -g 220 tor &>/dev/null
     else
-	chroot . groupadd tor &>/dev/null
+        chroot . groupadd tor &>/dev/null
     fi
 fi
-if ! grep -q "^tor:" etc/passwd ; then
-    if ! grep -q ":220:" etc/passwd ; then
-	chroot . useradd -d /dev/null -s /bin/false -c "The Onion Router" -u 220 -g tor tor &>/dev/null
+
+if ! getent passwd tor 2>&1 > /dev/null; then
+    if ! getent passwd 220 2>&1 > /dev/null; then
+        chroot . useradd -u 220 -d /dev/null -s /bin/false -c "The Onion Router" -g tor tor &>/dev/null
     else
-	chroot . useradd -d /dev/null -s /bin/false -c "The Onion Router" -g tor tor &>/dev/null
+        chroot . useradd -d /dev/null -s /bin/false -c "The Onion Router" -g tor tor &>/dev/null
     fi
 fi
