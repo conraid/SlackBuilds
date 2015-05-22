@@ -30,18 +30,17 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-suhosin}
 PKGNAME=${PKGNAME:-php-${PRGNAME}}
-VERSION=${VERSION:-0.9.37.1}
+VERSION=${VERSION:-0.9.38}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
 
 # Insert document files in this variable
 DOCFILES="CREDITS Changelog LICENSE"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
@@ -84,9 +83,6 @@ cd ${PRGNAME}-${VERSION}
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Apply patch from git
-patch -p1 -i ${CWD}/suhosin_mail.patch
-
 # Configure
 phpize --clean
 phpize
@@ -112,11 +108,11 @@ install -Dm644 suhosin.ini ${PKG}/etc/php.d/suhosin.ini.new
 cat ${CWD}/suhosin.ini >> ${PKG}/etc/php.d/suhosin.ini.new
  
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
