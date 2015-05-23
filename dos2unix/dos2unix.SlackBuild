@@ -30,15 +30,14 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-dos2unix}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-7.2.1}
+VERSION=${VERSION:-7.2.2}
 PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we are building on:
 if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
@@ -97,7 +96,7 @@ if [ -d ${PKG}/usr/man ]; then
 fi
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
