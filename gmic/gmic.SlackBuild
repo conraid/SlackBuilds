@@ -32,13 +32,13 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-gmic}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-1.6.2.0}
+VERSION=${VERSION:-1.6.3.1}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
@@ -82,30 +82,20 @@ cd ${PRGNAME}-${VERSION}
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Change Makefile for lib64, man pages and qmake path
-if [ ${ARCH} == 'x86_64' ]; then
-    sed -e 's/^LIB=lib/LIB=lib64/g' -e 's#/lib\([\/ ]\)#/lib64\1#g' -i src/Makefile
-fi
-sed -e 's#/share/man/#/man/#g' -e 's/qmake-qt4/qmake/' -i src/Makefile
+# Fix man path
+sed -e 's#/share/man/#/man/#g' -i src/Makefile
 
 # Build and install gmic:
 make -C src LIB=lib${LIBDIRSUFFIX} OPT_CFLAGS="${SLKCFLAGS}" OPT_LDFLAGS="${SLKLDFLAGS}" all
 make -C src install LIB=lib${LIBDIRSUFFIX} DESTDIR="${PKG}" USR="/usr"
 
-# Build and install zart:
-cd zart
-qmake PREFIX=/usr QMAKE_LIBS="${SLKLDFLAGS}" QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="${SLKCFLAGS}" QMAKE_CXXFLAGS_RELEASE="${SLKCFLAGS}" -o Makefile zart.pro
-make 
-install -Dsm755 zart "${PKG}/usr/bin/zart"
-cd -
-
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a COPYING README ${DOCDIR}
-install -Dm644 zart/README ${DOCDIR}/zart/zart.txt
+mkdir -p ${PKGDOCDIR}
+cp -a COPYING README ${PKGDOCDIR}
+install -Dm644 zart/README ${PKGDOCDIR}/zart/zart.txt
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
