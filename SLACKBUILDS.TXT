@@ -952,6 +952,15 @@ SLACKBUILD DOWNLOAD: http://jwilk.net/pool/hungrycat-0.3.3.tar.gz
 SLACKBUILD MD5SUM: e24d5905729569af4e7c94f4ce566370
 SLACKBUILD SHORT DESCRIPTION:  hungrycat
 
+SLACKBUILD NAME: hwinfo
+SLACKBUILD LOCATION: ./hwinfo
+SLACKBUILD FILES: hwinfo.SlackBuild hwinfo.info patches/Makefile.patch patches/tiocgdev.patch slack-desc
+SLACKBUILD VERSION: 21.12
+SLACKBUILD REQUIRED: libx86emu
+SLACKBUILD DOWNLOAD: https://github.com/openSUSE/hwinfo/archive/21.12.tar.gz
+SLACKBUILD MD5SUM: 3a97acf3e32e43dfea13b90da1a8403a
+SLACKBUILD SHORT DESCRIPTION:  hwinfo (hardware detection tool used in SuSE Linux)
+
 SLACKBUILD NAME: hydra
 SLACKBUILD LOCATION: ./hydra
 SLACKBUILD FILES: doinst.sh fix-locations.patch hydra.SlackBuild hydra.desktop hydra.info slack-desc
@@ -1626,6 +1635,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://github.com/libuv/libuv/archive/v1.5.0.tar.gz
 SLACKBUILD MD5SUM: 1c1c7714a801fffe35f5f52874fd50df
 SLACKBUILD SHORT DESCRIPTION:  libuv (Cross-platform asychronous I/O)
+
+SLACKBUILD NAME: libx86emu
+SLACKBUILD LOCATION: ./libx86emu
+SLACKBUILD FILES: libx86emu.SlackBuild libx86emu.info slack-desc
+SLACKBUILD VERSION: 1.5
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/wfeldt/libx86emu/archive/1.5.tar.gz
+SLACKBUILD MD5SUM: fc194f8c37533245df15f9a1b7f4bdc6
+SLACKBUILD SHORT DESCRIPTION:  libx86emu (x86 emulation library )
 
 SLACKBUILD NAME: lifstat
 SLACKBUILD LOCATION: ./lifstat
@@ -3121,6 +3139,15 @@ SLACKBUILD DOWNLOAD: http://spice-space.org/download/usbredir/usbredir-0.7.tar.b
 SLACKBUILD MD5SUM: bc096f160e4ebb848c3a0f0fbf9500fc
 SLACKBUILD SHORT DESCRIPTION:  usbredir (usb redirection protocol)
 
+SLACKBUILD NAME: valgrind
+SLACKBUILD LOCATION: ./valgrind
+SLACKBUILD FILES: patches/glibc-2.1_kernel_3_4.patch slack-desc valgrind.SlackBuild valgrind.info
+SLACKBUILD VERSION: 3.10.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://valgrind.org/downloads/valgrind-3.10.1.tar.bz2
+SLACKBUILD MD5SUM: 60ddae962bc79e7c95cfc4667245707f
+SLACKBUILD SHORT DESCRIPTION:  Valgrind (A tool to help find memory-management problems in programs)
+
 SLACKBUILD NAME: vdt
 SLACKBUILD LOCATION: ./vdt
 SLACKBUILD FILES: slack-desc vdt.SlackBuild vdt.info
@@ -3330,7 +3357,7 @@ SLACKBUILD SHORT DESCRIPTION:  yersinia
 
 SLACKBUILD NAME: zmap
 SLACKBUILD LOCATION: ./zmap
-SLACKBUILD FILES: doinst.sh slack-desc zmap-json.patch zmap.SlackBuild zmap.info
+SLACKBUILD FILES: doinst.sh patches/zmap-json.patch slack-desc zmap.SlackBuild zmap.info
 SLACKBUILD VERSION: 2.0.0-RC1
 SLACKBUILD REQUIRED: json-c redis byacc
 SLACKBUILD DOWNLOAD: https://github.com/zmap/zmap/archive/v2.0.0-RC1.tar.gz
