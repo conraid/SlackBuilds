@@ -34,7 +34,7 @@ PRGNAME=${PRGNAME:-zmap}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-2.0.0-RC1}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -91,8 +91,10 @@ for PATCH in ${CWD}/patches/*.patch; do
     patch -p1 -i $PATCH
 done
 
+# Fix man path
+sed 's|share/man/|man/|' -i src/CMakeLists.txt
+
 # Configure
-sed 's#share/man/#man/#' -i src/CMakeLists.txt # Fix man path
 mkdir build
 cd build
 cmake \
