@@ -39,7 +39,7 @@ PRGNAME=${PRGNAME:-redis}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
 VERSION=${VERSION:-3.0.1}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -91,14 +91,9 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
-sed -i 's/-O3//' deps/Makefile deps/hiredis/Makefile
-CFLAGS="${SLKCFLAGS}" make MALLOC=libc CFLAGS="${SLKCFLAGS}" PREFIX=/usr
+make MALLOC=libc CFLAGS="${SLKCFLAGS}" PREFIX=/usr
 mkdir -p ${PKG}/usr/bin
 make INSTALL_BIN="${PKG}/usr/bin" PREFIX=/usr install
-cd deps/hiredis
-sed "s#\(INSTALL_LIBRARY_PATH=.*\)#\1${LIBDIRSUFFIX}#" -i Makefile
-make PREFIX=${PKG}/usr install
-cd -
 
 # Create symlink to start redis in sentinel mode.
 ( cd ${PKG}/usr/bin ; ln -sf redis-server redis-sentinel )
