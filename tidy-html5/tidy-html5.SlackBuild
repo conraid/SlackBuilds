@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-tidy-html5}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-4.9.28}
+VERSION=${VERSION:-4.9.30}
 PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -91,9 +91,10 @@ cd build
 cmake \
   -DCMAKE_C_FLAGS:STRING="${SLKCFLAGS} -DNDEBUG" \
   -DCMAKE_CXX_FLAGS:STRING="${SLKCFLAGS} -DNDEBUG" \
-  -DCMAKE_BUILD_TYPE=none \
+  -DCMAKE_BUILD_TYPE=None \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DMAN_INSTALL_DIR=man/man1 \
+  -DBUILD_SHARED_LIB=ON \
   ..
 
 # Build and install:
