@@ -190,10 +190,10 @@ SLACKBUILD SHORT DESCRIPTION:  bost (DNS diagnostic program)
 SLACKBUILD NAME: browser-sync
 SLACKBUILD LOCATION: ./browser-sync
 SLACKBUILD FILES: browser-sync.SlackBuild browser-sync.info slack-desc
-SLACKBUILD VERSION: 2.7.3
+SLACKBUILD VERSION: 2.7.5
 SLACKBUILD REQUIRED: node npm
-SLACKBUILD DOWNLOAD: https://github.com/BrowserSync/browser-sync/archive/v2.7.3.tar.gz
-SLACKBUILD MD5SUM: 8347c3d91bc0eec9f27f8e2774f5a969
+SLACKBUILD DOWNLOAD: https://github.com/BrowserSync/browser-sync/archive/v2.7.5.tar.gz
+SLACKBUILD MD5SUM: 5c98321fa3ae70ee7a570cae222b7b91
 SLACKBUILD SHORT DESCRIPTION:  browser-sync (Live CSS Reload & Browser Syncing for Node.js)
 
 SLACKBUILD NAME: bulk_extractor
@@ -870,6 +870,15 @@ SLACKBUILD REQUIRED: atkmm cairomm glibmm libsigc++ pangomm
 SLACKBUILD DOWNLOAD: http://ftp.gnome.org/pub/GNOME/sources/gtkmm/2.24/gtkmm-2.24.4.tar.xz
 SLACKBUILD MD5SUM: b9ac60c90959a71095f07f84dd39961d
 SLACKBUILD SHORT DESCRIPTION:  gtkmm (C++ interface for GTK+)
+
+SLACKBUILD NAME: hiredis
+SLACKBUILD LOCATION: ./hiredis
+SLACKBUILD FILES: hiredis.SlackBuild hiredis.info slack-desc
+SLACKBUILD VERSION: 0.13.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/redis/hiredis/archive/v0.13.1.tar.gz
+SLACKBUILD MD5SUM: 4226dda52dbe08304e3b6027b4d6c74d
+SLACKBUILD SHORT DESCRIPTION:  hiredis (Minimalistic C client for Redis)
 
 SLACKBUILD NAME: hping
 SLACKBUILD LOCATION: ./hping
@@ -1710,7 +1719,7 @@ SLACKBUILD SHORT DESCRIPTION:  lwatch (Colourizing a system logs for easier read
 
 SLACKBUILD NAME: lynis
 SLACKBUILD LOCATION: ./lynis
-SLACKBUILD FILES: doinst.sh lynis.SlackBuild lynis.info slack-desc
+SLACKBUILD FILES: doinst.sh lynis.SlackBuild lynis.info slack-desc slackware.patch
 SLACKBUILD VERSION: 2.1.0
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://github.com/CISOfy/lynis/archive/2.1.0.tar.gz
@@ -1969,14 +1978,32 @@ SLACKBUILD DOWNLOAD: https://github.com/bower/bower/archive/v1.4.1.tar.gz
 SLACKBUILD MD5SUM: 8405945dbfa79913e2fd4eaa378693c7
 SLACKBUILD SHORT DESCRIPTION:  npm-bower (A package manager for the web)
 
+SLACKBUILD NAME: npm-clean-css
+SLACKBUILD LOCATION: ./npm-clean-css
+SLACKBUILD FILES: npm-clean-css.SlackBuild npm-clean-css.info slack-desc
+SLACKBUILD VERSION: 3.2.10
+SLACKBUILD REQUIRED: node npm
+SLACKBUILD DOWNLOAD: https://github.com/jakubpawlowicz/clean-css/archive/v3.2.10.tar.gz
+SLACKBUILD MD5SUM: 3270be2aa32bef279a669b8385746d5c
+SLACKBUILD SHORT DESCRIPTION:  npm-clean-css (CSS minifier for node.js)
+
 SLACKBUILD NAME: npm-less
 SLACKBUILD LOCATION: ./npm-less
 SLACKBUILD FILES: npm-less.SlackBuild npm-less.info slack-desc
-SLACKBUILD VERSION: 2.5.0
+SLACKBUILD VERSION: 2.5.1
 SLACKBUILD REQUIRED: node npm
-SLACKBUILD DOWNLOAD: https://github.com/less/less.js/archive/v2.5.0.tar.gz
-SLACKBUILD MD5SUM: f447d7329bf3a317b444910c54975a0f
+SLACKBUILD DOWNLOAD: https://github.com/less/less.js/archive/v2.5.1.tar.gz
+SLACKBUILD MD5SUM: 929bb1afa482f0634f20b5eeb410fd02
 SLACKBUILD SHORT DESCRIPTION:  npm-less (A standalone compiler for the LESS CSS language)
+
+SLACKBUILD NAME: npm-uglifyjs
+SLACKBUILD LOCATION: ./npm-uglifyjs
+SLACKBUILD FILES: npm-uglifyjs.SlackBuild npm-uglifyjs.info slack-desc
+SLACKBUILD VERSION: 2.4.23
+SLACKBUILD REQUIRED: node npm
+SLACKBUILD DOWNLOAD: https://github.com/mishoo/UglifyJS2/archive/v2.4.23.tar.gz
+SLACKBUILD MD5SUM: 8416c86af656b76539464c2fd4b5a116
+SLACKBUILD SHORT DESCRIPTION:  npm-uglify-js (JavaScript compressor/minifier)
 
 SLACKBUILD NAME: npm
 SLACKBUILD LOCATION: ./npm
@@ -2009,7 +2036,7 @@ SLACKBUILD NAME: ntopng
 SLACKBUILD LOCATION: ./ntopng
 SLACKBUILD FILES: doinst.sh ntopng.SlackBuild ntopng.info rc.ntopng slack-desc
 SLACKBUILD VERSION: 1.2.1
-SLACKBUILD REQUIRED: lua geoip rrdtool redis json-c
+SLACKBUILD REQUIRED: hiredis lua geoip rrdtool redis json-c
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/ntop/ntopng/ntopng-1.2.1.tgz
 SLACKBUILD MD5SUM: 4fe64c701e6dbfa42e9ced518d9c7836
 SLACKBUILD SHORT DESCRIPTION:  ntopng (next generation network top)
@@ -2081,7 +2108,7 @@ SLACKBUILD NAME: openvas-cli
 SLACKBUILD LOCATION: ./openvas-cli
 SLACKBUILD FILES: openvas-cli.SlackBuild openvas-cli.info slack-desc
 SLACKBUILD VERSION: 1.4.0
-SLACKBUILD REQUIRED: openvas-libraries 
+SLACKBUILD REQUIRED: openvas-libraries hiredis redis
 SLACKBUILD DOWNLOAD: http://wald.intevation.org/frs/download.php/1987/openvas-cli-1.4.0.tar.gz
 SLACKBUILD MD5SUM: 421cc8ef112feeabbfeeb6ff64d93a53
 SLACKBUILD SHORT DESCRIPTION:  openvas-cli (The OpenVAS Command-Line Interface)
@@ -2090,7 +2117,7 @@ SLACKBUILD NAME: openvas-gsa
 SLACKBUILD LOCATION: ./openvas-gsa
 SLACKBUILD FILES: PKGNOTE doinst.sh gsad.conf openvas-check-setup.sh openvas-gsa.SlackBuild openvas-gsa.info rc.gsad slack-desc slackware.README
 SLACKBUILD VERSION: 6.0.3
-SLACKBUILD REQUIRED: libmicrohttpd openvas-libraries
+SLACKBUILD REQUIRED: libmicrohttpd openvas-libraries hiredis redis
 SLACKBUILD DOWNLOAD: http://wald.intevation.org/frs/download.php/2079/greenbone-security-assistant-6.0.3.tar.gz
 SLACKBUILD MD5SUM: 66a55d20ab7b81b690977b3681222427
 SLACKBUILD SHORT DESCRIPTION:  openvas-gsa (greenbone-security-assistant: OpenVAS web frontend)
@@ -2099,7 +2126,7 @@ SLACKBUILD NAME: openvas-libraries
 SLACKBUILD LOCATION: ./openvas-libraries
 SLACKBUILD FILES: openvas-libraries.SlackBuild openvas-libraries.info slack-desc
 SLACKBUILD VERSION: 8.0.3
-SLACKBUILD REQUIRED: redis 
+SLACKBUILD REQUIRED: hiredis redis
 SLACKBUILD DOWNLOAD: http://wald.intevation.org/frs/download.php/2067/openvas-libraries-8.0.3.tar.gz
 SLACKBUILD MD5SUM: 6e0cb62dadbeaf85a4522484e7e5ce4c
 SLACKBUILD SHORT DESCRIPTION:  openvas-libraries (The OpenVAS libraries)
@@ -2108,7 +2135,7 @@ SLACKBUILD NAME: openvas-manager
 SLACKBUILD LOCATION: ./openvas-manager
 SLACKBUILD FILES: doinst.sh openvas-manager.SlackBuild openvas-manager.info rc.openvasmd slack-desc
 SLACKBUILD VERSION: 6.0.3
-SLACKBUILD REQUIRED: openvas-libraries
+SLACKBUILD REQUIRED: openvas-libraries hiredis redis
 SLACKBUILD DOWNLOAD: http://wald.intevation.org/frs/download.php/2075/openvas-manager-6.0.3.tar.gz
 SLACKBUILD MD5SUM: 28c51a13e369cb0da852f5b4673529d5
 SLACKBUILD SHORT DESCRIPTION:  openvas-manager (A layer between the OpenVAS Scanner and client)
@@ -2117,7 +2144,7 @@ SLACKBUILD NAME: openvas-scanner
 SLACKBUILD LOCATION: ./openvas-scanner
 SLACKBUILD FILES: doinst.sh openvas-scanner.SlackBuild openvas-scanner.info rc.openvassd slack-desc
 SLACKBUILD VERSION: 5.0.3
-SLACKBUILD REQUIRED: openvas-libraries
+SLACKBUILD REQUIRED: openvas-libraries hiredis redis
 SLACKBUILD DOWNLOAD: http://wald.intevation.org/frs/download.php/2071/openvas-scanner-5.0.3.tar.gz
 SLACKBUILD MD5SUM: b36ada767fdfc4f2617844fb8693ee7c
 SLACKBUILD SHORT DESCRIPTION:  openvas-scanner (The OpenVAS scanning daemon)
@@ -2522,7 +2549,7 @@ SLACKBUILD NAME: redis
 SLACKBUILD LOCATION: ./redis
 SLACKBUILD FILES: doinst.sh rc.redis redis.SlackBuild redis.info redis.logrotate slack-desc
 SLACKBUILD VERSION: 3.0.1
-SLACKBUILD REQUIRED: 
+SLACKBUILD REQUIRED: hiredis
 SLACKBUILD DOWNLOAD: http://download.redis.io/releases/redis-3.0.1.tar.gz
 SLACKBUILD MD5SUM: dd2bf1f65d75ed518313158086d4219b
 SLACKBUILD SHORT DESCRIPTION:  Redis (Key-Value Store)
@@ -2836,10 +2863,10 @@ SLACKBUILD SHORT DESCRIPTION:  sqlitebrowser (QT GUI editor for SQLite databases
 SLACKBUILD NAME: squid
 SLACKBUILD LOCATION: ./squid
 SLACKBUILD FILES: SLACKWARE.README doinst.sh rc.squid slack-desc squid.SlackBuild squid.info squid.logrotate
-SLACKBUILD VERSION: 3.5.4
+SLACKBUILD VERSION: 3.5.5
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.squid-cache.org/Versions/v3/3.5/squid-3.5.4.tar.xz
-SLACKBUILD MD5SUM: 5b53d5bb47fa033b76857f7956d0c36b
+SLACKBUILD DOWNLOAD: http://www.squid-cache.org/Versions/v3/3.5/squid-3.5.5.tar.xz
+SLACKBUILD MD5SUM: 9a323a97753143ddd935aed58a0193ae
 SLACKBUILD SHORT DESCRIPTION:  Squid (a popular free and open source Web proxy server and web cache)
 
 SLACKBUILD NAME: squidguard
@@ -2989,10 +3016,10 @@ SLACKBUILD SHORT DESCRIPTION:  testdisk (data recovery software)
 SLACKBUILD NAME: tidy-html5
 SLACKBUILD LOCATION: ./tidy-html5
 SLACKBUILD FILES: slack-desc tidy-html5.SlackBuild tidy-html5.info
-SLACKBUILD VERSION: 4.9.28
+SLACKBUILD VERSION: 4.9.30
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/htacg/tidy-html5/archive/4.9.28.tar.gz
-SLACKBUILD MD5SUM: 76461f1a5d5e28c2ead3d51cdb86a122
+SLACKBUILD DOWNLOAD: https://github.com/htacg/tidy-html5/archive/4.9.30.tar.gz
+SLACKBUILD MD5SUM: 198083ca35796652570943dacfce07ba
 SLACKBUILD SHORT DESCRIPTION:  tidy-html5 (HTML Tidy with HTML5 support)
 
 SLACKBUILD NAME: tig
@@ -3034,10 +3061,10 @@ SLACKBUILD SHORT DESCRIPTION:  torrent-file-editor (Qt GUI to create and edit .t
 SLACKBUILD NAME: torsocks
 SLACKBUILD LOCATION: ./torsocks
 SLACKBUILD FILES: doinst.sh slack-desc torsocks.SlackBuild torsocks.info
-SLACKBUILD VERSION: 2.0.0
+SLACKBUILD VERSION: 2.1.0
 SLACKBUILD REQUIRED: tor
-SLACKBUILD DOWNLOAD: https://github.com/dgoulet/torsocks/archive/v2.0.0.tar.gz
-SLACKBUILD MD5SUM: 36d9b50101477028892ec2296accf3dd
+SLACKBUILD DOWNLOAD: https://github.com/dgoulet/torsocks/archive/v2.1.0.tar.gz
+SLACKBUILD MD5SUM: 70e68c935071b92ac06b1e3faa9c59f8
 SLACKBUILD SHORT DESCRIPTION:  torsocks (Wrapper to safely torify applications)
 
 SLACKBUILD NAME: trojita
@@ -3232,10 +3259,10 @@ SLACKBUILD SHORT DESCRIPTION:  wipe (a secure file wiping utility)
 SLACKBUILD NAME: wireshark
 SLACKBUILD LOCATION: ./wireshark
 SLACKBUILD FILES: doinst.sh patches/lua53.patch slack-desc wireshark.SlackBuild wireshark.info
-SLACKBUILD VERSION: 1.99.5
+SLACKBUILD VERSION: 1.99.6
 SLACKBUILD REQUIRED: c-ares geoip lua
-SLACKBUILD DOWNLOAD: https://www.wireshark.org/download/src/wireshark-1.99.5.tar.bz2
-SLACKBUILD MD5SUM: e67475f4c94c28eb5d6979d5fcc3cb6f
+SLACKBUILD DOWNLOAD: https://www.wireshark.org/download/src/wireshark-1.99.6.tar.bz2
+SLACKBUILD MD5SUM: 2b3513d6967af50008a9aa2014895dc7
 SLACKBUILD SHORT DESCRIPTION:  WireShark (packet sniffer and protocol analyzer)
 
 SLACKBUILD NAME: wol
