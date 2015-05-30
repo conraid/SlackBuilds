@@ -32,13 +32,13 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-squid}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-3.5.4}
+VERSION=${VERSION:-3.5.5}
 PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 SQUIDUSER=${SQUIDUSER:-nobody}
 SQUIDGROUP=${SQUIDGROUP:-nobody}
 
@@ -160,12 +160,12 @@ sed -i -e 's%^cache_effective_user nobody%cache_effective_user '"$SQUIDUSER"'%g'
 sed -i -e 's%^cache_effective_group nobody%cache_effective_group '"$SQUIDGROUP"'%g' ${PKG}/etc/squid/squid.conf.new
 
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
-install -Dm644 ${CWD}/SLACKWARE.README ${DOCDIR}/README.SLACKWARE
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR} || true
+install -Dm644 ${CWD}/SLACKWARE.README ${PKGDOCDIR}/README.SLACKWARE
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
