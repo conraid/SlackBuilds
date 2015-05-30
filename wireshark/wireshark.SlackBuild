@@ -30,13 +30,13 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-wireshark}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-1.99.5}
+VERSION=${VERSION:-1.99.6}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PRGNAME}
-DOCDIR="${PKG}/usr/doc/${PRGNAME}-${PKGVERSION}"
+PKGDOCDIR="${PKG}/usr/doc/${PRGNAME}-${PKGVERSION}"
 
 # Insert document files in this variable
 DOCFILES="AUTHORS COPYING ChangeLog INSTALL* NEWS README* doc/README*"
@@ -90,10 +90,7 @@ for PATCH in ${CWD}/patches/*.patch; do
 done
 
 # configure
-LDFLAGS="${SLKLDFLAGS}" \
-CFLAGS="${SLKCFLAGS}" \
-CXXFLAGS="${SLKCFLAGS}" \
-./autogen.sh
+
 LDFLAGS="${SLKLDFLAGS}" \
 CFLAGS="${SLKCFLAGS}" \
 CXXFLAGS="${SLKCFLAGS}" \
@@ -116,7 +113,7 @@ CXXFLAGS="${SLKCFLAGS}" \
   --with-plugins \
   --with-gtk2=yes \
   --with-gtk3=no \
-  --with-qt=yes \
+  --with-qt=4 \
   --docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
   --host=${CHOST}-slackware-linux \
   --build=${CHOST}-slackware-linux
@@ -139,11 +136,11 @@ if [ -d ${PKG}/usr/man ]; then
 fi
 
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
