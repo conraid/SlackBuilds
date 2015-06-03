@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-filezilla}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-3.11.0.1}
+VERSION=${VERSION:-3.11.0.2}
 PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -41,7 +41,6 @@ PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
 # Insert document files in this variable
 DOCFILES="AUTHORS COPYING ChangeLog GPL* INSTALL NEWS README"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
