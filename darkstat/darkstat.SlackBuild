@@ -27,54 +27,54 @@ set -eu
 
 # Set variables:
 PRGNAME=darkstat
-VERSION=${VERSION:-3.0.718}
-PKGVERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+VERSION=${VERSION:-3.0.719}
+PKGVERSION=${VERSION//-/_}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 CWD=$(pwd)
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAME
-DOCS="$PKG/usr/doc/$PRGNAME-$PKGVERSION"
+PKG=${TMP}/package-${PRGNAME}
+PKGDOCDIR="${PKG}/usr/doc/${PRGNAME}-${PKGVERSION}"
 DOCFILES="AUTHORS COPYING.GPL ChangeLog INSTALL LICENSE NEWS README"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we are building on:
-if [ -z "$ARCH" ]; then
+if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
         i?86) ARCH=i686 ;;
         arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
+        # Unless ${ARCH} is already set, use uname -m for all other archs:
         *) ARCH=$( uname -m ) ;;
     esac
 fi
 
 # Set compiling FLAGS
-case "$ARCH" in
+case "${ARCH}" in
     i486)
-	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
+    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
     x86_64)
-	SLKCFLAGS="-O2 -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
+    SLKCFLAGS="-O2 -fomit-frame-pointer"; CHOST="x86_64"
+    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+    ;;
     *)
-        SLKCFLAGS="-O2"; CHOST=$ARCH
-        SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+    SLKCFLAGS="-O2"; CHOST=${ARCH}
+    SLKLDFLAGS=""; LIBDIRSUFFIX=""
+    ;;
 esac
 
 # Extract source and prepare:
-rm -rf $PKG
-mkdir -p $TMP $PKG
-cd $TMP
-rm -rf $PRGNAME-$VERSION
-tar xvf $CWD/$PRGNAME-$VERSION.tar.bz2
-cd $PRGNAME-$VERSION
+rm -rf ${PKG}
+mkdir -p ${TMP} ${PKG}
+cd ${TMP}
+rm -rf ${PRGNAME}-${VERSION}
+tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.bz2
+cd ${PRGNAME}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -85,9 +85,9 @@ find . \
  -exec chmod 644 {} \;
 
 # Configure:
-LDFLAGS="$SLKLDFLAGS" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
+LDFLAGS="${SLKLDFLAGS}" \
+CFLAGS="${SLKCFLAGS}" \
+CXXFLAGS="${SLKCFLAGS}" \
 ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -95,45 +95,34 @@ CXXFLAGS="$SLKCFLAGS" \
   --localstatedir=/var \
   --mandir=/usr/man \
   --disable-debug \
-  --build=$CHOST-slackware-linux
+  --build=${CHOST}-slackware-linux
 
 # Build and install:
 make
-make install DESTDIR=$PKG
+make install DESTDIR=${PKG}
 
 # Strip binaries:
-find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
-find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true
+find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
+find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true
 
 # Compress and link manpages, if any:
-if [ -d $PKG/usr/man ]; then
-( cd $PKG/usr/man
-  find . -type f -exec gzip -9 {} \;
-  for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
-)
+if [ -d ${PKG}/usr/man ]; then
+  find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Add a documentation directory:
-mkdir -p ${DOCS}
-for i in ${DOCFILES}; do
-    if [ -e ${i} ]; then
-        if ! [ -L ${i} ]; then
-	    cp -a ${i} ${DOCS}
-	else
-	    cp -LRp ${i} ${DOCS}
-        fi
-    fi;
-done
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR} || true
 
 # Add a slackbuild script:
-cat $CWD/$PRGNAME.SlackBuild > $DOCS/$PRGNAME.SlackBuild
+install -Dm644 ${CWD}/${PRGNAME}.SlackBuild ${PKGDOCDIR}/${PRGNAME}.SlackBuild
 
 # Add slack-desc and doinst.sh, if any
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Create package:
-cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PRGNAME-$PKGVERSION-$ARCH-${BUILD}${TAG}.txz
+cd ${PKG}
+/sbin/makepkg -l y -c n ${CWD}/${PRGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
 
 
