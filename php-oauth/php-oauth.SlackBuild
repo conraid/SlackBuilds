@@ -32,11 +32,11 @@ PRGNAME=${PRGNAME:-oauth}
 PKGNAME=${PKGNAME:-php-oauth}
 VERSION=${VERSION:-1.2.3}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-21}
+BUILD=${BUILD:-22}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
 
 # Insert document files in this variable
 DOCFILES="CREDITS ChangeLog LICENSE README*"
@@ -102,14 +102,14 @@ make INSTALL_ROOT=${PKG} install
 strip --strip-unneeded ${PKG}/usr/lib${LIBDIRSUFFIX}/php/extensions/oauth.so
 
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR} || true
 
 # Copy config files
 install -Dm644 ${CWD}/oauth.ini ${PKG}/etc/php.d/oauth.ini.new
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc

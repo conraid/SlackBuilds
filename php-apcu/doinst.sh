@@ -13,4 +13,4 @@ config() {
   # Otherwise, we leave the .new copy for the admin to consider...
 }
 
-config etc/php/apcu.ini.new
+config etc/php.d/apcu.ini.new

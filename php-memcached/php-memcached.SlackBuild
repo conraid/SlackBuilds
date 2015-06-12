@@ -32,16 +32,15 @@ PRGNAME=${PRGNAME:-memcached}
 PKGNAME=${PKGNAME:-php-memcached}
 VERSION=${VERSION:-2.2.0}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-13}
+BUILD=${BUILD:-14}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
 
 # Insert document files in this variable
 DOCFILES="CREDITS ChangeLog LICENSE README* memcached.ini"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
@@ -104,8 +103,8 @@ make INSTALL_ROOT=${PKG} install
 strip --strip-unneeded ${PKG}/usr/lib${LIBDIRSUFFIX}/php/extensions/memcached.so
 
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR} || true
 
 # Copy base config files (for options read memcached.ini in doc directory)
 mkdir -p ${PKG}/etc/php.d/
@@ -113,7 +112,7 @@ echo ';extension=memcached.so' > ${PKG}/etc/php.d/memcached.ini.new
 grep "^memcached" memcached.ini | sed 's/igbinary/php/' >> ${PKG}/etc/php.d/memcached.ini.new
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
