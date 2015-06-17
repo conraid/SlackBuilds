@@ -32,7 +32,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-inxi}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-2.2.23} # Leave empty to automatically set
+# Leave VERSION empty to automatically set.
+# For example by downloading https://inxi.googlecode.com/svn/trunk/inxi.tar.gz
+VERSION=${VERSION:-2.2.25} 
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -48,7 +50,7 @@ mkdir -p ${PRGNAME}
 cd ${PRGNAME}
 tar xvf ${CWD}/${PRGNAME}.tar.gz
 
-# Check version (if VERSION is empty)
+# Check version if VERSION is empty
 VERSION=${VERSION:-$(grep "^####  Version:" inxi | cut -f4 -d" ")}
 PKGVERSION=${VERSION//-/_}
 PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
