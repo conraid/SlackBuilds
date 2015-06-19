@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-wireshark}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-1.99.6}
+VERSION=${VERSION:-1.99.7}
 PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -84,13 +84,7 @@ cd ${PRGNAME}-${VERSION}
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Apply patches
-for PATCH in ${CWD}/patches/*.patch; do
-    patch -p1 -i $PATCH
-done
-
 # configure
-
 LDFLAGS="${SLKLDFLAGS}" \
 CFLAGS="${SLKCFLAGS}" \
 CXXFLAGS="${SLKCFLAGS}" \
@@ -106,7 +100,7 @@ CXXFLAGS="${SLKCFLAGS}" \
   --enable-packet-editor \
   --enable-tfshark \
   --enable-setuid-install \
-  --with-lua \
+  --without-lua \
   --with-ssl=/usr/lib${LIBDIRSUFFIX} \
   --with-c-ares \
   --with-geoip \
