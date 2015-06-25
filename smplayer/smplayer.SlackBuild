@@ -30,15 +30,14 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-smplayer}
 PKGNAME=${PKGNAME:-${PRGNAME}}
-VERSION=${VERSION:-14.9.0.6887}
+VERSION=${VERSION:-14.9.0.6994}
 PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
@@ -85,9 +84,10 @@ chmod -R u+w,go+r-w,a-s .
 # Patch Makefile
 QCONF="QMAKE_LIBS=\"${SLKLDFLAGS}\" QMAKE_CFLAGS=\"${SLKCFLAGS}\" QMAKE_CXXFLAGS=\"${SLKCFLAGS}\""
 
-sed -i 's%/share/man/%/man/%g' Makefile
-sed -i "s%(QMAKE_OPTS)%(QMAKE_OPTS) $QCONF%" Makefile
-sed -i 's%^DOC_PATH=$(PREFIX)/share/doc/packages/smplayer%DOC_PATH=$(PREFIX)/doc/smplayer-'${VERSION}'%' Makefile
+sed -e 's%/share/man/%/man/%g' \
+    -e "s%(QMAKE_OPTS)%(QMAKE_OPTS) $QCONF%" \
+    -e 's%^DOC_PATH=$(PREFIX)/share/doc/packages/smplayer%DOC_PATH=$(PREFIX)/doc/smplayer-'${VERSION}'%' \
+    -i Makefile
 
 # Build and install:
 make PREFIX=/usr
@@ -99,14 +99,12 @@ find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs str
 
 # Compress and link manpages, if any:
 if [ -d ${PKG}/usr/man ]; then
-( cd ${PKG}/usr/man
-  find . -type f -exec gzip -9 {} \;
-  for i in $( find . -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
-)
+  find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
