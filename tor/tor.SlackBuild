@@ -38,9 +38,9 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-tor}
 PKGNAME=${PKGNAME:-${PRGNAME}}
-VERSION=${VERSION:-0.2.6.8}
+VERSION=${VERSION:-0.2.6.9}
 PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
@@ -133,10 +133,10 @@ chmod 0700 ${PKG}/var/lib/tor
 install -Dm755 contrib/dist/tor.sh ${PKG}/etc/rc.d/rc.tor.new
 install -Dm755 contrib/dist/torctl ${PKG}/usr/bin/torctl
 mv ${PKG}/etc/tor/torrc.sample ${PKG}/etc/tor/torrc.new
-sed -i -e "s/_tor/$TOR_USER/" \
+sed -e "s/_tor/$TOR_USER/" \
     -e "s/_tor/$TOR_GROUP/" \
     -e 's#/etc/init.d/tor#/etc/rc.d/rc.tor#' \
-    contrib/operator-tools/tor.logrotate
+    -i contrib/operator-tools/tor.logrotate
 install -Dm644 contrib/operator-tools/tor.logrotate ${PKG}/etc/logrotate.d/tor.new
 
 # Compress and link manpages, if any:
