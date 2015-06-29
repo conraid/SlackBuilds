@@ -32,14 +32,13 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-dcraw}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-9.25.0}
+VERSION=${VERSION:-9.26.0}
 PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
 
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
@@ -110,8 +109,8 @@ if [ -x /usr/bin/gimptool-2.0 ]; then
 fi
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
-head -25 dcraw.c > ${DOCDIR}/LICENSE
+install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
+head -25 dcraw.c > ${PKGDOCDIR}/LICENSE
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
