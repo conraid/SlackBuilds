@@ -23,16 +23,18 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # Latest version of this SlackBuild at http://slackers.it/repository
+#
+# This script is to pure 64bit version or pure 32bit version. Not multilib
+
 
 # Exit on most errors
 set -eu
 
 # Set variables:
 CWD=$(pwd)
-
 PRGNAME=${PRGNAME:-wine}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-1.7.44}
+VERSION=${VERSION:-1.7.46}
 PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
