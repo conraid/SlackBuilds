@@ -1,0 +1,28 @@
+diff -Naupr a/Makefile.in b/Makefile.in
+--- a/Makefile.in	2013-12-31 21:22:40.000000000 +0100
++++ b/Makefile.in	2015-04-01 14:39:42.290280732 +0200
+@@ -50,15 +50,15 @@ lex:	c-lex.l python-lex.l perl-lex.l rub
+ 	$(LEX) $(LEXFLAGS) -Pyyruby ruby-lex.l     
+ 
+ install:	$(BIN)
+-	./mkinstalldirs $(BINDIR) $(LIBDIR) $(MANDIR) $(MANDIR)/man1 $(SHAREDIR)
+-	$(INSTALL_PROGRAM) $(BIN) $(BINDIR)
+-	$(INSTALL_DATA) rats-python.xml $(SHAREDIR)
+-	$(INSTALL_DATA) rats-c.xml $(SHAREDIR)
+-	$(INSTALL_DATA) rats-perl.xml $(SHAREDIR)
+-	$(INSTALL_DATA) rats-php.xml $(SHAREDIR)
+-	$(INSTALL_DATA) rats-ruby.xml $(SHAREDIR)
+-	$(INSTALL_DATA) rats-openssl.xml $(SHAREDIR)
+-	$(INSTALL_DATA) rats.1	$(MANDIR)/man1
++	./mkinstalldirs $(DESTDIR)/$(BINDIR) $(DESTDIR)/$(MANDIR) $(DESTDIR)/$(MANDIR)/man1 $(DESTDIR)/$(SHAREDIR)
++	$(INSTALL_PROGRAM) $(BIN) $(DESTDIR)/$(BINDIR)
++	$(INSTALL_DATA) rats-python.xml $(DESTDIR)/$(SHAREDIR)
++	$(INSTALL_DATA) rats-c.xml $(DESTDIR)/$(SHAREDIR)
++	$(INSTALL_DATA) rats-perl.xml $(DESTDIR)/$(SHAREDIR)
++	$(INSTALL_DATA) rats-php.xml $(DESTDIR)/$(SHAREDIR)
++	$(INSTALL_DATA) rats-ruby.xml $(DESTDIR)/$(SHAREDIR)
++	$(INSTALL_DATA) rats-openssl.xml $(DESTDIR)/$(SHAREDIR)
++	$(INSTALL_DATA) rats.1	$(DESTDIR)/$(MANDIR)/man1
+ 
+ clean:
+ 	rm -f $(OBJ) *~ $(BIN) core
