@@ -33,7 +33,7 @@ CWD=$(pwd)
 
 PRGNAME=${PRGNAME:-npm}
 PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-2.13.0}
+VERSION=${VERSION:-2.13.1}
 PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -55,24 +55,11 @@ if [ -z ${ARCH:=""} ]; then
 fi
 
 # Set compiling FLAGS
-case "${ARCH}" in
-    i[3-5]86)
-    SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
-    SLKLDFLAGS=""; LIBDIRSUFFIX=""
-    ;;
-    i686)
-    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
-    SLKLDFLAGS=""; LIBDIRSUFFIX=""
-    ;;
-    x86_64)
-    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
-    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-    ;;
-    *)
-    SLKCFLAGS="-O2"; CHOST=${ARCH}
-    SLKLDFLAGS=""; LIBDIRSUFFIX=""
-    ;;
-esac
+if [ "${ARCH}" = "x86_64" ]; then
+  LIBDIRSUFFIX="64"
+else
+  LIBDIRSUFFIX=""
+fi
 
 # Extract source and prepare:
 rm -rf ${PKG}
