@@ -22,7 +22,7 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Latest version of this SlackBuild at http://slackers.it/repository
+# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 #
 # This script is to pure 64bit version or pure 32bit version. Not multilib
 
@@ -32,15 +32,15 @@ set -eu
 
 # Set variables:
 CWD=$(pwd)
-PRGNAME=${PRGNAME:-wine}
-PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-1.7.46}
+PRGNAM=${PRGNAM:-wine}
+PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
+VERSION=${VERSION:-1.7.47}
 PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAME}
-PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
+PKG=${TMP}/package-${PKGNAM}
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${PKGVERSION}"
 
 # Insert document files in this variable
 DOCFILES="ANNOUNCE AUTHORS COPYING.LIB LICENSE* README VERSION"
@@ -79,9 +79,9 @@ esac
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAME}-${VERSION}
-tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.bz2
-cd ${PRGNAME}-${VERSION}
+rm -rf ${PRGNAM}-${VERSION}
+tar xvf ${CWD}/${PRGNAM}-${VERSION}.tar.bz2
+cd ${PRGNAM}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -98,7 +98,7 @@ CXXFLAGS="${SLKCFLAGS}" \
   --localstatedir=/var \
   --mandir=/usr/man \
   --infodir=/usr/info \
-  --docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
+  --docdir=/usr/doc/${PKGNAM}-${PKGVERSION} \
   --with-gnutls=yes \
   --with-opengl \
   --${WINE64}-win64 \
@@ -131,7 +131,7 @@ mkdir -p ${PKGDOCDIR}
 cp -a ${DOCFILES} ${PKGDOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
@@ -141,4 +141,4 @@ install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
