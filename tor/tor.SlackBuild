@@ -36,15 +36,15 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-tor}
-PKGNAME=${PKGNAME:-${PRGNAME}}
-VERSION=${VERSION:-0.2.6.9}
-PKGVERSION=${VERSION//-/_}
+PRGNAM=${PRGNAM:-tor}
+PKGNAM=${PKGNAM:-${PRGNAM}}
+VERSION=${VERSION:-0.2.6.10}
+PKGVERSION=$(echo ${VERSION} | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAME}
-PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
+PKG=${TMP}/package-${PKGNAM}
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${VERSION}"
 
 # Select tor's default user/group
 TOR_USER=${TOR_USER:-tor}
@@ -97,9 +97,9 @@ esac
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAME}-${VERSION}
+rm -rf ${PRGNAM}-${VERSION}
 tar xvf ${CWD}/tor-${VERSION}.tar.gz
-cd ${PRGNAME}-${VERSION}
+cd ${PRGNAM}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -116,9 +116,10 @@ CXXFLAGS="${SLKCFLAGS}" \
   --localstatedir=/var \
   --mandir=/usr/man \
   --infodir=/usr/info \
-  --docdir=/usr/doc/${PKGNAME}-${VERSION} \
+  --docdir=/usr/doc/${PKGNAM}-${VERSION} \
   --with-tor-user=$TOR_USER \
   --with-tor-group=$TOR_GROUP \
+  --enable-openbsd-malloc \
   --host=${CHOST}-slackware-linux \
   --build=${CHOST}-slackware-linux
 
@@ -150,7 +151,7 @@ mkdir -p ${PKGDOCDIR}
 cp -a ${DOCFILES} ${PKGDOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
@@ -160,5 +161,5 @@ install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
 
