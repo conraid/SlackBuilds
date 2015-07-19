@@ -28,15 +28,15 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-xdebug}
-PKGNAME=${PKGNAME:-php-${PRGNAME}}
+PRGNAM=${PRGNAM:-xdebug}
+PKGNAM=${PKGNAM:-php-${PRGNAM}}
 VERSION=${VERSION:-2.3.3}
-PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-1}
+PKGVERSION=$(echo ${VERSION} | tr - _)
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAME}
-PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
+PKG=${TMP}/package-${PKGNAM}
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${VERSION}"
 
 # Insert document files in this variable
 DOCFILES="CREDITS LICENSE NEWS README contrib"
@@ -75,9 +75,9 @@ esac
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAME}-${VERSION}
-tar xzvf ${CWD}/${PRGNAME}-${VERSION}.tgz
-cd ${PRGNAME}-${VERSION}
+rm -rf ${PRGNAM}-${VERSION}
+tar xzvf ${CWD}/${PRGNAM}-${VERSION}.tgz
+cd ${PRGNAM}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -125,7 +125,7 @@ mkdir -p ${PKG}/etc/php.d
 sed -e "s#/usr/lib/php#/usr/lib${LIBDIRSUFFIX}/php#" ${CWD}/xdebug.ini > ${PKG}/etc/php.d/xdebug.ini.new
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
@@ -135,4 +135,4 @@ install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz

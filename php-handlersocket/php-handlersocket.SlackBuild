@@ -28,16 +28,16 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=php-handlersocket
+PRGNAM=php-handlersocket
 EXTNAME=handlersocket
-PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
+PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
 VERSION=${VERSION:-0.3.1}
-PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-19}
+PKGVERSION=$(echo ${VERSION} | tr - _)
+BUILD=${BUILD:-20}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAME}
-PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
+PKG=${TMP}/package-${PKGNAM}
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${VERSION}"
 
 # Insert document files in this variable
 DOCFILES="CREDITS ChangeLog README LICENSE handlersocket.php"
@@ -77,7 +77,7 @@ rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
 rm -rf $EXTNAME
-tar xzvf ${CWD}/${PRGNAME}-${VERSION}.tar.gz
+tar xzvf ${CWD}/${PRGNAM}-${VERSION}.tar.gz
 cd $EXTNAME
 
 # Make sure ownerships and permissions are sane:
@@ -111,7 +111,7 @@ mkdir -p ${PKGDOCDIR}
 cp -a ${DOCFILES} ${PKGDOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
@@ -125,4 +125,4 @@ echo 'extension=handlersocket.so' > ${PKG}/etc/php.d/$EXTNAME.ini.new
 
 # Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
