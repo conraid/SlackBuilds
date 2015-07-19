@@ -28,15 +28,15 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-collectd}
-PKGNAME=${PKGNAME:-${PRGNAME}}
-VERSION=${VERSION:-5.4.2}
-PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-2}
+PRGNAM=${PRGNAM:-collectd}
+PKGNAM=${PKGNAM:-${PRGNAM}}
+VERSION=${VERSION:-5.5.0}
+PKGVERSION=$(echo ${VERSION} | tr - _)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
+PKG=${TMP}/package-${PKGNAM}
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${VERSION}"
 
 # Insert document files in this variable
 DOCFILES="AUTHORS COPYING ChangeLog INSTALL NEWS README TODO"
@@ -75,18 +75,13 @@ esac
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAME}-${VERSION}
-tar xjvf ${CWD}/${PRGNAME}-${VERSION}.tar.bz2
-cd ${PRGNAME}-${VERSION}
+rm -rf ${PRGNAM}-${VERSION}
+tar xjvf ${CWD}/${PRGNAM}-${VERSION}.tar.bz2
+cd ${PRGNAM}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
-
-# Apply patch for libstatgrab > 0.9*
-# See https://github.com/collectd/collectd/issues/445
-patch -p1 -i ${CWD}/libstatgrab.patch
-patch -p1 -i ${CWD}/libstatgrab2.patch
 
 # Configure
 sed 's#@prefix@/var#/var#g' -i src/collectd.conf.*
@@ -125,12 +120,12 @@ find ${PKG} -name perllocal.pod | xargs -r rm -f
 rm -rf ${PKG}/usr/lib/perl5/5.*
 
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR} || true
 
 # Add a sample directory:
-mkdir -p ${DOCDIR}/examples
-cp -a ${EXAMPLES} ${DOCDIR}/examples || true
+mkdir -p ${PKGDOCDIR}/examples
+cp -a ${EXAMPLES} ${PKGDOCDIR}/examples || true
 
 # Add or move config files
 install -Dpm644 ${CWD}/rc.collectd ${PKG}/etc/rc.d/rc.collectd.new
@@ -139,7 +134,7 @@ cat contrib/collection.conf | sed 's%/opt/collectd/%/usr/%g;s%/usr/var/%/var/%' 
 mv ${PKG}/etc/collectd/collectd.conf  ${PKG}/etc/collectd/collectd.conf.new
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
@@ -149,4 +144,4 @@ install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
