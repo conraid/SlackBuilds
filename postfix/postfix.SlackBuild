@@ -47,15 +47,15 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-postfix}
-PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-3.0.1}
-PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-2}
+PRGNAM=${PRGNAM:-postfix}
+PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
+VERSION=${VERSION:-3.0.2}
+PKGVERSION=$(echo ${VERSION} | tr - _)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PRGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}"
+PKG=${TMP}/package-${PRGNAM}
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}"
 
 # Insert document files in this variable.
 DOCFILES="AAAREADME COMPATIBILITY COPYRIGHT HISTORY IPv6-ChangeLog LICENSE \
@@ -100,9 +100,9 @@ esac
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAME}-${VERSION}
-tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.gz
-cd ${PRGNAME}-${VERSION}
+rm -rf ${PRGNAM}-${VERSION}
+tar xvf ${CWD}/${PRGNAM}-${VERSION}.tar.gz
+cd ${PRGNAM}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -117,9 +117,6 @@ sample_directory=/etc/postfix/sample \
 html_directory=/usr/doc/postfix/html \
 mail_owner=postfix \
 setgid_group=postdrop"
-
-# Apply patch for kernel 4.0
-patch -p1 -i ${CWD}/kernel4.patch
 
 # Build and install:
 make makefiles \
@@ -136,7 +133,7 @@ make makefiles \
 make
 make non-interactive-package \
     install_root=${PKG} \
-    tempdir=${TMP}/${PRGNAME}-temp \
+    tempdir=${TMP}/${PRGNAM}-temp \
     $CONFIG_PARAMS
 
 # Add auxiliary files
@@ -164,11 +161,11 @@ sed 's#^\(\$manpage[^:]*\):#\1.gz:#' -i ${PKG}/etc/postfix/meta/postfix-files ||
 install -m 0755 -D ${CWD}/rc.postfix ${PKG}/etc/rc.d/rc.postfix.new
 
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -aL ${DOCFILES} ${DOCDIR} || true
+mkdir -p ${PKGDOCDIR}
+cp -aL ${DOCFILES} ${PKGDOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
@@ -183,4 +180,4 @@ done
 
 # Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PRGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n ${CWD}/${PRGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
