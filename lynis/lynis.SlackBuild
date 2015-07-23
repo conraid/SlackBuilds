@@ -33,15 +33,15 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-lynis}
-PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-2.1.0}
-PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-2}
+PRGNAM=${PRGNAM:-lynis}
+PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
+VERSION=${VERSION:-2.1.1}
+PKGVERSION=$(echo ${VERSION} | tr - _)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
+PKG=${TMP}/package-${PKGNAM}
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${PKGVERSION}"
 
 ARCH=${ARCH:="noarch"}
 
@@ -52,23 +52,20 @@ DOCFILES="CHANGELOG CONTRIBUTORS FAQ INSTALL LICENSE README"
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAME}-${VERSION}
-tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.gz
-cd ${PRGNAME}-${VERSION}
+rm -rf ${PRGNAM}-${VERSION}
+tar xvf ${CWD}/${PRGNAM}-${VERSION}.tar.gz
+cd ${PRGNAM}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Apply patch to improve kernel detection on Slackware
-patch -p1 -i ${CWD}/slackware.patch
-
 # Install binary file
 install -Dm755 lynis ${PKG}/usr/bin/lynis
 
 # Install plugins, include, db
-mkdir -p ${PKG}/usr/share/${PKGNAME}
-cp -a db include plugins ${PKG}/usr/share/${PKGNAME}
+mkdir -p ${PKG}/usr/share/${PKGNAM}
+cp -a db include plugins ${PKG}/usr/share/${PKGNAM}
 
 # Install config file
 install -Dm644 default.prf ${PKG}/etc/lynis/default.prf.new
@@ -81,11 +78,11 @@ gzip -9 ${PKG}/usr/man/man8/lynis.8
 install -Dm644 extras/bash_completion.d/lynis ${PKG}/etc/bash_completion.d/lynis
 
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
@@ -95,4 +92,4 @@ install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
