@@ -28,15 +28,15 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-wireshark}
-PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-1.99.7}
-PKGVERSION=${VERSION//-/_}
+PRGNAM=${PRGNAM:-wireshark}
+PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
+VERSION=${VERSION:-1.99.8}
+PKGVERSION=$(echo ${VERSION} | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PRGNAME}
-PKGDOCDIR="${PKG}/usr/doc/${PRGNAME}-${PKGVERSION}"
+PKG=${TMP}/package-${PRGNAM}
+PKGDOCDIR="${PKG}/usr/doc/${PRGNAM}-${PKGVERSION}"
 
 # Insert document files in this variable
 DOCFILES="AUTHORS COPYING ChangeLog INSTALL* NEWS README* doc/README*"
@@ -76,9 +76,9 @@ esac
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAME}-${VERSION}
-tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.bz2
-cd ${PRGNAME}-${VERSION}
+rm -rf ${PRGNAM}-${VERSION}
+tar xvf ${CWD}/${PRGNAM}-${VERSION}.tar.bz2
+cd ${PRGNAM}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -107,8 +107,8 @@ CXXFLAGS="${SLKCFLAGS}" \
   --with-plugins \
   --with-gtk2=yes \
   --with-gtk3=no \
-  --with-qt=4 \
-  --docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
+  --with-qt=no \
+  --docdir=/usr/doc/${PKGNAM}-${PKGVERSION} \
   --host=${CHOST}-slackware-linux \
   --build=${CHOST}-slackware-linux
 
@@ -116,11 +116,14 @@ CXXFLAGS="${SLKCFLAGS}" \
 make
 make DESTDIR=${PKG} install-strip
 
+# Link binarie with gtk version. Qt version causes a segmentation fault.
+(cd ${PKG}/usr/bin; ln -s wireshark-gtk wireshark)
+
 # add headers files
-install -dm755 ${PKG}/usr/include/${PKGNAME}/{epan/{crypt,dfilter,dissectors,ftypes,wmem},wiretap,wsutil}
-install -m644 color.h config.h register.h ws_symbol_export.h "${PKG}/usr/include/${PKGNAME}"
+install -dm755 ${PKG}/usr/include/${PKGNAM}/{epan/{crypt,dfilter,dissectors,ftypes,wmem},wiretap,wsutil}
+install -m644 color.h config.h register.h ws_symbol_export.h "${PKG}/usr/include/${PKGNAM}"
 for d in epan epan/crypt epan/dfilter epan/dissectors epan/ftypes epan/wmem wiretap wsutil; do
-  install -m644 ${d}/*.h ${PKG}/usr/include/${PRGNAME}/${d}
+  install -m644 ${d}/*.h ${PKG}/usr/include/${PRGNAM}/${d}
 done
 
 # Compress and link manpages, if any:
@@ -134,7 +137,7 @@ mkdir -p ${PKGDOCDIR}
 cp -a ${DOCFILES} ${PKGDOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
@@ -143,15 +146,15 @@ install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Add icons and desktop file
-install -Dm644 ${PKGNAME}.desktop ${PKG}/usr/share/applications/${PKGNAME}.desktop
-install -Dm644 image/wsicon48.png ${PKG}/usr/share/pixmaps/${PKGNAME}.png
+install -Dm644 ${PKGNAM}.desktop ${PKG}/usr/share/applications/${PKGNAM}.desktop
+install -Dm644 image/wsicon48.png ${PKG}/usr/share/pixmaps/${PKGNAM}.png
 for col in {lo,hi}; do
   for size in {16,32,48}; do
-      install -Dm644 image/${col}${size}-app-${PKGNAME}.png \
-      ${PKG}/usr/share/icons/${col}color/${size}x${size}/apps/${PKGNAME}.png
+      install -Dm644 image/${col}${size}-app-${PKGNAM}.png \
+      ${PKG}/usr/share/icons/${col}color/${size}x${size}/apps/${PKGNAM}.png
   done
 done
 
 # Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
