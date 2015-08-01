@@ -33,7 +33,7 @@ CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-npm}
 PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
-VERSION=${VERSION:-3.2.0}
+VERSION=${VERSION:-2.13.4}
 PKGVERSION=$(echo ${VERSION} | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -74,10 +74,10 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Fix man page path.
-sed "/var manRoot/ s|'share',||" -i lib/{,un}build.js
+sed '/var manRoot/ s|"share",||' -i lib/{,un}build.js
 
 # Fix libdir for 64-bit.
-sed "s|'lib'|'lib${LIBDIRSUFFIX}'|" -i lib/npm.js
+sed "s|\"lib\"|\"lib${LIBDIRSUFFIX}\"|" -i lib/npm.js
 
 # Install:
 make DESTDIR=${PKG} install
