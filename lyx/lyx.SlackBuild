@@ -28,14 +28,14 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-lyx}
-PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-2.1.3}
-BUILD=${BUILD:-2}
+PRGNAM=${PRGNAM:-lyx}
+PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
+VERSION=${VERSION:-2.1.4}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PRGNAME}
-DOCDIR="${PKG}/usr/doc/${PRGNAME}-${VERSION}"
+PKG=${TMP}/package-${PRGNAM}
+PKGDOCDIR="${PKG}/usr/doc/${PRGNAM}-${VERSION}"
 
 # Insert document files in this variable
 DOCFILES="ABOUT-NLS ANNOUNCE COPYING INSTALL* NEWS README* UPGRADING"
@@ -74,9 +74,9 @@ esac
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAME}-${VERSION}
-tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.xz
-cd ${PRGNAME}-${VERSION}
+rm -rf ${PRGNAM}-${VERSION}
+tar xvf ${CWD}/${PRGNAM}-${VERSION}.tar.xz
+cd ${PRGNAM}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -109,11 +109,11 @@ if [ -d ${PKG}/usr/man ]; then
 fi
 
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
@@ -122,11 +122,11 @@ install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Add a desktop file
-install -Dm644 lib/${PKGNAME}.desktop ${PKG}/usr/share/applications/${PKGNAME}.desktop
+install -Dm644 lib/${PKGNAM}.desktop ${PKG}/usr/share/applications/${PKGNAM}.desktop
 
 # Add an icon
-install -Dm644 lib/images/${PKGNAME}.png ${PKG}/usr/share/pixmaps/${PKGNAME}.png
+install -Dm644 lib/images/${PKGNAM}.png ${PKG}/usr/share/pixmaps/${PKGNAM}.png
 
 # Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PRGNAME}-${VERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n ${CWD}/${PRGNAM}-${VERSION}-${ARCH}-${BUILD}${TAG}.txz
