@@ -34,8 +34,8 @@ set -eu
 CWD=$(pwd)
 PRGNAM=${PRGNAM:-wine}
 PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
-VERSION=${VERSION:-1.7.47}
-PKGVERSION=${VERSION//-/_}
+VERSION=${VERSION:-1.7.48}
+PKGVERSION=$(echo ${VERSION} | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -117,12 +117,12 @@ find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r 
 
 # Compress and link manpages, if any:
 if [ -d ${PKG}/usr/man ]; then
-     find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+    find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
     for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Make link in 64bit version
-if [ ${ARCH} == "x86_64" ]; then
+if [ ${ARCH} = "x86_64" ]; then
 ( cd ${PKG}/usr/bin; ln -s wine64 wine )
 fi
 
