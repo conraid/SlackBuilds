@@ -1,0 +1,12 @@
+--- orig/extra/kipi-plugins/CMakeLists.txt	2015-07-27 00:55:42.000000000 +0200
++++ new/extra/kipi-plugins/CMakeLists.txt	2015-08-07 15:06:40.207212756 +0200
+@@ -461,9 +461,6 @@ if(KIPI_FOUND)
+             add_subdirectory(panorama)
+         endif()
+ 
+-        if(ImageMagick_FOUND AND QTGSTREAMER_FOUND)
+-            add_subdirectory(videoslideshow)
+-        endif()
+ 
+         if(NOT WIN32)
+             configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/templates/kipi-plugins.lsm.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/kipi-plugins.lsm)
