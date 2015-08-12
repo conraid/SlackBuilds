@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-greenbone-security-assistant}
 PKGNAM=${PKGNAM:-openvas-gsa}
-VERSION=${VERSION:-6.0.4}
+VERSION=${VERSION:-6.0.5}
 PKGVERSION=$(echo ${VERSION} | tr + _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -85,9 +85,6 @@ cd ${PRGNAM}-${VERSION}
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Apply patch for glib
-patch -p1 -i ${CWD}/glib-include.patch
-
 # Sane man path
 sed -i 's#${DATADIR}/man/man#${CMAKE_INSTALL_PREFIX}/man/man#g' doc/CMakeLists.txt
 
@@ -132,7 +129,7 @@ install -Dm644 ${CWD}/slackware.README ${PKGDOCDIR}/SLACKWARE.README
 
 # Install utility check script
 # https://svn.wald.intevation.org/svn/openvas/trunk/tools/openvas-check-setup
-install -Dm755 ${CWD}/openvas-check-setup.sh ${PKG}/usr/sbin/openvas-check-setup
+install -Dm755 ${CWD}/openvas-check-setup ${PKG}/usr/sbin/openvas-check-setup
 
 # Install rc script (thanks to SBo)
 install -Dm644 ${CWD}/rc.gsad ${PKG}/etc/rc.d/rc.gsad.new
