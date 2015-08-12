@@ -22,7 +22,7 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Latest version of this SlackBuild at http://slackers.it/repository
+# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 #
 # Exit on most errors or unset variables
 set -eu
@@ -30,15 +30,15 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-nmon}
-PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-15e}
-PKGVERSION=${VERSION//-/_}
+PRGNAM=${PRGNAM:-nmon}
+PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
+VERSION=${VERSION:-15h}
+PKGVERSION=$(echo ${VERSION} | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
+PKG=${TMP}/package-${PKGNAM}
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${PKGVERSION}"
 
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
@@ -74,9 +74,9 @@ esac
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAME}-${VERSION}
-install -Dm644 ${CWD}/lmon${VERSION}.c ${PRGNAME}-${VERSION}/${PRGNAME}.c
-cd ${PRGNAME}-${VERSION}
+rm -rf ${PRGNAM}-${VERSION}
+install -Dm644 ${CWD}/lmon${VERSION}.c ${PRGNAM}-${VERSION}/${PRGNAM}.c
+cd ${PRGNAM}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -84,21 +84,21 @@ chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
 gcc -o nmon \
-    ${PRGNAME}.c ${SLKCFLAGS} ${SLKLDFLAGS} \
+    ${PRGNAM}.c ${SLKCFLAGS} ${SLKLDFLAGS} \
     -DJFS -DGETUSER -Wall -DLARGEMEM -lncurses -lm -DX86
-install -Dsm755 ${PRGNAME} ${PKG}/usr/bin/nmon
+install -Dsm755 ${PRGNAM} ${PKG}/usr/bin/nmon
 
 # Add a documentation directory and man file
-mkdir -p ${DOCDIR}
-cp -a ${CWD}/*.txt ${DOCDIR}
+mkdir -p ${PKGDOCDIR}
+cp -a ${CWD}/*.txt ${PKGDOCDIR}
 install -Dm644 ${CWD}/nmon.1.gz ${PKG}/usr/man/man1/nmon.1.gz
 
 # Add a slackbuild
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
