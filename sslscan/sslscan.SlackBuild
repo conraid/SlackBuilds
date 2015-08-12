@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Slackware build script for sslscan (http://www.titania.co.uk/sslscan.php)
+# Slackware build script for sslscan
 #
 # Copyright 2008-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
@@ -29,7 +29,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-sslscan}
-VERSION=${VERSION:-1.10.2}
+VERSION=${VERSION:-1.10.6}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -73,9 +73,9 @@ esac
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAM}-${VERSION}
-tar xvf ${CWD}/${PRGNAM}-${VERSION}.tar.gz
-cd ${PRGNAM}-${VERSION}
+rm -rf ${PRGNAM}-${VERSION}-rbsec
+tar xvf ${CWD}/${PRGNAM}-${VERSION}-rbsec.tar.gz
+cd ${PRGNAM}-${VERSION}-rbsec
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -83,10 +83,8 @@ chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
 make CFLAGS="${SLKCFLAGS} -I/usr/include/openssl" LDFLAGS="${SLKLDFLAGS} -lssl -lcrypto"
-make MANPATH="/usr/man" BINPATH="/usr/bin" DESTDIR=${PKG} install
-
-# Strip binaries:
-strip --strip-unneeded ${PKG}/usr/bin/sslscan
+install -Dsm755 sslscan ${PKG}/usr/bin/sslscan
+install -Dm644 sslscan.1 ${PKG}/usr/man/man1/sslscan.1
 
 # Compress manpage
 gzip -9 ${PKG}/usr/man/man1/sslscan.1
