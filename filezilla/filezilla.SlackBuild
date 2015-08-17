@@ -30,8 +30,8 @@ CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-filezilla}
 PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
-VERSION=${VERSION:-3.12.0.2}
-PKGVERSION=${VERSION//-/_}
+VERSION=${VERSION:-3.13.0}
+PKGVERSION=$(echo ${VERSION} | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -83,6 +83,9 @@ cd ${PRGNAM}-${VERSION}
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
+# Fix to fzputtygen_interface.h
+patch -p1 -i ${CWD}/fzputtygen_interface.patch
+
 # Configure
 LDFLAGS="${SLKLDFLAGS}" \
 CFLAGS="${SLKCFLAGS} -ldl" \
@@ -97,10 +100,10 @@ CXXFLAGS="${SLKCFLAGS} -ldl" \
   --docdir=/usr/doc/${PKGNAM}-${VERSION} \
   --enable-static=no \
   --enable-shared=yes \
-  --with-tinyxml=builtin \
   --disable-autoupdatecheck \
   --disable-manualupdatecheck \
   --enable-locales \
+  --with-pugixml=builtin \
   --host=${CHOST}-slackware-linux \
   --build=${CHOST}-slackware-linux
 
