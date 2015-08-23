@@ -22,7 +22,7 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Latest version of this SlackBuild at http://slackers.it/repository
+# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 #
 # Exit on most errors or unset variables
 set -eu
@@ -30,30 +30,30 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-inxi}
-PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
+PRGNAM=${PRGNAM:-inxi}
+PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
 # Leave VERSION empty to automatically set.
 # For example by downloading https://inxi.googlecode.com/svn/trunk/inxi.tar.gz
-VERSION=${VERSION:-2.2.27} 
+VERSION=${VERSION:-2.2.28} 
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAME}
+PKG=${TMP}/package-${PKGNAM}
 ARCH=${ARCH:="noarch"} 
 
 # Extract files
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAME}
-mkdir -p ${PRGNAME}
-cd ${PRGNAME}
-tar xvf ${CWD}/${PRGNAME}.tar.gz
+rm -rf ${PRGNAM}
+mkdir -p ${PRGNAM}
+cd ${PRGNAM}
+tar xvf ${CWD}/${PRGNAM}.tar.gz
 
 # Check version if VERSION is empty
 VERSION=${VERSION:-$(grep "^####  Version:" inxi | cut -f4 -d" ")}
-PKGVERSION=${VERSION//-/_}
-PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
+PKGVERSION=$(echo ${VERSION} | tr - _)
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${PKGVERSION}"
 
 # Install:
 install -Dm755 inxi ${PKG}/usr/bin/inxi
@@ -68,11 +68,11 @@ install -Dm644 inxi.changelog ${PKGDOCDIR}/ChangeLog
 install -Dm644 ${CWD}/gpl.txt ${PKGDOCDIR}/COPYING
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
