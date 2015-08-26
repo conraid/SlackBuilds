@@ -28,15 +28,15 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-gtklp}
-PKGNAME=${PKGNAME:-${PRGNAME}}
+PRGNAM=${PRGNAM:-gtklp}
+PKGNAM=${PKGNAM:-${PRGNAM}}
 VERSION=${VERSION:-1.3.1}
-PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-1}
+PKGVERSION=$(echo ${VERSION} | tr - _)
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
+PKG=${TMP}/package-${PKGNAM}
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${VERSION}"
 
 # Insert document files in this variable
 DOCFILES="ABOUT* AUTHORS BUGS COMPILING COPYING ChangeLog NEWS README* TODO USAGE"
@@ -75,9 +75,9 @@ esac
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAME}-${VERSION}
-tar xvf ${CWD}/${PRGNAME}-${VERSION}.src.tar.gz
-cd ${PRGNAME}-${VERSION}
+rm -rf ${PRGNAM}-${VERSION}
+tar xvf ${CWD}/${PRGNAM}-${VERSION}.src.tar.gz
+cd ${PRGNAM}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -96,7 +96,7 @@ CXXFLAGS="${SLKCFLAGS}" \
   --localstatedir=/var \
   --mandir=/usr/man \
   --infodir=/usr/info \
-  --docdir=/usr/doc/${PKGNAME}-${VERSION} \
+  --docdir=/usr/doc/${PKGNAM}-${VERSION} \
   --enable-static=no \
   --enable-shared=yes \
   --host=${CHOST}-slackware-linux \
@@ -117,8 +117,8 @@ if [ -d ${PKG}/usr/man ]; then
 fi
 
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR} || true
 
 # Install menu entries:
 mkdir -p ${PKG}/usr/share/{applications,pixmaps}
@@ -126,12 +126,12 @@ install -m644 ${CWD}/*.desktop ${PKG}/usr/share/applications
 install -m644 ${CWD}/*.png ${PKG}/usr/share/pixmaps
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
 

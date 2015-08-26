@@ -22,7 +22,7 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Latest version of this SlackBuild at http://slackers.it/repository
+# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
 # Exit on most errors
 set -eu
@@ -30,16 +30,16 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-hping}
-PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
+PRGNAM=${PRGNAM:-hping}
+PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
 VERSION=${VERSION:-3.0.0-git3547c}
-PKGVERSION=${VERSION//-/_}
+PKGVERSION=$(echo ${VERSION} | tr - _)
 COMMIT="3547c7691742c6eaa31f8402e0ccbb81387c1b99"
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
+PKG=${TMP}/package-${PKGNAM}
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${PKGVERSION}"
 
 # Insert document files in this variable
 DOCFILES="docs/*-* docs/*.txt docs/hping2rc.example"
@@ -78,9 +78,9 @@ esac
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAME}-${COMMIT}
-tar xvf ${CWD}/${PRGNAME}-${COMMIT}.tar.gz
-cd ${PRGNAME}-${COMMIT}
+rm -rf ${PRGNAM}-${COMMIT}
+tar xvf ${CWD}/${PRGNAM}-${COMMIT}.tar.gz
+cd ${PRGNAM}-${COMMIT}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -113,15 +113,15 @@ if [ -d ${PKG}/usr/man ]; then
 fi
 
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR} || true
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild $DOCDIR/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz

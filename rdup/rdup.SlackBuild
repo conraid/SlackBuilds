@@ -28,15 +28,15 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-rdup}
-PKGNAME=${PKGNAME:-${PRGNAME}}
+PRGNAM=${PRGNAM:-rdup}
+PKGNAM=${PKGNAM:-${PRGNAM}}
 VERSION=${VERSION:-1.1.14}
-PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-3}
+PKGVERSION=$(echo ${VERSION} | tr - _)
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
+PKG=${TMP}/package-${PKGNAM}
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${VERSION}"
 
 # Insert document files in this variable
 DOCFILES="AUTHORS DESIGN ChangeLog README DEPENDENCIES LICENSE"
@@ -75,9 +75,9 @@ esac
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAME}-${VERSION}
-tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.bz2
-cd ${PRGNAME}-${VERSION}
+rm -rf ${PRGNAM}-${VERSION}
+tar xvf ${CWD}/${PRGNAM}-${VERSION}.tar.bz2
+cd ${PRGNAM}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -95,7 +95,7 @@ CXXFLAGS="${SLKCFLAGS}" \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
   --localstatedir=/var \
   --mandir=/usr/man \
-  --docdir=/usr/doc/${PKGNAME}-${VERSION} \
+  --docdir=/usr/doc/${PKGNAM}-${VERSION} \
   --host=${CHOST}-slackware-linux \
   --build=${CHOST}-slackware-linux
 
@@ -110,12 +110,12 @@ if [ -d ${PKG}/usr/man ]; then
 fi
 
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR} || true
 rm -rf ${PKG}/usr/share
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
 
 # Add slack-desc
 mkdir -p ${PKG}/install
@@ -123,4 +123,4 @@ install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
