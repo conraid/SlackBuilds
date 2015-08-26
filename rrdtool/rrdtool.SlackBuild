@@ -30,15 +30,15 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-rrdtool}
-VERSION=${VERSION:-1.5.3}
-PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-PKGVERSION=${VERSION//-/_}
+PRGNAM=${PRGNAM:-rrdtool}
+VERSION=${VERSION:-1.5.4}
+PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
+PKGVERSION=$(echo ${VERSION} | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PRGNAME}
-DOCDIR="${PKG}/usr/doc/${PRGNAME}-${VERSION}"
+PKG=${TMP}/package-${PRGNAM}
+PKGDOCDIR="${PKG}/usr/doc/${PRGNAM}-${VERSION}"
 
 PYTHON=$( python -c 'import sys; print sys.version[:3]' )
 PERL=$( eval "`perl -V:version`"; echo $version )
@@ -79,9 +79,9 @@ esac
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAME}-${VERSION}
-tar xzvf ${CWD}/${PRGNAME}-${VERSION}.tar.gz
-cd ${PRGNAME}-${VERSION}
+rm -rf ${PRGNAM}-${VERSION}
+tar xzvf ${CWD}/${PRGNAM}-${VERSION}.tar.gz
+cd ${PRGNAM}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -99,7 +99,7 @@ sed -i "s|/lib/lua|/lib${LIBDIRSUFFIX}/lua|g" configure
 LDFLAGS="${SLKLDFLAGS}" \
 CFLAGS="${SLKCFLAGS} -I/usr/include/glib-2.0" \
 CXXFLAGS="${SLKCFLAGS}" \
-RRDDOCDIR="/usr/doc/${PRGNAME}-${VERSION}" \
+RRDDOCDIR="/usr/doc/${PRGNAM}-${VERSION}" \
 ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -133,35 +133,28 @@ if [ -d ${PKG}/usr/man ]; then
 fi
 
 # Remove perllocal.pod and other special files
-( cd ${PKG}
- find . -name perllocal.pod \
-    -o -name ".packlist" \
-    -o -name "*.bs" \
-    | xargs rm -f
-)
+find ${PKG} -name perllocal.pod -o -name ".packlist" -o -name "*.bs" | xargs rm -f || true
 
 # And remove the directory leftovers
 rm -rf ${PKG}/usr/lib/perl5/${PERL}
 rm -rf ${PKG}/usr/lib/perl5/site_perl/${PERL}/i486-linux-thread-multi/auto/RRDp
 
 # Set correct permissions (mostly on the Perl bindings)
-( cd ${PKG}
-  find . -perm 444 -exec chmod 0644 {} \;
-  find . -perm 555 -exec chmod 0755 {} \;
-)
+find ${PKG} -perm 444 -exec chmod 0644 {} \;
+find ${PKG} -perm 555 -exec chmod 0755 {} \;
 
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR} || true
-mv ${PKG}/usr/share/rrdtool/examples ${DOCDIR}
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR} || true
+mv ${PKG}/usr/share/rrdtool/examples ${PKGDOCDIR}
 rm -rf ${PKG}/usr/share
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PRGNAME}-${VERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n ${CWD}/${PRGNAM}-${VERSION}-${ARCH}-${BUILD}${TAG}.txz
