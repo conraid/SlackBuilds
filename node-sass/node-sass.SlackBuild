@@ -9,7 +9,7 @@
 # permitted provided that the following conditions are met:
 #
 # 1. Redistributions of this script must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
+#  notice, this list of conditions and the following disclaimer.
 #
 # THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
 # WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-node-sass}
 PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
-VERSION=${VERSION:-3.3.0}
+VERSION=${VERSION:-3.3.2}
 PKGVERSION=$(echo ${VERSION} | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -45,12 +45,12 @@ DOCFILES="CONTRIBUTING* LICENSE README* TROUBLESHOOTING*"
 
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
-    case "$( uname -m )" in
-        i?86) ARCH=i686 ;;
-        arm*) ARCH=arm ;;
-        # Unless ${ARCH} is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
-    esac
+  case "$( uname -m )" in
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    # Unless ${ARCH} is already set, use uname -m for all other archs:
+    *) ARCH=$( uname -m ) ;;
+  esac
 fi
 
 # Extract source and prepare:
@@ -74,8 +74,8 @@ find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r 
 
 # Compress and link manpages, if any:
 if [ -d ${PKG}/usr/man ]; then
-    find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
-    for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+  find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Remove empty dir
