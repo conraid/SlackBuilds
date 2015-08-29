@@ -28,15 +28,15 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-dos2unix}
-PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-7.2.3}
-PKGVERSION=${VERSION//-/_}
+PRGNAM=${PRGNAM:-dos2unix}
+PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
+VERSION=${VERSION:-7.3}
+PKGVERSION=$(echo ${VERSION} | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAME}
-PKGDOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
+PKG=${TMP}/package-${PKGNAM}
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${VERSION}"
 
 # Automatically determine the architecture we are building on:
 if [ -z ${ARCH:=""} ]; then
@@ -72,9 +72,9 @@ esac
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAME}-${VERSION}
-tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.gz
-cd ${PRGNAME}-${VERSION}
+rm -rf ${PRGNAM}-${VERSION}
+tar xvf ${CWD}/${PRGNAM}-${VERSION}.tar.gz
+cd ${PRGNAM}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -82,8 +82,8 @@ chmod -R u+w,go+r-w,a-s .
 
 # Build and install:
 sed -i 's#$(DESTDIR)$(datarootdir)/$(dir $(manfile))#$(DESTDIR)$(prefix)/$(dir $(manfile))#g' Makefile 
-make LDFLAGS_EXTRA="${SLKLDFLAGS}" RPM_OPT_FLAGS="${SLKCFLAGS}" mandir=/usr/man docdir=/usr/doc/${PKGNAME}-${VERSION}
-make DESTDIR=${PKG} mandir=/usr/man docdir=/usr/doc/${PKGNAME}-${VERSION} install
+make LDFLAGS_EXTRA="${SLKLDFLAGS}" RPM_OPT_FLAGS="${SLKCFLAGS}" mandir=/usr/man docdir=/usr/doc/${PKGNAM}-${VERSION}
+make DESTDIR=${PKG} mandir=/usr/man docdir=/usr/doc/${PKGNAM}-${VERSION} install
 
 # Strip binaries:
 find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
@@ -96,12 +96,12 @@ if [ -d ${PKG}/usr/man ]; then
 fi
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${PKGDOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
 
