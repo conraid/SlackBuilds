@@ -1,0 +1,109 @@
+From: Antonio Radici <antonio@debian.org>
+Date: Tue, 4 Mar 2014 15:39:14 +0100
+Subject: sidebar-utf8
+
+This patch fixes a problem with utf-8 strings and the sidebar,
+it rewrites entirely make_sidebar_entry so it also fixes some
+segfaults due to misallocations and overflows.
+
+See:
+ http://bugs.debian.org/584581
+ http://bugs.debian.org/603287
+
+Gbp-Pq: Topic mutt-patched
+--- mutt-1.5.24-orig/sidebar.c	2015-09-01 10:58:36.560951631 +0200
++++ mutt-1.5.24/sidebar.c	2015-09-01 11:01:28.635800399 +0200
+@@ -30,6 +30,7 @@
+ #include <libgen.h>
+ #include "keymap.h"
+ #include <stdbool.h>
++#include <wchar.h>
+ 
+ /*BUFFY *CurBuffy = 0;*/
+ static BUFFY *TopBuffy = 0;
+@@ -142,23 +143,70 @@ switch(op) {
+ }
+ 
+ char *make_sidebar_entry(char *box, unsigned int size, unsigned int new, unsigned int flagged) {
+-    static char *entry = 0;
+-    struct sidebar_entry sbe;
+-    int SBvisual;
+-
+-    SBvisual = SidebarWidth - strlen(SidebarDelim);
+-    if (SBvisual < 1)
+-        return NULL;
+-
+-    sbe.new = new;
+-    sbe.flagged = flagged;
+-    sbe.size = size;
+-    strncpy(sbe.box, box, 31);
++    char int_store[20]; // up to 64 bits integers
++    int right_width, left_width;
++    int box_len, box_bytes;
++    int int_len;
++    int right_offset = 0;
++    int delim_len = strlen(SidebarDelim);
++    static char *entry;
++
++    right_width = left_width = 0;
++    box_len = box_bytes = 0;
++
++    // allocate an entry big enough to contain SidebarWidth wide chars
++    entry = malloc((SidebarWidth*4)+1); // TODO: error check
++
++    // determine the right space (i.e.: how big are the numbers that we want to print)
++    if ( size > 0 ) {
++        int_len = snprintf(int_store, sizeof(int_store), "%d", size);
++        right_width += int_len;
++    } else {
++        right_width = 1; // to represent 0
++    }
++    if ( new > 0 ) {
++        int_len = snprintf(int_store, sizeof(int_store), "%d", new);
++        right_width += int_len + 2; // 2 is for ()
++    }
++    if ( flagged > 0 ) {
++        int_len = snprintf(int_store, sizeof(int_store), "%d", flagged);
++        right_width += int_len + 2; // 2 is for []
++    }
++
++    // determine how much space we have for *box and its padding (if any)
++    left_width = SidebarWidth - right_width - 1 - delim_len; // 1 is for the space
++    //fprintf(stdout, "left_width: %d right_width: %d\n", left_width, right_width);
++    // right side overflow case
++    if ( left_width <= 0 ) {
++        snprintf(entry, SidebarWidth*4, "%-*.*s ...", SidebarWidth-4-delim_len, SidebarWidth-4-delim_len, box);
++        return entry;
++    }
++    right_width -= delim_len;
+ 
+-    safe_realloc(&entry, SBvisual + 2);
+-    entry[SBvisual + 1] = '\0';
++    // to support utf-8 chars we need to add enough space padding in case there
++    // are less chars than bytes in *box
++    box_len = mbstowcs(NULL, box, 0);
++    box_bytes = strlen(box);
++    // debug
++    //fprintf(stdout, "box_len: %d box_bytes: %d (diff: %d)\n", box_len, box_bytes, (box_bytes-box_len));
++    // if there is less string than the space we allow, then we will add the
++    // spaces
++    if ( box_len != -1 && box_len < left_width ) {
++        left_width += (box_bytes - box_len);
++    }
++    // otherwise sprintf will truncate the string for us (therefore, no else case)
+ 
+-    mutt_FormatString (entry, SBvisual+1, 0, SidebarFormat, sidebar_format_str, (unsigned long) &sbe, 0);
++    // print the sidebar entry (without new and flagged messages, at the moment)
++    //fprintf(stdout, "left_width: %d right_width: %d\n", left_width, right_width);
++    right_offset = snprintf(entry, SidebarWidth*4, "%-*.*s %d", left_width, left_width, box, size);
++
++    // then pad new and flagged messages if any
++    if ( new > 0 ) {
++        right_offset += snprintf(entry+right_offset, SidebarWidth*4-right_offset, "(%d)", new);
++    }
++    if ( flagged > 0 ) {
++        right_offset += snprintf(entry+right_offset, SidebarWidth*4-right_offset, "[%d]", flagged);
++    }
+ 
+     return entry;
+ }

@@ -9,7 +9,7 @@
 # permitted provided that the following conditions are met:
 #
 # 1. Redistributions of this script must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
+#  notice, this list of conditions and the following disclaimer.
 #
 # THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
 # WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -28,45 +28,44 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-mutt}
-VERSION=${VERSION:-1.5.23}
-PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-PKGVERSION=${VERSION/-/_}
-BUILD=${BUILD:-4}
+PRGNAM=${PRGNAM:-mutt}
+VERSION=${VERSION:-1.5.24}
+PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
+PKGVERSION=$(echo ${VERSION} | tr - _)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
+PKG=${TMP}/package-${PKGNAM}
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${VERSION}"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
-# Automatically determine the architecture we are building on:
-if [ -z "${ARCH}" ]; then
-	case "$( uname -m )" in
-		i?86) ARCH=i686 ;;
-		arm*) ARCH=arm ;;
-		# Unless ${ARCH} is already set, use uname -m for all other archs:
-		*) ARCH=$( uname -m ) ;;
-	esac
+# Automatically determine the architecture we're building on:
+if [ -z ${ARCH:=""} ]; then
+  case "$( uname -m )" in
+  i?86) ARCH=i686 ;;
+  arm*) ARCH=arm ;;
+  # Unless ${ARCH} is already set, use uname -m for all other archs:
+  *) ARCH=$( uname -m ) ;;
+  esac
 fi
 
 # Set compiling FLAGS
 case "${ARCH}" in
-	i[3-5]86)
-	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
-	i686)
-	SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
-	x86_64)
-	SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-	;;
-	*)
-	SLKCFLAGS="-O2"; CHOST=${ARCH}
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+  i[3-5]86)
+  SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+  SLKLDFLAGS=""; LIBDIRSUFFIX=""
+  ;;
+  i686)
+  SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+  SLKLDFLAGS=""; LIBDIRSUFFIX=""
+  ;;
+  x86_64)
+  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
+  SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+  ;;
+  *)
+  SLKCFLAGS="-O2"; CHOST=${ARCH}
+  SLKLDFLAGS=""; LIBDIRSUFFIX=""
+  ;;
 esac
 
 
@@ -74,9 +73,9 @@ esac
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAME}-${VERSION}
+rm -rf ${PRGNAM}-${VERSION}
 tar xzvf ${CWD}/mutt-${VERSION}.tar.gz
-cd ${PRGNAME}-${VERSION}
+cd ${PRGNAM}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -84,7 +83,7 @@ chmod -R u+w,go+r-w,a-s .
 
 # patch by Lunar Linux to add sidebar support and other patch by Debian and Arch
 for PATCH in ${CWD}/patches/*.patch; do
-	patch -p1 -i $PATCH
+  patch -p1 -i $PATCH
 done
 
 # Configure
@@ -97,44 +96,58 @@ LDFLAGS="${SLKLDFLAGS}" \
   --localstatedir=/var \
   --mandir=/usr/man \
   --infodir=/usr/info \
-  --with-docdir=/usr/doc/${PKGNAME}-${VERSION} \
   --sysconfdir=/etc/mutt \
+  --with-docdir=/usr/doc/${PKGNAM}-${VERSION} \
   --with-mailpath=/var/spool/mail \
-  --enable-pop \
-  --enable-smtp \
-  --enable-imap \
   --with-ssl \
   --with-sasl \
   --with-idn \
+  --enable-pop \
+  --enable-smtp \
+  --enable-imap \
   --enable-hcache \
   --enable-gpgme \
   --host=${CHOST}-slackware-linux \
   --build=${CHOST}-slackware-linux
 
 # Build and install:
-make 
-make DESTDIR=${PKG} install-strip
+make
+make DESTDIR=${PKG} install
+
+# Delete debug mutt files
+rm ${PKG}/usr/bin/{flea,muttbug}
+rm ${PKG}/usr/man/man1/{flea,muttbug}.1
+
+# Strip binaries:
+find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 # Compress and link manpages, if any:
 if [ -d ${PKG}/usr/man ]; then
-    find ${PKG}/usr/man -type f -exec gzip -9 {} \;
-    for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+  find ${PKG}/usr/man -type f -exec gzip -9 {} \;
+  for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Rename conf files
-mv ${PKG}/etc/mutt/Muttrc $PKG/etc/mutt/Muttrc.new
-mv ${PKG}/etc/mutt/mime.types $PKG/etc/mutt/mime.types.new
+mv ${PKG}/etc/mutt/Muttrc ${PKG}/etc/mutt/Muttrc.new
+mv ${PKG}/etc/mutt/mime.types ${PKG}/etc/mutt/mime.types.new
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
+
+# Add a desktop file
+install -Dm644 ${CWD}/${PKGNAM}.desktop ${PKG}/usr/share/applications/${PKGNAM}.desktop
+
+# Add an icon
+install -Dm644 ${CWD}/${PKGNAM}.xpm ${PKG}/usr/share/pixmaps/${PKGNAM}.xpm
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Add a doinst.sh
-cat ${CWD}/doinst.sh > ${PKG}/install/doinst.sh
+install -Dm644  ${CWD}/doinst.sh ${PKG}/install/doinst.sh
 
 # Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PRGNAME}-${VERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n ${CWD}/${PRGNAM}-${VERSION}-${ARCH}-${BUILD}${TAG}.txz
 
