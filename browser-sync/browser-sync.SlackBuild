@@ -9,7 +9,7 @@
 # permitted provided that the following conditions are met:
 #
 # 1. Redistributions of this script must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
+#  notice, this list of conditions and the following disclaimer.
 #
 # THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
 # WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -34,7 +34,7 @@ PRGNAM=${PRGNAM:-browser-sync}
 PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
 VERSION=${VERSION:-2.8.2}
 PKGVERSION=$(echo ${VERSION} | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=${TMP}/package-${PKGNAM}
@@ -45,32 +45,32 @@ DOCFILES="ChangeLog* CONTRIBUTING* LICENSE README* examples test"
 
 # Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
-    case "$( uname -m )" in
-        i?86) ARCH=i686 ;;
-        arm*) ARCH=arm ;;
-        # Unless ${ARCH} is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
-    esac
+  case "$( uname -m )" in
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    # Unless ${ARCH} is already set, use uname -m for all other archs:
+    *) ARCH=$( uname -m ) ;;
+  esac
 fi
 
 # Set compiling FLAGS
 case "${ARCH}" in
-    i[3-5]86)
-    SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
-    SLKLDFLAGS=""; LIBDIRSUFFIX=""
-    ;;
-    i686)
-    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
-    SLKLDFLAGS=""; LIBDIRSUFFIX=""
-    ;;
-    x86_64)
-    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
-    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-    ;;
-    *)
-    SLKCFLAGS="-O2"; CHOST=${ARCH}
-    SLKLDFLAGS=""; LIBDIRSUFFIX=""
-    ;;
+  i[3-5]86)
+  SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+  SLKLDFLAGS=""; LIBDIRSUFFIX=""
+  ;;
+  i686)
+  SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+  SLKLDFLAGS=""; LIBDIRSUFFIX=""
+  ;;
+  x86_64)
+  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
+  SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+  ;;
+  *)
+  SLKCFLAGS="-O2"; CHOST=${ARCH}
+  SLKLDFLAGS=""; LIBDIRSUFFIX=""
+  ;;
 esac
 
 # Extract source and prepare:
