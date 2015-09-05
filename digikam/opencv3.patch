@@ -1,0 +1,816 @@
+diff -Naupr a/bootstrap.linux b/bootstrap.linux
+--- a/bootstrap.linux	2015-09-03 23:22:44.000000000 +0200
++++ b/bootstrap.linux	2015-09-05 21:19:18.000000000 +0200
+@@ -1,6 +1,6 @@
+ #!/bin/sh
+ 
+-# Copyright (c) 2008-2014, Gilles Caulier, <caulier dot gilles at gmail dot com>
++# Copyright (c) 2008-2015, Gilles Caulier, <caulier dot gilles at gmail dot com>
+ # 
+ # Redistribution and use is allowed according to the terms of the BSD license.
+ # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+@@ -41,6 +41,7 @@ cmake -G "$MAKEFILES_TYPE" . \
+       -DDIGIKAMSC_COMPILE_LIBKGEOMAP=ON \
+       -DDIGIKAMSC_COMPILE_LIBMEDIAWIKI=ON \
+       -DDIGIKAMSC_COMPILE_LIBKVKONTAKTE=ON \
++      -DENABLE_OPENCV3=OFF \
+       -DENABLE_LCMS2=ON \
+       -DENABLE_BALOOSUPPORT=ON \
+       -DENABLE_KDEPIMLIBSSUPPORT=ON \
+diff -Naupr a/bootstrap.local b/bootstrap.local
+--- a/bootstrap.local	2015-09-03 23:22:44.000000000 +0200
++++ b/bootstrap.local	2015-09-05 21:19:18.000000000 +0200
+@@ -1,6 +1,6 @@
+ #!/bin/sh
+ 
+-# Copyright (c) 2008-2014, Gilles Caulier, <caulier dot gilles at gmail dot com>
++# Copyright (c) 2008-2015, Gilles Caulier, <caulier dot gilles at gmail dot com>
+ # Copyright (c)      2012, Benjamin Girault <benjamin dot girault at gmail dot com>
+ #
+ # Redistribution and use is allowed according to the terms of the BSD license.
+@@ -66,6 +66,7 @@ cmake -G "$MAKEFILES_TYPE" . \
+       -DDIGIKAMSC_COMPILE_LIBKGEOMAP=OFF \
+       -DDIGIKAMSC_COMPILE_LIBMEDIAWIKI=OFF \
+       -DDIGIKAMSC_COMPILE_LIBKVKONTAKTE=OFF \
++      -DENABLE_OPENCV3=OFF \
+       -DENABLE_LCMS2=ON \
+       -DENABLE_BALOOSUPPORT=ON \
+       -DENABLE_KDEPIMLIBSSUPPORT=ON \
+diff -Naupr a/bootstrap.macports b/bootstrap.macports
+--- a/bootstrap.macports	2015-09-03 23:22:44.000000000 +0200
++++ b/bootstrap.macports	2015-09-05 21:19:18.000000000 +0200
+@@ -67,6 +67,7 @@ cmake -G "$MAKEFILES_TYPE" . \
+       -DDIGIKAMSC_COMPILE_LIBKGEOMAP=ON \
+       -DDIGIKAMSC_COMPILE_LIBMEDIAWIKI=ON \
+       -DDIGIKAMSC_COMPILE_LIBKVKONTAKTE=ON \
++      -DENABLE_OPENCV3=OFF \
+       -DENABLE_LCMS2=ON \
+       -DENABLE_BALOOSUPPORT=OFF \
+       -DENABLE_KDEPIMLIBSSUPPORT=OFF \
+diff -Naupr a/bootstrap.msvc.bat b/bootstrap.msvc.bat
+--- a/bootstrap.msvc.bat	2015-09-03 23:22:44.000000000 +0200
++++ b/bootstrap.msvc.bat	2015-09-05 21:19:18.000000000 +0200
+@@ -39,6 +39,7 @@ cmake -G "NMake Makefiles" . ^
+       -DDIGIKAMSC_COMPILE_LIBKGEOMAP=OFF ^
+       -DDIGIKAMSC_COMPILE_LIBMEDIAWIKI=OFF ^
+       -DDIGIKAMSC_COMPILE_LIBKVKONTAKTE=OFF ^
++      -DENABLE_OPENCV3=OFF ^
+       -DENABLE_LCMS2=OFF ^
+       -DENABLE_MYSQLSUPPORT=OFF ^
+       -DENABLE_INTERNALMYSQL=OFF ^
+diff -Naupr a/core/CMakeLists.txt b/core/CMakeLists.txt
+--- a/core/CMakeLists.txt	2015-09-03 23:22:45.000000000 +0200
++++ b/core/CMakeLists.txt	2015-09-05 23:37:24.000000000 +0200
+@@ -12,6 +12,7 @@ message(STATUS "Starting CMake configura
+ 
+ option(ENABLE_INTERNALMYSQL     "Build digiKam with internal MySQL server executable (default=OFF)"              OFF)
+ option(ENABLE_LCMS2             "Build digiKam with LCMS2 instead LCMS1 (default=OFF)"                           OFF)
++option(ENABLE_OPENCV3           "Build digiKam with OpenCV3 instead OpenCV2 (default=OFF)"                       OFF)
+ option(ENABLE_BALOOSUPPORT      "Build digiKam with Baloo support (default=ON)"                                  ON)
+ option(ENABLE_KDEPIMLIBSSUPPORT "Build digiKam with Kdepimlibs support (default=OFF)"                            OFF)
+ 
+@@ -28,11 +29,11 @@ option(ENABLE_IMGLOADERDEBUGMSG "Build d
+ 
+ # digiKam version
+ set(DIGIKAM_MAJOR_VERSION "4")
+-set(DIGIKAM_MINOR_VERSION "13")
++set(DIGIKAM_MINOR_VERSION "14")
+ set(DIGIKAM_PATCH_VERSION "0")
+ 
+ #digiKam release date
+-set(DIGIKAM_RELEASE_DATE "2015-08-30")
++set(DIGIKAM_RELEASE_DATE "2015-09-27")
+ 
+ # Suffix to add at end of version string. Usual values are:
+ # "-git"   : alpha code unstable from git. Do not use in production
+@@ -122,8 +123,27 @@ find_package(Boost)
+ 
+ # -- check OpenCV --------------------------------------------------------------------------------
+ 
+-set(OPENCV_MIN_VERSION "2.4.9")
+-DETECT_OPENCV(${OPENCV_MIN_VERSION}  core highgui objdetect contrib legacy imgproc)
++if(ENABLE_OPENCV3)
++
++    set(OPENCV_MIN_VERSION "3.0.0")
++    DETECT_OPENCV(${OPENCV_MIN_VERSION} core face highgui objdetect imgproc)
++
++    if(${OpenCV_VERSION} VERSION_LESS 3.0.0)
++        message(STATUS "ENABLE_OPENCV3 option is enabled and OpenCV < 3.0.0 have been found. Disabled ENABLE_OPENCV3")
++        set(OpenCV_FOUND FALSE)
++    endif()
++
++else()
++
++    set(OPENCV_MIN_VERSION "2.4.9")
++    DETECT_OPENCV(${OPENCV_MIN_VERSION} core highgui objdetect contrib legacy imgproc)
++
++    if(${OpenCV_VERSION} VERSION_GREATER 2.4.11)
++        message(STATUS "ENABLE_OPENCV3 option is disabled and OpenCV >= 3.0.0 have been found. Enabled ENABLE_OPENCV3")
++        set(OpenCV_FOUND FALSE)
++    endif()
++
++endif()
+ 
+ # -- check the libkdcraw version -----------------------------------------------------------------
+ 
+diff -Naupr a/core/ChangeLog b/core/ChangeLog
+diff -Naupr a/core/NEWS b/core/NEWS
+\ Manca newline alla fine del file
+diff -Naupr a/core/README b/core/README
+--- a/core/README	2015-09-03 23:22:45.000000000 +0200
++++ b/core/README	2015-09-05 23:37:24.000000000 +0200
+@@ -122,6 +122,9 @@ CMake compilation options to custom digi
+ Use CMake "-DENABLE_LCMS2=on"             flag to compile digiKam source code using lcms2 instead lcms1                          (disabled by default).
+ Use CMake "-DENABLE_BALOOSUPPORT=on"      flag to compile digiKam with Baloo support                                             (disabled by default).
+ Use CMake "-DENABLE_KDEPIMLIBSSUPPORT=on" flag to compile digiKam with KdePimLibs support                                        (disabled by default).
++Use CMake "-DENABLE_OPENCV3=on"           flag to compile digiKam source code using OpenCV3 instead OpenCV2                     (disabled by default).
++                                          OpenCV3 support needs extra contrib modules package, especially 'face'
++                                          and 'legacy' components.
+ 
+ Mysql support options (experimental):
+ 
+diff -Naupr a/core/app/utils/libopencv.h b/core/app/utils/libopencv.h
+--- a/core/app/utils/libopencv.h	2015-09-03 23:22:45.000000000 +0200
++++ b/core/app/utils/libopencv.h	2015-09-05 23:37:24.000000000 +0200
+@@ -7,7 +7,7 @@
+  * @date   2010-06-16
+  * @brief  Wrapper for OpenCV header files
+  *
+- * @author Copyright (C) 2012-2014 by Gilles Caulier
++ * @author Copyright (C) 2012-2015 by Gilles Caulier
+  *         <a href="mailto:caulier dot gilles at gmail dot com">caulier dot gilles at gmail dot com</a>
+  *
+  * This program is free software; you can redistribute it
+@@ -46,17 +46,19 @@
+ 
+ #define OPENCV_MAKE_VERSION(major,minor,patch) (((major) << 16) | ((minor) << 8) | (patch))
+ #define OPENCV_VERSION                         OPENCV_MAKE_VERSION(CV_MAJOR_VERSION,CV_MINOR_VERSION,CV_SUBMINOR_VERSION)
+-#define OPENCV_TEST_VERSION(major,minor,patch) ( OPENCV_VERSION >= OPENCV_MAKE_VERSION(major,minor,patch) )
++#define OPENCV_TEST_VERSION(major,minor,patch) ( OPENCV_VERSION < OPENCV_MAKE_VERSION(major,minor,patch) )
+ 
+-#if OPENCV_TEST_VERSION(2,3,0)
++#if OPENCV_TEST_VERSION(2,5,0)
+ #   include <opencv2/opencv.hpp>
+ #   include <opencv2/legacy/compat.hpp>
+ #   include <opencv/cvaux.h>
++#   include <opencv2/imgproc/imgproc.hpp>
+ #else
+ #   include <opencv/cv.h>
+ #   include <opencv/cvaux.h>
+ #   include <opencv/cxcore.h>
+ #   include <opencv/highgui.h>
++#   include <opencv2/imgproc.hpp>
+ #endif
+ 
+ // Restore warnings
+diff -Naupr a/core/libs/database/imgqsort/imgqsort.cpp b/core/libs/database/imgqsort/imgqsort.cpp
+--- a/core/libs/database/imgqsort/imgqsort.cpp	2015-09-03 23:22:45.000000000 +0200
++++ b/core/libs/database/imgqsort/imgqsort.cpp	2015-09-05 23:37:24.000000000 +0200
+@@ -282,10 +282,15 @@ void ImgQSort::readImage() const
+ 
+     MixerFilter mixer(&d->image, 0L, settings);
+     mixer.startFilterDirectly();
+-
+     d->image.putImageData(mixer.getTargetImage().bits());
++
++#if OPENCV_TEST_VERSION(3,0,0)
+     d->src      = cvCreateMat(d->image.numPixels(), 3, CV_8UC3); // Create a matrix containing the pixel values of original image
+     d->src_gray = cvCreateMat(d->image.numPixels(), 1, CV_8UC1); // Create a matrix containing the pixel values of grayscaled image
++#else
++    d->src      = Mat(d->image.numPixels(), 3, CV_8UC3); // Create a matrix containing the pixel values of original image
++    d->src_gray = Mat(d->image.numPixels(), 1, CV_8UC1); // Create a matrix containing the pixel values of grayscaled image
++#endif
+ 
+     if (d->imq.detectNoise)
+     {
+@@ -655,7 +660,12 @@ int ImgQSort::compressiondetector() cons
+     int countblocks      = 0;
+     int number_of_blocks = 0;
+     int sum              = 0;
++
++#if OPENCV_TEST_VERSION(3,0,0)
+     vector<int> average_bottom, average_middle, average_top;
++#else
++    std::vector<int> average_bottom, average_middle, average_top;
++#endif
+ 
+     // Go through 8 blocks at a time horizontally
+     // iterating through columns.
+@@ -792,7 +802,13 @@ int ImgQSort::compressiondetector() cons
+ int ImgQSort::exposureamount() const
+ {
+     /// Separate the image in 3 places ( B, G and R )
++
++#if OPENCV_TEST_VERSION(3,0,0)
+     vector<Mat> bgr_planes;
++#else
++    std::vector<Mat> bgr_planes;
++#endif
++
+     split(d->src, bgr_planes);
+ 
+     /// Establish the number of bins
+diff -Naupr a/core/project/NEWS.4.13.0 b/core/project/NEWS.4.13.0
+diff -Naupr a/download-repos b/download-repos
+diff -Naupr a/extra/kipi-plugins/CMakeLists.txt b/extra/kipi-plugins/CMakeLists.txt
+--- a/extra/kipi-plugins/CMakeLists.txt	2015-09-03 23:22:45.000000000 +0200
++++ b/extra/kipi-plugins/CMakeLists.txt	2015-09-05 23:36:50.000000000 +0200
+@@ -1,4 +1,3 @@
+-cmake_minimum_required(VERSION 2.8.9)
+ #
+ # Copyright (c) 2010-2015, Gilles Caulier, <caulier dot gilles at gmail dot com>
+ #
+@@ -11,16 +10,18 @@ project(kipi-plugins)
+ message(STATUS "----------------------------------------------------------------------------------")
+ message(STATUS "Starting CMake configuration for: kipi-plugins")
+ 
++option(ENABLE_OPENCV3 "Build kipi-plugins with OpenCV3 instead OpenCV2 (default=OFF)" OFF)
++
+ # =======================================================
+ # Information to update before to release this package.
+ 
+ # kipi-plugins version
+ set(KIPIPLUGINS_MAJOR_VERSION "4")
+-set(KIPIPLUGINS_MINOR_VERSION "13")
++set(KIPIPLUGINS_MINOR_VERSION "14")
+ set(KIPIPLUGINS_PATCH_VERSION "0")
+ 
+ # kipi-plugins release date
+-set(KIPIPLUGINS_RELEASE_DATE "2015-08-30")
++set(KIPIPLUGINS_RELEASE_DATE "2015-09-27")
+ 
+ # Suffix to add at end of version string. Usual values are:
+ # "-git"   : alpha code unstable from git. Do not use in production
+@@ -165,8 +166,28 @@ if(KIPI_FOUND)
+ 
+     include(MacroUtils)
+     include(MacroOpenCV)
+-    set(OPENCV_MIN_VERSION "2.4.9")
+-    DETECT_OPENCV(${OPENCV_MIN_VERSION} core highgui objdetect contrib legacy imgproc)
++
++    if(ENABLE_OPENCV3)
++
++        set(OPENCV_MIN_VERSION "3.0.0")
++        DETECT_OPENCV(${OPENCV_MIN_VERSION} core face highgui objdetect imgproc)
++
++        if(${OpenCV_VERSION} VERSION_LESS 3.0.0)
++            message(STATUS "ENABLE_OPENCV3 option is enabled and OpenCV < 3.0.0 have been found. Disabled ENABLE_OPENCV3")
++            set(OpenCV_FOUND FALSE)
++        endif()
++
++    else()
++
++        set(OPENCV_MIN_VERSION "2.4.9")
++        DETECT_OPENCV(${OPENCV_MIN_VERSION} core highgui objdetect contrib legacy imgproc)
++
++        if(${OpenCV_VERSION} VERSION_GREATER 2.4.11)
++            message(STATUS "ENABLE_OPENCV3 option is disabled and OpenCV >= 3.0.0 have been found. Enabled ENABLE_OPENCV3")
++            set(OpenCV_FOUND FALSE)
++        endif()
++
++    endif()
+ 
+     include(MacroOptionalDependPackage)
+ 
+diff -Naupr a/extra/kipi-plugins/NEWS b/extra/kipi-plugins/NEWS
+\ Manca newline alla fine del file
+diff -Naupr a/extra/kipi-plugins/README b/extra/kipi-plugins/README
+--- a/extra/kipi-plugins/README	2015-09-03 23:22:45.000000000 +0200
++++ b/extra/kipi-plugins/README	2015-09-05 23:36:50.000000000 +0200
+@@ -140,6 +140,12 @@ http://bugs.kde.org/buglist.cgi?product=
+ 
+ -- INSTALL ------------------------------------------------------------
+ 
++CMake compilation options to custom digiKam:
++
++Use CMake "-DENABLE_OPENCV3=on"           flag to compile kipi-plugins source code using OpenCV3 instead OpenCV2                     (disabled by default).
++                                          OpenCV3 support needs extra contrib modules package, especially 'face'
++                                          and 'legacy' components.
++
+ In order to compile, especially when QT3/Qt4 are installed at the same time, 
+ just use something like that:
+ 
+diff -Naupr a/extra/kipi-plugins/removeredeyes/CMakeLists.txt b/extra/kipi-plugins/removeredeyes/CMakeLists.txt
+--- a/extra/kipi-plugins/removeredeyes/CMakeLists.txt	2015-09-03 23:22:45.000000000 +0200
++++ b/extra/kipi-plugins/removeredeyes/CMakeLists.txt	2015-09-05 23:36:50.000000000 +0200
+@@ -1,5 +1,5 @@
+ #
+-# Copyright (c) 2010-2014, Gilles Caulier, <caulier dot gilles at gmail dot com>
++# Copyright (c) 2010-2015, Gilles Caulier, <caulier dot gilles at gmail dot com>
+ #
+ # Redistribution and use is allowed according to the terms of the BSD license.
+ # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+diff -Naupr a/extra/kipi-plugins/removeredeyes/detection/locators/haarclassifier/haarclassifierlocator.cpp b/extra/kipi-plugins/removeredeyes/detection/locators/haarclassifier/haarclassifierlocator.cpp
+--- a/extra/kipi-plugins/removeredeyes/detection/locators/haarclassifier/haarclassifierlocator.cpp	2015-09-03 23:22:45.000000000 +0200
++++ b/extra/kipi-plugins/removeredeyes/detection/locators/haarclassifier/haarclassifierlocator.cpp	2015-09-05 23:36:50.000000000 +0200
+@@ -90,6 +90,15 @@ const QString HaarClassifierLocator::Pri
+ 
+ // --------------------------------------------------------
+ 
++#if !(OPENCV_TEST_VERSION(2,5,0))
++
++static void cvFillImage(CvArr* const mat, double color)
++{
++    cvSet(mat, cvColorToScalar(color, cvGetElemType(mat)), 0);
++}
++
++#endif
++
+ int HaarClassifierLocator::findPossibleEyes(double csf, int ngf, const char* classifierFile)
+ {
+     // eyes sequence will reside in the storage
+diff -Naupr a/extra/kipi-plugins/removeredeyes/plugin/libopencv.h b/extra/kipi-plugins/removeredeyes/plugin/libopencv.h
+--- a/extra/kipi-plugins/removeredeyes/plugin/libopencv.h	2015-09-03 23:22:45.000000000 +0200
++++ b/extra/kipi-plugins/removeredeyes/plugin/libopencv.h	2015-09-05 23:36:50.000000000 +0200
+@@ -7,7 +7,7 @@
+  * @date   2010-06-16
+  * @brief  Wrapper for OpenCV header files
+  *
+- * @author Copyright (C) 2012-2014 by Gilles Caulier
++ * @author Copyright (C) 2012-2015 by Gilles Caulier
+  *         <a href="mailto:caulier dot gilles at gmail dot com">caulier dot gilles at gmail dot com</a>
+  *
+  * This program is free software; you can redistribute it
+@@ -53,12 +53,13 @@
+ 
+ #define OPENCV_MAKE_VERSION(major,minor,patch) (((major) << 16) | ((minor) << 8) | (patch))
+ #define OPENCV_VERSION                         OPENCV_MAKE_VERSION(CV_MAJOR_VERSION,CV_MINOR_VERSION,CV_SUBMINOR_VERSION)
+-#define OPENCV_TEST_VERSION(major,minor,patch) ( OPENCV_VERSION >= OPENCV_MAKE_VERSION(major,minor,patch) )
++#define OPENCV_TEST_VERSION(major,minor,patch) ( OPENCV_VERSION < OPENCV_MAKE_VERSION(major,minor,patch) )
+ 
+-#if OPENCV_TEST_VERSION(2,3,0)
++#include <opencv2/core/core_c.h>
++
++#if OPENCV_TEST_VERSION(2,5,0)
+ #include <opencv2/opencv.hpp>
+ #include <opencv2/highgui/highgui_c.h>
+-#include <opencv2/core/core_c.h>
+ #include <opencv2/legacy/compat.hpp>
+ #include <opencv/cvaux.h>
+ #else
+diff -Naupr a/extra/kipi-plugins/removeredeyes/test/CMakeLists.txt b/extra/kipi-plugins/removeredeyes/test/CMakeLists.txt
+--- a/extra/kipi-plugins/removeredeyes/test/CMakeLists.txt	2015-09-03 23:22:45.000000000 +0200
++++ b/extra/kipi-plugins/removeredeyes/test/CMakeLists.txt	2015-09-05 23:36:50.000000000 +0200
+@@ -1,10 +1,10 @@
+ #
+-# Copyright (c) 2010-2014, Gilles Caulier, <caulier dot gilles at gmail dot com>
++# Copyright (c) 2010-2015, Gilles Caulier, <caulier dot gilles at gmail dot com>
+ #
+ # Redistribution and use is allowed according to the terms of the BSD license.
+ # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+ 
+-if(NOT WIN32)
++if(NOT WIN32 AND (${OpenCV_VERSION} VERSION_LESS 3.0.0))
+ 
+     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../plugin
+                         ${CMAKE_CURRENT_SOURCE_DIR}/../libcvblobs
+diff -Naupr a/extra/libkface/CMakeLists.txt b/extra/libkface/CMakeLists.txt
+--- a/extra/libkface/CMakeLists.txt	2015-09-03 23:22:44.000000000 +0200
++++ b/extra/libkface/CMakeLists.txt	2015-09-05 23:35:49.000000000 +0200
+@@ -10,6 +10,8 @@ project(libkface)
+ message(STATUS "----------------------------------------------------------------------------------")
+ message(STATUS "Starting CMake configuration for: libkface")
+ 
++option(ENABLE_OPENCV3 "Build libkface with OpenCV3 instead OpenCV2 (default=OFF)" OFF)
++
+ find_package(Qt4 4.6.0 REQUIRED)
+ find_package(KDE4 REQUIRED)
+ 
+@@ -30,7 +32,26 @@ add_definitions(-DKDE_DEFAULT_DEBUG_AREA
+ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
+ 
+ include(MacroOpenCV)
+-DETECT_OPENCV(2.4.9 core highgui objdetect contrib legacy imgproc)
++
++if(ENABLE_OPENCV3)
++
++    DETECT_OPENCV(3.0.0 core face highgui objdetect imgproc)
++
++    if(${OpenCV_VERSION} VERSION_LESS 3.0.0)
++        message(STATUS "ENABLE_OPENCV3 option is enabled and OpenCV < 3.0.0 have been found. Disabled ENABLE_OPENCV3")
++        set(OpenCV_FOUND FALSE)
++    endif()
++
++else()
++
++    DETECT_OPENCV(2.4.9 core highgui objdetect contrib legacy imgproc)
++
++    if(${OpenCV_VERSION} VERSION_GREATER 2.4.11)
++        message(STATUS "ENABLE_OPENCV3 option is disabled and OpenCV >= 3.0.0 have been found. Enabled ENABLE_OPENCV3")
++        set(OpenCV_FOUND FALSE)
++    endif()
++
++endif()
+ 
+ include_directories(${OpenCV_INCLUDE_DIRS})
+ 
+@@ -49,11 +70,12 @@ if(OpenCV_FOUND)
+     # 3.3.0 => 2.0.0     (Added a "simple" training method using image data directly for a single image)
+     # 3.4.0 => 2.0.0     (Added a "simple" training method using image data directly for an image list)
+     # 3.5.0 => 3.0.0     (Added d private internal container to reduce binary uncompatibility with Identity class)
++    # 3.5.1 => 3.0.0     (Added OpenCV3 support)
+ 
+     # Library API version
+     set(KFACE_LIB_MAJOR_VERSION "3")
+     set(KFACE_LIB_MINOR_VERSION "5")
+-    set(KFACE_LIB_PATCH_VERSION "0")
++    set(KFACE_LIB_PATCH_VERSION "1")
+ 
+     # Suffix to add at end of version string. Usual values are:
+     # "-git"   : alpha code unstable from git. Do not use in production
+diff -Naupr a/extra/libkface/README b/extra/libkface/README
+--- a/extra/libkface/README	2015-09-03 23:22:44.000000000 +0200
++++ b/extra/libkface/README	2015-09-05 23:35:49.000000000 +0200
+@@ -21,6 +21,11 @@ libqt      >= 4.6.x                    h
+ libkde     >= 4.4.x                    http://www.kde.org
+ libopencv  >= 2.4.9                    http://opencv.willowgarage.com/wiki    (with opencv 'haarcascades' data files)
+ 
++CMake compilation options to custom libkface:
++
++Use CMake "-DENABLE_OPENCV3=on"        flag to compile libkface source code using OpenCV3 instead OpenCV2 (disabled by default).
++                                       OpenCV3 support needs extra contrib modules package, especially 'face' and 'legacy' components.
++
+ -- INSTALL ------------------------------------------------------------
+ 
+ In order to compile, especially when QT3/Qt4 are installed at the same time,
+diff -Naupr a/extra/libkface/libkface/CMakeLists.txt b/extra/libkface/libkface/CMakeLists.txt
+--- a/extra/libkface/libkface/CMakeLists.txt	2015-09-03 23:22:44.000000000 +0200
++++ b/extra/libkface/libkface/CMakeLists.txt	2015-09-05 23:35:49.000000000 +0200
+@@ -1,5 +1,5 @@
+ #
+-# Copyright (c) 2010-2014, Gilles Caulier, <caulier dot gilles at gmail dot com>
++# Copyright (c) 2010-2015, Gilles Caulier, <caulier dot gilles at gmail dot com>
+ #
+ # Redistribution and use is allowed according to the terms of the BSD license.
+ # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+diff -Naupr a/extra/libkface/libkface/detection/opencvfacedetector.cpp b/extra/libkface/libkface/detection/opencvfacedetector.cpp
+--- a/extra/libkface/libkface/detection/opencvfacedetector.cpp	2015-09-03 23:22:44.000000000 +0200
++++ b/extra/libkface/libkface/detection/opencvfacedetector.cpp	2015-09-05 23:35:49.000000000 +0200
+@@ -18,7 +18,7 @@
+  *         <a href="alexjironkin at gmail dot com">alexjironkin at gmail dot com</a>
+  * @author Copyright (C) 2010 by Aditya Bhatt
+  *         <a href="adityabhatt at gmail dot com">adityabhatt at gmail dot com</a>
+- * @author Copyright (C) 2010-2014 by Gilles Caulier
++ * @author Copyright (C) 2010-2015 by Gilles Caulier
+  *         <a href="mailto:caulier dot gilles at gmail dot com">caulier dot gilles at gmail dot com</a>
+  * @author Copyright (C) 2010-2013 by Marcel Wiesweg
+  *         <a href="mailto:marcel dot wiesweg at gmx dot de">marcel dot wiesweg at gmx dot de</a>
+@@ -136,13 +136,14 @@ public:
+ 
+     cv::Size getOriginalWindowSize() const
+     {
++#if OPENCV_VERSION <= OPENCV_MAKE_VERSION(2,4,11)
+         // This is a HACK which may break any time. Work around the fact that getOriginalWindowSize()
+         // always returns (0,0) and we need these values.
+         if (oldCascade)
+         {
+             return oldCascade->orig_window_size;
+         }
+-
++#endif
+         return cv::Size(0, 0);
+     }
+ 
+diff -Naupr a/extra/libkface/libkface/libopencv.h.cmake.in b/extra/libkface/libkface/libopencv.h.cmake.in
+--- a/extra/libkface/libkface/libopencv.h.cmake.in	2015-09-03 23:22:44.000000000 +0200
++++ b/extra/libkface/libkface/libopencv.h.cmake.in	2015-09-05 23:35:49.000000000 +0200
+@@ -7,7 +7,7 @@
+  * @date   2010-06-16
+  * @brief  Wrapper for OpenCV header files
+  *
+- * @author Copyright (C) 2012-2014 by Gilles Caulier
++ * @author Copyright (C) 2012-2015 by Gilles Caulier
+  *         <a href="mailto:caulier dot gilles at gmail dot com">caulier dot gilles at gmail dot com</a>
+  *
+  * This program is free software; you can redistribute it
+@@ -31,16 +31,16 @@
+ 
+ // Pragma directives to reduce warnings from OpenCV header files.
+ #if not defined(__APPLE__) && defined(__GNUC__)
+-#pragma GCC diagnostic push
+-#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
+-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
++#   pragma GCC diagnostic push
++#   pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
++#   pragma GCC diagnostic ignored "-Woverloaded-virtual"
+ #endif
+ 
+ #if defined(__APPLE__) && defined(__clang__)
+-#pragma clang diagnostic push
+-#pragma clang diagnostic ignored "-Wnon-virtual-dtor"
+-#pragma clang diagnostic ignored "-Woverloaded-virtual"
+-#pragma clang diagnostic ignored "-Wcast-align"
++#   pragma clang diagnostic push
++#   pragma clang diagnostic ignored "-Wnon-virtual-dtor"
++#   pragma clang diagnostic ignored "-Woverloaded-virtual"
++#   pragma clang diagnostic ignored "-Wcast-align"
+ #endif
+ 
+ // OpenCV includes
+@@ -51,23 +51,30 @@
+ #define OPENCV_VERSION                         OPENCV_MAKE_VERSION(CV_MAJOR_VERSION,CV_MINOR_VERSION,CV_SUBMINOR_VERSION)
+ #define OPENCV_TEST_VERSION(major,minor,patch) ( OPENCV_VERSION >= OPENCV_MAKE_VERSION(major,minor,patch) )
+ 
+-#include <opencv2/core/core.hpp>
+-#include <opencv2/core/internal.hpp>
+-#include <opencv2/contrib/contrib.hpp>
++#if OPENCV_TEST_VERSION(3,0,0)
++#   include <opencv2/face.hpp>
++#   include <opencv2/core.hpp>
++#else
++#   include <opencv2/core/core.hpp>
++#   include <opencv2/core/internal.hpp>
++#   include <opencv2/contrib/contrib.hpp>
++#endif
+ 
+ // for old-style code
++#if OPENCV_VERSION <= OPENCV_MAKE_VERSION(2,4,11)
++#   include <opencv2/legacy/compat.hpp>
++#endif
+ #include <opencv2/opencv.hpp>
+-#include <opencv2/legacy/compat.hpp>
+ #include <opencv2/highgui/highgui_c.h>
+ #include <opencv/cvaux.h>
+ 
+ // Restore warnings
+ #if not defined(__APPLE__) && defined(__GNUC__)
+-#pragma GCC diagnostic pop
++#   pragma GCC diagnostic pop
+ #endif
+ 
+ #if defined(__APPLE__) && defined(__clang__)
+-#pragma clang diagnostic pop
++#   pragma clang diagnostic pop
+ #endif
+ 
+ #endif // LIB_OPEN_CV_H
+diff -Naupr a/extra/libkface/libkface/recognition-opencv-lbph/facerec_borrowed.cpp b/extra/libkface/libkface/recognition-opencv-lbph/facerec_borrowed.cpp
+--- a/extra/libkface/libkface/recognition-opencv-lbph/facerec_borrowed.cpp	2015-09-03 23:22:44.000000000 +0200
++++ b/extra/libkface/libkface/recognition-opencv-lbph/facerec_borrowed.cpp	2015-09-05 23:35:49.000000000 +0200
+@@ -531,14 +531,16 @@ Ptr<LBPHFaceRecognizer> LBPHFaceRecogniz
+     return ptr;
+ }
+ 
+-CV_INIT_ALGORITHM(LBPHFaceRecognizer, "FaceRecognizer.LBPH-KFaceIface",
+-                  obj.info()->addParam(obj, "radius",     obj.m_radius);
+-                  obj.info()->addParam(obj, "neighbors",  obj.m_neighbors);
+-                  obj.info()->addParam(obj, "grid_x",     obj.m_grid_x);
+-                  obj.info()->addParam(obj, "grid_y",     obj.m_grid_y);
+-                  obj.info()->addParam(obj, "threshold",  obj.m_threshold);
+-                  obj.info()->addParam(obj, "histograms", obj.m_histograms);         // modification: Make Read/Write
+-                  obj.info()->addParam(obj, "labels",     obj.m_labels);             // modification: Make Read/Write
+-                  obj.info()->addParam(obj, "statistic",  obj.m_statisticsMode));    // modification: Add parameter
++#if OPENCV_VERSION <= OPENCV_MAKE_VERSION(2,4,11)
++    CV_INIT_ALGORITHM(LBPHFaceRecognizer, "FaceRecognizer.LBPH-KFaceIface",
++                      obj.info()->addParam(obj, "radius",     obj.m_radius);
++                      obj.info()->addParam(obj, "neighbors",  obj.m_neighbors);
++                      obj.info()->addParam(obj, "grid_x",     obj.m_grid_x);
++                      obj.info()->addParam(obj, "grid_y",     obj.m_grid_y);
++                      obj.info()->addParam(obj, "threshold",  obj.m_threshold);
++                      obj.info()->addParam(obj, "histograms", obj.m_histograms);         // modification: Make Read/Write
++                      obj.info()->addParam(obj, "labels",     obj.m_labels);             // modification: Make Read/Write
++                      obj.info()->addParam(obj, "statistic",  obj.m_statisticsMode));    // modification: Add parameter
++#endif
+ 
+ } // namespace KFaceIface
+diff -Naupr a/extra/libkface/libkface/recognition-opencv-lbph/facerec_borrowed.h b/extra/libkface/libkface/recognition-opencv-lbph/facerec_borrowed.h
+--- a/extra/libkface/libkface/recognition-opencv-lbph/facerec_borrowed.h	2015-09-03 23:22:44.000000000 +0200
++++ b/extra/libkface/libkface/recognition-opencv-lbph/facerec_borrowed.h	2015-09-05 23:35:49.000000000 +0200
+@@ -45,7 +45,11 @@
+ namespace KFaceIface
+ {
+ 
++#if OPENCV_TEST_VERSION(3,0,0)
++class LBPHFaceRecognizer : public cv::face::FaceRecognizer
++#else
+ class LBPHFaceRecognizer : public cv::FaceRecognizer
++#endif
+ {
+ public:
+ 
+@@ -99,8 +103,13 @@ public:
+ 
+     ~LBPHFaceRecognizer() {}
+ 
++#if OPENCV_TEST_VERSION(3,0,0)
++    using cv::face::FaceRecognizer::save;
++    using cv::face::FaceRecognizer::load;
++#else
+     using cv::FaceRecognizer::save;
+     using cv::FaceRecognizer::load;
++#endif
+ 
+     static cv::Ptr<LBPHFaceRecognizer> create(int radius=1, int neighbors=8, int grid_x=8, int grid_y=8, double threshold = DBL_MAX, PredictionStatistics statistics = NearestNeighbor);
+ 
+@@ -139,6 +148,34 @@ public:
+     /**
+      * Getter functions.
+      */
++#if OPENCV_TEST_VERSION(3,0,0)
++
++    int getNeighbors() const                             { return m_neighbors;            }
++    void setNeighbors(int _neighbors)                    { m_neighbors = _neighbors;      }
++
++    int getRadius()    const                             { return m_radius;               }
++    void setRadius(int radius)                           { m_radius = radius;             }
++
++    int getGrid_x()    const                             { return m_grid_x;               }
++    void setGrid_x(int _grid_x)                          { m_grid_x = _grid_x;            }
++
++    int getGrid_y()    const                             { return m_grid_y;               }
++    void setGrid_y(int _grid_y)                          { m_grid_y = _grid_y;            }
++
++    double getThreshold() const                          { return m_threshold;            }
++    void setThreshold(double _threshold)                 { m_threshold = _threshold;      }
++
++    void setHistograms(std::vector<cv::Mat> _histograms) { m_histograms = _histograms;    }
++    std::vector<cv::Mat> getHistograms() const           { return m_histograms;           }
++
++    void setLabels(cv::Mat _labels)                      { m_labels = _labels;            }
++    cv::Mat getLabels() const                            { return m_labels;               }
++
++    void setStatistic(int _statistic)                    { m_statisticsMode = _statistic; }
++    int getStatistic() const                             { return m_statisticsMode;       }
++
++#else
++
+     int neighbors() const { return m_neighbors; }
+     int radius()    const { return m_radius;    }
+     int grid_x()    const { return m_grid_x;    }
+@@ -147,6 +184,8 @@ public:
+     // NOTE: Implementation done through CV_INIT_ALGORITHM macro from OpenCV.
+     cv::AlgorithmInfo* info() const;
+ 
++#endif
++
+ private:
+ 
+     /** Computes a LBPH model with images in src and
+diff -Naupr a/extra/libkface/libkface/recognition-opencv-lbph/lbphfacemodel.cpp b/extra/libkface/libkface/recognition-opencv-lbph/lbphfacemodel.cpp
+--- a/extra/libkface/libkface/recognition-opencv-lbph/lbphfacemodel.cpp	2015-09-03 23:22:44.000000000 +0200
++++ b/extra/libkface/libkface/recognition-opencv-lbph/lbphfacemodel.cpp	2015-09-05 23:35:49.000000000 +0200
+@@ -61,7 +61,11 @@ LBPHFaceModel::LBPHFaceModel()
+     : cv::Ptr<LBPHFaceRecognizer>(LBPHFaceRecognizer::create()),
+       databaseId(0)
+ {
++#if OPENCV_TEST_VERSION(3,0,0)
++    ptr()->setThreshold(100.0);
++#else
+     ptr()->set("threshold", 100.0);
++#endif
+ }
+ 
+ LBPHFaceModel::~LBPHFaceModel()
+@@ -80,9 +84,13 @@ LBPHFaceRecognizer* LBPHFaceModel::ptr()
+ 
+ const LBPHFaceRecognizer* LBPHFaceModel::ptr() const
+ {
++#if OPENCV_TEST_VERSION(3,0,0)
++    const LBPHFaceRecognizer* const ptr = cv::Ptr<LBPHFaceRecognizer>::operator KFaceIface::LBPHFaceRecognizer*();
++#else
+     const LBPHFaceRecognizer* const ptr = cv::Ptr<LBPHFaceRecognizer>::operator const KFaceIface::LBPHFaceRecognizer*();
++#endif
+ 
+-    if (!ptr) 
++    if (!ptr)
+         kWarning() << "LBPHFaceRecognizer pointer is null";
+ 
+     return ptr;
+@@ -90,47 +98,83 @@ const LBPHFaceRecognizer* LBPHFaceModel:
+ 
+ int LBPHFaceModel::radius() const
+ {
++#if OPENCV_TEST_VERSION(3,0,0)
++    return ptr()->getRadius();
++#else
+     return ptr()->get<int>("radius");
++#endif
+ }
+ 
+ void LBPHFaceModel::setRadius(int radius)
+ {
++#if OPENCV_TEST_VERSION(3,0,0)
++    ptr()->setRadius(radius);
++#else
+     ptr()->set("radius", radius);
++#endif
+ }
+ 
+ int LBPHFaceModel::neighbors() const
+ {
++#if OPENCV_TEST_VERSION(3,0,0)
++    return ptr()->getNeighbors();
++#else
+     return ptr()->get<int>("neighbors");
++#endif
+ }
+ 
+ void LBPHFaceModel::setNeighbors(int neighbors)
+ {
++#if OPENCV_TEST_VERSION(3,0,0)
++    ptr()->setNeighbors(neighbors);
++#else
+     ptr()->set("neighbors", neighbors);
++#endif
+ }
+ 
+ int LBPHFaceModel::gridX() const
+ {
++#if OPENCV_TEST_VERSION(3,0,0)
++    return ptr()->getGrid_x();
++#else
+     return ptr()->get<int>("grid_x");
++#endif
+ }
+ 
+ void LBPHFaceModel::setGridX(int grid_x)
+ {
++#if OPENCV_TEST_VERSION(3,0,0)
++    ptr()->setGrid_x(grid_x);
++#else
+     ptr()->set("grid_x", grid_x);
++#endif
+ }
+ 
+ int LBPHFaceModel::gridY() const
+ {
++#if OPENCV_TEST_VERSION(3,0,0)
++    return ptr()->getGrid_y();
++#else
+     return ptr()->get<int>("grid_y");
++#endif
+ }
+ 
+ void LBPHFaceModel::setGridY(int grid_y)
+ {
++#if OPENCV_TEST_VERSION(3,0,0)
++    ptr()->setGrid_y(grid_y);
++#else
+     ptr()->set("grid_y", grid_y);
++#endif
+ }
+ 
+ OpenCVMatData LBPHFaceModel::histogramData(int index) const
+ {
++#if OPENCV_TEST_VERSION(3,0,0)
++    return OpenCVMatData(ptr()->getHistograms().at(index));
++#else
+     return OpenCVMatData(ptr()->get<std::vector<cv::Mat> >("histograms").at(index));
++#endif
+ }
+ 
+ QList<LBPHistogramMetadata> LBPHFaceModel::histogramMetadata() const
+@@ -168,12 +212,24 @@ void LBPHFaceModel::setHistograms(const
+         m_histogramMetadata << metadata;
+     }
+ 
++#if OPENCV_TEST_VERSION(3,0,0)
++    std::vector<cv::Mat> currentHistograms = ptr()->getHistograms();
++    cv::Mat currentLabels                  = ptr()->getLabels();
++#else
+     std::vector<cv::Mat> currentHistograms = ptr()->get<std::vector<cv::Mat> >("histograms");
+     cv::Mat currentLabels                  = ptr()->get<cv::Mat>("labels");
++#endif
++
+     currentHistograms.insert(currentHistograms.end(), newHistograms.begin(), newHistograms.end());
+     currentLabels.push_back(newLabels);
++
++#if OPENCV_TEST_VERSION(3,0,0)
++    ptr()->setHistograms(currentHistograms);
++    ptr()->setLabels(currentLabels);
++#else
+     ptr()->set("histograms", currentHistograms);
+-    ptr()->set("labels", currentLabels);
++    ptr()->set("labels",     currentLabels);
++#endif
+ 
+ /*
+     //Most cumbersome and inefficient way through a file storage which we were forced to use if we used standard OpenCV
+@@ -215,7 +271,11 @@ void LBPHFaceModel::update(const std::ve
+ 
+     // Update local information
+     // We assume new labels are simply appended
++#if OPENCV_TEST_VERSION(3,0,0)
++    cv::Mat currentLabels = ptr()->getLabels();
++#else
+     cv::Mat currentLabels = ptr()->get<cv::Mat>("labels");
++#endif
+ 
+     for (int i = m_histogramMetadata.size() ; i < currentLabels.rows ; i++)
+     {
+diff -Naupr a/project/macosx/bundle/configbundlepkg.sh b/project/macosx/bundle/configbundlepkg.sh
+diff -Naupr a/project/macosx/common/common.sh b/project/macosx/common/common.sh
+diff -Naupr a/project/scripts/bootstrap.opencv-minimal-linux.sh b/project/scripts/bootstrap.opencv-minimal-linux.sh
+--- a/project/scripts/bootstrap.opencv-minimal-linux.sh	2015-09-03 23:22:45.000000000 +0200
++++ b/project/scripts/bootstrap.opencv-minimal-linux.sh	2015-09-05 21:19:18.000000000 +0200
+@@ -56,7 +56,9 @@ export OpenCVOptions='-DCMAKE_BUILD_TYPE
+                       -DWITH_V4L=OFF \
+                       -DWITH_VIDEOINPUT=OFF \
+                       -DWITH_XINE=OFF \
+-                      -DWITH_OPENCL=OFF'
++                      -DWITH_OPENCL=OFF \
++                      -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules ..
++                      '
+ 
+ 
+ cmake -G "$MAKEFILES_TYPE" . \

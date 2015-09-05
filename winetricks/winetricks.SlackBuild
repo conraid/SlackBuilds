@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-winetricks}
 PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
-VERSION=${VERSION:-20150706}
+VERSION=${VERSION:-20150826}
 PKGVERSION=${VERSION//-/_}
 BUILD=${BUILD:-1}
 ARCH=noarch
@@ -49,19 +49,8 @@ rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
 rm -rf ${PRGNAM}-${VERSION}
-
-# Generic extract section
 tar xvf ${CWD}/${PRGNAM}-${VERSION}.tar.gz || tar xvf ${CWD}/v${VERSION}.tar.gz
-
-# Generic "change dir" section
-if [ -d ${PRGNAM}-${VERSION} ]; then
-    cd ${PRGNAM}-${VERSION}
-elif [ -d ${PRGNAM} ]; then
-    cd ${PRGNAM}
-else
-    echo "No source dir found"
-    exit 1 # Or add a command for a specific directory
-fi
+cd ${PRGNAM}-${VERSION}
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .

@@ -1,8 +1,8 @@
 #!/bin/sh
 #
-# Slackware build script for opencv
+# Slackware build script for cppunit
 #
-# Copyright 2009-2015 Corrado Franco (http://conraid.net)
+# Copyright 2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -21,16 +21,18 @@
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-# Exit on most errors or unset variables
+# Exit on most errors
 set -eu
 
 # Set variables:
 CWD=$(pwd)
 
-PRGNAM=${PRGNAM:-opencv}
+PRGNAM=${PRGNAM:-cppunit}
 PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
-VERSION=${VERSION:-3.0.0}
+VERSION=${VERSION:-1.13.2}
 PKGVERSION=$(echo ${VERSION} | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -39,9 +41,9 @@ PKG=${TMP}/package-${PKGNAM}
 PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${PKGVERSION}"
 
 # Insert document files in this variable
-DOCFILES="LICENSE README*"
+DOCFILES="AUTHORS BUGS COPYING ChangeLog INSTALL* NEWS README THANKS TODO CodingGuideLines.txt"
 
-# Automatically determine the architecture we are building on:
+# Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
     i?86) ARCH=i686 ;;
@@ -53,20 +55,17 @@ fi
 
 # Set compiling FLAGS
 case "${ARCH}" in
-  i486)
-  SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
+  i[3-5]86)
+  SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
   SLKLDFLAGS=""; LIBDIRSUFFIX=""
-  CONFSSE="-DENABLE_SSE3=OFF -DENABLE_SSE2=OFF -DENABLE_SSE=OFF"
   ;;
-  i686) # SSE only available from Pentium 3 onwards (i686 is way older)
+  i686)
   SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
   SLKLDFLAGS=""; LIBDIRSUFFIX=""
-  CONFSSE="-DENABLE_SSE3=OFF -DENABLE_SSE2=OFF -DENABLE_SSE=OFF"
   ;;
-  x86_64) # all x64 CPUs support SSE2 but not SSE3
-  SLKCFLAGS="-O2 -fomit-frame-pointer"; CHOST="x86_64"
+  x86_64)
+  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
   SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-  CONFSSE="-DENABLE_SSE3=OFF -DENABLE_SSE2=ON -DENABLE_SSE=ON"
   ;;
   *)
   SLKCFLAGS="-O2"; CHOST=${ARCH}
@@ -79,52 +78,49 @@ rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
 rm -rf ${PRGNAM}-${VERSION}
-# If you download files from the command line be careful because the files could have the same name.
-# Use "wget --content-disposition" or "curl -L"
-tar xvf ${CWD}/${PRGNAM}-${VERSION}.tar.gz
+tar xvf ${CWD}/${PRGNAM}-${VERSION}.tar.gz || tar xvf ${CWD}/v${VERSION}.tar.gz
 cd ${PRGNAM}-${VERSION}
-tar xvf ${CWD}/${PRGNAM}_contrib-${VERSION}.tar.gz 
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Apply patch for unix path
-# http://code.opencv.org/issues/2512
-patch -p1 -i ${CWD}/fsh.patch
+# Make it respect --htmldir.
+sed -i '/^htmldir/d' doc/Makefile.am
 
 # Configure
-mkdir -p build
-cd build
-cmake \
-  -DCMAKE_BUILD_TYPE=None \
-  -DCMAKE_C_FLAGS:STRING="${SLKCFLAGS}" \
-  -DCMAKE_CXX_FLAGS:STRING="${SLKCFLAGS}" \
-  -DCMAKE_INSTALL_PREFIX=/usr \
-  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
-  -DBUILD_EXAMPLES=OFF \
-  -DBUILD_SHARED_LIBS=ON \
-  -DBUILD_WITH_DEBUG_INFO=OFF \
-  -DENABLE_PRECOMPILED_HEADERS=OFF \
-  -DINSTALL_PYTHON_EXAMPLES=OFF \
-  -DWITH_GSTREAMER=ON \
-  -DWITH_OPENCL=ON \
-  -DWITH_QT=ON \
-  -DWITH_XINE=ON \
-  -DWITH_IPP=OFF \
-  -DENABLE_SSE41=OFF \
-  -DENABLE_SSE42=OFF \
-  -DOPENCV_EXTRA_MODULES_PATH=../${PRGNAM}_contrib-${VERSION}/modules \
-  $CONFSSE ..
+autoreconf -vif
+LDFLAGS="${SLKLDFLAGS}" \
+CFLAGS="${SLKCFLAGS}" \
+CXXFLAGS="${SLKCFLAGS}" \
+./configure \
+  --prefix=/usr \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --sysconfdir=/etc \
+  --localstatedir=/var \
+  --mandir=/usr/man \
+  --infodir=/usr/info \
+  --docdir=/usr/doc/${PKGNAM}-${PKGVERSION} \
+  --htmldir=/usr/doc/${PKGNAM}-${PKGVERSION}/html \
+  --enable-static=no \
+  --enable-shared=yes \
+  --disable-dependency-tracking \
+  --host=${CHOST}-slackware-linux \
+  --build=${CHOST}-slackware-linux
 
 # Build and install:
 make
 make DESTDIR=${PKG} install
-cd ..
 
 # Strip binaries:
 find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+
+# Compress and link manpages, if any:
+if [ -d ${PKG}/usr/man ]; then
+  find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+fi
 
 # Add a documentation directory:
 mkdir -p ${PKGDOCDIR}
@@ -139,4 +135,3 @@ install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 # Create package:
 cd ${PKG}
 /sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
-
