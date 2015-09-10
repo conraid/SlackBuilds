@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-httraqt}
 PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
-VERSION=${VERSION:-1.4.5}
+VERSION=${VERSION:-1.4.6}
 PKGVERSION=$(echo ${VERSION} | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -85,8 +85,6 @@ cd ${PRGNAM}
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-sed -i "295s|opt->mms_maxtime|//opt->mms_maxtime|g" sources/main/options.cpp
-
 # Configure
 mkdir -p build
 cd build
@@ -100,7 +98,6 @@ cmake \
 # Build and install:
 make
 make DESTDIR=${PKG} install
-chmod 755 ${PKG}/usr/bin/${PRGNAM}
 cd ..
 
 # Add a documentation directory:

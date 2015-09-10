@@ -9,7 +9,7 @@
 # permitted provided that the following conditions are met:
 #
 # 1. Redistributions of this script must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
+#  notice, this list of conditions and the following disclaimer.
 #
 # THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
 # WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -22,75 +22,60 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Exit on most errors
 set -eu
 
-# Set variables:
-PRGNAME=pmacct
-PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-1.5.1}
-PKGVERSION=$(echo ${VERSION} | tr - _)
+PRGNAM=pmacct
+VERSION=${VERSION:-1.5.2}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 CWD=$(pwd)
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PRGNAME}
+PKG=$TMP/package-$PRGNAM
+DOCDIR="$PKG/usr/doc/$PRGNAM-${VERSION}"
 
-DOCDIR="${PKG}/usr/doc/${PRGNAME}-${VERSION}"
-
-# Insert document files in this variable
 DOCFILES="AUTHORS CONFIG-KEYS COPYING ChangeLog FAQS INSTALL KNOWN-BUGS NEWS QUICKSTART README TOOLS TODO UPGRADE docs examples sql"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
-# Automatically determine the architecture we're building on:
-if [ -z "${ARCH}" ]; then
-    case "$( uname -m )" in
-	i?86) ARCH=i686 ;;
-	arm*) ARCH=arm ;;
-        # Unless ${ARCH} is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
-    esac
+if [ -z ${ARCH:=""} ]; then
+  case "$( uname -m )" in
+  i?86) ARCH=i686 ;;
+  arm*) ARCH=arm ;;
+  *) ARCH=$( uname -m ) ;;
+  esac
 fi
 
-# Set compiling FLAGS
-case "${ARCH}" in
-    i486)
-	SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
-    *)
-	SLKCFLAGS="-O2"; CHOST=${ARCH}
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
-esac
+if [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC"
+  LIBDIRSUFFIX="64"
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+fi
 
-# Extract source and prepare:
-rm -rf ${PKG}
-mkdir -p ${TMP} ${PKG}
-cd ${TMP}
-rm -rf ${PRGNAME}-${VERSION}
-tar xvf ${CWD}/${PRGNAME}-${VERSION}.tar.gz
-cd ${PRGNAME}-${VERSION}
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAM-$VERSION
+tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
+cd $PRGNAM-$VERSION
 
-# Make sure ownerships and permissions are sane:
 chown -R root:root .
-chmod -R u+w,go+r-w,a-s .
+find -L . \
+ \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
+  -o -perm 511 \) -exec chmod 755 {} \; -o \
+ \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
+  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-# Configure:
-CFLAGS="${SLKCFLAGS}" \
-CXXFLAGS="${SLKCFLAGS}" \
-LDFLAGS="${SLKLDFLAGS}" \
+CFLAGS=$SLKCFLAGS \
+CXXFLAGS=$SLKCFLAGS \
 ./configure \
   --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --libdir=/usr/lib$LIBDIRSUFFIX \
   --sysconfdir=/etc \
   --localstatedir=/var \
   --enable-mysql \
@@ -98,43 +83,35 @@ LDFLAGS="${SLKLDFLAGS}" \
   --enable-ipv6 \
   --enable-v4-mapped \
   --enable-threads \
-  --enable-ulog \
-  --enable-geoip \
+  --enable-geoipv2 \
+  --enable-jansson \
   --enable-static=no \
   --enable-shared=yes \
-  --host=${CHOST}-slackware-linux \
-  --build=${CHOST}-slackware-linux
+  --host=$ARCH-slackware-linux \
+  --build=$ARCH-slackware-linux
 
-# Build and install:
 make
-make DESTDIR=${PKG} install-strip
+make DESTDIR=$PKG install-strip
 
 # Install config file
-install -Dm644 examples/pmacctd-imt.conf.example ${PKG}/etc/pmacct/pmacctd.conf.new
+install -Dm644 examples/pmacctd-imt.conf.example $PKG/etc/pmacct/pmacctd.conf.new
 
 # Install database scripts
-mkdir -p ${PKG}/usr/share/pmacct/{mysql,pgsql,sqlite3,sh}
-install -Dm644 sql/*.mysql ${PKG}/usr/share/pmacct/mysql/
-install -Dm644 sql/*.pgsql ${PKG}/usr/share/pmacct/pgsql/
-install -Dm644 sql/*.sqlite3 ${PKG}/usr/share/pmacct/sqlite3/
-install -Dm744 examples/*.sh ${PKG}/usr/share/pmacct/sh/
+mkdir -p $PKG/usr/share/pmacct/{mysql,pgsql,sqlite3,sh}
+install -Dm644 sql/*.mysql $PKG/usr/share/pmacct/mysql/
+install -Dm644 sql/*.pgsql $PKG/usr/share/pmacct/pgsql/
+install -Dm644 sql/*.sqlite3 $PKG/usr/share/pmacct/sqlite3/
+install -Dm744 examples/*.sh $PKG/usr/share/pmacct/sh/
 
 # Install rc.d script
-install -Dm755 ${CWD}/rc.pmacctd ${PKG}/etc/rc.d/rc.pmacctd.new
+install -Dm755 $CWD/rc.pmacctd $PKG/etc/rc.d/rc.pmacctd.new
 
-# Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR}
+mkdir -p $DOCDIR
+cp -a $DOCFILES $DOCDIR
+cat $CWD/$PRGNAM.SlackBuild > $DOCDIR/$PRGNAM.SlackBuild
+mkdir -p $PKG/install 
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
-# Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
-
-# Add slack-desc
-install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
-
-# Add a doinst.sh
-install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
-
-# Create package:
-cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PRGNAME}-${VERSION}-${ARCH}-${BUILD}${TAG}.txz
+cd $PKG
+/sbin/makepkg -l y -c n $CWD/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-tgz}

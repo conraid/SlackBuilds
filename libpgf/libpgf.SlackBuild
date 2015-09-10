@@ -9,7 +9,7 @@
 # permitted provided that the following conditions are met:
 #
 # 1. Redistributions of this script must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
+#  notice, this list of conditions and the following disclaimer.
 #
 # THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
 # WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -22,7 +22,7 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Latest version of this SlackBuild at http://slackers.it/repository
+# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 #
 # Exit on most errors or unset variables
 set -eu
@@ -30,66 +30,63 @@ set -eu
 # Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-libpgf}
-PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
-VERSION=${VERSION:-6.14.12}
+PRGNAM=${PRGNAM:-libpgf}
+PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
+VERSION=${VERSION:-7.15.32}
 PKGVERSION=$(echo ${VERSION} | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
+PKG=${TMP}/package-${PKGNAM}
+PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${PKGVERSION}"
 
 # Insert document files in this variable
 DOCFILES="COPYING INSTALL README"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 # Automatically determine the architecture we're building on:
-if [ -z "${ARCH}" ]; then
-    case "$( uname -m )" in
-	i?86) ARCH=i686 ;;
-	arm*) ARCH=arm ;;
-        # Unless ${ARCH} is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
-    esac
+if [ -z ${ARCH:=""} ]; then
+  case "$( uname -m )" in
+  i?86) ARCH=i686 ;;
+  arm*) ARCH=arm ;;
+  # Unless ${ARCH} is already set, use uname -m for all other archs:
+  *) ARCH=$( uname -m ) ;;
+  esac
 fi
 
 # Set compiling FLAGS
 case "${ARCH}" in
-    i[3-5]86)
-	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    i686)
-	SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    x86_64)
-	SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
-    *)
-	SLKCFLAGS="-O2"; CHOST=${ARCH}
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
+  i[3-5]86)
+  SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
+  SLKLDFLAGS=""; LIBDIRSUFFIX=""
+  ;;
+  i686)
+  SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
+  SLKLDFLAGS=""; LIBDIRSUFFIX=""
+  ;;
+  x86_64)
+  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
+  SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+  ;;
+  *)
+  SLKCFLAGS="-O2"; CHOST=${ARCH}
+  SLKLDFLAGS=""; LIBDIRSUFFIX=""
+  ;;
 esac
 
 # Extract source and prepare:
 rm -rf ${PKG}
 mkdir -p ${TMP} ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAME}
-tar xvf ${CWD}/${PRGNAME}-src-${VERSION}.tar.gz
-cd ${PRGNAME}
+rm -rf PGF
+unzip ${CWD}/libPGF-codec-and-console-src.zip
+cd PGF/Codec
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Configure
-fromdos < configure.ac > configure.ac.new
-mv configure.ac.new configure.ac
-./autogen.sh
+sh ./autogen.sh
 LDFLAGS="${SLKLDFLAGS}" \
 CFLAGS="${SLKCFLAGS}" \
 CXXFLAGS="${SLKCFLAGS}" \
@@ -101,7 +98,7 @@ CXXFLAGS="${SLKCFLAGS}" \
   --mandir=/usr/man \
   --infodir=/usr/info \
   --datadir=/usr \
-  --docdir=/usr/doc/${PKGNAME}-${PKGVERSION} \
+  --docdir=/usr/doc/${PKGNAM}-${PKGVERSION} \
   --enable-static=no \
   --enable-shared=yes \
   --host=${CHOST}-slackware-linux \
@@ -117,21 +114,20 @@ find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r 
 
 # Compress and link manpages, if any:
 if [ -d ${PKG}/usr/man ]; then
-    find ${PKG}/usr/man -type f -exec gzip -9 {} \;
-    for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+  find ${PKG}/usr/man -type f -exec gzip -9 {} \;
+  for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR}
-chmod -x ${DOCDIR}
+mkdir -p ${PKGDOCDIR}
+cp -a ${DOCFILES} ${PKGDOCDIR}
 
 # Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
 
 # Add slack-desc
 install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
 
 # Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
