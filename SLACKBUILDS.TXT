@@ -595,10 +595,10 @@ SLACKBUILD SHORT DESCRIPTION:  dwdiff (word-level diff program)
 SLACKBUILD NAME: ecryptfs-utils
 SLACKBUILD LOCATION: ./ecryptfs-utils
 SLACKBUILD FILES: ecryptfs-utils.SlackBuild ecryptfs-utils.info slack-desc
-SLACKBUILD VERSION: 106
+SLACKBUILD VERSION: 108
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://launchpad.net/ecryptfs/trunk/106/+download/ecryptfs-utils_106.orig.tar.gz
-SLACKBUILD MD5SUM: bff8052636f6be642f15c6be45a14ea3
+SLACKBUILD DOWNLOAD: https://launchpad.net/ecryptfs/trunk/108/+download/ecryptfs-utils_108.orig.tar.gz
+SLACKBUILD MD5SUM: 80f2a73e14030239fa01a2f1e5606a0e
 SLACKBUILD SHORT DESCRIPTION:  ecryptfs-utils (ecryptfs cryptographic filesystem utilities)
 
 SLACKBUILD NAME: encfs
@@ -955,10 +955,10 @@ SLACKBUILD SHORT DESCRIPTION:  gtkmm (C++ interface for GTK+)
 SLACKBUILD NAME: hiredis
 SLACKBUILD LOCATION: ./hiredis
 SLACKBUILD FILES: hiredis.SlackBuild hiredis.info slack-desc
-SLACKBUILD VERSION: 0.13.1
+SLACKBUILD VERSION: 0.13.2
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/redis/hiredis/archive/v0.13.1.tar.gz
-SLACKBUILD MD5SUM: 4226dda52dbe08304e3b6027b4d6c74d
+SLACKBUILD DOWNLOAD: https://github.com/redis/hiredis/archive/v0.13.2.tar.gz
+SLACKBUILD MD5SUM: de1cf572f172167018cc3b04c989a3b7
 SLACKBUILD SHORT DESCRIPTION:  hiredis (Minimalistic C client for Redis)
 
 SLACKBUILD NAME: hping
@@ -1293,6 +1293,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/kdbg/Source%20Code/2.5.5/kdbg-2.5.5.tar.gz
 SLACKBUILD MD5SUM: 3c4271fb0c3be75d658a94c3ea6c6167
 SLACKBUILD SHORT DESCRIPTION:  KDbg (gdb GUI for KDE)
+
+SLACKBUILD NAME: kde-gtk-config
+SLACKBUILD LOCATION: ./kde-gtk-config
+SLACKBUILD FILES: doinst.sh kde-gtk-config.SlackBuild kde-gtk-config.info slack-desc
+SLACKBUILD VERSION: 2.2.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://download.kde.org/stable/kde-gtk-config/2.2.1/src/kde-gtk-config-2.2.1.tar.xz
+SLACKBUILD MD5SUM: d155ed431d509e54a60383a70b700e1c
+SLACKBUILD SHORT DESCRIPTION:  kde-gtk-config (GTK2 and GTK3 Configurator for KDE)
 
 SLACKBUILD NAME: kdiff3
 SLACKBUILD LOCATION: ./kdiff3
@@ -1869,6 +1878,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/M/Markdown/Markdown-2.6.2.tar.gz
 SLACKBUILD MD5SUM: 256d19afcc564dc4ce4c229bb762f7ae
 SLACKBUILD SHORT DESCRIPTION:  markdown (Python implementation of Markdown)
+
+SLACKBUILD NAME: masscan
+SLACKBUILD LOCATION: ./masscan
+SLACKBUILD FILES: masscan.SlackBuild masscan.info slack-desc
+SLACKBUILD VERSION: 1.0.3_cec300a
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/robertdavidgraham/masscan/archive/cec300a741a7d40143352bdd4617b8bb6f536384.tar.gz
+SLACKBUILD MD5SUM: 38ee0d1f0f4c3f937d5d3f99b308ec55
+SLACKBUILD SHORT DESCRIPTION:  masscan (Mass IP port scanner)
 
 SLACKBUILD NAME: mcelog
 SLACKBUILD LOCATION: ./mcelog
@@ -2727,11 +2745,11 @@ SLACKBUILD SHORT DESCRIPTION:  reaver (Brute force attack against Wifi Protected
 
 SLACKBUILD NAME: redis
 SLACKBUILD LOCATION: ./redis
-SLACKBUILD FILES: doinst.sh rc.redis redis.SlackBuild redis.info redis.logrotate slack-desc
-SLACKBUILD VERSION: 3.0.3
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://download.redis.io/releases/redis-3.0.3.tar.gz
-SLACKBUILD MD5SUM: 76725490d6168cfb4b0ce014b89d4b54
+SLACKBUILD FILES: doinst.sh rc.redis redis-2.8.11-use-system-jemalloc.patch redis.SlackBuild redis.info redis.logrotate slack-desc
+SLACKBUILD VERSION: 3.0.4
+SLACKBUILD REQUIRED: hiredis
+SLACKBUILD DOWNLOAD: http://download.redis.io/releases/redis-3.0.4.tar.gz
+SLACKBUILD MD5SUM: 9e535dea3dc5301de012047bf3cca952
 SLACKBUILD SHORT DESCRIPTION:  Redis (Key-Value Store)
 
 SLACKBUILD NAME: rkhunter
@@ -2881,29 +2899,38 @@ SLACKBUILD SHORT DESCRIPTION:  setconf (Utility for changing settings in configu
 SLACKBUILD NAME: shorewall-core
 SLACKBUILD LOCATION: ./shorewall-core
 SLACKBUILD FILES: PKGNOTE doinst.sh shorewall-core.SlackBuild shorewall-core.info slack-desc
-SLACKBUILD VERSION: 4.6.12.1
+SLACKBUILD VERSION: 4.6.13
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/4.6/shorewall-4.6.12/shorewall-core-4.6.12.1.tar.bz2
-SLACKBUILD MD5SUM: b7e73d9d720df217f35ed68e7e14af27
+SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/4.6/shorewall-4.6.13/shorewall-core-4.6.13.tar.bz2
+SLACKBUILD MD5SUM: 69b418ca83ce815be73c13fad2140896
 SLACKBUILD SHORT DESCRIPTION:  Shorewall-core (Core Shorewall libraries)
 
 SLACKBUILD NAME: shorewall
 SLACKBUILD LOCATION: ./shorewall
 SLACKBUILD FILES: PKGNOTE doinst.sh shorewall.SlackBuild shorewall.info slack-desc
-SLACKBUILD VERSION: 4.6.12.1
+SLACKBUILD VERSION: 4.6.13
 SLACKBUILD REQUIRED: shorewall-core
-SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/4.6/shorewall-4.6.12/shorewall-4.6.12.1.tar.bz2
-SLACKBUILD MD5SUM: 4fb5e0ac8059f5a3397d8d36cfe80278
+SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/4.6/shorewall-4.6.13/shorewall-4.6.13.tar.bz2
+SLACKBUILD MD5SUM: 12ee6cabb5d9118d5da664f7a192797f
 SLACKBUILD SHORT DESCRIPTION:  Shorewall (An iptables-based firewall for Linux systems)
 
 SLACKBUILD NAME: shorewall6
 SLACKBUILD LOCATION: ./shorewall6
 SLACKBUILD FILES: PKGNOTE doinst.sh shorewall6.SlackBuild shorewall6.info slack-desc
-SLACKBUILD VERSION: 4.6.12.1
+SLACKBUILD VERSION: 4.6.13
 SLACKBUILD REQUIRED: shorewall-core
-SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/4.6/shorewall-4.6.12/shorewall6-4.6.12.1.tar.bz2
-SLACKBUILD MD5SUM: 4fec53aabfb41e7235b5da72e6421231
+SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/4.6/shorewall-4.6.13/shorewall6-4.6.13.tar.bz2
+SLACKBUILD MD5SUM: 341ed02ef8f3682bc6eec63acc14ec53
 SLACKBUILD SHORT DESCRIPTION:  Shorewall6 (An IPv6 iptables-based firewall for Linux systems)
+
+SLACKBUILD NAME: siege
+SLACKBUILD LOCATION: ./siege
+SLACKBUILD FILES: doinst.sh siege.SlackBuild siege.info slack-desc
+SLACKBUILD VERSION: 3.1.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://download.joedog.org/siege/siege-3.1.1.tar.gz
+SLACKBUILD MD5SUM: 800b34cf0dbeda177196583588a2e731
+SLACKBUILD SHORT DESCRIPTION:  siege (http server benchmark)
 
 SLACKBUILD NAME: simplejson
 SLACKBUILD LOCATION: ./simplejson
@@ -3214,10 +3241,10 @@ SLACKBUILD SHORT DESCRIPTION:  testdisk (data recovery software)
 SLACKBUILD NAME: tidy-html5
 SLACKBUILD LOCATION: ./tidy-html5
 SLACKBUILD FILES: slack-desc tidy-html5.SlackBuild tidy-html5.info
-SLACKBUILD VERSION: 5.1.7
+SLACKBUILD VERSION: 5.1.9
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/htacg/tidy-html5/archive/5.1.7.tar.gz
-SLACKBUILD MD5SUM: da31a2b3c48434f4592ddb6c2ab09564
+SLACKBUILD DOWNLOAD: https://github.com/htacg/tidy-html5/archive/5.1.9.tar.gz
+SLACKBUILD MD5SUM: e3060d162eec7b0e2be021909cf70ebf
 SLACKBUILD SHORT DESCRIPTION:  tidy-html5 (HTML Tidy with HTML5 support)
 
 SLACKBUILD NAME: tig
@@ -3601,9 +3628,9 @@ SLACKBUILD SHORT DESCRIPTION:  yersinia
 SLACKBUILD NAME: zmap
 SLACKBUILD LOCATION: ./zmap
 SLACKBUILD FILES: doinst.sh slack-desc zmap.SlackBuild zmap.info
-SLACKBUILD VERSION: 2.1.0
-SLACKBUILD REQUIRED: json-c redis byacc
-SLACKBUILD DOWNLOAD: https://github.com/zmap/zmap/archive/v2.1.0.tar.gz
-SLACKBUILD MD5SUM: 0e6b9b0628eb1d3360fbd9ea56e36693
+SLACKBUILD VERSION: 2.1.1
+SLACKBUILD REQUIRED: json-c redis byacc gengetopt
+SLACKBUILD DOWNLOAD: https://github.com/zmap/zmap/archive/v2.1.1.tar.gz
+SLACKBUILD MD5SUM: a37555ac2beda1dc6f3754b411be545e
 SLACKBUILD SHORT DESCRIPTION:  zmap (Network scanner for Internet-wide network surveys)
 
