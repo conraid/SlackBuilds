@@ -11,7 +11,7 @@
 # permitted provided that the following conditions are met:
 #
 # 1. Redistributions of this script must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
+#  notice, this list of conditions and the following disclaimer.
 #
 # THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
 # WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -25,115 +25,95 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
-#
-# Based on SlackBuild by SBo
-# Modified by Corrado Franco to slackers.it
 
-# Exit on most errors
 set -eu
 
-# Set variables:
 CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-redis}
-PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
-VERSION=${VERSION:-3.0.3}
-PKGVERSION=$(echo ${VERSION} | tr - _)
+VERSION=${VERSION:-3.0.4}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAM}
-PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${PKGVERSION}"
+PKG=$TMP/package-$PRGNAM
+DOCDIR="$PKG/usr/doc/$PRGNAM-${VERSION}"
 
-# Insert document files in this variable
-DOCFILES="00-RELEASENOTES BUGS CONTRIBUTING COPYING INSTALL MANIFESTO README"
+DOCFILES="00-RELEASENOTES BUGS CONTRIBUTING COPYING MANIFESTO README"
 
-# Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
-    case "$( uname -m )" in
-    i?86) ARCH=i686 ;;
-    arm*) ARCH=arm ;;
-    # Unless ${ARCH} is already set, use uname -m for all other archs:
-    *) ARCH=$( uname -m ) ;;
-    esac
+  case "$( uname -m )" in
+  i?86) ARCH=i686 ;;
+  arm*) ARCH=arm ;;
+  *) ARCH=$( uname -m ) ;;
+  esac
 fi
 
-# Set compiling FLAGS
-case "${ARCH}" in
-    i[3-5]86)
-    SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
-    SLKLDFLAGS=""; LIBDIRSUFFIX=""
-    ;;
-    i686)
-    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
-    SLKLDFLAGS=""; LIBDIRSUFFIX=""
-    ;;
-    x86_64)
-    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
-    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-    ;;
-    *)
-    SLKCFLAGS="-O2"; CHOST=${ARCH}
-    SLKLDFLAGS=""; LIBDIRSUFFIX=""
-    ;;
-esac
+if [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC"
+  LIBDIRSUFFIX="64"
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+fi
 
-# Extract source and prepare:
-rm -rf ${PKG}
-mkdir -p ${TMP} ${PKG}
-cd ${TMP}
-rm -rf ${PRGNAM}-${VERSION}
-tar xvf ${CWD}/${PRGNAM}-${VERSION}.tar.gz
-cd ${PRGNAM}-${VERSION}
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAM-$VERSION
+tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
+cd $PRGNAM-$VERSION
 
-# Make sure ownerships and permissions are sane:
 chown -R root:root .
-chmod -R u+w,go+r-w,a-s .
+find -L . \
+ \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
+  -o -perm 511 \) -exec chmod 755 {} \; -o \
+ \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
+  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-# Build and install:
-make MALLOC=libc CFLAGS="${SLKCFLAGS}" PREFIX=/usr
-mkdir -p ${PKG}/usr/bin
-make INSTALL_BIN="${PKG}/usr/bin" PREFIX=/usr install
+# Use system library (Thanks to Archlinux)
+patch -p1 -i $CWD/redis-2.8.11-use-system-jemalloc.patch
+
+make CFLAGS="$SLKCFLAGS"
+make PREFIX=$PKG/usr install
 
 # Create symlink to start redis in sentinel mode.
-( cd ${PKG}/usr/bin ; ln -sf redis-server redis-sentinel )
+( cd $PKG/usr/bin ; ln -sf redis-server redis-sentinel )
 
-# Strip binaries:
-find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
-find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 # Use sample config and set some sane defaults.
-mkdir -p ${PKG}/etc
+mkdir -p $PKG/etc/redis
 sed -e 's|^daemonize no|daemonize yes|' \
   -e 's|^dir \.|dir /var/lib/redis|' \
   -e 's|^logfile stdout|logfile /var/log/redis.log|' \
   -e 's|^# bind 127.0.0.1|bind 127.0.0.1|' \
   -e 's|^tcp-keepalive 0|tcp-keepalive 60|' \
   -e 's|^# unixsocket|unixsocket|' \
-  redis.conf > ${PKG}/etc/redis.conf.new
+  redis.conf > $PKG/etc/redis/redis.conf.new
+install -Dm0644 sentinel.conf $PKG/etc/redis/sentinel.conf.new
 
 # Create data directory.
-install -dm0700 ${PKG}/var/lib/redis
+install -dm0700 $PKG/var/lib/redis
 
 # Install init script.
-install -Dm644 ${CWD}/rc.redis ${PKG}/etc/rc.d/rc.redis.new
+install -Dm644 $CWD/rc.redis $PKG/etc/rc.d/rc.redis.new
 
 # Install logrotate script.
-install -Dm644 ${CWD}/redis.logrotate ${PKG}/etc/logrotate.d/redis.new
+install -Dm644 $CWD/redis.logrotate $PKG/etc/logrotate.d/redis.new
 
-# Add a documentation directory:
-mkdir -p ${PKGDOCDIR}
-cp -a ${DOCFILES} ${PKGDOCDIR} || true
+mkdir -p $DOCDIR
+cp -a $DOCFILES $DOCDIR || true
+cat $CWD/$PRGNAM.SlackBuild > $DOCDIR/$PRGNAM.SlackBuild
+mkdir -p $PKG/install 
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
-# Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
-
-# Add slack-desc
-install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
-
-# Add a doinst.sh
-install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
-
-# Create package:
-cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+cd $PKG
+/sbin/makepkg -l y -c n $CWD/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-tgz}
