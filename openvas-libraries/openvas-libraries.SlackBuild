@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-openvas-libraries}
 VERSION=${VERSION:-8.0.4}
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -81,7 +81,7 @@ sed -i 's#$DATADIR/man/man#${CMAKE_INSTALL_PREFIX}/man/man#g' CMakeLists.txt
 mkdir -p build
 cd build
 cmake \
-  -DCMAKE_C_FLAGS:STRING=$SLKCFLAGS \
+  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
   -DCMAKE_BUILD_TYPE=none \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DSYSCONF_INSTALL_DIR=/etc \

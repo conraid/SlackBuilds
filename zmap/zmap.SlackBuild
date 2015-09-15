@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-zmap}
 VERSION=${VERSION:-2.1.1}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -82,7 +82,7 @@ sed 's|share/man/|man/|' -i src/CMakeLists.txt
 sed '/install(SCRIPT InstallConfFiles.cmake)/d' -i CMakeLists.txt
 
 cmake \
-  -DCMAKE_C_FLAGS:STRING=$SLKCFLAGS \
+  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
   -DCMAKE_BUILD_TYPE=none \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DWITH_REDIS=ON \
