@@ -5,138 +5,128 @@
 # Copyright 2009-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
-# Redistribution and use of this script, with or without modification, is
-# permitted provided that the following conditions are met:
-#
-# 1. Redistributions of this script must retain the above copyright
-#  notice, this list of conditions and the following disclaimer.
-#
-# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
-# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version, with the following exception:
+# the text of the GPL license may be omitted.
 
-# Exit on most errors or unset variables
+# This program is distributed in the hope that it will be useful, but
+# without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose. Compiling,
+# interpreting, executing or merely reading the text of the program
+# may result in lapses of consciousness and/or very being, up to and
+# including the end of all existence and the Universe as we know it.
+# See the GNU General Public License for more details.
+
+# You may have received a copy of the GNU General Public License along
+# with this program (most likely, a file named COPYING).  If not, see
+# <http://www.gnu.org/licenses/>.
+
 set -eu
 
-# Set variables:
 CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-opencv}
-PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
+PRGNAM=$(echo $PRGNAM | tr A-Z a-z)
 VERSION=${VERSION:-3.0.0}
-PKGVERSION=$(echo ${VERSION} | tr - _)
-BUILD=${BUILD:-1}
+VERSION=$(echo $VERSION | tr - _)
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAM}
-PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${PKGVERSION}"
+PKG=$TMP/package-${PRGNAM}
+OUTPUT=${OUTPUT:-/tmp}
+DOCDIR="$PKG/usr/doc/$PRGNAM-${VERSION}"
 
-# Insert document files in this variable
 DOCFILES="LICENSE README*"
 
-# Automatically determine the architecture we are building on:
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-    i?86) ARCH=i686 ;;
-    arm*) ARCH=arm ;;
-    # Unless ${ARCH} is already set, use uname -m for all other archs:
-    *) ARCH=$( uname -m ) ;;
+  i?86) ARCH=i686 ;;
+  arm*) ARCH=arm ;;
+  *) ARCH=$( uname -m ) ;;
   esac
 fi
 
-# Set compiling FLAGS
-case "${ARCH}" in
-  i486)
-  SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
-  SLKLDFLAGS=""; LIBDIRSUFFIX=""
+if [ "$ARCH" = "i586" ]; then
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+  LIBDIRSUFFIX=""
   CONFSSE="-DENABLE_SSE3=OFF -DENABLE_SSE2=OFF -DENABLE_SSE=OFF"
-  ;;
-  i686) # SSE only available from Pentium 3 onwards (i686 is way older)
-  SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
-  SLKLDFLAGS=""; LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+  LIBDIRSUFFIX=""
+  # SSE only available from Pentium 3 onwards (i686 is way older)
   CONFSSE="-DENABLE_SSE3=OFF -DENABLE_SSE2=OFF -DENABLE_SSE=OFF"
-  ;;
-  x86_64) # all x64 CPUs support SSE2 but not SSE3
-  SLKCFLAGS="-O2 -fomit-frame-pointer"; CHOST="x86_64"
-  SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC"
+  LIBDIRSUFFIX="64"
+  # all x64 CPUs support SSE2 but not SSE3
   CONFSSE="-DENABLE_SSE3=OFF -DENABLE_SSE2=ON -DENABLE_SSE=ON"
-  ;;
-  *)
-  SLKCFLAGS="-O2"; CHOST=${ARCH}
-  SLKLDFLAGS=""; LIBDIRSUFFIX=""
-  ;;
-esac
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+fi
 
-# Extract source and prepare:
 rm -rf ${PKG}
-mkdir -p ${TMP} ${PKG}
+mkdir -p $TMP ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAM}-${VERSION}
+rm -rf $PRGNAM-${VERSION}
 # If you download files from the command line be careful because the files could have the same name.
 # Use "wget --content-disposition" or "curl -L"
-tar xvf ${CWD}/${PRGNAM}-${VERSION}.tar.gz
-cd ${PRGNAM}-${VERSION}
-tar xvf ${CWD}/${PRGNAM}_contrib-${VERSION}.tar.gz 
+tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
+cd $PRGNAM-${VERSION}
+tar xvf $CWD/${PRGNAM}_contrib-$VERSION.tar.gz 
 
-# Make sure ownerships and permissions are sane:
 chown -R root:root .
-chmod -R u+w,go+r-w,a-s .
+find . \
+ \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
+  -o -perm 511 \) -exec chmod 755 {} \; -o \
+ \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
+  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
 # Apply patch for unix path
 # http://code.opencv.org/issues/2512
-patch -p1 -i ${CWD}/fsh.patch
+patch -p1 -i $CWD/fsh.patch
 
-# Configure
 mkdir -p build
 cd build
 cmake \
   -DCMAKE_BUILD_TYPE=None \
-  -DCMAKE_C_FLAGS:STRING="${SLKCFLAGS}" \
-  -DCMAKE_CXX_FLAGS:STRING="${SLKCFLAGS}" \
+  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
+  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
+  -DLIB_SUFFIX=$LIBDIRSUFFIX \
   -DBUILD_EXAMPLES=OFF \
   -DBUILD_SHARED_LIBS=ON \
   -DBUILD_WITH_DEBUG_INFO=OFF \
+  -DBUILD_TESTS=OFF \
+  -DBUILD_PERF_TESTS=OFF \
   -DENABLE_PRECOMPILED_HEADERS=OFF \
   -DINSTALL_PYTHON_EXAMPLES=OFF \
   -DWITH_GSTREAMER=ON \
   -DWITH_OPENCL=ON \
   -DWITH_QT=ON \
   -DWITH_XINE=ON \
-  -DWITH_IPP=OFF \
+  -DWITH_FFMPEG=OFF \
   -DENABLE_SSE41=OFF \
   -DENABLE_SSE42=OFF \
-  -DOPENCV_EXTRA_MODULES_PATH=../${PRGNAM}_contrib-${VERSION}/modules \
-  $CONFSSE ..
+  -DOPENCV_EXTRA_MODULES_PATH=../${PRGNAM}_contrib-$VERSION/modules \
+  ${CONFSSE:=""} ..
 
-# Build and install:
 make
-make DESTDIR=${PKG} install
+make DESTDIR=$PKG install
 cd ..
 
-# Strip binaries:
-find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
-find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
-# Add a documentation directory:
-mkdir -p ${PKGDOCDIR}
-cp -a ${DOCFILES} ${PKGDOCDIR} || true
+mkdir -p ${DOCDIR}
+cp -a $DOCFILES $DOCDIR || true
+cat $CWD/$PRGNAM.SlackBuild > $DOCDIR/$PRGNAM.SlackBuild
 
-# Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
+mkdir -p $PKG/install 
+cat $CWD/slack-desc > $PKG/install/slack-desc
 
-# Add slack-desc
-install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
-
-# Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.txz
 
