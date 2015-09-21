@@ -6,40 +6,40 @@
 # Copyright 2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
-# Redistribution and use of this script, with or without modification, is
-# permitted provided that the following conditions are met:
-#
-# 1. Redistributions of this script must retain the above copyright
-#  notice, this list of conditions and the following disclaimer.
-#
-# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
-# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version, with the following exception:
+# the text of the GPL license may be omitted.
+
+# This program is distributed in the hope that it will be useful, but
+# without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose. Compiling,
+# interpreting, executing or merely reading the text of the program
+# may result in lapses of consciousness and/or very being, up to and
+# including the end of all existence and the Universe as we know it.
+# See the GNU General Public License for more details.
+
+# You may have received a copy of the GNU General Public License along
+# with this program (most likely, a file named COPYING).  If not, see
+# <http://www.gnu.org/licenses/>.
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-# Exit on most errors
 set -eu
 
-# Set variables:
 CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-atom}
-PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
-VERSION=${VERSION:-1.0.11}
-PKGVERSION=$(echo ${VERSION} | tr - _)
+PRGNAM=$(echo $PRGNAM | tr A-Z a-z)
+VERSION=${VERSION:-1.0.15}
+VERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAM}
-PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${PKGVERSION}"
+PKG=$TMP/package-${PRGNAM}
+OUTPUT=${OUTPUT:-/tmp}
+DOCDIR="$PKG/usr/doc/$PRGNAM-$VERSION"
 
 # Disable send metrics to Google Analytics module
 DISABLE_METRICS=${DISABLE_METRICS:-yes}
@@ -48,77 +48,70 @@ DELETE_CACHE=${DELETE_CACHE:-yes}
 
 deletecache() {
   if [ "$DELETE_CACHE" = "yes" ]; then
-    # delete temporal data
-    rm -rf ~/.atom/
-    rm -rf /tmp/npm-*/
+  # delete temporal data
+  rm -rf ~/.atom/
+  rm -rf /tmp/npm-*/
   fi
 }
 # Clean cache data on exit
 trap deletecache EXIT
 
-# Insert document files in this variable
 DOCFILES="*.md docs"
 
-# Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-    i?86) ARCH=i686 ;;
-    arm*) ARCH=arm ;;
-    # Unless ${ARCH} is already set, use uname -m for all other archs:
-    *) ARCH=$( uname -m ) ;;
+  i?86) ARCH=i686 ;;
+  arm*) ARCH=arm ;;
+  *) ARCH=$( uname -m ) ;;
   esac
 fi
 
-# Extract source and prepare:
 rm -rf ${PKG}
-mkdir -p ${TMP} ${PKG}
+mkdir -p $TMP ${PKG}
 cd ${TMP}
-rm -rf ${PRGNAM}-${VERSION} || rm -rf ${PRGNAM}-master
-tar xvf ${CWD}/${PRGNAM}-${VERSION}.tar.gz || tar xvf ${CWD}/master.tar.gz
-cd ${PRGNAM}-${VERSION} || cd ${PRGNAM}-master
+rm -rf $PRGNAM-$VERSION || rm -rf $PRGNAM-master
+tar xvf $CWD/$PRGNAM-$VERSION.tar.gz || tar xvf $CWD/master.tar.gz
+cd $PRGNAM-$VERSION || cd $PRGNAM-master
 
-# Make sure ownerships and permissions are sane:
 chown -R root:root .
-chmod -R u+w,go+r-w,a-s .
+find . \
+ \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
+  -o -perm 511 \) -exec chmod 755 {} \; -o \
+ \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
+  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
 if [ "$DISABLE_METRICS" = "yes" ]; then
   sed -e '/"metrics":/d' -e '/"exception-reporting":/d' -i package.json
 fi
 
-# Build and install:
 mkdir -p destbuild
-BUILD_DIR=${PWD}/destbuild
+BUILD_DIR=$PWD/destbuild
 
 ./script/build --build-dir ${BUILD_DIR}
-./script/grunt --build-dir ${BUILD_DIR} --install-dir ${PKG}/usr install
+./script/grunt --build-dir ${BUILD_DIR} --install-dir $PKG/usr install
 
-# Strip binaries:
-find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
-find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 # move apm symlink to atom-apm for prevent conflicts with apmd package.
-mv ${PKG}/usr/bin/apm ${PKG}/usr/bin/atom-apm
+mv $PKG/usr/bin/apm $PKG/usr/bin/atom-apm
 
-# Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
+mkdir -p $DOCDIR
+cat $CWD/$PRGNAM.SlackBuild > $DOCDIR/$PRGNAM.SlackBuild
 
-# Add slack-desc
-install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
-
-# Add an icon
-install -Dm644 resources/${PKGNAM}.png ${PKG}/usr/share/pixmaps/${PKGNAM}.png
+install -Dm644 resources/$PRGNAM.png $PKG/usr/share/pixmaps/$PRGNAM.png
 
 # move and configure .desktop file
-mkdir -p ${PKG}/usr/share/applications
+mkdir -p $PKG/usr/share/applications
 sed -e "s/<%= description %>/Hackable text editor/" \
   -e "s|<%= executable %>|/usr/bin/atom|"\
   -e "s|<%= iconName %>|atom|"\
-  resources/linux/atom.desktop.in > ${PKG}/usr/share/applications/atom.desktop
+  resources/linux/atom.desktop.in > $PKG/usr/share/applications/atom.desktop
 
-# Add a doinst.sh
-install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
+mkdir -p $PKG/install 
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
-# Create package:
 cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.txz
 
