@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-sleuthkit}
 VERSION=${VERSION:-4.2.0}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-${PRGNAM}
@@ -74,6 +74,9 @@ find . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
+# Apply patch from git to fix segfault in ntfs fs.
+patch -p1 -i $CWD/patches/ntfs.patch
+  
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
