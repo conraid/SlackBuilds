@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-atom}
 VERSION=${VERSION:-1.2.0-dev}
-COMMIT="6196f" # Leave blank for release version
+COMMIT="1940d" # Leave blank for release version
 if [ -z $COMMIT ]; then
   PKGVERSION=$(echo $VERSION | tr - _)
   SRCVERSION=$VERSION
@@ -89,10 +89,6 @@ find . \
 if [ "$DISABLE_METRICS" = "yes" ]; then
   sed -e '/"metrics":/d' -e '/"exception-reporting":/d' -i package.json
 fi
-
-# Fix error with node4 in build/package.json
-# https://github.com/atom/atom/pull/8923/files
-sed '/runas/s/2/3/' -i build/package.json
 
 mkdir -p destbuild
 BUILD_DIR=$PWD/destbuild
