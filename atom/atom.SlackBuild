@@ -32,20 +32,19 @@ CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-atom}
 VERSION=${VERSION:-1.2.0-dev}
-COMMIT="1940d" # Leave blank for release version
+COMMIT="d160332" # Leave blank for release version
 if [ -z $COMMIT ]; then
-  PKGVERSION=$(echo $VERSION | tr - _)
+  VERSION=$(echo $VERSION | tr - _)
   SRCVERSION=$VERSION
 else
-  PKGVERSION=$(echo $VERSION | tr - _)_${COMMIT}
+  VERSION=$(echo $VERSION | tr - _)_$COMMIT
   SRCVERSION=$COMMIT
 fi
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-${PRGNAM}
+PKG=$TMP/package-$PRGNAM
 OUTPUT=${OUTPUT:-/tmp}
-DOCDIR="$PKG/usr/doc/$PRGNAM-$PKGVERSION"
 
 # Disable send metrics to Google Analytics module
 DISABLE_METRICS=${DISABLE_METRICS:-yes}
@@ -72,11 +71,11 @@ if [ -z ${ARCH:=""} ]; then
   esac
 fi
 
-rm -rf ${PKG}
-mkdir -p $TMP ${PKG}
-cd ${TMP}
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
 rm -rf $PRGNAM-$SRCVERSION*
-tar xvf $CWD/$PRGNAM-$SRCVERSION*.tar.gz || tar xvf $CWD/$SRCVERSION*.tar.gz || tar xvf $CWD/v${SRCVERSION}.tar.gz
+tar xvf $CWD/$PRGNAM-$SRCVERSION*.tar.gz || tar xvf $CWD/$SRCVERSION*.tar.gz || tar xvf $CWD/v$SRCVERSION.tar.gz
 cd $PRGNAM-$SRCVERSION*
 
 chown -R root:root .
@@ -102,8 +101,8 @@ find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r st
 # move apm symlink to atom-apm for prevent conflicts with apmd package.
 mv $PKG/usr/bin/apm $PKG/usr/bin/atom-apm
 
-mkdir -p $DOCDIR
-cat $CWD/$PRGNAM.SlackBuild > $DOCDIR/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 install -Dm644 resources/$PRGNAM.png $PKG/usr/share/pixmaps/$PRGNAM.png || \
 install -Dm644 resources/app-icons/stable/png/1024.png $PKG/usr/share/pixmaps/$PRGNAM.png
@@ -118,6 +117,6 @@ mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
-cd ${PKG}
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$PKGVERSION-$ARCH-$BUILD$TAG.txz
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
 
