@@ -28,22 +28,20 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-numpy}
-VERSION=${VERSION:-1.9.3}
+VERSION=${VERSION:-1.10.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
 OUTPUT=${OUTPUT:-/tmp}
-DOCDIR="$PKG/usr/doc/$PRGNAM-$VERSION"
 
 DOCFILES="COMPATIBILITY *.txt"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-    i?86) ARCH=i686 ;;
-    arm*) ARCH=arm ;;
-    *) ARCH=$( uname -m ) ;;
+  i?86) ARCH=i686 ;;
+  arm*) ARCH=arm ;;
+  *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -75,16 +73,16 @@ find . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-CFLAGS="$SLKCFLAGS" LDFLAGS="-L/usr/lib${LIBDIRSUFFIX} -shared" python setup.py install
+CFLAGS="$SLKCFLAGS" LDFLAGS="-L/usr/lib$LIBDIRSUFFIX -shared" python setup.py install
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true
 
-mkdir -p $DOCDIR
-cp -a $DOCFILES $DOCDIR || true
-find $DOCDIR -type f -exec chmod 0644 {} \;
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
+find $PKG/usr/doc/$PRGNAM-$VERSION -type f -exec chmod 0644 {} \;
 
-cat $CWD/$PRGNAM.SlackBuild > $DOCDIR/$PRGNAM.SlackBuild
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
