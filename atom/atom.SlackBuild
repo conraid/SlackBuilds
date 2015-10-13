@@ -31,15 +31,8 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-atom}
-VERSION=${VERSION:-1.2.0-dev}
-COMMIT="d5a0e2f" # Leave blank for release version
-if [ -z $COMMIT ]; then
-  VERSION=$(echo $VERSION | tr - _)
-  SRCVERSION=$VERSION
-else
-  VERSION=$(echo $VERSION | tr - _)_$COMMIT
-  SRCVERSION=$COMMIT
-fi
+SRCVERSION=1.1.0-beta1
+VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -74,9 +67,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-$SRCVERSION*
-tar xvf $CWD/$PRGNAM-$SRCVERSION*.tar.gz || tar xvf $CWD/$SRCVERSION*.tar.gz || tar xvf $CWD/v$SRCVERSION.tar.gz
-cd $PRGNAM-$SRCVERSION*
+rm -rf $PRGNAM-$SRCVERSION
+tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/v$SRCVERSION.tar.gz
+cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
 find . \
