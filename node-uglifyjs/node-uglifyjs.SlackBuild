@@ -32,12 +32,11 @@ CWD=$(pwd)
 SRCNAM=UglifyJS2
 PRGNAM=node-uglifyjs
 VERSION=${VERSION:-2.4.24}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
 OUTPUT=${OUTPUT:-/tmp}
-DOCDIR="$PKG/usr/doc/$PRGNAM-$VERSION"
 
 DOCFILES="LICENSE README*"
 
@@ -76,9 +75,9 @@ fi
 # Remove empty dir
 rmdir $PKG/usr/etc
 
-mkdir -p $DOCDIR
-cp -a $DOCFILES $DOCDIR || true
-cat $CWD/$PRGNAM.SlackBuild > $DOCDIR/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
