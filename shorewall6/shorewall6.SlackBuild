@@ -30,14 +30,13 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-shorewall6}
-VERSION=${VERSION:-4.6.13.1}
+VERSION=${VERSION:-5.0.1}
 BUILD=${BUILD:-1}
 ARCH=${ARCH:="noarch"}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
 OUTPUT=${OUTPUT:-/tmp}
-DOCDIR="$PKG/usr/doc/$PRGNAM-$VERSION"
 
 DOCFILES="COPYING INSTALL *.txt Samples6 tunnel ipsecvpn"
 
@@ -68,9 +67,9 @@ for FILE in $(ls $PKG/etc/shorewall6/[a-z]*) ; do
   mv $FILE $FILE.new
 done
 
-mkdir -p $DOCDIR
-cp -a $DOCFILES $DOCDIR || true
-cat $CWD/$PRGNAM.SlackBuild > $DOCDIR/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
