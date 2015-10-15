@@ -1,0 +1,1724 @@
+diff -Naupr sshguard-1.6.2/Makefile.am sshguard-git/Makefile.am
+--- sshguard-1.6.2/Makefile.am	2015-10-12 23:51:05.000000000 +0200
++++ sshguard-git/Makefile.am	2015-10-14 10:17:24.342124902 +0200
+@@ -1,3 +1 @@
+-AUTOMAKE_OPTIONS = foreign
+ SUBDIRS = src man
+-
+diff -Naupr sshguard-1.6.2/configure.ac sshguard-git/configure.ac
+--- sshguard-1.6.2/configure.ac	2015-10-12 23:51:05.000000000 +0200
++++ sshguard-git/configure.ac	2015-10-14 10:17:24.342124902 +0200
+@@ -1,18 +1,14 @@
+ # Process this file with autoconf to produce a configure script.
+-AC_PREREQ([2.59])
+-AC_INIT([sshguard], [1.6.2], [sshguard-users@lists.sourceforge.net])
++AC_PREREQ([2.59])
++AC_INIT([sshguard], [1.6.2], [sshguard-users@lists.sourceforge.net])
+ AC_CONFIG_SRCDIR([src/simclist.c])
+ AM_CONFIG_HEADER([src/config.h])
+-AM_INIT_AUTOMAKE
+-
++AM_INIT_AUTOMAKE([foreign])
+ AM_SILENT_RULES([yes])
+ 
+ ##############################################################################
+ # Configuration Options
+ 
+-AC_ARG_ENABLE([debug], [AS_HELP_STRING([--enable-debug], [Turn on debugging])])
+-AM_CONDITIONAL([DEBUG], [test x$enable_debug = xyes])
+-
+ AC_ARG_WITH([firewall], [AS_HELP_STRING([--with-firewall=fw],
+             [Firewall backend (one of pf, ipfw, iptables, ipfilter, hosts, aix, or null)])],
+ [
+@@ -21,7 +17,7 @@ AC_ARG_WITH([firewall], [AS_HELP_STRING(
+      aix)
+         cp $FWALLSDIR/command_aix.h $FWALLSDIR/command.h
+         useaix=true
+-        AC_CHECK_PROG(genfiltpath, genfilt, `which genfilt | xargs dirname`, "")
++        AC_CHECK_PROG([genfiltpath], [genfilt])
+         if test x$genfiltpath = x
+         then
+             # genfilt not in PATH, use "/usr/sbin" as default path
+@@ -36,7 +32,7 @@ AC_ARG_WITH([firewall], [AS_HELP_STRING(
+         cp $FWALLSDIR/command_ipfilter.h $FWALLSDIR/command.h
+         useipfilter=true
+         # is ipf in PATH?
+-        AC_CHECK_PROG(ipfpath, ipf, `which ipf | xargs dirname`, "")
++        AC_CHECK_PROG([ipfpath], [ipf])
+         if test x$ipfpath = x
+         then
+             # if ipf is not in PATH not, use "/sbin" as default path
+@@ -48,7 +44,7 @@ AC_ARG_WITH([firewall], [AS_HELP_STRING(
+         cp $FWALLSDIR/command_ipfw.h $FWALLSDIR/command.h
+         useipfw=true
+         # is ipfw in PATH ?
+-        AC_CHECK_PROG(ipfwpath, ipfw, `which ipfw | xargs dirname`, "")
++        AC_CHECK_PROG([ipfwpath], [ipfw])
+         if test x$ipfwpath = x
+         then
+             # if ipfw is not in PATH not, use "/sbin" as default path
+@@ -60,7 +56,7 @@ AC_ARG_WITH([firewall], [AS_HELP_STRING(
+         cp $FWALLSDIR/command_iptables.h $FWALLSDIR/command.h
+         useiptables=true
+         # is iptables in PATH ?
+-        AC_CHECK_PROG(iptablespath, iptables, `which iptables | xargs dirname`, "")
++        AC_CHECK_PROG([iptablespath], [iptables])
+         if test x$iptablespath = x
+         then
+             # if iptables is not in PATH not, use "/sbin" as default path
+@@ -72,7 +68,7 @@ AC_ARG_WITH([firewall], [AS_HELP_STRING(
+         cp $FWALLSDIR/command_pf.h $FWALLSDIR/command.h
+         usepf=true
+         # is pfctl in PATH ?
+-        AC_CHECK_PROG(pfctlpath, pfctl, `which pfctl | xargs dirname`, "")
++        AC_CHECK_PROG([pfctlpath], [pfctl])
+         if test x$pfctlpath = x
+         then
+             # if pfctl is not in PATH not, use "/sbin" as default path
+@@ -85,13 +81,12 @@ AC_ARG_WITH([firewall], [AS_HELP_STRING(
+         usenull=true
+         ;;
+      *)
+-        echo "Choose a valid firewall backend (see --help)"
+-        exit 1
++        AC_MSG_ERROR([Invalid firewall backend (see help)])
+         ;;
+     esac
+ ],
+ [
+- echo "Error: please choose a valid firewall backend (see --help)" && exit 1
++AC_MSG_ERROR([Please choose a firewall backend (see help)])
+ ])
+ 
+ AC_ARG_WITH([genfilt], [AS_HELP_STRING([--with-genfilt=path],
+@@ -126,6 +121,10 @@ AC_ARG_WITH([pfctl], [AS_HELP_STRING([--
+ 
+ ##############################################################################
+ AS_BOX([Program Checks])
++
++# Enable POSIX extensions on hosts that normally disable them.
++AC_USE_SYSTEM_EXTENSIONS
++
+ AC_PROG_AWK
+ AC_PROG_CC
+ AC_PROG_CC_C99
+@@ -135,13 +134,11 @@ AC_PROG_YACC
+ AM_PROG_LEX
+ 
+ ##############################################################################
+-AS_BOX([Library Checks])
+-AC_CHECK_LIB(pthread, pthread_create)
++AS_BOX([Headers, Types, and Compiler Checks])
+ 
+ # Header Files
+ AC_HEADER_STDC
+-AC_HEADER_SYS_WAIT
+-AC_CHECK_HEADERS([arpa/inet.h malloc.h netdb.h netinet/in.h stdlib.h string.h sys/socket.h syslog.h unistd.h getopt.h])
++AC_CHECK_HEADERS([getopt.h])
+ 
+ # Types
+ AC_TYPE_OFF_T
+@@ -153,33 +150,12 @@ AC_C_CONST
+ AC_C_INLINE
+ AC_C_RESTRICT
+ 
+-# test if we are on Solaris, which requires outstanding practices
+-AC_CANONICAL_BUILD
+-AS_CASE([$build_os], 
+-        [solaris*], [on_solaris=yes])
+-AM_CONDITIONAL([SOLARIS], [test x$on_solaris != x])
+-# Sun Studio?
+-AC_CHECK_DECL([__SUNPRO_C], [SUNCC="yes"], [SUNCC="no"])
+-
+-AS_IF([test "$SUNCC" = "yes"], [
+-    # sun compiler
+-    WARNING_CFLAGS="-v"
+-], [
+-    # other compiler (assume gcc-compatibile :( )
+-    WARNING_CFLAGS="-Wall"
+-])
+-
+-AC_SUBST(WARNING_CFLAGS)
+-
+ ##############################################################################
+ AS_BOX([Library Functions])
+-AC_FUNC_FORK
+-AC_FUNC_MALLOC
+-AC_CHECK_FUNCS([gethostbyname inet_ntoa strerror strstr strtol])
+ 
+-# Solaris provides these functions in separate libraries
+-AC_SEARCH_LIBS([socket], [socket])
+ AC_SEARCH_LIBS([gethostbyname], [nsl])
++AC_SEARCH_LIBS([pthread_create], [pthread])
++AC_SEARCH_LIBS([socket], [socket])
+ 
+ # set what firewall backend has been used, for automake
+ # AIX chosen
+@@ -216,25 +192,5 @@ AC_DEFINE_UNQUOTED(EGREP, $EGREP, [path
+ # define a suitable awk
+ AC_DEFINE_UNQUOTED(AWK, $AWK, [path and filename for a suitable awk tool])
+ 
+-# user feedback on options
+-if test x$useaix = xtrue ; then
+-    AC_MSG_NOTICE([Using $genfiltpath as path for genfilt])
+-fi
+-if test x$usehosts = xtrue ; then
+-    AC_MSG_NOTICE([Using $hostsfilepath as hosts.allow file])
+-fi
+-if test x$useipfilter = xtrue ; then
+-    AC_MSG_NOTICE([Using $ipfpath as location for ipf. Using $ipfconf as configuration file for ipfilter])
+-fi
+-if test x$useipfw = xtrue ; then
+-    AC_MSG_NOTICE([Using $ipfwpath as location for ipfw])
+-fi
+-if test x$useiptables = xtrue ; then
+-    AC_MSG_NOTICE([Using $iptablespath as location for iptables])
+-fi
+-if test x$usepf = xtrue ; then
+-    AC_MSG_NOTICE([Using $pfctlpath as location for pfctl])
+-fi
+-
+ AC_OUTPUT([Makefile man/Makefile src/Makefile src/parser/Makefile src/fwalls/Makefile])
+ 
+diff -Naupr sshguard-1.6.2/src/Makefile.am sshguard-git/src/Makefile.am
+--- sshguard-1.6.2/src/Makefile.am	2015-10-12 23:51:06.000000000 +0200
++++ sshguard-git/src/Makefile.am	2015-10-14 10:17:24.344124877 +0200
+@@ -1,17 +1,6 @@
+ SUBDIRS = parser fwalls
+ 
+-AM_CFLAGS=-I. -DSIMCLIST_NO_DUMPRESTORE @WARNING_CFLAGS@
+-
+-if SOLARIS
+-# on solaris, the compiler refuses to use C99 for compiling pre-POSIX.1-2001 stuff (ew!)
+-AM_CFLAGS+= -D_XOPEN_SOURCE=600
+-else
+-AM_CFLAGS+= -D_XOPEN_SOURCE
+-endif
+-
+-if DEBUG
+-AM_CFLAGS+= -g
+-endif
++AM_CFLAGS=-I. -DSIMCLIST_NO_DUMPRESTORE
+ 
+ sbin_PROGRAMS = sshguard
+ sshguard_SOURCES = sshguard.c seekers.c sshguard_whitelist.c sshguard_log.c sshguard_procauth.c sshguard_blacklist.c sshguard_options.c sshguard_logsuck.c simclist.c hash_32a.c
+diff -Naupr sshguard-1.6.2/src/fwalls/Makefile.am sshguard-git/src/fwalls/Makefile.am
+--- sshguard-1.6.2/src/fwalls/Makefile.am	2015-10-12 23:51:06.000000000 +0200
++++ sshguard-git/src/fwalls/Makefile.am	2015-10-14 10:17:24.344124877 +0200
+@@ -1,5 +1,3 @@
+-AM_CFLAGS=-I. -I.. @WARNING_CFLAGS@ -D_POSIX_C_SOURCE=200112L
+-
+ noinst_LIBRARIES = libfwall.a
+ 
+ if FWALL_HOSTS
+diff -Naupr sshguard-1.6.2/src/fwalls/command.c sshguard-git/src/fwalls/command.c
+--- sshguard-1.6.2/src/fwalls/command.c	2015-10-12 23:51:05.000000000 +0200
++++ sshguard-git/src/fwalls/command.c	2015-10-14 10:17:24.344124877 +0200
+@@ -110,8 +110,6 @@ int fw_block_list(const char *restrict a
+     assert(addresses != NULL);
+     assert(service_codes != NULL);
+ 
+-    if (addresses[0] == NULL) return FWALL_OK;
+-
+ #ifdef COMMAND_BLOCK_LIST
+     char address_list[MAX_ADDRESSES_PER_LIST * ADDRLEN];
+     address_list[0] = '\0';
+@@ -138,17 +136,10 @@ int fw_block_list(const char *restrict a
+ 
+ #else
+     int err = FWALL_OK;
+-    for (i = 0; addresses[i] != NULL; i++) {
+-        /* repeatedly call single-blocking command for each address */
++    for (int i = 0; addresses[i] != NULL; i++) {
+         if (fw_block(addresses[i], addrkind, service_codes[i]) != FWALL_OK)
+             err = FWALL_ERR;
+     }
+-
+-    if (err == FWALL_OK)
+-        sshguard_log(LOG_INFO, "Blocked %d addresses without errors.", i);
+-    else
+-        sshguard_log(LOG_INFO, "Some errors while trying to block %d addresses.", i);
+-
+     return err;
+ #endif
+ }
+diff -Naupr sshguard-1.6.2/src/parser/Makefile.am sshguard-git/src/parser/Makefile.am
+--- sshguard-1.6.2/src/parser/Makefile.am	2015-10-12 23:51:06.000000000 +0200
++++ sshguard-git/src/parser/Makefile.am	2015-10-14 10:17:24.345124864 +0200
+@@ -1,4 +1,3 @@
+-AM_CFLAGS=-I. -I.. @WARNING_CFLAGS@ -D_POSIX_C_SOURCE=200112L
+ AM_YFLAGS = -d
+ #AM_LFLAGS = -d
+ 
+diff -Naupr sshguard-1.6.2/src/parser/attack_scanner.l sshguard-git/src/parser/attack_scanner.l
+--- sshguard-1.6.2/src/parser/attack_scanner.l	2015-10-12 23:51:06.000000000 +0200
++++ sshguard-git/src/parser/attack_scanner.l	2015-10-14 10:17:24.345124864 +0200
+@@ -30,6 +30,7 @@ static int getsyslogpid(char *syslogbann
+ %}
+ 
+ %option debug
++%option noinput
+ %option nounput
+ %option noyywrap
+ 
+diff -Naupr sshguard-1.6.2/src/seekers.c sshguard-git/src/seekers.c
+--- sshguard-1.6.2/src/seekers.c	2015-10-12 23:51:06.000000000 +0200
++++ sshguard-git/src/seekers.c	2015-10-14 10:17:24.346124852 +0200
+@@ -1,8 +1,6 @@
+ #include <assert.h>
+ #include <string.h>
+ 
+-#include <simclist.h>
+-
+ #include "parser/attack.h"
+ #include "seekers.h"
+ 
+diff -Naupr sshguard-1.6.2/src/sshguard.c sshguard-git/src/sshguard.c
+--- sshguard-1.6.2/src/sshguard.c	2015-10-12 23:51:06.000000000 +0200
++++ sshguard-git/src/sshguard.c	2015-10-14 10:17:24.346124852 +0200
+@@ -18,44 +18,34 @@
+  * SSHGuard. See http://www.sshguard.net
+  */
+ 
++#include <assert.h>
++#include <pthread.h>
++#include <signal.h>
+ #include <stdio.h>
+-#include <string.h>
+ #include <stdlib.h>
++#include <string.h>
+ #include <unistd.h>
+-#include <time.h>
+-#include <pthread.h>
+-#include <signal.h>
+-#include <assert.h>
+-
+-#include <simclist.h>
+ 
+-/* subsystem for parsing log entries, notably parse_line() */
+ #include "parser/parser.h"
+-
+-/* logging subsystem, sshguard_log() */
+-#include "sshguard_log.h"
+-/* functions for getting user's preferences */
+-#include "sshguard_options.h"
+-/* functions for managing whitelist (addresses not to block): whitelist_*() */
+-#include "sshguard_whitelist.h"
+-/* functions for reading and updating the blacklist (addresses to block and never release): blacklist_*() */
++#include "seekers.h"
++#include "simclist.h"
++#include "sshguard.h"
+ #include "sshguard_blacklist.h"
+-/* functions for log messages verification: procauth_*() */
+-#include "sshguard_procauth.h"
+-/* functions for controlling the underlying firewall: fw_*() */
+ #include "sshguard_fw.h"
+-/* seeker functions for lists */
+-#include "seekers.h"
+-/* subsystem for polling multiple log files and getting log entries */
++#include "sshguard_log.h"
+ #include "sshguard_logsuck.h"
+-
+-#include "sshguard.h"
++#include "sshguard_options.h"
++#include "sshguard_procauth.h"
++#include "sshguard_whitelist.h"
+ 
+ #define MAX_LOGLINE_LEN     1000
+ 
+ /* switch from 0 (normal) to 1 (suspended) with SIGTSTP and SIGCONT respectively */
+ int suspended = 0;
+ 
++/** Keep track of the exit signal received. */
++static int exit_sig = 0;
++
+ /*      FUNDAMENTAL DATA STRUCTURES         */
+ /* These lists are all lists of attacker_t structures.
+  * limbo and hell maintain "temporary" entries: in limbo, entries are deleted
+@@ -90,13 +80,9 @@ static int attackt_whenlast_comparator(c
+ 
+ /* get log lines in here. Hide the actual source and the method. Fill buf up
+  * to buflen chars, return 0 for success, -1 for failure */
+-static int read_log_line(char *restrict buf, size_t buflen, bool from_last_source, sourceid_t *restrict source_id);
+-#ifdef EINTR
+-/* get line unaffected by interrupts */
+-static char *safe_fgets(char *restrict s, int size, FILE *restrict stream);
+-#endif
++static int read_log_line(char *restrict buf, sourceid_t *restrict source_id);
+ /* handler for termination-related signals */
+-static void sigfin_handler(int signo);
++static void sigfin_handler();
+ /* handler for suspension/resume signals */
+ static void sigstpcont_handler(int signo);
+ /* called at exit(): flush blocked addresses and finalize subsystems */
+@@ -109,25 +95,23 @@ static void report_address(attack_t atta
+ /* cleanup false-alarm attackers from limbo list (ones with too few attacks in too much time) */
+ static void purge_limbo_stale(void);
+ /* release blocked attackers after their penalty expired */
+-static void *pardonBlocked(void *par);
++static void *pardonBlocked();
+ 
+ /* create or destroy my own pidfile */
+-static int my_pidfile_create();
+-static void my_pidfile_destroy();
+-
++static void my_pidfile_create(void);
++static void my_pidfile_destroy(void);
+ 
+ int main(int argc, char *argv[]) {
+     pthread_t tid;
+-    int retv;
+     sourceid_t source_id;
+     char buf[MAX_LOGLINE_LEN];
+-    int sshg_debugging;
+ 
+-    /* initializations */
+-    srand(time(NULL));
+-    sshg_debugging = (getenv("SSHGUARD_DEBUG") != NULL);
+-    yydebug = sshg_debugging;
++    int sshg_debugging = (getenv("SSHGUARD_DEBUG") != NULL);
++    sshguard_log_init(sshg_debugging);
+     yy_flex_debug = sshg_debugging;
++    yydebug = sshg_debugging;
++
++    srand(time(NULL));
+ 
+     /* pending, blocked, and offender address lists */
+     list_init(&limbo);
+@@ -137,53 +121,32 @@ int main(int argc, char *argv[]) {
+     list_init(&offenders);
+     list_attributes_seeker(& offenders, seeker_addr);
+     list_attributes_comparator(& offenders, attackt_whenlast_comparator);
+-    pthread_mutex_init(& list_mutex, NULL);
+-
+-
+-    /* logging system */
+-    sshguard_log_init(sshg_debugging);
+ 
+-    /* whitelisting system */
+-    if (whitelist_init() != 0 || whitelist_conf_init() != 0) {
++    // Initialize procauth and whitelist before parsing arguments.
++    procauth_init();
++    whitelist_init();
++    if (whitelist_conf_init() != 0) {
+         fprintf(stderr, "Could not initialize the whitelist engine.\n");
+         exit(1);
+     }
+ 
+-    /* process authorization system */
+-    if (procauth_init() != 0) {
+-        fprintf(stderr, "Could not initialize the process authorization subsystem.");
+-        exit(1);
+-    }
+-
+-    /* parsing the command line */
+     if (get_options_cmdline(argc, argv) != 0) {
+-        exit(1);
++        exit(64);
+     }
+ 
+     /* create pidfile, if requested */
+     if (opts.my_pidfile != NULL) {
+-        if (my_pidfile_create() != 0)
+-            exit(1);
++        my_pidfile_create();
+         atexit(my_pidfile_destroy);
+     }
+ 
+-    /* whitelist localhost */
+-    if (whitelist_add("127.0.0.1") != 0) {
+-        fprintf(stderr, "Could not whitelist localhost. Terminating...\n");
+-        exit(1);
+-    }
+-
+-    whitelist_conf_fin();
+-
+-    /* address blocking system */
+     if (fw_init() != FWALL_OK) {
+-        sshguard_log(LOG_CRIT, "Could not init firewall. Terminating.\n");
+-        fprintf(stderr, "Could not init firewall. Terminating.\n");
+-        exit(1);
++        sshguard_log(LOG_ERR, "Failed to initialize firewall");
++        exit(69);
+     }
+ 
+-    /* set finalization routine */
+-    atexit(finishup);
++    // Load blacklist and block listed addresses.
++    process_blacklisted_addresses();
+ 
+     /* suspension signals */
+     signal(SIGTSTP, sigstpcont_handler);
+@@ -193,88 +156,70 @@ int main(int argc, char *argv[]) {
+     signal(SIGTERM, sigfin_handler);
+     signal(SIGHUP, sigfin_handler);
+     signal(SIGINT, sigfin_handler);
++    atexit(finishup);
+ 
+-    /* load blacklisted addresses and block them (if requested) */
+-    process_blacklisted_addresses();
++    // TODO: Privilege separation goes here!
++
++    /* whitelist localhost */
++    if (whitelist_add("127.0.0.1") != 0) {
++        fprintf(stderr, "Could not whitelist localhost. Terminating...\n");
++        exit(1);
++    }
++
++    whitelist_conf_fin();
+ 
+-    
+     /* start thread for purging stale blocked addresses */
++    pthread_mutex_init(&list_mutex, NULL);
+     if (pthread_create(&tid, NULL, pardonBlocked, NULL) != 0) {
+         perror("pthread_create()");
+         exit(2);
+     }
+ 
++    sshguard_log(LOG_INFO, "Monitoring attacks from %s",
++            opts.has_polled_files ? "log files" : "stdin");
+ 
+-    /* initialization successful */
+-    sshguard_log(LOG_NOTICE,
+-            "Started with danger threshold=%u ; minimum block=%u seconds",
+-            opts.abuse_threshold, (unsigned int)opts.pardon_threshold);
+-
+-    while (read_log_line(buf, MAX_LOGLINE_LEN, false, & source_id) == 0) {
++    while (read_log_line(buf, &source_id) == 0) {
+         attack_t parsed_attack;
+-        if (suspended) continue;
+ 
+-        retv = parse_line(source_id, buf, &parsed_attack);
+-        if (retv != 0) {
+-            /* sshguard_log(LOG_DEBUG, "Skip line '%s'", buf); */
++        if (suspended || parse_line(source_id, buf, &parsed_attack) != 0) {
+             continue;
+         }
+ 
+-        /* extract the IP address */
+-        sshguard_log(LOG_DEBUG, "Matched address %s:%d attacking service %d, dangerousness %u.", parsed_attack.address.value, parsed_attack.address.kind, parsed_attack.service, parsed_attack.dangerousness);
+-
+-        // Do not report if the source is clearly fake.
+         if (parsed_attack.source != 0 && procauth_isauthoritative(
+                     parsed_attack.service, parsed_attack.source) == -1) {
+             sshguard_log(LOG_NOTICE,
+-                    "Ignoring message from PID %d for service %d",
++                    "Ignoring message from pid %d on service %d",
+                     parsed_attack.source, parsed_attack.service);
+-        } else {
+-            report_address(parsed_attack);
++            continue;
+         }
++
++        sshguard_log(LOG_DEBUG, "Attack from %s on service %d with danger %u",
++                parsed_attack.address.value, parsed_attack.service,
++                parsed_attack.dangerousness);
++        report_address(parsed_attack);
+     }
+ 
+-    /* let exit() call finishup() */
+-    exit(0);
++    if (!opts.has_polled_files && feof(stdin)) {
++        sshguard_log(LOG_NOTICE, "Received EOF from stdin");
++    } else {
++        sshguard_log(LOG_ERR, "Unable to read any more log entries");
++    }
+ }
+ 
+-static int read_log_line(char *restrict buf, size_t buflen, bool from_last_source, sourceid_t *restrict source_id) {
++static int read_log_line(char *restrict buf, sourceid_t *restrict source_id) {
+     /* must fill buf, and return 0 for success and -1 for error */
+ 
+     /* get logs from polled files ? */
+     if (opts.has_polled_files) {
+         /* logsuck_getline() reflects the 0/-1 codes already */
+-        return logsuck_getline(buf, MAX_LOGLINE_LEN, from_last_source, source_id);
++        return logsuck_getline(buf, MAX_LOGLINE_LEN, source_id);
+     }
+ 
+     /* otherwise, get logs from stdin */
+     if (source_id != NULL) *source_id = 0;
+ 
+-#ifdef EINTR
+-    return (safe_fgets(buf, MAX_LOGLINE_LEN, stdin) != NULL ? 0 : -1);
+-#else
+     return (fgets(buf, MAX_LOGLINE_LEN, stdin) != NULL ? 0 : -1);
+-#endif
+-}
+-
+-#ifdef EINTR
+-static char *safe_fgets(char *restrict s, int size, FILE *restrict stream) {
+-    char *restrict ret;
+-
+-    do {
+-        clearerr(stream);
+-        ret = fgets(s, size, stream);
+-        if (ret != NULL)
+-            return s;
+-        if (errno != EINTR)
+-            return NULL;
+-    } while (ret == NULL && errno == EINTR);
+-
+-    /* pretend we arrive here to make compiler happy */
+-    return NULL;
+ }
+-#endif
+-
+ 
+ /*
+  * This function is called every time an attack pattern is matched.
+@@ -299,19 +244,19 @@ static void report_address(attack_t atta
+     tmpent = list_seek(& hell, & attack.address);
+     pthread_mutex_unlock(& list_mutex);
+     if (tmpent != NULL) {
+-        sshguard_log(LOG_INFO, "Asked to block '%s', which was already blocked to my account.", attack.address.value);
++        sshguard_log(LOG_WARNING, "%s: should already have been blocked",
++                attack.address.value);
+         return;
+     }
+ 
+-    /* protected address? */
+     if (whitelist_match(attack.address.value, attack.address.kind)) {
+-        sshguard_log(LOG_INFO, "Pass over address %s because it's been whitelisted.", attack.address.value);
++        sshguard_log(LOG_INFO, "%s: not blocking (on whitelist)",
++                attack.address.value);
+         return;
+     }
+     
+     /* search entry in list */
+     tmpent = list_seek(& limbo, & attack.address);
+-
+     if (tmpent == NULL) { /* entry not already in list, add it */
+         /* otherwise: insert the new item */
+         tmpent = malloc(sizeof(attacker_t));
+@@ -336,10 +281,10 @@ static void report_address(attack_t atta
+      * duration of blocking */
+     tmpent->pardontime = opts.pardon_threshold;
+     offenderent = list_seek(& offenders, & attack.address);
+-
+     if (offenderent == NULL) {
+         /* first time we block this guy */
+-        sshguard_log(LOG_DEBUG, "First abuse of '%s', adding to offenders list.", tmpent->attack.address.value);
++        sshguard_log(LOG_DEBUG, "%s: first block (adding as offender)",
++                tmpent->attack.address.value);
+         offenderent = (attacker_t *)malloc(sizeof(attacker_t));
+         /* copy everything from tmpent */
+         memcpy(offenderent, tmpent, sizeof(attacker_t));
+@@ -363,26 +308,9 @@ static void report_address(attack_t atta
+ 
+         /* insert in the blacklisted db iff enabled */
+         if (opts.blacklist_filename != NULL) {
+-            switch (blacklist_lookup_address(opts.blacklist_filename, & offenderent->attack.address)) {
+-                case 1:     /* in blacklist */
+-                    /* do nothing */
+-                    break;
+-                case 0:     /* not in blacklist */
+-                    /* add it */
+-                    sshguard_log(LOG_NOTICE, "Offender '%s:%d' scored %d danger in %u abuses (threshold %u) -> blacklisted.",
+-                            offenderent->attack.address.value, offenderent->attack.address.kind,
+-                            offenderent->cumulated_danger, offenderent->numhits,
+-                            opts.blacklist_threshold);
+-                    if (blacklist_add(opts.blacklist_filename, offenderent) != 0) {
+-                        sshguard_log(LOG_ERR, "Could not blacklist offender: %s", strerror(errno));
+-                    }
+-                    break;
+-                default:    /* error while looking up */
+-                    sshguard_log(LOG_ERR, "Error while looking up '%s:%d' in blacklist '%s'.", attack.address.value, attack.address.kind, opts.blacklist_filename);
+-            }
++            blacklist_add(offenderent);
+         }
+     } else {
+-        sshguard_log(LOG_INFO, "Offender '%s:%d' scored %u danger in %u abuses.", tmpent->attack.address.value, tmpent->attack.address.kind, offenderent->cumulated_danger, offenderent->numhits);
+         /* compute blocking time wrt the "offensiveness" */
+         for (unsigned int i = 0; i < offenderent->numhits; i++) {
+             tmpent->pardontime *= 1.5;
+@@ -390,13 +318,16 @@ static void report_address(attack_t atta
+     }
+     list_sort(& offenders, -1);
+ 
+-    sshguard_log(LOG_NOTICE, "Blocking %s:%d for >%lldsecs: %u danger in %u attacks over %lld seconds (all: %ud in %d abuses over %llds).\n",
+-            tmpent->attack.address.value, tmpent->attack.address.kind, (long long int)tmpent->pardontime,
+-            tmpent->cumulated_danger, tmpent->numhits, (long long int)(tmpent->whenlast - tmpent->whenfirst),
+-            offenderent->cumulated_danger, offenderent->numhits, (long long int)(offenderent->whenlast - offenderent->whenfirst));
++    sshguard_log(LOG_NOTICE, "%s: blocking for %lld secs (%u attacks in %lld secs, after %d abuses over %lld secs)",
++            tmpent->attack.address.value, (long long)tmpent->pardontime,
++            tmpent->numhits, (long long)(tmpent->whenlast - tmpent->whenfirst),
++            offenderent->numhits,
++            (long long)(offenderent->whenlast - offenderent->whenfirst));
+     int ret = fw_block(attack.address.value,
+             attack.address.kind, attack.service);
+-    if (ret != FWALL_OK) sshguard_log(LOG_ERR, "Blocking command failed. Exited: %d", ret);
++    if (ret != FWALL_OK) {
++        sshguard_log(LOG_ERR, "fw: failed to block (%d)", ret);
++    }
+ 
+     /* append blocked attacker to the blocked list, and remove it from the pending list */
+     pthread_mutex_lock(& list_mutex);
+@@ -417,7 +348,7 @@ static inline void attackerinit(attacker
+ }
+ 
+ static void purge_limbo_stale(void) {
+-    sshguard_log(LOG_DEBUG, "Purging stale attackers.");
++    sshguard_log(LOG_DEBUG, "Purging old attackers");
+     time_t now = time(NULL);
+     for (unsigned int pos = 0; pos < list_size(&limbo); pos++) {
+         attacker_t *tmpent = list_get_at(&limbo, pos);
+@@ -429,7 +360,7 @@ static void purge_limbo_stale(void) {
+     }
+ }
+ 
+-static void *pardonBlocked(void *par) {
++static void *pardonBlocked() {
+     time_t now;
+     attacker_t *tmpel;
+     int ret;
+@@ -449,9 +380,13 @@ static void *pardonBlocked(void *par) {
+             /* process hosts with finite pardon time */
+             if (now - tmpel->whenlast > tmpel->pardontime) {
+                 /* pardon time passed, release block */
+-                sshguard_log(LOG_INFO, "Releasing %s after %lld seconds.\n", tmpel->attack.address.value, (long long int)(now - tmpel->whenlast));
++                sshguard_log(LOG_INFO, "%s: unblocking after %lld secs",
++                        tmpel->attack.address.value,
++                        (long long)(now - tmpel->whenlast));
+                 ret = fw_release(tmpel->attack.address.value, tmpel->attack.address.kind, tmpel->attack.service);
+-                if (ret != FWALL_OK) sshguard_log(LOG_ERR, "Release command failed. Exited: %d", ret);
++                if (ret != FWALL_OK) {
++                    sshguard_log(LOG_ERR, "fw: failed to unblock (%d)", ret);
++                }
+                 list_delete_at(&hell, pos);
+                 free(tmpel);
+                 /* element removed, next element is at current index (don't step pos) */
+@@ -468,22 +403,26 @@ static void *pardonBlocked(void *par) {
+     return NULL;
+ }
+ 
+-/* finalization routine */
+ static void finishup(void) {
+-    /* flush blocking rules */
+-    sshguard_log(LOG_NOTICE, "Got exit signal, flushing blocked addresses and exiting...");
+-    fw_flush();
+-    if (fw_fin() != FWALL_OK) sshguard_log(LOG_ERR, "Cound not finalize firewall.");
+-    if (whitelist_fin() != 0) sshguard_log(LOG_ERR, "Could not finalize the whitelisting system.");
+-    if (procauth_fin() != 0) sshguard_log(LOG_ERR, "Could not finalize the process authorization subsystem.");
++    sshguard_log(LOG_INFO, "Exiting on %s",
++            exit_sig == SIGHUP ? "SIGHUP" : "signal");
++
++    if (fw_flush() != FWALL_OK) {
++        sshguard_log(LOG_ERR, "fw: failed to flush blocked addresses");
++    }
++
+     if (opts.has_polled_files) {
+-        if (logsuck_fin() != 0) sshguard_log(LOG_ERR, "Could not finalize the log polling subsystem.");
++        logsuck_fin();
+     }
++
++    fw_fin();
++    whitelist_fin();
++    procauth_fin();
+     sshguard_log_fin();
+ }
+ 
+-static void sigfin_handler(int signo) {
+-    /* let exit() call finishup() */
++static void sigfin_handler(int sig) {
++    exit_sig = sig;
+     exit(0);
+ }
+ 
+@@ -512,29 +451,24 @@ static void process_blacklisted_addresse
+     list_t *blacklist;
+     const char **addresses;         /* NULL-terminated array of (string) addresses to block:  char *addresses[]  */
+     int *restrict service_codes;    /* array of service codes resp to the given addresses */
+-    int i;
+ 
+-
+-    /* if blacklist enabled, block blacklisted addresses */
+-    if (opts.blacklist_filename == NULL)
++    if (opts.blacklist_filename == NULL) {
++        // Return if blacklisting is not enabled.
+         return;
++    }
+ 
+     blacklist = blacklist_load(opts.blacklist_filename);
+     if (blacklist == NULL) {
+-        sshguard_log(LOG_NOTICE, "Blacklist file '%s' doesn't exist, I'll create it for you.\n", opts.blacklist_filename);
+-        if (blacklist_create(opts.blacklist_filename) != 0) {
+-            /* write to both destinations to make sure the user notice it */
+-            fprintf(stderr, "Unable to create a blacklist file at '%s'! Terminating.\n", opts.blacklist_filename);
+-            sshguard_log(LOG_CRIT, "Unable to create a blacklist file at '%s'! Terminating.\n", opts.blacklist_filename);
+-            exit(1);
+-        }
+-        blacklist = blacklist_load(opts.blacklist_filename);
++        perror("Could not open blacklist");
++        sshguard_log(LOG_ERR, "blacklist: could not open %s",
++                opts.blacklist_filename);
++        exit(66);
+     }
+ 
+     /* blacklist enabled */
+-    assert(blacklist != NULL);
+     size_t num_blacklisted = list_size(blacklist);
+-    sshguard_log(LOG_INFO, "Blacklist loaded, blocking %lu addresses.", (long unsigned int)num_blacklisted);
++    sshguard_log(LOG_INFO, "blacklist: blocking %lu addresses",
++            (long unsigned int)num_blacklisted);
+     /* prepare to call fw_block_list() to block in bulk */
+     /* two runs, one for each address kind (but allocate arrays once) */
+     addresses = (const char **)malloc(sizeof(const char *) * (num_blacklisted+1));
+@@ -542,15 +476,23 @@ static void process_blacklisted_addresse
+     int addrkind;
+     for (addrkind = ADDRKIND_IPv4; addrkind != -1; addrkind = (addrkind == ADDRKIND_IPv4 ? ADDRKIND_IPv6 : -1)) {
+         /* extract from blacklist only addresses (and resp. codes) of type addrkind */
+-        i = 0;
++        int i = 0;
+         list_iterator_start(blacklist);
+         while (list_iterator_hasnext(blacklist)) {
+             const attacker_t *bl_attacker = list_iterator_next(blacklist);
+             if (bl_attacker->attack.address.kind != addrkind)
+                 continue;
+-            sshguard_log(LOG_DEBUG, "Loaded from blacklist (%d): '%s:%d', service %d, last seen %s.", i,
+-                    bl_attacker->attack.address.value, bl_attacker->attack.address.kind, bl_attacker->attack.service,
+-                    ctime(& bl_attacker->whenlast));
++
++            // Trim trailing newline from strchr().
++            char *time_str = ctime(&bl_attacker->whenlast);
++            char *newline = strchr(time_str, '\n');
++            assert(newline != NULL);
++            *newline = '\0';
++            sshguard_log(LOG_DEBUG,
++                    "blacklist: loaded %s (ip%d) on service %d: %s",
++                    bl_attacker->attack.address.value,
++                    bl_attacker->attack.address.kind,
++                    bl_attacker->attack.service, time_str);
+             addresses[i] = bl_attacker->attack.address.value;
+             service_codes[i] = bl_attacker->attack.service;
+             ++i;
+@@ -561,32 +503,27 @@ static void process_blacklisted_addresse
+         addresses[i] = NULL;
+         /* do block addresses of this kind */
+         if (fw_block_list(addresses, addrkind, service_codes) != FWALL_OK) {
+-            sshguard_log(LOG_CRIT, "While blocking blacklisted addresses, the firewall refused to block!");
++            sshguard_log(LOG_ERR, "blacklist: failed to block addresses");
+         }
+     }
+     /* free temporary arrays */
+     free(addresses);
+     free(service_codes);
+-    /* free blacklist stuff */
+-    list_destroy(blacklist);
+-    free(blacklist);
+ }
+ 
+-static int my_pidfile_create() {
+-    FILE *p;
+-    
+-    p = fopen(opts.my_pidfile, "w");
++static void my_pidfile_create() {
++    FILE *p = fopen(opts.my_pidfile, "w");
+     if (p == NULL) {
+-        sshguard_log(LOG_ERR, "Could not create pidfile '%s': %s.", opts.my_pidfile, strerror(errno));
+-        return -1;
++        sshguard_log(LOG_ERR, "Failed to create pid file: %m");
++        exit(73);
+     }
++
+     fprintf(p, "%d\n", (int)getpid());
+     fclose(p);
+-
+-    return 0;
+ }
+ 
+ static void my_pidfile_destroy() {
+-    if (unlink(opts.my_pidfile) != 0)
+-        sshguard_log(LOG_ERR, "Could not remove pidfile '%s': %s.", opts.my_pidfile, strerror(errno));
++    if (unlink(opts.my_pidfile) != 0) {
++        sshguard_log(LOG_ERR, "Failed to remove pid file: %m");
++    }
+ }
+diff -Naupr sshguard-1.6.2/src/sshguard_blacklist.c sshguard-git/src/sshguard_blacklist.c
+--- sshguard-1.6.2/src/sshguard_blacklist.c	2015-10-12 23:51:05.000000000 +0200
++++ sshguard-git/src/sshguard_blacklist.c	2015-10-14 10:17:24.347124839 +0200
+@@ -18,21 +18,16 @@
+  * SSHGuard. See http://www.sshguard.net
+  */
+ 
+-#include <stdio.h>
+-#include <string.h>
+-#include <stdlib.h>
+-#include <sys/types.h>
+-#include <inttypes.h>
+-/* for hton*() functions */
+-#include <arpa/inet.h>
+ #include <assert.h>
+ #include <ctype.h>
+-
+-#include <simclist.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
+ 
+ #include "parser/attack.h"
+-#include "sshguard_log.h"
++#include "simclist.h"
+ #include "sshguard_blacklist.h"
++#include "sshguard_log.h"
+ 
+ #define BL_MAXBUF      1024
+ #define BL_NUMENT      5
+@@ -40,6 +35,8 @@
+ #define stringify(x)    xstr(x)
+ #define xstr(x)         #x
+ 
++static FILE *blacklist_file;
++static list_t *blacklist;
+ 
+ /*          UTILITY FUNCTIONS           */
+ 
+@@ -61,24 +58,34 @@ static size_t attacker_el_meter(const vo
+ 
+ /*          INTERFACE FUNCTIONS             */
+ 
++static void blacklist_close() {
++    assert(blacklist_file != NULL && blacklist != NULL);
++    fclose(blacklist_file);
++    blacklist_file = NULL;
++    list_destroy(blacklist);
++    free(blacklist);
++    blacklist = NULL;
++}
++
+ list_t *blacklist_load(const char *filename) {
+-    attacker_t newattacker;
+-    list_t *blacklist;
+-    FILE *blacklist_file;
+     char blacklist_line[BL_MAXBUF];
+     unsigned int linecnt;
+ 
+-    blacklist_file = fopen(filename, "r");
+-
+-    if (blacklist_file == NULL)
++    assert(blacklist_file == NULL && blacklist == NULL);
++    blacklist_file = fopen(filename, "a+");
++    if (blacklist_file == NULL) {
+         return NULL;
++    }
+ 
+     blacklist = (list_t *)malloc(sizeof(list_t));
+     list_init(blacklist);
+     list_attributes_copy(blacklist, attacker_el_meter, 1);
++    rewind(blacklist_file);
+ 
+     /* loading content of the file in the blacklist */
+     for (linecnt = 1; fgets(blacklist_line, BL_MAXBUF, blacklist_file) != NULL; ++linecnt) {
++        attacker_t newattacker;
++
+         /* discard empty lines and lines starting with a white-space or # */
+         if (isspace(blacklist_line[0]) || blacklist_line[0] == '#') {
+             while (blacklist_line[strlen(blacklist_line)-1] != '\n') {
+@@ -88,16 +95,24 @@ list_t *blacklist_load(const char *filen
+             continue;
+         }
+ 
+-        /* line is valid, do create a list entry for it */
+-        if (sscanf(blacklist_line, "%lu|%d|%d|%" stringify(ADDRLEN) "s", & newattacker.whenlast,
+-               & newattacker.attack.service,
+-               & newattacker.attack.address.kind, newattacker.attack.address.value) != 4) {
+-            sshguard_log(LOG_NOTICE, "Blacklist entry (line #%d of '%s') appears to be malformatted. Ignoring.", linecnt, filename);
++        long long blacklist_time;
++        int service_no;
++        if (sscanf(blacklist_line, "%lld|%d|%d|%" stringify(ADDRLEN) "s",
++                    &blacklist_time, &service_no,
++                    &newattacker.attack.address.kind,
++                    newattacker.attack.address.value) != 4) {
++            sshguard_log(LOG_NOTICE,
++                    "blacklist: ignoring malformed line %d", linecnt);
+             continue;
+         }
+-        if (newattacker.attack.address.kind != ADDRKIND_IPv4 && newattacker.attack.address.kind != ADDRKIND_IPv6) {
++        newattacker.whenlast = (time_t)blacklist_time;
++        newattacker.attack.service = (enum service)service_no;
++
++        if (newattacker.attack.address.kind != ADDRKIND_IPv4 &&
++                newattacker.attack.address.kind != ADDRKIND_IPv6) {
+             /* unknown address type */
+-            sshguard_log(LOG_NOTICE, "Blacklist entry (line #%d of '%s') has unknown type %d. Ignoring.", linecnt, filename, newattacker.attack.address.kind);
++            sshguard_log(LOG_NOTICE,
++                    "blacklist: unknown address type on line %d", linecnt);
+             continue;
+         }
+ 
+@@ -112,78 +127,40 @@ list_t *blacklist_load(const char *filen
+         list_append(blacklist, & newattacker);
+     }
+ 
+-    fclose(blacklist_file);
+-
++    atexit(blacklist_close);
+     return blacklist;
+ }
+ 
+-int blacklist_create(const char *filename) {
+-    FILE * blacklist_file = fopen(filename, "w");
+-
+-    if (blacklist_file == NULL)
+-        return -1;
+-
+-    fprintf(blacklist_file, "# SSHGuard blacklist file ( http://www.sshguard.net/ ).\n");
+-    fprintf(blacklist_file, "# Format of entries: BLACKLIST_TIMESTAMP|SERVICE|ADDRESS_TYPE|ADDRESS\n");
+-    fclose(blacklist_file);
+-
+-    return 0;
+-}
+-
+-int blacklist_add(const char *restrict filename, const attacker_t *restrict newel) {
+-    FILE * blacklist_file;
+-    char blacklist_line[BL_MAXBUF];
+-    unsigned int counter = 0;
+-
+-    /* append the new attacker in the blacklist */
+-    blacklist_file = fopen(filename, "r+");
+-
+-    if (blacklist_file == NULL)
+-        return -1;
+-
+-    /* count existing entries */
+-    while (fgets(blacklist_line, BL_MAXBUF, blacklist_file) != NULL) {
+-        /* discard empty lines */
+-        // TODO: check again this condition
+-        if ((blacklist_line != NULL || (blacklist_line[0] == '\0')))
+-          continue;
+-
+-        /* check if the line is a comment */
+-        if (blacklist_line[0] == '#')
+-          continue;
+-
+-        ++counter;
++void blacklist_add(const attacker_t *restrict newel) {
++    assert(blacklist_file != NULL && blacklist != NULL);
++    if (blacklist_contains(&newel->attack.address)) {
++        sshguard_log(LOG_WARNING, "blacklist: %s is already blacklisted",
++                newel->attack.address.value);
++        return;
+     }
+ 
+-    fprintf(blacklist_file, "%lu|%d|%d|%s\n", newel->whenlast, newel->attack.service, newel->attack.address.kind, newel->attack.address.value);
+-    fclose(blacklist_file);
+-
+-    sshguard_log(LOG_DEBUG, "Attacker '%s:%d' blacklisted. Blacklist now %d entries.", newel->attack.address.value, newel->attack.address.kind, counter);
+-
+-    return 0;
++    int retval = fprintf(blacklist_file, "%lld|%d|%d|%s\n",
++            (long long)newel->whenlast, newel->attack.service,
++            newel->attack.address.kind, newel->attack.address.value);
++    if (retval > 0) {
++        sshguard_log(LOG_NOTICE, "blacklist: added %s",
++                newel->attack.address.value);
++        fflush(blacklist_file);
++        list_append(blacklist, newel);
++    } else {
++        sshguard_log(LOG_ERR, "blacklist: could not add %s: %s",
++                newel->attack.address.value, strerror(errno));
++    }
+ }
+ 
+-
+-int blacklist_lookup_address(const char *restrict filename, const sshg_address_t *restrict addr) {
+-    attacker_t *restrict el;
+-    list_t *restrict blacklist = blacklist_load(filename);
+-
+-    if (blacklist == NULL)
++int blacklist_contains(const sshg_address_t *restrict addr) {
++    if (blacklist == NULL) {
++        // Blacklist hasn't been loaded yet.
+         return -1;
++    }
+ 
+-    sshguard_log(LOG_DEBUG, "Looking for address '%s:%d'...", addr->value, addr->kind);
+     list_attributes_seeker(blacklist, seeker_addr);
+-
+-    el = list_seek(blacklist, addr);
+-
+-    list_destroy(blacklist);
+-    free(blacklist);
+-
+-    if (el != NULL)
+-        sshguard_log(LOG_DEBUG, "Found!");
+-    else
+-        sshguard_log(LOG_DEBUG, "Not found.");
+-
++    attacker_t *restrict el = list_seek(blacklist, addr);
+     return (el != NULL);
+ }
+ 
+diff -Naupr sshguard-1.6.2/src/sshguard_blacklist.h sshguard-git/src/sshguard_blacklist.h
+--- sshguard-1.6.2/src/sshguard_blacklist.h	2015-10-12 23:51:06.000000000 +0200
++++ sshguard-git/src/sshguard_blacklist.h	2015-10-14 10:17:24.347124839 +0200
+@@ -22,10 +22,8 @@
+ #define SSHGUARD_BLACKLIST_H
+ 
+ /**
+- * Load the blacklist contained at a given filename.
+- *
+- * Load the blacklist from a file with full path specified at "filename" into
+- * a list_t object, and return it.
++ * Load blacklist from the given file. Return a list with the contents of the
++ * blacklist. Do not destroy or free the returned list.
+  *
+  * @param filename  full path of the file containing the black list
+  * @return          NULL in case of error, or a list containing blacklisted entries
+@@ -33,34 +31,20 @@
+ list_t *blacklist_load(const char *filename);
+ 
+ /**
+- * Create an empty blacklist.
+- *
+- * Create an empty blacklist file at "filename". If such file already
+- * exists, it is overwritten.
+- *
+- * @param filename  full path of the file to create
+- * @return          0 if successfull, non-0 otherwise
+- */
+-int blacklist_create(const char *filename);
+-
+-/**
+  * Add an entry to the blacklist.
+  *
+  * @param filename  full path of the file containing the black list
+  * @param newel     ip entry to add
+- *
+- * @return          0 if successful, non-0 otherwise
+  */
+-int blacklist_add(const char *restrict filename, const attacker_t *restrict newel);
++void blacklist_add(const attacker_t *restrict newel);
+ 
+ /**
+  * Lookup if an address is present in the blacklist.
+  *
+- * @param filename  full path of the file containing the black list
+  * @param addr      address to look up (value + type)
+  *
+  * @return          <0 if error; 1 if (addr,addrkind) present in blacklist, 0 otherwise
+  */
+-int blacklist_lookup_address(const char *restrict filename, const sshg_address_t *restrict addr);
++int blacklist_contains(const sshg_address_t *restrict addr);
+ 
+ #endif
+diff -Naupr sshguard-1.6.2/src/sshguard_log.c sshguard-git/src/sshguard_log.c
+--- sshguard-1.6.2/src/sshguard_log.c	2015-10-12 23:51:06.000000000 +0200
++++ sshguard-git/src/sshguard_log.c	2015-10-14 10:17:24.347124839 +0200
+@@ -18,117 +18,20 @@
+  * SSHGuard. See http://www.sshguard.net
+  */
+ 
+-#include <stdio.h>
+-#include <string.h>
+-#include <stdlib.h>
+-#include <assert.h>
+-
+ #include "sshguard_log.h"
+ 
++void sshguard_log_init(int debug) {
++    int flags = LOG_NDELAY | LOG_PID;
+ 
+-const int sshguard_log_minloglevel = LOG_NOTICE;
+-
+-static int sshg_log_debugging;
+-
+-static char *msgbuf = NULL;
+-static size_t msgbuf_len;
+-/* when the buffer is too little, how much bigger do we make it? (factor, 0..+oo) */
+-static const float msgbuf_growth_factor = 0.2;
+-/* if msgbuf would get bigger than this, just give up increasing (bytes) */
+-static const size_t msgbuf_max_length = 1024;
+-
+-
+-int sshguard_log_init(int debugmode) {
+-    sshg_log_debugging = debugmode;
+-    if (! sshg_log_debugging) openlog("sshguard", LOG_PID, LOG_AUTH);
+-
+-    /*
+-     * Prepare the message buffer. Start with 100 bytes,
+-     * will increase automatically if too small.
+-     */
+-    msgbuf_len = 100;
+-    msgbuf = (char *)malloc(msgbuf_len);
+-    assert(msgbuf != NULL);
+-    assert(msgbuf_growth_factor > 0);
+-
+-    return 0;
+-}
+-
+-/* enable/disable debug mode */
+-int sshguard_log_debug(int use_debug) {
+-    int tmp;
+-
+-    if (sshg_log_debugging == use_debug)
+-        return use_debug;
+-
+-    if (use_debug)
+-        closelog();
+-    else
+-        openlog("sshguard", LOG_PID, LOG_AUTH);
+-
+-    tmp = sshg_log_debugging;
+-    sshg_log_debugging = use_debug;
+-    return tmp;
+-}
+-
+-/* finalize the given logging subsystem */
+-int sshguard_log_fin() {
+-    if (! sshg_log_debugging) closelog();
+-    free(msgbuf);
+-    return 0;
+-}
+-
+-/* increase msgbuf_growth_factor times the capacity of the logging buffer */
+-static void enlarge_buffer() {
+-    size_t newlen = msgbuf_len + msgbuf_growth_factor * msgbuf_len;
+-    if (newlen > msgbuf_max_length)
+-        newlen = msgbuf_max_length;
+-    free(msgbuf);
+-    msgbuf_len = newlen;
+-    msgbuf = (char *)malloc(msgbuf_len);
+-    assert(msgbuf != NULL);
+-}
+-
+-/* log one message */
+-int sshguard_log(int prio, char *fmt, ...) {
+-    va_list ap;
+-
+-    /* has the logging subsystem been initialized? */
+-    assert(msgbuf != NULL);
+-
+-    /* cut irrelevant messages when not debugging */
+-    if (! sshg_log_debugging ) {
+-        /* LOG_* are sometimes defined in uncomparable manners. Find out */
+-        if (LOG_EMERG > LOG_DEBUG) {
+-            /* right ordering */
+-            if (prio < sshguard_log_minloglevel)
+-                return 0;
+-        } else {
+-            /* opposite ordering */
+-            if (prio > sshguard_log_minloglevel)
+-                return 0;
+-        }
+-    }
+-
+-    va_start(ap, fmt);
+-    if (sshg_log_debugging) {
+-        vfprintf(stderr, fmt, ap);
+-        fflush(stderr);
+-        if (fmt[strlen(fmt)-1] != '\n')
+-            fprintf(stderr, "\n");
+-        fflush(stderr);
++    if (debug) {
++        flags |= LOG_PERROR;
+     } else {
+-        /* avoid the more convenient vsyslog() for portability reasons.. */
+-        while ((size_t)vsnprintf(msgbuf, msgbuf_len, fmt, ap) >= msgbuf_len) {
+-            if (msgbuf_len >= msgbuf_max_length) break;
+-            /* msgbuf was too small to host message, increase it by 20% and retry */
+-            enlarge_buffer();
+-            va_end(ap);
+-            va_start(ap, fmt);
+-        }
+-        syslog(prio, "%s", msgbuf);
++        setlogmask(LOG_UPTO(LOG_INFO));
+     }
+-    va_end(ap);
+ 
+-    return 0;
++    openlog("sshguard", flags, LOG_AUTH);
++}
++
++void sshguard_log_fin() {
++    closelog();
+ }
+diff -Naupr sshguard-1.6.2/src/sshguard_log.h sshguard-git/src/sshguard_log.h
+--- sshguard-1.6.2/src/sshguard_log.h	2015-10-12 23:51:06.000000000 +0200
++++ sshguard-git/src/sshguard_log.h	2015-10-14 10:17:24.347124839 +0200
+@@ -18,7 +18,6 @@
+  * SSHGuard. See http://www.sshguard.net
+  */
+ 
+-
+ #ifndef SSHGUARD_LOG_H
+ #define SSHGUARD_LOG_H
+ 
+@@ -26,61 +25,16 @@
+ #include <stdarg.h>
+ 
+ /**
+- * Cut messages under this value, except when debugging enabled.
+- */
+-extern const int sshguard_log_minloglevel;
+-
+-
+-/**
+- * Initialize the logging system.
+- *
+- * This function must be called before any call to sshguard_log() is issued.
+- * If debugging mode is wanted, the respective argument must be set to
+- * non-zero.
+- *
+- * @param debugmode     0 if debugging disabled; non-0 otherwise
+- * @return              0 if successful, non-0 otherwise
++ * Initialize the logging system. Must be called before sshguard_log().
++ * @param debug     Enable debugging if set to non-zero value
+  */
+-int sshguard_log_init(int debugmode);
+-
++void sshguard_log_init(int debug);
+ 
+ /**
+- * Enable or disable debug mode.
+- *
+- * @param use_debug     0 to disable debug mode, non-0 to enable it
+- *
+- * @return              the previous state
++ * Clean up the logging system.
+  */
+-int sshguard_log_debug(int use_debug);
++void sshguard_log_fin();
+ 
++#define sshguard_log syslog
+ 
+-/**
+- * Issue a log message.
+- *
+- * A log message is reported with the implemented subsystem. Depending on the
+- * level of importance specified (prio), the message might be discarded if
+- * irrelevant. The log message can be composed with standard printf() format
+- * (fmt).
+- *
+- * If debugging is enabled, the message is printed to standard error.
+- *
+- * @return 0 iff successful
+- */
+-int sshguard_log(int prio, char *fmt, ...)
+-#ifdef __GNUC__
+-    /* thanks kate` :) */
+-    __attribute__ ((format (printf, 2, 3)))
+ #endif
+-    ;
+-
+-
+-/**
+- * Finalize the logging system.
+- *
+- * This function is expected to be call when the logging system is not needed
+- * anymore. No calls to sshguard_log() are expected after this.
+- */
+-int sshguard_log_fin();
+-
+-#endif
+-
+diff -Naupr sshguard-1.6.2/src/sshguard_logsuck.c sshguard-git/src/sshguard_logsuck.c
+--- sshguard-1.6.2/src/sshguard_logsuck.c	2015-10-12 23:51:06.000000000 +0200
++++ sshguard-git/src/sshguard_logsuck.c	2015-10-14 10:17:24.347124839 +0200
+@@ -21,34 +21,24 @@
+ #include "config.h"
+ 
+ #include <assert.h>
+-#include <stdio.h>
+-#include <errno.h>
+-#include <unistd.h>
+-#include <fcntl.h>
+-#include <string.h>
+-#include <stdlib.h>
+ #include <fcntl.h>
+ #include <limits.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
+ #include <sys/stat.h>
+-/* to sleep POSIX-compatibly with select() */
+-#include <sys/time.h>
+-
++#include <unistd.h>
+ 
+ #include "fnv.h"
+ #include "simclist.h"
+-
+ #include "sshguard.h"
+ #include "sshguard_log.h"
+-
+-
+ #include "sshguard_logsuck.h"
+ 
+-
+ #ifndef STDIN_FILENO
+ #   define STDIN_FILENO     0
+ #endif
+ 
+-
+ /* factor of growth of the interval between polls while in idle */
+ #define     LOGPOLL_INTERVAL_GROWTHFACTOR     0.03
+ 
+@@ -83,7 +73,7 @@ static int activate_source(source_entry_
+ static int refresh_files();
+ 
+ /* meter for SimCList */
+-static size_t list_meter_sourceentry(const void *el) {
++static size_t list_meter_sourceentry() {
+     return sizeof(source_entry_t);
+ }
+ 
+@@ -149,25 +139,12 @@ int logsuck_add_logsource(const char *re
+     return 0;
+ }
+ 
+-int logsuck_getline(char *restrict buf, size_t buflen, bool from_previous_source, sourceid_t *restrict whichsource) {
++int logsuck_getline(char *restrict buf, size_t buflen, sourceid_t *restrict whichsource) {
+     int ret;
+     /* use active poll through non-blocking read()s */
+     int sleep_interval;
+     source_entry_t *restrict readentry;
+ 
+-
+-    /* do we have to stick to the last source used? */
+-    if (from_previous_source && index_last_read >= 0) {
+-        /* get source to read from */
+-        readentry = (source_entry_t *restrict)list_get_at(& sources_list, index_last_read);
+-        if (readentry->active) {
+-            sshguard_log(LOG_DEBUG, "Sticking to '%s' to get next line.", readentry->filename);
+-            if (whichsource != NULL) *whichsource = readentry->source_id;
+-            return read_from(readentry, buf, buflen);
+-        }
+-        sshguard_log(LOG_ERR, "Source '%s' no longer active; can't insist reading from it.", readentry->filename);
+-    }
+-
+     /* poll all files until some stuff is read (in random order, until data is found) */
+     sleep_interval = 20;
+     while (1) {
+@@ -222,7 +199,7 @@ int logsuck_getline(char *restrict buf,
+     return -1;
+ }
+ 
+-int logsuck_fin() {
++void logsuck_fin() {
+     source_entry_t *restrict myentry;
+ 
+     /* close all files and release memory for metadata */
+@@ -233,10 +210,7 @@ int logsuck_fin() {
+         close(myentry->current_descriptor);
+     }
+     list_iterator_stop(& sources_list);
+-
+     list_destroy(& sources_list);
+-
+-    return 0;
+ }
+ 
+ 
+diff -Naupr sshguard-1.6.2/src/sshguard_logsuck.h sshguard-git/src/sshguard_logsuck.h
+--- sshguard-1.6.2/src/sshguard_logsuck.h	2015-10-12 23:51:06.000000000 +0200
++++ sshguard-git/src/sshguard_logsuck.h	2015-10-14 10:17:24.347124839 +0200
+@@ -44,18 +44,16 @@ int logsuck_add_logsource(const char *re
+ /**
+  * Get the first whole log line coming from any log file configured.
+  *
+- * @param from_previous_source  read from the same source of previous message
+- *
+  * @return 0 on success, -1 on error
+  */
+-int logsuck_getline(char *restrict buf, size_t buflen, bool from_previous_source, sourceid_t *restrict whichsource);
++int logsuck_getline(char *restrict buf, size_t buflen, sourceid_t *restrict whichsource);
+ 
+ /**
+  * Finalize the logsuck subsystem.
+  *
+  * @return 0 on success, -1 on error
+  */
+-int logsuck_fin();
++void logsuck_fin(void);
+ 
+ #endif
+ 
+diff -Naupr sshguard-1.6.2/src/sshguard_options.c sshguard-git/src/sshguard_options.c
+--- sshguard-1.6.2/src/sshguard_options.c	2015-10-12 23:51:06.000000000 +0200
++++ sshguard-git/src/sshguard_options.c	2015-10-14 10:17:24.347124839 +0200
+@@ -18,28 +18,30 @@
+  * SSHGuard. See http://www.sshguard.net
+  */
+ 
++#include "config.h"
++
+ #include <stdio.h>
+-#include <string.h>
+ #include <stdlib.h>
+-#include <unistd.h>
+-#include <sys/stat.h> /* stat() function and stat structure */
+-
+-#include "config.h"
++#include <string.h>
++#include <sys/stat.h>
+ 
+ #ifdef HAVE_GETOPT_H
+ #include <getopt.h>
+ #endif
+ 
+ #include "sshguard.h"
+-#include "sshguard_procauth.h"
+-#include "sshguard_whitelist.h"
+ #include "sshguard_logsuck.h"
+ #include "sshguard_options.h"
++#include "sshguard_procauth.h"
++#include "sshguard_whitelist.h"
+ 
+ sshg_opts opts;
+ 
+-/* dumps usage message to standard error */
+-static void usage(void);
++static void usage(void) {
++    fprintf(stderr, "usage: sshguard [-v] [-a thresh] [-b thresh:file] [-e script]\n"
++                    "\t\t[-f service:pid-file] [-i pidfile] [-l source] [-p interval]\n"
++                    "\t\t[-s interval] [-w address | file]\n");
++}
+ 
+ static void version(void) {
+     fprintf(stderr, PACKAGE_STRING "\n");
+@@ -57,7 +59,7 @@ int get_options_cmdline(int argc, char *
+     opts.stale_threshold = DEFAULT_STALE_THRESHOLD;
+     opts.abuse_threshold = DEFAULT_ABUSE_THRESHOLD;
+     opts.has_polled_files = 0;
+-    while ((optch = getopt(argc, argv, "b:p:s:a:w:f:l:i:e:vdh")) != -1) {
++    while ((optch = getopt(argc, argv, "b:p:s:a:w:f:l:i:e:vh")) != -1) {
+         switch (optch) {
+             case 'b':   /* threshold for blacklisting (num abuses >= this implies permanent block */
+                 opts.blacklist_filename = (char *)malloc(strlen(optarg)+1);
+@@ -67,10 +69,6 @@ int get_options_cmdline(int argc, char *
+                 }
+                 break;
+ 
+-            case 'd':   /* (historical) debugging */
+-                fprintf(stderr, "Debugging mode now uses environment variable. Run:\n\tenv SSHGUARD_DEBUG=\"\" %s ...\n", argv[0]);
+-                return -1;
+-
+             case 'p':   /* pardon threshold interval */
+                 opts.pardon_threshold = strtol(optarg, (char **)NULL, 10);
+                 if (opts.pardon_threshold < 1) {
+@@ -91,13 +89,17 @@ int get_options_cmdline(int argc, char *
+ 
+             case 'a':   /* abuse threshold count */
+                 opts.abuse_threshold = strtol(optarg, (char **)NULL, 10);
+-                if (opts.abuse_threshold < 1) {
+-                    fprintf(stderr, "Doesn't make sense to have an abuse threshold lower than 1 attempt. Terminating.\n");
+-                    usage();
++                if (opts.abuse_threshold < DEFAULT_ATTACKS_DANGEROUSNESS) {
++                    fprintf(stderr,
++                            "Abuse threshold should be greater than one attack (%d danger)\n",
++                            DEFAULT_ATTACKS_DANGEROUSNESS);
+                     return -1;
+-                } else if (opts.abuse_threshold < DEFAULT_ABUSE_THRESHOLD) {
+-                    fprintf(stderr, "Warning! Sshguard now uses *attack dangerousness*, not occurrences, to gauge threats.\n");
+-                    fprintf(stderr, "Default dangerousness per attack is %u, default threshold is %d.\n", DEFAULT_ATTACKS_DANGEROUSNESS, DEFAULT_ABUSE_THRESHOLD);
++                }
++
++                if (opts.abuse_threshold % DEFAULT_ATTACKS_DANGEROUSNESS != 0) {
++                    fprintf(stderr,
++                            "Warning: abuse threshold should be a multiple of %d\n",
++                            DEFAULT_ATTACKS_DANGEROUSNESS);
+                 }
+                 break;
+ 
+@@ -171,20 +173,3 @@ int get_options_cmdline(int argc, char *
+ 
+     return 0;
+ }
+-
+-static void usage(void) {
+-    fprintf(stderr, "Usage:\nsshguard [-b <thr:file>] [-w <whlst>]{0,n} [-a num] [-p sec] [-s sec]\n\t[-l <source>] [-f <srv:pidfile>]{0,n} [-i <pidfile>] [-v]\n");
+-    /* fprintf(stderr, "\t-d\tDebugging mode: don't fork to background, and dump activity to stderr.\n"); */
+-    fprintf(stderr, "\t-b\tBlacklist: thr = blacklist from this total incurred danger, file = blacklist filename.\n");
+-    fprintf(stderr, "\t-a\tIncurred danger score after which blocking an address (%d)\n", DEFAULT_ABUSE_THRESHOLD);
+-    fprintf(stderr, "\t-p\tSeconds after which unblocking a blocked address (%d)\n", DEFAULT_PARDON_THRESHOLD);
+-    fprintf(stderr, "\t-w\tWhitelisting of addr/host/block, or take from file if starts with \"/\" or \".\" (repeatable)\n");
+-    fprintf(stderr, "\t-s\tSeconds after which forgetting about a cracker candidate (%d)\n", DEFAULT_STALE_THRESHOLD);
+-    fprintf(stderr, "\t-l\tAdd the given log source to Log Sucker's monitored sources (off)\n");
+-    fprintf(stderr, "\t-f\t\"authenticate\" service's logs through its process pid, as in pidfile\n");
+-    fprintf(stderr, "\t-i\tWhen started, save PID in the given file; useful for startup scripts (off)\n");
+-    fprintf(stderr, "\t-e\tEvent script that is executed each time a firewall event is risen (it must be the absolute path if the script is not in the system path).\n");
+-    fprintf(stderr, "\t-v\tDump version message to stderr, supply this when reporting bugs\n");
+-    fprintf(stderr, "\n");
+-    fprintf(stderr, "\tThe SSHGUARD_DEBUG environment variable enables debugging mode (verbosity + interactivity).\n");
+-}
+diff -Naupr sshguard-1.6.2/src/sshguard_procauth.c sshguard-git/src/sshguard_procauth.c
+--- sshguard-1.6.2/src/sshguard_procauth.c	2015-10-12 23:51:06.000000000 +0200
++++ sshguard-git/src/sshguard_procauth.c	2015-10-14 10:17:24.347124839 +0200
+@@ -20,13 +20,11 @@
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include <time.h>
+-#include <sys/wait.h>
+ #include <string.h>
+-#include <errno.h>
++#include <sys/wait.h>
+ #include <unistd.h>
+-#include <simclist.h>
+ 
++#include "simclist.h"
+ #include "sshguard_log.h"
+ #include "sshguard_procauth.h"
+ 
+@@ -36,7 +34,7 @@ typedef struct {
+     pid_t current_pid;
+ } procpid;
+ 
+-size_t procpid_meter(const void *el) {
++size_t procpid_meter() {
+     return sizeof(procpid);
+ }
+ 
+@@ -46,17 +44,12 @@ list_t proclist;
+ static pid_t procauth_getprocpid(char *filename);
+ static int procauth_ischildof(pid_t child, pid_t parent);
+ 
+-
+-
+-int procauth_init() {
+-    /* assume random number generator already seeded */
++void procauth_init() {
+     list_init(&proclist);
+     list_attributes_copy(&proclist, procpid_meter, 1);
+-
+-    return 0;
+ }
+ 
+-int procauth_fin() {
++void procauth_fin() {
+     procpid *pp;
+ 
+     /* free filenames */
+@@ -69,7 +62,6 @@ int procauth_fin() {
+ 
+     /* destroy the list itself */
+     list_destroy(&proclist);
+-    return 0;
+ }
+ 
+ int procauth_addprocess(char *conf) {
+diff -Naupr sshguard-1.6.2/src/sshguard_procauth.h sshguard-git/src/sshguard_procauth.h
+--- sshguard-1.6.2/src/sshguard_procauth.h	2015-10-12 23:51:06.000000000 +0200
++++ sshguard-git/src/sshguard_procauth.h	2015-10-14 10:17:24.347124839 +0200
+@@ -24,10 +24,10 @@
+ #include <sys/types.h>
+ 
+ /* initialize the procauth subsystem */
+-int procauth_init();
++void procauth_init(void);
+ 
+ /* finalize the procauth subsystem */
+-int procauth_fin();
++void procauth_fin(void);
+ 
+ /* add a process to the list of authorizable given its configuration.
+  * Configuration format is: "digit:string", meaning: service_code:pid_filename
+diff -Naupr sshguard-1.6.2/src/sshguard_whitelist.c sshguard-git/src/sshguard_whitelist.c
+--- sshguard-1.6.2/src/sshguard_whitelist.c	2015-10-12 23:51:06.000000000 +0200
++++ sshguard-git/src/sshguard_whitelist.c	2015-10-14 10:17:24.348124827 +0200
+@@ -18,24 +18,20 @@
+  * SSHGuard. See http://www.sshguard.net
+  */
+ 
+-
++#include <arpa/inet.h>
++#include <assert.h>
++#include <netdb.h>
++#include <netinet/in.h>
++#include <regex.h>
+ #include <stdio.h>
+-#include <string.h>
+ #include <stdlib.h>
+-#include <limits.h>
+-#include <regex.h>
+-#include <sys/types.h>
++#include <string.h>
+ #include <sys/socket.h>
+-#include <netinet/in.h>
+-#include <arpa/inet.h>
+-#include <netdb.h>
+-#include <errno.h>
+-#include <assert.h>
+ 
++#include "parser/address.h"
+ #include "simclist.h"
+ #include "sshguard_log.h"
+ #include "sshguard_whitelist.h"
+-#include "parser/address.h"
+ 
+ #define WHITELIST_SRCLINE_LEN       300
+ 
+@@ -78,8 +74,7 @@ static int match_ip6(const struct in6_ad
+     return 1;
+ }
+ 
+-
+-static size_t whitelist_meter(const void *el) { return sizeof(addrblock_t); }
++static size_t whitelist_meter() { return sizeof(addrblock_t); }
+ 
+ static int whitelist_compare(const void *a, const void *b) {
+     int ret;
+@@ -128,24 +123,20 @@ int whitelist_conf_init(void) {
+     return 0;
+ }
+ 
+-int whitelist_conf_fin(void) {
++void whitelist_conf_fin() {
+     regfree(&wl_ip4reg);
+     regfree(&wl_ip6reg);
+     regfree(&wl_hostreg);
+-    return 0;
+ }
+ 
+-int whitelist_init(void) {
++void whitelist_init() {
+     list_init(&whitelist);
+     list_attributes_copy(&whitelist, whitelist_meter, 1);
+     list_attributes_comparator(&whitelist, whitelist_compare);
+-    
+-    return 0;
+ }
+ 
+-int whitelist_fin(void) {
++void whitelist_fin() {
+     list_destroy(&whitelist);
+-    return 0;
+ }
+ 
+ int whitelist_file(const char *restrict filename) {
+diff -Naupr sshguard-1.6.2/src/sshguard_whitelist.h sshguard-git/src/sshguard_whitelist.h
+--- sshguard-1.6.2/src/sshguard_whitelist.h	2015-10-12 23:51:06.000000000 +0200
++++ sshguard-git/src/sshguard_whitelist.h	2015-10-14 10:17:24.348124827 +0200
+@@ -32,7 +32,7 @@
+  *
+  * @see whitelist_fin()
+  */
+-int whitelist_init(void);
++void whitelist_init(void);
+ 
+ /**
+  * Start a session for configuring the whitelist.
+@@ -49,20 +49,16 @@ int whitelist_conf_init(void);
+ 
+ /**
+  * End a session for configuring the whitelist.
+- *
+- * @return 0
+  */
+-int whitelist_conf_fin(void);
++void whitelist_conf_fin(void);
+ 
+ /**
+  * Terminate the whitelisting subsystem.
+  *
+  * No calls to any whitelist_*() function can occur after
+  * this, unless whitelist_init() is called first.
+- *
+- * @return  0 if success, <0 if failure
+  */
+-int whitelist_fin(void);
++void whitelist_fin(void);
+ 
+ /**
+  * Adds entries to whitelist from file.
