@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-numpy}
-VERSION=${VERSION:-1.10.0}
+VERSION=${VERSION:-1.10.1}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -73,7 +73,7 @@ find . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-CFLAGS="$SLKCFLAGS" LDFLAGS="-L/usr/lib$LIBDIRSUFFIX -shared" python setup.py install
+CFLAGS="$SLKCFLAGS" LDFLAGS="-L/usr/lib$LIBDIRSUFFIX -shared" python setup.py install --root=$PKG
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true
