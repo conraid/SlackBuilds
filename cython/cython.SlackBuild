@@ -31,13 +31,12 @@ CWD=$(pwd)
 
 SRCNAM=${PRGNAM:-Cython}
 PRGNAM=$(echo $SRCNAM | tr A-Z a-z)
-VERSION=${VERSION:-0.23.3}
+VERSION=${VERSION:-0.23.4}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
 OUTPUT=${OUTPUT:-/tmp}
-DOCDIR="$PKG/usr/doc/$PRGNAM-$VERSION"
 
 DOCFILES="CHANGES* *.txt"
 
@@ -68,9 +67,9 @@ python setup.py install --root=$PKG
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
-mkdir -p $DOCDIR
-cp -a $DOCFILES $DOCDIR || true
-cat $CWD/$PRGNAM.SlackBuild > $DOCDIR/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
