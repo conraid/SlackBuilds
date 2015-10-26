@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-node-sass}
-VERSION=${VERSION:-3.3.3}
-BUILD=${BUILD:-2}
+VERSION=${VERSION:-3.4.0}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -62,7 +62,7 @@ find . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-DESTDIR=$PKG npm install --user root -g
+DESTDIR=$PKG npm install --user root -g node-sass
 
 # Install binding from https://github.com/sass/node-sass-binaries
 # to fix error with node4 in install script
