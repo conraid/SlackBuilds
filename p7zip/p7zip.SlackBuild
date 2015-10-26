@@ -5,99 +5,83 @@
 # Copyright 2009-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
-# Redistribution and use of this script, with or without modification, is
-# permitted provided that the following conditions are met:
-#
-# 1. Redistributions of this script must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-#
-# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
-# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version, with the following exception:
+# the text of the GPL license may be omitted.
 
-# Exit on most errors
+# This program is distributed in the hope that it will be useful, but
+# without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose. Compiling,
+# interpreting, executing or merely reading the text of the program
+# may result in lapses of consciousness and/or very being, up to and
+# including the end of all existence and the Universe as we know it.
+# See the GNU General Public License for more details.
+
+# You may have received a copy of the GNU General Public License along
+# with this program (most likely, a file named COPYING).  If not, see
+# <http://www.gnu.org/licenses/>.
+
 set -eu
 
-# Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-p7zip}
-PKGNAME=${PKGNAME:-${PRGNAME}}
-VERSION=${VERSION:-9.38.1}
-PKGVERSION=${VERSION//-/_}
-BUILD=${BUILD:-6}
+PRGNAM=${PRGNAM:-p7zip}
+VERSION=${VERSION:-15.09}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${VERSION}"
+PKG=$TMP/package-$PRGNAM
+OUTPUT=${OUTPUT:-/tmp}
 
-# Automatically determine the architecture we are building on:
 if [ -z ${ARCH:=""} ]; then
-    case "$( uname -m )" in
-        i?86) ARCH=i686 ;;
-        arm*) ARCH=arm ;;
-        # Unless ${ARCH} is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
-    esac
+  case "$( uname -m )" in
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    *) ARCH=$( uname -m ) ;;
+  esac
 fi
 
-# Set compiling FLAGS
-case "${ARCH}" in
-    i486)
-    SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
-    SLKLDFLAGS=""; LIBDIRSUFFIX=""
-    ;;
-    i686)
-    SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
-    SLKLDFLAGS=""; LIBDIRSUFFIX=""
-    ;;
-    x86_64)
-    SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
-    SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-    ;;
-    *)
-    SLKCFLAGS="-O2"; CHOST=${ARCH}
-    SLKLDFLAGS=""; LIBDIRSUFFIX=""
-    ;;
-esac
-
-# Extract source and prepare:
-rm -rf ${PKG}
-mkdir -p ${TMP} ${PKG}
-cd ${TMP}
-rm -rf ${PRGNAME}_${VERSION}
-tar xvf ${CWD}/p7zip_${VERSION}_src_all.tar.bz2
-cd ${PRGNAME}_${VERSION}
-
-# Make sure ownerships and permissions are sane:
-chown -R root:root .
-chmod -R u+w,go+r-w,a-s .
-
-# Apply patch from cvs
-patch -p1 -i ${CWD}/7zip-cvs.patch
-
-# Apply patch to install.sh. Original script makes issues in filesystem.
-patch -p1 -i ${CWD}/permissions.patch
-
-# Configure
-if [ "${CHOST}" == "x86_64" ]; then
-    cp -f makefile.linux_amd64_asm makefile.machine
+if [ "$ARCH" = "i586" ]; then
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC"
+  LIBDIRSUFFIX="64"
 else
-    cp -f makefile.linux_x86_asm_gcc_4.X makefile.machine
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+fi
+
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf ${PRGNAM}_${VERSION}
+tar xvf $CWD/p7zip_${VERSION}_src_all.tar.bz2
+cd ${PRGNAM}_${VERSION}
+
+chown -R root:root .
+find . \
+ \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
+  -o -perm 511 \) -exec chmod 755 {} \; -o \
+ \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
+  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
+
+if [ $ARCH == "x86_64" ]; then
+  cp -f makefile.linux_amd64_asm makefile.machine
+else
+  cp -f makefile.linux_x86_asm_gcc_4.X makefile.machine
 fi
 
 # Build GUI if find wxwidgets 
 if type -P wx-config &>/dev/null; then
   ALL=all4
   # Fix setup.h include
-  sed "s#/lib/x86_64-linux-gnu/#/lib${LIBDIRSUFFIX}/#g" -i CPP/7zip/*/*/makefile.depend 
+  sed "s#/lib/x86_64-linux-gnu/#/lib$LIBDIRSUFFIX/#g" -i CPP/7zip/*/*/makefile.depend 
   # Fix gtk3 include
   [ "$(wx-config --query-toolkit)" == "gtk3" ] && sed "s/gtk2/gtk3/g" -i CPP/7zip/*/*/makefile.depend  
 else
@@ -110,59 +94,52 @@ sed \
   -i makefile* CPP/7zip/Bundles/Format7zFree/makefile
 rm -rf CPP/7zip/Compress/Rar
 
-# Build and install:
 sed -e s'#cp -r DOC#cp -r DOC/*#' -e 's#${DEST_SHARE_DOC}/DOC#${DEST_SHARE_DOC}#g' -i install.sh
-make $ALL OPTFLAGS="${SLKCFLAGS}"
+make $ALL OPTFLAGS="$SLKCFLAGS"
 make install \
-    DEST_HOME=/usr \
-    DEST_SHARE_DOC=/usr/doc/${PRGNAME}-${VERSION} \
-    DEST_MAN=/usr/man \
-    DEST_SHARE=/usr/lib${LIBDIRSUFFIX}/p7zip \
-    DEST_DIR=${PKG}
+  DEST_HOME=/usr \
+  DEST_SHARE_DOC=/usr/doc/$PRGNAM-$VERSION \
+  DEST_MAN=/usr/man \
+  DEST_SHARE=/usr/lib$LIBDIRSUFFIX/p7zip \
+  DEST_DIR=$PKG
 
-# Strip binaries:
-find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
-find ${PKG} | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 # install midnight commander vfs add on
-install -Dm755 contrib/VirtualFileSystemForMidnightCommander/u7z ${PKG}/usr/share/mc/extfs/u7z
-mkdir -p ${DOCDIR}/mc-vfs/
-install -m644 contrib/VirtualFileSystemForMidnightCommander/readme* ${DOCDIR}/mc-vfs/
+install -Dm755 contrib/VirtualFileSystemForMidnightCommander/u7z $PKG/usr/share/mc/extfs/u7z
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION/mc-vfs/
+install -m644 contrib/VirtualFileSystemForMidnightCommander/readme* $PKG/usr/doc/$PRGNAM-$VERSION/mc-vfs/
 
 # install gzip like wrapper
-install -Dm755 contrib/gzip-like_CLI_wrapper_for_7z/p7zip ${PKG}/usr/bin/p7zip
-install -Dm644 contrib/gzip-like_CLI_wrapper_for_7z/man1/p7zip.1 ${PKG}/usr/man/man1/p7zip.1
+install -Dm755 contrib/gzip-like_CLI_wrapper_for_7z/p7zip $PKG/usr/bin/p7zip
+install -Dm644 contrib/gzip-like_CLI_wrapper_for_7z/man1/p7zip.1 $PKG/usr/man/man1/p7zip.1
 
 # Install GUI help files
-cp -a GUI/help ${PKG}/usr/lib${LIBDIRSUFFIX}/p7zip/help
-find ${PKG}/usr/lib${LIBDIRSUFFIX}/p7zip/help -type d -exec chmod 755 {} \;
-find ${PKG}/usr/lib${LIBDIRSUFFIX}/p7zip/help -type f -exec chmod 644 {} \;
+cp -a GUI/help $PKG/usr/lib$LIBDIRSUFFIX/p7zip/help
+find $PKG/usr/lib$LIBDIRSUFFIX/p7zip/help -type d -exec chmod 755 {} \;
+find $PKG/usr/lib$LIBDIRSUFFIX/p7zip/help -type f -exec chmod 644 {} \;
 
-# Compress and link manpages, if any:
-if [ -d ${PKG}/usr/man ]; then
-    find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
-    for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+if [ -d $PKG/usr/man ]; then
+  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
-# Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 # Install icon
-install -Dm644 GUI/p7zip_16_ok.png ${PKG}/usr/share/icons/hicolor/16x16/apps/p7zip.png
+install -Dm644 GUI/p7zip_16_ok.png $PKG/usr/share/icons/hicolor/16x16/apps/p7zip.png
 
 # Install desktop files
 rm GUI/kde4/p7zip_compress.desktop
-mkdir -p ${PKG}/usr/share/kde4/services/ServiceMenus
-cp GUI/kde4/*.desktop ${PKG}/usr/share/kde4/services/ServiceMenus/
-install -Dm644 ${CWD}/7zFM.desktop ${PKG}/usr/share/applications/7zFM.desktop
+mkdir -p $PKG/usr/share/kde4/services/ServiceMenus
+cp GUI/kde4/*.desktop $PKG/usr/share/kde4/services/ServiceMenus/
+install -Dm644 $CWD/7zFM.desktop $PKG/usr/share/applications/7zFM.desktop
 
-# Add a doinst.sh
-install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
+mkdir -p $PKG/install 
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
-# Add slack-desc
-install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
-
-# Create package:
-cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
 
