@@ -36,7 +36,7 @@ CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-node}
 VERSION=${VERSION:-4.2.1}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -80,20 +80,19 @@ find . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-# Fix man page path.
-sed 's|share/man|/man|' -i tools/install.py
-
-# Fix libdir for 64-bit.
-sed "s|\(['/]\)lib/|\1lib$LIBDIRSUFFIX/|g" -i tools/install.py
+# Fix path and libdir for 64-bit.
+sed -e "s|share/doc/node/|doc/$PRGNAM-$VERSION/|g" \
+    -e 's|share/man|man|g' \
+    -e "s|\(['/]\)lib/|\1lib$LIBDIRSUFFIX/|g" -i tools/install.py
 sed "s|'lib'|'lib$LIBDIRSUFFIX'|" -i lib/module.js
-sed "s|\"lib\"|\"lib$LIBDIRSUFFIX\"|"  -i deps/npm/lib/npm.js
 
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr \
   --shared-zlib \
-  --with-intl=system-icu
+  --with-intl=system-icu \
+  --without-npm
 # Removed --shared-openssl because build failure with openssl 1.0.1*
 
 make CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS" 
