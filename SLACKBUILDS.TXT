@@ -505,10 +505,10 @@ SLACKBUILD SHORT DESCRIPTION:  darkstat (packet sniffing daemon that serves stat
 SLACKBUILD NAME: darktable
 SLACKBUILD LOCATION: ./darktable
 SLACKBUILD FILES: darktable.SlackBuild darktable.info doinst.sh slack-desc
-SLACKBUILD VERSION: 1.6.8
-SLACKBUILD REQUIRED: lensfun flickcurl json-glib graphicsmagick
-SLACKBUILD DOWNLOAD: https://github.com/darktable-org/darktable/releases/download/release-1.6.8/darktable-1.6.8.tar.xz
-SLACKBUILD MD5SUM: ff6651082a8aba9c686191628e95e099
+SLACKBUILD VERSION: 1.6.9
+SLACKBUILD REQUIRED: lensfun flickcurl json-glib graphicsmagick lu52
+SLACKBUILD DOWNLOAD: https://github.com/darktable-org/darktable/releases/download/release-1.6.9/darktable-1.6.9.tar.xz
+SLACKBUILD MD5SUM: d4a52d06c37209afc31c0d0ffdc87ed9
 SLACKBUILD SHORT DESCRIPTION:  darktable (digital photography application)
 
 SLACKBUILD NAME: dcraw
@@ -540,11 +540,11 @@ SLACKBUILD SHORT DESCRIPTION:  Dia (diagram creation program)
 
 SLACKBUILD NAME: digikam
 SLACKBUILD LOCATION: ./digikam
-SLACKBUILD FILES: digikam.SlackBuild digikam.info doinst.sh opencv3.patch slack-desc videoslideshow.patch
-SLACKBUILD VERSION: 4.13.0
-SLACKBUILD REQUIRED: lensfun liblqr libpgf opencv
-SLACKBUILD DOWNLOAD: http://download.kde.org/stable/digikam/digikam-4.13.0.tar.bz2
-SLACKBUILD MD5SUM: 930b9a89244afd1f28490d0acabbecc5
+SLACKBUILD FILES: digikam.SlackBuild digikam.info doinst.sh slack-desc
+SLACKBUILD VERSION: 4.14.0
+SLACKBUILD REQUIRED: lensfun libkface libkgeomap liblqr libpgf opencv
+SLACKBUILD DOWNLOAD: http://download.kde.org/stable/digikam/digikam-4.14.0.tar.bz2
+SLACKBUILD MD5SUM: 8fd3cb0a822e8c2d4102e8adc00c082f
 SLACKBUILD SHORT DESCRIPTION:  digiKam (KDE Photo Management Application)
 
 SLACKBUILD NAME: diskscan
@@ -883,10 +883,10 @@ SLACKBUILD SHORT DESCRIPTION:  glibmm (C++ bindings for glib)
 SLACKBUILD NAME: gmic
 SLACKBUILD LOCATION: ./gmic
 SLACKBUILD FILES: gmic.SlackBuild gmic.info slack-desc
-SLACKBUILD VERSION: 1.6.6.1
+SLACKBUILD VERSION: 1.6.7
 SLACKBUILD REQUIRED: opencv
-SLACKBUILD DOWNLOAD: http://gmic.eu/files/source/gmic_1.6.6.1.tar.gz
-SLACKBUILD MD5SUM: 1b97339072586320f4bffc05373521c4
+SLACKBUILD DOWNLOAD: http://gmic.eu/files/source/gmic_1.6.7.tar.gz
+SLACKBUILD MD5SUM: 744fe03a742804bb377340553cb0fecc
 SLACKBUILD SHORT DESCRIPTION:  GMIC (Image converter and gimp plugin)
 
 SLACKBUILD NAME: goaccess
@@ -1564,6 +1564,24 @@ SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/libircclient/libir
 SLACKBUILD MD5SUM: a1b4fd5491a36b8aedf65a6845755800
 SLACKBUILD SHORT DESCRIPTION:  libircclient (a small client-server IRC protocol library)
 
+SLACKBUILD NAME: libkface
+SLACKBUILD LOCATION: ./libkface
+SLACKBUILD FILES: README libkface.SlackBuild libkface.info patches/libkface.patch slack-desc
+SLACKBUILD VERSION: 15.08.2
+SLACKBUILD REQUIRED: opencv
+SLACKBUILD DOWNLOAD: http://download.kde.org/stable/applications/15.08.2/src/libkface-15.08.2.tar.xz
+SLACKBUILD MD5SUM: ab51bf06908c4580769fed3bd2e2d774
+SLACKBUILD SHORT DESCRIPTION:  libkface (KDE face recognition wrapper library)
+
+SLACKBUILD NAME: libkgeomap
+SLACKBUILD LOCATION: ./libkgeomap
+SLACKBUILD FILES: README libkgeomap.SlackBuild libkgeomap.info slack-desc
+SLACKBUILD VERSION: 15.08.2
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://download.kde.org/stable/applications/15.08.2/src/libkgeomap-15.08.2.tar.xz
+SLACKBUILD MD5SUM: 43bc3d8531a43849afac3fd3b679f51b
+SLACKBUILD SHORT DESCRIPTION:  libkgeomap (KDE wrapper around world map)
+
 SLACKBUILD NAME: liblqr
 SLACKBUILD LOCATION: ./liblqr
 SLACKBUILD FILES: liblqr.SlackBuild liblqr.info slack-desc
@@ -1684,10 +1702,10 @@ SLACKBUILD SHORT DESCRIPTION:  libpwquality (Library for password quality checki
 SLACKBUILD NAME: libsass
 SLACKBUILD LOCATION: ./libsass
 SLACKBUILD FILES: libsass.SlackBuild libsass.info slack-desc
-SLACKBUILD VERSION: 3.2.5
+SLACKBUILD VERSION: 3.3.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/sass/libsass/archive/3.2.5.tar.gz
-SLACKBUILD MD5SUM: b100ee38c830afec202449bb0b2fd03f
+SLACKBUILD DOWNLOAD: https://github.com/sass/libsass/archive/3.3.0.tar.gz
+SLACKBUILD MD5SUM: 910a2a6ba1adbaf0a7e10c106075667c
 SLACKBUILD SHORT DESCRIPTION:  libsass (C/C++ port of the Sass CSS precompiler)
 
 SLACKBUILD NAME: libseccomp
@@ -1815,6 +1833,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://www.lua.org/ftp/lua-5.3.1.tar.gz
 SLACKBUILD MD5SUM: 797adacada8d85761c079390ff1d9961
 SLACKBUILD SHORT DESCRIPTION:  Lua (a powerful, fast, light-weight, embeddable scripting language)
+
+SLACKBUILD NAME: lua52
+SLACKBUILD LOCATION: ./lua52
+SLACKBUILD FILES: README liblua.so.patch lua52.SlackBuild lua52.info lua52.pc slack-desc
+SLACKBUILD VERSION: 5.2.4
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://www.lua.org/ftp/lua-5.2.4.tar.gz
+SLACKBUILD MD5SUM: 913fdb32207046b273fdb17aad70be13
+SLACKBUILD SHORT DESCRIPTION:  Lua 5.2.* (powerful,fast,light-weight,embeddable scripting language)
 
 SLACKBUILD NAME: luckybackup
 SLACKBUILD LOCATION: ./luckybackup
@@ -2107,10 +2134,10 @@ SLACKBUILD SHORT DESCRIPTION:  nmon (Performance Monitoring)
 SLACKBUILD NAME: node-bower
 SLACKBUILD LOCATION: ./node-bower
 SLACKBUILD FILES: node-bower.SlackBuild node-bower.info slack-desc
-SLACKBUILD VERSION: 1.6.3
+SLACKBUILD VERSION: 1.6.4
 SLACKBUILD REQUIRED: node
-SLACKBUILD DOWNLOAD: https://github.com/bower/bower/archive/v1.6.3.tar.gz
-SLACKBUILD MD5SUM: 21c962214f04cebc006fcaa105cf992d
+SLACKBUILD DOWNLOAD: https://github.com/bower/bower/archive/v1.6.4.tar.gz
+SLACKBUILD MD5SUM: 9ca061ae4a840351bf146cffa621bc64
 SLACKBUILD SHORT DESCRIPTION:  node-bower (A package manager for the web)
 
 SLACKBUILD NAME: node-clean-css
@@ -2152,10 +2179,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-less (A standalone compiler for the LESS CSS
 SLACKBUILD NAME: node-sass
 SLACKBUILD LOCATION: ./node-sass
 SLACKBUILD FILES: node-sass.SlackBuild node-sass.info slack-desc
-SLACKBUILD VERSION: 3.3.3
+SLACKBUILD VERSION: 3.4.0
 SLACKBUILD REQUIRED: node libsass
-SLACKBUILD DOWNLOAD: https://github.com/sass/node-sass/archive/v3.3.3.tar.gz
-SLACKBUILD MD5SUM: 1f572cdd8d9d9557c82c26166361f4a2
+SLACKBUILD DOWNLOAD: https://github.com/sass/node-sass/archive/v3.4.0.tar.gz
+SLACKBUILD MD5SUM: 31136b19531f77612ef15f8ed1d3351e
 SLACKBUILD SHORT DESCRIPTION:  node-sass (Wrapper around libsass)
 
 SLACKBUILD NAME: node-uglifyjs
@@ -2202,6 +2229,15 @@ SLACKBUILD REQUIRED: opencv
 SLACKBUILD DOWNLOAD: https://downloads.sourceforge.net/nomacs/nomacs-2.4.6-source.tar.bz2
 SLACKBUILD MD5SUM: a154966dc5c1fed71279bc70d8078935
 SLACKBUILD SHORT DESCRIPTION:  nomacs (Qt image viewer)
+
+SLACKBUILD NAME: npm
+SLACKBUILD LOCATION: ./npm
+SLACKBUILD FILES: npm.SlackBuild npm.info slack-desc
+SLACKBUILD VERSION: 3.3.10
+SLACKBUILD REQUIRED: node
+SLACKBUILD DOWNLOAD: https://github.com/npm/npm/archive/v3.3.10.tar.gz
+SLACKBUILD MD5SUM: 99167e26c3c9cfcf5d2dc1ebba350a65
+SLACKBUILD SHORT DESCRIPTION:  npm (package manager for node)
 
 SLACKBUILD NAME: nsoq
 SLACKBUILD LOCATION: ./nsoq
@@ -2376,11 +2412,11 @@ SLACKBUILD SHORT DESCRIPTION:  p0f (passive os fingerprint tool)
 
 SLACKBUILD NAME: p7zip
 SLACKBUILD LOCATION: ./p7zip
-SLACKBUILD FILES: 7zFM.desktop 7zip-cvs.patch doinst.sh p7zip.SlackBuild p7zip.info permissions.patch slack-desc
-SLACKBUILD VERSION: 9.38.1
+SLACKBUILD FILES: 7zFM.desktop doinst.sh p7zip.SlackBuild p7zip.info slack-desc
+SLACKBUILD VERSION: 15.09
 SLACKBUILD REQUIRED: wxgtk
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/p7zip/p7zip/9.38.1/p7zip_9.38.1_src_all.tar.bz2
-SLACKBUILD MD5SUM: 6cba8402ccab2370d3b70c5e28b3d651
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/p7zip/p7zip_15.09_src_all.tar.bz2
+SLACKBUILD MD5SUM: ab69f4f13ba0ec57eca2cf4c9edd9678
 SLACKBUILD SHORT DESCRIPTION:  p7zip (File Compression/Decompression Utility)
 
 SLACKBUILD NAME: packeth
@@ -2743,6 +2779,15 @@ SLACKBUILD DOWNLOAD: https://github.com/IJHack/qtpass/archive/v0.8.5.1.tar.gz
 SLACKBUILD MD5SUM: ea40b1ffc7173f6b915decead97fdffc
 SLACKBUILD SHORT DESCRIPTION:  qtpass (A multi-platform GUI for pass)
 
+SLACKBUILD NAME: qupzilla
+SLACKBUILD LOCATION: ./qupzilla
+SLACKBUILD FILES: README doinst.sh qupzilla.SlackBuild qupzilla.info slack-desc
+SLACKBUILD VERSION: 1.8.8
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/QupZilla/qupzilla/releases/download/v1.8.8/QupZilla-1.8.8.tar.xz
+SLACKBUILD MD5SUM: a73b1b574b99988018a5ada62018fab9
+SLACKBUILD SHORT DESCRIPTION:  qupzilla (lightweight web browser)
+
 SLACKBUILD NAME: qwt
 SLACKBUILD LOCATION: ./qwt
 SLACKBUILD FILES: qwt.SlackBuild qwt.info qwtconfig.pri.patch slack-desc
@@ -2809,10 +2854,10 @@ SLACKBUILD SHORT DESCRIPTION:  reaver (Brute force attack against Wifi Protected
 SLACKBUILD NAME: redis
 SLACKBUILD LOCATION: ./redis
 SLACKBUILD FILES: doinst.sh rc.redis redis-2.8.11-use-system-jemalloc.patch redis.SlackBuild redis.info redis.logrotate slack-desc
-SLACKBUILD VERSION: 3.0.4
+SLACKBUILD VERSION: 3.0.5
 SLACKBUILD REQUIRED: hiredis
-SLACKBUILD DOWNLOAD: http://download.redis.io/releases/redis-3.0.4.tar.gz
-SLACKBUILD MD5SUM: 9e535dea3dc5301de012047bf3cca952
+SLACKBUILD DOWNLOAD: http://download.redis.io/releases/redis-3.0.5.tar.gz
+SLACKBUILD MD5SUM: c7ba233e5f92ad2f48860c815bb05480
 SLACKBUILD SHORT DESCRIPTION:  Redis (Key-Value Store)
 
 SLACKBUILD NAME: rkhunter
@@ -2881,10 +2926,10 @@ SLACKBUILD SHORT DESCRIPTION:  sarg (Squid Analysis Report Generator)
 SLACKBUILD NAME: sassc
 SLACKBUILD LOCATION: ./sassc
 SLACKBUILD FILES: sassc.SlackBuild sassc.info slack-desc
-SLACKBUILD VERSION: 3.2.5
+SLACKBUILD VERSION: 3.3.0
 SLACKBUILD REQUIRED: libsass
-SLACKBUILD DOWNLOAD: https://github.com/sass/sassc/archive/3.2.5.tar.gz
-SLACKBUILD MD5SUM: 610c0d6c9e68ce8a02a475d6da4a1e9b
+SLACKBUILD DOWNLOAD: https://github.com/sass/sassc/archive/3.3.0.tar.gz
+SLACKBUILD MD5SUM: 96fa24b12ce050fc7beace8099a14536
 SLACKBUILD SHORT DESCRIPTION:  sassc (C/C++ port of the Sass CSS precompiler)
 
 SLACKBUILD NAME: scanssh
