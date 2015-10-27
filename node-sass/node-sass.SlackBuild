@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-node-sass}
-VERSION=${VERSION:-3.4.0}
+VERSION=${VERSION:-3.4.1}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -62,11 +62,7 @@ find . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-DESTDIR=$PKG npm install --user root -g node-sass
-
-# Install binding from https://github.com/sass/node-sass-binaries
-# to fix error with node4 in install script
-install -Dm644 $CWD/linux-x64-46_binding.node $PKG/usr/lib64/node_modules/node-sass/vendor/linux-x64-46/binding.node
+DESTDIR=$PKG npm install --user root -g
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
