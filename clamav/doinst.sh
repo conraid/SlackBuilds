@@ -31,6 +31,8 @@ config etc/logrotate.d/clamav.new
 # Remove new log if one is already present (thanks to SBo)
 config var/log/clamav/clamd.log.new ; rm -f var/log/clamav/clamd.log.new
 config var/log/clamav/freshclam.log.new ; rm -f var/log/clamav/freshclam.log.new
+#config var/lib/clamav/main.cvd ; rm -f var/lib/clamav/main.cvd.new
+#config var/lib/clamav/daily.cvd ; rm -f var/lib/clamav/daily.cvd.new
 
 # Add user and group (uid=210 and gid=210 are SBo suggest)
 if ! getent group clamav 2>&1 > /dev/null; then
