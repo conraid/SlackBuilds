@@ -29,12 +29,11 @@ CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-sleuthkit}
 VERSION=${VERSION:-4.2.0}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-${PRGNAM}
+PKG=$TMP/package-$PRGNAM
 OUTPUT=${OUTPUT:-/tmp}
-DOCDIR="$PKG/usr/doc/$PRGNAM-${VERSION}"
 
 DOCFILES="ChangeLog.txt  INSTALL.txt NEWS.txt  README.md licenses/*"
 
@@ -60,12 +59,12 @@ else
   LIBDIRSUFFIX=""
 fi
 
-rm -rf ${PKG}
-mkdir -p $TMP ${PKG}
-cd ${TMP}
-rm -rf $PRGNAM-${VERSION}
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAM-$VERSION
 tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
-cd $PRGNAM-${VERSION}
+cd $PRGNAM-$VERSION
 
 chown -R root:root .
 find . \
@@ -74,8 +73,11 @@ find . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-# Apply patch from git to fix segfault in ntfs fs.
-patch -p1 -i $CWD/patches/ntfs.patch
+# Apply patch from git to fix segfault in ntfs and hfs fs.
+for PATCH in $CWD/patches/*.patch; do
+  patch -p1 -i $PATCH
+done
+
   
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -97,12 +99,12 @@ if [ -d $PKG/usr/man ]; then
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
-mkdir -p ${DOCDIR}
-cp -a $DOCFILES $DOCDIR || true
-cat $CWD/$PRGNAM.SlackBuild > $DOCDIR/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
-cd ${PKG}
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.txz
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}

@@ -28,9 +28,9 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=php-handlersocket
-EXTNAME=handlersocket
+SRCNAM=handlersocket
 VERSION=${VERSION:-0.3.1}
-BUILD=${BUILD:-21}
+BUILD=${BUILD:-22}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -63,9 +63,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $EXTNAME
+rm -rf $SRCNAM
 tar xzvf $CWD/$PRGNAM-$VERSION.tar.gz
-cd $EXTNAME
+cd $SRCNAM
 
 chown -R root:root .
 find . \
@@ -90,7 +90,7 @@ CFLAGS="$SLKCFLAGS" \
 make
 make INSTALL_ROOT=$PKG install
 
-strip --strip-unneeded $PKG/usr/lib$LIBDIRSUFFIX/php/extensions/$EXTNAME.so
+strip --strip-unneeded $PKG/usr/lib$LIBDIRSUFFIX/php/extensions/$SRCNAM.so
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
@@ -102,7 +102,7 @@ cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 # Add extensione config example
 mkdir -p $PKG/etc/php.d
-echo 'extension=handlersocket.so' > $PKG/etc/php.d/$EXTNAME.ini.new
+echo 'extension=handlersocket.so' > $PKG/etc/php.d/$SRCNAM.ini.new
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
