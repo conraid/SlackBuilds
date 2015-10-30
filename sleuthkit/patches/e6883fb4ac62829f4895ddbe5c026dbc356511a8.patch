@@ -1,0 +1,123 @@
+From e6883fb4ac62829f4895ddbe5c026dbc356511a8 Mon Sep 17 00:00:00 2001
+From: Brian Carrier <carrier@sleuthkit.org>
+Date: Fri, 16 Oct 2015 22:17:51 -0400
+Subject: [PATCH] Added HFS catalog bounds checking that was lost in
+ refactoring long ago.  Fixes #529
+
+---
+ tsk/fs/hfs.c      | 25 +++++++++++++++++++++++++
+ tsk/fs/hfs_dent.c | 12 ------------
+ tsk/fs/tsk_hfs.h  |  9 ++++++++-
+ 3 files changed, 33 insertions(+), 13 deletions(-)
+
+diff --git a/tsk/fs/hfs.c b/tsk/fs/hfs.c
+index 52d4dff..c875992 100644
+--- a/tsk/fs/hfs.c
++++ b/tsk/fs/hfs.c
+@@ -924,6 +924,7 @@ hfs_cat_traverse(HFS_INFO * hfs,
+                 size_t rec_off;
+                 hfs_btree_key_cat *key;
+                 uint8_t retval;
++                uint16_t keylen;
+ 
+                 // get the record offset in the node
+                 rec_off =
+@@ -938,8 +939,20 @@ hfs_cat_traverse(HFS_INFO * hfs,
+                     free(node);
+                     return 1;
+                 }
++
+                 key = (hfs_btree_key_cat *) & node[rec_off];
+ 
++                keylen = 2 + tsk_getu16(hfs->fs_info.endian, key->key_len);
++                if ((keylen) > nodesize) {
++                    tsk_error_set_errno(TSK_ERR_FS_GENFS);
++                    tsk_error_set_errstr
++                        ("hfs_cat_traverse: length of key %d in index node %d too large (%d vs %"
++                        PRIu16 ")", rec, cur_node, keylen, nodesize);
++                    free(node);
++                    return 1;
++                }
++
++
+                 /*
+                    if (tsk_verbose)
+                    tsk_fprintf(stderr,
+@@ -949,6 +962,7 @@ hfs_cat_traverse(HFS_INFO * hfs,
+                    tsk_getu32(fs->endian, key->parent_cnid));
+                  */
+ 
++
+                 /* save the info from this record unless it is too big */
+                 retval =
+                     a_cb(hfs, HFS_BT_NODE_TYPE_IDX, key,
+@@ -1015,6 +1029,7 @@ hfs_cat_traverse(HFS_INFO * hfs,
+                 size_t rec_off;
+                 hfs_btree_key_cat *key;
+                 uint8_t retval;
++                uint16_t keylen;
+ 
+                 // get the record offset in the node
+                 rec_off =
+@@ -1031,6 +1046,16 @@ hfs_cat_traverse(HFS_INFO * hfs,
+                 }
+                 key = (hfs_btree_key_cat *) & node[rec_off];
+ 
++                keylen = 2 + tsk_getu16(hfs->fs_info.endian, key->key_len);
++                if ((keylen) > nodesize) {
++                    tsk_error_set_errno(TSK_ERR_FS_GENFS);
++                    tsk_error_set_errstr
++                        ("hfs_cat_traverse: length of key %d in leaf node %d too large (%d vs %"
++                        PRIu16 ")", rec, cur_node, keylen, nodesize);
++                    free(node);
++                    return 1;
++                }
++
+                 /*
+                    if (tsk_verbose)
+                    tsk_fprintf(stderr,
+diff --git a/tsk/fs/hfs_dent.c b/tsk/fs/hfs_dent.c
+index b54ac45..c1a04e4 100644
+--- a/tsk/fs/hfs_dent.c
++++ b/tsk/fs/hfs_dent.c
+@@ -234,18 +234,6 @@ hfs_dir_open_meta_cb(HFS_INFO * hfs, int8_t level_type,
+             return HFS_BTREE_CB_LEAF_STOP;
+         }
+         rec_off2 = 2 + tsk_getu16(hfs->fs_info.endian, cur_key->key_len);
+-        // @@@ NEED TO REPLACE THIS SOMEHOW, but need to figure out the max length
+-        /*
+-           if (rec_off2 > nodesize) {
+-           tsk_error_set_errno(TSK_ERR_FS_GENFS);
+-           tsk_error_set_errstr(
+-           "hfs_dir_open_meta: offset of record+keylen %d in leaf node %d too large (%"PRIuSIZE" vs %"
+-           PRIu16 ")", rec, cur_node, rec_off2, nodesize);
+-           tsk_fs_name_free(fs_name);
+-           free(node);
+-           return TSK_COR;
+-           }
+-         */
+         rec_type = tsk_getu16(hfs->fs_info.endian, &rec_buf[rec_off2]);
+ 
+         // Catalog entry is for a file
+diff --git a/tsk/fs/tsk_hfs.h b/tsk/fs/tsk_hfs.h
+index d0dcc7a..21dec31 100644
+--- a/tsk/fs/tsk_hfs.h
++++ b/tsk/fs/tsk_hfs.h
+@@ -774,9 +774,16 @@ extern uint8_t hfs_cat_file_lookup(HFS_INFO * hfs, TSK_INUM_T inum,
+ extern void error_returned(char *errstr, ...);
+ extern void error_detected(uint32_t errnum, char *errstr, ...);
+ 
++/**
++ * @param hfs
++ * @param level_type Type of node the records are from
++ * @param cur_key Key currently being analyzed (record data follows it)
++ * @param key_off Byte offset in tree that this key is located in
++ * @param ptr Pointer to data that was passed into parent
++ */
+ typedef uint8_t(*TSK_HFS_BTREE_CB) (HFS_INFO *, int8_t level_type,
+     const hfs_btree_key_cat * cur_key,
+-    TSK_OFF_T key_off, void *);
++    TSK_OFF_T key_off, void *ptr);
+ // return values for callback
+ #define HFS_BTREE_CB_IDX_LT     1       // current key is less than target (keeps looking in node)
+ #define HFS_BTREE_CB_IDX_EQGT   2       // current key is equal or greater than target (stops)
