@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-wireshark}
-VERSION=${VERSION:-2.0.0rc1}
+VERSION=${VERSION:-2.0.0rc2}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -73,6 +73,8 @@ find . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
+LUA_LIBS="-llua5.2 -lm" \
+LUA_CFLAGS="-I/usr/include/lua5.2" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
@@ -87,7 +89,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-packet-editor \
   --enable-tfshark \
   --enable-setuid-install \
-  --without-lua \
+  --with-lua \
   --with-ssl=/usr/lib$LIBDIRSUFFIX \
   --with-c-ares \
   --with-geoip \
@@ -103,7 +105,7 @@ make
 make DESTDIR=$PKG install-strip
 
 # Link to gtk version. Qt version causes a segmentation fault.
-(cd $PKG/usr/bin; ln -s wireshark-gtk wireshark)
+( cd $PKG/usr/bin; ln -s wireshark-gtk wireshark )
 
 # add headers files
 install -dm755 $PKG/usr/include/$PRGNAM/{epan/{crypt,dfilter,dissectors,ftypes,wmem},wiretap,wsutil}
