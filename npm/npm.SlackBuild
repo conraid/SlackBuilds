@@ -31,7 +31,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-npm}
-VERSION=${VERSION:-3.3.10}
+VERSION=${VERSION:-3.3.11}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -71,7 +71,7 @@ find . \
 # Fix man page path.
 sed "/var manRoot/s/'share',//" -i lib/{,un}build.js
 # Fix libdir for 64-bit.
-sed "s|'lib'|'lib$LIBDIRSUFFIX'|" -i lib/npm.js
+sed "s|'lib'|'lib${LIBDIRSUFFIX}'|" -i lib/npm.js
 
 # Install:
 make DESTDIR=$PKG install
