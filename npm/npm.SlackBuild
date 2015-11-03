@@ -31,7 +31,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-npm}
-VERSION=${VERSION:-3.3.11}
+VERSION=${VERSION:-3.3.12}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -73,7 +73,6 @@ sed "/var manRoot/s/'share',//" -i lib/{,un}build.js
 # Fix libdir for 64-bit.
 sed "s|'lib'|'lib${LIBDIRSUFFIX}'|" -i lib/npm.js
 
-# Install:
 make DESTDIR=$PKG install
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
