@@ -30,14 +30,12 @@ set -euu
 CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-squid}
-VERSION=${VERSION:-3.5.10}
+VERSION=${VERSION:-3.5.11}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
 OUTPUT=${OUTPUT:-/tmp}
-SQUIDUSER=${SQUIDUSER:-nobody}
-SQUIDGROUP=${SQUIDGROUP:-nobody}
 
 DOCFILES="CONTRIBUTORS COPYING COPYRIGHT CREDITS ChangeLog INSTALL QUICKSTART README RELEASENOTES* SPONSORS"
 
@@ -129,18 +127,14 @@ fi
 mkdir -p $PKG/etc/{logrotate.d,rc.d} 
 install -Dm644 $CWD/rc.squid $PKG/etc/rc.d/rc.squid.new
 
-sed -e "s,@USER@,$SQUIDUSER," -e "s,@GROUP@,$SQUIDGROUP," $CWD/squid.logrotate > $PKG/etc/logrotate.d/squid.new
+install -Dm644 $CWD/squid.logrotate $PKG/etc/logrotate.d/squid.new
 
 rename .conf .conf.new $PKG/etc/squid/*.conf
 rename .css .css.new $PKG/etc/squid/*.css
 install -Dm644 src/squid.conf.documented $PKG/etc/squid/squid.conf.documented
 
 mkdir -p $PKG/var/{cache,run}/squid
-chown $SQUIDUSER:$SQUIDGROUP $PKG/var/{cache,log,run}/squid
-
-## Edit the config file to set the user and group to run as
-sed -i -e 's%^cache_effective_user nobody%cache_effective_user '"$SQUIDUSER"'%g' $PKG/etc/squid/squid.conf.new
-sed -i -e 's%^cache_effective_group nobody%cache_effective_group '"$SQUIDGROUP"'%g' $PKG/etc/squid/squid.conf.new
+chown nobody:nobody $PKG/var/{cache,log,run}/squid
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
