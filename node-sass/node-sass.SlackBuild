@@ -31,7 +31,8 @@ CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-node-sass}
 VERSION=${VERSION:-3.4.1}
-BUILD=${BUILD:-1}
+BINDING_VER="47"
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -46,6 +47,17 @@ if [ -z ${ARCH:=""} ]; then
   arm*) ARCH=arm ;;
   *) ARCH=$( uname -m ) ;;
   esac
+fi
+
+if [ "$ARCH" = "x86_64" ]; then
+  BINDING_ARCH="x64";
+  LIBDIRSUFFIX="64"
+elif [ "$ARCH" = "i686" ]; then
+  BINDING_ARCH="ia32";
+  LIBDIRSUFFIX=""
+else
+  echo "platform not supported"
+  exit
 fi
 
 rm -rf $PKG
@@ -71,6 +83,14 @@ if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
+
+if [ -e $CWD/linux-${BINDING_ARCH}-${BINDING_VER}_binding.node ]; then
+  cp $CWD/linux-${BINDING_ARCH}-${BINDING_VER}_binding.node $PKG
+else
+  wget https://github.com/sass/node-sass/releases/download/v3.4.1/linux-${BINDING_ARCH}-${BINDING_VER}_binding.node
+fi
+install -Dsm644 linux-${BINDING_ARCH}-${BINDING_VER}_binding.node \
+$PKG/usr/lib${LIBDIRSUFFIX}/node_modules/node-sass/vendor/linux-x64-${BINDING_VER}/binding.node
 
 # Remove empty dir
 rmdir $PKG/usr/etc
