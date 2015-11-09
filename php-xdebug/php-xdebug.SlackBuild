@@ -29,14 +29,14 @@ CWD=$(pwd)
 
 SRCNAM=xdebug
 PRGNAM=php-${SRCNAM}
-VERSION=${VERSION:-2.3.3}
-BUILD=${BUILD:-4}
+VERSION=${VERSION:-2.4.0beta1}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="CREDITS LICENSE NEWS README contrib"
+DOCFILES="CREDITS LICENSE README* contrib"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
