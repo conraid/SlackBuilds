@@ -30,9 +30,9 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-node-sass}
-VERSION=${VERSION:-3.4.1}
+VERSION=${VERSION:-3.4.2}
 BINDING_VER="47"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -87,7 +87,7 @@ fi
 if [ -e $CWD/linux-${BINDING_ARCH}-${BINDING_VER}_binding.node ]; then
   cp $CWD/linux-${BINDING_ARCH}-${BINDING_VER}_binding.node $PKG
 else
-  wget https://github.com/sass/node-sass/releases/download/v3.4.1/linux-${BINDING_ARCH}-${BINDING_VER}_binding.node
+  wget https://github.com/sass/node-sass/releases/download/v${VERSION}/linux-${BINDING_ARCH}-${BINDING_VER}_binding.node
 fi
 install -Dsm644 linux-${BINDING_ARCH}-${BINDING_VER}_binding.node \
 $PKG/usr/lib${LIBDIRSUFFIX}/node_modules/node-sass/vendor/linux-x64-${BINDING_VER}/binding.node
