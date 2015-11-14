@@ -27,7 +27,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
 
 LOG=/tmp/openvas-check-setup.log
-CHECKVERSION=2.3.0
+CHECKVERSION=2.3.3
 
 if [ "$1" = "--server" -o "$2" = "--server" ]
 then
@@ -109,7 +109,7 @@ echo "openvas-check-setup $CHECKVERSION"
 echo "  Test completeness and readiness of OpenVAS-$VER"
 if [ "$VER" = "8" ]
 then
-  echo "  (add '--v6' or '--v7' or '--9'"
+  echo "  (add '--v6' or '--v7' or '--v9'"
   echo "   if you want to check for another OpenVAS version)"
 fi
 echo ""
@@ -187,6 +187,7 @@ if [ `echo $VERSION | grep "^$SCANNER_MAJOR\.$SCANNER_MINOR" | wc -l` -ne "1" ]
 then
   log_and_print "ERROR: OpenVAS Scanner too old or too new: $VERSION"
   log_and_print "FIX: Please install OpenVAS Scanner $SCANNER_MAJOR.$SCANNER_MINOR."
+  log_and_print "HINT: Please see the --v6/7/8/9 command line options to check other major versions."
   check_failed
 fi
 echo "" >> $LOG
@@ -200,12 +201,65 @@ CAFILE=`openvassd -s 2>>$LOG | grep ca_file | sed -e "s/^ca_file = //"`
 if [ ! -e $CAFILE ]
 then
   log_and_print "ERROR: No CA certificate file of OpenVAS Scanner found."
-  log_and_print "FIX: Run 'openvas-mkcert'."
+  if [ "$VER" -ge 9 ]
+  then
+    log_and_print "FIX: Run 'openvas-manage-certs -a'."
+  else
+    log_and_print "FIX: Run 'openvas-mkcert'."
+  fi
   check_failed
 fi
 echo "" >> $LOG
 
 log_and_print "OK: OpenVAS Scanner CA Certificate is present as $CAFILE."
+
+if [ "$VER" -ge 8 ]
+then
+  echo "Checking presence of redis ..." >> $LOG
+  BINARY=`redis-server --version`
+
+  if [ $? -ne 0 ]
+  then
+    log_and_print "ERROR: No redis-server installation found."
+    log_and_print "FIX: You should install redis-server for improved scalability and ability to trace/debug the KB"
+    check_failed
+  else
+    VERSION=`redis-server --version | awk '{ print $4 }'`
+    if [ `echo $VERSION | grep sha` ]
+    then
+      VERSION=`redis-server --version | awk '{ print $3 }'`
+    fi
+    log_and_print "OK: redis-server is present in version $VERSION."
+    HAVE_REDIS=1
+  fi
+  echo "" >> $LOG
+
+  if [ $HAVE_REDIS -eq 1 ]
+  then
+    echo "Checking if redis-server is configured properly to run with openVAS ..." >> $LOG
+    REDISSOCKET=`openvassd -s 2>>$LOG | grep kb_location | sed -e "s/^kb_location = //"`
+    if [ -z "$REDISSOCKET" ]
+    then
+       log_and_print "ERROR: scanner is not configured to use a redis-server socket."
+       log_and_print "FIX: Configure the kb_location setting of the scanner to the path of the redis-server socket."
+       check_failed
+    else
+      log_and_print "OK: scanner (kb_location setting) is configured properly using the redis-server socket: $REDISSOCKET"
+      echo "Checking if redis-server is running ..." >> $LOG
+      if [ -e $REDISSOCKET ]
+      then
+       log_and_print "OK: redis-server is running and listening on socket: $REDISSOCKET."
+       else
+       log_and_print "ERROR: redis-server is not running or not listening on socket: $REDISSOCKET"
+       log_and_print "FIX: You should start the redis-server or configure it to listen on socket: $REDISSOCKET"
+       check_failed
+      fi
+    fi
+  log_and_print "OK: redis-server configuration is OK and redis-server is running."
+  fi
+
+  echo "" >> $LOG
+fi
 
 echo "Checking NVT collection ..." >> $LOG
 PLUGINSFOLDER=`openvassd -s 2>>$LOG | grep plugins_folder | sed -e "s/^plugins_folder = //"`
@@ -256,55 +310,6 @@ else
 fi
 echo "" >> $LOG
 
-if [ "$VER" -ge 8 ]
-then
-  echo "Checking presence of redis ..." >> $LOG
-  BINARY=`redis-server --version`
-
-  if [ $? -ne 0 ]
-  then
-    log_and_print "ERROR: No redis-server installation found."
-    log_and_print "FIX: You should install redis-server for improved scalability and ability to trace/debug the KB"
-    check_failed
-  else
-    VERSION=`redis-server --version | awk '{ print $4 }'`
-    if [ `echo $VERSION | grep sha` ]
-    then
-      VERSION=`redis-server --version | awk '{ print $3 }'`
-    fi
-    log_and_print "OK: redis-server is present in version $VERSION."
-    HAVE_REDIS=1
-  fi
-  echo "" >> $LOG
-
-  if [ $HAVE_REDIS -eq 1 ]
-  then
-    echo "Checking if redis-server is configured properly to run with openVAS ..." >> $LOG
-    REDISSOCKET=`openvassd -s 2>>$LOG | grep kb_location | sed -e "s/^kb_location = //"`
-    if [ -z "$REDISSOCKET" ]
-    then
-       log_and_print "ERROR: scanner is not configured to use a redis-server socket."
-       log_and_print "FIX: Configure the kb_location setting of the scanner to the path of the redis-server socket."
-       check_failed
-    else
-      log_and_print "OK: scanner (kb_location setting) is configured properly using the redis-server socket: $REDISSOCKET"
-      echo "Checking if redis-server is running ..." >> $LOG
-      if [ -e $REDISSOCKET ]
-      then
-       log_and_print "OK: redis-server is running and listening on socket: $REDISSOCKET."
-       else
-       log_and_print "ERROR: redis-server is not running or not listening on socket: $REDISSOCKET"
-       log_and_print "FIX: You should start the redis-server or configure it to listen on socket: $REDISSOCKET"
-       check_failed
-      fi
-    fi
-  log_and_print "OK: redis-server configuration is OK and redis-server is running."
-  fi
-
-  echo "" >> $LOG
-fi
-
-
 echo "Step 2: Checking OpenVAS Manager ... "
 
 echo "Checking presence of OpenVAS Manager ..." >> $LOG
@@ -323,6 +328,7 @@ if [ `echo $VERSION | grep "^$MANAGER_MAJOR\.$MANAGER_MINOR" | wc -l` -ne "1" ]
 then
   log_and_print "ERROR: OpenVAS Manager too old or too new: $VERSION"
   log_and_print "FIX: Please install OpenVAS Manager $MANAGER_MAJOR.$MANAGER_MINOR."
+  log_and_print "HINT: Please see the --v6/7/8/9 command line options to check other major versions."
   check_failed
 fi
 echo "" >> $LOG
@@ -335,7 +341,10 @@ CLIENTCERTFILE="$CERTDIR/clientcert.pem"
 if [ ! -e $CLIENTCERTFILE ]
 then
   log_and_print "ERROR: No client certificate file of OpenVAS Manager found."
-  if [ $VER -ge 7 ]
+  if [ $VER -ge 9 ]
+  then
+    log_and_print "FIX: Run 'openvas-manage-certs -a'."
+  elif [ $VER -ge 7 ]
   then
     log_and_print "FIX: Run 'openvas-mkcert-client -n -i'"
   else
@@ -380,29 +389,6 @@ fi
 echo "" >> $LOG
 
 log_and_print "OK: Access rights for the OpenVAS Manager database are correct."
-
-if [ $ADMINISTRATOR_MAJOR = "0" ]
-then
-  echo "Checking if users exist ..." >> $LOG
-  if [ $VER != "7" ]
-  then
-    USERCOUNT=`openvasmd --get-users | sed -e "/^$/d" | wc -l`
-  else
-    USERCOUNT=`openvasmd --list-users | sed -e "/^$/d" | wc -l`
-  fi
-  if [ $USERCOUNT -eq 0 ]
-  then
-    log_and_print "ERROR: No users found. You need to create at least one user to log in."
-    log_and_print "       It is recommended to have at least one user with role Admin."
-    log_and_print "FIX: create a user by running 'openvasmd --create-user=<name> --role=Admin && openvasmd --user=<name> --new-password=<password>'"
-    check_failed
-  else
-    log_and_print "OK: At least one user exists."
-  fi
-  echo "" >> $LOG
-fi
-
-# TODO: Do a check for presence of at least one Admin user.
 
 echo "Checking sqlite3 presence ..." >> $LOG
 SQLITE3=`type sqlite3 2> /dev/null`
@@ -454,7 +440,7 @@ then
     log_and_print "ERROR: The number of NVTs in the OpenVAS Manager database is too low."
     log_and_print "FIX: Make sure OpenVAS Scanner is running with an up-to-date NVT collection and run 'openvasmd --rebuild'."
 
-    OPENVASSD_RUNNING=`ps -Af | grep "openvassd: waiting for incoming connections" | grep -v grep | wc -l`
+    OPENVASSD_RUNNING=`ps -Af | grep "openvassd: [Ww]aiting for incoming connections" | grep -v grep | wc -l`
     if [ $OPENVASSD_RUNNING -eq 0 ]
     then
       log_and_print "WARNING: OpenVAS Scanner is NOT running!" ;
@@ -466,6 +452,29 @@ then
     log_and_print "OK: OpenVAS Manager database contains information about $DBNVTCOUNT NVTs."
   fi
 fi
+
+if [ $ADMINISTRATOR_MAJOR = "0" ]
+then
+  echo "Checking if users exist ..." >> $LOG
+  if [ $VER != "7" ]
+  then
+    USERCOUNT=`openvasmd --get-users | sed -e "/^$/d" | wc -l`
+  else
+    USERCOUNT=`openvasmd --list-users | sed -e "/^$/d" | wc -l`
+  fi
+  if [ $USERCOUNT -eq 0 ]
+  then
+    log_and_print "ERROR: No users found. You need to create at least one user to log in."
+    log_and_print "       It is recommended to have at least one user with role Admin."
+    log_and_print "FIX: create a user by running 'openvasmd --create-user=<name> --role=Admin && openvasmd --user=<name> --new-password=<password>'"
+    check_failed
+  else
+    log_and_print "OK: At least one user exists."
+  fi
+  echo "" >> $LOG
+fi
+
+# TODO: Do a check for presence of at least one Admin user.
 
 echo "Checking OpenVAS SCAP database ..." >> $LOG
 # Guess openvas state dir from $PLUGINSFOLDER
@@ -530,6 +539,7 @@ then
   then
     log_and_print "ERROR: OpenVAS Administrator too old or too new: $VERSION"
     log_and_print "FIX: Please install OpenVAS Administrator $ADMINISTRATOR_MAJOR.$ADMINISTRATOR_MINOR."
+    log_and_print "HINT: Please see the --v6/7/8/9 command line options to check other major versions."
     check_failed
   fi
   echo "" >> $LOG
@@ -601,6 +611,7 @@ if [ `echo $VERSION | grep "^$GSA_MAJOR\.$GSA_MINOR" | wc -l` -ne "1" ]
 then
   log_and_print "ERROR: Greenbone Security Assistant too old or too new: $VERSION"
   log_and_print "FIX: Please install Greenbone Security Assistant $GSA_MAJOR.$GSA_MINOR."
+  log_and_print "HINT: Please see the --v6/7/8/9 command line options to check other major versions."
   check_failed
 fi
 echo "" >> $LOG
@@ -617,6 +628,7 @@ then
   then
     log_and_print "ERROR: No OpenVAS CLI (omp) found."
     log_and_print "FIX: Please install OpenVAS CLI."
+    log_and_print "HINT: Please see the --server command line option to skip this check."
     check_failed
   fi
   echo "" >> $LOG
@@ -627,6 +639,7 @@ then
   then
     log_and_print "ERROR: OpenVAS CLI too old or too new: $VERSION"
     log_and_print "FIX: Please install OpenVAS CLI $CLI_MAJOR.$CLI_MINOR."
+    log_and_print "HINT: Please see the --v6/7/8/9 command line options to check other major versions."
     check_failed
   fi
   echo "" >> $LOG
@@ -667,10 +680,12 @@ then
       then
         log_and_print "ERROR: Greenbone Security Desktop too old or too new: $VERSION"
         log_and_print "FIX: Please install Greenbone Security Desktop $GSD_MAJOR.$GSD_MINOR."
+        log_and_print "HINT: Please see the --v6/7/8/9 command line options to check other major versions."
         check_failed
       else
         log_and_print "WARNING: Greenbone Security Desktop too old or too new: $VERSION"
         log_and_print "SUGGEST: Please install Greenbone Security Desktop $GSD_MAJOR.$GSD_MINOR."
+        log_and_print "HINT: Please see the --v6/7/8/9 command line options to check other major versions."
       fi
     fi
     echo "" >> $LOG
@@ -699,18 +714,18 @@ echo "" >> $LOG
 
 if [ $HAVE_NETSTAT -eq 1 ]
 then
-  netstat -A inet -ntlp 2> /dev/null >> $LOG
-  OPENVASSD_HOST=`netstat -A inet -ntlp 2> /dev/null | grep openvassd | awk -F\  '{print $4}' | awk -F: '{print $1}'`
-  OPENVASSD_PORT=`netstat -A inet -ntlp 2> /dev/null | grep openvassd | awk -F\  '{print $4}' | awk -F: '{print $2}'`
-  OPENVASMD_HOST=`netstat -A inet -ntlp 2> /dev/null | grep openvasmd | awk -F\  '{print $4}' | awk -F: '{print $1}'`
-  OPENVASMD_PORT=`netstat -A inet -ntlp 2> /dev/null | grep openvasmd | awk -F\  '{print $4}' | awk -F: '{print $2}'`
-  OPENVASAD_HOST=`netstat -A inet -ntlp 2> /dev/null | grep openvasad | awk -F\  '{print $4}' | awk -F: '{print $1}'`
-  OPENVASAD_PORT=`netstat -A inet -ntlp 2> /dev/null | grep openvasad | awk -F\  '{print $4}' | awk -F: '{print $2}'`
-  GSAD_HOST=`netstat -A inet -ntlp 2> /dev/null | grep gsad | awk -F\  '{print $4}' | awk -F: '{print $1}'`
-  GSAD_PORT=`netstat -A inet -ntlp 2> /dev/null | grep gsad | awk -F\  '{print $4}' | awk -F: '{print $2}'`
+  netstat -A inet -A inet6 -ntlp 2> /dev/null >> $LOG
+  OPENVASSD_HOST=`netstat -A inet -A inet6 -ntlp 2> /dev/null | grep openvassd | awk -F\  '{print $4}' | awk -F: 'sub(FS $NF,x)'`
+  OPENVASSD_PORT=`netstat -A inet -A inet6 -ntlp 2> /dev/null | grep openvassd | awk -F\  '{print $4}' | awk -F: '{print $NF}'`
+  OPENVASMD_HOST=`netstat -A inet -A inet6 -ntlp 2> /dev/null | grep openvasmd | awk -F\  '{print $4}' | awk -F: 'sub(FS $NF,x)'`
+  OPENVASMD_PORT=`netstat -A inet -A inet6 -ntlp 2> /dev/null | grep openvasmd | awk -F\  '{print $4}' | awk -F: '{print $NF}'`
+  OPENVASAD_HOST=`netstat -A inet -A inet6 -ntlp 2> /dev/null | grep openvasad | awk -F\  '{print $4}' | awk -F: 'sub(FS $NF,x)'`
+  OPENVASAD_PORT=`netstat -A inet -A inet6 -ntlp 2> /dev/null | grep openvasad | awk -F\  '{print $4}' | awk -F: '{print $NF}'`
+  GSAD_HOST=`netstat -A inet -A inet6 -ntlp 2> /dev/null | grep gsad | awk -F\  '{print $4}' | awk -F: 'sub(FS $NF,x)'`
+  GSAD_PORT=`netstat -A inet -A inet6 -ntlp 2> /dev/null | grep gsad | awk -F\  '{print $4}' | awk -F: '{print $NF}' | tail -1`
 
   case "$OPENVASSD_HOST" in
-    "0.0.0.0") log_and_print "OK: OpenVAS Scanner is running and listening on all interfaces." ;;
+    "0.0.0.0"|"::") log_and_print "OK: OpenVAS Scanner is running and listening on all interfaces." ;;
     "127.0.0.1") log_and_print "OK: OpenVAS Scanner is running and listening only on the local interface." ;;
     "") OPENVASSD_PROC=`ps -Af | grep "openvassd: waiting for incoming connections" | grep -v grep | wc -l`
         if [ $OPENVASSD_PROC -eq 0 ]
@@ -734,7 +749,7 @@ then
   esac
 
   case "$OPENVASMD_HOST" in
-    "0.0.0.0") log_and_print "OK: OpenVAS Manager is running and listening on all interfaces." ;;
+    "0.0.0.0"|"::") log_and_print "OK: OpenVAS Manager is running and listening on all interfaces." ;;
     "127.0.0.1") log_and_print "WARNING: OpenVAS Manager is running and listening only on the local interface."
                  log_and_print "This means that you will not be able to access the OpenVAS Manager from the"
                  log_and_print "outside using GSD or OpenVAS CLI."
@@ -771,7 +786,7 @@ then
   fi
 
   case "$GSAD_HOST" in
-    "0.0.0.0") log_and_print "OK: Greenbone Security Assistant is running and listening on all interfaces." ;;
+    "0.0.0.0"|"::") log_and_print "OK: Greenbone Security Assistant is running and listening on all interfaces." ;;
     "127.0.0.1") log_and_print "WARNING: Greenbone Security Assistant is running and listening only on the local interface."
                  log_and_print "This means that you will not be able to access the Greenbone Security Assistant from the"
                  log_and_print "outside using a web browser."
