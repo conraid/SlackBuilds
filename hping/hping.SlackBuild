@@ -29,10 +29,10 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=${PRGNAM:-hping}
+PRGNAM=hping
 VERSION=${VERSION:-3.0.0-git3547c}
 COMMIT="3547c7691742c6eaa31f8402e0ccbb81387c1b99"
-BUILD=${BUILD:-7}
+BUILD=${BUILD:-8}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -70,11 +70,8 @@ tar xvf $CWD/$PRGNAM-$COMMIT.tar.gz
 cd $PRGNAM-$COMMIT
 
 chown -R root:root .
-find . \
- \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
-  -o -perm 511 \) -exec chmod 755 {} \; -o \
- \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
-  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
+find -L . -executable -exec chmod 755 {} \+
+find -L . ! -executable -exec chmod 644 {} \+
 
 # Add some of Debian's patchset (thanks to Debian and SBo)
 for PATCH in $CWD/patches/*.diff; do
