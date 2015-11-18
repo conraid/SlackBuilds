@@ -29,9 +29,9 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=${PRGNAM:-pcsc-perl}
+PRGNAM=pcsc-perl
 VERSION=${VERSION:-1.4.13}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -81,8 +81,8 @@ perl Makefile.PL \
   PREFIX=/usr \
   INSTALLDIRS=vendor \
   INSTALLVENDORMAN3DIR=/usr/man/man3
+
 make
-#make test
 make install DESTDIR=$PKG
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
