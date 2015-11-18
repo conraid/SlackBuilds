@@ -29,8 +29,9 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=${PRGNAM:-darktable}
-VERSION=${VERSION:-2.0.rc1}
+PRGNAM=darktable
+VERSION=2.0.rc2
+SRCVERSION=2.0~rc2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -41,9 +42,9 @@ DOCFILES="doc/ChangeLog doc/NEWS README* RELEASE*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-    i?86) ARCH=i686 ;;
-    arm*) ARCH=arm ;;
-    *) ARCH=$( uname -m ) ;;
+  i?86) ARCH=i686 ;;
+  arm*) ARCH=arm ;;
+  *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -64,20 +65,19 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-$VERSION || rm -rf $PRGNAM-2.0*
+rm -rf $PRGNAM-$SRCVERSION
 tar xvf $CWD/$PRGNAM-$VERSION.tar.xz
-cd $PRGNAM-$VERSION || cd $PRGNAM-2.0*
+cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
-find . \
- \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
-  -o -perm 511 \) -exec chmod 755 {} \; -o \
- \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
-  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
+find -L . -executable -exec chmod 755 {} \+
+find -L . ! -executable -exec chmod 644 {} \+
 
+# Fix doc path
 sed -e "s#share/doc/darktable#doc/darktable-$VERSION#" \
   -e "s#\${SHARE_INSTALL}/doc/darktable/#./doc/darktable-$VERSION#" \
   -i doc/CMakeLists.txt
+
 mkdir -p build
 cd build
 cmake \
@@ -90,9 +90,11 @@ cmake \
   -DBINARY_PACKAGE_BUILD=On \
   -DUSE_DARKTABLE_PROFILING=On \
   -DUSE_LUA=On \
-  -DDONT_USE_INTERNAL_LUA=Off \
+  -DLUA52=ON \
+  -DDONT_USE_INTERNAL_LUA=On \
   -DUSE_LIBSECRET=On \
   -DUSE_GNOME_KEYRING=Off \
+  -DGTK3_INCLUDE_DIR=/usr/include/gtk-3.0 \
   ..
 
 make
