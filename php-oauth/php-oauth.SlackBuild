@@ -30,13 +30,13 @@ CWD=$(pwd)
 SRCNAM=oauth
 PRGNAM=php-$SRCNAM
 VERSION=${VERSION:-1.2.3}
-BUILD=${BUILD:-25}
+BUILD=${BUILD:-26}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="CREDITS ChangeLog LICENSE README*"
+DOCFILES="LICENSE"
 
 ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 if [ -z ${ARCH:=""} ]; then
@@ -69,11 +69,8 @@ tar xzvf $CWD/$SRCNAM-$VERSION.tgz
 cd $SRCNAM-$VERSION
 
 chown -R root:root .
-find . \
- \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
-  -o -perm 511 \) -exec chmod 755 {} \; -o \
- \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
-  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
+find -L . -executable -exec chmod 755 {} \+
+find -L . ! -executable -exec chmod 644 {} \+
 
 phpize --clean
 phpize
@@ -93,8 +90,9 @@ mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
-# Copy config files
-install -Dm644 $CWD/oauth.ini $PKG/etc/php.d/oauth.ini.new
+# Install config files
+mkdir -p $PKG/etc/php.d
+echo 'extension=oauth.so' > $PKG/etc/php.d/oauth.ini.new
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc

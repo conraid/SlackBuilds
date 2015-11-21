@@ -32,7 +32,8 @@ set -eu
 
 CWD=$(pwd)
 PRGNAM=wine
-VERSION=${VERSION:-1.7.55}
+SRCVERSION=${VERSION:-1.8-rc1}
+VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -68,9 +69,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.bz2
-cd $PRGNAM-$VERSION
+rm -rf $PRGNAM-$SRCVERSION
+tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.bz2
+cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
 find -L . -executable -exec chmod 755 {} \+

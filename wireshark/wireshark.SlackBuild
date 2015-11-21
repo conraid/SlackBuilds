@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=wireshark
-VERSION=${VERSION:-2.0.0rc3}
+VERSION=${VERSION:-2.0.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -67,11 +67,8 @@ tar xvf $CWD/$PRGNAM-$VERSION.tar.bz2
 cd $PRGNAM-$VERSION
 
 chown -R root:root .
-find . \
- \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
-  -o -perm 511 \) -exec chmod 755 {} \; -o \
- \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
-  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
+find -L . -executable -exec chmod 755 {} \+
+find -L . ! -executable -exec chmod 644 {} \+
 
 LUA_LIBS="-llua5.2 -lm" \
 LUA_CFLAGS="-I/usr/include/lua5.2" \
@@ -105,7 +102,7 @@ make DESTDIR=$PKG install
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
-# Link to gtk version. Qt version causes a segmentation fault.
+# Link to gtk version. QT4 version causes a segmentation fault.
 ( cd $PKG/usr/bin; ln -s wireshark-gtk wireshark )
 
 # add headers files
