@@ -1,0 +1,2629 @@
+diff -Npaur dcfldd-1.3.4-1/Makefile.am dcfldd/Makefile.am
+--- dcfldd-1.3.4-1/Makefile.am	2005-05-15 01:20:30.000000000 +0200
++++ dcfldd/Makefile.am	2015-11-22 15:25:17.000000000 +0100
+@@ -6,8 +6,12 @@ xstrtol.h version-etc.c version-etc.h \
+ system.h sys2.h pathmax.h xalloc.h argmatch.c argmatch.h xstrtoul.c \
+ full-write.c xstrtoumax.c copy.c copy.h dcfldd.h hash.h hash.c verify.c verify.h \
+ translate.c translate.h sizeprobe.c sizeprobe.h pattern.c pattern.h util.c util.h \
+-log.c log.h full-write.h output.c output.h split.c split.h hashformat.c hashformat.h
++log.c log.h full-write.h output.c output.h split.c split.h hashformat.c hashformat.h \
++random.c random.h
+ 
+ man_MANS = dcfldd.1
+ 
+ EXTRA_DIST = $(man_MANS)
++
++preflight:
++	@grep RBF $(DISTFILES)
+\ Manca newline alla fine del file
+diff -Npaur dcfldd-1.3.4-1/aclocal.m4 dcfldd/aclocal.m4
+--- dcfldd-1.3.4-1/aclocal.m4	2006-12-19 17:06:53.000000000 +0100
++++ dcfldd/aclocal.m4	2015-11-22 15:25:17.000000000 +0100
+@@ -1,7 +1,7 @@
+-# generated automatically by aclocal 1.9.6 -*- Autoconf -*-
++# aclocal.m4 generated automatically by aclocal 1.6.3 -*- Autoconf -*-
+ 
+-# Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004,
+-# 2005  Free Software Foundation, Inc.
++# Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002
++# Free Software Foundation, Inc.
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+ # with or without modifications, as long as this notice is preserved.
+@@ -11,32 +11,385 @@
+ # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ # PARTICULAR PURPOSE.
+ 
+-# Copyright (C) 2002, 2003, 2005  Free Software Foundation, Inc.
+-#
+-# This file is free software; the Free Software Foundation
+-# gives unlimited permission to copy and/or distribute it,
+-# with or without modifications, as long as this notice is preserved.
++# Like AC_CONFIG_HEADER, but automatically create stamp file. -*- Autoconf -*-
++
++# Copyright 1996, 1997, 2000, 2001 Free Software Foundation, Inc.
++
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2, or (at your option)
++# any later version.
++
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++# 02111-1307, USA.
++
++AC_PREREQ([2.52])
++
++# serial 6
++
++# When config.status generates a header, we must update the stamp-h file.
++# This file resides in the same directory as the config header
++# that is generated.  We must strip everything past the first ":",
++# and everything past the last "/".
++
++# _AM_DIRNAME(PATH)
++# -----------------
++# Like AS_DIRNAME, only do it during macro expansion
++AC_DEFUN([_AM_DIRNAME],
++       [m4_if(regexp([$1], [^.*[^/]//*[^/][^/]*/*$]), -1,
++	      m4_if(regexp([$1], [^//\([^/]\|$\)]), -1,
++		    m4_if(regexp([$1], [^/.*]), -1,
++			  [.],
++			  patsubst([$1], [^\(/\).*], [\1])),
++		    patsubst([$1], [^\(//\)\([^/].*\|$\)], [\1])),
++	      patsubst([$1], [^\(.*[^/]\)//*[^/][^/]*/*$], [\1]))[]dnl
++])# _AM_DIRNAME
++
++
++# The stamp files are numbered to have different names.
++# We could number them on a directory basis, but that's additional
++# complications, let's have a unique counter.
++m4_define([_AM_STAMP_Count], [0])
++
++
++# _AM_STAMP(HEADER)
++# -----------------
++# The name of the stamp file for HEADER.
++AC_DEFUN([_AM_STAMP],
++[m4_define([_AM_STAMP_Count], m4_incr(_AM_STAMP_Count))dnl
++AS_ESCAPE(_AM_DIRNAME(patsubst([$1],
++                               [:.*])))/stamp-h[]_AM_STAMP_Count])
++
++
++# _AM_CONFIG_HEADER(HEADER[:SOURCES], COMMANDS, INIT-COMMANDS)
++# ------------------------------------------------------------
++# We used to try to get a real timestamp in stamp-h.  But the fear is that
++# that will cause unnecessary cvs conflicts.
++AC_DEFUN([_AM_CONFIG_HEADER],
++[# Add the stamp file to the list of files AC keeps track of,
++# along with our hook.
++AC_CONFIG_HEADERS([$1],
++                  [# update the timestamp
++echo 'timestamp for $1' >"_AM_STAMP([$1])"
++$2],
++                  [$3])
++])# _AM_CONFIG_HEADER
++
++
++# AM_CONFIG_HEADER(HEADER[:SOURCES]..., COMMANDS, INIT-COMMANDS)
++# --------------------------------------------------------------
++AC_DEFUN([AM_CONFIG_HEADER],
++[AC_FOREACH([_AM_File], [$1], [_AM_CONFIG_HEADER(_AM_File, [$2], [$3])])
++])# AM_CONFIG_HEADER
++
++# Do all the work for Automake.                            -*- Autoconf -*-
++
++# This macro actually does too much some checks are only needed if
++# your package does certain things.  But this isn't really a big deal.
++
++# Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002
++# Free Software Foundation, Inc.
++
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2, or (at your option)
++# any later version.
++
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++# 02111-1307, USA.
++
++# serial 8
++
++# There are a few dirty hacks below to avoid letting `AC_PROG_CC' be
++# written in clear, in which case automake, when reading aclocal.m4,
++# will think it sees a *use*, and therefore will trigger all it's
++# C support machinery.  Also note that it means that autoscan, seeing
++# CC etc. in the Makefile, will ask for an AC_PROG_CC use...
++
++
++AC_PREREQ([2.52])
++
++# Autoconf 2.50 wants to disallow AM_ names.  We explicitly allow
++# the ones we care about.
++m4_pattern_allow([^AM_[A-Z]+FLAGS$])dnl
++
++# AM_INIT_AUTOMAKE(PACKAGE, VERSION, [NO-DEFINE])
++# AM_INIT_AUTOMAKE([OPTIONS])
++# -----------------------------------------------
++# The call with PACKAGE and VERSION arguments is the old style
++# call (pre autoconf-2.50), which is being phased out.  PACKAGE
++# and VERSION should now be passed to AC_INIT and removed from
++# the call to AM_INIT_AUTOMAKE.
++# We support both call styles for the transition.  After
++# the next Automake release, Autoconf can make the AC_INIT
++# arguments mandatory, and then we can depend on a new Autoconf
++# release and drop the old call support.
++AC_DEFUN([AM_INIT_AUTOMAKE],
++[AC_REQUIRE([AM_SET_CURRENT_AUTOMAKE_VERSION])dnl
++ AC_REQUIRE([AC_PROG_INSTALL])dnl
++# test to see if srcdir already configured
++if test "`cd $srcdir && pwd`" != "`pwd`" &&
++   test -f $srcdir/config.status; then
++  AC_MSG_ERROR([source directory already configured; run "make distclean" there first])
++fi
++
++# Define the identity of the package.
++dnl Distinguish between old-style and new-style calls.
++m4_ifval([$2],
++[m4_ifval([$3], [_AM_SET_OPTION([no-define])])dnl
++ AC_SUBST([PACKAGE], [$1])dnl
++ AC_SUBST([VERSION], [$2])],
++[_AM_SET_OPTIONS([$1])dnl
++ AC_SUBST([PACKAGE], [AC_PACKAGE_TARNAME])dnl
++ AC_SUBST([VERSION], [AC_PACKAGE_VERSION])])dnl
++
++_AM_IF_OPTION([no-define],,
++[AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE", [Name of package])
++ AC_DEFINE_UNQUOTED(VERSION, "$VERSION", [Version number of package])])dnl
++
++# Some tools Automake needs.
++AC_REQUIRE([AM_SANITY_CHECK])dnl
++AC_REQUIRE([AC_ARG_PROGRAM])dnl
++AM_MISSING_PROG(ACLOCAL, aclocal-${am__api_version})
++AM_MISSING_PROG(AUTOCONF, autoconf)
++AM_MISSING_PROG(AUTOMAKE, automake-${am__api_version})
++AM_MISSING_PROG(AUTOHEADER, autoheader)
++AM_MISSING_PROG(MAKEINFO, makeinfo)
++AM_MISSING_PROG(AMTAR, tar)
++AM_PROG_INSTALL_SH
++AM_PROG_INSTALL_STRIP
++# We need awk for the "check" target.  The system "awk" is bad on
++# some platforms.
++AC_REQUIRE([AC_PROG_AWK])dnl
++AC_REQUIRE([AC_PROG_MAKE_SET])dnl
++
++_AM_IF_OPTION([no-dependencies],,
++[AC_PROVIDE_IFELSE([AC_PROG_][CC],
++                  [_AM_DEPENDENCIES(CC)],
++                  [define([AC_PROG_][CC],
++                          defn([AC_PROG_][CC])[_AM_DEPENDENCIES(CC)])])dnl
++AC_PROVIDE_IFELSE([AC_PROG_][CXX],
++                  [_AM_DEPENDENCIES(CXX)],
++                  [define([AC_PROG_][CXX],
++                          defn([AC_PROG_][CXX])[_AM_DEPENDENCIES(CXX)])])dnl
++])
++])
++
++# Copyright 2002  Free Software Foundation, Inc.
++
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2, or (at your option)
++# any later version.
++
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+ 
+ # AM_AUTOMAKE_VERSION(VERSION)
+ # ----------------------------
+ # Automake X.Y traces this macro to ensure aclocal.m4 has been
+ # generated from the m4 files accompanying Automake X.Y.
+-AC_DEFUN([AM_AUTOMAKE_VERSION], [am__api_version="1.9"])
++AC_DEFUN([AM_AUTOMAKE_VERSION],[am__api_version="1.6"])
+ 
+ # AM_SET_CURRENT_AUTOMAKE_VERSION
+ # -------------------------------
+ # Call AM_AUTOMAKE_VERSION so it can be traced.
+ # This function is AC_REQUIREd by AC_INIT_AUTOMAKE.
+ AC_DEFUN([AM_SET_CURRENT_AUTOMAKE_VERSION],
+-	 [AM_AUTOMAKE_VERSION([1.9.6])])
++	 [AM_AUTOMAKE_VERSION([1.6.3])])
++
++# Helper functions for option handling.                    -*- Autoconf -*-
++
++# Copyright 2001, 2002  Free Software Foundation, Inc.
+ 
+-# AM_AUX_DIR_EXPAND                                         -*- Autoconf -*-
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2, or (at your option)
++# any later version.
++
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++# 02111-1307, USA.
++
++# serial 2
++
++# _AM_MANGLE_OPTION(NAME)
++# -----------------------
++AC_DEFUN([_AM_MANGLE_OPTION],
++[[_AM_OPTION_]m4_bpatsubst($1, [[^a-zA-Z0-9_]], [_])])
++
++# _AM_SET_OPTION(NAME)
++# ------------------------------
++# Set option NAME.  Presently that only means defining a flag for this option.
++AC_DEFUN([_AM_SET_OPTION],
++[m4_define(_AM_MANGLE_OPTION([$1]), 1)])
++
++# _AM_SET_OPTIONS(OPTIONS)
++# ----------------------------------
++# OPTIONS is a space-separated list of Automake options.
++AC_DEFUN([_AM_SET_OPTIONS],
++[AC_FOREACH([_AM_Option], [$1], [_AM_SET_OPTION(_AM_Option)])])
++
++# _AM_IF_OPTION(OPTION, IF-SET, [IF-NOT-SET])
++# -------------------------------------------
++# Execute IF-SET if OPTION is set, IF-NOT-SET otherwise.
++AC_DEFUN([_AM_IF_OPTION],
++[m4_ifset(_AM_MANGLE_OPTION([$1]), [$2], [$3])])
+ 
+-# Copyright (C) 2001, 2003, 2005  Free Software Foundation, Inc.
+ #
+-# This file is free software; the Free Software Foundation
+-# gives unlimited permission to copy and/or distribute it,
+-# with or without modifications, as long as this notice is preserved.
++# Check to make sure that the build environment is sane.
++#
++
++# Copyright 1996, 1997, 2000, 2001 Free Software Foundation, Inc.
++
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2, or (at your option)
++# any later version.
++
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++# 02111-1307, USA.
++
++# serial 3
++
++# AM_SANITY_CHECK
++# ---------------
++AC_DEFUN([AM_SANITY_CHECK],
++[AC_MSG_CHECKING([whether build environment is sane])
++# Just in case
++sleep 1
++echo timestamp > conftest.file
++# Do `set' in a subshell so we don't clobber the current shell's
++# arguments.  Must try -L first in case configure is actually a
++# symlink; some systems play weird games with the mod time of symlinks
++# (eg FreeBSD returns the mod time of the symlink's containing
++# directory).
++if (
++   set X `ls -Lt $srcdir/configure conftest.file 2> /dev/null`
++   if test "$[*]" = "X"; then
++      # -L didn't work.
++      set X `ls -t $srcdir/configure conftest.file`
++   fi
++   rm -f conftest.file
++   if test "$[*]" != "X $srcdir/configure conftest.file" \
++      && test "$[*]" != "X conftest.file $srcdir/configure"; then
++
++      # If neither matched, then we have a broken ls.  This can happen
++      # if, for instance, CONFIG_SHELL is bash and it inherits a
++      # broken ls alias from the environment.  This has actually
++      # happened.  Such a system could not be considered "sane".
++      AC_MSG_ERROR([ls -t appears to fail.  Make sure there is not a broken
++alias in your environment])
++   fi
++
++   test "$[2]" = conftest.file
++   )
++then
++   # Ok.
++   :
++else
++   AC_MSG_ERROR([newly created file is older than distributed files!
++Check your system clock])
++fi
++AC_MSG_RESULT(yes)])
++
++#  -*- Autoconf -*-
++
++
++# Copyright 1997, 1999, 2000, 2001 Free Software Foundation, Inc.
++
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2, or (at your option)
++# any later version.
++
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++# 02111-1307, USA.
++
++# serial 3
++
++# AM_MISSING_PROG(NAME, PROGRAM)
++# ------------------------------
++AC_DEFUN([AM_MISSING_PROG],
++[AC_REQUIRE([AM_MISSING_HAS_RUN])
++$1=${$1-"${am_missing_run}$2"}
++AC_SUBST($1)])
++
++
++# AM_MISSING_HAS_RUN
++# ------------------
++# Define MISSING if not defined so far and test if it supports --run.
++# If it does, set am_missing_run to use it, otherwise, to nothing.
++AC_DEFUN([AM_MISSING_HAS_RUN],
++[AC_REQUIRE([AM_AUX_DIR_EXPAND])dnl
++test x"${MISSING+set}" = xset || MISSING="\${SHELL} $am_aux_dir/missing"
++# Use eval to expand $SHELL
++if eval "$MISSING --run true"; then
++  am_missing_run="$MISSING --run "
++else
++  am_missing_run=
++  AC_MSG_WARN([`missing' script is too old or missing])
++fi
++])
++
++# AM_AUX_DIR_EXPAND
++
++# Copyright 2001 Free Software Foundation, Inc.
++
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2, or (at your option)
++# any later version.
++
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++# 02111-1307, USA.
+ 
+ # For projects using AC_CONFIG_AUX_DIR([foo]), Autoconf sets
+ # $ac_aux_dir to `$srcdir/foo'.  In other projects, it is set to
+@@ -76,65 +429,109 @@ AC_DEFUN([AM_SET_CURRENT_AUTOMAKE_VERSIO
+ # absolute PATH.  The drawback is that using absolute paths prevent a
+ # configured tree to be moved without reconfiguration.
+ 
+-AC_DEFUN([AM_AUX_DIR_EXPAND],
+-[dnl Rely on autoconf to set up CDPATH properly.
+-AC_PREREQ([2.50])dnl
++# Rely on autoconf to set up CDPATH properly.
++AC_PREREQ([2.50])
++
++AC_DEFUN([AM_AUX_DIR_EXPAND], [
+ # expand $ac_aux_dir to an absolute path
+ am_aux_dir=`cd $ac_aux_dir && pwd`
+ ])
+ 
+-# AM_CONDITIONAL                                            -*- Autoconf -*-
++# AM_PROG_INSTALL_SH
++# ------------------
++# Define $install_sh.
+ 
+-# Copyright (C) 1997, 2000, 2001, 2003, 2004, 2005
+-# Free Software Foundation, Inc.
+-#
+-# This file is free software; the Free Software Foundation
+-# gives unlimited permission to copy and/or distribute it,
+-# with or without modifications, as long as this notice is preserved.
++# Copyright 2001 Free Software Foundation, Inc.
+ 
+-# serial 7
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2, or (at your option)
++# any later version.
+ 
+-# AM_CONDITIONAL(NAME, SHELL-CONDITION)
+-# -------------------------------------
+-# Define a conditional.
+-AC_DEFUN([AM_CONDITIONAL],
+-[AC_PREREQ(2.52)dnl
+- ifelse([$1], [TRUE],  [AC_FATAL([$0: invalid condition: $1])],
+-	[$1], [FALSE], [AC_FATAL([$0: invalid condition: $1])])dnl
+-AC_SUBST([$1_TRUE])
+-AC_SUBST([$1_FALSE])
+-if $2; then
+-  $1_TRUE=
+-  $1_FALSE='#'
+-else
+-  $1_TRUE='#'
+-  $1_FALSE=
+-fi
+-AC_CONFIG_COMMANDS_PRE(
+-[if test -z "${$1_TRUE}" && test -z "${$1_FALSE}"; then
+-  AC_MSG_ERROR([[conditional "$1" was never defined.
+-Usually this means the macro was only invoked conditionally.]])
+-fi])])
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++# 02111-1307, USA.
+ 
++AC_DEFUN([AM_PROG_INSTALL_SH],
++[AC_REQUIRE([AM_AUX_DIR_EXPAND])dnl
++install_sh=${install_sh-"$am_aux_dir/install-sh"}
++AC_SUBST(install_sh)])
+ 
+-# Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005
+-# Free Software Foundation, Inc.
+-#
+-# This file is free software; the Free Software Foundation
+-# gives unlimited permission to copy and/or distribute it,
+-# with or without modifications, as long as this notice is preserved.
++# AM_PROG_INSTALL_STRIP
+ 
+-# serial 8
++# Copyright 2001 Free Software Foundation, Inc.
+ 
+-# There are a few dirty hacks below to avoid letting `AC_PROG_CC' be
+-# written in clear, in which case automake, when reading aclocal.m4,
+-# will think it sees a *use*, and therefore will trigger all it's
+-# C support machinery.  Also note that it means that autoscan, seeing
+-# CC etc. in the Makefile, will ask for an AC_PROG_CC use...
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2, or (at your option)
++# any later version.
+ 
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++# 02111-1307, USA.
+ 
+-# _AM_DEPENDENCIES(NAME)
+-# ----------------------
++# One issue with vendor `install' (even GNU) is that you can't
++# specify the program used to strip binaries.  This is especially
++# annoying in cross-compiling environments, where the build's strip
++# is unlikely to handle the host's binaries.
++# Fortunately install-sh will honor a STRIPPROG variable, so we
++# always use install-sh in `make install-strip', and initialize
++# STRIPPROG with the value of the STRIP variable (set by the user).
++AC_DEFUN([AM_PROG_INSTALL_STRIP],
++[AC_REQUIRE([AM_PROG_INSTALL_SH])dnl
++# Installed binaries are usually stripped using `strip' when the user
++# run `make install-strip'.  However `strip' might not be the right
++# tool to use in cross-compilation environments, therefore Automake
++# will honor the `STRIP' environment variable to overrule this program.
++dnl Don't test for $cross_compiling = yes, because it might be `maybe'.
++if test "$cross_compiling" != no; then
++  AC_CHECK_TOOL([STRIP], [strip], :)
++fi
++INSTALL_STRIP_PROGRAM="\${SHELL} \$(install_sh) -c -s"
++AC_SUBST([INSTALL_STRIP_PROGRAM])])
++
++# serial 4						-*- Autoconf -*-
++
++# Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
++
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2, or (at your option)
++# any later version.
++
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++# 02111-1307, USA.
++
++
++# There are a few dirty hacks below to avoid letting `AC_PROG_CC' be
++# written in clear, in which case automake, when reading aclocal.m4,
++# will think it sees a *use*, and therefore will trigger all it's
++# C support machinery.  Also note that it means that autoscan, seeing
++# CC etc. in the Makefile, will ask for an AC_PROG_CC use...
++
++
++
++# _AM_DEPENDENCIES(NAME)
++# ----------------------
+ # See how the compiler implements dependency checking.
+ # NAME is "CC", "CXX", "GCJ", or "OBJC".
+ # We try a few techniques and use that to set a single cache variable.
+@@ -168,34 +565,18 @@ AC_CACHE_CHECK([dependency style of $dep
+   # using a relative directory.
+   cp "$am_depcomp" conftest.dir
+   cd conftest.dir
+-  # We will build objects and dependencies in a subdirectory because
+-  # it helps to detect inapplicable dependency modes.  For instance
+-  # both Tru64's cc and ICC support -MD to output dependencies as a
+-  # side effect of compilation, but ICC will put the dependencies in
+-  # the current directory while Tru64 will put them in the object
+-  # directory.
+-  mkdir sub
+ 
+   am_cv_$1_dependencies_compiler_type=none
+   if test "$am_compiler_list" = ""; then
+      am_compiler_list=`sed -n ['s/^#*\([a-zA-Z0-9]*\))$/\1/p'] < ./depcomp`
+   fi
+   for depmode in $am_compiler_list; do
+-    # Setup a source with many dependencies, because some compilers
+-    # like to wrap large dependency lists on column 80 (with \), and
+-    # we should not choose a depcomp mode which is confused by this.
+-    #
+     # We need to recreate these files for each test, as the compiler may
+     # overwrite some of them when testing with obscure command lines.
+     # This happens at least with the AIX C compiler.
+-    : > sub/conftest.c
+-    for i in 1 2 3 4 5 6; do
+-      echo '#include "conftst'$i'.h"' >> sub/conftest.c
+-      # Using `: > sub/conftst$i.h' creates only sub/conftst1.h with
+-      # Solaris 8's {/usr,}/bin/sh.
+-      touch sub/conftst$i.h
+-    done
+-    echo "${am__include} ${am__quote}sub/conftest.Po${am__quote}" > confmf
++    echo '#include "conftest.h"' > conftest.c
++    echo 'int i;' > conftest.h
++    echo "${am__include} ${am__quote}conftest.Po${am__quote}" > confmf
+ 
+     case $depmode in
+     nosideeffect)
+@@ -213,25 +594,13 @@ AC_CACHE_CHECK([dependency style of $dep
+     # mode.  It turns out that the SunPro C++ compiler does not properly
+     # handle `-M -o', and we need to detect this.
+     if depmode=$depmode \
+-       source=sub/conftest.c object=sub/conftest.${OBJEXT-o} \
+-       depfile=sub/conftest.Po tmpdepfile=sub/conftest.TPo \
+-       $SHELL ./depcomp $depcc -c -o sub/conftest.${OBJEXT-o} sub/conftest.c \
+-         >/dev/null 2>conftest.err &&
+-       grep sub/conftst6.h sub/conftest.Po > /dev/null 2>&1 &&
+-       grep sub/conftest.${OBJEXT-o} sub/conftest.Po > /dev/null 2>&1 &&
++       source=conftest.c object=conftest.o \
++       depfile=conftest.Po tmpdepfile=conftest.TPo \
++       $SHELL ./depcomp $depcc -c conftest.c -o conftest.o >/dev/null 2>&1 &&
++       grep conftest.h conftest.Po > /dev/null 2>&1 &&
+        ${MAKE-make} -s -f confmf > /dev/null 2>&1; then
+-      # icc doesn't choke on unknown options, it will just issue warnings
+-      # or remarks (even with -Werror).  So we grep stderr for any message
+-      # that says an option was ignored or not supported.
+-      # When given -MP, icc 7.0 and 7.1 complain thusly:
+-      #   icc: Command line warning: ignoring option '-M'; no argument required
+-      # The diagnosis changed in icc 8.0:
+-      #   icc: Command line remark: option '-MP' not supported
+-      if (grep 'ignoring option' conftest.err ||
+-          grep 'not supported' conftest.err) >/dev/null 2>&1; then :; else
+-        am_cv_$1_dependencies_compiler_type=$depmode
+-        break
+-      fi
++      am_cv_$1_dependencies_compiler_type=$depmode
++      break
+     fi
+   done
+ 
+@@ -242,9 +611,6 @@ else
+ fi
+ ])
+ AC_SUBST([$1DEPMODE], [depmode=$am_cv_$1_dependencies_compiler_type])
+-AM_CONDITIONAL([am__fastdep$1], [
+-  test "x$enable_dependency_tracking" != xno \
+-  && test "$am_cv_$1_dependencies_compiler_type" = gcc3])
+ ])
+ 
+ 
+@@ -253,8 +619,16 @@ AM_CONDITIONAL([am__fastdep$1], [
+ # Choose a directory name for dependency files.
+ # This macro is AC_REQUIREd in _AM_DEPENDENCIES
+ AC_DEFUN([AM_SET_DEPDIR],
+-[AC_REQUIRE([AM_SET_LEADING_DOT])dnl
+-AC_SUBST([DEPDIR], ["${am__leading_dot}deps"])dnl
++[rm -f .deps 2>/dev/null
++mkdir .deps 2>/dev/null
++if test -d .deps; then
++  DEPDIR=.deps
++else
++  # MS-DOS does not allow filenames that begin with a dot.
++  DEPDIR=_deps
++fi
++rmdir .deps 2>/dev/null
++AC_SUBST([DEPDIR])
+ ])
+ 
+ 
+@@ -262,8 +636,8 @@ AC_SUBST([DEPDIR], ["${am__leading_dot}d
+ # ------------
+ AC_DEFUN([AM_DEP_TRACK],
+ [AC_ARG_ENABLE(dependency-tracking,
+-[  --disable-dependency-tracking  speeds up one-time build
+-  --enable-dependency-tracking   do not reject slow dependency extractors])
++[  --disable-dependency-tracking Speeds up one-time builds
++  --enable-dependency-tracking  Do not reject slow dependency extractors])
+ if test "x$enable_dependency_tracking" != xno; then
+   am_depcomp="$ac_aux_dir/depcomp"
+   AMDEPBACKSLASH='\'
+@@ -272,16 +646,26 @@ AM_CONDITIONAL([AMDEP], [test "x$enable_
+ AC_SUBST([AMDEPBACKSLASH])
+ ])
+ 
+-# Generate code to set up dependency tracking.              -*- Autoconf -*-
++# Generate code to set up dependency tracking.   -*- Autoconf -*-
+ 
+-# Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005
+-# Free Software Foundation, Inc.
+-#
+-# This file is free software; the Free Software Foundation
+-# gives unlimited permission to copy and/or distribute it,
+-# with or without modifications, as long as this notice is preserved.
++# Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
++
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2, or (at your option)
++# any later version.
+ 
+-#serial 3
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++# 02111-1307, USA.
++
++#serial 2
+ 
+ # _AM_OUTPUT_DEPENDENCY_COMMANDS
+ # ------------------------------
+@@ -300,21 +684,27 @@ AC_DEFUN([_AM_OUTPUT_DEPENDENCY_COMMANDS
+   else
+     continue
+   fi
+-  # Extract the definition of DEPDIR, am__include, and am__quote
+-  # from the Makefile without running `make'.
+-  DEPDIR=`sed -n 's/^DEPDIR = //p' < "$mf"`
++  grep '^DEP_FILES *= *[[^ @%:@]]' < "$mf" > /dev/null || continue
++  # Extract the definition of DEP_FILES from the Makefile without
++  # running `make'.
++  DEPDIR=`sed -n -e '/^DEPDIR = / s///p' < "$mf"`
+   test -z "$DEPDIR" && continue
+-  am__include=`sed -n 's/^am__include = //p' < "$mf"`
+-  test -z "am__include" && continue
+-  am__quote=`sed -n 's/^am__quote = //p' < "$mf"`
+   # When using ansi2knr, U may be empty or an underscore; expand it
+-  U=`sed -n 's/^U = //p' < "$mf"`
+-  # Find all dependency output files, they are included files with
+-  # $(DEPDIR) in their names.  We invoke sed twice because it is the
+-  # simplest approach to changing $(DEPDIR) to its actual value in the
+-  # expansion.
+-  for file in `sed -n "
+-    s/^$am__include $am__quote\(.*(DEPDIR).*\)$am__quote"'$/\1/p' <"$mf" | \
++  U=`sed -n -e '/^U = / s///p' < "$mf"`
++  test -d "$dirpart/$DEPDIR" || mkdir "$dirpart/$DEPDIR"
++  # We invoke sed twice because it is the simplest approach to
++  # changing $(DEPDIR) to its actual value in the expansion.
++  for file in `sed -n -e '
++    /^DEP_FILES = .*\\\\$/ {
++      s/^DEP_FILES = //
++      :loop
++	s/\\\\$//
++	p
++	n
++	/\\\\$/ b loop
++      p
++    }
++    /^DEP_FILES = / s/^DEP_FILES = //p' < "$mf" | \
+        sed -e 's/\$(DEPDIR)/'"$DEPDIR"'/g' -e 's/\$U/'"$U"'/g'`; do
+     # Make sure the directory exists.
+     test -f "$dirpart/$file" && continue
+@@ -340,186 +730,33 @@ AC_DEFUN([AM_OUTPUT_DEPENDENCY_COMMANDS]
+      [AMDEP_TRUE="$AMDEP_TRUE" ac_aux_dir="$ac_aux_dir"])
+ ])
+ 
+-# Copyright (C) 1996, 1997, 2000, 2001, 2003, 2005
+-# Free Software Foundation, Inc.
+-#
+-# This file is free software; the Free Software Foundation
+-# gives unlimited permission to copy and/or distribute it,
+-# with or without modifications, as long as this notice is preserved.
+-
+-# serial 8
+-
+-# AM_CONFIG_HEADER is obsolete.  It has been replaced by AC_CONFIG_HEADERS.
+-AU_DEFUN([AM_CONFIG_HEADER], [AC_CONFIG_HEADERS($@)])
+-
+-# Do all the work for Automake.                             -*- Autoconf -*-
+-
+-# Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005
+-# Free Software Foundation, Inc.
+-#
+-# This file is free software; the Free Software Foundation
+-# gives unlimited permission to copy and/or distribute it,
+-# with or without modifications, as long as this notice is preserved.
+-
+-# serial 12
+-
+-# This macro actually does too much.  Some checks are only needed if
+-# your package does certain things.  But this isn't really a big deal.
+-
+-# AM_INIT_AUTOMAKE(PACKAGE, VERSION, [NO-DEFINE])
+-# AM_INIT_AUTOMAKE([OPTIONS])
+-# -----------------------------------------------
+-# The call with PACKAGE and VERSION arguments is the old style
+-# call (pre autoconf-2.50), which is being phased out.  PACKAGE
+-# and VERSION should now be passed to AC_INIT and removed from
+-# the call to AM_INIT_AUTOMAKE.
+-# We support both call styles for the transition.  After
+-# the next Automake release, Autoconf can make the AC_INIT
+-# arguments mandatory, and then we can depend on a new Autoconf
+-# release and drop the old call support.
+-AC_DEFUN([AM_INIT_AUTOMAKE],
+-[AC_PREREQ([2.58])dnl
+-dnl Autoconf wants to disallow AM_ names.  We explicitly allow
+-dnl the ones we care about.
+-m4_pattern_allow([^AM_[A-Z]+FLAGS$])dnl
+-AC_REQUIRE([AM_SET_CURRENT_AUTOMAKE_VERSION])dnl
+-AC_REQUIRE([AC_PROG_INSTALL])dnl
+-# test to see if srcdir already configured
+-if test "`cd $srcdir && pwd`" != "`pwd`" &&
+-   test -f $srcdir/config.status; then
+-  AC_MSG_ERROR([source directory already configured; run "make distclean" there first])
+-fi
+-
+-# test whether we have cygpath
+-if test -z "$CYGPATH_W"; then
+-  if (cygpath --version) >/dev/null 2>/dev/null; then
+-    CYGPATH_W='cygpath -w'
+-  else
+-    CYGPATH_W=echo
+-  fi
+-fi
+-AC_SUBST([CYGPATH_W])
+-
+-# Define the identity of the package.
+-dnl Distinguish between old-style and new-style calls.
+-m4_ifval([$2],
+-[m4_ifval([$3], [_AM_SET_OPTION([no-define])])dnl
+- AC_SUBST([PACKAGE], [$1])dnl
+- AC_SUBST([VERSION], [$2])],
+-[_AM_SET_OPTIONS([$1])dnl
+- AC_SUBST([PACKAGE], ['AC_PACKAGE_TARNAME'])dnl
+- AC_SUBST([VERSION], ['AC_PACKAGE_VERSION'])])dnl
+-
+-_AM_IF_OPTION([no-define],,
+-[AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE", [Name of package])
+- AC_DEFINE_UNQUOTED(VERSION, "$VERSION", [Version number of package])])dnl
+-
+-# Some tools Automake needs.
+-AC_REQUIRE([AM_SANITY_CHECK])dnl
+-AC_REQUIRE([AC_ARG_PROGRAM])dnl
+-AM_MISSING_PROG(ACLOCAL, aclocal-${am__api_version})
+-AM_MISSING_PROG(AUTOCONF, autoconf)
+-AM_MISSING_PROG(AUTOMAKE, automake-${am__api_version})
+-AM_MISSING_PROG(AUTOHEADER, autoheader)
+-AM_MISSING_PROG(MAKEINFO, makeinfo)
+-AM_PROG_INSTALL_SH
+-AM_PROG_INSTALL_STRIP
+-AC_REQUIRE([AM_PROG_MKDIR_P])dnl
+-# We need awk for the "check" target.  The system "awk" is bad on
+-# some platforms.
+-AC_REQUIRE([AC_PROG_AWK])dnl
+-AC_REQUIRE([AC_PROG_MAKE_SET])dnl
+-AC_REQUIRE([AM_SET_LEADING_DOT])dnl
+-_AM_IF_OPTION([tar-ustar], [_AM_PROG_TAR([ustar])],
+-              [_AM_IF_OPTION([tar-pax], [_AM_PROG_TAR([pax])],
+-	      		     [_AM_PROG_TAR([v7])])])
+-_AM_IF_OPTION([no-dependencies],,
+-[AC_PROVIDE_IFELSE([AC_PROG_CC],
+-                  [_AM_DEPENDENCIES(CC)],
+-                  [define([AC_PROG_CC],
+-                          defn([AC_PROG_CC])[_AM_DEPENDENCIES(CC)])])dnl
+-AC_PROVIDE_IFELSE([AC_PROG_CXX],
+-                  [_AM_DEPENDENCIES(CXX)],
+-                  [define([AC_PROG_CXX],
+-                          defn([AC_PROG_CXX])[_AM_DEPENDENCIES(CXX)])])dnl
+-])
+-])
+-
++# Copyright 2001 Free Software Foundation, Inc.             -*- Autoconf -*-
+ 
+-# When config.status generates a header, we must update the stamp-h file.
+-# This file resides in the same directory as the config header
+-# that is generated.  The stamp files are numbered to have different names.
+-
+-# Autoconf calls _AC_AM_CONFIG_HEADER_HOOK (when defined) in the
+-# loop where config.status creates the headers, so we can generate
+-# our stamp files there.
+-AC_DEFUN([_AC_AM_CONFIG_HEADER_HOOK],
+-[# Compute $1's index in $config_headers.
+-_am_stamp_count=1
+-for _am_header in $config_headers :; do
+-  case $_am_header in
+-    $1 | $1:* )
+-      break ;;
+-    * )
+-      _am_stamp_count=`expr $_am_stamp_count + 1` ;;
+-  esac
+-done
+-echo "timestamp for $1" >`AS_DIRNAME([$1])`/stamp-h[]$_am_stamp_count])
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2, or (at your option)
++# any later version.
+ 
+-# Copyright (C) 2001, 2003, 2005  Free Software Foundation, Inc.
+-#
+-# This file is free software; the Free Software Foundation
+-# gives unlimited permission to copy and/or distribute it,
+-# with or without modifications, as long as this notice is preserved.
+-
+-# AM_PROG_INSTALL_SH
+-# ------------------
+-# Define $install_sh.
+-AC_DEFUN([AM_PROG_INSTALL_SH],
+-[AC_REQUIRE([AM_AUX_DIR_EXPAND])dnl
+-install_sh=${install_sh-"$am_aux_dir/install-sh"}
+-AC_SUBST(install_sh)])
+-
+-# Copyright (C) 2003, 2005  Free Software Foundation, Inc.
+-#
+-# This file is free software; the Free Software Foundation
+-# gives unlimited permission to copy and/or distribute it,
+-# with or without modifications, as long as this notice is preserved.
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++# 02111-1307, USA.
+ 
+ # serial 2
+ 
+-# Check whether the underlying file-system supports filenames
+-# with a leading dot.  For instance MS-DOS doesn't.
+-AC_DEFUN([AM_SET_LEADING_DOT],
+-[rm -rf .tst 2>/dev/null
+-mkdir .tst 2>/dev/null
+-if test -d .tst; then
+-  am__leading_dot=.
+-else
+-  am__leading_dot=_
+-fi
+-rmdir .tst 2>/dev/null
+-AC_SUBST([am__leading_dot])])
+-
+-# Check to see how 'make' treats includes.	            -*- Autoconf -*-
+-
+-# Copyright (C) 2001, 2002, 2003, 2005  Free Software Foundation, Inc.
+-#
+-# This file is free software; the Free Software Foundation
+-# gives unlimited permission to copy and/or distribute it,
+-# with or without modifications, as long as this notice is preserved.
+-
+-# serial 3
+-
+ # AM_MAKE_INCLUDE()
+ # -----------------
+ # Check to see how make treats includes.
+ AC_DEFUN([AM_MAKE_INCLUDE],
+ [am_make=${MAKE-make}
+ cat > confinc << 'END'
+-am__doit:
++doit:
+ 	@echo done
+-.PHONY: am__doit
+ END
+ # If we don't find an include directive, just comment out the code.
+ AC_MSG_CHECKING([for style of include used by $am_make])
+@@ -533,7 +770,7 @@ echo "include confinc" > confmf
+ # In particular we don't look at `^make:' because GNU make might
+ # be invoked under some other name (usually "gmake"), in which
+ # case it prints its new name instead of `make'.
+-if test "`$am_make -s -f confmf 2> /dev/null | grep -v 'ing directory'`" = "done"; then
++if test "`$am_make -s -f confmf 2> /dev/null | fgrep -v 'ing directory'`" = "done"; then
+    am__include=include
+    am__quote=
+    _am_result=GNU
+@@ -547,316 +784,53 @@ if test "$am__include" = "#"; then
+       _am_result=BSD
+    fi
+ fi
+-AC_SUBST([am__include])
+-AC_SUBST([am__quote])
+-AC_MSG_RESULT([$_am_result])
++AC_SUBST(am__include)
++AC_SUBST(am__quote)
++AC_MSG_RESULT($_am_result)
+ rm -f confinc confmf
+ ])
+ 
+-# Fake the existence of programs that GNU maintainers use.  -*- Autoconf -*-
+-
+-# Copyright (C) 1997, 1999, 2000, 2001, 2003, 2005
+-# Free Software Foundation, Inc.
+-#
+-# This file is free software; the Free Software Foundation
+-# gives unlimited permission to copy and/or distribute it,
+-# with or without modifications, as long as this notice is preserved.
++# AM_CONDITIONAL                                              -*- Autoconf -*-
+ 
+-# serial 4
++# Copyright 1997, 2000, 2001 Free Software Foundation, Inc.
+ 
+-# AM_MISSING_PROG(NAME, PROGRAM)
+-# ------------------------------
+-AC_DEFUN([AM_MISSING_PROG],
+-[AC_REQUIRE([AM_MISSING_HAS_RUN])
+-$1=${$1-"${am_missing_run}$2"}
+-AC_SUBST($1)])
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2, or (at your option)
++# any later version.
+ 
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++# 02111-1307, USA.
+ 
+-# AM_MISSING_HAS_RUN
+-# ------------------
+-# Define MISSING if not defined so far and test if it supports --run.
+-# If it does, set am_missing_run to use it, otherwise, to nothing.
+-AC_DEFUN([AM_MISSING_HAS_RUN],
+-[AC_REQUIRE([AM_AUX_DIR_EXPAND])dnl
+-test x"${MISSING+set}" = xset || MISSING="\${SHELL} $am_aux_dir/missing"
+-# Use eval to expand $SHELL
+-if eval "$MISSING --run true"; then
+-  am_missing_run="$MISSING --run "
+-else
+-  am_missing_run=
+-  AC_MSG_WARN([`missing' script is too old or missing])
+-fi
+-])
+-
+-# Copyright (C) 2003, 2004, 2005  Free Software Foundation, Inc.
+-#
+-# This file is free software; the Free Software Foundation
+-# gives unlimited permission to copy and/or distribute it,
+-# with or without modifications, as long as this notice is preserved.
+-
+-# AM_PROG_MKDIR_P
+-# ---------------
+-# Check whether `mkdir -p' is supported, fallback to mkinstalldirs otherwise.
+-#
+-# Automake 1.8 used `mkdir -m 0755 -p --' to ensure that directories
+-# created by `make install' are always world readable, even if the
+-# installer happens to have an overly restrictive umask (e.g. 077).
+-# This was a mistake.  There are at least two reasons why we must not
+-# use `-m 0755':
+-#   - it causes special bits like SGID to be ignored,
+-#   - it may be too restrictive (some setups expect 775 directories).
+-#
+-# Do not use -m 0755 and let people choose whatever they expect by
+-# setting umask.
+-#
+-# We cannot accept any implementation of `mkdir' that recognizes `-p'.
+-# Some implementations (such as Solaris 8's) are not thread-safe: if a
+-# parallel make tries to run `mkdir -p a/b' and `mkdir -p a/c'
+-# concurrently, both version can detect that a/ is missing, but only
+-# one can create it and the other will error out.  Consequently we
+-# restrict ourselves to GNU make (using the --version option ensures
+-# this.)
+-AC_DEFUN([AM_PROG_MKDIR_P],
+-[if mkdir -p --version . >/dev/null 2>&1 && test ! -d ./--version; then
+-  # We used to keeping the `.' as first argument, in order to
+-  # allow $(mkdir_p) to be used without argument.  As in
+-  #   $(mkdir_p) $(somedir)
+-  # where $(somedir) is conditionally defined.  However this is wrong
+-  # for two reasons:
+-  #  1. if the package is installed by a user who cannot write `.'
+-  #     make install will fail,
+-  #  2. the above comment should most certainly read
+-  #     $(mkdir_p) $(DESTDIR)$(somedir)
+-  #     so it does not work when $(somedir) is undefined and
+-  #     $(DESTDIR) is not.
+-  #  To support the latter case, we have to write
+-  #     test -z "$(somedir)" || $(mkdir_p) $(DESTDIR)$(somedir),
+-  #  so the `.' trick is pointless.
+-  mkdir_p='mkdir -p --'
+-else
+-  # On NextStep and OpenStep, the `mkdir' command does not
+-  # recognize any option.  It will interpret all options as
+-  # directories to create, and then abort because `.' already
+-  # exists.
+-  for d in ./-p ./--version;
+-  do
+-    test -d $d && rmdir $d
+-  done
+-  # $(mkinstalldirs) is defined by Automake if mkinstalldirs exists.
+-  if test -f "$ac_aux_dir/mkinstalldirs"; then
+-    mkdir_p='$(mkinstalldirs)'
+-  else
+-    mkdir_p='$(install_sh) -d'
+-  fi
+-fi
+-AC_SUBST([mkdir_p])])
+-
+-# Helper functions for option handling.                     -*- Autoconf -*-
+-
+-# Copyright (C) 2001, 2002, 2003, 2005  Free Software Foundation, Inc.
+-#
+-# This file is free software; the Free Software Foundation
+-# gives unlimited permission to copy and/or distribute it,
+-# with or without modifications, as long as this notice is preserved.
+-
+-# serial 3
+-
+-# _AM_MANGLE_OPTION(NAME)
+-# -----------------------
+-AC_DEFUN([_AM_MANGLE_OPTION],
+-[[_AM_OPTION_]m4_bpatsubst($1, [[^a-zA-Z0-9_]], [_])])
+-
+-# _AM_SET_OPTION(NAME)
+-# ------------------------------
+-# Set option NAME.  Presently that only means defining a flag for this option.
+-AC_DEFUN([_AM_SET_OPTION],
+-[m4_define(_AM_MANGLE_OPTION([$1]), 1)])
+-
+-# _AM_SET_OPTIONS(OPTIONS)
+-# ----------------------------------
+-# OPTIONS is a space-separated list of Automake options.
+-AC_DEFUN([_AM_SET_OPTIONS],
+-[AC_FOREACH([_AM_Option], [$1], [_AM_SET_OPTION(_AM_Option)])])
+-
+-# _AM_IF_OPTION(OPTION, IF-SET, [IF-NOT-SET])
+-# -------------------------------------------
+-# Execute IF-SET if OPTION is set, IF-NOT-SET otherwise.
+-AC_DEFUN([_AM_IF_OPTION],
+-[m4_ifset(_AM_MANGLE_OPTION([$1]), [$2], [$3])])
+-
+-# Check to make sure that the build environment is sane.    -*- Autoconf -*-
+-
+-# Copyright (C) 1996, 1997, 2000, 2001, 2003, 2005
+-# Free Software Foundation, Inc.
+-#
+-# This file is free software; the Free Software Foundation
+-# gives unlimited permission to copy and/or distribute it,
+-# with or without modifications, as long as this notice is preserved.
++# serial 5
+ 
+-# serial 4
++AC_PREREQ(2.52)
+ 
+-# AM_SANITY_CHECK
+-# ---------------
+-AC_DEFUN([AM_SANITY_CHECK],
+-[AC_MSG_CHECKING([whether build environment is sane])
+-# Just in case
+-sleep 1
+-echo timestamp > conftest.file
+-# Do `set' in a subshell so we don't clobber the current shell's
+-# arguments.  Must try -L first in case configure is actually a
+-# symlink; some systems play weird games with the mod time of symlinks
+-# (eg FreeBSD returns the mod time of the symlink's containing
+-# directory).
+-if (
+-   set X `ls -Lt $srcdir/configure conftest.file 2> /dev/null`
+-   if test "$[*]" = "X"; then
+-      # -L didn't work.
+-      set X `ls -t $srcdir/configure conftest.file`
+-   fi
+-   rm -f conftest.file
+-   if test "$[*]" != "X $srcdir/configure conftest.file" \
+-      && test "$[*]" != "X conftest.file $srcdir/configure"; then
+-
+-      # If neither matched, then we have a broken ls.  This can happen
+-      # if, for instance, CONFIG_SHELL is bash and it inherits a
+-      # broken ls alias from the environment.  This has actually
+-      # happened.  Such a system could not be considered "sane".
+-      AC_MSG_ERROR([ls -t appears to fail.  Make sure there is not a broken
+-alias in your environment])
+-   fi
+-
+-   test "$[2]" = conftest.file
+-   )
+-then
+-   # Ok.
+-   :
++# AM_CONDITIONAL(NAME, SHELL-CONDITION)
++# -------------------------------------
++# Define a conditional.
++AC_DEFUN([AM_CONDITIONAL],
++[ifelse([$1], [TRUE],  [AC_FATAL([$0: invalid condition: $1])],
++        [$1], [FALSE], [AC_FATAL([$0: invalid condition: $1])])dnl
++AC_SUBST([$1_TRUE])
++AC_SUBST([$1_FALSE])
++if $2; then
++  $1_TRUE=
++  $1_FALSE='#'
+ else
+-   AC_MSG_ERROR([newly created file is older than distributed files!
+-Check your system clock])
+-fi
+-AC_MSG_RESULT(yes)])
+-
+-# Copyright (C) 2001, 2003, 2005  Free Software Foundation, Inc.
+-#
+-# This file is free software; the Free Software Foundation
+-# gives unlimited permission to copy and/or distribute it,
+-# with or without modifications, as long as this notice is preserved.
+-
+-# AM_PROG_INSTALL_STRIP
+-# ---------------------
+-# One issue with vendor `install' (even GNU) is that you can't
+-# specify the program used to strip binaries.  This is especially
+-# annoying in cross-compiling environments, where the build's strip
+-# is unlikely to handle the host's binaries.
+-# Fortunately install-sh will honor a STRIPPROG variable, so we
+-# always use install-sh in `make install-strip', and initialize
+-# STRIPPROG with the value of the STRIP variable (set by the user).
+-AC_DEFUN([AM_PROG_INSTALL_STRIP],
+-[AC_REQUIRE([AM_PROG_INSTALL_SH])dnl
+-# Installed binaries are usually stripped using `strip' when the user
+-# run `make install-strip'.  However `strip' might not be the right
+-# tool to use in cross-compilation environments, therefore Automake
+-# will honor the `STRIP' environment variable to overrule this program.
+-dnl Don't test for $cross_compiling = yes, because it might be `maybe'.
+-if test "$cross_compiling" != no; then
+-  AC_CHECK_TOOL([STRIP], [strip], :)
++  $1_TRUE='#'
++  $1_FALSE=
+ fi
+-INSTALL_STRIP_PROGRAM="\${SHELL} \$(install_sh) -c -s"
+-AC_SUBST([INSTALL_STRIP_PROGRAM])])
+-
+-# Check how to create a tarball.                            -*- Autoconf -*-
+-
+-# Copyright (C) 2004, 2005  Free Software Foundation, Inc.
+-#
+-# This file is free software; the Free Software Foundation
+-# gives unlimited permission to copy and/or distribute it,
+-# with or without modifications, as long as this notice is preserved.
+-
+-# serial 2
+-
+-# _AM_PROG_TAR(FORMAT)
+-# --------------------
+-# Check how to create a tarball in format FORMAT.
+-# FORMAT should be one of `v7', `ustar', or `pax'.
+-#
+-# Substitute a variable $(am__tar) that is a command
+-# writing to stdout a FORMAT-tarball containing the directory
+-# $tardir.
+-#     tardir=directory && $(am__tar) > result.tar
+-#
+-# Substitute a variable $(am__untar) that extract such
+-# a tarball read from stdin.
+-#     $(am__untar) < result.tar
+-AC_DEFUN([_AM_PROG_TAR],
+-[# Always define AMTAR for backward compatibility.
+-AM_MISSING_PROG([AMTAR], [tar])
+-m4_if([$1], [v7],
+-     [am__tar='${AMTAR} chof - "$$tardir"'; am__untar='${AMTAR} xf -'],
+-     [m4_case([$1], [ustar],, [pax],,
+-              [m4_fatal([Unknown tar format])])
+-AC_MSG_CHECKING([how to create a $1 tar archive])
+-# Loop over all known methods to create a tar archive until one works.
+-_am_tools='gnutar m4_if([$1], [ustar], [plaintar]) pax cpio none'
+-_am_tools=${am_cv_prog_tar_$1-$_am_tools}
+-# Do not fold the above two line into one, because Tru64 sh and
+-# Solaris sh will not grok spaces in the rhs of `-'.
+-for _am_tool in $_am_tools
+-do
+-  case $_am_tool in
+-  gnutar)
+-    for _am_tar in tar gnutar gtar;
+-    do
+-      AM_RUN_LOG([$_am_tar --version]) && break
+-    done
+-    am__tar="$_am_tar --format=m4_if([$1], [pax], [posix], [$1]) -chf - "'"$$tardir"'
+-    am__tar_="$_am_tar --format=m4_if([$1], [pax], [posix], [$1]) -chf - "'"$tardir"'
+-    am__untar="$_am_tar -xf -"
+-    ;;
+-  plaintar)
+-    # Must skip GNU tar: if it does not support --format= it doesn't create
+-    # ustar tarball either.
+-    (tar --version) >/dev/null 2>&1 && continue
+-    am__tar='tar chf - "$$tardir"'
+-    am__tar_='tar chf - "$tardir"'
+-    am__untar='tar xf -'
+-    ;;
+-  pax)
+-    am__tar='pax -L -x $1 -w "$$tardir"'
+-    am__tar_='pax -L -x $1 -w "$tardir"'
+-    am__untar='pax -r'
+-    ;;
+-  cpio)
+-    am__tar='find "$$tardir" -print | cpio -o -H $1 -L'
+-    am__tar_='find "$tardir" -print | cpio -o -H $1 -L'
+-    am__untar='cpio -i -H $1 -d'
+-    ;;
+-  none)
+-    am__tar=false
+-    am__tar_=false
+-    am__untar=false
+-    ;;
+-  esac
+-
+-  # If the value was cached, stop now.  We just wanted to have am__tar
+-  # and am__untar set.
+-  test -n "${am_cv_prog_tar_$1}" && break
+-
+-  # tar/untar a dummy directory, and stop if the command works
+-  rm -rf conftest.dir
+-  mkdir conftest.dir
+-  echo GrepMe > conftest.dir/file
+-  AM_RUN_LOG([tardir=conftest.dir && eval $am__tar_ >conftest.tar])
+-  rm -rf conftest.dir
+-  if test -s conftest.tar; then
+-    AM_RUN_LOG([$am__untar <conftest.tar])
+-    grep GrepMe conftest.dir/file >/dev/null 2>&1 && break
+-  fi
+-done
+-rm -rf conftest.dir
+-
+-AC_CACHE_VAL([am_cv_prog_tar_$1], [am_cv_prog_tar_$1=$_am_tool])
+-AC_MSG_RESULT([$am_cv_prog_tar_$1])])
+-AC_SUBST([am__tar])
+-AC_SUBST([am__untar])
+-]) # _AM_PROG_TAR
++AC_CONFIG_COMMANDS_PRE(
++[if test -z "${$1_TRUE}" && test -z "${$1_FALSE}"; then
++  AC_MSG_ERROR([conditional \"$1\" was never defined.
++Usually this means the macro was only invoked conditionally.])
++fi])])
+ 
+diff -Npaur dcfldd-1.3.4-1/config.h.in dcfldd/config.h.in
+--- dcfldd-1.3.4-1/config.h.in	2006-12-19 17:07:35.000000000 +0100
++++ dcfldd/config.h.in	2015-11-22 15:25:17.000000000 +0100
+@@ -16,6 +16,9 @@
+    don't. */
+ #undef HAVE_DECL_STRTOUMAX
+ 
++/* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
++#undef HAVE_FSEEKO
++
+ /* Define to 1 if you have the <inttypes.h> header file. */
+ #undef HAVE_INTTYPES_H
+ 
+@@ -64,9 +67,30 @@
+ /* Define to 1 if you have the ANSI C header files. */
+ #undef STDC_HEADERS
+ 
++/* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
++#undef TIME_WITH_SYS_TIME
++
+ /* Version number of package */
+ #undef VERSION
+ 
++/* Define to 1 if your processor stores words with the most significant byte
++   first (like Motorola and SPARC, unlike Intel and VAX). */
++#undef WORDS_BIGENDIAN
++
++/* Number of bits in a file offset, on hosts where this is settable. */
++#undef _FILE_OFFSET_BITS
++
++/* Enable GNU extensions on systems that have them.  */
++#ifndef _GNU_SOURCE
++# undef _GNU_SOURCE
++#endif
++
++/* Define to 1 to make fseeko visible on some hosts (e.g. glibc 2.2). */
++#undef _LARGEFILE_SOURCE
++
++/* Define for large files, on AIX-style hosts. */
++#undef _LARGE_FILES
++
+ /* Define to empty if `const' does not conform to ANSI C. */
+ #undef const
+ 
+diff -Npaur dcfldd-1.3.4-1/configure.in dcfldd/configure.in
+--- dcfldd-1.3.4-1/configure.in	2006-12-19 17:03:55.000000000 +0100
++++ dcfldd/configure.in	2015-11-22 15:25:17.000000000 +0100
+@@ -3,7 +3,9 @@ AC_INIT(dcfldd.c)
+ AM_CONFIG_HEADER(config.h)
+ AC_CANONICAL_HOST
+ 
+-AM_INIT_AUTOMAKE([dcfldd], [1.3.4-1])
++AM_INIT_AUTOMAKE([dcfldd], [1.4])
++
++AC_GNU_SOURCE
+ 
+ AC_PROG_CC
+ AC_PROG_CPP
+@@ -14,6 +16,11 @@ AC_PROG_MAKE_SET
+ AC_PROG_RANLIB
+ 
+ AC_HEADER_STDC
++AC_HEADER_TIME
++
++AC_C_BIGENDIAN
++AC_FUNC_FSEEKO
++AC_SYS_LARGEFILE
+ 
+ AC_C_CONST
+ AC_TYPE_OFF_T
+diff -Npaur dcfldd-1.3.4-1/copy.c dcfldd/copy.c
+--- dcfldd-1.3.4-1/copy.c	2006-12-14 22:58:57.000000000 +0100
++++ dcfldd/copy.c	2015-11-22 15:25:17.000000000 +0100
+@@ -34,6 +34,7 @@
+ #include "util.h"
+ #include "log.h"
+ #include "output.h"
++#include "random.h"
+ 
+ static void write_output(void);
+ static void copy_simple(unsigned char const *, int);
+@@ -54,6 +55,8 @@ static void write_output(void)
+ {
+     /*int nwritten = full_write(STDOUT_FILENO, obuf, output_blocksize); */
+     int nwritten = outputlist_write(obuf, output_blocksize);
++
++    w_bytes += nwritten;
+     
+     if (nwritten != output_blocksize) {
+         if (nwritten > 0)
+@@ -150,10 +153,8 @@ int dd_copy(void)
+     unsigned char *ibuf, *bufstart; /* Input buffer. */
+     unsigned char *real_buf;	  /* real buffer address before alignment */
+     unsigned char *real_obuf;
+-    ssize_t nread;		/* Bytes read in the current block. */
++    ssize_t nread = 0;		/* Bytes read in the current block. */
+     int exit_status = 0;
+-    int input_from_stream = !!input_file;
+-    int input_from_pattern = !input_from_stream;
+     size_t page_size = getpagesize();
+     size_t n_bytes_read;    
+     
+@@ -211,22 +212,31 @@ int dd_copy(void)
+         quit(exit_status);
+     
+     if (input_from_pattern) {
+-        replicate_pattern(pattern, ibuf, input_blocksize);
++        if (random_pattern)
++            init_genrand(rand());
++        else
++            replicate_pattern(pattern, ibuf, input_blocksize);
+         nread = n_bytes_read = input_blocksize;
+     }
+-    
++
+     while (1) {
+         /* Display an update message */
+         if (do_status && w_full % update_thresh == 0 && w_full != 0) {
++            time_t curr_time = time(NULL);
+             off_t total_bytes = w_full * input_blocksize;
+             off_t total_mb = total_bytes / 1048576;
+-    
++            int seconds = (int)difftime(curr_time, start_time);
++            int secs = seconds ? seconds : 1;
++            int transfer_rate;
++            char commabuf1[30];
++            char commabuf2[30];
++            char commabuf3[30];
++            
+             if (probe == PROBE_NONE || probed_size == 0)
+-                fprintf(stderr, "\r%llu blocks (%lluMb) written.", 
+-                        w_full, total_mb);
++                fprintf(stderr, "\r%s blocks (%sMb) written.", 
++                        commaprint(w_full, commabuf1, sizeof commabuf1),
++                        commaprint(total_mb, commabuf2, sizeof commabuf2));
+             else {
+-                time_t curr_time = time(NULL);
+-                int seconds = (int)difftime(curr_time, start_time);
+                 off_t probed_mb = probed_size / 1048576;
+                 float fprcnt = total_bytes / (float)probed_size;
+                 float fprcnt_remaining = 1.0 - fprcnt;
+@@ -236,14 +246,39 @@ int dd_copy(void)
+                 char secstr[100];
+     
+                 time_left(secstr, sizeof secstr, seconds_remaining);
+-                fprintf(stderr, "\r[%d%% of %lluMb] %llu blocks (%lluMb) written. %s",
+-                        prcnt, probed_mb, w_full, total_mb, secstr);
+-            }	
++                fprintf(stderr, "\r[%d%% of %sMb] %s blocks (%sMb) written. %s.",
++                        prcnt,
++                        commaprint(probed_mb, commabuf1, sizeof commabuf1),
++                        commaprint(w_full, commabuf2, sizeof commabuf2),
++                        commaprint(total_mb, commabuf3, sizeof commabuf3),
++                        secstr);
++            }
++
++            switch (rate_type) {
++            case TRANSFER_RATE_MB:
++                transfer_rate = (int)(total_mb / secs);
++                fprintf(stderr, " %s MB/sec",
++                        commaprint(transfer_rate, commabuf1, sizeof commabuf1));
++                break;
++            case TRANSFER_RATE_BLOCK:
++                transfer_rate = (int)(w_full / secs);
++                fprintf(stderr, " %s blocks/sec",
++                        commaprint(transfer_rate, commabuf1, sizeof commabuf1));
++                break;
++            case TRANSFER_RATE_BYTE:
++                transfer_rate = (int)(total_bytes / secs);
++                fprintf(stderr, " %s bytes/sec",
++                        commaprint(transfer_rate, commabuf1, sizeof commabuf1));
++                break;
++            }
+         }
+     
+         if (r_partial + r_full >= max_records)
+             break;
+-    
++        
++        if (input_from_pattern && random_pattern)
++            genrand_buf((char *) ibuf, input_blocksize);
++        
+         /* Zero the buffer before reading, so that if we get a read error,
+            whatever data we are able to read is followed by zeros.
+            This minimizes data loss. */
+@@ -267,9 +302,6 @@ int dd_copy(void)
+                 /* Seek past the bad block if possible. */
+                 lseek(STDIN_FILENO, (off_t) input_blocksize, SEEK_CUR);
+                 if (conversions_mask & C_SYNC) {
+-                    /* Replace the missing input with null bytes and
+-                       proceed normally.  */
+-                    // EXPERIMENTAL: let's try re-zeroing this buffer
+                     memset((char *) ibuf,
+                            (conversions_mask & (C_BLOCK | C_UNBLOCK)) ? ' ' : '\0',
+                            input_blocksize);
+@@ -283,7 +315,8 @@ int dd_copy(void)
+             }
+         }
+         n_bytes_read = nread;
+-    
++	r_bytes += nread;
++        
+         if (do_hash && hashconv == HASHCONV_BEFORE)
+             hash_update(ihashlist, ibuf, n_bytes_read);
+         
+@@ -304,6 +337,7 @@ int dd_copy(void)
+         if (ibuf == obuf) {		/* If not C_TWOBUFS. */
+             /* int nwritten = full_write(STDOUT_FILENO, obuf, n_bytes_read); */
+             int nwritten = outputlist_write(obuf, n_bytes_read);
++	    w_bytes += nwritten;
+             
+             if (nwritten < 0) 
+                 syscall_error(output_file);
+@@ -334,7 +368,6 @@ int dd_copy(void)
+             hash_update(ihashlist, ibuf, n_bytes_read);
+     }
+ 
+-    
+     /* If we have a char left as a result of conv=swab, output it.  */
+     if (char_is_saved) {
+         if (conversions_mask & C_BLOCK)
+@@ -344,7 +377,7 @@ int dd_copy(void)
+         else
+             output_char(saved_char);
+     }
+-    
++
+     if ((conversions_mask & C_BLOCK) && col > 0) {
+         /* If the final input line didn't end with a '\n', pad
+            the output block to `conversion_blocksize' chars.  */
+@@ -362,7 +395,8 @@ int dd_copy(void)
+     if (oc != 0) {
+         /* int nwritten = full_write(STDOUT_FILENO, obuf, oc); */
+         int nwritten = outputlist_write(obuf, oc);
+-        
++        w_bytes += nwritten;
++
+         if (nwritten > 0)
+             w_partial++;
+         if (nwritten < 0) {
+@@ -373,11 +407,11 @@ int dd_copy(void)
+     free(real_buf);
+     if (real_obuf)
+         free(real_obuf);
+-    
++
+     if (do_hash) {
+         hash_remainder(ihashlist, WINDOW_CTX);
+         display_totalhash(ihashlist, TOTAL_CTX);
+     }
+-        
++
+     return exit_status;
+ }
+diff -Npaur dcfldd-1.3.4-1/copy.h dcfldd/copy.h
+--- dcfldd-1.3.4-1/copy.h	2005-05-13 20:52:06.000000000 +0200
++++ dcfldd/copy.h	2015-11-22 15:25:17.000000000 +0100
+@@ -1,4 +1,4 @@
+-/* $Id: copy.h,v 1.3 2005/05/13 18:52:06 harbourn Exp $
++/* $Id$
+  * dcfldd - The Enhanced Forensic DD
+  * By Nicholas Harbour
+  */
+diff -Npaur dcfldd-1.3.4-1/dcfldd.1 dcfldd/dcfldd.1
+--- dcfldd-1.3.4-1/dcfldd.1	2006-02-12 17:21:50.000000000 +0100
++++ dcfldd/dcfldd.1	2015-11-22 15:25:17.000000000 +0100
+@@ -1,7 +1,7 @@
+-.\" DO NOT MODIFY THIS FILE!  It was generated by help2man 1.35.
+-.TH DCFLDD "1" "February 2006" "dcfldd (dcfldd) 1.3.4" "User Commands"
++.\" DO NOT MODIFY THIS FILE!  It was generated by help2man 1.36.
++.TH DCFLDD "1" "September 2007" "dcfldd (dcfldd) 1.4" "User Commands"
+ .SH NAME
+-dcfldd \- manual page for dcfldd (dcfldd) 1.3.4
++dcfldd \- manual page for dcfldd (dcfldd) 1.4
+ .SH SYNOPSIS
+ .B dcfldd
+ [\fIOPTION\fR]...
+@@ -46,7 +46,10 @@ skip=BLOCKS
+ skip BLOCKS ibs\-sized blocks at start of input
+ .TP
+ pattern=HEX
+-use the specified binary pattern as input
++use the specified binary pattern HEX as input
++.IP
++or use pseudo\-random data as input if "random"
++is specified.
+ .TP
+ textpattern=TEXT
+ use repeating TEXT as input
+@@ -72,6 +75,12 @@ can send each to a seperate file using t
+ convention ALGORITHMlog=FILE, for example
+ md5log=FILE1, sha1log=FILE2, etc.
+ .TP
++log=FILE
++writes the information generated by haslog and
++.IP
++errlog to the single file FILE. Note that this
++operation appends FILE if it already exists.
++.TP
+ hashlog:=COMMAND
+ exec and write hashlog to process COMMAND
+ .IP
+@@ -107,6 +116,11 @@ WARNING: do not use this option against
+ .IP
+ tape device.
+ .TP
++rate=[mb|block|byte]
++display the transfer rate as Megabytes per second (mb),
++.IP
++Blocks per second (block), or Bytes per second (byte)
++.TP
+ split=BYTES
+ write every BYTES amount of data to a new file
+ .IP
+@@ -114,19 +128,26 @@ This operation applies to any of=FILE th
+ .TP
+ splitformat=TEXT
+ the file extension format for split operation.
++TEXT should be a combination of 'a' (alpha), 'n'
++(numeric), and 'd' (digit) characters. Numeric
+ .IP
+-you may use any number of 'a' or 'n' in any combo
+-the default format is "nnn"
+-NOTE: The split and splitformat options take effect
+-.IP
+-only for output files specified AFTER these
+-options appear in the command line.  Likewise,
+-you may specify these several times for
+-for different output files within the same
++suffixes start at .000, digit suffixes start
++with .001. The length
++of this string indicates how many digits to
++.IP
++include in the suffix. The default format
++is "nnn". Although you cannot use 'd' with
++any other characters, you may use any number of
++\&'a' or 'n' characters.
++.IP
++Note that the split and splitformat options
++take effect only for output files specified
++AFTER these options appear in the command line.
++Likewise, you may specify these several times
++for for different output files within the same
+ command line. you may use as many digits in
+-any combination you would like.
+-(e.g. "anaannnaana" would be valid, but
+-quite insane)
++any combination you would like. (e.g.
++"anaannnaana" would be valid, but quite insane)
+ .TP
+ vf=FILE
+ verify that FILE matches the specified input
+@@ -216,6 +237,9 @@ do not truncate the output file
+ ucase
+ change lower case to upper case
+ .TP
++direct
++bypass opertaing system caching. Good for disks with errors
++.TP
+ swab
+ swap every pair of input bytes
+ .TP
+@@ -228,7 +252,7 @@ with block or unblock, pad with spaces r
+ .SH AUTHOR
+ Written by: dcfldd by Nicholas Harbour, GNU dd by Paul Rubin, David MacKenzie and Stuart Kemp.
+ .SH "REPORTING BUGS"
+-Report bugs to <nicholasharbour@yahoo.com>.
++Report bugs to <nickharbour@gmail.com>.
+ .SH COPYRIGHT
+ Copyright \(co 1985-2006 Free Software Foundation, Inc.
+ .br
+diff -Npaur dcfldd-1.3.4-1/dcfldd.c dcfldd/dcfldd.c
+--- dcfldd-1.3.4-1/dcfldd.c	2006-01-06 01:56:01.000000000 +0100
++++ dcfldd/dcfldd.c	2015-11-22 15:25:17.000000000 +0100
+@@ -27,24 +27,30 @@
+  *
+  */
+ 
+-#include "config.h"
++// Now included by dcfldd.h
++//#include "config.h"
++
+ #include <string.h>
+ #include <stdio.h>
+ #include <errno.h>
+ #include <stdlib.h>
+ #include <string.h>
+ 
++/* Moved to dcfldd.h
+ #if HAVE_INTTYPES_H
+ # include <inttypes.h>
+ #endif
+-#include <sys/types.h>
+-#include <sys/stat.h>
++*/
++
+ #include <dirent.h>
+ #include <ctype.h>
+ #include <signal.h>
+ #include <getopt.h>
+ #include <time.h>
+-#include <fcntl.h>
++
++// Moved to dcfldd.h
++//#include <fcntl.h>
++
+ #include "system.h"
+ #include "human.h"
+ #include "long-options.h"
+@@ -105,6 +111,12 @@ uintmax_t r_partial = 0;
+ /* Number of full blocks read. */
+ uintmax_t r_full = 0;
+ 
++/* Number of bytes read */
++uintmax_t r_bytes = 0;
++
++/* Number of bytes written */
++uintmax_t w_bytes = 0;
++
+ /* If nonzero, filter characters through the translation table.  */
+ int translation_needed = 0;
+ 
+@@ -133,6 +145,8 @@ ssize_t update_thresh = 256;
+ 
+ time_t start_time;
+ 
++int rate_type = DEFAULT_RATE_TYPE;
++
+ static struct conversion conversions[] =
+ {
+     {"ascii", C_ASCII | C_TWOBUFS},	/* EBCDIC to ASCII. */
+@@ -146,6 +160,7 @@ static struct conversion conversions[] =
+     {"noerror", C_NOERROR},	/* Ignore i/o errors. */
+     {"notrunc", C_NOTRUNC},	/* Do not truncate output file. */
+     {"sync", C_SYNC},		/* Pad input records to ibs with NULs. */
++    {"direct", C_DIRECT},       /* Use O_DIRECT to open input files */
+     {NULL, 0}
+ };
+ 
+@@ -155,7 +170,7 @@ void usage(int status)
+         log_info("Try `%s --help' for more information.\n", program_name);
+     else {
+         printf("Usage: %s [OPTION]...\n", program_name);
+-        printf("\
++        printf("\n\
+ Copy a file, converting and formatting according to the options.\n\
+ \n\
+   bs=BYTES                 force ibs=BYTES and obs=BYTES\n\
+@@ -171,7 +186,9 @@ Copy a file, converting and formatting a
+   of:=COMMAND              exec and write output to process COMMAND\n\
+   seek=BLOCKS              skip BLOCKS obs-sized blocks at start of output\n\
+   skip=BLOCKS              skip BLOCKS ibs-sized blocks at start of input\n\
+-  pattern=HEX              use the specified binary pattern as input\n\
++  pattern=HEX              use the specified binary pattern HEX as input\n\
++                             or use pseudo-random data as input if \"random\"\n\
++                             is specified.\n\
+   textpattern=TEXT         use repeating TEXT as input\n\
+   errlog=FILE              send error messages to FILE as well as stderr\n\
+   hashwindow=BYTES         perform a hash on every BYTES amount of data\n\
+@@ -184,6 +201,9 @@ Copy a file, converting and formatting a
+                              can send each to a seperate file using the\n\
+                              convention ALGORITHMlog=FILE, for example\n\
+                              md5log=FILE1, sha1log=FILE2, etc.\n\
++  log=FILE                 writes the information generated by haslog and\n\
++                             errlog to the single file FILE. Note that this\n\
++                             operation appends\ FILE if it already exists.\n\
+   hashlog:=COMMAND         exec and write hashlog to process COMMAND\n\
+                              ALGORITHMlog:=COMMAND also works in the same fashion\n\
+   hashconv=[before|after]  perform the hashing before or after the conversions\n\
+@@ -199,20 +219,28 @@ Copy a file, converting and formatting a
+                              gives you a percentage indicator)\n\
+                              WARNING: do not use this option against a\n\
+                                       tape device.\n\
++  rate=[mb|block|byte]     display the transfer rate as Megabytes per second (mb),\n\
++                             Blocks per second (block), or Bytes per second (byte)\n\
+   split=BYTES              write every BYTES amount of data to a new file\n\
+                              This operation applies to any of=FILE that follows\n\
+   splitformat=TEXT         the file extension format for split operation.\n\
+-                             you may use any number of 'a' or 'n' in any combo\n\
+-                             the default format is \"nnn\"\n\
+-                             NOTE: The split and splitformat options take effect\n\
+-                                  only for output files specified AFTER these\n\
+-                                  options appear in the command line.  Likewise,\n\
+-                                  you may specify these several times for\n\
+-                                  for different output files within the same\n\
+-                                  command line. you may use as many digits in\n\
+-                                  any combination you would like.\n\
+-                                  (e.g. \"anaannnaana\" would be valid, but\n\
+-                                  quite insane)\n\
++                           TEXT should be a combination of 'a' (alpha), 'n'\n\
++                           (numeric), and 'd' (digit) characters. Numeric\n\
++                            suffixes start at .000, digit suffixes start\n\
++                            with .001. The length\n\
++                            of this string indicates how many digits to \n\
++                           include in the suffix. The default format \n\
++                           is \"nnn\". Although you cannot use 'd' with \n\
++                           any other characters, you may use any number of \n\
++                           'a' or 'n' characters.\n\n\
++                           Note that the split and splitformat options \n\
++                           take effect only for output files specified \n\
++                           AFTER these options appear in the command line.\n\
++                           Likewise, you may specify these several times \n\
++                           for for different output files within the same\n\
++                           command line. you may use as many digits in\n\
++                           any combination you would like. (e.g. \n\
++                           \"anaannnaana\" would be valid, but quite insane)\n\
+   vf=FILE                  verify that FILE matches the specified input\n\
+   verifylog=FILE           send verify results to FILE instead of stderr\n\
+   verifylog:=COMMAND       exec and write verify results to process COMMAND\n\
+@@ -256,13 +284,19 @@ Each KEYWORD may be:\n\
+   unblock   replace trailing spaces in cbs-size records with newline\n\
+   lcase     change upper case to lower case\n\
+   notrunc   do not truncate the output file\n\
+-  ucase     change lower case to upper case\n\
++  ucase     change lower case to upper case\n");
++
++	if (O_DIRECT)
++	  printf ("\
++  direct    bypass opertaing system caching. Good for disks with errors\n");
++	
++	printf ("\
+   swab      swap every pair of input bytes\n\
+   noerror   continue after read errors\n\
+   sync      pad every input block with NULs to ibs-size; when used\n\
+             with block or unblock, pad with spaces rather than NULs\n\
+ ");
+-        puts("\nReport bugs to <nicholasharbour@yahoo.com>.");
++        puts("\nReport bugs to <nickharbour@gmail.com>.");
+     }
+     exit(status);
+ }
+@@ -283,6 +317,13 @@ void print_stats(void)
+                  ? "truncated record"
+                  : "truncated records"));
+     }
++
++    log_info("%s bytes in\n", 
++	     human_readable(r_bytes,buf[0],1,1));
++    log_info("%s bytes out\n",
++	     human_readable(w_bytes,buf[0],1,1));
++
++
+ }
+ 
+ void cleanup(void)
+@@ -291,6 +332,7 @@ void cleanup(void)
+         fprintf(stderr, "\n");
+     if (!do_verify)
+         print_stats();
++    // RBF - Improve error handling in cleanup()
+     if (close(STDIN_FILENO) < 0)
+         ;
+     if (close(STDOUT_FILENO) < 0)
+@@ -373,19 +415,24 @@ void parse_conversion(char *str)
+     unsigned int i;
+     
+     do {
+-        new = strchr(str, ',');
+-        if (new != NULL)
+-            *new++ = '\0';
+-        for (i = 0; conversions[i].convname != NULL; i++)
+-            if (STREQ(conversions[i].convname, str)) {
+-                conversions_mask |= conversions[i].conversion;
+-                break;
+-            }
+-        if (conversions[i].convname == NULL) {
+-            log_info("invalid conversion: %s\n", str);
+-            usage(1);
+-        }
+-        str = new;
++      new = strchr(str, ',');
++      if (new != NULL)
++	*new++ = '\0';
++      for (i = 0; conversions[i].convname != NULL; i++)
++	if (STREQ(conversions[i].convname, str)) {
++	  conversions_mask |= conversions[i].conversion;
++
++	  if (C_DIRECT == conversions[i].conversion &&
++	      0 == O_DIRECT)
++	    log_info("Direct conversion not available, ignored\n");
++
++	  break;
++	}
++      if (conversions[i].convname == NULL) {
++	log_info("invalid conversion: %s\n", str);
++	usage(1);
++      }
++      str = new;
+     } while (new != NULL);
+ }
+ 
+@@ -501,10 +548,14 @@ static void scanargs(int argc, char **ar
+         } else if (STREQ(name, "conv"))
+             parse_conversion(val);
+         else if (STREQ(name, "pattern")) {
+-            pattern = make_pattern(val);
+-            if (pattern == NULL) {
+-                log_info("%s: invalid hex pattern: %s", program_name, val);
+-                quit(1);
++            if (STREQ(val, "random"))
++                random_pattern = 1;
++            else {
++                pattern = make_pattern(val);
++                if (pattern == NULL) {
++                    log_info("%s: invalid hex pattern: %s", program_name, val);
++                    quit(1);
++                }
+             }
+             input_from_pattern = 1;
+         } else if (STREQ(name, "textpattern")) {
+@@ -521,6 +572,12 @@ static void scanargs(int argc, char **ar
+             if (hash_log == NULL)
+                 syscall_error(val);
+             do_hash++;
++	} else if (STREQ(name,"log")) {
++	    hash_log = fopen(val,"a");
++	    if (hash_log == NULL)
++	       syscall_error(val);
++	    do_hash++;
++	    errlog = hash_log;
+         } else if (STREQ(name, "hashformat"))
+             hashformat = parse_hashformat(val);
+         else if (STREQ(name, "totalhashformat"))
+@@ -592,12 +649,21 @@ static void scanargs(int argc, char **ar
+             if (errlog == NULL)
+                 syscall_error(val);
+         } else if (STREQ(name, "splitformat"))
+-            splitformat = val;
++            splitformat = strdup(val);
+         else if (STREQ(name, "status")) {
+             if (STREQ(val, "off"))
+                 do_status = 0;
+             else if (STREQ(val, "on")) 
+                 do_status = 1;
++        } else if (STREQ(name, "rate")) {
++            if (STREQ(val, "mb"))
++                rate_type = TRANSFER_RATE_MB;
++            else if (STREQ(val, "block"))
++                rate_type = TRANSFER_RATE_BLOCK;
++            else if (STREQ(val, "byte"))
++                rate_type = TRANSFER_RATE_BYTE;
++            else
++                user_error("invalid rate type \"%s\"", val);
+         } else if (STREQ(name, "hashalgorithm") || STREQ(name, "hash")) {
+             parse_hash(val);
+             do_hash++;
+@@ -618,7 +684,11 @@ static void scanargs(int argc, char **ar
+         } else {
+             int invalid = 0;
+             uintmax_t n = parse_integer(val, &invalid);
+-            
++         
++	    // RBF - Double check this error handling
++	    if (1 == invalid)
++	      user_error("Illegal command line option");
++
+             if (STREQ(name, "ibs")) {
+                 input_blocksize = n;
+                 invalid |= input_blocksize != n || input_blocksize == 0;
+@@ -735,14 +805,21 @@ int main(int argc, char **argv)
+     
+     apply_translations();
+     
++    int open_flags;
++
++    if (conversions_mask & C_DIRECT)
++      open_flags = O_RDONLY | O_DIRECT;
++    else
++      open_flags = O_RDONLY;
++
+     if (input_file != NULL) {
+-        if (open_fd(STDIN_FILENO, input_file, O_RDONLY, 0) < 0)
++        if (open_fd(STDIN_FILENO, input_file, open_flags, 0) < 0)
+             syscall_error(input_file);
+     } else if (pattern == NULL)
+         input_file = "standard input";
+ 
+     if (verify_file != NULL)
+-        if ((verify_fd = open(verify_file, O_RDONLY)) < 0)
++        if ((verify_fd = open(verify_file, open_flags)) < 0)
+             syscall_error(verify_file);
+     
+     if (outputlist == NULL)
+@@ -769,4 +846,7 @@ int main(int argc, char **argv)
+ 
+     close(1);
+     quit(exit_status);
++
++    // We should never reach here, but this makes the compiler happy
++    return EXIT_SUCCESS;
+ }
+diff -Npaur dcfldd-1.3.4-1/dcfldd.h dcfldd/dcfldd.h
+--- dcfldd-1.3.4-1/dcfldd.h	2006-02-12 17:21:07.000000000 +0100
++++ dcfldd/dcfldd.h	2015-11-22 15:25:17.000000000 +0100
+@@ -24,22 +24,51 @@
+ #ifndef DCFLDD_H
+ #define DCFLDD_H
+ 
+-#define _FILE_OFFSET_BITS 64
+-#define LARGEFILE_SOURCE
++#ifdef HAVE_CONFIG_H
++# include "config.h"
++#endif
++
++#include <stdio.h>
++#include <ctype.h>
++
++#ifdef TIME_WITH_SYS_TIME
++# include <sys/time.h>
++# include <time.h>
++#else
++# ifdef HAVE_SYS_TIME_H
++#  include <sys/time.h>
++# else
++#  include <time.h>
++# endif
++#endif
+ 
+ #if HAVE_INTTYPES_H
+ # include <inttypes.h>
+ #endif
+-#include <sys/types.h>
+-#include <ctype.h>
+-#include <time.h>
+ 
+-#include <stdio.h>
+-#include "config.h"
+-#include "system.h"
++#ifdef HAVE_SYS_TYPES_H
++# include <sys/types.h>
++#endif 
++
++#ifdef HAVE_SYS_STAT_H
++# include <sys/stat.h>
++#endif 
+ 
++#ifdef HAVE_FCNTL_H
++# include <fcntl.h>
++#endif
++/* We have to define O_DIRECT just in case it's not supported on
++   this operating system. Later function check the value to determine
++   whether or not it can be used. */
++#ifndef O_DIRECT
++# define O_DIRECT 0
++#endif
++
++
++#include "system.h"
+ #include "hash.h"
+ 
++// RBF - Can these be wrapped in the configuration script? 
+ /* The official name of this program (e.g., no `g' prefix).  */
+ #define PROGRAM_NAME "dcfldd"
+ 
+@@ -75,23 +104,27 @@ while (0)
+ #ifndef DEFAULT_BLOCKSIZE
+ #define DEFAULT_BLOCKSIZE 32768   /* 32k blocksize is HUGELY more efficient
+                                    * for large device IO than 512 */
+-#endif /* DEFAULT_BLOCKSIZE */
++#endif /* !DEFAULT_BLOCKSIZE */
+ 
+ #ifndef DEFAULT_SPLIT_FORMAT
+ #define DEFAULT_SPLIT_FORMAT "nnn"
+-#endif /* DEFAULT_SPLIT_FORMAT */
++#endif /* !DEFAULT_SPLIT_FORMAT */
+ 
+ #ifndef DEFAULT_HASHWINDOW_FORMAT
+ #define DEFAULT_HASHWINDOW_FORMAT "#window_start# - #window_end#: #hash#"
+-#endif /* DEFAULT_HASHWINDOW_FORMAT */
++#endif /* !DEFAULT_HASHWINDOW_FORMAT */
+ 
+ #ifndef DEFAULT_TOTALHASH_FORMAT
+ #define DEFAULT_TOTALHASH_FORMAT "Total (#algorithm#): #hash#"
+-#endif /* DEFAULT_TOTALHASH_FORMAT */
++#endif /* !DEFAULT_TOTALHASH_FORMAT */
+ 
+ #ifndef DEFAULT_HASHCONV
+ #define DEFAULT_HASHCONV HASHCONV_BEFORE
+-#endif /* DEFAULT_HASHCONV */
++#endif /* !DEFAULT_HASHCONV */
++
++#ifndef DEFAULT_RATE_TYPE
++#define DEFAULT_RATE_TYPE TRANSFER_RATE_MB
++#endif /* !DEFAULT_RATE_TYPE */
+ 
+ /* Conversions bit masks. */
+ #define C_ASCII 01
+@@ -107,6 +140,13 @@ while (0)
+ #define C_SYNC 02000
+ /* Use separate input and output buffers, and combine partial input blocks. */
+ #define C_TWOBUFS 04000
++#define C_DIRECT  010000
++
++enum {
++    TRANSFER_RATE_MB,
++    TRANSFER_RATE_BLOCK,
++    TRANSFER_RATE_BYTE
++};
+ 
+ typedef enum {
+     HASHCONV_BEFORE,
+@@ -138,6 +178,9 @@ extern uintmax_t r_full;
+ extern uintmax_t r_partial;
+ extern uintmax_t r_truncate;
+ 
++extern uintmax_t r_bytes;
++extern uintmax_t w_bytes;
++
+ extern int do_hash;
+ extern int do_verify;
+ extern int do_status;
+@@ -147,6 +190,8 @@ extern unsigned char saved_char;
+ 
+ extern time_t start_time;
+ 
++extern int rate_type;
++
+ extern ssize_t update_thresh;
+ 
+ struct conversion
+diff -Npaur dcfldd-1.3.4-1/output.c dcfldd/output.c
+--- dcfldd-1.3.4-1/output.c	2005-06-15 16:33:04.000000000 +0200
++++ dcfldd/output.c	2015-11-22 15:25:17.000000000 +0100
+@@ -135,6 +135,9 @@ void outputlist_add(outputtype_t type, .
+         split->currfd = -1;
+         ptr->data.split = split;
+         break;
++
++    case NONE:
++      break;
+     }
+ 
+     va_end(ap);
+@@ -143,6 +146,7 @@ void outputlist_add(outputtype_t type, .
+ int outputlist_write(const char *buf, size_t len)
+ {
+     outputlist_t *ptr;
++    // RBF - Should nwritten be a size_t? 
+     int nwritten = 0;
+     
+     for (ptr = outputlist; ptr != NULL; ptr = ptr->next) {
+@@ -154,6 +158,8 @@ int outputlist_write(const char *buf, si
+         case SPLIT_FILE:
+             nwritten = split_write(ptr->data.split, buf, len);
+             break;
++	case NONE:
++	  break;
+         }
+         if (nwritten < len)
+             break;
+diff -Npaur dcfldd-1.3.4-1/pattern.c dcfldd/pattern.c
+--- dcfldd-1.3.4-1/pattern.c	2005-05-13 20:52:06.000000000 +0200
++++ dcfldd/pattern.c	2015-11-22 15:25:17.000000000 +0100
+@@ -27,8 +27,8 @@
+ /* Pattern to be written out */
+ char *pattern;
+ size_t pattern_len;
+-int input_from_pattern;
+-
++int input_from_pattern = 0;
++int random_pattern = 0;
+ 
+ char *make_pattern(char *pattern)
+ {
+diff -Npaur dcfldd-1.3.4-1/pattern.h dcfldd/pattern.h
+--- dcfldd-1.3.4-1/pattern.h	2005-05-13 20:52:06.000000000 +0200
++++ dcfldd/pattern.h	2015-11-22 15:25:17.000000000 +0100
+@@ -30,6 +30,7 @@
+ extern char *pattern;
+ extern size_t pattern_len;
+ extern int input_from_pattern;
++extern int random_pattern;
+ 
+ extern char *make_pattern(char *);
+ extern void replicate_pattern(char *, char *, size_t);
+diff -Npaur dcfldd-1.3.4-1/random.c dcfldd/random.c
+--- dcfldd-1.3.4-1/random.c	1970-01-01 01:00:00.000000000 +0100
++++ dcfldd/random.c	2015-11-22 15:25:17.000000000 +0100
+@@ -0,0 +1,159 @@
++/* 
++   A C-program for MT19937, with initialization improved 2002/2/10.
++   Coded by Takuji Nishimura and Makoto Matsumoto.
++   This is a faster version by taking Shawn Cokus's optimization,
++   Matthe Bellew's simplification, Isaku Wada's real version.
++
++   Before using, initialize the state by using init_genrand(seed) 
++   or init_by_array(init_key, key_length).
++
++   Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura,
++   All rights reserved.
++
++   Portions Copyright (c) 2006 Free Software Foundation, Inc.
++
++   Redistribution and use in source and binary forms, with or without
++   modification, are permitted provided that the following conditions
++   are met:
++
++     1. Redistributions of source code must retain the above copyright
++        notice, this list of conditions and the following disclaimer.
++
++     2. Redistributions in binary form must reproduce the above copyright
++        notice, this list of conditions and the following disclaimer in the
++        documentation and/or other materials provided with the distribution.
++
++     3. The names of its contributors may not be used to endorse or promote 
++        products derived from this software without specific prior written 
++        permission.
++
++   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++   A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
++   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
++   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
++   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
++   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
++   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
++   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
++   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++
++
++   Any feedback is very welcome.
++   http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html
++   email: m-mat @ math.sci.hiroshima-u.ac.jp (remove space)
++*/
++
++#include <stdio.h>
++#include <string.h>
++
++/* Period parameters */  
++#define N 624
++#define M 397
++#define MATRIX_A 0x9908b0dfUL   /* constant vector a */
++#define UMASK 0x80000000UL /* most significant w-r bits */
++#define LMASK 0x7fffffffUL /* least significant r bits */
++#define MIXBITS(u,v) ( ((u) & UMASK) | ((v) & LMASK) )
++#define TWIST(u,v) ((MIXBITS(u,v) >> 1) ^ ((v)&1UL ? MATRIX_A : 0UL))
++
++static unsigned long state[N]; /* the array for the state vector  */
++static int left = 1;
++static int initf = 0;
++static unsigned long *next;
++
++/* initializes state[N] with a seed */
++void init_genrand(unsigned long s)
++{
++    int j;
++    state[0]= s & 0xffffffffUL;
++    for (j=1; j<N; j++) {
++        state[j] = (1812433253UL * (state[j-1] ^ (state[j-1] >> 30)) + j); 
++        /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
++        /* In the previous versions, MSBs of the seed affect   */
++        /* only MSBs of the array state[].                        */
++        /* 2002/01/09 modified by Makoto Matsumoto             */
++        state[j] &= 0xffffffffUL;  /* for >32 bit machines */
++    }
++    left = 1; initf = 1;
++}
++
++// dcfldd is not using init_by_array() at the moment, but
++// I leave it in here in the event that we might use it
++// in the future, if people have issues with the way
++// we're seeding the generator.  
++
++/* initialize by an array with array-length */
++/* init_key is the array for initializing keys */
++/* key_length is its length */
++/* slight change for C++, 2004/2/26 */
++void init_by_array(unsigned long init_key[], int key_length)
++{
++    int i, j, k;
++    init_genrand(19650218UL);
++    i=1; j=0;
++    k = (N>key_length ? N : key_length);
++    for (; k; k--) {
++        state[i] = (state[i] ^ ((state[i-1] ^ (state[i-1] >> 30)) * 1664525UL))
++          + init_key[j] + j; /* non linear */
++        state[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
++        i++; j++;
++        if (i>=N) { state[0] = state[N-1]; i=1; }
++        if (j>=key_length) j=0;
++    }
++    for (k=N-1; k; k--) {
++        state[i] = (state[i] ^ ((state[i-1] ^ (state[i-1] >> 30)) * 1566083941UL))
++          - i; /* non linear */
++        state[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
++        i++;
++        if (i>=N) { state[0] = state[N-1]; i=1; }
++    }
++
++    state[0] = 0x80000000UL; /* MSB is 1; assuring non-zero initial array */ 
++    left = 1; initf = 1;
++}
++
++/* Some redundancy in this function to improve efficiency */
++void genrand_buf(char *buf, size_t bufsize)
++{
++    unsigned long *array = (unsigned long *)buf;
++    int arraysize = (bufsize / 4) + ((bufsize % 4) ? 1 : 0);
++    int i;
++
++    for (i = 0; i < arraysize; i++) {
++        unsigned long y;
++
++        if (--left == 0) {
++            unsigned long *p=state;
++            int j;
++            
++            /* if init_genrand() has not been called, */
++            /* a default initial seed is used         */
++            if (initf==0) init_genrand(5489UL);
++            
++            left = N;
++            next = state;
++            
++            for (j=N-M+1; --j; p++) 
++                *p = p[M] ^ TWIST(p[0], p[1]);
++            
++            for (j=M; --j; p++) 
++                *p = p[M-N] ^ TWIST(p[0], p[1]);
++            
++            *p = p[M-N] ^ TWIST(p[0], state[0]);
++        }
++        y = *next++;
++
++        /* Tempering */
++        y ^= (y >> 11);
++        y ^= (y << 7) & 0x9d2c5680UL;
++        y ^= (y << 15) & 0xefc60000UL;
++        y ^= (y >> 18);
++
++        if (i <= bufsize / 4)
++            array[i] = y;
++        else  /* fill the remainder, if any */
++            memcpy(&array[i], &y, bufsize % 4);
++    }
++}
++
+diff -Npaur dcfldd-1.3.4-1/random.h dcfldd/random.h
+--- dcfldd-1.3.4-1/random.h	1970-01-01 01:00:00.000000000 +0100
++++ dcfldd/random.h	2015-11-22 15:25:17.000000000 +0100
+@@ -0,0 +1,17 @@
++#ifndef RANDOM_H
++#define RANDOM_H 1
++
++#include <string.h>
++
++extern void init_genrand(unsigned long);
++extern void init_by_array(unsigned long [], int);
++extern unsigned long genrand_int32(void);
++extern long genrand_int31(void);
++extern double genrand_real1(void);
++extern double genrand_real2(void);
++extern double genrand_real3(void);
++extern double genrand_res53(void);
++
++extern void genrand_buf(char *, size_t);
++
++#endif /* RANDOM_H */
+diff -Npaur dcfldd-1.3.4-1/sha2.c dcfldd/sha2.c
+--- dcfldd-1.3.4-1/sha2.c	2005-05-13 20:52:06.000000000 +0200
++++ dcfldd/sha2.c	2015-11-22 15:25:17.000000000 +0100
+@@ -29,9 +29,11 @@
+  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+  * SUCH DAMAGE.
+  *
+- * $Id: sha2.c,v 1.3 2005/05/13 18:52:06 harbourn Exp $
++ * $Id: sha2.c,v 1.1 2001/11/08 00:01:51 adg Exp adg $
+  */
+ 
++// RBF - Update this file to use WORDS_BIGENDIAN instead of BYTE_ORDER
++
+ #include <string.h>	/* memcpy()/memset() or bcopy()/bzero() */
+ #include <assert.h>	/* assert() */
+ #include "sha2.h"
+@@ -226,7 +228,7 @@ void SHA512_Transform(SHA512_CTX*, const
+ 
+ /*** SHA-XYZ INITIAL HASH VALUES AND CONSTANTS ************************/
+ /* Hash constant words K for SHA-256: */
+-const static sha2_word32 K256[64] = {
++static const sha2_word32 K256[64] = {
+ 	0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL,
+ 	0x3956c25bUL, 0x59f111f1UL, 0x923f82a4UL, 0xab1c5ed5UL,
+ 	0xd807aa98UL, 0x12835b01UL, 0x243185beUL, 0x550c7dc3UL,
+@@ -246,7 +248,7 @@ const static sha2_word32 K256[64] = {
+ };
+ 
+ /* Initial hash value H for SHA-256: */
+-const static sha2_word32 sha256_initial_hash_value[8] = {
++static const sha2_word32 sha256_initial_hash_value[8] = {
+ 	0x6a09e667UL,
+ 	0xbb67ae85UL,
+ 	0x3c6ef372UL,
+@@ -258,7 +260,7 @@ const static sha2_word32 sha256_initial_
+ };
+ 
+ /* Hash constant words K for SHA-384 and SHA-512: */
+-const static sha2_word64 K512[80] = {
++static const sha2_word64 K512[80] = {
+ 	0x428a2f98d728ae22ULL, 0x7137449123ef65cdULL,
+ 	0xb5c0fbcfec4d3b2fULL, 0xe9b5dba58189dbbcULL,
+ 	0x3956c25bf348b538ULL, 0x59f111f1b605d019ULL,
+@@ -302,7 +304,7 @@ const static sha2_word64 K512[80] = {
+ };
+ 
+ /* Initial hash value H for SHA-384 */
+-const static sha2_word64 sha384_initial_hash_value[8] = {
++static const sha2_word64 sha384_initial_hash_value[8] = {
+ 	0xcbbb9d5dc1059ed8ULL,
+ 	0x629a292a367cd507ULL,
+ 	0x9159015a3070dd17ULL,
+@@ -314,7 +316,7 @@ const static sha2_word64 sha384_initial_
+ };
+ 
+ /* Initial hash value H for SHA-512 */
+-const static sha2_word64 sha512_initial_hash_value[8] = {
++static const sha2_word64 sha512_initial_hash_value[8] = {
+ 	0x6a09e667f3bcc908ULL,
+ 	0xbb67ae8584caa73bULL,
+ 	0x3c6ef372fe94f82bULL,
+diff -Npaur dcfldd-1.3.4-1/sha2.h dcfldd/sha2.h
+--- dcfldd-1.3.4-1/sha2.h	2005-05-13 20:52:06.000000000 +0200
++++ dcfldd/sha2.h	2015-11-22 15:25:17.000000000 +0100
+@@ -29,7 +29,7 @@
+  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+  * SUCH DAMAGE.
+  *
+- * $Id: sha2.h,v 1.3 2005/05/13 18:52:06 harbourn Exp $
++ * $Id: sha2.h,v 1.1 2001/11/08 00:02:01 adg Exp adg $
+  */
+ 
+ #ifndef __SHA2_H__
+diff -Npaur dcfldd-1.3.4-1/sizeprobe.c dcfldd/sizeprobe.c
+--- dcfldd-1.3.4-1/sizeprobe.c	2005-05-15 22:15:28.000000000 +0200
++++ dcfldd/sizeprobe.c	2015-11-22 15:25:17.000000000 +0100
+@@ -64,6 +64,8 @@ static off_t get_dev_size(int fd, long b
+ {
+     off_t num_sectors = 0;
+   
++    // RBF - Update get_dev_size with md5deep 2.0 code for 2nd ioctl call
++
+     if (ioctl(fd, BLKGETSIZE, &num_sectors))
+         log_info("%s: ioctl call to BLKGETSIZE failed.\n", program_name);
+     else 
+diff -Npaur dcfldd-1.3.4-1/split.c dcfldd/split.c
+--- dcfldd-1.3.4-1/split.c	2005-05-13 20:52:06.000000000 +0200
++++ dcfldd/split.c	2015-11-22 15:25:17.000000000 +0100
+@@ -39,7 +39,9 @@ static char *letters = "abcdefghijklmnop
+ #define NUM_LETTERS 26
+ 
+ static char *getext(char *, int);
+-static int maxsplits(char *);
++
++// RBF - This function is not used
++//static int maxsplits(char *);
+ 
+ /* Generate a split file extension string based on
+  * the specified format string and a given number
+@@ -54,28 +56,34 @@ static char *getext(char *fmt, int num)
+ 
+     retval = malloc(fmtlen);
+ 
+-    /* Fill the retval in reverse while constantly dividing num apropriately */
+-    for (i = fmtlen - 1; i >= 0; i--) {
++    if ('d' == fmt[0])
++      snprintf(retval,fmtlen+1,"%0*d",fmtlen,num+1);
++    else
++    {
++      /* Fill the retval in reverse while constantly dividing num apropriately */
++      for (i = fmtlen - 1; i >= 0; i--) {
+         int x;
+-
++	
+         if (fmt[i] == 'a') {
+-            x = num % NUM_LETTERS;
+-            retval[i] = letters[x];
+-            num = num / NUM_LETTERS;
++	  x = num % NUM_LETTERS;
++	  retval[i] = letters[x];
++	  num = num / NUM_LETTERS;
+         } else {
+-            x = num % NUM_NUMBERS;
+-            retval[i] = numbers[x];
+-            num = num / NUM_NUMBERS;
++	  x = num % NUM_NUMBERS;
++	  retval[i] = numbers[x];
++	  num = num / NUM_NUMBERS;
+         }
++      }
++      retval[fmtlen] = '\0';
+     }
+-
+-    retval[fmtlen] = '\0';
+     
+     return retval;
+ }
+ 
+ /* Given a format string, determine the maximum number of splits
+  * that can be used. */
++/* This function is currently not being used and thus commented out */
++/*
+ static int maxsplits(char *fmt)
+ {
+     int fmtlen = strlen(fmt);
+@@ -89,6 +97,8 @@ static int maxsplits(char *fmt)
+ 
+     return retval;
+ }
++*/
++
+ 
+ /* Open the next extension in a split sequence */
+ static void open_split(split_t *split)
+@@ -102,6 +112,10 @@ static void open_split(split_t *split)
+     asprintf(&fname, "%s.%s", split->name, ext);
+     free(ext);
+ 
++    /* RBF - Experimental method for closing the existing file handle */
++    if (split->currfd != -1)
++      close(split->currfd);
++
+     fd = open(fname, O_WRONLY | O_CREAT, perms);
+ 
+     if (fd < 0)
+diff -Npaur dcfldd-1.3.4-1/system.h dcfldd/system.h
+--- dcfldd-1.3.4-1/system.h	2005-05-10 01:56:13.000000000 +0200
++++ dcfldd/system.h	2015-11-22 15:25:17.000000000 +0100
+@@ -159,7 +159,9 @@ extern int errno;
+ #if O_BINARY
+ # ifndef __DJGPP__
+ #  define setmode _setmode
++#ifndef fileno
+ #  define fileno(_fp) _fileno (_fp)
++#endif
+ # endif /* not DJGPP */
+ # define SET_BINARY(_f) do {if (!isatty(_f)) setmode (_f, O_BINARY);} while (0)
+ # define SET_BINARY2(_f1, _f2)		\
+diff -Npaur dcfldd-1.3.4-1/util.c dcfldd/util.c
+--- dcfldd-1.3.4-1/util.c	2006-02-12 15:45:16.000000000 +0100
++++ dcfldd/util.c	2015-11-22 15:25:17.000000000 +0100
+@@ -40,6 +40,7 @@
+ #include "config.h"
+ #include <unistd.h>
+ #include <errno.h>
++#include "safe-read.h"
+ 
+ int buggy_lseek_support(int fdesc)
+ {
+@@ -304,7 +305,7 @@ void replace_escapes(char *str)
+ char *strndup(const char *str, size_t n)
+ {
+     char *retval;
+-    int i;
++    size_t i;
+     
+     if (str == NULL || n == 0)
+         return NULL;
+@@ -433,3 +434,20 @@ int pclose2(FILE *iop)
+ 		
+ 	return (pid == -1 ? -1 : pstat);
+ }
++
++char *commaprint(uintmax_t n, char *buf, size_t buflen)
++{
++    char *p = &buf[buflen - 1];
++    int i = 0;
++
++    *p = '\0';
++    do {
++        if (i % 3 == 0 && i != 0)
++            *--p = ',';
++        *--p = '0' + n % 10;
++        n /= 10;
++        i++;
++    } while (n != 0);
++
++    return p;
++}
+diff -Npaur dcfldd-1.3.4-1/util.h dcfldd/util.h
+--- dcfldd-1.3.4-1/util.h	2006-01-02 02:16:52.000000000 +0100
++++ dcfldd/util.h	2015-11-22 15:25:17.000000000 +0100
+@@ -41,7 +41,8 @@ extern void time_left(char *, size_t, in
+ extern int bit_count(register unsigned int);
+ extern void replace_escapes(char *);
+ extern FILE *popen2(const char *, const char *);
+-extern pclose2(FILE *);
++extern int pclose2(FILE *);
++extern char *commaprint(uintmax_t n, char *buf, size_t buflen);
+ 
+ #if (!HAVE_DECL_STRNDUP)
+ extern char *strndup(const char *, size_t);
