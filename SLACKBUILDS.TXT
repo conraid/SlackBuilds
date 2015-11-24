@@ -91,10 +91,10 @@ SLACKBUILD SHORT DESCRIPTION:  atkmm (C++ interface for ATK)
 SLACKBUILD NAME: atom
 SLACKBUILD LOCATION: ./atom
 SLACKBUILD FILES: atom.SlackBuild atom.info doinst.sh slack-desc
-SLACKBUILD VERSION: 1.2.3
+SLACKBUILD VERSION: 1.2.4
 SLACKBUILD REQUIRED: node npm grunt-cli
-SLACKBUILD DOWNLOAD: https://github.com/atom/atom/archive/v1.2.3.tar.gz
-SLACKBUILD MD5SUM: 99722dbfb105953e6a568bbd81bd43d6
+SLACKBUILD DOWNLOAD: https://github.com/atom/atom/archive/v1.2.4.tar.gz
+SLACKBUILD MD5SUM: c39979527badc8a17d0af47d36994990
 SLACKBUILD SHORT DESCRIPTION:  atom (text editor)
 
 SLACKBUILD NAME: atop
@@ -376,6 +376,15 @@ SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/clamav/clamav/0.98
 SLACKBUILD MD5SUM: 157c601161da1c2d5a0e48ea1b49e067
 SLACKBUILD SHORT DESCRIPTION:  clamav (open source antivirus engine)
 
+SLACKBUILD NAME: codelite
+SLACKBUILD LOCATION: ./codelite
+SLACKBUILD FILES: codelite.SlackBuild codelite.info doinst.sh slack-desc
+SLACKBUILD VERSION: 9.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/eranif/codelite/archive/9.0.tar.gz
+SLACKBUILD MD5SUM: 9724f3048934544d13febde5140c7ecf
+SLACKBUILD SHORT DESCRIPTION:  codelite (A Free, open source, cross platform C/C++/PHP IDE)
+
 SLACKBUILD NAME: collectd
 SLACKBUILD LOCATION: ./collectd
 SLACKBUILD FILES: collectd.SlackBuild collectd.info doinst.sh libstatgrab.patch libstatgrab2.patch rc.collectd slack-desc
@@ -604,10 +613,10 @@ SLACKBUILD SHORT DESCRIPTION:  docutils (Python Documentation Utilities)
 SLACKBUILD NAME: dos2unix
 SLACKBUILD LOCATION: ./dos2unix
 SLACKBUILD FILES: dos2unix.SlackBuild dos2unix.info slack-desc
-SLACKBUILD VERSION: 7.3.1
+SLACKBUILD VERSION: 7.3.2
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/dos2unix/dos2unix-7.3.1.tar.gz
-SLACKBUILD MD5SUM: 943b1765e14bd42848c62d84399855ab
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/dos2unix/dos2unix-7.3.2.tar.gz
+SLACKBUILD MD5SUM: 77701464e6d715676f57304f6adc13ad
 SLACKBUILD SHORT DESCRIPTION:  dos2unix (DOS/MAC to UNIX text file format converter)
 
 SLACKBUILD NAME: dsniff
@@ -1009,10 +1018,10 @@ SLACKBUILD SHORT DESCRIPTION:  hping (TCP/IP packet assembler/analyzer)
 SLACKBUILD NAME: hstr
 SLACKBUILD LOCATION: ./hstr
 SLACKBUILD FILES: hstr.SlackBuild hstr.info slack-desc
-SLACKBUILD VERSION: 1.17
+SLACKBUILD VERSION: 1.18
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/dvorka/hstr/archive/1.17.tar.gz
-SLACKBUILD MD5SUM: 75d07a9b962fb693978c1ba32f9fd3f4
+SLACKBUILD DOWNLOAD: https://github.com/dvorka/hstr/releases/download/1.18/hh-1.18-src.tgz
+SLACKBUILD MD5SUM: 
 SLACKBUILD SHORT DESCRIPTION:  hstr (Shell history suggest box)
 
 SLACKBUILD NAME: ht
@@ -3429,7 +3438,7 @@ SLACKBUILD SHORT DESCRIPTION:  Subtitle Composer (KDE/QT Subtitle Editor9
 
 SLACKBUILD NAME: suricata
 SLACKBUILD LOCATION: ./suricata
-SLACKBUILD FILES: doinst.sh rc.suricata slack-desc suricata.SlackBuild suricata.info suricata.yaml.patch
+SLACKBUILD FILES: doinst.sh patches/01-logging.patch patches/03-rulex_reload.patch patches/04-suricata.yaml.patch rc.suricata slack-desc suricata.SlackBuild suricata.info
 SLACKBUILD VERSION: 2.1beta4
 SLACKBUILD REQUIRED: geoip jansson libcap-ng libnet lua luajit libhtp
 SLACKBUILD DOWNLOAD: http://www.openinfosecfoundation.org/download/suricata-2.1beta4.tar.gz
@@ -3502,10 +3511,10 @@ SLACKBUILD SHORT DESCRIPTION:  testdisk (data recovery software)
 SLACKBUILD NAME: tidy-html5
 SLACKBUILD LOCATION: ./tidy-html5
 SLACKBUILD FILES: slack-desc tidy-html5.SlackBuild tidy-html5.info
-SLACKBUILD VERSION: 5.1.24
+SLACKBUILD VERSION: 5.1.25
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/htacg/tidy-html5/archive/5.1.24.tar.gz
-SLACKBUILD MD5SUM: 2d642c88bdb8f8457a39c6c0a3d88140
+SLACKBUILD DOWNLOAD: https://github.com/htacg/tidy-html5/archive/5.1.25.tar.gz
+SLACKBUILD MD5SUM: 5fd96deef635ab8cea3dc74079f54d95
 SLACKBUILD SHORT DESCRIPTION:  tidy-html5 (HTML Tidy with HTML5 support)
 
 SLACKBUILD NAME: tig
@@ -3834,7 +3843,7 @@ SLACKBUILD SHORT DESCRIPTION:  wput (utility for putting files using the FTP pro
 
 SLACKBUILD NAME: wxgtk
 SLACKBUILD LOCATION: ./wxgtk
-SLACKBUILD FILES: slack-desc wxgtk.SlackBuild wxgtk.info
+SLACKBUILD FILES: make-abicheck-non-fatal.patch slack-desc wxgtk.SlackBuild wxgtk.info
 SLACKBUILD VERSION: 3.0.2
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/wxwindows/3.0.2/wxWidgets-3.0.2.tar.bz2
