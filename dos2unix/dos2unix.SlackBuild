@@ -27,8 +27,8 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=${PRGNAM:-dos2unix}
-VERSION=${VERSION:-7.3.1}
+PRGNAM=dos2unix
+VERSION=${VERSION:-7.3.2}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -37,9 +37,9 @@ OUTPUT=${OUTPUT:-/tmp}
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-    i?86) ARCH=i686 ;;
-    arm*) ARCH=arm ;;
-    *) ARCH=$( uname -m ) ;;
+  i?86) ARCH=i686 ;;
+  arm*) ARCH=arm ;;
+  *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -50,7 +50,7 @@ elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC"
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -65,11 +65,8 @@ tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
 cd $PRGNAM-$VERSION
 
 chown -R root:root .
-find . \
- \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
-  -o -perm 511 \) -exec chmod 755 {} \; -o \
- \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
-  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
+find . -executable -exec chmod 755 {} \+
+find . ! -executable -exec chmod 644 {} \+
 
 sed -i 's#$(DESTDIR)$(datarootdir)/$(dir $(manfile))#$(DESTDIR)$(prefix)/$(dir $(manfile))#g' Makefile 
 make RPM_OPT_FLAGS="$SLKCFLAGS" mandir=/usr/man docdir=/usr/doc/$PRGNAM-$VERSION
