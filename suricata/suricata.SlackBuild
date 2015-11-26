@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-suricata}
-VERSION=${VERSION:-2.1beta4}
-BUILD=${BUILD:-2}
+VERSION=${VERSION:-3.0RC1}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -76,12 +76,7 @@ find . ! -executable -exec chmod 644 {} \+
 # Change magic file path with default slackware magic file path.
 sed "s|/usr/share/file/magic|/etc/file/magic.mgc|g" -i configure* -i suricata.yaml.in
 
-# Apply patches from git
-for PATCH in $CWD/patches/*.patch; do
-patch -p1 -i $PATCH
-done
-
-autoreconf -if
+autoreconf 
 LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -102,7 +97,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-af-packet \
   --enable-geoip \
   --enable-lua \
-  --enable-luajit \
   --enable-unix-socket \
   --enable-non-bundled-htp \
   --host=$ARCH-slackware-linux \
