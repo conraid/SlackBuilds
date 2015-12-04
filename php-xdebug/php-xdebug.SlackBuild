@@ -29,7 +29,8 @@ CWD=$(pwd)
 
 SRCNAM=xdebug
 PRGNAM=php-${SRCNAM}
-VERSION=${VERSION:-2.4.0RC1}
+VERSION=${VERSION:-2.4.0rc2}
+SRCVERSION="$(echo $VERSION | tr a-z A-Z)"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -63,9 +64,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $SRCNAM-$VERSION
+rm -rf $SRCNAM-$SRCVERSION
 tar xzvf $CWD/$SRCNAM-$VERSION.tgz
-cd $SRCNAM-$VERSION
+cd $SRCNAM-$SRCVERSION
 
 chown -R root:root .
 find -L . -executable -exec chmod 755 {} \+
