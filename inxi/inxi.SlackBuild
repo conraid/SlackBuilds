@@ -5,74 +5,60 @@
 # Copyright 2011-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
-# Redistribution and use of this script, with or without modification, is
-# permitted provided that the following conditions are met:
-#
-# 1. Redistributions of this script must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-#
-# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
-# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version, with the following exception:
+# the text of the GPL license may be omitted.
+
+# This program is distributed in the hope that it will be useful, but
+# without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose. Compiling,
+# interpreting, executing or merely reading the text of the program
+# may result in lapses of consciousness and/or very being, up to and
+# including the end of all existence and the Universe as we know it.
+# See the GNU General Public License for more details.
+
+# You may have received a copy of the GNU General Public License along
+# with this program (most likely, a file named COPYING).  If not, see
+# <http://www.gnu.org/licenses/>.
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 #
-# Exit on most errors or unset variables
 set -eu
 
-# Set variables:
 CWD=$(pwd)
 
-PRGNAM=${PRGNAM:-inxi}
-PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
-# Leave VERSION empty to automatically set.
-# For example by downloading https://inxi.googlecode.com/svn/trunk/inxi.tar.gz
-VERSION=${VERSION:-2.2.28} 
+PRGNAM=inxi
+VERSION="2.2.31"
+COMMIT="18c180f" 
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAM}
-ARCH=${ARCH:="noarch"} 
+PKG=$TMP/package-$PRGNAM
+OUTPUT=${OUTPUT:-/tmp}
+ARCH=noarch 
 
-# Extract files
-rm -rf ${PKG}
-mkdir -p ${TMP} ${PKG}
-cd ${TMP}
-rm -rf ${PRGNAM}
-mkdir -p ${PRGNAM}
-cd ${PRGNAM}
-tar xvf ${CWD}/${PRGNAM}.tar.gz
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAM-${COMMIT}*
+tar xvf $CWD/$PRGNAM-${COMMIT}*.tar.gz
+cd $PRGNAM-${COMMIT}*
 
-# Check version if VERSION is empty
-VERSION=${VERSION:-$(grep "^####  Version:" inxi | cut -f4 -d" ")}
-PKGVERSION=$(echo ${VERSION} | tr - _)
-PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${PKGVERSION}"
-
-# Install:
-install -Dm755 inxi ${PKG}/usr/bin/inxi
+# Install bin:
+install -Dm755 inxi $PKG/usr/bin/inxi
 
 # Install man page:
-install -Dm644 inxi.1.gz ${PKG}/usr/man/man1/inxi.1.gz
-
-# Install changelog
-install -Dm644 inxi.changelog ${PKGDOCDIR}/ChangeLog
+install -Dm644 inxi.1.gz $PKG/usr/man/man1/inxi.1.gz
 
 # Install Copyright files
-install -Dm644 ${CWD}/gpl.txt ${PKGDOCDIR}/COPYING
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cp -r *.txt inxi.changelog $PKG/usr/doc/$PRGNAM-$VERSION
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
-# Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
+mkdir -p $PKG/install 
+cat $CWD/slack-desc > $PKG/install/slack-desc
 
-# Add slack-desc
-install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
-
-# Create package:
-cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
