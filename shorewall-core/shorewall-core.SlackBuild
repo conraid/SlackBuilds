@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=shorewall-core
-VERSION=${VERSION:-5.0.2}
+VERSION=${VERSION:-5.0.2.1}
 BUILD=${BUILD:-1}
 ARCH=${ARCH:="noarch"}
 TAG=${TAG:-cf}
@@ -48,8 +48,7 @@ tar xvf $CWD/$PRGNAM-$VERSION.tar.bz2
 cd $PRGNAM-$VERSION
 
 chown -R root:root .
-find -L . -executable -exec chmod 755 {} \+
-find -L . ! -executable -exec chmod 644 {} \+
+chmod -R u+w,go+r-w,a+X-s .
 
 ./configure
 DESTDIR=$PKG ./install.sh
