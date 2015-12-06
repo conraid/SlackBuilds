@@ -56,6 +56,7 @@ install -Dm644 inxi.1.gz $PKG/usr/man/man1/inxi.1.gz
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -r *.txt inxi.changelog $PKG/usr/doc/$PRGNAM-$VERSION
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+chmod 644 $PKG/usr/doc/$PRGNAM-$VERSION/*.*
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
