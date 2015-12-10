@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 SRCNAM=bower
 PRGNAM=node-bower
-VERSION=${VERSION:-1.6.8}
+VERSION=${VERSION:-1.7.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -70,8 +70,7 @@ tar xvf $CWD/$SRCNAM-$VERSION.tar.gz
 cd $SRCNAM-$VERSION
 
 chown -R root:root .
-find . -executable -exec chmod 755 {} \+
-find . ! -executable -exec chmod 644 {} \+
+chmod -R u+w,go+r-w,a+X-s .
 
 DESTDIR=$PKG npm install --user root -g
 
