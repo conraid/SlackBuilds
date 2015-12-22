@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PRGNAM=wireshark
 VERSION=${VERSION:-2.0.0}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -70,6 +70,10 @@ chown -R root:root .
 find -L . -executable -exec chmod 755 {} \+
 find -L . ! -executable -exec chmod 644 {} \+
 
+# Fix patch with QT
+# https://bugs.wireshark.org/bugzilla/show_bug.cgi?id=11833
+patch -p1 -i $CWD/segfault_fix.patch
+
 LUA_LIBS="-llua5.2 -lm" \
 LUA_CFLAGS="-I/usr/include/lua5.2" \
 CFLAGS="$SLKCFLAGS" \
@@ -84,14 +88,13 @@ CXXFLAGS="$SLKCFLAGS" \
   --disable-usr-local \
   --enable-tfshark \
   --enable-setuid-install \
-  --enable-airpcap \
   --with-lua \
   --with-ssl=/usr/lib$LIBDIRSUFFIX \
   --with-geoip \
   --with-plugins \
   --with-gtk2=no \
   --with-gtk3=yes \
-  --with-qt=no \
+  --with-qt=4 \
   --docdir=/usr/doc/$PRGNAM-$VERSION \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
@@ -101,9 +104,6 @@ make DESTDIR=$PKG install
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
-
-# Link to gtk version. QT4 version causes a segmentation fault.
-( cd $PKG/usr/bin; ln -s wireshark-gtk wireshark )
 
 # add headers files
 install -dm755 $PKG/usr/include/$PRGNAM/{epan/{crypt,dfilter,dissectors,ftypes,wmem},wiretap,wsutil}
