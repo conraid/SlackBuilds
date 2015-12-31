@@ -2,120 +2,96 @@
 #
 # Slackware build script for qtcurve
 #
-# Copyright 2008-2014 Corrado Franco (http://conraid.net)
+# Copyright 2008-2015 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
-# Redistribution and use of this script, with or without modification, is
-# permitted provided that the following conditions are met:
-#
-# 1. Redistributions of this script must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-#
-# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
-# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version, with the following exception:
+# the text of the GPL license may be omitted.
 
-# Exit on most errors or unset variables
+# This program is distributed in the hope that it will be useful, but
+# without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose. Compiling,
+# interpreting, executing or merely reading the text of the program
+# may result in lapses of consciousness and/or very being, up to and
+# including the end of all existence and the Universe as we know it.
+# See the GNU General Public License for more details.
+
+# You may have received a copy of the GNU General Public License along
+# with this program (most likely, a file named COPYING).  If not, see
+# <http://www.gnu.org/licenses/>.
+
 set -eu
 
-# Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-qtcurve}
-PKGNAME=$(echo $PRGNAME | tr A-Z a-z)
-VERSION=${VERSION:-1.8.18}
-BUILD=${BUILD:-2}
+PRGNAM=qtcurve
+VERSION=330bfa5
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PKGNAME
-DOCS="$PKG/usr/doc/$PKGNAME-$VERSION"
+PKG=$TMP/package-$PRGNAM
+OUTPUT=${OUTPUT:-/tmp}
 
-# Insert document files in this variable
 DOCFILES="AUTHORS Bugs* COPYING README* ChangeLog.md README* TODO*"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
-# Automatically determine the architecture we're building on:
-if [ -z "$ARCH" ]; then
-    case "$( uname -m )" in
-        i?86) ARCH=i686 ;;
-        arm*) ARCH=arm ;;
-        # Unless $ARCH is already set, use uname -m for all other archs:
-        *) ARCH=$( uname -m ) ;;
-    esac
+if [ -z ${ARCH:=""} ]; then
+  case "$( uname -m )" in
+  i?86) ARCH=i586 ;;
+  arm*) ARCH=arm ;;
+  *) ARCH=$( uname -m ) ;;
+  esac
 fi
 
-# Set compiling FLAGS
-case "$ARCH" in
-    i486)
-        SLKCFLAGS="-O2 -march=i486 -mtune=i686"; CHOST="i486"
-        SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    i686)
-        SLKCFLAGS="-O2 -march=i686 -pipe -fomit-frame-pointer"; CHOST="i486"
-        SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-    x86_64)
-        SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"; CHOST="x86_64"
-        SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-        ;;
-    *)
-        SLKCFLAGS="-O2"; CHOST=$ARCH
-        SLKLDFLAGS=""; LIBDIRSUFFIX=""
-        ;;
-esac
+if [ "$ARCH" = "i586" ]; then
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  LIBDIRSUFFIX="64"
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+fi
 
-# Extract source
 mkdir -p $PKG
 cd $TMP
-rm -rf $PRGNAME-$VERSION $PKG
-tar xvf $CWD/$PRGNAME-$VERSION.tar.gz
-cd $TMP/$PRGNAME-$VERSION
-chown -R root:root .
-chmod -R u+w,go+r-w,a-s .
+rm -rf $PRGNAM
+tar xvf $CWD/$PRGNAM-$VERSION.tar.bz2
+cd $PRGNAM
 
-# Configure
+chown -R root:root .
+find . -executable -exec chmod 755 {} \+
+find . ! -executable -exec chmod 644 {} \+
+
 mkdir build
 cd build
 cmake \
+ -Wno-dev \
  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
  -DCMAKE_INSTALL_PREFIX=/usr \
  -DMAN_INSTALL_DIR=/usr/man \
  -DSYSCONF_INSTALL_DIR=/etc \
- -DLIB_SUFFIX=${LIBDIRSUFFIX} \
+ -DLIB_SUFFIX=$LIBDIRSUFFIX \
  -DENABLE_QT5=Off \
  ..
 
-# Build and install
 make VERBOSE=1
 make install/strip VERBOSE=1 DESTDIR=$PKG
 cd ..
 
-# Add a documentation directory:
-mkdir -p ${DOCS}
-for i in ${DOCFILES}; do
-    if [ -e ${i} ]; then
-        if ! [ -L ${i} ]; then
-            cp -a ${i} ${DOCS}
-        else
-            cp -LRp ${i} ${DOCS}
-        fi
-    fi;
-done
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
-# Add a slackbuild script:
-install -Dm644 $CWD/$PKGNAME.SlackBuild $DOCS/$PKGNAME.SlackBuild
+mkdir -p $PKG/install 
+cat $CWD/slack-desc > $PKG/install/slack-desc
 
-# Add slack-desc
-install -Dm644 $CWD/slack-desc $PKG/install/slack-desc
-
-# Create package:
 cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PKGNAME-$VERSION-$ARCH-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
