@@ -30,8 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=inxi
-VERSION="2.2.31"
-COMMIT="18c180f" 
+COMMIT="1d0ff19" 
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -42,9 +41,11 @@ ARCH=noarch
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-${COMMIT}*
+rm -rf $PRGNAM-${COMMIT}* || true
 tar xvf $CWD/$PRGNAM-${COMMIT}*.tar.gz
 cd $PRGNAM-${COMMIT}*
+
+VERSION=$( grep "^#*[[:space:]]*Version:" $PRGNAM | cut -d" " -f4)
 
 # Install bin:
 install -Dm755 inxi $PKG/usr/bin/inxi
