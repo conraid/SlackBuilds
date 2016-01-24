@@ -1,0 +1,57 @@
+From 416adba8c000bd2a70efc881283249d03a56553b Mon Sep 17 00:00:00 2001
+From: Paul LeoNerd Evans <leonerd@leonerd.org.uk>
+Date: Tue, 29 Dec 2015 12:37:19 +0000
+Subject: [PATCH] Correct handling of ASCII NUL to imply Ctrl-Space
+
+---
+ t/02getkey.c | 10 +++++++++-
+ termkey.c    |  8 +++++++-
+ 2 files changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/t/02getkey.c b/t/02getkey.c
+index 279a598..258c2e3 100644
+--- a/t/02getkey.c
++++ b/t/02getkey.c
+@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
+   TermKey   *tk;
+   TermKeyKey key;
+ 
+-  plan_tests(31);
++  plan_tests(35);
+ 
+   tk = termkey_new_abstract("vt100", 0);
+ 
+@@ -69,6 +69,14 @@ int main(int argc, char *argv[])
+   is_int(key.code.sym,    TERMKEY_SYM_ESCAPE,  "key.code.sym after Ctrl-Escape");
+   is_int(key.modifiers,   TERMKEY_KEYMOD_CTRL, "key.modifiers after Ctrl-Escape");
+ 
++  termkey_push_bytes(tk, "\0", 1);
++
++  is_int(termkey_getkey(tk, &key), TERMKEY_RES_KEY, "getkey yields RES_KEY after Ctrl-Space");
++
++  is_int(key.type,           TERMKEY_TYPE_UNICODE, "key.type after Ctrl-Space");
++  is_int(key.code.codepoint, ' ',                  "key.code.codepoint after Ctrl-Space");
++  is_int(key.modifiers,      TERMKEY_KEYMOD_CTRL,  "key.modifiers after Ctrl-Space");
++
+   termkey_destroy(tk);
+ 
+   return exit_status();
+diff --git a/termkey.c b/termkey.c
+index 448df86..a88e6c2 100644
+--- a/termkey.c
++++ b/termkey.c
+@@ -729,7 +729,13 @@ static TermKeyResult parse_utf8(const unsigned char *bytes, size_t len, long *cp
+ 
+ static void emit_codepoint(TermKey *tk, long codepoint, TermKeyKey *key)
+ {
+-  if(codepoint < 0x20) {
++  if(codepoint == 0) {
++    // ASCII NUL = Ctrl-Space
++    key->type = TERMKEY_TYPE_KEYSYM;
++    key->code.sym = TERMKEY_SYM_SPACE;
++    key->modifiers = TERMKEY_KEYMOD_CTRL;
++  }
++  else if(codepoint < 0x20) {
+     // C0 range
+     key->code.codepoint = 0;
+     key->modifiers = 0;
