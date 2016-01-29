@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 SRCNAM=zuluCrypt
 PRGNAM=zulucrypt
-VERSION=${VERSION:-4.7.8}
+VERSION=${VERSION:-4.8.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -55,7 +55,7 @@ elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -70,8 +70,7 @@ tar xvf $CWD/$SRCNAM-$VERSION.tar.xz || tar xvf $CWD/v$VERSION.tar.xz
 cd $SRCNAM-$VERSION
 
 chown -R root:root .
-find . -executable -exec chmod 755 {} \+
-find . ! -executable -exec chmod 644 {} \+
+chmod -R u+w,go+r-w,a+X-s .
 
 # Fix man path
 sed 's|share/man/|man/|g' -i {external_libraries/tc-play/,}CMakeLists.txt
