@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 SRCNAM=openal-soft
 PRGNAM=openal
-VERSION=${VERSION:-1.17.1}
+VERSION=${VERSION:-1.17.2}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -68,8 +68,7 @@ tar xvf $CWD/$SRCNAM-$VERSION.tar.bz2
 cd $SRCNAM-$VERSION
 
 chown -R root:root .
-find . -executable -exec chmod 755 {} \+
-find . ! -executable -exec chmod 644 {} \+
+chmod -R u+w,go+r-w,a+X-s .
 
 mkdir -p build
 cd build
