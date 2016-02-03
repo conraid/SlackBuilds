@@ -30,8 +30,9 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=atop
-VERSION=${VERSION:-2.1}
-BUILD=${BUILD:-2}
+SRCVERSION=${SRCVERSION:-2.2-3}
+VERSION=$(echo $SRCVERSION | tr - _)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -54,7 +55,7 @@ elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -64,24 +65,26 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION-1.tar.gz
-cd $PRGNAM-$VERSION
+rm -rf $PRGNAM-$SRCVERSION
+tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz
+cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 # Apply patch to Makefile for mkdir SBINDIR
-patch -p0 -i $CWD/atop-makefile.diff
+patch -p0 -i $CWD/atop-makefile.patch
 
-# Add the init script and fix the paths in it (Thanks to SBo)
-patch -p1 -i $CWD/atop.init.diff
+# Fix path in init script
+sed -e 's|exit 0|exit 1|' \
+    -e 's|/etc/atop/atop.daily\&|/etc/cron.daily/atop \&|g' \
+    -i atop.init
 
-# Fix manpath
-sed -i 's#/usr/share/man/man#/usr/man/man#g' Makefile
+# Fix man path
+sed -i 's|/usr/share/man/man|/usr/man/man|g' Makefile
 
-make FLAGS="$SLKCFLAGS"
-make DESTDIR=$PKG INIPATH=/etc/rc.d CRNPATH=/etc/cron.daily install
+make CFLAGS="$SLKCFLAGS"
+make DESTDIR=$PKG INIPATH=/etc/rc.d CRNPATH=/etc/cron.daily sysvinstall
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
@@ -101,14 +104,13 @@ mv $PKG/etc/cron.daily/atop.daily $PKG/etc/cron.daily/atop.new
 install -Dm0644 $CWD/psacct.logrotate $PKG/etc/logrotate.d/psacct.new
 
 # Delete some dir and files
-rm -rf $PKG/etc/atop
-rm -f $PKG/etc/cron.d/atop
+rm -f $PKG/etc/cron.daily/atop
 rm -f $PKG/etc/rc.d/atopacct
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION
-install -Dm644 $CWD/slackware.readme $PKG/usr/doc/$PRGNAM-$VERSION/README.SLACKWARE #(Thanks to SBo)
-install -Dm644 $CWD/$PRGNAM.SlackBuild $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+cat $CWD/slackware.readme > $PKG/usr/doc/$PRGNAM-$VERSION/README.SLACKWARE # (Thanks to SBo)
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc

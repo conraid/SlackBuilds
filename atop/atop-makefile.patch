@@ -1,0 +1,22 @@
+--- Makefile.orig	2016-02-03 13:10:48.000000000 +0100
++++ Makefile	2016-02-03 13:15:50.024548499 +0100
+@@ -85,7 +85,7 @@ sysvinstall:	genericinstall
+ 		if [ ! -d $(DESTDIR)$(INIPATH) ]; 			\
+ 		then	mkdir -p  $(DESTDIR)$(INIPATH); fi
+ 		#
+-		cp atop.init      $(DESTDIR)$(INIPATH)/atop
++		cp atop.init      $(DESTDIR)$(INIPATH)/rc.atop
+ 		cp atopacct.init  $(DESTDIR)$(INIPATH)/atopacct
+ 		cp atop.cronsysv  $(DESTDIR)$(CRNPATH)/atop
+ 		#
+@@ -146,8 +146,8 @@ genericinstall:	atop atopacctd
+ 		chmod 0700 		$(DESTDIR)$(SBINPATH)/atopacctd
+ 		cp atop   		$(DESTDIR)$(BINPATH)/atop-$(VERS)
+ 		ln -sf atop-$(VERS)     $(DESTDIR)$(BINPATH)/atopsar-$(VERS)
+-		cp atop.daily    	$(DESTDIR)$(SCRPATH)
+-		chmod 0711 	 	$(DESTDIR)$(SCRPATH)/atop.daily
++		cp atop.daily    	$(DESTDIR)$(CRNPATH)
++		chmod 0755 	 	$(DESTDIR)$(CRNPATH)/atop.daily
+ 		cp man/atop.1    	$(DESTDIR)$(MAN1PATH)
+ 		cp man/atopsar.1 	$(DESTDIR)$(MAN1PATH)
+ 		cp man/atoprc.5  	$(DESTDIR)$(MAN5PATH)
