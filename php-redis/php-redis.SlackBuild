@@ -32,7 +32,7 @@ CWD=$(pwd)
 SRCNAM=redis
 PRGNAM=php-redis
 VERSION=${VERSION:-2.2.7}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -70,8 +70,7 @@ tar xvf $CWD/$SRCNAM-$VERSION.tgz
 cd $SRCNAM-$VERSION
 
 chown -R root:root .
-find . -executable -exec chmod 755 {} \+
-find . ! -executable -exec chmod 644 {} \+
+chmod -R u+w,go+r-w,a+X-s .
 
 phpize --clean
 phpize
