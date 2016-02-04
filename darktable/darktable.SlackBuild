@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=darktable
-VERSION=2.0.0
+VERSION=${VERSION:-2.0.1}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -69,8 +69,7 @@ tar xvf $CWD/$PRGNAM-$VERSION.tar.xz
 cd $PRGNAM-$VERSION
 
 chown -R root:root .
-find . -executable -exec chmod 755 {} \+
-find . ! -executable -exec chmod 644 {} \+
+chmod -R u+w,go+r-w,a+X-s .
 
 # Fix doc path
 sed -e "s#share/doc/darktable#doc/darktable-$VERSION#" \
