@@ -2,7 +2,7 @@
 #
 # Slackware build script for mutt (http://www.mutt.org)
 #
-# Copyright 2008-2015 Corrado Franco (http://conraid.net)
+# Copyright 2008-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,11 +30,11 @@ CWD=$(pwd)
 SRCNAM=mutt
 PRGNAM=mutt-sidebar
 VERSION=${VERSION:-1.5.24}
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
-DOCDIR="$PKG/usr/doc/$PRGNAM-${VERSION}"
+OUTPUT=${OUTPUT:-/tmp}
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -44,14 +44,14 @@ if [ -z ${ARCH:=""} ]; then
   esac
 fi
 
-if [ "$ARCH" = "i486" ]; then
-  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+if [ "$ARCH" = "i586" ]; then
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC"
+  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -66,11 +66,7 @@ tar xzvf $CWD/$SRCNAM-$VERSION.tar.gz
 cd $SRCNAM-$VERSION
 
 chown -R root:root .
-find -L . \
- \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
-  -o -perm 511 \) -exec chmod 755 {} \; -o \
- \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
-  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
+find . \
 
 # patch by Lunar Linux to add sidebar support and other patch by Debian and Arch
 for PATCH in $CWD/patches/*.patch; do
@@ -120,17 +116,16 @@ find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r st
 mv $PKG/etc/$PRGNAM/Muttrc $PKG/etc/$PRGNAM/Muttrc.new
 mv $PKG/etc/$PRGNAM/mime.types $PKG/etc/$PRGNAM/mime.types.new
 
-mkdir -p $DOCDIR
-cat $CWD/$PRGNAM.SlackBuild > $DOCDIR/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 install -Dm644 $CWD/$PRGNAM.desktop $PKG/usr/share/applications/$PRGNAM.desktop
 install -Dm644 $CWD/$PRGNAM.xpm $PKG/usr/share/pixmaps/$PRGNAM.xpm
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
-
-install -Dm644  $CWD/doinst.sh $PKG/install/doinst.sh
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
-/sbin/makepkg -l y -c n $CWD/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-tgz}
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
 
