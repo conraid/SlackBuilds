@@ -2,7 +2,7 @@
 #
 # Slackware build script for php-codesniffer
 #
-# Copyright 2015 Corrado Franco (http://conraid.net)
+# Copyright 2015-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ CWD=$(pwd)
 SRCNAM=PHP_CodeSniffer
 PRGNAM=php-codesniffer
 VERSION=${VERSION:-2.5.1}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -56,6 +56,20 @@ pear install -P $PKG $SRCNAM-$VERSION.tgz
 # Remove channel, metadata etc...
 cd $PKG/usr/lib$LIBDIRSUFFIX/php
 rm -r $(ls -A | grep '^\.')
+
+# Install WordPress-Coding-Standards
+# Register in doinst.sh
+mkdir -p $PKG/usr/lib64/php/PHP/CodeSniffer/Standards
+tar xvf $CWD/WordPress-Coding-Standards-0.9.0.tar.gz \
+-C $PKG/usr/lib64/php/PHP/CodeSniffer/Standards --strip-components=1 \
+WordPress-Coding-Standards-0.9.0/WordPress \
+WordPress-Coding-Standards-0.9.0/WordPress-Core \
+WordPress-Coding-Standards-0.9.0/WordPress-Docs \
+WordPress-Coding-Standards-0.9.0/WordPress-Extra \
+WordPress-Coding-Standards-0.9.0/WordPress-VIP
+
+chown -R root:root $PKG/usr/lib64/php/PHP/CodeSniffer/Standards
+chmod -R u+w,go+r-w,a+X-s $PKG/usr/lib64/php/PHP/CodeSniffer/Standards
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a $PKG/usr/lib$LIBDIRSUFFIX/php/doc/$SRCNAM/* $PKG/usr/doc/$PRGNAM-$VERSION || true
