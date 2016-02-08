@@ -2,7 +2,7 @@
 #
 # Slackware build script for etherpoke
 #
-# Copyright 2015 Corrado Franco (http://conraid.net)
+# Copyright 2015-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=${PRGNAM:-etherpoke}
-VERSION=${VERSION:-2.4.0}
+VERSION=${VERSION:-2.5.1}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -41,9 +41,9 @@ DOCFILES="AUTHORS COPYING ChangeLog README* conf"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-    i?86) ARCH=i686 ;;
-    arm*) ARCH=arm ;;
-    *) ARCH=$( uname -m ) ;;
+  i?86) ARCH=i686 ;;
+  arm*) ARCH=arm ;;
+  *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -54,7 +54,7 @@ elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -69,8 +69,7 @@ tar xvf $CWD/$PRGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
 cd $PRGNAM-$VERSION
 
 chown -R root:root .
-find . -executable -exec chmod 755 {} \+
-find . ! -executable -exec chmod 644 {} \+
+chmod -R u+w,go+r-w,a+X-s .
 
 make LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS"
 install -Dsm755 src/$PRGNAM $PKG/usr/bin/$PRGNAM
