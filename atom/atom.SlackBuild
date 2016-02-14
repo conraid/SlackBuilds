@@ -31,7 +31,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=atom
-VERSION=${VERSION:-1.5.1}
+VERSION=${VERSION:-1.5.3}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -43,25 +43,11 @@ DISABLE_METRICS=${DISABLE_METRICS:-yes}
 # Clean cache data
 DELETE_CACHE=${DELETE_CACHE:-yes}
 
-deletecache() {
-  if [ "$DELETE_CACHE" = "yes" ]; then
-  # delete temporal data
-  echo $HOME
-  rm -rf $HOME/.atom/
-  rm -rf /tmp/npm-*/
-  rm -rf $TMP/npm-*/
-  fi
-}
-# Clean cache data on exit
-trap deletecache EXIT
-
-DOCFILES="*.md docs"
-
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
   i?86) ARCH=i686 ;;
   arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+     *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -92,7 +78,7 @@ find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r st
 mv $PKG/usr/bin/apm $PKG/usr/bin/atom-apm
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION
+cp -a *.md docs $PKG/usr/doc/$PRGNAM-$VERSION
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 install -Dm644 resources/$PRGNAM.png $PKG/usr/share/pixmaps/$PRGNAM.png || \
@@ -109,6 +95,13 @@ sed -e 's/<%= appName %>/Atom/' \
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
+
+if [ "$DELETE_CACHE" = "yes" ]; then
+  # delete temporal data
+  rm -rf $HOME/.atom/
+  rm -rf /tmp/npm-*/
+  rm -rf $TMP/npm-*/
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
