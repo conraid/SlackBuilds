@@ -2,7 +2,7 @@
 #
 # Slackware build script for Suricata
 #
-# Copyright 2014-2015 Corrado Franco (http://conraid.net)
+# Copyright 2014-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,8 +29,8 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=${PRGNAM:-suricata}
-VERSION=${VERSION:-3.0RC1}
+PRGNAM=suricata
+VERSION=${VERSION:-3.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -39,12 +39,11 @@ OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="COPYING* ChangeLog LICENSE"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -55,7 +54,7 @@ elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -70,19 +69,18 @@ tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
 cd $PRGNAM-$VERSION
 
 chown -R root:root .
-find . -executable -exec chmod 755 {} \+
-find . ! -executable -exec chmod 644 {} \+
+chmod -R u+w,go+r-w,a+X-s .
 
 # Change magic file path with default slackware magic file path.
 sed "s|/usr/share/file/magic|/etc/file/magic.mgc|g" -i configure* -i suricata.yaml.in
 
 autoreconf 
-LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
+LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr \
-  --libdir=/usr/lib$LIBDIRSUFFIX \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
   --sysconfdir=/etc \
   --localstatedir=/var \
   --mandir=/usr/man \
