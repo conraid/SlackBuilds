@@ -2,7 +2,7 @@
 #
 # Slackware build script for squid
 #
-# Copyright 2013-2015 Corrado Franco (http://conraid.net)
+# Copyright 2013-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -euu
 CWD=$(pwd)
 
 PRGNAM=squid
-VERSION=${VERSION:-4.0.4}
+VERSION=${VERSION:-4.0.5}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -75,7 +75,7 @@ CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr \
-  --libdir=/usr/lib$LIBDIRSUFFIX \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
   --sysconfdir=/etc/squid \
   --localstatedir=/var/log/squid \
   --datadir=/usr/share/squid \
@@ -121,13 +121,11 @@ fi
 
 # Make directory and configuration files (thanks to SBo)
 mkdir -p $PKG/etc/{logrotate.d,rc.d} 
-install -Dm644 $CWD/rc.squid $PKG/etc/rc.d/rc.squid.new
-
-install -Dm644 $CWD/squid.logrotate $PKG/etc/logrotate.d/squid.new
-
+cat $CWD/rc.squid > $PKG/etc/rc.d/rc.squid.new
+cat $CWD/squid.logrotate > $PKG/etc/logrotate.d/squid.new
+cat src/squid.conf.documented > $PKG/etc/squid/squid.conf.documented
 rename .conf .conf.new $PKG/etc/squid/*.conf
 rename .css .css.new $PKG/etc/squid/*.css
-install -Dm644 src/squid.conf.documented $PKG/etc/squid/squid.conf.documented
 
 mkdir -p $PKG/var/{cache,run}/squid
 chown nobody:nobody $PKG/var/{cache,log,run}/squid
