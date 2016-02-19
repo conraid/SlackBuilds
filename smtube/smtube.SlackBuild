@@ -2,7 +2,7 @@
 #
 # Slackware build script for SMTube
 #
-# Copyright 2013-2015 Corrado Franco (http://conraid.net)
+# Copyright 2013-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=smtube
-VERSION=${VERSION:-15.11.0}
+VERSION=${VERSION:-16.1.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -41,7 +41,7 @@ if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
   i?86) ARCH=i686 ;;
   arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+     *) ARCH=$( uname -m ) ;;
   esac
 fi
 
