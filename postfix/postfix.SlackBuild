@@ -2,7 +2,7 @@
 # Slackware build script for postfix (http://www.postfix.org)
 #
 # Copyright 2006, Alan Hicks, Lizella, GA (by slackbuilds.org)
-# Copyright 2008-2015 Corrado Franco (http://conraid.net)
+# Copyright 2008-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -46,8 +46,8 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=postfix
-VERSION=${VERSION:-3.0.3}
-BUILD=${BUILD:-3}
+VERSION=${VERSION:-3.0.4}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -76,7 +76,7 @@ elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC"
+  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -91,11 +91,10 @@ tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
 cd $PRGNAM-$VERSION
 
 chown -R root:root .
-find -L . -executable -exec chmod 755 {} \+
-find -L . ! -executable -exec chmod 644 {} \+
+chmod -R u+w,go+r-w,a+X-s .
 
 # Set config parameters (Default values for the other parameters are fine)
-CONFIG_PARAMS="shlib_directory=/usr/lib$LIBDIRSUFFIX/postfix \
+CONFIG_PARAMS="shlib_directory=/usr/lib${LIBDIRSUFFIX}/postfix \
 manpage_directory=/usr/man \
 readme_directory=/usr/doc/postfix/README_FILES \
 meta_directory=/etc/postfix/meta \
@@ -116,8 +115,8 @@ make makefiles \
   CCARGS+='-DHAS_MYSQL -I/usr/include/mysql' \
   CCARGS+='-DHAS_SQLITE' \
   AUXLIBS="-lsasl2 -lssl -lcrypto" \
-  AUXLIBS_MYSQL="-L/usr/lib$LIBDIRSUFFIX/mysql -lmysqlclient -lz -lm" \
-  AUXLIBS_SQLITE="-L/usr/lib$LIBDIRSUFFIX -lsqlite3 -lpthread"
+  AUXLIBS_MYSQL="-L/usr/lib${LIBDIRSUFFIX}/mysql -lmysqlclient -lz -lm" \
+  AUXLIBS_SQLITE="-L/usr/lib${LIBDIRSUFFIX} -lsqlite3 -lpthread"
 make
 make non-interactive-package \
   install_root=$PKG \
