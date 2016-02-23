@@ -30,7 +30,6 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=inxi
-COMMIT="7880ebc" 
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -41,23 +40,23 @@ ARCH=noarch
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-${COMMIT}* || true
-tar xvf $CWD/$PRGNAM-${COMMIT}*.tar.gz
-cd $PRGNAM-${COMMIT}*
+rm -rf $PRGNAM
+mkdir -p $PRGNAM
+cd $PRGNAM
+tar xvf $CWD/$PRGNAM.tar.gz
 
 VERSION=$( grep "^#*[[:space:]]*Version:" $PRGNAM | cut -d" " -f4)
 
-# Install bin:
+# Install bin
 install -Dm755 inxi $PKG/usr/bin/inxi
 
-# Install man page:
+# Install man page
 install -Dm644 inxi.1.gz $PKG/usr/man/man1/inxi.1.gz
 
-# Install license files
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -r *.txt inxi.changelog $PKG/usr/doc/$PRGNAM-$VERSION
+cat inxi.changelog > $PKG/usr/doc/$PRGNAM-$VERSION/ChangeLog
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
-chmod 644 $PKG/usr/doc/$PRGNAM-$VERSION/*.*
+cat $CWD/LICENSE > $PKG/usr/doc/$PRGNAM-$VERSION/LICENSE
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
