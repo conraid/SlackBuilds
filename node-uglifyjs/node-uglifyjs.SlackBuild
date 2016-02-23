@@ -2,7 +2,7 @@
 #
 # Slackware build script for node-uglifyjs
 #
-# Copyright 2015 Corrado Franco (http://conraid.net)
+# Copyright 2015-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 SRCNAM=UglifyJS2
 PRGNAM=node-uglifyjs
-VERSION=${VERSION:-2.6.1}
+VERSION=${VERSION:-2.6.2}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -42,9 +42,9 @@ DOCFILES="LICENSE README*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -56,11 +56,7 @@ tar xvf $CWD/$SRCNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
 cd $SRCNAM-$VERSION
 
 chown -R root:root .
-find . \
- \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
-  -o -perm 511 \) -exec chmod 755 {} \; -o \
- \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
-  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
+chmod -R u+w,go+r-w,a+X-s .
 
 DESTDIR=$PKG npm install --user root -g
 
