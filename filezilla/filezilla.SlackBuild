@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=filezilla
-VERSION=${VERSION:-3.15.0.2}
+VERSION=${VERSION:-3.16.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -73,7 +73,7 @@ CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr \
-  --libdir=/usr/lib$LIBDIRSUFFIX \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
   --sysconfdir=/etc \
   --localstatedir=/var \
   --mandir=/usr/man \
