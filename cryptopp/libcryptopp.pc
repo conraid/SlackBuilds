@@ -1,0 +1,9 @@
+prefix=/usr
+libdir=${prefix}/lib%LIBDIRSUFFIX%
+includedir=${prefix}/include
+
+Name: libcryptopp-%VERSION%
+Description: C++ class library of cryptographic schemes
+Version: %VERSION%
+Libs: -L${libdir} -lcryptopp
+Cflags: -I${includedir} 
