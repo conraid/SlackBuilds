@@ -2,125 +2,104 @@
 #
 # Slackware build script for sslh
 #
-# Copyright 2013-2015 Corrado Franco (http://conraid.net)
+# Copyright 2013-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
-# Redistribution and use of this script, with or without modification, is
-# permitted provided that the following conditions are met:
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version, with the following exception:
+# the text of the GPL license may be omitted.
+
+# This program is distributed in the hope that it will be useful, but
+# without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose. Compiling,
+# interpreting, executing or merely reading the text of the program
+# may result in lapses of consciousness and/or very being, up to and
+# including the end of all existence and the Universe as we know it.
+# See the GNU General Public License for more details.
+
+# You may have received a copy of the GNU General Public License along
+# with this program (most likely, a file named COPYING).  If not, see
+# <http://www.gnu.org/licenses/>.
 #
-# 1. Redistributions of this script must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
+# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 #
-# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
-# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# Latest version of this SlackBuild at http://slackers.it/repository
-#
-# Exit on most errors or unset variables
 set -eu
 
-# Set variables:
 CWD=$(pwd)
 
-PRGNAME=${PRGNAME:-sslh}
-PKGNAME=$(echo ${PRGNAME} | tr A-Z a-z)
+PRGNAM=sslh
 VERSION=${VERSION:-1.17}
-PKGVERSION=${VERSION/-/_}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAME}
-DOCDIR="${PKG}/usr/doc/${PKGNAME}-${PKGVERSION}"
+PKG=$TMP/package-$PRGNAM
+OUTPUT=${OUTPUT:-/tmp}
 
-# Insert document files in this variable
 DOCFILES="COPYING ChangeLog README* TODO *.cfg scripts"
 
-# Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
-	case "$( uname -m )" in
-		i?86) ARCH=i686 ;;
-		arm*) ARCH=arm ;;
-		# Unless ${ARCH} is already set, use uname -m for all other archs:
-		*) ARCH=$( uname -m ) ;;
-	esac
+  case "$( uname -m )" in
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    *) ARCH=$( uname -m ) ;;
+  esac
 fi
 
-# Set compiling FLAGS
-case "${ARCH}" in
-	i[3-5]86)
-	SLKCFLAGS="-O2 -march=${ARCH} -mtune=i686"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
-	i686)
-	SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i486"
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
-	x86_64)
-	SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
-	SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-	;;
-	*)
-	SLKCFLAGS="-O2"; CHOST=${ARCH}
-	SLKLDFLAGS=""; LIBDIRSUFFIX=""
-	;;
-esac
+if [ "$ARCH" = "i586" ]; then
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"
+  LIBDIRSUFFIX="64"
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+fi
 
-# Extract source and prepare:
-rm -rf ${PKG}
-mkdir -p ${TMP} ${PKG}
-cd ${TMP}
-rm -rf ${PRGNAME}-v${VERSION}
-tar xvf ${CWD}/${PRGNAME}-v${VERSION}.tar.gz
-cd ${PRGNAME}-v${VERSION}
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAM-v$VERSION
+tar xvf $CWD/$PRGNAM-v${VERSION}.tar.gz
+cd $PRGNAM-v$VERSION
 
-# Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Fix slackware path in manpage
 sed -i "s#/init.d/sslh#/rc.d/rc.sslh#" sslh.pod
 
-# Build and install:
-make LDFLAGS="${SLKLDFLAGS}" CFLAGS="${SLKCFLAGS}"
-install -Dsm755 sslh-fork ${PKG}/usr/sbin/sslh-fork
-install -Dsm755 sslh-select ${PKG}/usr/sbin/sslh-select
-ln -s sslh-fork ${PKG}/usr/sbin/sslh
+make LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" CFLAGS="$SLKCFLAGS"
+install -Dsm755 sslh-fork $PKG/usr/sbin/sslh-fork
+install -Dsm755 sslh-select $PKG/usr/sbin/sslh-select
+ln -s sslh-fork $PKG/usr/sbin/sslh
 
 # Install man page
-install -Dm644 sslh.8.gz ${PKG}/usr/man/man8/sslh.8.gz
+install -Dm644 sslh.8.gz $PKG/usr/man/man8/sslh.8.gz
 
 # Install init file
-install -Dm755 ${CWD}/rc.sslh ${PKG}/etc/rc.d/rc.sslh.new
+install -Dm755 $CWD/rc.sslh $PKG/etc/rc.d/rc.sslh.new
 
 # Install config files
 sed 's#/var/run/#/var/run/sslh/#' -i *.cfg
-install -Dm644 basic.cfg ${PKG}/etc/default/sslh.new
-install -d -g nobody -o nobody ${PKG}/var/run/sslh
+install -Dm644 basic.cfg $PKG/etc/default/sslh.new
+install -d -g nobody -o nobody $PKG/var/run/sslh
 
-# Add a documentation directory:
-mkdir -p ${DOCDIR}
-cp -a ${DOCFILES} ${DOCDIR}
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION
+cat $CWD/${PRGNAM}.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/${PRGNAM}.SlackBuild
 
-# Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAME}.SlackBuild ${DOCDIR}/${PKGNAME}.SlackBuild
-
-# Add slack-desc
-install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
-
-# Add a doinst.sh
-install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
+mkdir -p $PKG/install 
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 # Add a license file
-install -Dm644 ${CWD}/COPYING ${DOCDIR}/COPYING
+install -Dm644 $CWD/COPYING $PKG/usr/doc/$PRGNAM-$VERSION/COPYING
 
-# Create package:
-cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAME}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD${TAG}.txz
