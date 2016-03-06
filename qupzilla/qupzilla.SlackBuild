@@ -2,7 +2,7 @@
 #
 # Slackware build script for QupZilla
 #
-# Copyright 2013-2015 Corrado Franco (http://conraid.net)
+# Copyright 2013-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ CWD=$(pwd)
 SRCNAM=QupZilla
 PRGNAM=qupzilla
 VERSION=${VERSION:-1.8.8}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -42,30 +42,25 @@ DOCFILES="AUTHORS BUILDING COPYRIGHT FAQ GPLv3 README* TODO"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i586 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
   esac
 fi
 
-case "$ARCH" in
-  i[3-5]86)
-  SLKCFLAGS="-O2 -march=$ARCH -mtune=i686"; CHOST="i586"
-  SLKLDFLAGS=""; LIBDIRSUFFIX=""
-  ;;
-  i686)
-  SLKCFLAGS="-O2 -march=i686 -fomit-frame-pointer"; CHOST="i586"
-  SLKLDFLAGS=""; LIBDIRSUFFIX=""
-  ;;
-  x86_64)
-  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"; CHOST="x86_64"
-  SLKLDFLAGS="-L/lib64 -L/usr/lib64"; LIBDIRSUFFIX="64"
-  ;;
-  *)
-  SLKCFLAGS="-O2"; CHOST=$ARCH
-  SLKLDFLAGS=""; LIBDIRSUFFIX=""
-  ;;
-esac
+if [ "$ARCH" = "i586" ]; then
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  LIBDIRSUFFIX="64"
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG
@@ -75,13 +70,9 @@ tar xvf $CWD/$SRCNAM-$VERSION.tar.xz
 cd $SRCNAM-$VERSION
 
 chown -R root:root .
-find . \
- \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
-  -o -perm 511 \) -exec chmod 755 {} \; -o \
- \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
-  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
+chmod -R u+w,go+r-w,a+X-s .
 
-export USE_LIBPATH="/usr/lib$LIBDIRSUFFIX/" USE_WEBGL=true \
+export USE_LIBPATH="/usr/lib${LIBDIRSUFFIX}/" USE_WEBGL=true \
        KDE_INTEGRATION=true GNOME_INTEGRATION=false
 qmake QMAKE_CFLAGS="$SLKCFLAGS" QMAKE_CXXFLAGS="$SLKCFLAGS" \
       QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" \

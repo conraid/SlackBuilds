@@ -30,7 +30,7 @@ CWD=$(pwd)
 SRCNAM=mutt
 PRGNAM=mutt-sidebar
 VERSION=${VERSION:-1.5.24}
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -66,7 +66,7 @@ tar xzvf $CWD/$SRCNAM-$VERSION.tar.gz
 cd $SRCNAM-$VERSION
 
 chown -R root:root .
-find . \
+chmod -R u+w,go+r-w,a+X-s .
 
 # patch by Lunar Linux to add sidebar support and other patch by Debian and Arch
 for PATCH in $CWD/patches/*.patch; do
