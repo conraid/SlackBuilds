@@ -2,7 +2,7 @@
 #
 # Slackware build script for openvas-scanner
 #
-# Copyright 2014-2015 Corrado Franco (http://conraid.net)
+# Copyright 2014-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=openvas-scanner
-VERSION=${VERSION:-5.0.4}
-BUILD=${BUILD:-3}
+VERSION=${VERSION:-5.0.5}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -54,7 +54,7 @@ elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC"
+  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -69,13 +69,12 @@ tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
 cd $PRGNAM-$VERSION
 
 chown -R root:root .
-find -L . -executable -exec chmod 755 {} \+
-find -L . ! -executable -exec chmod 644 {} \+
+chmod -R u+w,go+r-w,a+X-s .
 
 # Sane man and doc path
 sed -i \
-  -e 's#$DATADIR/man/man#${CMAKE_INSTALL_PREFIX}/man/man#g' \
-  -e "s#\$DATADIR/doc/openvas-scanner#\${CMAKE_INSTALL_PREFIX}/doc/openvas-scanner-${VERSION}#g" \
+  -e 's|\${DATADIR}/man/man|${CMAKE_INSTALL_PREFIX}/man/man|g' \
+  -e "s|\${DATADIR}/doc/openvas-scanner|\${CMAKE_INSTALL_PREFIX}/doc/openvas-scanner-${VERSION}|g" \
   CMakeLists.txt
 
 mkdir -p build
