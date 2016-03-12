@@ -35,7 +35,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=node
-VERSION=${VERSION:-5.7.1}
+VERSION=${VERSION:-5.8.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -88,6 +88,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --prefix=/usr \
   --shared-zlib \
   --shared-openssl \
+  --shared-libuv \
   --with-intl=system-icu \
   --without-npm
 
