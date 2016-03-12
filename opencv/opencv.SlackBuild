@@ -2,7 +2,7 @@
 #
 # Slackware build script for opencv
 #
-# Copyright 2009-2015 Corrado Franco (http://conraid.net)
+# Copyright 2009-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -27,16 +27,13 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=${PRGNAM:-opencv}
-PRGNAM=$(echo $PRGNAM | tr A-Z a-z)
-VERSION=${VERSION:-3.0.0}
-VERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-2}
+PRGNAM=opencv
+VERSION=${VERSION:-3.1.0}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-${PRGNAM}
+PKG=$TMP/package-$PRGNAM
 OUTPUT=${OUTPUT:-/tmp}
-DOCDIR="$PKG/usr/doc/$PRGNAM-${VERSION}"
 
 DOCFILES="LICENSE README*"
 
@@ -58,7 +55,7 @@ elif [ "$ARCH" = "i686" ]; then
   # SSE only available from Pentium 3 onwards (i686 is way older)
   CONFSSE="-DENABLE_SSE3=OFF -DENABLE_SSE2=OFF -DENABLE_SSE=OFF"
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC"
+  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
   # all x64 CPUs support SSE2 but not SSE3
   CONFSSE="-DENABLE_SSE3=OFF -DENABLE_SSE2=ON -DENABLE_SSE=ON"
@@ -67,44 +64,43 @@ else
   LIBDIRSUFFIX=""
 fi
 
-rm -rf ${PKG}
-mkdir -p $TMP ${PKG}
-cd ${TMP}
-rm -rf $PRGNAM-${VERSION}
-# If you download files from the command line be careful because the files could have the same name.
-# Use "wget --content-disposition" or "curl -L"
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
-cd $PRGNAM-${VERSION}
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAM-$VERSION
+tar xvf $CWD/$PRGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
+cd $PRGNAM-$VERSION
 tar xvf $CWD/${PRGNAM}_contrib-$VERSION.tar.gz 
 
 chown -R root:root .
-find . \
- \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
-  -o -perm 511 \) -exec chmod 755 {} \; -o \
- \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
-  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
+chmod -R u+w,go+r-w,a+X-s .
 
-# Apply patch for unix path
-# http://code.opencv.org/issues/2512
-patch -p1 -i $CWD/fsh.patch
+# Apply patches
+for PATCH in $CWD/patches/*.patch; do
+  patch -p1 -i $PATCH
+done
 
 mkdir -p build
 cd build
 cmake \
-  -DCMAKE_BUILD_TYPE=None \
-  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DLIB_SUFFIX=$LIBDIRSUFFIX \
+  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
   -DBUILD_EXAMPLES=OFF \
   -DBUILD_SHARED_LIBS=ON \
   -DBUILD_WITH_DEBUG_INFO=OFF \
   -DBUILD_TESTS=OFF \
   -DBUILD_PERF_TESTS=OFF \
+  -DBUILD_TIFF=ON \
+  -DBUILD_JPEG=ON \
+  -DBUILD_NEW_PYTHON_SUPPORT=ON \
   -DENABLE_PRECOMPILED_HEADERS=OFF \
   -DINSTALL_PYTHON_EXAMPLES=OFF \
   -DWITH_GSTREAMER=ON \
   -DWITH_OPENCL=ON \
+  -DWITH_OPENGL=ON \
   -DWITH_QT=ON \
   -DWITH_XINE=ON \
   -DWITH_FFMPEG=OFF \
@@ -120,13 +116,13 @@ cd ..
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
-mkdir -p ${DOCDIR}
-cp -a $DOCFILES $DOCDIR || true
-cat $CWD/$PRGNAM.SlackBuild > $DOCDIR/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
-cd ${PKG}
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.txz
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
 
