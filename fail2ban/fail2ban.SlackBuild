@@ -4,119 +4,104 @@
 #
 # Copyright (c) 2008-2015, Nishant Limbachia, Hoffman Estates, IL, USA
 # <nishant _AT_ mnspace _DOT_ net>
-# Copyright 2015 Corrado Franco (http://conraid.net)
+# Copyright 2015-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
-# Redistribution and use of this script, with or without modification, is
-# permitted provided that the following conditions are met:
-#
-# 1. Redistributions of this script must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-#
-# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
-# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version, with the following exception:
+# the text of the GPL license may be omitted.
+
+# This program is distributed in the hope that it will be useful, but
+# without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose. Compiling,
+# interpreting, executing or merely reading the text of the program
+# may result in lapses of consciousness and/or very being, up to and
+# including the end of all existence and the Universe as we know it.
+# See the GNU General Public License for more details.
+
+# You may have received a copy of the GNU General Public License along
+# with this program (most likely, a file named COPYING).  If not, see
+# <http://www.gnu.org/licenses/>.
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-# Exit on most errors
 set -eu
 
-# Set variables:
 CWD=$(pwd)
 
-PRGNAM=${PRGNAM:-fail2ban}
-PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
-VERSION=${VERSION:-0.9.3}
-PKGVERSION=$(echo ${VERSION} | tr - _)
+PRGNAM=fail2ban
+VERSION=0.9.4
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAM}
-PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${PKGVERSION}"
+PKG=$TMP/package-$PRGNAM
+OUTPUT=${OUTPUT:-/tmp}
 
-# Insert document files in this variable
 DOCFILES="CONTRIBUTING* COPYING ChangeLog DEVELOP FILTERS MANIFEST README.md RELEASE THANKS TODO doc/run-rootless.txt files"
 
-# Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
     case "$( uname -m )" in
         i?86) ARCH=i686 ;;
         arm*) ARCH=arm ;;
-        # Unless ${ARCH} is already set, use uname -m for all other archs:
         *) ARCH=$( uname -m ) ;;
     esac
 fi
 
-# Extract source and prepare:
-rm -rf ${PKG}
-mkdir -p ${TMP} ${PKG}
-cd ${TMP}
-rm -rf ${PRGNAM}-${VERSION}
-tar xvf ${CWD}/${PRGNAM}-${VERSION}.tar.gz || tar xvf ${CWD}/${VERSION}.tar.gz
-cd ${PRGNAM}-${VERSION}
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAM-$VERSION
+tar xvf $CWD/$PRGNAM-$VERSION.tar.gz || tar xvf $CWD/${VERSION}.tar.gz
+cd $PRGNAM-$VERSION
 
-# Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Build and install:
-python setup.py install --root=${PKG}
+python setup.py install --root=$PKG
 
 # install and zip man pages
-mkdir -p ${PKG}/usr/man/{man1,man5}
+mkdir -p $PKG/usr/man/{man1,man5}
 install -m 0644 man/fail2ban-client.1 man/fail2ban-regex.1 \
-  man/fail2ban-server.1 man/fail2ban.1 ${PKG}/usr/man/man1
-install -m 0644 man/jail.conf.5 ${PKG}/usr/man/man5
-find ${PKG}/usr/man -type f -exec gzip -9 {} \;
+  man/fail2ban-server.1 man/fail2ban.1 $PKG/usr/man/man1
+install -m 0644 man/jail.conf.5 $PKG/usr/man/man5
+find $PKG/usr/man -type f -exec gzip -9 {} \;
 
 # move config files to .new
-for FILE in $(find ${PKG}/etc/fail2ban -type f); do
-mv $FILE "${FILE}.new"
+for FILE in $(find $PKG/etc/fail2ban -type f); do
+  mv "$FILE" "${FILE}.new"
 done
 
 # Patch to Slackware version
-sed 's/paths-debian.conf/paths-slackware.conf/' -i ${PKG}/etc/fail2ban/jail.conf.new
+sed 's/paths-debian.conf/paths-slackware.conf/' -i $PKG/etc/fail2ban/jail.conf.new
 
 # install startup script
-install -D -m 0644 ${CWD}/rc.fail2ban ${PKG}/etc/rc.d/rc.fail2ban.new
-install -D -m 0644 ${CWD}/paths-slackware.conf ${PKG}/etc/fail2ban/paths-slackware.conf.new
+install -D -m 0644 $CWD/rc.fail2ban $PKG/etc/rc.d/rc.fail2ban.new
+install -D -m 0644 $CWD/paths-slackware.conf $PKG/etc/fail2ban/paths-slackware.conf.new
 
 # remove non-slackware specific stuff
-rm -f ${PKG}/etc/fail2ban/paths-{debian,fedora,freebsd,osx}.conf.new
+rm -f $PKG/etc/fail2ban/paths-{debian,fedora,freebsd,osx}.conf.new
 
 # install logrotate script
-install -Dm644 ${CWD}/fail2ban.logrotate ${PKG}/etc/logrotate.d/fail2ban.new
+install -Dm644 $CWD/fail2ban.logrotate $PKG/etc/logrotate.d/fail2ban.new
 
 # make directory for socket, pid file & db file
-mkdir -p ${PKG}/var/{run,lib}/fail2ban
+mkdir -p $PKG/var/{run,lib}/fail2ban
 
 # Install bash completion
-install -Dm644 files/bash-completion ${PKG}/etc/bash_completion.d/fail2ban
+install -Dm644 files/bash-completion $PKG/etc/bash_completion.d/fail2ban
 
 # remove share/doc
-rm -fr ${PKG}/usr/share
+rm -rf $PKG/usr/share
 
-# Add a documentation directory:
-mkdir -p ${PKGDOCDIR}
-cp -a ${DOCFILES} ${PKGDOCDIR} || true
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
+cat $CWD/${PRGNAM}.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/${PRGNAM}.SlackBuild
 
-# Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
+mkdir -p $PKG/install 
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
-# Add slack-desc
-install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
-
-# Add a doinst.sh
-install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
-
-# Create package:
-cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD${TAG}.txz
