@@ -32,7 +32,7 @@ CWD=$(pwd)
 SRCNAM=greenbone-security-assistant
 PRGNAM=openvas-gsa
 VERSION=${VERSION:-6.0.10}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -107,7 +107,7 @@ install -Dm644 $CWD/gsad.conf $PKG/etc/openvas/gsad.conf.new
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
-install -Dm644 $CWD/slackware.README $PKG/usr/doc/$PRGNAM-$VERSION/SLACKWARE.README
+cat $CWD/SLACKWARE.README > $PKG/usr/doc/$PRGNAM-$VERSION/SLACKWARE.README
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 # Install utility check script
