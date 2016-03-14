@@ -1,0 +1,130 @@
+
+The Slackers.it Repository 
+
+======================================================================
+
+openvas-gsa (greenbone-security-assistant: OpenVAS web frontend)
+penvas-gsa
+OpenVAS is a framework of several services and tools offering a
+comprehensive and powerful vulnerability scanning and vulnerability
+management solution.
+
+HOME: http://www.openvas.org
+
+======================================================================
+NOTE: 
+
+###### Upgrade Instructions ######
+
+Before running openvas, you'll need to migrate the openvas-manager database.
+Simply run:
+# openvasmd --migrate
+
+###### Installation Instructions ######
+
+You must install all openvas packages and related dependencies 
+(redisa and libmicrohttpd)
+
+Then you can try running the openvas-check-setup script 
+# openvas-check-setup
+or follow the instructions in /usr/doc/openvas-gsa/README.SLACKWARE
+
+======================
+NOTE: 
+
+greenbone-security-assistant (UI for OpenVAS)
+
+This is the UI the Open Vulnerability Assessment System (OpenVAS).
+
+###### Upgrade Notes ######
+
+If you're updating from OpenVAS-7 to OpenVAS-8, please note the following.
+(See: http://www.openvas.org/install-source.html if you're unsure which
+version you're running.)
+
+Openvas now uses redis as a temporary database while running scans.  You will
+need redis installed and running, as well as hiredis.  See step 2 below on
+how to configure redis.
+
+Before running openvas, you'll need to migrate the openvas-manager database.
+Simply run:
+# openvasmd --migrate
+
+###### Installation Instructions ######
+
+You must install all openvas packages and related dependencies 
+(redis, libmicrohttpd and libssh from alien ktown repository)
+
+Then you can try running the openvas-check-setup script 
+# openvas-check-setup
+or follow the instructions below
+
+1. Start redis.
+# sh /etc/rc.d/rc.redis start
+
+2. You need a Certificate Authority and server certificate. Run the following
+   command:
+# openvas-mkcert
+
+3. You need the NVT's (Network Vulnerability Tests).  Run the following
+   command to sync.  In the future, you can do this through the 
+   greenbone-security-assistant interface.  This will take a minute or so
+   with a blazing fast internet connection. YMMV.
+# openvas-nvt-sync
+
+4. Start the openvas-scanner daemon.
+# sh /etc/rc.d/rc.openvassd start
+
+5. You need client certificates for manager to talk to scanner.  Use the
+   following command.
+# openvas-mkcert-client -n -i
+
+6. Initialize the manager database.  This will take a while, so be patient.
+# openvasmd --rebuild
+
+7. You want encrypted credentials in the DB, so do this now.
+# openvasmd --create-credentials-encryption-key
+   This may take a while, so it's best to create some entropy by skipping to
+   #13-#15 and then coming back, if needed.
+
+8. Create a user.
+# openvasmd --create-user=admin role=Admin
+    If you find the assigned password hard to remember, you can change it 
+    right now.
+# openvasmd --user=admin --new-password=<password>
+
+9 Sync SCAP data.  This will take some time.
+# openvas-scapdata-sync
+
+10. Sync CERT data.
+# openvas-certdata-sync
+
+11. Update port names.
+# wget http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xml
+# openvas-portnames-update service-names-port-numbers.xml
+# rm service-names-port-numbers.xml
+
+12. Start the openvas-manager daemon.
+# sh /etc/rc.d/rc.openvasmd start
+
+13. Launch the greenbone-security-assistant.
+# sh /etc/rc.d/rc.gsad start
+
+14. Point your browser at https://<YOUR IP OR HOSTNAME>:9392
+    You'll get a certificate error, of course (fixing this is left as an 
+    excercise for the reader). Log in with your username/password from #10.
+
+15. [Optional] Build and install openvas-cli.  You'll need this if you ever
+    want to script tests.
+
+
+Please let me know if you run into any problems.  Patches welcome!
+
+--
+This README is modified version of 
+http://slackbuilds.org/slackbuilds/14.1/network/greenbone-security-assistant/README
+by Kent Fritz (fritz.kent@gmail.com)
+
+======================
+REQUIRES: libmicrohttpd openvas-libraries hiredis redis
+

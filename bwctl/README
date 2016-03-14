@@ -1,0 +1,29 @@
+
+The Slackers.it Repository 
+
+======================================================================
+
+bwctl (Bandwidth Test Controller)
+
+BWCTL is a command line client application and a scheduling and
+policy daemon that wraps the network measurement tools, including
+Iperf, Iperf3, Nuttcp, Ping, Traceroute, Tracepath, and OWAMP.
+These tests can measure maximum TCP bandwidth, with various tuning
+options available, as well as the delay, jitter, and loss rate of a
+network. 
+
+HOME: http://software.internet2.edu/bwctl/index.html
+
+======================================================================
+NOTE: 
+
+FOR TESTING ONLY  
+
+You will need to create an bwctld.conf file in /etc/bwctl/ before you can run
+bwctld. See the bwctld.conf(5) manual page and /etc/bwctl/bwctld.conf.sample
+file for details. You may also want to create bwctld.limits(5) and
+bwctld.pfs(5) files.
+
+======================
+REQUIRES: iperf3 i2util
+
