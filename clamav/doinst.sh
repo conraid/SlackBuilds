@@ -33,20 +33,19 @@ config var/log/clamav/clamd.log.new ; rm -f var/log/clamav/clamd.log.new
 config var/log/clamav/freshclam.log.new ; rm -f var/log/clamav/freshclam.log.new
 
 # Add user and group (uid=210 and gid=210 are SBo suggest)
-if ! getent group clamav 2>&1 > /dev/null; then
-    if ! getent group 210 2>&1 > /dev/null; then
-        chroot . groupadd -g 210 clamav &>/dev/null
-    else
-        chroot . groupadd clamav &>/dev/null
-    fi
+if ! grep -q "^clamav:" etc/group; then
+  if ! grep -q ":210:" etc/group; then
+    chroot . groupadd -g 210 clamav &>/dev/null
+  else
+    chroot . groupadd clamav &>/dev/null
+  fi
 fi
-
-if ! getent passwd clamav 2>&1 > /dev/null; then
-    if ! getent passwd 210 2>&1 > /dev/null; then
-        chroot . useradd -u 210 -d /dev/null -s /bin/false -c "Clam AntiVirus" -g clamav clamav &>/dev/null
-    else
-        chroot . useradd -d /dev/null -s /bin/false -c "Clam AntiVirus" -g clamav clamav &>/dev/null
-    fi
+if ! grep -q "^clamav:" etc/passwd; then
+  if ! grep -q ":210:" etc/passwd; then
+    chroot . useradd -u 210 -d /dev/null -s /bin/false -c "Clam AntiVirus" -g clamav clamav &>/dev/null
+  else
+    chroot . useradd -d /dev/null -s /bin/false -c "Clam AntiVirus" -g clamav clamav &>/dev/null
+  fi
 fi
 
 echo "
