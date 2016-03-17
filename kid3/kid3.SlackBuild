@@ -2,7 +2,7 @@
 #
 # Slackware build script for kid3 (http://kid3.sourceforge.net/)
 #
-# Copyright 2008-2015 Corrado Franco (http://conraid.net)
+# Copyright 2008-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=kid3
-VERSION=${VERSION:-3.3.1}
+VERSION=${VERSION:-3.3.2}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -67,31 +67,30 @@ tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
 cd $PRGNAM-$VERSION
 
 chown -R root:root .
-find . -executable -exec chmod 755 {} \+
-find . ! -executable -exec chmod 644 {} \+
+chmod -R u+w,go+r-w,a+X-s .
 
 mkdir build
 cd build
 cmake \
--DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
--DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
--DCMAKE_BUILD_TYPE=none \
--DCMAKE_INSTALL_PREFIX=/usr \
--DSYSCONF_INSTALL_DIR=/etc \
--DCMAKE_BUILD_TYPE=none \
--DBUILD_SHARED_LIBS=ON \
--DHTML_INSTALL_DIR=/usr/doc/HTML \
--DLIB_SUFFIX=$LIBDIRSUFFIX \
--DLIB_INSTALL_DIR=/usr/lib$LIBDIRSUFFIX \
--DWITH_MANDIR=man \
--DWITH_DOCDIR=doc/kid3-$VERSION \
--DWITH_APPS="Qt;CLI;KDE" \
--DWITH_CHROMAPRINT=OFF \
--DWITH_MP4V2=ON \
--DWITH_PHONON=ON \
--DWITH_QT4=ON \
--DWITH_QT5=OFF \
-..
+  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
+  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
+  -DCMAKE_BUILD_TYPE=none \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DSYSCONF_INSTALL_DIR=/etc \
+  -DCMAKE_BUILD_TYPE=none \
+  -DBUILD_SHARED_LIBS=ON \
+  -DHTML_INSTALL_DIR=/usr/doc/HTML \
+  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
+  -DLIB_INSTALL_DIR=/usr/lib${LIBDIRSUFFIX} \
+  -DWITH_MANDIR=man \
+  -DWITH_DOCDIR=doc/kid3-$VERSION \
+  -DWITH_APPS="Qt;CLI;KDE" \
+  -DWITH_CHROMAPRINT=OFF \
+  -DWITH_MP4V2=ON \
+  -DWITH_PHONON=ON \
+  -DWITH_QT4=ON \
+  -DWITH_QT5=OFF \
+  ..
 
 make 
 make DESTDIR=$PKG install/strip
