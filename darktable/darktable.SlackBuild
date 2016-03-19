@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PRGNAM=darktable
 VERSION=${VERSION:-2.0.2}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -73,7 +73,7 @@ chmod -R u+w,go+r-w,a+X-s .
 
 # Fix doc path
 sed -e "s|share/doc/darktable|doc/darktable-$VERSION|" \
-  -e "s|\${SHARE_INSTALL}/doc/darktable/|./doc/darktable-$VERSION|" \
+  -e "s|\${SHARE_INSTALL}/doc/darktable|./doc/darktable-$VERSION|" \
   -i doc/CMakeLists.txt
 
 mkdir -p build
