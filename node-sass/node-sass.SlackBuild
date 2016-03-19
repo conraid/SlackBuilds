@@ -29,10 +29,10 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=${PRGNAM:-node-sass}
-VERSION=${VERSION:-3.4.2}
-BINDING_VER="47"
-BUILD=${BUILD:-2}
+PRGNAM=node-sass
+SRCVERSION=3.5.0-beta.1
+VERSION=$(echo $SRCVERSION | tr - _)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -63,9 +63,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
-cd $PRGNAM-$VERSION
+rm -rf $PRGNAM-$SRCVERSION
+tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/v$SRCVERSION.tar.gz
+cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
 find . \
@@ -82,16 +82,6 @@ find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r st
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
-fi
-
-if [ ! -e $PKG/usr/lib${LIBDIRSUFFIX}/node_modules/node-sass/vendor/linux-x64-${BINDING_VER}/binding.node ]; then
-  if [ -e $CWD/linux-${BINDING_ARCH}-${BINDING_VER}_binding.node ]; then
-    cp $CWD/linux-${BINDING_ARCH}-${BINDING_VER}_binding.node $PKG
-  else
-    wget https://github.com/sass/node-sass/releases/download/v${VERSION}/linux-${BINDING_ARCH}-${BINDING_VER}_binding.node
-  fi
-  install -Dsm644 linux-${BINDING_ARCH}-${BINDING_VER}_binding.node \
-  $PKG/usr/lib${LIBDIRSUFFIX}/node_modules/node-sass/vendor/linux-x64-${BINDING_VER}/binding.node
 fi
 
 # Remove empty dir
