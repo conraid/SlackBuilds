@@ -3,93 +3,81 @@
 # Slackware build script for lynis (http://www.rootkit.nl/projects/lynis.html)
 #
 # Copyright 2008 Michelino Chionchio
-# Copyright 2008-2015 Corrado Franco
+# Copyright 2008-2016 Corrado Franco
 #
 # All rights reserved.
 #
-# Redistribution and use of this script, with or without modification, is
-# permitted provided that the following conditions are met:
-#
-# 1. Redistributions of this script must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-#
-# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
-# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version, with the following exception:
+# the text of the GPL license may be omitted.
+
+# This program is distributed in the hope that it will be useful, but
+# without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose. Compiling,
+# interpreting, executing or merely reading the text of the program
+# may result in lapses of consciousness and/or very being, up to and
+# including the end of all existence and the Universe as we know it.
+# See the GNU General Public License for more details.
+
+# You may have received a copy of the GNU General Public License along
+# with this program (most likely, a file named COPYING).  If not, see
+# <http://www.gnu.org/licenses/>.
 #
 # Initial SlackBuild by Michelino Chionchio
 # Rewritten by Corrado Franco
 
-# Exit on most errors or unset variables
 set -eu
 
-# Set variables:
 CWD=$(pwd)
 
-PRGNAM=${PRGNAM:-lynis}
-PKGNAM=$(echo ${PRGNAM} | tr A-Z a-z)
-VERSION=${VERSION:-2.1.1}
-PKGVERSION=$(echo ${VERSION} | tr - _)
+PRGNAM=lynis
+VERSION=${VERSION:-2.2.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=${TMP}/package-${PKGNAM}
-PKGDOCDIR="${PKG}/usr/doc/${PKGNAM}-${PKGVERSION}"
+PKG=$TMP/package-$PRGNAM
+OUTPUT=${OUTPUT:-/tmp}
 
 ARCH=${ARCH:="noarch"}
 
-# Insert document files in this variable
-DOCFILES="CHANGELOG CONTRIBUTORS FAQ INSTALL LICENSE README"
+DOCFILES="CHANGELOG CONTRIBUT* FAQ INSTALL LICENSE README*"
 
-# Extract source and prepare:
-rm -rf ${PKG}
-mkdir -p ${TMP} ${PKG}
-cd ${TMP}
-rm -rf ${PRGNAM}-${VERSION}
-tar xvf ${CWD}/${PRGNAM}-${VERSION}.tar.gz
-cd ${PRGNAM}-${VERSION}
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAM-$VERSION
+tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
+cd $PRGNAM-$VERSION
 
-# Make sure ownerships and permissions are sane:
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Install binary file
-install -Dm755 lynis ${PKG}/usr/bin/lynis
+install -Dm755 lynis $PKG/usr/bin/lynis
 
 # Install plugins, include, db
-mkdir -p ${PKG}/usr/share/${PKGNAM}
-cp -a db include plugins ${PKG}/usr/share/${PKGNAM}
+mkdir -p $PKG/usr/share/$PRGNAM
+cp -a db include plugins $PKG/usr/share/$PRGNAM
 
 # Install config file
-install -Dm644 default.prf ${PKG}/etc/lynis/default.prf.new
+install -Dm644 default.prf $PKG/etc/lynis/default.prf.new
 
 # Install and compress manpage
-install -Dm644 lynis.8 ${PKG}/usr/man/man8/lynis.8
-gzip -9 ${PKG}/usr/man/man8/lynis.8
+install -Dm644 lynis.8 $PKG/usr/man/man8/lynis.8
+gzip -9 $PKG/usr/man/man8/lynis.8
 
 # Install bash completion file
-install -Dm644 extras/bash_completion.d/lynis ${PKG}/etc/bash_completion.d/lynis
+install -Dm644 extras/bash_completion.d/lynis $PKG/etc/bash_completion.d/lynis
 
-# Add a documentation directory:
-mkdir -p ${PKGDOCDIR}
-cp -a ${DOCFILES} ${PKGDOCDIR} || true
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
+cat $CWD/${PRGNAM}.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/${PRGNAM}.SlackBuild
 
-# Add a slackbuild script:
-install -Dm644 ${CWD}/${PKGNAM}.SlackBuild ${PKGDOCDIR}/${PKGNAM}.SlackBuild
+mkdir -p $PKG/install 
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
-# Add slack-desc
-install -Dm644 ${CWD}/slack-desc ${PKG}/install/slack-desc
-
-# Add doinst.sh
-install -Dm644 ${CWD}/doinst.sh ${PKG}/install/doinst.sh
-
-# Create package:
-cd ${PKG}
-/sbin/makepkg -l y -c n ${CWD}/${PKGNAM}-${PKGVERSION}-${ARCH}-${BUILD}${TAG}.txz
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD${TAG}.txz
