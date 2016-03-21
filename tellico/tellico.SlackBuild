@@ -2,7 +2,7 @@
 #
 # Slackware build script for tellico (http://tellico-project.org)
 #
-# Copyright 2009-2015 Corrado Franco (http://conraid.net)
+# Copyright 2009-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PRGNAM=tellico
 VERSION=${VERSION:-2.3.11}
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -52,7 +52,7 @@ elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -78,7 +78,7 @@ cmake \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DMAN_INSTALL_DIR=/usr/man \
   -DSYSCONF_INSTALL_DIR=/etc \
-  -DLIB_SUFFIX=$LIBDIRSUFFIX \
+  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
   -DHTML_INSTALL_DIR=/usr/doc/HTML \
   ..
 
