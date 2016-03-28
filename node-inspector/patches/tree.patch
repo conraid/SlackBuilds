@@ -1,0 +1,26 @@
+From b5c638a8c553ffb3483ac555d792b3498ac5898e Mon Sep 17 00:00:00 2001
+From: Guilherme Pacheco <guilherme.f.pacheco@hotmail.com>
+Date: Tue, 1 Sep 2015 15:54:37 -0300
+Subject: [PATCH] Fix calling unexposed function
+
+Using same code as Chromium team:
+https://codereview.chromium.org/690893002/diff/1/Source/devtools/front_end/ui/treeoutline.js
+---
+ front-end/treeoutline.js | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/front-end/treeoutline.js b/front-end/treeoutline.js
+index be154b7..9363cbf 100644
+--- a/front-end/treeoutline.js
++++ b/front-end/treeoutline.js
+@@ -940,8 +940,8 @@ TreeElement.prototype.traversePreviousTreeElement = function(skipUnrevealed, don
+ TreeElement.prototype.isEventWithinDisclosureTriangle = function(event)
+ {
+     // FIXME: We should not use getComputedStyle(). For that we need to get rid of using ::before for disclosure triangle. (http://webk.it/74446) 
+-    var paddingLeftValue = window.getComputedStyle(this._listItemNode).getPropertyValue("padding-left");
+-    var computedLeftPadding = paddingLeftValue ? parseInt(paddingLeftValue) : 0;
++    var paddingLeftValue = window.getComputedStyle(this._listItemNode).paddingLeft;
++    var computedLeftPadding = parseFloat(paddingLeftValue, 10);
+     var left = this._listItemNode.totalOffsetLeft() + computedLeftPadding;
+     return event.pageX >= left && event.pageX <= left + this.arrowToggleWidth && this.hasChildren;
+ }
