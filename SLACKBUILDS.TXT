@@ -27,11 +27,11 @@ SLACKBUILD SHORT DESCRIPTION:  acpitool (Configuration and Power Interface clien
 
 SLACKBUILD NAME: afflib
 SLACKBUILD LOCATION: ./afflib
-SLACKBUILD FILES: README afflib.SlackBuild afflib.info slack-desc
-SLACKBUILD VERSION: 3.7.4
+SLACKBUILD FILES: README afflib.SlackBuild afflib.info configure.ac.diff slack-desc
+SLACKBUILD VERSION: 3.7.7
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/simsong/AFFLIBv3/archive/v3.7.4.tar.gz
-SLACKBUILD MD5SUM: a81470590cfc2f22a3168f89ebe27ea6
+SLACKBUILD DOWNLOAD: https://github.com/sshock/AFFLIBv3/archive/v3.7.7.tar.gz
+SLACKBUILD MD5SUM: a35ef9a443225fcbe99f7ad61fadb33b
 SLACKBUILD SHORT DESCRIPTION:  afflib 
 
 SLACKBUILD NAME: aide
@@ -757,7 +757,7 @@ SLACKBUILD SHORT DESCRIPTION:  extundelete (utility to undelete files from ext3/
 SLACKBUILD NAME: fail2ban
 SLACKBUILD LOCATION: ./fail2ban
 SLACKBUILD FILES: README doinst.sh fail2ban.SlackBuild fail2ban.info fail2ban.logrotate paths-slackware.conf rc.fail2ban slack-desc
-SLACKBUILD VERSION: 0.9.3
+SLACKBUILD VERSION: 0.9.4
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://github.com/fail2ban/fail2ban/archive/0.9.4.tar.gz
 SLACKBUILD MD5SUM: 2dc93dff03c4da9fb95d4695e07b65d8
@@ -2383,6 +2383,15 @@ SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/nmon/lmon16d.c
 SLACKBUILD MD5SUM: 8598d06b7e45b8987f69558062ff8405
 SLACKBUILD SHORT DESCRIPTION:  nmon (Performance Monitoring)
 
+SLACKBUILD NAME: node-better-console
+SLACKBUILD LOCATION: ./node-better-console
+SLACKBUILD FILES: README node-better-console.SlackBuild node-better-console.info slack-desc
+SLACKBUILD VERSION: 0.2.4
+SLACKBUILD REQUIRED: node npm
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/better-console/-/better-console-0.2.4.tgz
+SLACKBUILD MD5SUM: 71e57e48cd12d95623f91cd892d23d90
+SLACKBUILD SHORT DESCRIPTION:  node-better-console (A better console for Node.js)
+
 SLACKBUILD NAME: node-bower
 SLACKBUILD LOCATION: ./node-bower
 SLACKBUILD FILES: README node-bower.SlackBuild node-bower.info slack-desc
@@ -2410,6 +2419,15 @@ SLACKBUILD DOWNLOAD: https://github.com/IndigoUnited/node-cross-spawn/archive/2.
 SLACKBUILD MD5SUM: a2409e4ed36d0f124fc008d82327487f
 SLACKBUILD SHORT DESCRIPTION:  node-cross-spawn (Cross platform solution to node's spawn)
 
+SLACKBUILD NAME: node-csscomb
+SLACKBUILD LOCATION: ./node-csscomb
+SLACKBUILD FILES: README node-csscomb.SlackBuild node-csscomb.info slack-desc
+SLACKBUILD VERSION: 3.1.7
+SLACKBUILD REQUIRED: node npm
+SLACKBUILD DOWNLOAD: https://github.com/csscomb/csscomb.js/archive/v3.1.7.tar.gz
+SLACKBUILD MD5SUM: b0324cfa5b3ed585755208497b578e6a
+SLACKBUILD SHORT DESCRIPTION:  node-csscomb (CSS coding style formatter)
+
 SLACKBUILD NAME: node-doctoc
 SLACKBUILD LOCATION: ./node-doctoc
 SLACKBUILD FILES: README node-doctoc.SlackBuild node-doctoc.info slack-desc
@@ -2428,9 +2446,18 @@ SLACKBUILD DOWNLOAD: https://github.com/nodejs/node-gyp/archive/v3.0.3.tar.gz
 SLACKBUILD MD5SUM: f7bc8373b45178cf54ebc24b71dd9dd2
 SLACKBUILD SHORT DESCRIPTION:  node-gyp (Node.js native addon build tool)
 
+SLACKBUILD NAME: node-inspector
+SLACKBUILD LOCATION: ./node-inspector
+SLACKBUILD FILES: README node-inspector.SlackBuild node-inspector.info patches/tree.patch slack-desc
+SLACKBUILD VERSION: 0.12.7
+SLACKBUILD REQUIRED: node npm
+SLACKBUILD DOWNLOAD: https://github.com/node-inspector/node-inspector/archive/v0.12.7.tar.gz
+SLACKBUILD MD5SUM: 42febffaf996d51421f12b00d04f980a
+SLACKBUILD SHORT DESCRIPTION:  node-inspector (Node.js debugger based on Blink Developer Tools)
+
 SLACKBUILD NAME: node-less
 SLACKBUILD LOCATION: ./node-less
-SLACKBUILD FILES: README node-less.SlackBuild node-less.info slack-desc
+SLACKBUILD FILES: README node-less.SlackBuild node-less.info patches/8feb269e8ef07a77a9bff92e13499af44e959f66.patch slack-desc
 SLACKBUILD VERSION: 2.6.1
 SLACKBUILD REQUIRED: node npm
 SLACKBUILD DOWNLOAD: https://github.com/less/less.js/archive/v2.6.1.tar.gz
@@ -2521,10 +2548,10 @@ SLACKBUILD SHORT DESCRIPTION:  nomacs (Qt image viewer)
 SLACKBUILD NAME: npm
 SLACKBUILD LOCATION: ./npm
 SLACKBUILD FILES: README npm.SlackBuild npm.info slack-desc
-SLACKBUILD VERSION: 3.8.3
+SLACKBUILD VERSION: 3.8.5
 SLACKBUILD REQUIRED: node
-SLACKBUILD DOWNLOAD: https://github.com/npm/npm/archive/v3.8.3.tar.gz
-SLACKBUILD MD5SUM: 1f0fec0d1d6b9524bab2f8d7856dd386
+SLACKBUILD DOWNLOAD: https://github.com/npm/npm/archive/v3.8.5.tar.gz
+SLACKBUILD MD5SUM: 593d521ffde5afa5d23350a34f8cc222
 SLACKBUILD SHORT DESCRIPTION:  npm (package manager for node)
 
 SLACKBUILD NAME: nsoq
@@ -2557,10 +2584,10 @@ SLACKBUILD SHORT DESCRIPTION:  ntopng (next generation network top)
 SLACKBUILD NAME: numpy
 SLACKBUILD LOCATION: ./numpy
 SLACKBUILD FILES: README numpy.SlackBuild numpy.info slack-desc
-SLACKBUILD VERSION: 1.10.4
+SLACKBUILD VERSION: 1.11.0
 SLACKBUILD REQUIRED: lapack cython
-SLACKBUILD DOWNLOAD: https://github.com/numpy/numpy/archive/v1.10.4.tar.gz
-SLACKBUILD MD5SUM: 3cb325c3dff03b5bc15206c757a26116
+SLACKBUILD DOWNLOAD: https://github.com/numpy/numpy/archive/v1.11.0.tar.gz
+SLACKBUILD MD5SUM: 487c83ea27d5e4581348a916453723da
 SLACKBUILD SHORT DESCRIPTION:  NumPy (a Python extension for scientific computing)
 
 SLACKBUILD NAME: nuttcp
@@ -2976,6 +3003,33 @@ SLACKBUILD REQUIRED: libgsasl tinyxml protobuf libircclient
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/pokerth/pokerth/1.1/PokerTH-1.1.1-src.tar.bz2
 SLACKBUILD MD5SUM: a7f76f95782099f966e5f2b6809f502a
 SLACKBUILD SHORT DESCRIPTION:  PokerTH (A poker game)
+
+SLACKBUILD NAME: postcss-autoprefixer
+SLACKBUILD LOCATION: ./postcss-autoprefixer
+SLACKBUILD FILES: README postcss-autoprefixer.SlackBuild postcss-autoprefixer.info slack-desc
+SLACKBUILD VERSION: 6.3.5
+SLACKBUILD REQUIRED: postcss node npm
+SLACKBUILD DOWNLOAD: https://github.com/postcss/autoprefixer/archive/6.3.5.tar.gz
+SLACKBUILD MD5SUM: 1bb7e418bd3b43aa348478554c6f835d
+SLACKBUILD SHORT DESCRIPTION:  postcss-autoprefixer (Parse CSS and add vendor prefixes to rules)
+
+SLACKBUILD NAME: postcss-cli
+SLACKBUILD LOCATION: ./postcss-cli
+SLACKBUILD FILES: README postcss-cli.SlackBuild postcss-cli.info slack-desc
+SLACKBUILD VERSION: 1.0.1
+SLACKBUILD REQUIRED: node npm postcss
+SLACKBUILD DOWNLOAD: https://github.com/code42day/postcss-cli/archive/s1.0.1.tar.gz
+SLACKBUILD MD5SUM: 0fc5c636efbb84d02a77bf4aa51d9c22
+SLACKBUILD SHORT DESCRIPTION:  postcss-cli (Simple CLI for postcss)
+
+SLACKBUILD NAME: postcss
+SLACKBUILD LOCATION: ./postcss
+SLACKBUILD FILES: README postcss.SlackBuild postcss.info slack-desc
+SLACKBUILD VERSION: 5.0.19
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/postcss/postcss/archive/5.0.19.tar.gz
+SLACKBUILD MD5SUM: 9536db83b4095f6ee7f1541eaebe487d
+SLACKBUILD SHORT DESCRIPTION:  postcss (Transforming styles with JS plugins)
 
 SLACKBUILD NAME: postfix
 SLACKBUILD LOCATION: ./postfix
@@ -3403,10 +3457,10 @@ SLACKBUILD SHORT DESCRIPTION:  Server Status Widget (KDE4 Plasmoid)
 SLACKBUILD NAME: setconf
 SLACKBUILD LOCATION: ./setconf
 SLACKBUILD FILES: README setconf.SlackBuild setconf.info slack-desc
-SLACKBUILD VERSION: 0.7.1
+SLACKBUILD VERSION: 0.7.2
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://setconf.roboticoverlords.org/setconf-0.7.1.tar.xz
-SLACKBUILD MD5SUM: 9ec452909327a36b5e63b9de3d29c694
+SLACKBUILD DOWNLOAD: http://setconf.roboticoverlords.org/setconf-0.7.2.tar.xz
+SLACKBUILD MD5SUM: 9fdc439feeaa4fed2de1d6427e8d4bdc
 SLACKBUILD SHORT DESCRIPTION:  setconf (Utility for changing settings in configuration files)
 
 SLACKBUILD NAME: shorewall-core
@@ -3547,19 +3601,19 @@ SLACKBUILD SHORT DESCRIPTION:  smem (memory reporting tool)
 SLACKBUILD NAME: smplayer
 SLACKBUILD LOCATION: ./smplayer
 SLACKBUILD FILES: README doinst.sh slack-desc smplayer.SlackBuild smplayer.info
-SLACKBUILD VERSION: 15.11.0
+SLACKBUILD VERSION: 16.1.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/smplayer/smplayer-15.11.0.tar.bz2
-SLACKBUILD MD5SUM: e6f459f640908df2403381a39a27cdba
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/smplayer/smplayer-16.1.0.tar.bz2
+SLACKBUILD MD5SUM: 3a85e04132a97c739f3cbd919252c65f
 SLACKBUILD SHORT DESCRIPTION:  SMplayer (Qt4 Mplayer front-end)
 
 SLACKBUILD NAME: smtube
 SLACKBUILD LOCATION: ./smtube
 SLACKBUILD FILES: README doinst.sh slack-desc smtube.SlackBuild smtube.info
-SLACKBUILD VERSION: 16.1.0
+SLACKBUILD VERSION: 16.3.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/smtube/smtube-16.1.0.tar.bz2
-SLACKBUILD MD5SUM: 33bb92f48dc18240d7ff208569f4a67c
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/smtube/smtube-16.3.0.tar.bz2
+SLACKBUILD MD5SUM: 2c5e8a5ff7ea4208c3240c3d35a0a362
 SLACKBUILD SHORT DESCRIPTION:  SMTube (small youtube browser)
 
 SLACKBUILD NAME: snort
