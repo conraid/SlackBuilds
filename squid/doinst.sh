@@ -23,6 +23,7 @@ perms() {
 }
 
 perms etc/rc.d/rc.squid.new
+config etc/logrotate.d/squid.new
 for NEW in etc/squid/*.new; do
 	config $NEW
 done
