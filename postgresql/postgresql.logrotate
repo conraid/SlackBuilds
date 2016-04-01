@@ -1,0 +1,9 @@
+/var/log/postgresql-%PG_VERSION% {
+    daily
+    rotate 7
+    copytruncate
+    delaycompress
+    compress
+    notifempty
+    missingok
+}

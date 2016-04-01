@@ -1,0 +1,171 @@
+#!/bin/sh
+#
+# Slackware build script for postgresql
+#
+# Copyright 2007-2015 Adis Nezirovic <adis_at_linux.org.ba>
+# Copyright 2016 Corrado Franco (http://conraid.net)
+# All rights reserved.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version, with the following exception:
+# the text of the GPL license may be omitted.
+
+# This program is distributed in the hope that it will be useful, but
+# without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose. Compiling,
+# interpreting, executing or merely reading the text of the program
+# may result in lapses of consciousness and/or very being, up to and
+# including the end of all existence and the Universe as we know it.
+# See the GNU General Public License for more details.
+
+# You may have received a copy of the GNU General Public License along
+# with this program (most likely, a file named COPYING).  If not, see
+# <http://www.gnu.org/licenses/>.
+#
+# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+
+set -eu
+
+# Bail out if user or group isn't valid on your system
+# For slackbuilds.org, assigned postgres uid/gid are 209/209
+# See http://slackbuilds.org/uid_gid.txt
+if ! grep ^postgres: /etc/group 2>&1 > /dev/null; then
+  echo "  You must have a postgres group to run this script."
+  echo "    # groupadd -g 209 postgres"
+  exit 1
+elif ! grep ^postgres: /etc/passwd 2>&1 > /dev/null; then
+  echo "  You must have a postgres user to run this script."
+  echo "    # useradd -u 209 -g 209 -d /var/lib/pgsql postgres"
+  exit 1
+fi
+
+CWD=$(pwd)
+
+PRGNAM=postgresql
+VERSION=${VERSION:-9.5.2}
+PG_VERSION=$(echo $VERSION | cut -d. -f-2)
+BUILD=${BUILD:-1}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+PKG=$TMP/package-$PRGNAM
+
+DOCFILES="COPYRIGHT HISTORY INSTALL README doc/KNOWN_BUGS doc/MISSING_FEATURES doc/TODO"
+
+if [ -z ${ARCH:=""} ]; then
+  case "$( uname -m )" in
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
+  esac
+fi
+
+if [ "$ARCH" = "i586" ]; then
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  LIBDIRSUFFIX="64"
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+fi
+
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAM-$VERSION
+tar xvf $CWD/$PRGNAM-$VERSION.tar.bz2
+cd $PRGNAM-$VERSION
+
+chown -R root:root .
+chmod -R u+w,go+r-w,a+X-s .
+
+LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+  --prefix=/usr/lib${LIBDIRSUFFIX}/$PRGNAM/$PG_VERSION \
+  --sysconfdir=/etc/$PRGNAM/$PG_VERSION \
+  --includedir=/usr/include \
+  --datarootdir=/usr/share \
+  --mandir=/usr/man \
+  --localstatedir=/var \
+  --infodir=/usr/info \
+  --docdir=/usr/doc/$PRGNAM-$VERSION \
+  --datadir=/usr/share/$PRGNAM-$PG_VERSION \
+  --with-system-tzdata=/usr/share/zoneinfo \
+  --with-libxml \
+  --with-libxslt \
+  --with-openssl \
+  --with-perl \
+  --with-python \
+  --with-tcl \
+  --with-uuid=e2fs \
+  --enable-nls \
+  --enable-thread-safety \
+  --host=$ARCH-slackware-linux \
+  --build=$ARCH-slackware-linux
+
+make
+make -C contrib
+make DESTDIR=$PKG install
+make DESTDIR=$PKG install-docs
+make DESTDIR=$PKG install -C contrib
+
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+
+if [ -d $PKG/usr/man ]; then
+  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+fi
+
+# create symlinks to shared library for other programs to link against
+( cd $PKG/usr/lib${LIBDIRSUFFIX}
+  for i in $(ls $PRGNAM/$PG_VERSION/lib/lib*.so*) ; do ln -sf $i ; done
+)
+
+# create symlinks to pkg-config scripts
+( mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
+  cd $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
+  for i in $(ls ../$PRGNAM/$PG_VERSION/lib/pkgconfig/*) ; do ln -sf $i ; done
+)
+
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+sed -e "s|%PG_VERSION%|$PG_VERSION|g" \
+  $CWD/SLACKWARE.README > $PKG/usr/doc/$PRGNAM-$VERSION/README.SLACKWARE
+
+# base database directory
+# assumes you are using /var/lib/pgsql as a homedir for postgres user
+mkdir -p $PKG/var/lib/pgsql/$PG_VERSION/data
+chown -R postgres:postgres $PKG/var/lib/pgsql
+chmod 700 $PKG/var/lib/pgsql
+# permissions for DATADIR should be u=rwx (0700)
+chmod 700 $PKG/var/lib/pgsql/$PG_VERSION/data
+
+# Install init script
+mkdir -p $PKG/etc/rc.d
+sed -e "s|%PG_VERSION%|$PG_VERSION|g" \
+  -e "s|%LIBDIRSUFFIX%|$LIBDIRSUFFIX|g" \
+  $CWD/rc.$PRGNAM > $PKG/etc/rc.d/rc.$PRGNAM.new
+
+# Install logrotate script
+mkdir -p $PKG/etc/logrotate.d
+sed -e "s|%PG_VERSION%|$PG_VERSION|g" \
+  $CWD/$PRGNAM.logrotate > $PKG/etc/logrotate.d/$PRGNAM.new
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+sed -e "s|%LIBDIRSUFFIX%|$LIBDIRSUFFIX|g" \
+    -e "s|%PG_VERSION%|$PG_VERSION|g" \
+  $CWD/doinst.sh > $PKG/install/doinst.sh
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
