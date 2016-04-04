@@ -31,8 +31,8 @@ CWD=$(pwd)
 
 SRCNAM=PHP_CodeSniffer
 PRGNAM=php-codesniffer
-VERSION=${VERSION:-2.5.1}
-BUILD=${BUILD:-3}
+VERSION=${VERSION:-2.6.0}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -57,22 +57,6 @@ pear install -P $PKG $SRCNAM-$VERSION.tgz
 cd $PKG/usr/lib${LIBDIRSUFFIX}/php
 rm -r $(ls -A | grep '^\.')
 cd -
-
-# Install WordPress-Coding-Standards, if exists
-WCSNAM="WordPress-Coding-Standards"
-if [ -f $WCSNAM-*.tar.gz ]; then
-  WCSVERSION=$(echo $WCSNAM-*.tar.gz | rev | cut -f 3- -d . | cut -f 1 -d - | rev)
-  WCSDIR="$PKG/usr/lib${LIBDIRSUFFIX}/php/PHP/CodeSniffer/Standards"
-  mkdir -p $WCSDIR
-  tar xvf $CWD/$WCSNAM-$WCSVERSION.tar.gz -C $WCSDIR --strip-components=1 \
-  $WCSNAM-$WCSVERSION/WordPress \
-  $WCSNAM-$WCSVERSION/WordPress-Core \
-  $WCSNAM-$WCSVERSION/WordPress-Docs \
-  $WCSNAM-$WCSVERSION/WordPress-Extra \
-  $WCSNAM-$WCSVERSION/WordPress-VIP
-  chown -R root:root $WCSDIR
-  chmod -R u+w,go+r-w,a+X-s $WCSDIR
-fi
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a $PKG/usr/lib${LIBDIRSUFFIX}/php/doc/$SRCNAM/* $PKG/usr/doc/$PRGNAM-$VERSION || true
