@@ -182,11 +182,9 @@ index f7fd01f..89b9431 100644
  	    && mutt_append_message (ctx_trash, ctx, ctx->hdrs[i], 0, 0) == -1)
  	  {
  	    mx_close_mailbox (ctx_trash, NULL);
-diff --git a/pager.c b/pager.c
-index 23eb8ca..b17afb4 100644
---- a/pager.c
-+++ b/pager.c
-@@ -2350,12 +2350,15 @@ search_next:
+---a/pager.c	2016-04-04 11:20:36.267235270 +0200
++++ b/pager.c	2016-04-04 11:26:06.000000000 +0200
+@@ -2372,6 +2372,7 @@ search_next:
  	MAYBE_REDRAW (redraw);
  	break;
  
@@ -194,28 +192,29 @@ index 23eb8ca..b17afb4 100644
        case OP_DELETE:
  	CHECK_MODE(IsHeader (extra));
  	CHECK_READONLY;
- 	CHECK_ACL(M_ACL_DELETE, _("delete message"));
+@@ -2379,6 +2380,8 @@ search_next:
+ 	CHECK_ACL(M_ACL_DELETE, _("Cannot delete message"));
  
  	mutt_set_flag (Context, extra->hdr, M_DELETE, 1);
 +	mutt_set_flag (Context, extra->hdr, M_PURGED,
-+		       ch != OP_PURGE_MESSAGE ? 0 : 1);
++		       ch != OP_PURGE_MESSAGE ? 0 : 1);	
          if (option (OPTDELETEUNTAG))
  	  mutt_set_flag (Context, extra->hdr, M_TAG, 0);
  	redraw = REDRAW_STATUS | REDRAW_INDEX;
-@@ -2682,6 +2685,7 @@ search_next:
- 	CHECK_ACL(M_ACL_DELETE, _("undelete message"));
+@@ -2709,6 +2712,7 @@ search_next:
+ 	CHECK_ACL(M_ACL_DELETE, _("Cannot undelete message"));
  
  	mutt_set_flag (Context, extra->hdr, M_DELETE, 0);
 +	mutt_set_flag (Context, extra->hdr, M_PURGED, 0);
  	redraw = REDRAW_STATUS | REDRAW_INDEX;
  	if (option (OPTRESOLVE))
  	{
-@@ -2697,9 +2701,11 @@ search_next:
- 	CHECK_ACL(M_ACL_DELETE, _("undelete message(s)"));
+@@ -2725,9 +2729,11 @@ search_next:
+ 	CHECK_ACL(M_ACL_DELETE, _("Cannot undelete message(s)"));
  
  	r = mutt_thread_set_flag (extra->hdr, M_DELETE, 0,
 +				  ch == OP_UNDELETE_THREAD ? 0 : 1)
-+	  + mutt_thread_set_flag (extra->hdr, M_PURGED, 0,
++	  + mutt_thread_set_flag (extra->hdr, M_PURGED, 0,				  
  				  ch == OP_UNDELETE_THREAD ? 0 : 1);
  
 -	if (r != -1)
@@ -223,6 +222,7 @@ index 23eb8ca..b17afb4 100644
  	{
  	  if (option (OPTRESOLVE))
  	  {
+
 diff --git a/pattern.c b/pattern.c
 index 7af1c38..4cdbd05 100644
 --- a/pattern.c

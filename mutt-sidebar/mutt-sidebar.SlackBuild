@@ -29,8 +29,8 @@ CWD=$(pwd)
 
 SRCNAM=mutt
 PRGNAM=mutt-sidebar
-VERSION=${VERSION:-1.5.24}
-BUILD=${BUILD:-5}
+VERSION=${VERSION:-1.6.0}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -68,7 +68,7 @@ cd $SRCNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-# patch by Lunar Linux to add sidebar support and other patch by Debian and Arch
+# patch by Lunar Linux to add sidebar support and other patches by Debian and Arch
 for PATCH in $CWD/patches/*.patch; do
   patch -p1 -i $PATCH
 done
@@ -106,9 +106,6 @@ make DESTDIR=$PKG install
 # Delete debug files
 rm -f $PKG/usr/bin/{flea,muttbug}-sidebar
 
-# Delete man files (present in mutt standard package)
-rm -rf $PKG/usr/man/
-
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
@@ -118,6 +115,9 @@ mv $PKG/etc/$PRGNAM/mime.types $PKG/etc/$PRGNAM/mime.types.new
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+
+# Move man files (present in mutt standard package) in doc dir
+mv $PKG/usr/man/ $PKG/usr/doc/$PRGNAM-$VERSION/
 
 install -Dm644 $CWD/$PRGNAM.desktop $PKG/usr/share/applications/$PRGNAM.desktop
 install -Dm644 $CWD/$PRGNAM.xpm $PKG/usr/share/pixmaps/$PRGNAM.xpm
