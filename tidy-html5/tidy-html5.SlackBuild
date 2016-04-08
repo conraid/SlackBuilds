@@ -37,7 +37,7 @@ TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="LICENSE* README* version*"
+DOCFILES="README/* version*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -70,6 +70,9 @@ cd $PRGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
+
+# fix to conflict with kdewebdev
+sed 's/LIB_NAME tidy/LIB_NAME tidy5/' -i CMakeLists.txt
 
 mkdir -p sbuild
 cd sbuild
