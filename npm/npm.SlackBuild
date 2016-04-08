@@ -31,7 +31,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=npm
-VERSION=${VERSION:-3.8.6}
+VERSION=${VERSION:-3.8.7}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -88,7 +88,7 @@ rm -f $PKG/usr/man/man{1,5,7}/*
 for DIR in man{1,5,7}; do
   cd $PKG/usr/lib$LIBDIRSUFFIX/node_modules/npm/man/$DIR
   for FILE in *; do
-  ln -s /usr/lib$LIBDIRSUFFIX/node_modules/npm/man/$DIR/$FILE $PKG/usr/man/$DIR/
+    ln -s /usr/lib$LIBDIRSUFFIX/node_modules/npm/man/$DIR/$FILE $PKG/usr/man/$DIR/
   done
   cd -
 done
