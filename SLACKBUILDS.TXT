@@ -425,7 +425,7 @@ SLACKBUILD NAME: collectd
 SLACKBUILD LOCATION: ./collectd
 SLACKBUILD FILES: README collectd.SlackBuild collectd.info doinst.sh rc.collectd slack-desc
 SLACKBUILD VERSION: 5.5.1
-SLACKBUILD REQUIRED: hiredis libdbi libesmtp libmemcached liboping libstatgrab protobuf-c rrdtool yajl
+SLACKBUILD REQUIRED: hiredis libdbi libesmtp libmemcached liboping libstatgrab protobuf-c rrdtool yajl libvirt
 SLACKBUILD DOWNLOAD: http://collectd.org/files/collectd-5.5.1.tar.bz2
 SLACKBUILD MD5SUM: fd24b947cef9351ce3e2d6d2a0762e18
 SLACKBUILD SHORT DESCRIPTION:  collectd (system statistics collection daemon)
@@ -1260,11 +1260,11 @@ SLACKBUILD SHORT DESCRIPTION:  instant-markdown-d (Instant Markdown previews fro
 
 SLACKBUILD NAME: inxi
 SLACKBUILD LOCATION: ./inxi
-SLACKBUILD FILES: LICENSE README inxi.SlackBuild inxi.info slack-desc
-SLACKBUILD VERSION: 2.2.36
+SLACKBUILD FILES: LICENSE.txt README README.txt inxi.SlackBuild inxi.info slack-desc
+SLACKBUILD VERSION: 2.2.38
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/smxi/inxi/raw/a130a680b688709d2cfef2e08654cb11ba90f762/inxi.tar.gz
-SLACKBUILD MD5SUM: d6538e150a6c703024f2e32f424467b2
+SLACKBUILD DOWNLOAD: https://github.com/smxi/inxi/raw/b8647b9d7307835ba1302b3d38472249d0194523/inxi.tar.gz
+SLACKBUILD MD5SUM: 46936d59b0ebe561156af5cfc8819920
 SLACKBUILD SHORT DESCRIPTION:  inxi (system information script)
 
 SLACKBUILD NAME: ioping
@@ -1951,6 +1951,15 @@ SLACKBUILD DOWNLOAD: https://github.com/libuv/libuv/archive/v1.9.0.tar.gz
 SLACKBUILD MD5SUM: 14737f9c76123a19a290dabb7d1cd04c
 SLACKBUILD SHORT DESCRIPTION:  libuv (Cross-platform asychronous I/O)
 
+SLACKBUILD NAME: libvirt
+SLACKBUILD LOCATION: ./libvirt
+SLACKBUILD FILES: README doinst.sh libvirt.SlackBuild libvirt.info rc.libvirt slack-desc
+SLACKBUILD VERSION: 1.3.3
+SLACKBUILD REQUIRED: urlgrabber yajl
+SLACKBUILD DOWNLOAD: http://libvirt.org/sources/libvirt-1.3.3.tar.gz
+SLACKBUILD MD5SUM: 698e0949a41a2b669dbe374759aaa64b
+SLACKBUILD SHORT DESCRIPTION:  libvirt (The virtualization API)
+
 SLACKBUILD NAME: libvterm
 SLACKBUILD LOCATION: ./libvterm
 SLACKBUILD FILES: README libvterm.SlackBuild libvterm.info slack-desc
@@ -2376,11 +2385,11 @@ SLACKBUILD SHORT DESCRIPTION:  NmapSi4 (Qt4 gui for nmap)
 
 SLACKBUILD NAME: nmon
 SLACKBUILD LOCATION: ./nmon
-SLACKBUILD FILES: README gpl.txt lmon15a_README.txt nmon.1.gz nmon.SlackBuild nmon.info nmon.txt slack-desc
-SLACKBUILD VERSION: 16d
+SLACKBUILD FILES: README gpl.txt lmon15a_README.txt nmon.1.gz nmon.SlackBuild nmon.info slack-desc
+SLACKBUILD VERSION: 16e
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/nmon/lmon16d.c
-SLACKBUILD MD5SUM: 8598d06b7e45b8987f69558062ff8405
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/nmon/lmon16e.c
+SLACKBUILD MD5SUM: f3495b9df5204d3dbaf2829ebd7733bc
 SLACKBUILD SHORT DESCRIPTION:  nmon (Performance Monitoring)
 
 SLACKBUILD NAME: node-better-console
@@ -2980,10 +2989,10 @@ SLACKBUILD SHORT DESCRIPTION:  pmount (mount removable devices as normal project
 SLACKBUILD NAME: pngcrush
 SLACKBUILD LOCATION: ./pngcrush
 SLACKBUILD FILES: README pngcrush.SlackBuild pngcrush.info slack-desc
-SLACKBUILD VERSION: 1.8.0
+SLACKBUILD VERSION: 1.8.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/pmt/pngcrush-1.8.0.tar.xz
-SLACKBUILD MD5SUM: 9f0fc4c5ce45b33adb4c93203433a489
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/pmt/pngcrush-1.8.1.tar.xz
+SLACKBUILD MD5SUM: ce116b11de49d75c0ed17bb5cf603b0d
 SLACKBUILD SHORT DESCRIPTION:  pngcrush
 
 SLACKBUILD NAME: podofo
@@ -3655,10 +3664,10 @@ SLACKBUILD SHORT DESCRIPTION:  socket-sentry (Real-time network traffic monitor 
 SLACKBUILD NAME: soundkonverter
 SLACKBUILD LOCATION: ./soundkonverter
 SLACKBUILD FILES: README doinst.sh slack-desc soundkonverter.SlackBuild soundkonverter.info
-SLACKBUILD VERSION: 2.1.2
+SLACKBUILD VERSION: 2.2.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://kde-apps.org/CONTENT/content-files/29024-soundkonverter-2.1.2.tar.gz
-SLACKBUILD MD5SUM: 4f09193d6602de7952b985b9505731f8
+SLACKBUILD DOWNLOAD: https://github.com/HessiJames/soundkonverter/archive/v2.2.0.tar.gz
+SLACKBUILD MD5SUM: 23d14344ff32f1030d55606cb5fd39af
 SLACKBUILD SHORT DESCRIPTION:  soundKonverter (kde frontend to audio converters)
 
 SLACKBUILD NAME: sqlitebrowser
