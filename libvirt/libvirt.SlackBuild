@@ -1,0 +1,149 @@
+#!/bin/sh
+#
+# Slackware build script for libvirt
+#
+# Written by Michal Bialozor <bialyy@o2.pl>
+# Maintained (for SBo) by Robby Workman <rworkman@slackbuilds.org>
+#
+# Copyright 2016 Corrado Franco (http://conraid.net)
+# All rights reserved.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version, with the following exception:
+# the text of the GPL license may be omitted.
+
+# This program is distributed in the hope that it will be useful, but
+# without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose. Compiling,
+# interpreting, executing or merely reading the text of the program
+# may result in lapses of consciousness and/or very being, up to and
+# including the end of all existence and the Universe as we know it.
+# See the GNU General Public License for more details.
+
+# You may have received a copy of the GNU General Public License along
+# with this program (most likely, a file named COPYING).  If not, see
+# <http://www.gnu.org/licenses/>.
+#
+# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+
+set -eu
+
+CWD=$(pwd)
+
+PRGNAM=libvirt
+VERSION=${VERSION:-1.3.3}
+BUILD=${BUILD:-1}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+PKG=$TMP/package-$PRGNAM
+
+DOCFILES="AUTHORS ChangeLog COPYING* INSTALL README NEWS TODO"
+
+if [ -z ${ARCH:=""} ]; then
+  case "$( uname -m )" in
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
+  esac
+fi
+
+if [ "$ARCH" = "i586" ]; then
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  LIBDIRSUFFIX="64"
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+fi
+
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf $PRGNAM-$VERSION
+tar xvf $CWD/$PRGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
+cd $PRGNAM-$VERSION
+
+chown -R root:root .
+chmod -R u+w,go+r-w,a+X-s .
+
+# Slackware has sysctld files in /etc/sysctl.d
+sed -i "s|(prefix)/lib/sysctl|(sysconfdir)/sysctl|" daemon/Makefile.in
+
+LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+  --prefix=/usr \
+  --libdir=/usr/lib$LIBDIRSUFFIX \
+  --sysconfdir=/etc \
+  --localstatedir=/var \
+  --mandir=/usr/man \
+  --infodir=/usr/info \
+  --docdir=/usr/doc/$PRGNAM-$VERSION \
+  --enable-static=no \
+  --enable-shared=yes \
+  --with-yajl \
+  --with-lxc \
+  --with-qemu-group=users \
+  --with-init-script=none \
+  --with-openssl \
+  --with-audit \
+  --host=$ARCH-slackware-linux \
+  --build=$ARCH-slackware-linux
+
+make HTML_DIR=/usr/doc/$PRGNAM-$VERSION EXAMPLE_DIR=/usr/doc/$PRGNAM-$VERSION/examples
+make HTML_DIR=/usr/doc/$PRGNAM-$VERSION EXAMPLE_DIR=/usr/doc/$PRGNAM-$VERSION/examples DESTDIR=$PKG install
+
+# We don't have augeas
+rm -fr $PKG/usr/share/augeas
+
+# Add an rc.libvirt to start/stop/restart the daemon
+install -Dm755 $CWD/rc.libvirt $PKG/etc/rc.d/rc.libvirt.new
+
+# We use $VIRTGROUP as our virtualization group, fix auth permissions, and
+# consider the fact that by default we got no certs
+sed -e 's|^\#unix_sock_group\ =\ "libvirt"|unix_sock_group = "users"|' \
+    -e 's|^\#unix_sock_rw_perms\ =\ "0770"|unix_sock_rw_perms = "0770"|' \
+    -e 's|^\#auth_unix_ro.*|auth_unix_ro = "none"|' \
+    -e 's|^\#auth_unix_rw.*|auth_unix_rw = "none"|' \
+    -e 's|^\#listen_tls|listen_tls|' \
+    -i $PKG/etc/libvirt/libvirtd.conf
+
+# still, we use users as our virtualization group
+sed -e 's|^\#group\ =\ "root"|group = "users"|' -i $PKG/etc/libvirt/qemu.conf
+
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+
+if [ -d $PKG/usr/man ]; then
+  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+fi
+
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+
+mkdir -p $PKG/install 
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+
+# Don't clobber existing configuration files
+for i in etc/libvirt etc/libvirt/nwfilter etc/libvirt/qemu/networks etc/logrotate.d etc/sasl2 etc/sysctl.d; do
+  for j in $(ls -1 $PKG/$i); do
+    if [ ! -d $PKG/$i/$j ]; then
+      mv $PKG/$i/$j $PKG/$i/$j.new
+      echo "config $i/$j.new" >> $PKG/install/doinst.sh
+    fi
+  done
+done
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
