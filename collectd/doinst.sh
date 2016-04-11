@@ -23,6 +23,6 @@ perms() {
   config $NEW
 }
 
-permis etc/rc.d/rc.collectd.new
+perms etc/rc.d/rc.collectd.new
 config etc/collectd/collection.conf.new
 config etc/collectd/collectd.conf.new
