@@ -118,10 +118,10 @@ SLACKBUILD SHORT DESCRIPTION:  arpwatch (Monitoring tools for tracking IP addres
 SLACKBUILD NAME: atom
 SLACKBUILD LOCATION: ./atom
 SLACKBUILD FILES: README atom.SlackBuild atom.info doinst.sh slack-desc
-SLACKBUILD VERSION: 1.6.2
+SLACKBUILD VERSION: 1.7.0
 SLACKBUILD REQUIRED: node npm grunt-cli
-SLACKBUILD DOWNLOAD: https://github.com/atom/atom/archive/v1.6.2.tar.gz
-SLACKBUILD MD5SUM: c295f403996c327b203daf80e4062d80
+SLACKBUILD DOWNLOAD: https://github.com/atom/atom/archive/v1.7.0.tar.gz
+SLACKBUILD MD5SUM: 3b9021cefaf53d220c9dc7d64622258e
 SLACKBUILD SHORT DESCRIPTION:  atom (text editor)
 
 SLACKBUILD NAME: atop
@@ -207,11 +207,11 @@ SLACKBUILD SHORT DESCRIPTION:  bleachbit (deletes unnecessary files to free valu
 
 SLACKBUILD NAME: bluefish
 SLACKBUILD LOCATION: ./bluefish
-SLACKBUILD FILES: README bluefish.SlackBuild bluefish.info doinst.sh slack-desc
+SLACKBUILD FILES: README bluefish.SlackBuild bluefish.info doinst.sh patches/svn.patch slack-desc
 SLACKBUILD VERSION: 2.2.8
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/bluefish/bluefish-2.2.8.tar.bz2
-SLACKBUILD MD5SUM: 2dbc4c666f3eef822d95588bc178e02d
+SLACKBUILD MD5SUM: 4d576ab2571aea7ed501d34399c6bd43
 SLACKBUILD SHORT DESCRIPTION:  Bluefish (GTK-based HTML Editor)
 
 SLACKBUILD NAME: bmon
@@ -244,10 +244,10 @@ SLACKBUILD SHORT DESCRIPTION:  bost (DNS diagnostic program)
 SLACKBUILD NAME: browser-sync
 SLACKBUILD LOCATION: ./browser-sync
 SLACKBUILD FILES: README browser-sync.SlackBuild browser-sync.info slack-desc
-SLACKBUILD VERSION: 2.11.2
+SLACKBUILD VERSION: 2.12.1
 SLACKBUILD REQUIRED: node npm
-SLACKBUILD DOWNLOAD: https://github.com/BrowserSync/browser-sync/archive/v2.11.2.tar.gz
-SLACKBUILD MD5SUM: de6cf4fdf4847d1cdbb324256c9183fb
+SLACKBUILD DOWNLOAD: https://github.com/BrowserSync/browser-sync/archive/v2.12.1.tar.gz
+SLACKBUILD MD5SUM: 722eaf4e3eb0c5c0b964de1451f4fc35
 SLACKBUILD SHORT DESCRIPTION:  browser-sync (Live CSS Reload & Browser Syncing for Node.js)
 
 SLACKBUILD NAME: bulk_extractor
@@ -2266,15 +2266,6 @@ SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/multibootusb/multibootusb-
 SLACKBUILD MD5SUM: c2e990d434f4a6df14b03d2d126c302e
 SLACKBUILD SHORT DESCRIPTION:  multibootusb (Create multi boot live Linux on a USB disk)
 
-SLACKBUILD NAME: mutt-sidebar
-SLACKBUILD LOCATION: ./mutt-sidebar
-SLACKBUILD FILES: README doinst.sh mutt-sidebar.SlackBuild mutt-sidebar.desktop mutt-sidebar.info mutt-sidebar.xpm patches/01-sidebar.patch patches/02-sidebar-firstchar.patch patches/02-sidebar-utf8.patch patches/05-trash-folder.patch patches/06-purge-message.diff patches/07-imap_fast_trash.diff slack-desc
-SLACKBUILD VERSION: 1.6.0
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: ftp://ftp.mutt.org/pub/mutt/mutt-1.6.0.tar.gz
-SLACKBUILD MD5SUM: d05bb821d7040c61ba89b22d7c2bd388
-SLACKBUILD SHORT DESCRIPTION:  Mutt-sidebar (the Mutt mail user agent with sidebar patch)
-
 SLACKBUILD NAME: mysqltuner
 SLACKBUILD LOCATION: ./mysqltuner
 SLACKBUILD FILES: README mysqltuner.SlackBuild mysqltuner.info slack-desc
@@ -2319,6 +2310,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://www.remlab.net/files/ndisc6/ndisc6-1.0.3.tar.bz2
 SLACKBUILD MD5SUM: 21afdaa3a5a5c1ce50eb7f2b7d795989
 SLACKBUILD SHORT DESCRIPTION:  NDisc6 (IPV6 network utilities)
+
+SLACKBUILD NAME: neomutt
+SLACKBUILD LOCATION: ./neomutt
+SLACKBUILD FILES: README doinst.sh neomutt.SlackBuild neomutt.desktop neomutt.info neomutt.xpm slack-desc
+SLACKBUILD VERSION: 20160413
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/neomutt/neomutt/archive/729ef79e7d33117eb33baad830c168d815014fe5.tar.gz
+SLACKBUILD MD5SUM: bbb80a94da59b4f7694f014f3eec593f
+SLACKBUILD SHORT DESCRIPTION:  neomutt (Bringing together all the Mutt code)
 
 SLACKBUILD NAME: neovim
 SLACKBUILD LOCATION: ./neovim
@@ -2562,6 +2562,15 @@ SLACKBUILD REQUIRED: opencv
 SLACKBUILD DOWNLOAD: https://downloads.sourceforge.net/nomacs/nomacs-2.4.6-source.tar.bz2
 SLACKBUILD MD5SUM: a154966dc5c1fed71279bc70d8078935
 SLACKBUILD SHORT DESCRIPTION:  nomacs (Qt image viewer)
+
+SLACKBUILD NAME: notmuch
+SLACKBUILD LOCATION: ./notmuch
+SLACKBUILD FILES: README doinst.sh notmuch.SlackBuild notmuch.info slack-desc
+SLACKBUILD VERSION: 0.21
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://notmuchmail.org/releases/notmuch-0.21.tar.gz
+SLACKBUILD MD5SUM: a951212b8c4624e9a2069e9d9e00222b
+SLACKBUILD SHORT DESCRIPTION:  notmuch (thread-based email index, search and tagging)
 
 SLACKBUILD NAME: npm
 SLACKBUILD LOCATION: ./npm
@@ -4101,15 +4110,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://prdownloads.sourceforge.net/vifm/vifm-0.8.1.tar.bz2
 SLACKBUILD MD5SUM: 2b748ed3831b3036bc32689218df356f
 SLACKBUILD SHORT DESCRIPTION:  Vifm (a ncurses-based file manager with vi-like keybindings)
-
-SLACKBUILD NAME: vim-instant-markdown
-SLACKBUILD LOCATION: ./vim-instant-markdown
-SLACKBUILD FILES: README slack-desc vim-instant-markdown.SlackBuild vim-instant-markdown.info
-SLACKBUILD VERSION: 0.0.7
-SLACKBUILD REQUIRED: instant-markdown-d
-SLACKBUILD DOWNLOAD: https://github.com/suan/vim-instant-markdown/archive/v0.0.7.tar.gz
-SLACKBUILD MD5SUM: e2011dd3b70c3e4510e28f77fc4fa56e
-SLACKBUILD SHORT DESCRIPTION:  vim-instant-markdown (Instant Markdown previews from VIm!)
 
 SLACKBUILD NAME: vnstat
 SLACKBUILD LOCATION: ./vnstat
