@@ -31,7 +31,7 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=atom
-VERSION=${VERSION:-1.6.2}
+VERSION=${VERSION:-1.7.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -64,6 +64,9 @@ chmod -R u+w,go+r-w,a+X-s .
 if [ "$DISABLE_METRICS" = "yes" ]; then
   sed -e '/"metrics":/d' -e '/"exception-reporting":/d' -i package.json
 fi
+
+# Fix Electron bug with fontconfig
+sed '/"electronVersion":/s/0.36.8/0.36.12/' -i package.json
 
 mkdir -p destbuild
 BUILD_DIR=$PWD/destbuild
