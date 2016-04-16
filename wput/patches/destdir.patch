@@ -1,0 +1,31 @@
+diff -upr a/Makefile.in b/Makefile.in
+--- a/Makefile.in	2008-09-27 12:31:23.000000000 +0200
++++ b/Makefile.in	2016-04-16 15:02:02.999355608 +0200
+@@ -2,7 +2,7 @@
+ PACKAGE     = @PACKAGE@
+ prefix      = @prefix@
+ datadir     = $(prefix)/share
+-mandir	    = $(datadir)/man/man1
++mandir	    = $(prefix)/man/man1
+ exec_prefix = @exec_prefix@
+ bindir=@bindir@
+ 
+@@ -16,12 +16,12 @@ win-clean:
+ 
+ install: all
+ 	cd po && $(MAKE) $(MAKEDEFS) $@
+-	mkdir -p $(bindir) 
+-	mkdir -p $(mandir) 
+-	install -m0755 wput $(bindir)
+-	install -m0644 doc/wput.1.gz $(mandir)
+-	ln -s $(bindir)/wput $(bindir)/wdel
+-	install -m0644 doc/wdel.1.gz $(mandir)
++	mkdir -p $(DESTDIR)$(bindir) 
++	mkdir -p $(DESTDIR)$(mandir) 
++	install -m0755 wput $(DESTDIR)$(bindir)
++	install -m0644 doc/wput.1.gz $(DESTDIR)$(mandir)
++	ln -s wput $(DESTDIR)$(bindir)/wdel
++	install -m0644 doc/wdel.1.gz $(DESTDIR)$(mandir)
+ 	@echo "----------------"
+ 	@echo "Wput and Wdel installed. See 'wput/wdel -h' or 'man wput/wdel' for"
+ 	@echo "usage information."
