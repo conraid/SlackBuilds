@@ -28,7 +28,8 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=filezilla
-VERSION=${VERSION:-3.16.1}
+SRCVERSION="3.17.0-rc1"
+VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -62,9 +63,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/FileZilla_${VERSION}_src.tar.bz2
-cd $PRGNAM-$VERSION
+rm -rf $PRGNAM-$SRCVERSION
+tar xvf $CWD/FileZilla_${SRCVERSION}_src.tar.bz2
+cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
