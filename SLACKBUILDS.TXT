@@ -244,10 +244,10 @@ SLACKBUILD SHORT DESCRIPTION:  bost (DNS diagnostic program)
 SLACKBUILD NAME: browser-sync
 SLACKBUILD LOCATION: ./browser-sync
 SLACKBUILD FILES: README browser-sync.SlackBuild browser-sync.info slack-desc
-SLACKBUILD VERSION: 2.12.3
+SLACKBUILD VERSION: 2.12.5
 SLACKBUILD REQUIRED: node npm
-SLACKBUILD DOWNLOAD: https://github.com/BrowserSync/browser-sync/archive/v2.12.3.tar.gz
-SLACKBUILD MD5SUM: e8ebccd600b6343d1d3bc9b86d428436
+SLACKBUILD DOWNLOAD: https://github.com/BrowserSync/browser-sync/archive/v2.12.5.tar.gz
+SLACKBUILD MD5SUM: bcba36ee6244ecd4f9b3e2540514cfe1
 SLACKBUILD SHORT DESCRIPTION:  browser-sync (Live CSS Reload & Browser Syncing for Node.js)
 
 SLACKBUILD NAME: bulk_extractor
@@ -1999,11 +1999,20 @@ SLACKBUILD SHORT DESCRIPTION:  luapeg (Parsing Expression Grammars For Lua)
 SLACKBUILD NAME: lua51-messagepack
 SLACKBUILD LOCATION: ./lua51-messagepack
 SLACKBUILD FILES: README lua51-messagepack.SlackBuild lua51-messagepack.info slack-desc
-SLACKBUILD VERSION: 0.3.3
+SLACKBUILD VERSION: 0.3.4
 SLACKBUILD REQUIRED: lua51
-SLACKBUILD DOWNLOAD: https://github.com/fperrad/lua-MessagePack/archive/0.3.3.tar.gz
-SLACKBUILD MD5SUM: f4c1b0cc63b0bcde4ecb83ce012ab67e
+SLACKBUILD DOWNLOAD: https://github.com/fperrad/lua-MessagePack/archive/0.3.4.tar.gz
+SLACKBUILD MD5SUM: 762c9dc15b4bc8315990a62341751f7b
 SLACKBUILD SHORT DESCRIPTION:  lua51-messagepack (Lua implementation of msgpack)
+
+SLACKBUILD NAME: lua51-mpack
+SLACKBUILD LOCATION: ./lua51-mpack
+SLACKBUILD FILES: README lua51-mpack.SlackBuild lua51-mpack.info slack-desc
+SLACKBUILD VERSION: 1.0.2
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/tarruda/libmpack/archive/1.0.2.tar.gz
+SLACKBUILD MD5SUM: a6320e37991bb56520d4670419edb43c
+SLACKBUILD SHORT DESCRIPTION:  lua51-mpack (lua 5.1 mspack)
 
 SLACKBUILD NAME: lua51
 SLACKBUILD LOCATION: ./lua51
@@ -2278,10 +2287,10 @@ SLACKBUILD SHORT DESCRIPTION:  neomutt (Bringing together all the Mutt code)
 SLACKBUILD NAME: neovim
 SLACKBUILD LOCATION: ./neovim
 SLACKBUILD FILES: README neovim.SlackBuild neovim.info patches/msgc.patch slack-desc
-SLACKBUILD VERSION: 0.1.3
-SLACKBUILD REQUIRED: libtermkey libvterm lua51 lua51-lpeg lua51-messagepack luajit msgpack-c unibilium
-SLACKBUILD DOWNLOAD: https://github.com/neovim/neovim/archive/v0.1.3.tar.gz
-SLACKBUILD MD5SUM: 3ccc08ce57d14d37d423ef6e587bc065
+SLACKBUILD VERSION: 0.1.4
+SLACKBUILD REQUIRED: libtermkey libvterm lua51 lua51-lpeg lua51-mpack luajit msgpack-c unibilium
+SLACKBUILD DOWNLOAD: https://github.com/neovim/neovim/archive/v0.1.4.tar.gz
+SLACKBUILD MD5SUM: 0629174b4bee820fbc39343c746d6f9a
 SLACKBUILD SHORT DESCRIPTION:  neovim (Vim-fork focused on extensibility and agility.)
 
 SLACKBUILD NAME: nethogs
@@ -2485,10 +2494,10 @@ SLACKBUILD SHORT DESCRIPTION:  watcherjs (Node.js based application for service 
 SLACKBUILD NAME: node
 SLACKBUILD LOCATION: ./node
 SLACKBUILD FILES: README node.SlackBuild node.info slack-desc
-SLACKBUILD VERSION: 5.11.0
+SLACKBUILD VERSION: 6.0.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/nodejs/node/archive/v5.11.0.tar.gz
-SLACKBUILD MD5SUM: 4e468eb1384053e5e5f714aac7549eb2
+SLACKBUILD DOWNLOAD: https://github.com/nodejs/node/archive/v6.0.0.tar.gz
+SLACKBUILD MD5SUM: 35fee73b79866ee82f98ab142db35ea0
 SLACKBUILD SHORT DESCRIPTION:  Node (Evented I/O for V8 JavaScript)
 
 SLACKBUILD NAME: noip2
@@ -3139,15 +3148,6 @@ SLACKBUILD DOWNLOAD: http://wiki.qemu-project.org/download/qemu-2.5.1.tar.bz2
 SLACKBUILD MD5SUM: 42e73182dea8b9213fa7050e168a4615
 SLACKBUILD SHORT DESCRIPTION:  qemu (open source processor emulator)
 
-SLACKBUILD NAME: qgmailnotifier
-SLACKBUILD LOCATION: ./qgmailnotifier
-SLACKBUILD FILES: README doinst.sh qgmailnotifier.SlackBuild qgmailnotifier.desktop qgmailnotifier.info slack-desc
-SLACKBUILD VERSION: 2014.1
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.codef00.com/projects/qgmailnotifier-2014.1.tgz
-SLACKBUILD MD5SUM: c2e8592306222539a4886c3aeeb180b3
-SLACKBUILD SHORT DESCRIPTION:  QGMailNotifier (Qt GMail Notifier)
-
 SLACKBUILD NAME: qnetstatview
 SLACKBUILD LOCATION: ./qnetstatview
 SLACKBUILD FILES: README doinst.sh qnetstatview.SlackBuild qnetstatview.desktop qnetstatview.ico qnetstatview.info slack-desc
@@ -3744,7 +3744,7 @@ SLACKBUILD SHORT DESCRIPTION:  tcpflow (TCP/IP session demultiplexer)
 
 SLACKBUILD NAME: tcpick
 SLACKBUILD LOCATION: ./tcpick
-SLACKBUILD FILES: README slack-desc tcpick.SlackBuild tcpick.info
+SLACKBUILD FILES: README patches/CVE-2006-0048.patch patches/fix-build-with-gcc5.patch patches/fix-double-free-error.patch patches/fix-infinite-loop-on-powerpc.patch patches/fix-man-invocation.patch slack-desc tcpick.SlackBuild tcpick.info
 SLACKBUILD VERSION: 0.2.1
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/tcpick/tcpick/0.2.1/tcpick-0.2.1.tar.gz
@@ -3759,15 +3759,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://www.linuxco.de/tcping/tcping-1.3.5.tar.gz
 SLACKBUILD MD5SUM: f9dd03c730db6999ca8beca479f078e3
 SLACKBUILD SHORT DESCRIPTION:  tcping (utility that check of TCP connection to a given IP/Port)
-
-SLACKBUILD NAME: tcpreplay
-SLACKBUILD LOCATION: ./tcpreplay
-SLACKBUILD FILES: README slack-desc tcpreplay.SlackBuild tcpreplay.info
-SLACKBUILD VERSION: 4.1.0
-SLACKBUILD REQUIRED: libdnet
-SLACKBUILD DOWNLOAD: https://github.com/appneta/tcpreplay/releases/download/v4.1.0/tcpreplay-4.1.0.tar.gz
-SLACKBUILD MD5SUM: fd48d73d84ade30ece0a9abb538c82d5
-SLACKBUILD SHORT DESCRIPTION:  tcpreplay (reproduces the traffic captured by libpcap)
 
 SLACKBUILD NAME: tcptrack
 SLACKBUILD LOCATION: ./tcptrack
@@ -4096,10 +4087,10 @@ SLACKBUILD SHORT DESCRIPTION:  wine (Wine Is Not an Emulator)
 SLACKBUILD NAME: winetricks
 SLACKBUILD LOCATION: ./winetricks
 SLACKBUILD FILES: README slack-desc winetricks.SlackBuild winetricks.info
-SLACKBUILD VERSION: 20160329
+SLACKBUILD VERSION: 20160425
 SLACKBUILD REQUIRED: cabextract wine
-SLACKBUILD DOWNLOAD: https://github.com/Winetricks/winetricks/archive/20160329.tar.gz
-SLACKBUILD MD5SUM: 2e6eb491d2a36498aeefb62b01f9b7f9
+SLACKBUILD DOWNLOAD: https://github.com/Winetricks/winetricks/archive/20160425.tar.gz
+SLACKBUILD MD5SUM: eb230a00a29f3d6d5ee5b5dfca85d9fc
 SLACKBUILD SHORT DESCRIPTION:  winetricks (script for install runtime libraries in wine)
 
 SLACKBUILD NAME: wipe
