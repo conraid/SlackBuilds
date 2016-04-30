@@ -27,12 +27,12 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=collectd
-VERSION=${VERSION:-5.5.1}
-BUILD=${BUILD:-3}
+PKGNAM=collectd
+VERSION=5.5.1
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="AUTHORS COPYING ChangeLog INSTALL NEWS README TODO"
@@ -63,9 +63,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xjvf $CWD/$PRGNAM-$VERSION.tar.bz2
-cd $PRGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
+tar xjvf $CWD/$PKGNAM-$VERSION.tar.bz2
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -104,13 +104,13 @@ fi
 find $PKG -name perllocal.pod | xargs -r rm -f
 rm -rf $PKG/usr/lib/perl5/5.*
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 
 # Add a sample directory:
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION/examples
-cp -a $EXAMPLES $PKG/usr/doc/$PRGNAM-$VERSION/examples || true
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION/examples
+cp -a $EXAMPLES $PKG/usr/doc/$PKGNAM-$VERSION/examples || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 # Add or move config files
 install -Dpm644 $CWD/rc.collectd $PKG/etc/rc.d/rc.collectd.new
@@ -123,4 +123,4 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
