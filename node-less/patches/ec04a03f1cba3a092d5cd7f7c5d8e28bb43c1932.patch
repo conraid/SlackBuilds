@@ -1,0 +1,31 @@
+From ec04a03f1cba3a092d5cd7f7c5d8e28bb43c1932 Mon Sep 17 00:00:00 2001
+From: Anna Henningsen <sqrt@entless.org>
+Date: Sun, 27 Mar 2016 12:20:18 +0200
+Subject: [PATCH] bin/lessc: Make sure path.dirname gets passed strings
+
+Since nodejs/node@08085c49b6e, which will be part of Node.js v6.0,
+functions from the `path` core module (like `dirname`) will require
+the input to be a string.
+
+Because `.sourceMapFullFilename` and `.sourceMapInputFilename` in
+bin/lessc may be `undefined`, default to passing `'.'` to
+`path.dirname` instead.
+---
+ bin/lessc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/bin/lessc b/bin/lessc
+index 4907bc3..8f31be4 100755
+--- a/bin/lessc
++++ b/bin/lessc
+@@ -316,8 +316,8 @@ function printUsage() {
+     }
+ 
+     if (sourceMapOptions.sourceMapRootpath === undefined) {
+-        var pathToMap = path.dirname(sourceMapFileInline ? output : sourceMapOptions.sourceMapFullFilename),
+-            pathToInput = path.dirname(sourceMapOptions.sourceMapInputFilename);
++        var pathToMap = path.dirname(sourceMapFileInline ? output : sourceMapOptions.sourceMapFullFilename || '.'),
++            pathToInput = path.dirname(sourceMapOptions.sourceMapInputFilename || '.');
+         sourceMapOptions.sourceMapRootpath = path.relative(pathToMap, pathToInput);
+     }
+ 
