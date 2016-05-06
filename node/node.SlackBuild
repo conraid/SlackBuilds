@@ -35,14 +35,14 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=node
-VERSION=6.0.0
+VERSION=6.1.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="AUTHORS CHANGELOG* CONTRIBUTING* GOVERNANCE* LICENSE README* ROADMAP* WORKING_GROUPS* doc"
+DOCFILES="*.md AUTHORS LICENSE doc"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
