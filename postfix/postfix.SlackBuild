@@ -1,37 +1,38 @@
 #!/bin/sh
 # Slackware build script for postfix (http://www.postfix.org)
 #
-# Copyright 2006, Alan Hicks, Lizella, GA (by slackbuilds.org)
 # Copyright 2008-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
-# Redistribution and use of this script, with or without modification, is
-# permitted provided that the following conditions are met:
-#
-# 1. Redistributions of this script must retain the above copyright
-#  notice, this list of conditions and the following disclaimer.
-#
-# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
-# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version, with the following exception:
+# the text of the GPL license may be omitted.
 
-# IMPORTANT
+# This program is distributed in the hope that it will be useful, but
+# without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose. Compiling,
+# interpreting, executing or merely reading the text of the program
+# may result in lapses of consciousness and/or very being, up to and
+# including the end of all existence and the Universe as we know it.
+# See the GNU General Public License for more details.
+
+# You may have received a copy of the GNU General Public License along
+# with this program (most likely, a file named COPYING).  If not, see
+# <http://www.gnu.org/licenses/>.
 #
-#  Must have a postfix user and group  run this script
+# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+
+
+# You must have a postfix user and group  run this script
 #
-# # groupadd -g 200 postfix
-# # useradd -u 200 -d /dev/null -s /bin/false -g postfix postfix
+#  groupadd -g 200 postfix
+#  useradd -u 200 -d /dev/null -s /bin/false -g postfix postfix
 #
-#  Must have a postdrop group to run this script
+# You must have a postdrop group to run this script
 #
-# # groupadd -g 201 postdrop
+#  groupadd -g 201 postdrop
 #
 if ! grep ^postfix: /etc/passwd 2>&1 > /dev/null; then
   echo "You must have a postfix user and group to run this script"
@@ -46,8 +47,8 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=postfix
-VERSION=${VERSION:-3.1.0}
-BUILD=${BUILD:-2}
+VERSION=3.1.0
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -76,7 +77,7 @@ elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -140,10 +141,10 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 # Fix man files for postfix set-permissions
-sed 's#^\(\$manpage[^:]*\):#\1.gz:#' -i $PKG/etc/postfix/meta/postfix-files || true
+sed 's|^\(\$manpage[^:]*\):|\1.gz:|' -i $PKG/etc/postfix/meta/postfix-files || true
 
 # Add rc.postfix
-install -m 0755 -D $CWD/rc.postfix $PKG/etc/rc.d/rc.postfix.new
+install -Dm755 $CWD/rc.postfix $PKG/etc/rc.d/rc.postfix.new
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -aL $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
