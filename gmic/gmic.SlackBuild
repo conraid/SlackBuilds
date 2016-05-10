@@ -29,12 +29,12 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=gmic
-VERSION=${VERSION:-1.7.0}
+PKGNAM=gmic
+VERSION=1.7.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 if [ -z ${ARCH:=""} ]; then
@@ -62,9 +62,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/${PRGNAM}_$VERSION.tar.gz
-cd $PRGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/${PKGNAM}_$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -75,10 +75,10 @@ sed -e 's|/share/man/|/man/|g' -i src/Makefile
 make -C src LIB=lib${LIBDIRSUFFIX} OPT_CFLAGS="$SLKCFLAGS" all
 make -C src install LIB=lib${LIBDIRSUFFIX} DESTDIR=$PKG USR="/usr"
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a COPYING README $PKG/usr/doc/$PRGNAM-$VERSION
-cat zart/README > $PKG/usr/doc/$PRGNAM-$VERSION/zart.txt
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a COPYING README $PKG/usr/doc/$PKGNAM-$VERSION
+cat zart/README > $PKG/usr/doc/$PKGNAM-$VERSION/zart.txt
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
@@ -87,4 +87,4 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 rmdir $PKG/usr/share || true
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
