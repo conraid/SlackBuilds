@@ -4,7 +4,7 @@
 #
 # Copyright 2010 Kuroi Kenshi <kuroi_kenshi96@yahoo.com>
 # Copyright 2012-2013 Audrius Kažukauskas <audrius@neutrino.lt>
-# Copyright 2013-2015 Corrado Franco (http://conraid.net)
+# Copyright 2013-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,12 +31,12 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=redis
-VERSION=${VERSION:-3.0.7}
+PKGNAM=redis
+VERSION=3.2.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="00-RELEASENOTES BUGS CONTRIBUTING COPYING MANIFESTO README"
@@ -56,7 +56,7 @@ elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -66,20 +66,22 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
-cd $PRGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
-find . \
+chmod -R u+w,go+r-w,a+X-s .
 
-# Use system library (Thanks to Archlinux)
-patch -p1 -i $CWD/redis-2.8.11-use-system-jemalloc.patch
-rm -rf deps/jemalloc
-rm deps/*.sh
+# Apply patches
+if [ -e $CWD/patches ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
 
-# Use our CFLAGS (thanks to SBo)
-sed -i "s|-O3||" deps/Makefile deps/hiredis/Makefile 
+# Use our flags (thanks to SBo)
+sed "s|-O3||" -i deps/Makefile -i deps/hiredis/Makefile 
 
 make CFLAGS="$SLKCFLAGS"
 make PREFIX=$PKG/usr install
@@ -110,13 +112,13 @@ install -Dm644 $CWD/rc.redis $PKG/etc/rc.d/rc.redis.new
 # Install logrotate script.
 install -Dm644 $CWD/redis.logrotate $PKG/etc/logrotate.d/redis.new
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
