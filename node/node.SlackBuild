@@ -35,7 +35,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=node
-VERSION=6.1.0
+VERSION=6.2.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -46,9 +46,9 @@ DOCFILES="*.md AUTHORS LICENSE doc"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
   esac
 fi
 
