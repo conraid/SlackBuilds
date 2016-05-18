@@ -29,12 +29,12 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=unetbootin
-VERSION=${VERSION:-619}
+PKGNAM=unetbootin
+VERSION=625
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="README* INSTALL"
@@ -67,9 +67,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
-cd $PRGNAM-$VERSION/src/$PRGNAM/
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION/src/$PKGNAM/
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -82,24 +82,24 @@ PREFIX=/usr QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" 
 "DEFINES += NOSTATIC" "RESOURCES -= unetbootin.qrc"
 make
 
-install -Dsm755 $PRGNAM $PKG/usr/bin/unetbootin
+install -Dsm755 $PKGNAM $PKG/usr/bin/unetbootin
 
-mkdir -p $PKG/usr/share/$PRGNAM/
-install -m644 ${PRGNAM}*.qm $PKG/usr/share/$PRGNAM/
-install -Dm644 $PRGNAM.desktop $PKG/usr/share/applications/$PRGNAM.desktop
+mkdir -p $PKG/usr/share/$PKGNAM/
+install -m644 ${PKGNAM}*.qm $PKG/usr/share/$PKGNAM/
+install -Dm644 $PKGNAM.desktop $PKG/usr/share/applications/$PKGNAM.desktop
 for i in 16 22 24 32 48 256; do
-  install -Dm644 ${PRGNAM}_${i}.png $PKG/usr/share/icons/hicolor/${i}x${i}/apps/$PRGNAM.png
+  install -Dm644 ${PKGNAM}_${i}.png $PKG/usr/share/icons/hicolor/${i}x${i}/apps/$PKGNAM.png
 done
-install -Dm644 ${PRGNAM}_icons.svg $PKG/usr/share/pixmaps/$PRGNAM.svg
+install -Dm644 ${PKGNAM}_icons.svg $PKG/usr/share/pixmaps/$PKGNAM.svg
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
-chmod 644 $PKG/usr/doc/$PRGNAM-$VERSION/*
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
+chmod 644 $PKG/usr/doc/$PKGNAM-$VERSION/*
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
