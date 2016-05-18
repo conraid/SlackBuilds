@@ -24,8 +24,7 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-
-# You must have a postfix user and group  run this script
+# You must have a postfix user and group to run this script
 #
 #  groupadd -g 200 postfix
 #  useradd -u 200 -d /dev/null -s /bin/false -g postfix postfix
@@ -46,12 +45,12 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=postfix
-VERSION=3.1.0
-BUILD=${BUILD:-3}
+PKGNAM=postfix
+VERSION=3.1.1
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="AAAREADME COMPATIBILITY COPYRIGHT HISTORY IPv6-ChangeLog LICENSE \
@@ -64,9 +63,9 @@ main.cf main.cf.default master.cf relocated transport virtual"
   
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -87,9 +86,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
-cd $PRGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -121,7 +120,7 @@ make makefiles \
 make
 make non-interactive-package \
   install_root=$PKG \
-  tempdir=$TMP/$PRGNAM-temp \
+  tempdir=$TMP/$PKGNAM-temp \
   $CONFIG_PARAMS
 
 # Add auxiliary files
@@ -143,21 +142,21 @@ fi
 # Fix man files for postfix set-permissions
 sed 's|^\(\$manpage[^:]*\):|\1.gz:|' -i $PKG/etc/postfix/meta/postfix-files || true
 
-# Add rc.postfix
+# Add init script
 install -Dm755 $CWD/rc.postfix $PKG/etc/rc.d/rc.postfix.new
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -aL $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -aL $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
-# Create .new files
+# Rename config files
 for FILE in $NEWFILES; do
   mv $PKG/etc/postfix/$FILE $PKG/etc/postfix/$FILE.new
 done
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
