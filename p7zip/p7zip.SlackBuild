@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=p7zip
 VERSION=15.14.1
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -66,6 +66,13 @@ cd ${PKGNAM}_$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
+
+# Apply patches
+if [ -e $CWD/patches ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
 
 if [ $ARCH == "x86_64" ]; then
   cp -f makefile.linux_amd64_asm makefile.machine
