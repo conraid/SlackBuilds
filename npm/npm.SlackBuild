@@ -31,7 +31,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=npm
-VERSION=3.9.1
+VERSION=3.9.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -42,9 +42,9 @@ DOCFILES="AUTHORS CHANGELOG* CONTRIBUTING* LICENSE README* doc/*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
   esac
 fi
 
