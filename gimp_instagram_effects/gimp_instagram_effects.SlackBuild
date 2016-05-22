@@ -1,0 +1,67 @@
+#!/bin/sh
+#
+# Slackware build script for gimp_instagram_effects
+#
+# Copyright 2015-2016 Corrado Franco (http://conraid.net)
+# All rights reserved.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version, with the following exception:
+# the text of the GPL license may be omitted.
+
+# This program is distributed in the hope that it will be useful, but
+# without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose. Compiling,
+# interpreting, executing or merely reading the text of the program
+# may result in lapses of consciousness and/or very being, up to and
+# including the end of all existence and the Universe as we know it.
+# See the GNU General Public License for more details.
+
+# You may have received a copy of the GNU General Public License along
+# with this program (most likely, a file named COPYING).  If not, see
+# <http://www.gnu.org/licenses/>.
+#
+# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+
+set -eu
+
+CWD=$(pwd)
+
+PKGNAM=gimp_instagram_effects
+VERSION=0.1
+BUILD=${BUILD:-1}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+PKG=$TMP/package-$PKGNAM
+OUTPUT=${OUTPUT:-/tmp}
+
+if [ -z ${ARCH:=""} ]; then
+  case "$( uname -m )" in
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    *) ARCH=$( uname -m ) ;;
+  esac
+fi
+
+[ $ARCH == 'x86_64' ] && LIBDIRSUFFIX="64" || LIBDIRSUFFIX=""
+
+rm -rf $PKG
+mkdir -p $TMP $PKG/usr/lib${LIBDIRSUFFIX}/gimp/2.0/plug-ins/
+cd $PKG/usr/lib${LIBDIRSUFFIX}/gimp/2.0/plug-ins/
+unzip $CWD/${PKGNAM}.zip
+
+chown -R root:root .
+chmod -R ugo-x,u+rwX,go+rX,go-w,a+x .
+
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
+
+install -Dm644 $CWD/${PKGNAM}.SlackBuild $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBuild
+
+mkdir -p $PKG/install 
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD${TAG}.txz
