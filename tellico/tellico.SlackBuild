@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=tellico
 VERSION=2.3.11
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -39,9 +39,9 @@ DOCFILES="AUTHORS COPYING* ChangeLog README"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
   esac
 fi
 
