@@ -2,7 +2,7 @@
 #
 # Slackware build script for phpdocumentor
 #
-# Copyright 2015 Corrado Franco (http://conraid.net)
+# Copyright 2015-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,20 +29,20 @@ set -eu
 
 CWD=$(pwd)
 
-SRCNAM=phpDocumentor
-PRGNAM=$(echo $SRCNAM | tr A-Z a-z)
-VERSION=${VERSION:-2.8.5}
+PRGNAM=phpDocumentor
+PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
+VERSION=2.9.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -52,18 +52,18 @@ rm -rf $PKG
 mkdir -p $PKG
 
 pear channel-discover pear.phpdoc.org || pear channel-update pear.phpdoc.org
-pear install -P $PKG $CWD/$SRCNAM-$VERSION.tgz
+pear install -P $PKG $CWD/$PRGNAM-$VERSION.tgz
 
 # Remove channel, metadata etc...
-cd $PKG/usr/lib$LIBDIRSUFFIX/php
+cd $PKG/usr/lib${LIBDIRSUFFIX}/php
 rm -r $(ls -A | grep '^\.')
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $PKG/usr/lib$LIBDIRSUFFIX/php/$SRCNAM/{LICENSE,VERSION} $PKG/usr/doc/$PRGNAM-$VERSION
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $PKG/usr/lib${LIBDIRSUFFIX}/php/$PRGNAM/{LICENSE,VERSION} $PKG/usr/doc/$PKGNAM-$VERSION
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}

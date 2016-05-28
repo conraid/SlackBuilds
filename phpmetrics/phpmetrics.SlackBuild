@@ -29,24 +29,24 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=phpmetrics
-VERSION=${VERSION:-1.10.0}
-BUILD=${BUILD:-1}
+PKGNAM=phpmetrics
+VERSION=1.10.0
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 ARCH=noarch
 
-install -Dm755 -o root -g root $CWD/${PRGNAM}.phar $PKG/usr/bin/$PRGNAM
+install -Dm755 -o root -g root $CWD/${PKGNAM}.phar $PKG/usr/bin/$PKGNAM
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $CWD/LICENSE $PKG/usr/doc/$PRGNAM-$VERSION
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $CWD/LICENSE $PKG/usr/doc/$PKGNAM-$VERSION
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}

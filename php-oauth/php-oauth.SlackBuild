@@ -30,7 +30,7 @@ CWD=$(pwd)
 PRGNAM=oauth
 PKGNAM=php-oauth
 VERSION=1.2.3
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-7}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -38,12 +38,11 @@ OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="LICENSE"
 
-ARCH=${ARCH:=""} # Set ARCH or leave blank to determine it automatically/
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    *) ARCH=$( uname -m ) ;;
   esac
 fi
 

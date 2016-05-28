@@ -29,13 +29,13 @@ set -eu
 
 CWD=$(pwd)
 
-SRCNAM=PHP_CodeSniffer
-PRGNAM=php-codesniffer
-VERSION=${VERSION:-2.6.0}
-BUILD=${BUILD:-1}
+PRGNAM=PHP_CodeSniffer
+PKGNAM=php-codesniffer
+VERSION=2.6.0
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 if [ -z ${ARCH:=""} ]; then
@@ -51,19 +51,19 @@ fi
 rm -rf $PKG
 mkdir -p $PKG
 
-pear install -P $PKG $SRCNAM-$VERSION.tgz
+pear install -P $PKG $PRGNAM-$VERSION.tgz
 
 # Remove channel, metadata etc...
 cd $PKG/usr/lib${LIBDIRSUFFIX}/php
 rm -r $(ls -A | grep '^\.')
 cd -
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $PKG/usr/lib${LIBDIRSUFFIX}/php/doc/$SRCNAM/* $PKG/usr/doc/$PRGNAM-$VERSION || true
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $PKG/usr/lib${LIBDIRSUFFIX}/php/doc/$PRGNAM/* $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
