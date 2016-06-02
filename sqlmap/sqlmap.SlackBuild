@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=sqlmap
-VERSION="1.0.5"
+VERSION=1.0.6
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -41,9 +41,9 @@ DOCFILES="README*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-     *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
   esac
 fi
 [ "$ARCH" = "x86_64" ] && LIBDIRSUFFIX="64" || LIBDIRSUFFIX=""
