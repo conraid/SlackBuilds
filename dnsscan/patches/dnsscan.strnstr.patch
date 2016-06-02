@@ -1,0 +1,44 @@
+--- a/dnsreader.c.orig	2008-09-30 19:03:18.000000000 +0200
++++ b/dnsreader.c	2008-10-02 13:24:36.000000000 +0200
+@@ -65,6 +65,11 @@
+ #include "dnscore.h"
+ #include "exclude.h"
+ 
++#include <sys/types.h>
++#ifndef        __DECONST
++ #define       __DECONST(type, var)    ((type)(uintptr_t)(const void *)(var))
++#endif
++
+ #define DNSSCAN_TAG_REQUEST	0x01
+ #define CHECKPOINT_TAG		0x02
+ #define DNSRESPONDER_TAG	0xae
+@@ -85,6 +90,29 @@
+ static int show_date_in_usec = 0;
+ 
+ static char *
++  strnstr(const char *s, const char *find, size_t slen)
++  {
++     char c, sc;
++     size_t len;
++
++     if ((c = *find++) != '\0') {
++        len = strlen(find);
++        do {
++           do {
++              if (slen < 1 || (sc = *s) == '\0')
++               return (NULL);
++            --slen;
++            ++s;
++         } while (sc != c);
++         if (len > slen)
++            return (NULL);
++      } while (strncmp(s, find, len) != 0);
++      s--;
++   }
++   return (__DECONST(char *, s));
++}
++
++static char *
+ escape_payload(uint8_t *data, uint32_t datalen)
+ {
+ 	char *payload, *p;
