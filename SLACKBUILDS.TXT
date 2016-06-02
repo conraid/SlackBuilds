@@ -471,7 +471,7 @@ SLACKBUILD LOCATION: ./converseen
 SLACKBUILD FILES: README converseen.SlackBuild converseen.info doinst.sh slack-desc
 SLACKBUILD VERSION: 0.9.2
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/converseen/Converseen/Converseen%200.9/converseen-0.9.2.tar.bz2
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/converseen/converseen-0.9.2.tar.bz2
 SLACKBUILD MD5SUM: d08caf7a00ee7761dc1f0551527b56ee
 SLACKBUILD SHORT DESCRIPTION:  converseen
 
@@ -648,9 +648,9 @@ SLACKBUILD SHORT DESCRIPTION:  distorm (Powerful Disassembler Library For x86/AM
 
 SLACKBUILD NAME: dnsscan
 SLACKBUILD LOCATION: ./dnsscan
-SLACKBUILD FILES: README dnsscan.SlackBuild dnsscan.info dnsscan.strnstr.diff.gz slack-desc
+SLACKBUILD FILES: README dnsscan.SlackBuild dnsscan.info patches/dnsscan.strnstr.patch slack-desc
 SLACKBUILD VERSION: 1.0
-SLACKBUILD REQUIRED: libevent 
+SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://monkey.org/~provos/dnsscan-1.0.tar.gz
 SLACKBUILD MD5SUM: 32e4fc11156eb54625045036c8f98259
 SLACKBUILD SHORT DESCRIPTION:  dnsscan
@@ -910,10 +910,10 @@ SLACKBUILD SHORT DESCRIPTION:  GeoIP (geoip API and database)
 SLACKBUILD NAME: geoipupdate
 SLACKBUILD LOCATION: ./geoipupdate
 SLACKBUILD FILES: README doinst.sh geoipupdate.SlackBuild geoipupdate.info slack-desc
-SLACKBUILD VERSION: 2.2.1
+SLACKBUILD VERSION: 2.2.2
 SLACKBUILD REQUIRED: geoip
-SLACKBUILD DOWNLOAD: https://github.com/maxmind/geoipupdate/releases/download/v2.2.1/geoipupdate-2.2.1.tar.gz
-SLACKBUILD MD5SUM: abfd4bb9dd7fd489c103888dde5f2a57
+SLACKBUILD DOWNLOAD: https://github.com/maxmind/geoipupdate/releases/download/v2.2.2/geoipupdate-2.2.2.tar.gz
+SLACKBUILD MD5SUM: 06284bd7bcb298d078d794eb630dae55
 SLACKBUILD SHORT DESCRIPTION:  geoipupdate (GeoIP Updater)
 
 SLACKBUILD NAME: gifsicle
@@ -1054,10 +1054,10 @@ SLACKBUILD SHORT DESCRIPTION:  GooBook (Access your Google contacts from the com
 SLACKBUILD NAME: graphicsmagick
 SLACKBUILD LOCATION: ./graphicsmagick
 SLACKBUILD FILES: README graphicsmagick.SlackBuild graphicsmagick.info slack-desc
-SLACKBUILD VERSION: 1.3.23
+SLACKBUILD VERSION: 1.3.24
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/graphicsmagick/GraphicsMagick-1.3.23.tar.xz
-SLACKBUILD MD5SUM: 9885ff5d91bc215a0adb3be1185e9777
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/graphicsmagick/GraphicsMagick-1.3.24.tar.xz
+SLACKBUILD MD5SUM: 40034150f6eaae28a12b6c8f9baa3e5e
 SLACKBUILD SHORT DESCRIPTION:  GraphicsMagick (Image Processing System)
 
 SLACKBUILD NAME: grunt-cli
@@ -1617,6 +1617,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/lensfun/0.3.2/lensfun-0.3.2.tar.gz
 SLACKBUILD MD5SUM: 247e59a0812ec451f6cd0d20b3379cb5
 SLACKBUILD SHORT DESCRIPTION:  LensFun (Photographic lenses open source database library)
+
+SLACKBUILD NAME: leptonica
+SLACKBUILD LOCATION: ./leptonica
+SLACKBUILD FILES: README leptonica.SlackBuild leptonica.info slack-desc
+SLACKBUILD VERSION: 1.73
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://www.leptonica.com/source/leptonica-1.73.tar.gz
+SLACKBUILD MD5SUM: 092cea2e568cada79fff178820397922
+SLACKBUILD SHORT DESCRIPTION:  leptonica (Image Processing Library)
 
 SLACKBUILD NAME: libasecnsp11
 SLACKBUILD LOCATION: ./libasecnsp11
@@ -2251,10 +2260,10 @@ SLACKBUILD SHORT DESCRIPTION:  ms-sys (Program for writing Microsoft compatible 
 SLACKBUILD NAME: msgpack-c
 SLACKBUILD LOCATION: ./msgpack-c
 SLACKBUILD FILES: README msgpack-c.SlackBuild msgpack-c.info slack-desc
-SLACKBUILD VERSION: 1.4.1
+SLACKBUILD VERSION: 1.4.2
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/msgpack/msgpack-c/releases/download/cpp-1.4.1/msgpack-1.4.1.tar.gz
-SLACKBUILD MD5SUM: fde8da1388d4f8daf21faee5536a53cf
+SLACKBUILD DOWNLOAD: https://github.com/msgpack/msgpack-c/releases/download/cpp-1.4.2/msgpack-1.4.2.tar.gz
+SLACKBUILD MD5SUM: 445d6988e031b258386494742bb24c9b
 SLACKBUILD SHORT DESCRIPTION:  msgpack-c (msgpack for C/C++)
 
 SLACKBUILD NAME: mtpfs
@@ -2331,11 +2340,11 @@ SLACKBUILD SHORT DESCRIPTION:  NDisc6 (IPV6 network utilities)
 
 SLACKBUILD NAME: neomutt
 SLACKBUILD LOCATION: ./neomutt
-SLACKBUILD FILES: README doinst.sh neomutt.SlackBuild neomutt.desktop neomutt.info neomutt.xpm slack-desc
-SLACKBUILD VERSION: 20160502
+SLACKBUILD FILES: README doinst.sh neomutt.SlackBuild neomutt.desktop neomutt.info neomutt.xpm patches/mailbox.patch slack-desc
+SLACKBUILD VERSION: 20160530
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/neomutt/neomutt/archive/neomutt-20160502.tar.gz
-SLACKBUILD MD5SUM: 3176d435b046609bff761cba5633d056
+SLACKBUILD DOWNLOAD: https://github.com/neomutt/neomutt/archive/neomutt-20160530.tar.gz
+SLACKBUILD MD5SUM: b390a3f8b5c297b68cd8b41edeba9f6f
 SLACKBUILD SHORT DESCRIPTION:  neomutt (Bringing together all the Mutt code)
 
 SLACKBUILD NAME: neovim
@@ -2422,10 +2431,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-bower (A package manager for the web)
 SLACKBUILD NAME: node-clean-css
 SLACKBUILD LOCATION: ./node-clean-css
 SLACKBUILD FILES: README node-clean-css.SlackBuild node-clean-css.info slack-desc
-SLACKBUILD VERSION: 3.4.12
+SLACKBUILD VERSION: 3.4.15
 SLACKBUILD REQUIRED: node npm
-SLACKBUILD DOWNLOAD: https://github.com/jakubpawlowicz/clean-css/archive/v3.4.12.tar.gz
-SLACKBUILD MD5SUM: fa54c92047b8c086154ade3446a1c017
+SLACKBUILD DOWNLOAD: https://github.com/jakubpawlowicz/clean-css/archive/v3.4.15.tar.gz
+SLACKBUILD MD5SUM: 2287682b7a1377e0b7302e6ddaed7f0d
 SLACKBUILD SHORT DESCRIPTION:  node-clean-css (CSS minifier for node.js)
 
 SLACKBUILD NAME: node-cross-spawn
@@ -2845,10 +2854,10 @@ SLACKBUILD SHORT DESCRIPTION:  php-apc (APC Alternative PHP Cache)
 SLACKBUILD NAME: php-codesniffer
 SLACKBUILD LOCATION: ./php-codesniffer
 SLACKBUILD FILES: README php-codesniffer.SlackBuild php-codesniffer.info slack-desc
-SLACKBUILD VERSION: 2.6.0
+SLACKBUILD VERSION: 2.6.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://download.pear.php.net/package/PHP_CodeSniffer-2.6.0.tgz
-SLACKBUILD MD5SUM: 59635235cfbe18a5ada186fceea5d992
+SLACKBUILD DOWNLOAD: http://download.pear.php.net/package/PHP_CodeSniffer-2.6.1.tgz
+SLACKBUILD MD5SUM: eccb4343021a043a56e2006092df65a6
 SLACKBUILD SHORT DESCRIPTION:  PHP_CodeSniffer (tokenizes PHP, JavaScript and CSS)
 
 SLACKBUILD NAME: php-composer
@@ -3628,10 +3637,10 @@ SLACKBUILD SHORT DESCRIPTION:  sqlitebrowser (QT GUI editor for SQLite databases
 SLACKBUILD NAME: sqlmap
 SLACKBUILD LOCATION: ./sqlmap
 SLACKBUILD FILES: README doinst.sh slack-desc sqlmap.SlackBuild sqlmap.info
-SLACKBUILD VERSION: 1.0.5
+SLACKBUILD VERSION: 1.0.6
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/sqlmapproject/sqlmap/archive/1.0.5.tar.gz
-SLACKBUILD MD5SUM: 5c0b939a46fc3df6b771555a03946f1e
+SLACKBUILD DOWNLOAD: https://github.com/sqlmapproject/sqlmap/archive/1.0.6.tar.gz
+SLACKBUILD MD5SUM: ac83bef8ff30799eb40b2d67a15e2180
 SLACKBUILD SHORT DESCRIPTION:  sqlmap (Automatic SQL injection and database takeover tool)
 
 SLACKBUILD NAME: squid
@@ -3786,6 +3795,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://tellico-project.org/files/tellico-2.3.11.tar.bz2
 SLACKBUILD MD5SUM: 8f79b02147167f95111c334cf6c0376c
 SLACKBUILD SHORT DESCRIPTION:  Tellico (KDE application for keeping track of your collections)
+
+SLACKBUILD NAME: tesseract
+SLACKBUILD LOCATION: ./tesseract
+SLACKBUILD FILES: PKGNOTE README slack-desc tesseract.SlackBuild tesseract.info
+SLACKBUILD VERSION: 3.04.01
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/tesseract-ocr/tesseract/archive/3.04.01.tar.gz
+SLACKBUILD MD5SUM: 645a21effcf2825a3473849d72a7fd90
+SLACKBUILD SHORT DESCRIPTION:  tesseract (Open Source OCR Engine)
 
 SLACKBUILD NAME: testdisk
 SLACKBUILD LOCATION: ./testdisk
