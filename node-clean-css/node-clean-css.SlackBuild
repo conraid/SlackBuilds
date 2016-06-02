@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PRGNAM=clean-css
 PKGNAM=node-clean-css
-VERSION=${VERSION:-3.4.12}
+VERSION=3.4.15
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -42,9 +42,9 @@ DOCFILES="LICENSE README*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
   esac
 fi
 
