@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=gmic
-VERSION=1.7.1
+VERSION=1.7.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -39,9 +39,9 @@ OUTPUT=${OUTPUT:-/tmp}
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
   esac
 fi
 
