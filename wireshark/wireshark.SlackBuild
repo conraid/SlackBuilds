@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=wireshark
-VERSION=${VERSION:-2.0.3}
+VERSION=2.0.4
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -39,9 +39,9 @@ DOCFILES="AUTHORS COPYING ChangeLog INSTALL* NEWS README* doc/README*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -100,7 +100,7 @@ make DESTDIR=$PKG install
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
-# add headers files
+# Add headers files
 install -dm755 $PKG/usr/include/$PKGNAM/{epan/{crypt,dfilter,dissectors,ftypes,wmem},wiretap,wsutil}
 install -m644 color.h config.h register.h ws_symbol_export.h "$PKG/usr/include/$PKGNAM"
 for d in epan epan/crypt epan/dfilter epan/dissectors epan/ftypes epan/wmem wiretap wsutil; do
