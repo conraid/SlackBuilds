@@ -30,12 +30,12 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=atom
-VERSION=1.7.4
+PKGNAM=atom
+VERSION=1.8.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 # Clean cache data
@@ -52,9 +52,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
-cd $PRGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -62,8 +62,12 @@ chmod -R u+w,go+r-w,a+X-s .
 # Disable send metrics to Google Analytics module
 sed -e '/"metrics":/d' -e '/"exception-reporting":/d' -i package.json
 
-# Fix Electron bug with fontconfig
-sed '/"electronVersion":/s/0.36.8/0.36.12/' -i package.json
+# Apply patches
+if [ -e $CWD/patches ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
 
 mkdir -p destbuild
 BUILD_DIR=$PWD/destbuild
@@ -77,12 +81,12 @@ find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r st
 # move apm symlink to atom-apm for prevent conflicts with apmd package.
 mv $PKG/usr/bin/apm $PKG/usr/bin/atom-apm
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a *.md docs $PKG/usr/doc/$PRGNAM-$VERSION
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a *.md docs $PKG/usr/doc/$PKGNAM-$VERSION
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-install -Dm644 resources/$PRGNAM.png $PKG/usr/share/pixmaps/$PRGNAM.png || \
-install -Dm644 resources/app-icons/stable/png/1024.png $PKG/usr/share/pixmaps/$PRGNAM.png
+install -Dm644 resources/$PKGNAM.png $PKG/usr/share/pixmaps/$PKGNAM.png || \
+install -Dm644 resources/app-icons/stable/png/1024.png $PKG/usr/share/pixmaps/$PKGNAM.png
 
 mkdir -p $PKG/usr/share/applications
 sed -e 's/<%= appName %>/Atom/' \
@@ -104,5 +108,5 @@ if [ "$DELETE_CACHE" = "yes" ]; then
 fi
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
 
