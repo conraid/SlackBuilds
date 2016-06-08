@@ -2,8 +2,7 @@
 #
 # Slackware build script for lua (http://www.lua.org/)
 #
-# Copyright 2008 Menno Duursma from SlackBuilds.org
-# Copyright 2015 Corrado Franco (http://conraid.net)
+# Copyright 2015-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,22 +22,18 @@
 # You may have received a copy of the GNU General Public License along
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
-#
-# Modified by the SlackBuilds.org project
-# Modified by Aaron W. Hsu
-# Modified by Corrado Franco <http://conraid.net>
 
 set -eu
 
 CWD=$(pwd)
 
-PRGNAM=lua
-VERSION=${VERSION:-5.3.2}
+PKGNAM=lua
+VERSION=5.3.3
 MAINVERSION=${VERSION%.*}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="README doc/*"
@@ -68,23 +63,22 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
-cd $PRGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
-find . -executable -exec chmod 755 {} \+
-find . ! -executable -exec chmod 644 {} \+
+chmod -R u+w,go+r-w,a+X-s .
 
 # Fix up a to-be-installed header and the pkgconfig file
-sed -i "s|lib/lua|lib$LIBDIRSUFFIX/lua|" src/luaconf.h
+sed -i "s|lib/lua|lib${LIBDIRSUFFIX}/lua|" src/luaconf.h
 
 # Apply patch for shared libraries
 patch -p1 -i "$CWD/liblua.so.patch"
 
 make \
 MYCFLAGS="$SLKCFLAGS -DLUA_COMPAT_5_2 -DLUA_COMPAT_5_1" \
-MYLDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
+MYLDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 MYLIBS="-ltermcap" \
 linux
 
@@ -92,15 +86,16 @@ make \
 TO_LIB="liblua.a liblua.so liblua.so.$MAINVERSION liblua.so.${VERSION}" \
 INSTALL_DATA="cp -d" \
 INSTALL_TOP="$PKG/usr" \
-INSTALL_LIB=$PKG/usr/lib$LIBDIRSUFFIX \
-INSTALL_CMOD=$PKG/usr/lib$LIBDIRSUFFIX/lua/$MAINVERSION \
+INSTALL_LIB=$PKG/usr/lib${LIBDIRSUFFIX} \
+INSTALL_CMOD=$PKG/usr/lib${LIBDIRSUFFIX}/lua/$MAINVERSION \
 linux install
 
 # Install the pkg-config file so other apps can find LUA
-mkdir -p $PKG/usr/lib$LIBDIRSUFFIX/pkgconfig
+mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
 sed -e "s|prefix}/lib|prefix}/lib${LIBDIRSUFFIX}|g" \
-  -e "s/%VER%/$MAINVERSION/g;s/%REL%/$VERSION/g" \
-  $CWD/lua.pc > $PKG/usr/lib$LIBDIRSUFFIX/pkgconfig/lua.pc
+    -e "s|%VER%|$MAINVERSION|" \
+    -e "s|%REL%|$VERSION|" \
+    $CWD/lua.pc > $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/lua.pc
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true                                                                     
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true
@@ -110,13 +105,13 @@ if [ -d $PKG/usr/man ]; then
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
 
