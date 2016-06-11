@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=wireshark
-VERSION=2.0.4
+VERSION=2.1.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -102,7 +102,7 @@ find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r st
 
 # Add headers files
 install -dm755 $PKG/usr/include/$PKGNAM/{epan/{crypt,dfilter,dissectors,ftypes,wmem},wiretap,wsutil}
-install -m644 color.h config.h register.h ws_symbol_export.h "$PKG/usr/include/$PKGNAM"
+install -m644 config.h register.h ws_*.h "$PKG/usr/include/$PKGNAM"
 for d in epan epan/crypt epan/dfilter epan/dissectors epan/ftypes epan/wmem wiretap wsutil; do
   install -m644 ${d}/*.h $PKG/usr/include/$PKGNAM/${d}
 done
