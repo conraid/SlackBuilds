@@ -31,8 +31,8 @@ CWD=$(pwd)
 
 PRGNAM=redis
 PKGNAM=php-redis
-VERSION=2.2.7
-BUILD=${BUILD:-6}
+VERSION=2.2.8
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -42,9 +42,9 @@ DOCFILES="COPYING CREDITS README* tests"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
   esac
 fi
 
