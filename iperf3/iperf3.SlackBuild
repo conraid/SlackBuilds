@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 SRCNAM=iperf
 PRGNAM=iperf3
-VERSION=${VERSION:-3.1.2}
+VERSION=${VERSION:-3.1.3}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -40,9 +40,9 @@ DOCFILES="INSTALL LICENSE README* RELEASE_NOTES"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
   esac
 fi
 
