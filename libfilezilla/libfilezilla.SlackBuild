@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=libfilezilla
-VERSION=0.5.2
+VERSION=0.5.3
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -41,9 +41,9 @@ DOCFILES="AUTHORS COPYING ChangeLog INSTALL NEWS README"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
   esac
 fi
 
