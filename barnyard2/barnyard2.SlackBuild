@@ -31,8 +31,8 @@ CWD=$(pwd)
 
 PKGNAM=barnyard2
 SRCVERSION=2-1.13
-VERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-3}
+VERSION=$(echo $SRCVERSION | tr - _)
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
