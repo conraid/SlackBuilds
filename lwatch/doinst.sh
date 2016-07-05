@@ -13,7 +13,6 @@ config() {
   # Otherwise, we leave the .new copy for the admin to consider...
 }
 
-# Afeter config
 config etc/lwatch.conf.new
 
 
