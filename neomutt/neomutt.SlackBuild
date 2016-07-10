@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=neomutt
-VERSION=20160611
+VERSION=20160709
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -63,9 +63,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PKGNAM-$VERSION || rm -rf $PKGNAM-$PKGNAM-$VERSION
+rm -rf $PKGNAM-$PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
-cd $PKGNAM-$VERSION || cd $PKGNAM-$PKGNAM-$VERSION 
+cd $PKGNAM-$PKGNAM-$VERSION 
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
