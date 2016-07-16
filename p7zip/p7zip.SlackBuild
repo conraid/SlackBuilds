@@ -28,8 +28,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=p7zip
-VERSION=15.14.1
-BUILD=${BUILD:-2}
+VERSION=16.02
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -67,13 +67,6 @@ cd ${PKGNAM}_$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-# Apply patches
-if [ -e $CWD/patches ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
-fi
-
 if [ $ARCH == "x86_64" ]; then
   cp -f makefile.linux_amd64_asm makefile.machine
 else
@@ -86,7 +79,7 @@ sed \
   -i makefile* CPP/7zip/Bundles/Format7zFree/makefile
 rm -rf CPP/7zip/Compress/Rar
 
-sed -e s'#cp -r DOC#cp -r DOC/*#' -e 's#${DEST_SHARE_DOC}/DOC#${DEST_SHARE_DOC}#g' -i install.sh
+sed -e 's|cp -r DOC|cp -r DOC/*|g' -e 's|${DEST_SHARE_DOC}/DOC|${DEST_SHARE_DOC}|g' -i install.sh
 make all5 OPTFLAGS="$SLKCFLAGS"
 make install \
   DEST_HOME=/usr \
@@ -106,11 +99,6 @@ install -m644 contrib/VirtualFileSystemForMidnightCommander/readme* $PKG/usr/doc
 # install gzip like wrapper
 install -Dm755 contrib/gzip-like_CLI_wrapper_for_7z/p7zip $PKG/usr/bin/p7zip
 install -Dm644 contrib/gzip-like_CLI_wrapper_for_7z/man1/p7zip.1 $PKG/usr/man/man1/p7zip.1
-
-# Install GUI help files
-cp -a GUI/help $PKG/usr/lib${LIBDIRSUFFIX}/p7zip/help
-find $PKG/usr/lib${LIBDIRSUFFIX}/p7zip/help -type d -exec chmod 755 {} \;
-find $PKG/usr/lib${LIBDIRSUFFIX}/p7zip/help -type f -exec chmod 644 {} \;
 
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
