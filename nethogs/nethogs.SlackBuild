@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=nethogs
-VERSION=0.8.2
+VERSION=0.8.5
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -75,8 +75,8 @@ sed 's|/share/man/|/man/|g' -i doc/Makefile
 # Fix unversioned .so file
 sed 's/$(LIB[^)]*ION)/0/g' -i src/MakeLib.mk
 
-make CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS" PREFIX=/usr
-make DESTDIR=$PKG PREFIX=/usr install
+make CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS" PREFIX=/usr nethogs libnethogs
+make DESTDIR=$PKG PREFIX=/usr install install_lib
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true
