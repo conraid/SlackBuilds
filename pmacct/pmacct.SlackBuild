@@ -27,7 +27,7 @@ set -eu
 
 PKGNAM=pmacct
 VERSION=1.6.0
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 CWD=$(pwd)
 TMP=${TMP:-/tmp/pkg}
@@ -35,7 +35,6 @@ PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="AUTHORS CONFIG-KEYS COPYING ChangeLog FAQS INSTALL QUICKSTART TOOLS UPGRADE"
-
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
