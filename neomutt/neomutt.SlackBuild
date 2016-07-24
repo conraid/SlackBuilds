@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=neomutt
-VERSION=20160709
+VERSION=20160723
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -72,13 +72,6 @@ chmod -R u+w,go+r-w,a+X-s .
 
 # Rename NAME to fix locales
 sed "/AC_INIT/s/mutt/$PKGNAM/g" -i configure.ac
-
-# Apply patches from git
-if [ -e $CWD/patches ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
-fi
 
 autoreconf -i
 
