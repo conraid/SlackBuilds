@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PKGNAM=qemu
 VERSION=2.6.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -68,6 +68,9 @@ tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
 cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
+
+# Fix VTE version
+sed 's/vte-2\.90/vte-2.91/g' -i configure
 
 ARFLAGS="rv" \
 ./configure \
@@ -108,6 +111,7 @@ ARFLAGS="rv" \
   --enable-seccomp \
   --disable-tpm \
   --enable-libssh2 \
+  --enable-vte \
   --audio-drv-list="alsa,sdl,pa" \
   --target-list="arm-softmmu,i386-softmmu,x86_64-softmmu,arm-linux-user,armeb-linux-user,i386-linux-user,x86_64-linux-user"
 
