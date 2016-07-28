@@ -442,10 +442,10 @@ SLACKBUILD SHORT DESCRIPTION:  codecrypt (The post-quantum cryptography tool)
 SLACKBUILD NAME: collectd
 SLACKBUILD LOCATION: ./collectd
 SLACKBUILD FILES: README collectd.SlackBuild collectd.info doinst.sh rc.collectd slack-desc
-SLACKBUILD VERSION: 5.5.1
+SLACKBUILD VERSION: 5.5.2
 SLACKBUILD REQUIRED: audit hiredis libdbi libesmtp libmemcached liboping libstatgrab protobuf-c rrdtool yajl libvirt postgresql
-SLACKBUILD DOWNLOAD: http://collectd.org/files/collectd-5.5.1.tar.bz2
-SLACKBUILD MD5SUM: fd24b947cef9351ce3e2d6d2a0762e18
+SLACKBUILD DOWNLOAD: http://collectd.org/files/collectd-5.5.2.tar.bz2
+SLACKBUILD MD5SUM: 40b83343f72089e0330f53965f1140bd
 SLACKBUILD SHORT DESCRIPTION:  collectd (system statistics collection daemon)
 
 SLACKBUILD NAME: colordiff
@@ -775,10 +775,10 @@ SLACKBUILD SHORT DESCRIPTION:  fdupes (find duplicate files)
 SLACKBUILD NAME: filezilla
 SLACKBUILD LOCATION: ./filezilla
 SLACKBUILD FILES: README doinst.sh filezilla.SlackBuild filezilla.info slack-desc
-SLACKBUILD VERSION: 3.20.0-rc1
+SLACKBUILD VERSION: 3.20.0
 SLACKBUILD REQUIRED: wxgtk libfilezilla
-SLACKBUILD DOWNLOAD: http://download.filezilla-project.org/client/FileZilla_3.20.0-rc1_src.tar.bz2
-SLACKBUILD MD5SUM: cb439b6d1478a58bac1e69759226728b
+SLACKBUILD DOWNLOAD: http://download.filezilla-project.org/client/FileZilla_3.20.0_src.tar.bz2
+SLACKBUILD MD5SUM: 91c548a361e188bf21984246b5eba482
 SLACKBUILD SHORT DESCRIPTION:  filezilla (the free FTP solution)
 
 SLACKBUILD NAME: flickcurl
@@ -1648,10 +1648,10 @@ SLACKBUILD SHORT DESCRIPTION:  libewf
 SLACKBUILD NAME: libfilezilla
 SLACKBUILD LOCATION: ./libfilezilla
 SLACKBUILD FILES: README libfilezilla.SlackBuild libfilezilla.info slack-desc
-SLACKBUILD VERSION: 0.6.0
+SLACKBUILD VERSION: 0.6.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://download.filezilla-project.org/libfilezilla/libfilezilla-0.6.0.tar.bz2
-SLACKBUILD MD5SUM: 578fef90164d7c2bf6db2862234b65fe
+SLACKBUILD DOWNLOAD: http://download.filezilla-project.org/libfilezilla/libfilezilla-0.6.1.tar.bz2
+SLACKBUILD MD5SUM: 3d4728ce8949490b09198443e955c8b6
 SLACKBUILD SHORT DESCRIPTION:  libfilezilla (library for filezilla)
 
 SLACKBUILD NAME: libgsasl
@@ -2989,10 +2989,10 @@ SLACKBUILD SHORT DESCRIPTION:  postcss-cli (Simple CLI for postcss)
 SLACKBUILD NAME: postcss
 SLACKBUILD LOCATION: ./postcss
 SLACKBUILD FILES: README postcss.SlackBuild postcss.info slack-desc
-SLACKBUILD VERSION: 5.0.21
+SLACKBUILD VERSION: 5.1.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/postcss/postcss/archive/5.0.21.tar.gz
-SLACKBUILD MD5SUM: 58815d53aeae612900c38ec65f09a63e
+SLACKBUILD DOWNLOAD: https://github.com/postcss/postcss/archive/5.1.1.tar.gz
+SLACKBUILD MD5SUM: 6d2a2c97f92c09c792fe3b0d2fb22a5f
 SLACKBUILD SHORT DESCRIPTION:  postcss (Transforming styles with JS plugins)
 
 SLACKBUILD NAME: postfix
@@ -3125,7 +3125,7 @@ SLACKBUILD NAME: qemu
 SLACKBUILD LOCATION: ./qemu
 SLACKBUILD FILES: 65-kvm.rules README qemu.SlackBuild qemu.info slack-desc
 SLACKBUILD VERSION: 2.6.0
-SLACKBUILD REQUIRED: vde2 libseccomp usbredir
+SLACKBUILD REQUIRED: libseccomp usbredir vde2 vte3-ng
 SLACKBUILD DOWNLOAD: http://wiki.qemu-project.org/download/qemu-2.6.0.tar.bz2
 SLACKBUILD MD5SUM: ca3f70b43f093e33e9e014f144067f13
 SLACKBUILD SHORT DESCRIPTION:  qemu (open source processor emulator)
@@ -3976,6 +3976,15 @@ SLACKBUILD DOWNLOAD: ftp://ftp.ossp.org/pkg/lib/uuid/uuid-1.6.2.tar.gz
 SLACKBUILD MD5SUM: 5db0d43a9022a6ebbbc25337ae28942f
 SLACKBUILD SHORT DESCRIPTION:  uuid (OSSP Universally Unique Identifier)
 
+SLACKBUILD NAME: vala
+SLACKBUILD LOCATION: ./vala
+SLACKBUILD FILES: README slack-desc vala.SlackBuild vala.info
+SLACKBUILD VERSION: 0.32.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://download.gnome.org/sources/vala/0.32/vala-0.32.1.tar.xz
+SLACKBUILD MD5SUM: 755881770bffac020b5ea5f625fbe528
+SLACKBUILD SHORT DESCRIPTION:  vala (Compiler for the GObject type system)
+
 SLACKBUILD NAME: valgrind
 SLACKBUILD LOCATION: ./valgrind
 SLACKBUILD FILES: README patches/fix_rlimit.patch slack-desc valgrind.SlackBuild valgrind.info
@@ -4020,6 +4029,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://humdi.net/vnstat/vnstat-1.15.tar.gz
 SLACKBUILD MD5SUM: 351051ef3005e3ca99123eec07ac0a7d
 SLACKBUILD SHORT DESCRIPTION:  vnStat (a console-based network traffic monitor)
+
+SLACKBUILD NAME: vte3-ng
+SLACKBUILD LOCATION: ./vte3-ng
+SLACKBUILD FILES: README slack-desc vte3-ng.SlackBuild vte3-ng.info
+SLACKBUILD VERSION: 0.44.2.a
+SLACKBUILD REQUIRED: vala
+SLACKBUILD DOWNLOAD: https://github.com/thestinger/vte-ng/archive/0.44.2.a.tar.gz
+SLACKBUILD MD5SUM: 1948a7647a0bdbcd87311e08fe4a35ec
+SLACKBUILD SHORT DESCRIPTION:  vte3-ng (enhanced vte3 terminal widget)
 
 SLACKBUILD NAME: wacomtablet
 SLACKBUILD LOCATION: ./wacomtablet
