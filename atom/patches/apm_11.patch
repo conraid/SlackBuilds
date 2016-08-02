@@ -6,7 +6,7 @@ diff -Naupr atom-1.8.0.orig/apm/package.json atom-1.8.0/apm/package.json
      "url": "https://github.com/atom/atom.git"
    },
    "dependencies": {
--    "atom-package-manager": "1.9.2"
+-    "atom-package-manager": "1.10.0"
 +    "atom-package-manager": "1.11.1"
    }
  }
@@ -29,7 +29,7 @@ diff -Naupr atom-1.8.0.orig/script/bootstrap atom-1.8.0/script/bootstrap
  
    var buildInstallCommand = initialNpmCommand + npmFlags + 'install';
    var buildInstallOptions = {cwd: path.resolve(__dirname, '..', 'build')};
--  var apmInstallCommand = npmPath + npmFlags + '--target=0.10.35 ' + 'install';
+-  var apmInstallCommand = npmPath + npmFlags + '--target=0.10.40 ' + 'install';
 +  var apmInstallCommand = npmPath + npmFlags + '--target=4.4.5 --global-style ' + 'install';
    var apmInstallOptions = {cwd: apmInstallPath};
    var moduleInstallCommand = apmPath + ' install' + apmFlags;
