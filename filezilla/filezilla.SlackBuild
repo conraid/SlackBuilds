@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=filezilla
-SRCVERSION=3.20.0
+SRCVERSION=3.20.1
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -61,7 +61,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$SRCVERSION
 tar xvf $CWD/FileZilla_${SRCVERSION}_src.tar.bz2
