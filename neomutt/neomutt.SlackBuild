@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=neomutt
-VERSION=20160723
+VERSION=20160808
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -61,7 +61,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
