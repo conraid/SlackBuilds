@@ -30,11 +30,12 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=postcss
-VERSION=5.1.1
+VERSION=5.1.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
+OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="*.md LICENSE docs/*"
 
@@ -48,7 +49,7 @@ fi
 [ "$ARCH" = "x86_64" ] && LIBDIRSUFFIX="64" || LIBDIRSUFFIX=""
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
