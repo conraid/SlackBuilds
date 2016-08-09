@@ -30,14 +30,14 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=protobuf
-VERSION=2.6.1
-BUILD=${BUILD:-2}
+VERSION=3.0.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="*.txt README*"
+DOCFILES="BUILD LICENSE *.txt README* WORKSPACE editors examples"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -62,15 +62,16 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
+./autogen.sh
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -88,9 +89,52 @@ CXXFLAGS="$SLKCFLAGS" \
 
 make
 make DESTDIR=$PKG install-strip
+
+# Python
 cd python
 python setup.py install --root=$PKG
-cd ..
+cd -
+
+# PHP
+cd php/ext/google/protobuf/
+phpize --clean
+phpize
+CFLAGS="$SLKCFLAGS" \
+./configure \
+  --with-libdir=lib${LIBDIRSUFFIX} \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --sysconfdir=/etc \
+  --localstatedir=/var \
+  --disable-static \
+  --host=$ARCH-slackware-linux \
+  --build=$ARCH-slackware-linux
+cd - 
+
+# Node.js
+cd js
+DESTDIR=$PKG npm install --user root -g
+cd -
+
+# Ruby
+cd ruby
+rake
+rake clobber_package gem
+gem install `ls pkg/google-protobuf-*.gem`
+DESTDIR="$(ruby -e'puts Gem.default_dir')"
+HOME="/tmp"  \
+GEM_HOME="$DESTDIR" \
+GEM_PATH="$DESTDIR" \
+gem install \
+   --local \
+   --no-update-sources \
+   --ignore-dependencies \
+   --backtrace \
+   --no-user-install \
+   --install-dir $PKG/$DESTDIR \
+   --bindir $PKG/usr/bin \
+  pkg/google-protobuf-3.0.0.gem
+
+cd -
 
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
