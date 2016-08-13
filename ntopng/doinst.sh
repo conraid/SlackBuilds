@@ -12,16 +12,17 @@ config() {
 }
 
 perms() {
-    # Keep same perms on file
-    NEW="$1"
-    OLD="$(dirname $NEW)/$(basename $NEW .new)"
-    if [ -e $OLD ]; then
-	cp -a $OLD $NEW.incoming
-	cat $NEW > $NEW.incoming
-	mv $NEW.incoming $NEW
-    fi
-    config $NEW
+  # Keep same perms on file
+  NEW="$1"
+  OLD="$(dirname $NEW)/$(basename $NEW .new)"
+  if [ -e $OLD ]; then
+	  cp -a $OLD $NEW.incoming
+	  cat $NEW > $NEW.incoming
+	  mv $NEW.incoming $NEW
+  fi
+  config $NEW
 }
 
 perms etc/rc.d/rc.ntopng.new
+perms etc/ntopng/ntopng.conf.new
 
