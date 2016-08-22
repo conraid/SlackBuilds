@@ -29,8 +29,8 @@ CWD=$(pwd)
 
 PRGNAM=AFFLIB
 PKGNAM=afflib
-VERSION=3.7.7
-BUILD=${BUILD:-2}
+VERSION=3.7.8
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -61,7 +61,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf ${PRGNAM}v3-$VERSION
 tar xzvf $CWD/${PRGNAM}v3-$VERSION.tar.gz
@@ -69,9 +69,6 @@ cd ${PRGNAM}v3-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
-
-# Patch fix ncurses error
-patch -p1 -i $CWD/configure.ac.diff
 
 if [ ! -e configure ]; then
   sh bootstrap.sh
