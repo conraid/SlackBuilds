@@ -2,7 +2,7 @@
 #
 # Slackware build script for libvterm
 #
-# Copyright 2015 Corrado Franco (http://conraid.net)
+# Copyright 2015-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,12 +29,12 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=libvterm
-VERSION=${VERSION:-a9c7c6f}
+PKGNAM=libvterm
+VERSION=487f21d
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 if [ -z ${ARCH:=""} ]; then
@@ -60,17 +60,17 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$VERSION*
-tar xvf $CWD/$PRGNAM-$VERSION*.tar.gz || tar xvf $CWD/$VERSION*.tar.gz
-cd $PRGNAM-$VERSION*
+rm -rf $PKGNAM-$VERSION*
+tar xvf $CWD/$PKGNAM-$VERSION*.tar.gz || tar xvf $CWD/$VERSION*.tar.gz
+cd $PKGNAM-$VERSION*
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-make CFLAGS="$SLKCFLAGS" PREFIX=/usr LIBDIR=/usr/lib$LIBDIRSUFFIX
-make DESTDIR=$PKG install PREFIX=/usr LIBDIR=/usr/lib$LIBDIRSUFFIX MANDIR=/usr/man
+make CFLAGS="$SLKCFLAGS" PREFIX=/usr LIBDIR=/usr/lib${LIBDIRSUFFIX}
+make DESTDIR=$PKG install PREFIX=/usr LIBDIR=/usr/lib${LIBDIRSUFFIX} MANDIR=/usr/man
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
@@ -80,12 +80,12 @@ if [ -d $PKG/usr/man ]; then
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cat LICENSE > $PKG/usr/doc/$PRGNAM-$VERSION/LICENSE
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cat LICENSE > $PKG/usr/doc/$PKGNAM-$VERSION/LICENSE
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
