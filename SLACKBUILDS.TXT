@@ -757,19 +757,19 @@ SLACKBUILD SHORT DESCRIPTION:  Fail2Ban (bans IP that makes too many password fa
 SLACKBUILD NAME: fdupes
 SLACKBUILD LOCATION: ./fdupes
 SLACKBUILD FILES: README fdupes.SlackBuild fdupes.info slack-desc
-SLACKBUILD VERSION: 4d4e304
+SLACKBUILD VERSION: 1.6.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/adrianlopezroche/fdupes/archive/4d4e304f1e5f21aef566896ddcd6e30fdfe87d63.tar.gz
-SLACKBUILD MD5SUM: 759a57ceda9b1890df1a6577262182a5
+SLACKBUILD DOWNLOAD: https://github.com/adrianlopezroche/fdupes/archive/v1.6.1.tar.gz
+SLACKBUILD MD5SUM: 4fc41681fb506e518a40d610fec50aea
 SLACKBUILD SHORT DESCRIPTION:  fdupes (find duplicate files)
 
 SLACKBUILD NAME: filezilla
 SLACKBUILD LOCATION: ./filezilla
 SLACKBUILD FILES: README doinst.sh filezilla.SlackBuild filezilla.info slack-desc
-SLACKBUILD VERSION: 3.20.1
+SLACKBUILD VERSION: 3.21.0
 SLACKBUILD REQUIRED: wxgtk libfilezilla
-SLACKBUILD DOWNLOAD: http://download.filezilla-project.org/client/FileZilla_3.20.1_src.tar.bz2
-SLACKBUILD MD5SUM: 7b30be0be0cd5ce6fbbb5b5f7a061e3b
+SLACKBUILD DOWNLOAD: http://download.filezilla-project.org/client/FileZilla_3.21.0_src.tar.bz2
+SLACKBUILD MD5SUM: 5b76b43fa061fea69fc039976d4bab3c
 SLACKBUILD SHORT DESCRIPTION:  filezilla (the free FTP solution)
 
 SLACKBUILD NAME: flickcurl
@@ -1215,7 +1215,7 @@ SLACKBUILD SHORT DESCRIPTION:  id3 (a commandline mass ID3 tagger)
 
 SLACKBUILD NAME: id3lib
 SLACKBUILD LOCATION: ./id3lib
-SLACKBUILD FILES: README id3lib.SlackBuild id3lib.gcc43diff.gz id3lib.info id3lib.utfdiff.gz id3lib_Doxyfile.patch.gz slack-desc
+SLACKBUILD FILES: README id3lib.SlackBuild id3lib.gcc43diff.gz id3lib.info id3lib.utfdiff.gz id3lib_Doxyfile.patch.gz patches/id3lib-gcc43.patch patches/id3lib-utf.patch patches/id3lib_Doxyfile.patch slack-desc
 SLACKBUILD VERSION: 3.8.3
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/id3lib/id3lib/3.8.3/id3lib-3.8.3.tar.gz
@@ -1441,10 +1441,10 @@ SLACKBUILD SHORT DESCRIPTION:  Keychain (front-end to SSH and GnuPG agents)
 SLACKBUILD NAME: kid3
 SLACKBUILD LOCATION: ./kid3
 SLACKBUILD FILES: README doinst.sh kid3.SlackBuild kid3.info slack-desc
-SLACKBUILD VERSION: 3.4.1
+SLACKBUILD VERSION: 3.4.2
 SLACKBUILD REQUIRED: id3lib libmp4v2 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/kid3/kid3-3.4.1.tar.gz
-SLACKBUILD MD5SUM: d89e7f50453098b6028c81873148a348
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/kid3/kid3-3.4.2.tar.gz
+SLACKBUILD MD5SUM: 48c9dc602d26dd139c477d8cd90e78b6
 SLACKBUILD SHORT DESCRIPTION:  Kid3 (Efficient Audio Tagger)
 
 SLACKBUILD NAME: kile
@@ -2035,10 +2035,10 @@ SLACKBUILD SHORT DESCRIPTION:  lxml
 SLACKBUILD NAME: lynis
 SLACKBUILD LOCATION: ./lynis
 SLACKBUILD FILES: README doinst.sh lynis.SlackBuild lynis.info slack-desc
-SLACKBUILD VERSION: 2.3.2
+SLACKBUILD VERSION: 2.3.3
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/CISOfy/lynis/archive/2.3.2.tar.gz
-SLACKBUILD MD5SUM: 7a0492d1fb1ccaecff40f9b88848813c
+SLACKBUILD DOWNLOAD: https://github.com/CISOfy/lynis/archive/2.3.3.tar.gz
+SLACKBUILD MD5SUM: 0626c43474f0052b1bb446248d8d39dc
 SLACKBUILD SHORT DESCRIPTION:  lynis
 
 SLACKBUILD NAME: lyx
@@ -2899,10 +2899,10 @@ SLACKBUILD SHORT DESCRIPTION:  pmount (mount removable devices as normal project
 SLACKBUILD NAME: pngcrush
 SLACKBUILD LOCATION: ./pngcrush
 SLACKBUILD FILES: README pngcrush.SlackBuild pngcrush.info slack-desc
-SLACKBUILD VERSION: 1.8.4
+SLACKBUILD VERSION: 1.8.5
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/pmt/pngcrush-1.8.4.tar.xz
-SLACKBUILD MD5SUM: 40a5a618cc83d589ee516d17061931ea
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/pmt/pngcrush-1.8.5.tar.xz
+SLACKBUILD MD5SUM: 68a8e64595a7e4a3945a95c96d539a85
 SLACKBUILD SHORT DESCRIPTION:  pngcrush
 
 SLACKBUILD NAME: podofo
@@ -4069,10 +4069,10 @@ SLACKBUILD SHORT DESCRIPTION:  wipe (a secure file wiping utility)
 SLACKBUILD NAME: wireshark
 SLACKBUILD LOCATION: ./wireshark
 SLACKBUILD FILES: README doinst.sh slack-desc wireshark.SlackBuild wireshark.info
-SLACKBUILD VERSION: 2.1.1
+SLACKBUILD VERSION: 2.2.0rc1
 SLACKBUILD REQUIRED: c-ares geoip lua52
-SLACKBUILD DOWNLOAD: https://www.wireshark.org/download/src/wireshark-2.1.1.tar.bz2
-SLACKBUILD MD5SUM: f67839cb60121ba80f60600b2bfd3c88
+SLACKBUILD DOWNLOAD: https://www.wireshark.org/download/src/wireshark-2.2.0rc1.tar.bz2
+SLACKBUILD MD5SUM: 35b368760cef1bb5d57ee3d9cd42dbae
 SLACKBUILD SHORT DESCRIPTION:  WireShark (packet sniffer and protocol analyzer)
 
 SLACKBUILD NAME: wol
