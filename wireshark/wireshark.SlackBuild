@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=wireshark
-VERSION=2.1.1
+VERSION=2.2.0rc1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -60,7 +60,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
@@ -79,6 +79,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --sysconfdir=/etc \
   --localstatedir=/var \
   --mandir=/usr/man \
+  --docdir=/usr/doc/$PKGNAM-$VERSION \
   --disable-static \
   --disable-usr-local \
   --enable-tfshark \
@@ -90,7 +91,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-gtk2=no \
   --with-gtk3=yes \
   --with-qt=4 \
-  --docdir=/usr/doc/$PKGNAM-$VERSION \
+  --enable-tfshark \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
