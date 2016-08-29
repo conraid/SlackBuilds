@@ -28,8 +28,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=ncdu
-VERSION=1.11
-BUILD=${BUILD:-2}
+VERSION=1.12
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -38,11 +38,11 @@ OUTPUT=${OUTPUT:-/tmp}
 DOCFILES="AUTHORS BUGS COPYING* ChangeLog INSTALL NEWS README* THANKS TODO VERSION"
 
 if [ -z ${ARCH:=""} ]; then
-    case "$( uname -m )" in
-        i?86) ARCH=i686 ;;
-        arm*) ARCH=arm ;;
-        *) ARCH=$( uname -m ) ;;
-    esac
+  case "$( uname -m )" in
+    i?86) ARCH=i686 ;;
+     rm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
+  esac
 fi
 
 if [ "$ARCH" = "i586" ]; then
@@ -60,7 +60,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
