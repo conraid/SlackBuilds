@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=samhain
-VERSION=4.1.4
+VERSION=4.1.5
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -62,7 +62,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION*
 tar xvf $CWD/${PKGNAM}_signed-$VERSION.tar.gz
