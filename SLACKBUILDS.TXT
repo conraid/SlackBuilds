@@ -1377,7 +1377,7 @@ SLACKBUILD SHORT DESCRIPTION:  k9copy
 
 SLACKBUILD NAME: kdbg
 SLACKBUILD LOCATION: ./kdbg
-SLACKBUILD FILES: README doinst.sh kdbg.SlackBuild kdbg.info slack-desc
+SLACKBUILD FILES: README doinst.sh kdbg.SlackBuild kdbg.info patches/kdbg-cmake-3.4.patch slack-desc
 SLACKBUILD VERSION: 2.5.5
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/kdbg/Source%20Code/2.5.5/kdbg-2.5.5.tar.gz
@@ -1479,7 +1479,7 @@ SLACKBUILD LOCATION: ./knemo
 SLACKBUILD FILES: README doinst.sh knemo.SlackBuild knemo.info slack-desc
 SLACKBUILD VERSION: 0.7.7
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://kde-apps.org/CONTENT/content-files/12956-knemo-0.7.7.tar.xz
+SLACKBUILD DOWNLOAD: https://dl.opendesktop.org/api/files/download/id/1466632297/12956-knemo-0.7.7.tar.xz
 SLACKBUILD MD5SUM: d7448d77145c82ae80bbbc6460fa108c
 SLACKBUILD SHORT DESCRIPTION:  knemo (The KDE Network Monitor)
 
@@ -1518,15 +1518,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://github.com/skoegl/kssh4/archive/0b861066c6cdd3660d53ebe8ebd675a4980d28d3.tar.gz
 SLACKBUILD MD5SUM: ccbb9ec646ca7ed4da5adc6ce4d45fb7
 SLACKBUILD SHORT DESCRIPTION:  kssh4 (kde4 ssh frontend)
-
-SLACKBUILD NAME: kvpnc
-SLACKBUILD LOCATION: ./kvpnc
-SLACKBUILD FILES: README doinst.sh kvpnc.SlackBuild kvpnc.info slack-desc
-SLACKBUILD VERSION: 0.9.6a
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://download.gna.org/kvpnc/kvpnc-0.9.6a-kde4.tar.bz2
-SLACKBUILD MD5SUM: bf8b7224284f5d3f8ad5235c599fe9e7
-SLACKBUILD SHORT DESCRIPTION:  KVnpc (KDE vpn client)
 
 SLACKBUILD NAME: lapack
 SLACKBUILD LOCATION: ./lapack
@@ -2764,10 +2755,10 @@ SLACKBUILD SHORT DESCRIPTION:  php-apc (APC Alternative PHP Cache)
 SLACKBUILD NAME: php-codesniffer
 SLACKBUILD LOCATION: ./php-codesniffer
 SLACKBUILD FILES: README php-codesniffer.SlackBuild php-codesniffer.info slack-desc
-SLACKBUILD VERSION: 2.6.2
+SLACKBUILD VERSION: 2.7.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://download.pear.php.net/package/PHP_CodeSniffer-2.6.2.tgz
-SLACKBUILD MD5SUM: 44feaafe673cd6e0c89dc6fc65a6cf56
+SLACKBUILD DOWNLOAD: http://download.pear.php.net/package/PHP_CodeSniffer-2.7.0.tgz
+SLACKBUILD MD5SUM: 40e5d70ab9aa4cc1a15091ddcc14c609
 SLACKBUILD SHORT DESCRIPTION:  PHP_CodeSniffer (tokenizes PHP, JavaScript and CSS)
 
 SLACKBUILD NAME: php-composer
@@ -3088,10 +3079,10 @@ SLACKBUILD SHORT DESCRIPTION:  q4wine (Qt4 GUI for wine)
 SLACKBUILD NAME: qemu
 SLACKBUILD LOCATION: ./qemu
 SLACKBUILD FILES: 65-kvm.rules README qemu.SlackBuild qemu.info slack-desc
-SLACKBUILD VERSION: 2.6.0
+SLACKBUILD VERSION: 2.7.0
 SLACKBUILD REQUIRED: libseccomp usbredir vde2 vte3-ng
-SLACKBUILD DOWNLOAD: http://wiki.qemu-project.org/download/qemu-2.6.0.tar.bz2
-SLACKBUILD MD5SUM: ca3f70b43f093e33e9e014f144067f13
+SLACKBUILD DOWNLOAD: http://wiki.qemu-project.org/download/qemu-2.7.0.tar.bz2
+SLACKBUILD MD5SUM: 08d4d06d1cb598efecd796137f4844ab
 SLACKBUILD SHORT DESCRIPTION:  qemu (open source processor emulator)
 
 SLACKBUILD NAME: qnetstatview
@@ -3250,10 +3241,10 @@ SLACKBUILD SHORT DESCRIPTION:  samhain (file integrity / intrusion detection sys
 SLACKBUILD NAME: sarg
 SLACKBUILD LOCATION: ./sarg
 SLACKBUILD FILES: README doinst.sh sarg.SlackBuild sarg.info slack-desc slackware-path.diff
-SLACKBUILD VERSION: 2.3.9
+SLACKBUILD VERSION: 2.3.10
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/sarg/sarg/sarg-2.3.9/sarg-2.3.9.tar.gz
-SLACKBUILD MD5SUM: d6e8b854950f1bebb953e0ea2ca13428
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/sarg/sarg-2.3.10.tar.gz
+SLACKBUILD MD5SUM: f3c5f9a55ffea1662f6ec88daa0c49c3
 SLACKBUILD SHORT DESCRIPTION:  sarg (Squid Analysis Report Generator)
 
 SLACKBUILD NAME: sassc
@@ -3544,15 +3535,6 @@ SLACKBUILD DOWNLOAD: http://www.squid-cache.org/Versions/v4/squid-4.0.12.tar.bz2
 SLACKBUILD MD5SUM: f7797a4181efeb92debe495e4a4563c1
 SLACKBUILD SHORT DESCRIPTION:  Squid (a popular free and open source Web proxy server and web cache)
 
-SLACKBUILD NAME: squidguard
-SLACKBUILD LOCATION: ./squidguard
-SLACKBUILD FILES: PKGNOTE README doinst.sh patches/squid.patch patches/squidGuard-1.4_upgrade.patch slack-desc squid.patch squidguard.SlackBuild squidguard.info
-SLACKBUILD VERSION: 1.4
-SLACKBUILD REQUIRED: squid
-SLACKBUILD DOWNLOAD: http://www.squidguard.org/Downloads/squidGuard-1.4.tar.gz
-SLACKBUILD MD5SUM: de834150998c1386c30feae196f16b06
-SLACKBUILD SHORT DESCRIPTION:  squidguard (URL redirector)
-
 SLACKBUILD NAME: srm
 SLACKBUILD LOCATION: ./srm
 SLACKBUILD FILES: README slack-desc srm.SlackBuild srm.info
@@ -3660,15 +3642,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/tcpick/tcpick/0.2.1/tcpick-0.2.1.tar.gz
 SLACKBUILD MD5SUM: bb94f2f9ea81aeb645619fbe9b3b9a29
 SLACKBUILD SHORT DESCRIPTION:  tcpick (tcp stream tracker and sniffer)
-
-SLACKBUILD NAME: tcping
-SLACKBUILD LOCATION: ./tcping
-SLACKBUILD FILES: README slack-desc tcping.SlackBuild tcping.info
-SLACKBUILD VERSION: 1.3.5
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.linuxco.de/tcping/tcping-1.3.5.tar.gz
-SLACKBUILD MD5SUM: f9dd03c730db6999ca8beca479f078e3
-SLACKBUILD SHORT DESCRIPTION:  tcping (utility that check of TCP connection to a given IP/Port)
 
 SLACKBUILD NAME: tcptrack
 SLACKBUILD LOCATION: ./tcptrack
