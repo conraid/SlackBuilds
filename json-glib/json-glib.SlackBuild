@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=json-glib
-VERSION=1.0.4
-BUILD=${BUILD:-2}
+VERSION=1.2.2
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -62,7 +62,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
