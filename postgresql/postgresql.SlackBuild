@@ -43,13 +43,14 @@ fi
 
 CWD=$(pwd)
 
-PRGNAM=postgresql
-VERSION=${VERSION:-9.5.2}
+PKGNAM=postgresql
+VERSION=9.5.4
 PG_VERSION=$(echo $VERSION | cut -d. -f-2)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
+OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="COPYRIGHT HISTORY INSTALL README doc/KNOWN_BUGS doc/MISSING_FEATURES doc/TODO"
 
@@ -76,28 +77,28 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.bz2
-cd $PRGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
+LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
-  --prefix=/usr/lib${LIBDIRSUFFIX}/$PRGNAM/$PG_VERSION \
-  --sysconfdir=/etc/$PRGNAM/$PG_VERSION \
+  --prefix=/usr/lib${LIBDIRSUFFIX}/$PKGNAM/$PG_VERSION \
+  --sysconfdir=/etc/$PKGNAM/$PG_VERSION \
   --includedir=/usr/include \
   --datarootdir=/usr/share \
   --mandir=/usr/man \
   --localstatedir=/var \
   --infodir=/usr/info \
-  --docdir=/usr/doc/$PRGNAM-$VERSION \
-  --datadir=/usr/share/$PRGNAM-$PG_VERSION \
+  --docdir=/usr/doc/$PKGNAM-$VERSION \
+  --datadir=/usr/share/$PKGNAM-$PG_VERSION \
   --with-system-tzdata=/usr/share/zoneinfo \
   --with-libxml \
   --with-libxslt \
@@ -126,21 +127,25 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 # create symlinks to shared library for other programs to link against
-( cd $PKG/usr/lib${LIBDIRSUFFIX}
-  for i in $(ls $PRGNAM/$PG_VERSION/lib/lib*.so*) ; do ln -sf $i ; done
+( 
+  cd $PKG/usr/lib${LIBDIRSUFFIX}
+  for i in $(ls $PKGNAM/$PG_VERSION/lib/lib*.so*) ; do ln -sf $i ; done
+  cd -
 )
 
 # create symlinks to pkg-config scripts
-( mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
+( 
+  mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
   cd $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
-  for i in $(ls ../$PRGNAM/$PG_VERSION/lib/pkgconfig/*) ; do ln -sf $i ; done
+  for i in $(ls ../$PKGNAM/$PG_VERSION/lib/pkgconfig/*) ; do ln -sf $i ; done
+  cd -
 )
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 sed -e "s|%PG_VERSION%|$PG_VERSION|g" \
-  $CWD/SLACKWARE.README > $PKG/usr/doc/$PRGNAM-$VERSION/README.SLACKWARE
+  $CWD/SLACKWARE.README > $PKG/usr/doc/$PKGNAM-$VERSION/README.SLACKWARE
 
 # base database directory
 # assumes you are using /var/lib/pgsql as a homedir for postgres user
@@ -153,19 +158,19 @@ chmod 700 $PKG/var/lib/pgsql/$PG_VERSION/data
 # Install init script
 mkdir -p $PKG/etc/rc.d
 sed -e "s|%PG_VERSION%|$PG_VERSION|g" \
-  -e "s|%LIBDIRSUFFIX%|$LIBDIRSUFFIX|g" \
-  $CWD/rc.$PRGNAM > $PKG/etc/rc.d/rc.$PRGNAM.new
+  -e "s|%LIBDIRSUFFIX%|${LIBDIRSUFFIX}|g" \
+  $CWD/rc.$PKGNAM > $PKG/etc/rc.d/rc.$PKGNAM.new
 
 # Install logrotate script
 mkdir -p $PKG/etc/logrotate.d
 sed -e "s|%PG_VERSION%|$PG_VERSION|g" \
-  $CWD/$PRGNAM.logrotate > $PKG/etc/logrotate.d/$PRGNAM.new
+  $CWD/$PKGNAM.logrotate > $PKG/etc/logrotate.d/$PKGNAM.new
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-sed -e "s|%LIBDIRSUFFIX%|$LIBDIRSUFFIX|g" \
+sed -e "s|%LIBDIRSUFFIX%|${LIBDIRSUFFIX}|g" \
     -e "s|%PG_VERSION%|$PG_VERSION|g" \
   $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
