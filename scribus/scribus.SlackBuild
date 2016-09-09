@@ -29,12 +29,12 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=scribus
-VERSION=${VERSION:-1.4.6}
-BUILD=${BUILD:-2}
+PKGNAM=scribus
+VERSION=1.4.6
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 if [ -z ${ARCH:=""} ]; then
@@ -60,11 +60,11 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.xz
-cd $PRGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
@@ -74,8 +74,8 @@ sed -e 's|/share/doc/|/doc/|g' -e "s|/share/doc/scribus/|/doc/scribus-$VERSION/|
 
 # Fix man path
 sed -e 's|CMAKE_INSTALL_DATAROOTDIR}/man/|CMAKE_INSTALL_PREFIX}/man/|g' \
-    -e 's|CMAKE_INSTALL_DATAROOTDIR}/doc/${MAIN_DIR_NAME}${TAG_VERSION}/|CMAKE_INSTALL_PREFIX}/doc/${MAIN_DIR_NAME}-${VERSION}/|g' \
-    -e 's|CMAKE_INSTALL_DATAROOTDIR}/doc/${MAIN_DIR_NAME}/|CMAKE_INSTALL_PREFIX}/doc/${MAIN_DIR_NAME}-${VERSION}/|g' \
+    -e 's|CMAKE_INSTALL_DATAROOTDIR}/doc/${MAIN_DIR_NAME}${TAG_VERSION}/|CMAKE_INSTALL_PREFIX}/doc/${MAIN_DIR_NAME}-$VERSION/|g' \
+    -e 's|CMAKE_INSTALL_DATAROOTDIR}/doc/${MAIN_DIR_NAME}/|CMAKE_INSTALL_PREFIX}/doc/${MAIN_DIR_NAME}-$VERSION/|g' \
     -e 's|CMAKE_INSTALL_DATAROOTDIR}/doc/|CMAKE_INSTALL_PREFIX}/man/|g' \
     -i CMakeLists.txt
 
@@ -88,7 +88,7 @@ cmake \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DLIB_SUFFIX=${LIBDIRSUFFIX} \
   -DRENDER_LIB=CAIRO \
-  -DDOCDIR=/usr/doc/$PRGNAM-$VERSION \
+  -DDOCDIR=/usr/doc/$PKGNAM-$VERSION \
   -DMANDIR=/usr/man \
   -Wno-dev \
   ..
@@ -102,18 +102,17 @@ install -Dm644 scribus.desktop $PKG/usr/share/applications/scribus.desktop
 install -Dm644 $PKG/usr/share/scribus/icons/scribus.png $PKG/usr/share/pixmaps/scribus.png
 
 if [ -d $PKG/usr/man ]; then
-  find -type f -exec gzip -9 {} \;
-  for i in $(find -type l); do ln -s $(readlink $i).gz $i.gz; rm $i; done
+  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
-
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
 
