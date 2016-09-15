@@ -2,7 +2,7 @@
 #
 # Slackware build script for mp3diags (http://mp3diags.sourceforge.net)
 #
-# Copyright 2009-2015 Corrado Franco (http://conraid.net)
+# Copyright 2009-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -27,13 +27,13 @@ set -eu
 
 CWD=$(pwd)
 
-SRCNAM=MP3Diags
-PRGNAM=mp3diags
-VERSION=${VERSION:-1.2.02}
-BUILD=${BUILD:-3}
+PRGNAM=MP3Diags
+PKGNAM=mp3diags
+VERSION=1.2.03
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="COPYING license*"
@@ -53,7 +53,7 @@ elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC"
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -61,36 +61,35 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $SRCNAM-$VERSION
-tar xzvf $CWD/$SRCNAM-$VERSION.tar.gz
-cd $SRCNAM-$VERSION
+rm -rf $PRGNAM-$VERSION
+tar xzvf $CWD/$PRGNAM-$VERSION.tar.gz
+cd $PRGNAM-$VERSION
 
 chown -R root:root .
-find -L . -executable -exec chmod 755 {} \+
-find -L . ! -executable -exec chmod 644 {} \+
+chmod -R u+w,go+r-w,a+X-s .
 
 ./AdjustMt.sh
-qmake PREFIX=/usr QMAKE_CFLAGS="$SLKCFLAGS" QMAKE_CXXFLAGS="$SLKCFLAGS" -o Makefile $PRGNAM.pro
+qmake PREFIX=/usr QMAKE_CFLAGS="$SLKCFLAGS" QMAKE_CXXFLAGS="$SLKCFLAGS" -o Makefile $PKGNAM.pro
 
 make
 install -Dpm 755 bin/MP3Diags $PKG/usr/bin/MP3Diags
 strip $PKG/usr/bin/MP3Diags
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
-install -Dm644 desktop/$SRCNAM.desktop $PKG/usr/share/applications/$SRCNAM.desktop
+install -Dm644 desktop/$PRGNAM.desktop $PKG/usr/share/applications/$PRGNAM.desktop
 
 for size in {16,22,24,32,36,48}; do
-  install -Dm644 desktop/$SRCNAM${size}.png $PKG/usr/share/icons/hicolor/${size}x${size}/apps/$SRCNAM.png
+  install -Dm644 desktop/$PRGNAM${size}.png $PKG/usr/share/icons/hicolor/${size}x${size}/apps/$PRGNAM.png
 done
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
