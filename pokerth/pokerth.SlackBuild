@@ -32,7 +32,7 @@ CWD=$(pwd)
 PRGNAM=PokerTH
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 VERSION=1.1.1
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-7}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -69,14 +69,21 @@ rm -rf $PRGNAM-$VERSION-src
 tar xvf $CWD/$PRGNAM-$VERSION-src.tar.bz2
 cd $PRGNAM-$VERSION-src
 
+chown -R root:root .
 # fix g++: error: unrecognized option '-no_dead_strip_inits_and_terms'
+
+chmod -R u+w,go+r-w,a+X-s .
 sed -i 's/QMAKE_LFLAGS += -no_dead_strip_inits_and_terms//' -i zlib_compress.pro pokerth_game.pro pokerth_server.pro
 
 # Fix for QT < 5
 sed 's/include <QtWidgets>/include <QtGui>/g' -i src/gui/qt/*/*/*.h -i src/gui/qt/*/*.h -i src/*.cpp
 
-chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+# Apply patches
+if [ -e $CWD/patches ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
 
 qmake PREFIX=/usr QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" -o Makefile pokerth.pro
 
