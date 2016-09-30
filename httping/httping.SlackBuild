@@ -26,8 +26,8 @@
 set -eu
 
 PKGNAM=httping
-VERSION=2.4
-BUILD=${BUILD:-4}
+VERSION=2.5
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 CWD=$(pwd)
 TMP=${TMP:-/tmp/pkg}
@@ -57,7 +57,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tgz
