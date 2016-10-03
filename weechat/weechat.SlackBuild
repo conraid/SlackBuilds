@@ -28,8 +28,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=weechat
-VERSION=1.5
-BUILD=${BUILD:-2}
+VERSION=1.6
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -76,7 +76,6 @@ cmake \
   -DCMAKE_BUILD_TYPE=none \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DENABLE_MAN=On \
-  -DMANDIR="/usr/man" \
   -DLIBDIR=/usr/lib${LIBDIRSUFFIX} \
   ..
 
