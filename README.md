@@ -31,11 +31,11 @@ To build:
 
 This command builds a package which will be created in the same directory.
 
-## note
+## Note
 
 If you have any questions or requests, you can contact me at slackers.it (at) gmail (dot) com
 
-Packaged by Corrado Franco (http://conraid.net)
+All scrips are released under the GPL License.
 
 ## Links
 
