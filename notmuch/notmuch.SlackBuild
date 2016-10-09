@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=notmuch
-VERSION=0.22.2
+VERSION=0.23
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -87,6 +87,7 @@ CXXFLAGS="$SLKCFLAGS" \
 make
 make DESTDIR=$PKG install
 
+
 # Install ruby bindings
 sed 's|INSTALL = .*[^D]$|& -D|' -i bindings/ruby/Makefile
 make -C bindings/ruby exec_prefix=$PKG/usr prefix=/usr install
@@ -97,20 +98,21 @@ python setup.py install --prefix=/usr --root=$PKG
 cd -
 
 # Install vim plugin
-install -Dm644 contrib/notmuch-vim/plugin/notmuch.vim $PKG/usr/share/vim/vim74/plugin/notmuch.vim
-mkdir -p $PKG/usr/share/vim/vim74/syntax/
-install -m644 contrib/notmuch-vim/syntax/*.vim $PKG/usr/share/vim/vim74/syntax/
+install -Dm644 vim/notmuch.vim $PKG/usr/share/vim/vim80/plugin/notmuch.vim
+mkdir -p $PKG/usr/share/vim/vim80/syntax/
+install -m644 vim/syntax/*.vim $PKG/usr/share/vim/vim80/syntax/
 
-# Install mutt script (required some perl scripts)
-mkdir -p $PKG/usr/man/man1
-pod2man contrib/notmuch-mutt/notmuch-mutt > $PKG/usr/man/man1/notmuch-mutt.1
+# Install mutt script (required some perl scripts at runtime)
+make -C contrib/notmuch-mutt
+install -Dm644 contrib/notmuch-mutt/notmuch-mutt.1 $PKG/usr/man/man1/notmuch-mutt.1
+gzip -9 $PKG/usr/man/man1/notmuch-mutt.1
 install -Dm755 contrib/notmuch-mutt/notmuch-mutt $PKG/usr/bin/notmuch-mutt
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 if [ -d $PKG/usr/man ]; then
-    find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
