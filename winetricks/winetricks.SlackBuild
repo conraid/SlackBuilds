@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=winetricks
-VERSION=20160724
+VERSION=20161012
 BUILD=${BUILD:-1}
 ARCH=noarch
 TAG=${TAG:-cf}
@@ -41,7 +41,7 @@ OUTPUT=${OUTPUT:-/tmp}
 DOCFILES="README*"
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
