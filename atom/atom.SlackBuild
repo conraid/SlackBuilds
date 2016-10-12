@@ -31,7 +31,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=atom
-VERSION=1.10.2
+VERSION=1.11.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -69,11 +69,10 @@ if [ -e $CWD/patches ]; then
   done
 fi
 
-mkdir -p destbuild
-BUILD_DIR=$PWD/destbuild
+sed "/userLocalDirPath/s|path.join('/usr', 'local')|path.join('$PKG/usr', '')|" -i script/lib/install-application.js
 
-./script/build --build-dir ${BUILD_DIR}
-./script/grunt --build-dir ${BUILD_DIR} --install-dir $PKG/usr install
+./script/bootstrap
+./script/build --install 
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
