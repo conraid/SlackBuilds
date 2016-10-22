@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=torsocks
-VERSION=2.1.0
-BUILD=${BUILD:-2}
+VERSION=2.2.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -62,7 +62,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v${VERSION}.tar.gz
@@ -71,7 +71,7 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-./autogen.sh --noconfig
+./autogen.sh 
 
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
