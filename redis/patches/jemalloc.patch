@@ -1,13 +1,11 @@
-Index: redis-2.8.11/src/Makefile
-===================================================================
---- redis-2.8.11.orig/src/Makefile
-+++ redis-2.8.11/src/Makefile
-@@ -84,8 +84,8 @@ endif
+--- a/src/Makefile	2016-10-26 09:17:45.000000000 +0200
++++ b/src/Makefile	2016-10-27 07:52:52.208858080 +0200
+@@ -104,8 +104,8 @@ endif
  
  ifeq ($(MALLOC),jemalloc)
  	DEPENDENCY_TARGETS+= jemalloc
 -	FINAL_CFLAGS+= -DUSE_JEMALLOC -I../deps/jemalloc/include
--	FINAL_LIBS+= ../deps/jemalloc/lib/libjemalloc.a -ldl
+-	FINAL_LIBS+= ../deps/jemalloc/lib/libjemalloc.a
 +	FINAL_CFLAGS+= -DUSE_JEMALLOC -DJEMALLOC_NO_DEMANGLE -I/usr/include/jemalloc
 +	FINAL_LIBS+= -ljemalloc -ldl
  endif
