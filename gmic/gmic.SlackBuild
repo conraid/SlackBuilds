@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=gmic
-VERSION=1.7.5
+VERSION=1.7.8
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -80,8 +80,13 @@ sed -e 's|/share/man/|/man/|g' -i src/Makefile
 
 make -C src LIB=lib${LIBDIRSUFFIX} OPT_CFLAGS="$SLKCFLAGS" all 
 make -C src install LIB=lib${LIBDIRSUFFIX} DESTDIR=$PKG USR="/usr"
-make -C zart LIB=lib${LIBDIRSUFFIX} OPT_CFLAGS="$SLKCFLAGS" all 
-install -Dm755 zart/zart $PKG/usr/bin/zart
+
+# Zart
+cd zart
+qmake PREFIX=/usr QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" -o Makefile zart.pro
+make LIB=lib${LIBDIRSUFFIX} OPT_CFLAGS="$SLKCFLAGS" all 
+install -Dm755 zart $PKG/usr/bin/zart
+cd -
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a COPYING README $PKG/usr/doc/$PKGNAM-$VERSION
