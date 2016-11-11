@@ -35,7 +35,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=node
-VERSION=7.0.0
+VERSION=7.1.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -96,7 +96,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --shared-zlib \
   --shared-openssl \
   --shared-libuv \
-  --with-intl=system-icu \
   --without-npm
 
 make PREFIX="/usr" CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS" 
