@@ -31,7 +31,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=atom
-VERSION=1.11.2
+VERSION=1.12.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -48,12 +48,13 @@ if [ -z ${ARCH:=""} ]; then
        *) ARCH=$( uname -m ) ;;
   esac
 fi
+[ "$ARCH" = "x86_64" ] && LIBDIRSUFFIX="64" || LIBDIRSUFFIX=""
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
@@ -62,12 +63,6 @@ chmod -R u+w,go+r-w,a+X-s .
 # Disable send metrics to Google Analytics module
 sed -e '/"metrics":/d' -e '/"exception-reporting":/d' -i package.json
 
-# Apply patches
-if [ -e $CWD/patches ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
-fi
 
 sed "/userLocalDirPath/s|path.join('/usr', 'local')|path.join('$PKG/usr', '')|" -i script/lib/install-application.js
 
