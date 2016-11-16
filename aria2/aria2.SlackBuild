@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=aria2
-VERSION=1.28.0
-BUILD=${BUILD:-2}
+VERSION=1.29.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -64,6 +64,7 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
+cd 
 rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
 cd $PKGNAM-$VERSION
