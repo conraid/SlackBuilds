@@ -29,14 +29,14 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=wp-cli
-VERSION=${VERSION:-0.22.0}
+PKGNAM=wp-cli
+VERSION=0.25.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
+OUTPUT=${OUTPUT:-/tmp}
 
-# Insert document files in this variable
 DOCFILES="CONTRIBUTING* LICENSE* README* VERSION"
 
 if [ -z ${ARCH:=""} ]; then
@@ -62,28 +62,28 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
-cd $PRGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 composer install --no-interaction --prefer-dist
-php -dphar.readonly=0 utils/make-phar.php $PRGNAM.phar
-install -Dm755 $PRGNAM.phar $PKG/usr/bin/wp
+php -dphar.readonly=0 utils/make-phar.php $PKGNAM.phar
+install -Dm755 $PKGNAM.phar $PKG/usr/bin/wp
 
 # Install bash completion
 install -Dm644 utils/wp-completion.bash $PKG/etc/bash_completion.d/wp
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
