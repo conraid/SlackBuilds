@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PRGNAM=AFFLIB
 PKGNAM=afflib
-VERSION=3.7.8
+VERSION=3.7.11
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -83,7 +83,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --localstatedir=/var \
   --mandir=/usr/man \
   --infodir=/usr/info \
-  --enable-s3 \
+  --disable-s3 \
   --enable-python \
   --disable-static \
   --host=$ARCH-slackware-linux \
