@@ -28,8 +28,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=collectd
-VERSION=5.6.1
-BUILD=${BUILD:-2}
+VERSION=5.6.2
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -116,7 +116,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 # Add or move config files
 install -Dpm644 $CWD/rc.collectd $PKG/etc/rc.d/rc.collectd.new
 mkdir -p $PKG/etc/collectd
-cat contrib/collection.conf | sed 's%/opt/collectd/%/usr/%g;s%/usr/var/%/var/%' > $PKG/etc/collectd/collection.conf.new
+cat contrib/collection.conf | sed 's|/opt/collectd/|/usr/|g;s|/usr/var/|/var/|' > $PKG/etc/collectd/collection.conf.new
 mv $PKG/etc/collectd/collectd.conf  $PKG/etc/collectd/collectd.conf.new
 
 mkdir -p $PKG/install 
