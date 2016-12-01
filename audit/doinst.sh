@@ -28,7 +28,7 @@ perms etc/rc.d/rc.auditd.new
 for NEW in etc/audisp/{,plugins.d/}*.new; do
   config $NEW
 done
+config etc/audit/audit-stop.rules.new
 config etc/audit/auditd.conf.new
-config etc/audit/rules.d/audit.rules.new
 config etc/sysconfig/auditd
 config etc/libaudit.conf.new
