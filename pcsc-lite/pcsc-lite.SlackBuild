@@ -29,12 +29,12 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=pcsc-lite
-VERSION=${VERSION:-1.8.16}
+PKGNAM=pcsc-lite
+VERSION=1.8.18
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="AUTHORS COPYING ChangeLog* DRIVERS GPL* HELP INSTALL NEWS README SECURITY TODO"
@@ -62,11 +62,11 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.bz2
-cd $PRGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -80,7 +80,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --localstatedir=/var \
   --mandir=/usr/man \
   --infodir=/usr/info \
-  --docdir=/usr/doc/$PRGNAM-$VERSION \
+  --docdir=/usr/doc/$PKGNAM-$VERSION \
   --enable-static=no \
   --enable-shared=yes \
   --enable-ipcdir=/var/run/pcscd \
@@ -113,15 +113,15 @@ install -Dm0755 $CWD/rc.pcscd $PKG/etc/rc.d/rc.pcscd.new
 # Create the directory for drivers and such (not included with this package) (thanks to SBo)
 mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/pcsc/{drivers,services}
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION
 # Install Slackware Readme file from SlackBuilds.org
-cat $CWD/SLACKWARE.README > $PKG/usr/doc/$PRGNAM-$VERSION/README.SLACKWARE
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+cat $CWD/SLACKWARE.README > $PKG/usr/doc/$PKGNAM-$VERSION/README.SLACKWARE
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
