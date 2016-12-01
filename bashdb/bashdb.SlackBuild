@@ -30,9 +30,9 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=bashdb
-SRCVERSION=4.3-0.91
+SRCVERSION=4.4-0.92
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -63,7 +63,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$SRCVERSION
 tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.bz2
