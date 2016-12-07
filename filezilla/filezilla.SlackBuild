@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=filezilla
-SRCVERSION=3.23.0-rc1
+SRCVERSION=3.23.0.2
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -65,11 +65,13 @@ mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$SRCVERSION
 tar xvf $CWD/FileZilla_${SRCVERSION}_src.tar.bz2
-tar xvf $CWD/classic.tar.gz
 cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
+
+# Fix wx3.1 version
+sed 's/"3.1"/"3.2"/;s/"3.0"/"3.1"/' -i configure
 
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
