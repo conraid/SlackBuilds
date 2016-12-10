@@ -1,0 +1,28 @@
+--- ./Makefile.orig	2016-12-08 20:45:32.000000000 +0100
++++ ./Makefile	2016-12-10 11:59:21.962164441 +0100
+@@ -5,11 +5,11 @@ clean:
+ 	find . -name "*.pyc" -delete
+ 	find . -name "*.class" -delete
+ 
+-PREFIX ?= /usr/local
++PREFIX ?= /usr
+ BINDIR ?= $(PREFIX)/bin
+ MANDIR ?= $(PREFIX)/man
+ SHAREDIR ?= $(PREFIX)/share
+-PYTHON ?= /usr/bin/env python
++PYTHON ?= /usr/bin/python
+ 
+ # set SYSCONFDIR to /etc if PREFIX=/usr or PREFIX=/usr/local
+ SYSCONFDIR = $(shell if [ $(PREFIX) = /usr -o $(PREFIX) = /usr/local ]; then echo /etc; else echo $(PREFIX)/etc; fi)
+@@ -66,11 +66,9 @@ supportedsites:
+ 	$(PYTHON) devscripts/make_supportedsites.py docs/supportedsites.md
+ 
+ README.txt: README.md
+-	pandoc -f markdown -t plain README.md -o README.txt
+ 
+ youtube-dl.1: README.md
+ 	$(PYTHON) devscripts/prepare_manpage.py youtube-dl.1.temp.md
+-	pandoc -s -f markdown -t man youtube-dl.1.temp.md -o youtube-dl.1
+ 	rm -f youtube-dl.1.temp.md
+ 
+ youtube-dl.bash-completion: youtube_dl/*.py youtube_dl/*/*.py devscripts/bash-completion.in
