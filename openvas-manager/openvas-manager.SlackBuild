@@ -29,12 +29,12 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=openvas-manager
-VERSION=${VERSION:-6.0.8}
+PKGNAM=openvas-manager
+VERSION=7.0.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="CHANGES COPYING* ChangeLog INSTALL README*"
@@ -54,7 +54,7 @@ elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -62,20 +62,22 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
-cd $PRGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-# Sane man path
-sed -i \
-  -e 's|share/man/man|man/man|g' \
-  -e "s|share/doc/openvas-manager/|doc/openvas-manager-$VERSION/|g" \
-  doc/CMakeLists.txt
+# Sane man and doc path
+sed -e 's|\${DATADIR}/man|${CMAKE_INSTALL_PREFIX}/man|g' \
+    -e "s|\${DATADIR}/doc/openvas-manager|\${CMAKE_INSTALL_PREFIX}/doc/openvas-manager-${VERSION}|g" \
+    -i CMakeLists.txt
+sed -e 's|share/man/|man/|g' \
+    -e "s|share/doc/openvas-manager|doc/openvas-manager-${VERSION}|g" \
+    -i doc/CMakeLists.txt
 
 mkdir -p build
 cd build
@@ -105,9 +107,9 @@ rename .conf .conf.new $PKG/etc/openvas/*.conf
 # Install rc script (thanks to SBo)
 install -Dm644 $CWD/rc.openvasmd  $PKG/etc/rc.d/rc.openvasmd.new
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
@@ -115,4 +117,4 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
