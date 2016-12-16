@@ -33,7 +33,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=wine
-VERSION=1.9.23
+SRCVERSION=2.0-rc1
+VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -69,13 +70,12 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
-tar xvf $CWD/$PKGNAM-staging-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
-cd $PKGNAM-staging-$VERSION/patches
-./patchinstall.sh --all DESTDIR=$TMP/$PKGNAM-$VERSION
-
-cd $TMP/$PKGNAM-$VERSION
+rm -rf $PKGNAM-SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.bz2
+tar xvf $CWD/$PKGNAM-staging-$SRCVERSION.tar.gz || tar xvf $CWD/v$SRCVERSION.tar.gz
+cd $PKGNAM-staging-$SRCVERSION/patches
+./patchinstall.sh --all DESTDIR=$TMP/$PKGNAM-$SRCVERSION
+cd $TMP/$PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
