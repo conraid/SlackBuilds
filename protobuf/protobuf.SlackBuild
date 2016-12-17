@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=protobuf
 VERSION=3.1.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -42,7 +42,6 @@ DOCFILES="BUILD LICENSE *.txt README* WORKSPACE editors examples"
 # Set YES to enable bindings.
 BUILD_PYTHON=${BUILD_PYTHON:-YES}
 BUILD_PHP=${BUILD_PHP:-YES}
-BUILD_NODE=${BUILD_NODE:-YES}
 BUILD_RUBY=${BUILD_RUBY:-NO}
 
 if [ -z ${ARCH:=""} ]; then
@@ -118,13 +117,6 @@ if [ $BUILD_PHP == "YES" ]; then
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
   cd - 
-fi
-
-# Node.js
-if [ $BUILD_NODE == "YES" ]; then
-  cd js
-  DESTDIR=$PKG npm install --user root -g
-  cd -
 fi
 
 # Ruby
