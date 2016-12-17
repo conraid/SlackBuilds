@@ -31,7 +31,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=npm
-VERSION=4.1.0
+VERSION=4.1.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -95,6 +95,12 @@ done
 
 # Remove unneeded files.
 find $PKG/usr \( -name '.git*' -o -name '.travis.yml' \) -exec rm -f {} \;
+
+# Remove occurrences of $PKG
+find $PKG -name "package.json" \
+  -exec sed -e "s|${TMP}/${PKGNAM}-build||" \
+            -e "s|${TMP}/${PKGNAM}-${VERSION}|/usr/lib${LIBDIRSUFFIX}/node_modules/${PKGNAM}|" \
+            -i '{}' \;
 
 # Add bash completion file
 install -D -m 644 lib/utils/completion.sh $PKG/etc/bash_completion.d/npm
