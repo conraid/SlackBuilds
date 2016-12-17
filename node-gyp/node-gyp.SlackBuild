@@ -2,7 +2,7 @@
 #
 # Slackware build script for node-gyp
 #
-# Copyright 2015 Corrado Franco (http://conraid.net)
+# Copyright 2015-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,13 +30,13 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=${PRGNAM:-node-gyp}
-VERSION=${VERSION:-3.0.3}
-BUILD=${BUILD:-1}
+PKGNAM=node-gyp
+VERSION=3.0.3
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
-DOCDIR="$PKG/usr/doc/$PRGNAM-${VERSION}"
+PKG=$TMP/package-$PKGNAM
+OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="CHANGELOG* LICENSE README*"
 
@@ -47,20 +47,17 @@ if [ -z ${ARCH:=""} ]; then
   *) ARCH=$( uname -m ) ;;
   esac
 fi
+[ "$ARCH" = "x86_64" ] && LIBDIRSUFFIX="64" || LIBDIRSUFFIX=""
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
-cd $PRGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
-find . \
- \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
-  -o -perm 511 \) -exec chmod 755 {} \; -o \
- \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
-  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
+chmod -R u+w,go+r-w,a+X-s .
 
 DESTDIR=$PKG npm install --user root -g
 
@@ -70,12 +67,18 @@ find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r st
 # Remove empty dir
 rmdir $PKG/usr/etc
 
-mkdir -p $DOCDIR
-cp -a $DOCFILES $DOCDIR || true
-cat $CWD/$PRGNAM.SlackBuild > $DOCDIR/$PRGNAM.SlackBuild
+# Remove occurrences of $PKG
+find $PKG -name "package.json" \
+  -exec sed -e "s|$TMP/$PKGNAM-build||" \
+            -e "s|$TMP/$PKGNAM-$VERSION|/usr/lib${LIBDIRSUFFIX}/node_modules/${PKGNAM}|" \
+            -i '{}' \;
+
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}

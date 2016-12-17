@@ -25,37 +25,35 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-# Exit on most errors
 set -eu
 
 CWD=$(pwd)
 
-PRGNAM=gulp
-VERSION=${VERSION:-3.9.1}
-BUILD=${BUILD:-1}
+PKGNAM=gulp
+VERSION=3.9.1
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
+OUTPUT=${OUTPUT:-/tmp}
 
-# Insert document files in this variable
 DOCFILES="AUTHORS BUGS CHANGES COPYING* COPYRIGHT ChangeLog INSTALL LICENSE MANIFEST NEWS README* THANKS TODO VERSION"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
   i?86) ARCH=i686 ;;
   arm*) ARCH=arm ;;
-  # Unless $ARCH is already set, use uname -m for all other archs:
   *) ARCH=$( uname -m ) ;;
   esac
 fi
 [ "$ARCH" = "x86_64" ] && LIBDIRSUFFIX="64" || LIBDIRSUFFIX=""
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
-cd $PRGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -65,15 +63,21 @@ DESTDIR=$PKG npm install --user root -g
 # Remove empty dir
 rmdir $PKG/usr/etc
 
+# Remove occurrences of $PKG
+find $PKG -name "package.json" \
+  -exec sed -e "s|$TMP/$PKGNAM-build||" \
+            -e "s|$TMP/$PKGNAM-${VERSION}|/usr/lib${LIBDIRSUFFIX}/node_modules/${PKGNAM}|" \
+            -i '{}' \;
+
 # Install bash completion
 install -Dm644 $PKG/usr/lib64/node_modules/gulp/completion/bash $PKG/etc/bash_completion.d/gulp
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}

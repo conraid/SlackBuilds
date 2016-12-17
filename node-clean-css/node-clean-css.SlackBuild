@@ -32,7 +32,7 @@ CWD=$(pwd)
 PRGNAM=clean-css
 PKGNAM=node-clean-css
 VERSION=3.4.22
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -47,6 +47,7 @@ if [ -z ${ARCH:=""} ]; then
        *) ARCH=$( uname -m ) ;;
   esac
 fi
+[ "$ARCH" = "x86_64" ] && LIBDIRSUFFIX="64" || LIBDIRSUFFIX=""
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
@@ -70,6 +71,12 @@ fi
 
 # Remove empty dir
 rmdir $PKG/usr/etc
+
+# Remove occurrences of $PKG
+find $PKG -name "package.json" \
+  -exec sed -e "s|${TMP}/${PRGNAM}-build||" \
+            -e "s|${TMP}/${PRGNAM}-${VERSION}|/usr/lib${LIBDIRSUFFIX}/node_modules/${PRGNAM}|" \
+            -i '{}' \;
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
