@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PRGNAM=clean-css
 PKGNAM=node-clean-css
-VERSION=3.4.22
+VERSION=3.4.23
 BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -71,6 +71,9 @@ fi
 
 # Remove empty dir
 rmdir $PKG/usr/etc
+
+# Remove unneeded files.
+find $PKG/usr \( -name '.git*' -o -name '.travis.yml' \) -exec rm -f {} \;
 
 # Remove occurrences of $PKG
 find $PKG -name "package.json" \
