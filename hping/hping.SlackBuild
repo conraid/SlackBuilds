@@ -2,7 +2,7 @@
 #
 # Slackware build script for hping
 #
-# Copyright 2014-2015 Corrado Franco (http://conraid.net)
+# Copyright 2014-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,13 +29,13 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=hping
-VERSION=${VERSION:-3.0.0-git3547c}
+PKGNAM=hping
+VERSION=3.0.0_git
 COMMIT="3547c7691742c6eaa31f8402e0ccbb81387c1b99"
-BUILD=${BUILD:-8}
+BUILD=${BUILD:-9}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="docs/*-* docs/*.txt docs/hping2rc.example"
@@ -55,7 +55,7 @@ elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC"
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -63,15 +63,14 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$COMMIT
-tar xvf $CWD/$PRGNAM-$COMMIT.tar.gz
-cd $PRGNAM-$COMMIT
+rm -rf $PKGNAM-$COMMIT
+tar xvf $CWD/$PKGNAM-$COMMIT.tar.gz
+cd $PKGNAM-$COMMIT
 
 chown -R root:root .
-find -L . -executable -exec chmod 755 {} \+
-find -L . ! -executable -exec chmod 644 {} \+
+chmod -R u+w,go+r-w,a+X-s .
 
 # Add some of Debian's patchset (thanks to Debian and SBo)
 for PATCH in $CWD/patches/*.diff; do
@@ -95,12 +94,12 @@ if [ -d $PKG/usr/man ]; then
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
