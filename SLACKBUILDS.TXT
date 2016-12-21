@@ -172,10 +172,10 @@ SLACKBUILD SHORT DESCRIPTION:  autossh (Automatically restart SSH sessions and t
 SLACKBUILD NAME: balsa
 SLACKBUILD LOCATION: ./balsa
 SLACKBUILD FILES: README balsa.SlackBuild balsa.info doinst.sh slack-desc
-SLACKBUILD VERSION: 2.5.2
+SLACKBUILD VERSION: 2.5.3
 SLACKBUILD REQUIRED: libesmtp
-SLACKBUILD DOWNLOAD: http://pawsa.fedorapeople.org/balsa/balsa-2.5.2.tar.bz2
-SLACKBUILD MD5SUM: da3b500b5c939f85071fb1fe3e3efc01
+SLACKBUILD DOWNLOAD: http://pawsa.fedorapeople.org/balsa/balsa-2.5.3.tar.bz2
+SLACKBUILD MD5SUM: d02bc62af34c4d1b0c1f6cfb4efff8db
 SLACKBUILD SHORT DESCRIPTION:  balsa (Email Client)
 
 SLACKBUILD NAME: barnyard2
@@ -226,10 +226,10 @@ SLACKBUILD SHORT DESCRIPTION:  Bluefish (GTK-based HTML Editor)
 SLACKBUILD NAME: bmon
 SLACKBUILD LOCATION: ./bmon
 SLACKBUILD FILES: README bmon.SlackBuild bmon.info doinst.sh slack-desc
-SLACKBUILD VERSION: 3.9
+SLACKBUILD VERSION: 4.0
 SLACKBUILD REQUIRED: confuse
-SLACKBUILD DOWNLOAD: https://github.com/tgraf/bmon/releases/download/v3.9/bmon-3.9.tar.gz
-SLACKBUILD MD5SUM: a959371dc6f8eecdfe27c088447ec636
+SLACKBUILD DOWNLOAD: https://github.com/tgraf/bmon/releases/download/v4.0/bmon-4.0.tar.gz
+SLACKBUILD MD5SUM: 8ec83f7e6f6a8a41c60c3ffdc9605e69
 SLACKBUILD SHORT DESCRIPTION:  bmon (portable bandwidth monitor and rate estimator)
 
 SLACKBUILD NAME: bootlint
@@ -366,6 +366,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://dennisk.customer.netspace.net.au/checkit/checkit-0.3.0.tar.gz
 SLACKBUILD MD5SUM: 9ce7376865d4ddd1a3255c043d6cf8d4
 SLACKBUILD SHORT DESCRIPTION:  checkit (A file integrity tool)
+
+SLACKBUILD NAME: checksec
+SLACKBUILD LOCATION: ./checksec
+SLACKBUILD FILES: README checksec.SlackBuild checksec.info slack-desc
+SLACKBUILD VERSION: 1.7.5
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/slimm609/checksec.sh/archive/1.7.5.tar.gz
+SLACKBUILD MD5SUM: fd722cc34fa59402719b305d3c6d2bd2
+SLACKBUILD SHORT DESCRIPTION:  checksec (Tool to check what security features are used)
 
 SLACKBUILD NAME: chkrootkit
 SLACKBUILD LOCATION: ./chkrootkit
@@ -2458,10 +2467,10 @@ SLACKBUILD SHORT DESCRIPTION:  watcherjs (Node.js based application for service 
 SLACKBUILD NAME: node
 SLACKBUILD LOCATION: ./node
 SLACKBUILD FILES: README node.SlackBuild node.info slack-desc
-SLACKBUILD VERSION: 7.2.1
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/nodejs/node/archive/v7.2.1.tar.gz
-SLACKBUILD MD5SUM: 2b4cdee7ac6137941a12bd54a292adf2
+SLACKBUILD VERSION: 7.3.0
+SLACKBUILD REQUIRED: npm
+SLACKBUILD DOWNLOAD: https://github.com/nodejs/node/archive/v7.3.0.tar.gz
+SLACKBUILD MD5SUM: a1b4249e2d341128847a38be12639d3e
 SLACKBUILD SHORT DESCRIPTION:  Node (Evented I/O for V8 JavaScript)
 
 SLACKBUILD NAME: nomacs
@@ -3718,10 +3727,10 @@ SLACKBUILD SHORT DESCRIPTION:  tomb (system for file encryption)
 SLACKBUILD NAME: tor
 SLACKBUILD LOCATION: ./tor
 SLACKBUILD FILES: README doinst.sh slack-desc tor.SlackBuild tor.info
-SLACKBUILD VERSION: 0.2.8.9
+SLACKBUILD VERSION: 0.2.9.8
 SLACKBUILD REQUIRED: libseccomp
-SLACKBUILD DOWNLOAD: https://www.torproject.org/dist/tor-0.2.8.9.tar.gz
-SLACKBUILD MD5SUM: e1f8bc2b2e2b365fc916388304e5e40d
+SLACKBUILD DOWNLOAD: https://www.torproject.org/dist/tor-0.2.9.8.tar.gz
+SLACKBUILD MD5SUM: 1fb879608c5237294cb7e682e486b073
 SLACKBUILD SHORT DESCRIPTION:  tor (The onion router)
 
 SLACKBUILD NAME: torrent-file-editor
@@ -4015,10 +4024,10 @@ SLACKBUILD SHORT DESCRIPTION:  wifite (automated wireless auditor)
 SLACKBUILD NAME: wine
 SLACKBUILD LOCATION: ./wine
 SLACKBUILD FILES: README doinst.sh slack-desc wine.SlackBuild wine.info
-SLACKBUILD VERSION: 2.0-rc1
+SLACKBUILD VERSION: 2.0-rc2
 SLACKBUILD REQUIRED: openal
-SLACKBUILD DOWNLOAD: http://mirrors.ibiblio.org/wine/source/2.0/wine-2.0-rc1.tar.bz2
-SLACKBUILD MD5SUM: ce6e5c2b834a9857126865fffd231a4a
+SLACKBUILD DOWNLOAD: http://mirrors.ibiblio.org/wine/source/2.0/wine-2.0-rc2.tar.bz2
+SLACKBUILD MD5SUM: 25d5c2ac320daa93d5f22cb603ca72bc
 SLACKBUILD SHORT DESCRIPTION:  wine (Wine Is Not an Emulator)
 
 SLACKBUILD NAME: winetricks
@@ -4186,11 +4195,20 @@ SLACKBUILD SHORT DESCRIPTION:  yersinia
 SLACKBUILD NAME: youtube-dl
 SLACKBUILD LOCATION: ./youtube-dl
 SLACKBUILD FILES: README patches/makefile.patch patches/setup.patch slack-desc youtube-dl.SlackBuild youtube-dl.info
-SLACKBUILD VERSION: 2016.12.12
+SLACKBUILD VERSION: 2016.12.20
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://yt-dl.org/downloads/2016.12.12/youtube-dl-2016.12.12.tar.gz
-SLACKBUILD MD5SUM: ed8cb2aa78f3da2f89670ccca2834e0d
+SLACKBUILD DOWNLOAD: https://yt-dl.org/downloads/2016.12.20/youtube-dl-2016.12.20.tar.gz
+SLACKBUILD MD5SUM: 1fef01b66f067b0a42a0d90328218149
 SLACKBUILD SHORT DESCRIPTION:  youtube-dl (YouTube video download utility)
+
+SLACKBUILD NAME: zenity
+SLACKBUILD LOCATION: ./zenity
+SLACKBUILD FILES: README slack-desc zenity.SlackBuild zenity.info
+SLACKBUILD VERSION: 3.22.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://download.gnome.org/sources/zenity/3.22/zenity-3.22.0.tar.xz
+SLACKBUILD MD5SUM: eaf4cbaac3a356817b837668b5a45a97
+SLACKBUILD SHORT DESCRIPTION:  zenity (display gtk dialog boxes from cli)
 
 SLACKBUILD NAME: zmap
 SLACKBUILD LOCATION: ./zmap
