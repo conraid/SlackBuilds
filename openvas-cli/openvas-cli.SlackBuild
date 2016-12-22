@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=openvas-cli
 VERSION=1.4.5
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,7 +72,7 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 # Sane man path
-sed -i 's|\$DATADIR/man/man|${CMAKE_INSTALL_PREFIX}/man/man|g' doc/CMakeLists.txt
+sed '/man/s/DATADIR/CMAKE_INSTALL_PREFIX/' -i doc/CMakeLists.txt
 
 mkdir -p build
 cd build
