@@ -29,7 +29,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=qemu
-VERSION=2.7.0
+VERSION=2.8.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -102,7 +102,6 @@ ARFLAGS="rv" \
   --enable-curl \
   --enable-bluez \
   --enable-kvm \
-  --enable-uuid \
   --enable-vde \
   --enable-cap-ng \
   --enable-attr \
