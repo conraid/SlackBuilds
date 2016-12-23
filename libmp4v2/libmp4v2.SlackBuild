@@ -30,7 +30,7 @@ CWD=$(pwd)
 PRGNAM=mp4v2
 PKGNAM=libmp4v2
 VERSION=2.0.0
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -61,7 +61,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PRGNAM-$VERSION
 tar xjvf $CWD/$PRGNAM-$VERSION.tar.bz2
