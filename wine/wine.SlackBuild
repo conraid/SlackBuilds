@@ -35,7 +35,7 @@ CWD=$(pwd)
 PKGNAM=wine
 SRCVERSION=2.0-rc2
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -70,7 +70,7 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-SRCVERSION
+rm -rf $PKGNAM-$SRCVERSION $PKGNAM-staging-$SRCVERSION
 tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.bz2
 tar xvf $CWD/$PKGNAM-staging-$SRCVERSION.tar.gz || tar xvf $CWD/v$SRCVERSION.tar.gz
 cd $PKGNAM-staging-$SRCVERSION/patches
@@ -94,7 +94,9 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-opengl \
   --${WINE64}-win64 \
   --with-x \
-  --without-gstreamer \
+  --with-gstreamer \
+  --with-d3d9-nine \
+  --with-xattr \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
