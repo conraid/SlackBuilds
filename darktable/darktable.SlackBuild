@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=darktable
-VERSION=2.0.7
+VERSION=2.2.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -71,11 +71,6 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-# Fix doc path
-sed -e "s|share/doc/darktable|doc/darktable-$VERSION|" \
-  -e "s|\${SHARE_INSTALL}/doc/darktable|./doc/darktable-$VERSION|" \
-  -i doc/CMakeLists.txt
-
 mkdir -p build
 cd build
 cmake \
@@ -83,16 +78,14 @@ cmake \
   -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_BUILD_TYPE=none \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DMAN_INSTALL_DIR=/usr/man/man1 \
-  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
+  -DCMAKE_INSTALL_MANDIR=/usr/man \
+  -DCMAKE_INSTALL_DOCDIR=/usr/doc/$PKGNAM-$VERSION \
   -DBINARY_PACKAGE_BUILD=On \
   -DUSE_DARKTABLE_PROFILING=On \
   -DUSE_LUA=On \
   -DLUA52=ON \
   -DDONT_USE_INTERNAL_LUA=On \
   -DUSE_LIBSECRET=On \
-  -DUSE_GNOME_KEYRING=Off \
-  -DGTK3_INCLUDE_DIR=/usr/include/gtk-3.0 \
   ..
 
 make
