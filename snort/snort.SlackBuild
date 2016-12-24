@@ -29,12 +29,12 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=snort
-VERSION=${VERSION:-2.9.8.2}
+PKGNAM=snort
+VERSION=2.9.9.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="COPYING ChangeLog LICENSE RELEASE.NOTES"
@@ -62,11 +62,11 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
-cd $PRGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -88,7 +88,7 @@ CXXFLAGS="$SLKCFLAGS" \
  --localstatedir=/var \
  --mandir=/usr/man \
  --infodir=/usr/info \
- --docdir=/usr/doc/$PRGNAM-$VERSION \
+ --docdir=/usr/doc/$PKGNAM-$VERSION \
  --enable-static=no \
  --enable-shared=yes \
  --enable-linux-smp-stats \
@@ -109,9 +109,9 @@ if [ -d $PKG/usr/man ]; then
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
-install -Dm644 $CWD/SLACKWARE.README $PKG/usr/doc/$PRGNAM-$VERSION/README.SLACKWARE # Thanks to SBo
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+install -Dm644 $CWD/SLACKWARE.README $PKG/usr/doc/$PKGNAM-$VERSION/README.SLACKWARE # Thanks to SBo
 
 ### Set directory for snort. Thanks to SBo and archlinux
 mkdir -p $PKG/etc/{rc.d,snort/rules,snort/preproc_rules}
@@ -137,12 +137,12 @@ sed -e "s/%LIBDIRSUFFIX%/${LIBDIRSUFFIX}/" $CWD/rc.snort > $PKG/etc/rc.d/rc.snor
 # Add blacklist and whitelist reputation files (see README.reputation)
 touch $PKG/etc/snort/rules/{black,white}_list.rules.new
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION 
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION 
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
