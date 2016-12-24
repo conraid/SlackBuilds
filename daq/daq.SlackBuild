@@ -29,12 +29,12 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=daq
-VERSION=${VERSION:-2.0.6}
-BUILD=${BUILD:-4}
+PKGNAM=daq
+VERSION=2.0.6
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="COPYING ChangeLog README"
@@ -62,11 +62,11 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/daq-$VERSION.tar.gz
-cd $PRGNAM-$VERSION
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -90,12 +90,12 @@ make DESTDIR=$PKG install-strip
 # This has been bugged upstream
 rm $PKG/usr/lib${LIBDIRSUFFIX}/libdaq_static*
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
