@@ -46,7 +46,7 @@ CWD=$(pwd)
 PKGNAM=postgresql
 VERSION=9.6.1
 PG_VERSION=$(echo $VERSION | cut -d. -f-2)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -127,19 +127,15 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 # create symlinks to shared library for other programs to link against
-( 
-  cd $PKG/usr/lib${LIBDIRSUFFIX}
-  for i in $(ls $PKGNAM/$PG_VERSION/lib/lib*.so*) ; do ln -sf $i ; done
-  cd -
-)
+cd $PKG/usr/lib${LIBDIRSUFFIX}
+for i in $(ls $PKGNAM/$PG_VERSION/lib/lib*.so*) ; do ln -sf $i ; done
+cd -
 
 # create symlinks to pkg-config scripts
-( 
-  mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
-  cd $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
-  for i in $(ls ../$PKGNAM/$PG_VERSION/lib/pkgconfig/*) ; do ln -sf $i ; done
-  cd -
-)
+mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
+cd $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
+for i in $(ls ../$PKGNAM/$PG_VERSION/lib/pkgconfig/*) ; do ln -sf $i ; done
+cd -
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
