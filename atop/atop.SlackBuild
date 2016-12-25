@@ -2,7 +2,7 @@
 #
 # Slackware build script for atop
 #
-# Copyright 2014-2015 Corrado Franco (http://conraid.net)
+# Copyright 2014-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,13 +29,13 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=atop
-SRCVERSION=${SRCVERSION:-2.2-3}
+PKGNAM=atop
+SRCVERSION=2.2-3
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="AUTHOR COPYING ChangeLog README"
@@ -55,7 +55,7 @@ elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -fomit-frame-pointer"
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -63,11 +63,11 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$SRCVERSION
-tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz
-cd $PRGNAM-$SRCVERSION
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz
+cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -107,14 +107,14 @@ install -Dm0644 $CWD/psacct.logrotate $PKG/etc/logrotate.d/psacct.new
 rm -f $PKG/etc/cron.daily/atop
 rm -f $PKG/etc/rc.d/atopacct
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION
-cat $CWD/slackware.readme > $PKG/usr/doc/$PRGNAM-$VERSION/README.SLACKWARE # (Thanks to SBo)
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION
+cat $CWD/slackware.readme > $PKG/usr/doc/$PKGNAM-$VERSION/README.SLACKWARE # (Thanks to SBo)
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}

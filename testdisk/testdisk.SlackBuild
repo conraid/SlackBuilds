@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=testdisk
 VERSION=7.0
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -58,7 +58,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2

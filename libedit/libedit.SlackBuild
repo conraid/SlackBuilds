@@ -32,7 +32,7 @@ CWD=$(pwd)
 PKGNAM=libedit
 SRCVERSION=20160618-3.1
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -63,7 +63,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$SRCVERSION
 tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz

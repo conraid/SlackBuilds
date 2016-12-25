@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=vdt
 VERSION=5.4.68
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -62,7 +62,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf ${PKGNAM}5
 tar xvf $CWD/$PKGNAM-$VERSION-src.tar.gz

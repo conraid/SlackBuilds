@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=nload
 VERSION=${VERSION:-0.7.4}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -60,7 +60,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
 tar xzvf $CWD/$PKGNAM-$VERSION.tar.gz

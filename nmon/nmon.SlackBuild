@@ -29,12 +29,12 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=nmon
+PKGNAM=nmon
 VERSION=16f
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 if [ -z ${ARCH:=""} ]; then
@@ -56,24 +56,24 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-install -Dm644 $CWD/lmon$VERSION.c $PRGNAM-$VERSION/$PRGNAM.c
-cd $PRGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
+install -Dm644 $CWD/lmon$VERSION.c $PKGNAM-$VERSION/$PKGNAM.c
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 gcc -o nmon \
-  ${PRGNAM}.c $SLKCFLAGS \
+  ${PKGNAM}.c $SLKCFLAGS \
   -DJFS -DGETUSER -Wall -DLARGEMEM -lncurses -lm -DX86
-install -Dsm755 $PRGNAM $PKG/usr/bin/nmon
+install -Dsm755 $PKGNAM $PKG/usr/bin/nmon
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-./nmon -h > $PKG/usr/doc/$PRGNAM-$VERSION/nmon.txt
-cp -a $CWD/*.txt $PKG/usr/doc/$PRGNAM-$VERSION
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+./nmon -h > $PKG/usr/doc/$PKGNAM-$VERSION/nmon.txt
+cp -a $CWD/*.txt $PKG/usr/doc/$PKGNAM-$VERSION
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 # Install man page
 install -Dm644 $CWD/nmon.1.gz $PKG/usr/man/man1/nmon.1.gz
@@ -82,4 +82,4 @@ mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
