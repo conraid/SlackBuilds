@@ -31,21 +31,22 @@ CWD=$(pwd)
 
 SRCNAM=MySQLTuner-perl
 PRGNAM=mysqltuner
-VERSION=${VERSION:-a154701}
+VERSION=1.6.18
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
+OUTPUT=${OUTPUT:-/tmp}
 ARCH="noarch"
 
 DOCFILES="*.md LICENSE *.tlp *.png"
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $SRCNAM-${VERSION}*
-tar xvf $CWD/$SRCNAM-${VERSION}*.tar.gz || tar xvf $CWD/${VERSION}*.tar.gz
-cd $SRCNAM-${VERSION}*
+rm -rf $SRCNAM-${VERSION}
+tar xvf $CWD/$SRCNAM-${VERSION}.tar.gz || tar xvf $CWD/${VERSION}.tar.gz
+cd $SRCNAM-${VERSION}
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -62,4 +63,4 @@ mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-git_$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
