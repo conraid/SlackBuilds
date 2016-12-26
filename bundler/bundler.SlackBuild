@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=bundler
-VERSION=1.12.5
+VERSION=1.13.7
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -46,7 +46,7 @@ if [ -z ${ARCH:=""} ]; then
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 
 DESTDIR="$(ruby -e'puts Gem.default_dir')"
