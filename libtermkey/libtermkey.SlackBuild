@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=libtermkey
-VERSION=0.18
-BUILD=${BUILD:-4}
+VERSION=0.19
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -63,15 +63,11 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
-
-# Apply patch to correct handling of ASCII NUL to imply Ctrl-Space 
-# https://github.com/neovim/libtermkey/commit/416adba8c000bd2a70efc881283249d03a56553b
-patch -p1 -i $CWD/patches/ascii.patch
 
 make CFLAGS="$SLKCFLAGS" PREFIX=/usr LIBDIR=/usr/lib${LIBDIRSUFFIX}
 make install DESTDIR=$PKG PREFIX=/usr LIBDIR=/usr/lib${LIBDIRSUFFIX} MANDIR=/usr/man
