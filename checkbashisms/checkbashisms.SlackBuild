@@ -29,41 +29,43 @@ set -eu
 
 CWD=$(pwd)
 
-SRCNAM=devscripts
-PRGNAM=checkbashisms
-VERSION=${VERSION:-2.16.3} # Version of debian devscripts
+PRGNAM=devscripts
+PKGNAM=checkbashisms
+# Version of debian devscripts
+VERSION=2.16.13
 BUILD=${BUILD:-1}
 ARCH=noarch
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $SRCNAM-$VERSION
-tar xvf $CWD/${SRCNAM}_${VERSION}.tar.xz
-cd $SRCNAM-$VERSION
+rm -rf $PRGNAM-$VERSION
+tar xvf $CWD/${PRGNAM}_${VERSION}.tar.xz
+cd $PRGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Install:
-install -Dm755 scripts/$PRGNAM.pl $PKG/usr/bin/$PRGNAM
+# Install script
+install -Dm755 scripts/$PKGNAM.pl $PKG/usr/bin/$PKGNAM
 
-install -Dm644 scripts/$PRGNAM.1 $PKG/usr/man/man1/${PRGNAM}.1
-gzip -9 $PKG/usr/man/man1/$PRGNAM.1
+# Install man
+install -Dm644 scripts/$PKGNAM.1 $PKG/usr/man/man1/${PKGNAM}.1
+gzip -9 $PKG/usr/man/man1/$PKGNAM.1
 
-# Install bash completion:
-install -Dm644 scripts/$PRGNAM.bash_completion $PKG/etc/bash_completion.d/$PRGNAM
+# Install bash completion
+install -Dm644 scripts/$PKGNAM.bash_completion $PKG/etc/bash_completion.d/$PKGNAM
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp COPYING $PKG/usr/doc/$PRGNAM-$VERSION
-cat $CWD/${PRGNAM}.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp COPYING $PKG/usr/doc/$PKGNAM-$VERSION
+cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD${TAG}.txz
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD${TAG}.txz
