@@ -27,24 +27,24 @@ set -eu
 
 CWD=$(pwd)
 
-SRCNAM=CImg
-PRGNAM=cimg
-VERSION=${VERSION:-1.6.9}
+PRGNAM=CImg
+PKGNAM=cimg
+VERSION=1.7.9
 ARCH=noarch
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="CHANGES.txt Licence* README.txt examples"
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $SRCNAM-$VERSION
-unzip $CWD/${SRCNAM}_${VERSION}.zip
-cd $SRCNAM-$VERSION
+rm -rf $PRGNAM-$VERSION
+unzip $CWD/${PRGNAM}_${VERSION}.zip
+cd $PRGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
@@ -56,12 +56,12 @@ install -Dm644 CImg.h $PKG/usr/include/CImg/CImg.h
 mkdir -p $PKG/usr/share/CImg
 cp -a plugins/ $PKG/usr/share/CImg
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
-cat $CWD/${PRGNAM}.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/${PRGNAM}.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD${TAG}.txz
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD${TAG}.txz
