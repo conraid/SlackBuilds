@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=pugixml
-VERSION=1.7
-BUILD=${BUILD:-2}
+VERSION=1.8
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -78,7 +78,7 @@ cmake \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DBUILD_SHARED_LIBS=ON \
-  ../scripts
+  ..
 
 make
 make DESTDIR=$PKG install
