@@ -2,7 +2,7 @@
 #
 # Slackware build script for libmilter
 #
-# Copyright 2015 Corrado Franco (http://conraid.net)
+# Copyright 2015-2016 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,14 +29,15 @@ set -eu
 
 CWD=$(pwd)
 
-SRCNAM=sendmail
-PRGNAM=libmilter
-VERSION=${VERSION:-8.15.2}
+PRGNAM=sendmail
+PKGNAM=libmilter
+VERSION=8.15.2
 SRCBUILD="2"
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
+OUTPUT=${OUTPUT:-/tmp}
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -48,22 +49,22 @@ fi
 [ "$ARCH" = "x86_64" ] && LIBDIRSUFFIX="64" || LIBDIRSUFFIX=""
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $PKG
-tar xvf $CWD/$SRCNAM-$VERSION-$ARCH-$SRCBUILD.txz \
-usr/{include/libmilter,lib${LIBDIRSUFFIX}/libmilter.a,doc/$SRCNAM-$VERSION/{LICENSE,libmilter/}}
+tar xvf $CWD/$PRGNAM-$VERSION-$ARCH-$SRCBUILD.txz \
+usr/{include/libmilter,lib${LIBDIRSUFFIX}/libmilter.a,doc/$PRGNAM-$VERSION/{LICENSE,libmilter/}}
 
 # Rename lib for check conflicts with sendmail package
 rename .a .a.new $PKG/usr/lib${LIBDIRSUFFIX}/libmilter.a 
 
-rename $SRCNAM $PRGNAM $PKG/usr/doc/$SRCNAM-$VERSION
-mv $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM/* $PKG/usr/doc/$PRGNAM-$VERSION
-rmdir $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM/
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+rename $PRGNAM $PKGNAM $PKG/usr/doc/$PRGNAM-$VERSION
+mv $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM/* $PKG/usr/doc/$PKGNAM-$VERSION
+rmdir $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM/
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 sed "s/%LIBDIRSUFFIX%/${LIBDIRSUFFIX}/" $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
