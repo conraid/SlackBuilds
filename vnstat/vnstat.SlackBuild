@@ -27,13 +27,13 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=vnstat
-VERSION=${VERSION:-1.15}
+PKGNAM=vnstat
+VERSION=1.16
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 SOURCE="http://humdi.net/vnstat/vnstat-${VERSION}.tar.gz"
-PKG=$TMP/package-$PRGNAM
+PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="CHANGES COPYING FAQ INSTALL* README UPGRADE examples/vnstat*"
@@ -61,26 +61,26 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
-cd $PRGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
+LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr \
-  --libdir=/usr/lib$LIBDIRSUFFIX \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
   --sysconfdir=/etc \
   --localstatedir=/var \
   --mandir=/usr/man \
   --infodir=/usr/info \
-  --docdir=/usr/doc/$PRGNAM-$VERSION \
+  --docdir=/usr/doc/$PKGNAM-$VERSION \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
@@ -103,14 +103,14 @@ mkdir -p $PKG/var/{run,lib,log}/vnstat
 # Add rc.vnstatd
 install -Dm644 $CWD/rc.vnstatd $PKG/etc/rc.d/rc.vnstatd.new
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
-cat $CWD/${PRGNAM}.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/${PRGNAM}.SlackBuild
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD${TAG}.txz
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD${TAG}.txz
 
