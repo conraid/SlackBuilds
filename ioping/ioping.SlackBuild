@@ -30,14 +30,14 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=ioping
-VERSION=0.9
-BUILD=${BUILD:-3}
+VERSION=1.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="changelog version README"
+DOCFILES="changelog LICENSE README"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -62,17 +62,14 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xf $CWD/v${VERSION}.tar.gz 
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
-
-# Apply patch from git
-patch -p1 -i $CWD/ioping.patch
 
 CFLAGS="$SLKCFLAGS" make PREFIX=/usr
 make DESTDIR=$PKG PREFIX=/usr MAN1DIR=/usr/man/man1 install
