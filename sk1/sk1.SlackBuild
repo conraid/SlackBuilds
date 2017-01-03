@@ -2,7 +2,7 @@
 #
 # Slackware build script for sk1
 #
-# Copyright 2015-2016 Corrado Franco (http://conraid.net)
+# Copyright 2015-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=sk1
-VERSION=0.9.3
-BUILD=${BUILD:-3}
+VERSION=2.0rc2
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -71,8 +71,8 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-sed "/install_pat/s|/usr/lib/|/usr/lib${LIBDIRSUFFIX}/|" -i setup.py 
-CFLAGS="$SLKCFLAGS" python setup.py install --root=$PKG
+sed "/install_pat/s|/usr/lib/|/usr/lib${LIBDIRSUFFIX}/|" -i setup-sk1.py 
+CFLAGS="$SLKCFLAGS" python setup-sk1.py install --root=$PKG
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
