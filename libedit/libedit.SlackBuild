@@ -2,7 +2,7 @@
 #
 # Slackware build script for libedit
 #
-# Copyright 2013-2016 Corrado Franco (http://conraid.net)
+# Copyright 2013-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,9 +30,9 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=libedit
-SRCVERSION=20160618-3.1
+SRCVERSION=20160903-3.1
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -95,8 +95,8 @@ find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cu
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 if [ -d $PKG/usr/man ]; then
-    find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
-    for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
