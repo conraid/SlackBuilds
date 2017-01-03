@@ -2,7 +2,7 @@
 #
 # Slackware build script for autoprefixer
 #
-# Copyright 2016 Corrado Franco (http://conraid.net)
+# Copyright 2016-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,8 +31,8 @@ CWD=$(pwd)
 
 PRGNAM=autoprefixer
 PKGNAM=postcss-autoprefixer
-VERSION=6.6.0
-BUILD=${BUILD:-2}
+VERSION=6.6.1
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -78,7 +78,7 @@ find $PKG/usr \( -name '.git*' -o -name '.travis.yml' \) -exec rm -f {} \;
 # Remove occurrences of $PKG
 find $PKG -name "package.json" \
   -exec sed -e "s|$TMP/$PRGNAM-build||" \
-            -e "s|$TMP/$PRGNAM-${VERSION}|/usr/lib${LIBDIRSUFFIX}/node_modules/${PRGNAM}|" \
+            -e "s|$TMP/$PRGNAM-$VERSION|/usr/lib${LIBDIRSUFFIX}/node_modules/${PRGNAM}|" \
             -i '{}' \;
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
