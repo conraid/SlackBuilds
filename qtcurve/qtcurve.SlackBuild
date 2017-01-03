@@ -2,7 +2,7 @@
 #
 # Slackware build script for qtcurve
 #
-# Copyright 2008-2016 Corrado Franco (http://conraid.net)
+# Copyright 2008-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=qtcurve
-VERSION=3d8622c
+VERSION=16eef6f
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -59,11 +59,11 @@ else
   LIBDIRSUFFIX=""
 fi
 
-mkdir -p $PKG
+mkdir -p $PKG $TMP $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-${VERSION} || rm -rf $PKGNAM
-tar xvf $CWD/$PKGNAM-${VERSION}*.tar.bz2
-cd $PKGNAM-${VERSION} || cd $PKGNAM
+rm -rf $PKGNAM-${VERSION}*
+tar xvf $CWD/$PKGNAM-${VERSION}*.tar.gz || tar xvf ${VERSION}*.tar.gz
+cd $PKGNAM-${VERSION}*
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
