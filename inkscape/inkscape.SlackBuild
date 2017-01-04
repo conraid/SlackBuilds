@@ -2,7 +2,7 @@
 #
 # Slackware build script for inkscape (http://inkscape.org)
 #
-# Copyright 2008-2016 Corrado Franco (http://conraid.net)
+# Copyright 2008-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -28,8 +28,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=inkscape
-VERSION=0.91
-BUILD=${BUILD:-9}
+VERSION=0.92.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -60,7 +60,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
@@ -69,26 +69,25 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS -std=c++11" \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --infodir=/usr/info \
-  --docdir=/usr/doc/inkscape-$VERSION \
-  --enable-lcms \
-  --enable-poppler-cairo \
-  --without-gnome-vfs \
-  --enable-static=no \
-  --enable-shared=yes \
-  --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
+# Fix man path
+sed 's|\${SHARE_INSTALL}/man/man|man/man|g' -i CMakeScripts/Pod2man.cmake
 
-make 
+mkdir -p build
+cd build
+cmake -Wno-dev \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DWITH_GNOME_VFS=OFF \
+  -DENABLE_LCMS=ON \
+  -DENABLE_POPPLER=ON \
+  -DENABLE_POPPLER_CAIRO=ON \
+  ..
+
+make
 make DESTDIR=$PKG install
+cd ..
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
