@@ -1,6 +1,6 @@
 --- ./setup.py.orig	2016-12-08 20:45:32.000000000 +0100
-+++ -/setup.py	2016-12-10 11:59:56.095737713 +0100
-@@ -59,10 +59,10 @@ if len(sys.argv) >= 2 and sys.argv[1] ==
++++ ./setup.py	2016-12-10 11:59:56.095737713 +0100
+@@ -59,10 +59,9 @@ if len(sys.argv) >= 2 and sys.argv[1] ==
      params = py2exe_params
  else:
      files_spec = [
@@ -10,8 +10,7 @@
 -        ('share/man/man1', ['youtube-dl.1'])
 +        ('/etc/bash_completion.d', ['youtube-dl.bash-completion']),
 +        ('/etc/fish/completions', ['youtube-dl.fish']),
-+        ('/usr/doc/youtube_dl', ['README.txt']),
-+        ('/usr/man/man1', ['youtube-dl.1'])
++        ('man/man1', ['youtube-dl.1'])
      ]
      root = os.path.dirname(os.path.abspath(__file__))
      data_files = []

@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=youtube-dl
-VERSION=2017.01.02
+VERSION=2017.01.05
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -38,7 +38,7 @@ PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 UTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="README.md LICENSE AUTHORS *.plugin.zsh docs/*.md"
+DOCFILES="README* LICENSE AUTHORS *.plugin.zsh docs/*.md"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
