@@ -2,7 +2,7 @@
 #
 # Slackware build script for libuv
 #
-# Copyright 2015-2016 Corrado Franco (http://conraid.net)
+# Copyright 2015-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=libuv
-VERSION=1.10.1
+VERSION=1.10.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -94,7 +94,7 @@ find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cu
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 # Add man page
-install -Dm644 $CWD/libuv.1.gz $PKG/usr/man/man1/libuv.1.gz
+install -Dm644 $CWD/files/libuv.1.gz $PKG/usr/man/man1/libuv.1.gz
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
