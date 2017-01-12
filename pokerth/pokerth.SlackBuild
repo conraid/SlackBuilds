@@ -2,7 +2,7 @@
 #
 # Slackware build script for PokerTH
 #
-# Copyright 2013-2016 Corrado Franco (http://conraid.net)
+# Copyright 2013-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ CWD=$(pwd)
 PRGNAM=PokerTH
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 VERSION=1.1.1
-BUILD=${BUILD:-8}
+BUILD=${BUILD:-9}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -70,9 +70,9 @@ tar xvf $CWD/$PRGNAM-$VERSION-src.tar.bz2
 cd $PRGNAM-$VERSION-src
 
 chown -R root:root .
-# fix g++: error: unrecognized option '-no_dead_strip_inits_and_terms'
-
 chmod -R u+w,go+r-w,a+X-s .
+
+# fix g++: error: unrecognized option '-no_dead_strip_inits_and_terms'
 sed -i 's/QMAKE_LFLAGS += -no_dead_strip_inits_and_terms//' -i zlib_compress.pro pokerth_game.pro pokerth_server.pro
 
 # Fix for QT < 5
