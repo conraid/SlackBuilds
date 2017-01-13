@@ -2,7 +2,7 @@
 #
 # Slackware build script for nmp.js
 #
-# Copyright 2015-2016 Corrado Franco (http://conraid.net)
+# Copyright 2015-2017 Corrado Franco (http://conraid.net)
 #
 # All rights reserved.
 #
@@ -31,7 +31,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=npm
-VERSION=4.1.1
+VERSION=4.1.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -98,8 +98,8 @@ find $PKG/usr \( -name '.git*' -o -name '.travis.yml' \) -exec rm -f {} \;
 
 # Remove occurrences of $PKG
 find $PKG -name "package.json" \
-  -exec sed -e "s|${TMP}/${PKGNAM}-build||" \
-            -e "s|${TMP}/${PKGNAM}-${VERSION}|/usr/lib${LIBDIRSUFFIX}/node_modules/${PKGNAM}|" \
+  -exec sed -e "s|$TMP/$PKGNAM-build||" \
+            -e "s|$TMP/$PKGNAM-${VERSION}|/usr/lib${LIBDIRSUFFIX}/node_modules/${PKGNAM}|" \
             -i '{}' \;
 
 # Add bash completion file
