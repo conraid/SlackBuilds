@@ -28,8 +28,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=weechat
-VERSION=1.6
-BUILD=${BUILD:-3}
+VERSION=1.7
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -79,8 +79,8 @@ cmake \
   -DLIBDIR=/usr/lib${LIBDIRSUFFIX} \
   ..
 
-  make
-  make DESTDIR=$PKG install/strip
+make
+make DESTDIR=$PKG install/strip
 cd -
 
 if [ -d $PKG/usr/man ]; then
