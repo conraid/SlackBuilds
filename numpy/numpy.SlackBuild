@@ -28,8 +28,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=numpy
-VERSION=1.11.3
-BUILD=${BUILD:-2}
+VERSION=1.12.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -63,7 +63,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz  
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
@@ -79,7 +79,7 @@ cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 find $PKG/usr/doc/$PKGNAM-$VERSION -type f -exec chmod 0644 {} \;
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
