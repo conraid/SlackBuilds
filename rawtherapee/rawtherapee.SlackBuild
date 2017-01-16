@@ -2,7 +2,7 @@
 #
 # Slackware build script for rawtherapee
 #
-# Copyright 2013-2016 Corrado Franco (http://conraid.net)
+# Copyright 2013-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,14 +31,15 @@ CWD=$(pwd)
 
 PRGNAM=RawTherapee
 PKGNAM=rawtherapee
-VERSION=a991d53
+VERSION=4.2.1256_git
+COMMIT=dd7d69f86967a0157c1e3c226d2fe01d0a226061
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="*.txt"
+DOCFILES="*.txt README*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -63,23 +64,26 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-GIT
-git clone https://github.com/Beep6581/RawTherapee $PRGNAM-GIT
-cd $PRGNAM-GIT
+rm -rf $PRGNAM-$COMMIT
+tar xf $CWD/$PRGNAM-$COMMIT.tar.gz || tar xf $CWD/$COMMIT.tar.gz
+cd $PRGNAM-$COMMIT
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-VERSION=$(git describe --tags --always | tr - _)
+# Copy cmake utility file
+cp $CWD/files/ReleaseInfo.cmake .
 
+# Fix man and doc path
 sed -e "s|/share/doc/rawtherapee|/doc/$PKGNAM-$VERSION|g" \
   -e "s|/share/man/|/man/|g" \
   -i CMakeLists.txt
+
 mkdir -p build
 cd build
-cmake \
+cmake -Wno-dev \
   -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -Werror=unused-label -fopenmp -Werror=unknown-pragmas -g" \
   -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -std=c++11 -Werror=unused-label -fopenmp -Werror=unknown-pragmas -g" \
   -DCMAKE_BUILD_TYPE=Release \
@@ -103,7 +107,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
