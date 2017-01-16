@@ -35,7 +35,7 @@ TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
-ARCH=noarch 
+ARCH=noarch
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
@@ -47,18 +47,15 @@ tar xvf $CWD/$PKGNAM.tar.gz
 
 VERSION=$( grep "^#*[[:space:]]*Version:" $PKGNAM | cut -d" " -f4)
 
-# Install bin
 install -Dm755 inxi $PKG/usr/bin/inxi
-
-# Install man page
 install -Dm644 inxi.1.gz $PKG/usr/man/man1/inxi.1.gz
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat inxi.changelog > $PKG/usr/doc/$PKGNAM-$VERSION/ChangeLog
-cp $CWD/*.txt $PKG/usr/doc/$PKGNAM-$VERSION
+cp $CWD/files/*.txt $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
