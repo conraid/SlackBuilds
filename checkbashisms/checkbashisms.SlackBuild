@@ -2,7 +2,7 @@
 #
 # Slackware build script for checkbashisms
 #
-# Copyright 2015-2016 Corrado Franco (http://conraid.net)
+# Copyright 2015-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,8 +31,7 @@ CWD=$(pwd)
 
 PRGNAM=devscripts
 PKGNAM=checkbashisms
-# Version of debian devscripts
-VERSION=2.16.13
+VERSION=2.17.0 # Version of debian devscripts
 BUILD=${BUILD:-1}
 ARCH=noarch
 TAG=${TAG:-cf}
@@ -50,10 +49,8 @@ cd $PRGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Install script
 install -Dm755 scripts/$PKGNAM.pl $PKG/usr/bin/$PKGNAM
 
-# Install man
 install -Dm644 scripts/$PKGNAM.1 $PKG/usr/man/man1/${PKGNAM}.1
 gzip -9 $PKG/usr/man/man1/$PKGNAM.1
 
@@ -64,7 +61,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp COPYING $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
