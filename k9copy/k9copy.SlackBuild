@@ -2,7 +2,7 @@
 #
 # Slackware build script for k9copy (http://k9copy.sourceforge.net/)
 #
-# Copyright 2009-2016 Corrado Franco (http://conraid.net)
+# Copyright 2009-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -27,9 +27,9 @@ set -eu
 
 CWD=$(pwd)
 
-PKGNAM=${PKGNAM:-k9copy}
-VERSION=${VERSION:-3.0.3}
-BUILD=${BUILD:-3}
+PKGNAM=k9copy
+VERSION=3.0.3
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -60,7 +60,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM
 tar xvf $CWD/k9copy-${VERSION}.tar.gz
@@ -68,6 +68,13 @@ cd $PKGNAM
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
+
+# Apply patches
+if [ -e $CWD/patches ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
 
 mkdir build
 cd build

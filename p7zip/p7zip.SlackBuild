@@ -2,7 +2,7 @@
 #
 # Slackware build script for p7zip
 #
-# Copyright 2009-2016 Corrado Franco (http://conraid.net)
+# Copyright 2009-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=p7zip
 VERSION=16.02
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -58,7 +58,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf ${PKGNAM}_$VERSION
 tar xvf $CWD/p7zip_${VERSION}_src_all.tar.bz2
@@ -116,7 +116,7 @@ rm GUI/kde4/p7zip_compress.desktop
 mkdir -p $PKG/usr/share/kde4/services/ServiceMenus
 cp GUI/kde4/*.desktop $PKG/usr/share/kde4/services/ServiceMenus/
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 

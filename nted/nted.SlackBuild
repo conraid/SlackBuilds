@@ -3,7 +3,7 @@
 # Slackware build script for nted
 #(http://vsr.informatik.tu-chemnitz.de/staff/jan/nted/nted.xhtml)
 #
-# Copyright 2008-2016 Corrado Franco (http://conraid.net)
+# Copyright 2008-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,8 +31,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=nted
-VERSION=${VERSION:-1.10.18}
-BUILD=${BUILD:-2}
+VERSION=1.10.18
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -63,7 +63,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tar.gz

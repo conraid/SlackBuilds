@@ -2,7 +2,7 @@
 #
 # Slackware build script for owamp
 #
-# Copyright 2015-2016 Corrado Franco (http://conraid.net)
+# Copyright 2015-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ PKGNAM=owamp
 SRCVERSION=3.4-10
 MAINVERSION=$(echo $SRCVERSION | cut -d- -f1)
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -64,7 +64,7 @@ else
 fi
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$MAINVERSION
 tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz
