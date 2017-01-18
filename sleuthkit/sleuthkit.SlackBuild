@@ -28,14 +28,14 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=sleuthkit
-VERSION=4.3.1
-BUILD=${BUILD:-4}
+VERSION=4.4.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="ChangeLog.txt  INSTALL.txt NEWS.txt  README.md licenses/*"
+DOCFILES="ChangeLog.txt INSTALL.txt NEWS.txt  README.md licenses/*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -62,16 +62,12 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION || rm -rf $PKGNAM-$PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$PKGNAM-$PKGNAM-$VERSION.tar.gz
-cd $PKGNAM-$VERSION || cd $PKGNAM-$PKGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
-
-if [ -e ./bootstrap ]; then
-  ./bootstrap
-fi
 
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -97,7 +93,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
