@@ -2,7 +2,7 @@
 #
 # Slackware build script for gimp_instagram_effects
 #
-# Copyright 2015-2016 Corrado Franco (http://conraid.net)
+# Copyright 2015-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=gimp_instagram_effects
 VERSION=0.1
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -48,7 +48,7 @@ fi
 [ $ARCH == 'x86_64' ] && LIBDIRSUFFIX="64" || LIBDIRSUFFIX=""
 
 rm -rf $PKG
-mkdir -p $TMP $PKG/usr/lib${LIBDIRSUFFIX}/gimp/2.0/plug-ins/
+mkdir -p $TMP $OUTPUT $PKG/usr/lib${LIBDIRSUFFIX}/gimp/2.0/plug-ins/
 cd $PKG/usr/lib${LIBDIRSUFFIX}/gimp/2.0/plug-ins/
 unzip $CWD/${PKGNAM}.zip
 

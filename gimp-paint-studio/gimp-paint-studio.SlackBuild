@@ -2,7 +2,7 @@
 #
 # Slackware build script for gimp-paint-studio
 #
-# Copyright 2015-2016 Corrado Franco (http://conraid.net)
+# Copyright 2015-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ CWD=$(pwd)
 PRGNAM=GPS
 PKGNAM=gimp-paint-studio
 VERSION=2_0
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -43,7 +43,7 @@ DOCFILES="License* Readme*"
 ARCH=${ARCH:="x86_64"} # This package it's no arch
 
 rm -rf $PKG
-mkdir -p $TMP $PKG/usr/share/gimp/2.0/
+mkdir -p $TMP $OUTPUT $PKG/usr/share/gimp/2.0/
 cd $PKG/usr/share/gimp/2.0/
 tar -xf $CWD/${PRGNAM}_${VERSION}.tar.gz
 
