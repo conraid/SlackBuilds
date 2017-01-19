@@ -1,0 +1,15 @@
+FOR TESTING AND DEVELOPMENT ONLY
+
+You can get started with ModSecurity by adding the following lines to the
+appropriate sections of Apache's main configuration file (httpd.conf):
+
+LoadModule security2_module lib64/httpd/modules/mod_security2.so
+<IfModule security2_module>
+Include /etc/httpd/extra/modsecurity-recommended.conf
+</IfModule>
+
+lib64/... in x86_64 architecture
+lib/... in x86 architecture
+
+Also refer to the file /usr/doc/modsecurity-apache-[VERSION]/crs.txt
+for information on how to get the Core Rule Set (CRS) up and running.
