@@ -1,0 +1,38 @@
+--- ./sarg.conf	2014-07-07 20:41:21.000000000 +0200
++++ ./sarg.conf.new	2015-01-21 10:40:13.077863411 +0100
+@@ -4,7 +4,7 @@
+ #       Where is the access.log file
+ #       sarg -l file
+ #
+-#access_log /usr/local/squid/var/logs/access.log
++access_log /var/log/squid/access.log
+ 
+ # TAG: graphs yes|no
+ #	Use graphics where is possible.
+@@ -17,7 +17,7 @@
+ #       The full path to the TTF font file to use to create the graphs. It is required
+ #       if graphs is set to yes.
+ #
+-#graph_font /usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf
++graph_font /usr/share/fonts/TTF/DejaVuSans.ttf
+ 
+ # TAG:	title
+ # 	Especify the title for html page.
+@@ -309,7 +309,7 @@
+ #      Only codes matching exactly one of the line is rejected. The
+ #      comparison is not case sensitive.
+ #
+-#exclude_codes /usr/local/sarg/etc/exclude_codes
++exclude_codes /etc/sarg/exclude_codes
+ 
+ # TAG: replace_index string
+ #      Replace "index.html" in the main index file with this string
+@@ -555,7 +555,7 @@
+ #      If this option is specified, it takes precedence over squidguard_conf.
+ #      The command line option -L override this option.
+ #
+-#redirector_log /usr/local/squidGuard/var/logs/urls.log
++redirector_log /var/log/sarg/urls.log
+ 
+ # TAG: redirector_filter_out_date on|off
+ #      This option replaces squidguard_ignore_date and redirector_ignore_date whose names were not

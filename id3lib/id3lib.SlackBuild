@@ -2,7 +2,7 @@
 #
 # Slackware build script for id3lib (http://id3lib.sourceforge.net/)
 #
-# Copyright 2008-2016 Corrado Franco (http://conraid.net)
+# Copyright 2008-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=id3lib
 VERSION=3.8.3
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -101,8 +101,8 @@ find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cu
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true
 
 if [ -d $PKG/usr/man ]; then
-  find ${PKG}/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
-  for i in $( find ${PKG}/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION

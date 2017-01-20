@@ -2,7 +2,7 @@
 #
 # Slackware build script for tinyxml
 #
-# Copyright 2012-2016 Corrado Franco (http://conraid.net)
+# Copyright 2012-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ CWD=$(pwd)
 PKGNAM=tinyxml
 SRCVERSION=${VERSION:-2_6_2}
 VERSION=$(echo $SRCVERSION | tr _ .)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -92,8 +92,7 @@ install -m755 lib${PKGNAM}.so.0.$VERSION $PKG/usr/lib${LIBDIRSUFFIX}
 install -m644 $PKGNAM.h tinystr.h $PKG/usr/include/
 ( cd $PKG/usr/lib${LIBDIRSUFFIX}
   ln -s lib${PKGNAM}.so.0.$VERSION lib${PKGNAM}.so.0
-  ln -s lib${PKGNAM}.so.0.$VERSION lib${PKGNAM}.so
-)
+  ln -s lib${PKGNAM}.so.0.$VERSION lib${PKGNAM}.so )
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
