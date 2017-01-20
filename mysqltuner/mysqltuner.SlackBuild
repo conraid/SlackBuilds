@@ -2,7 +2,7 @@
 #
 # Slackware build script for mysqltuner
 #
-# Copyright 2016 Corrado Franco (http://conraid.net)
+# Copyright 2016-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ CWD=$(pwd)
 SRCNAM=MySQLTuner-perl
 PRGNAM=mysqltuner
 VERSION=1.6.18
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -44,9 +44,9 @@ DOCFILES="*.md LICENSE *.tlp *.png"
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $SRCNAM-${VERSION}
+rm -rf $SRCNAM-$VERSION
 tar xvf $CWD/$SRCNAM-${VERSION}.tar.gz || tar xvf $CWD/${VERSION}.tar.gz
-cd $SRCNAM-${VERSION}
+cd $SRCNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .

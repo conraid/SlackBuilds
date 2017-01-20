@@ -2,7 +2,7 @@
 #
 # Slackware build script for sshguard
 #
-# Copyright 2009-2016 Corrado Franco (http://conraid.net)
+# Copyright 2009-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=sshguard
 VERSION=1.7.1
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -84,7 +84,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
-make 
+make
 make DESTDIR=$PKG install-strip
 
 if [ -d $PKG/usr/man ]; then
@@ -96,16 +96,16 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 
 # Add config files (thanks to Debian project)
-install -Dm644 $CWD/whitelist $PKG/etc/sshguard/whitelist.new
-install -Dm644 $CWD/sshguard.conf $PKG/etc/sshguard/sshguard.conf.new
+install -Dm644 $CWD/files/whitelist $PKG/etc/sshguard/whitelist.new
+install -Dm644 $CWD/files/sshguard.conf $PKG/etc/sshguard/sshguard.conf.new
 
 # Add startup file
-install -Dm644 $CWD/rc.sshguard $PKG/etc/rc.d/rc.sshguard.new
+install -Dm644 $CWD/files/rc.sshguard $PKG/etc/rc.d/rc.sshguard.new
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
