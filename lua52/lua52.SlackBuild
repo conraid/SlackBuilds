@@ -3,7 +3,7 @@
 # Slackware build script for lua (http://www.lua.org/)
 #
 # Copyright 2008 Menno Duursma from SlackBuilds.org
-# Copyright 2015-2016 Corrado Franco (http://conraid.net)
+# Copyright 2015-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -35,8 +35,8 @@ CWD=$(pwd)
 PRGNAM=lua
 PKGNAM=lua52
 VERSION=5.2.4
-MAINVERSION=${VERSION%.*}
-BUILD=${BUILD:-3}
+MAINVERSION=$(echo $VERSION | cut -d. -f-2)
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -79,8 +79,12 @@ chmod -R u+w,go+r-w,a+X-s .
 # Fix up a to-be-installed header and the pkgconfig file
 sed -i "s|lib/lua|lib${LIBDIRSUFFIX}/lua|" src/luaconf.h
 
-# Apply patch for shared libraries
-patch -p1 -i "$CWD/liblua.so.patch"
+# Apply patches
+if [ -e $CWD/patches ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
 
 # Fix lua 5.2
 sed -r -e "/^LUA_(SO|A|T)=/ s/lua/lua$MAINVERSION/" -e "/^LUAC_T=/ s/luac/luac$MAINVERSION/" -i src/Makefile
@@ -103,9 +107,9 @@ INSTALL_INC="$PKG/usr/include/lua$MAINVERSION"
 mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
 sed -e "s|prefix}/lib|prefix}/lib${LIBDIRSUFFIX}|g" \
   -e "s/%VER%/$MAINVERSION/g;s/%REL%/$VERSION/g" \
-  $CWD/lua52.pc > $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/lua52.pc
+  $CWD/files/lua52.pc > $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/lua52.pc
 
-find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true                                                                     
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true
 
 if [ -d $PKG/usr/man ]; then
@@ -121,7 +125,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG

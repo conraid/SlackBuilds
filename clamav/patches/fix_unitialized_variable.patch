@@ -1,0 +1,31 @@
+From ac2bd61e61b7afc23cee59b02b70294c99a2f9b5 Mon Sep 17 00:00:00 2001
+From: Steven Morgan <stevmorg@cisco.com>
+Date: Wed, 4 Jan 2017 13:20:29 -0500
+Subject: [PATCH] Fix unitialized variable issue when scanning file properties
+ with libjson not configured.
+
+---
+ libclamav/scanners.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/libclamav/scanners.c b/libclamav/scanners.c
+index c14a617..a54ab29 100644
+--- a/libclamav/scanners.c
++++ b/libclamav/scanners.c
+@@ -2665,6 +2665,8 @@ static int magic_scandesc(cli_ctx *ctx, cli_file_t type)
+     perf_start(ctx, PERFT_CACHE);
+     if (!(SCAN_PROPERTIES))
+         res = cache_check(hash, ctx);
++    else
++        res = CL_VIRUS;
+ 
+ #if HAVE_JSON
+     if (SCAN_PROPERTIES /* ctx.options & CL_SCAN_FILE_PROPERTIES && ctx->wrkproperty != NULL */) {
+@@ -2683,7 +2685,6 @@ static int magic_scandesc(cli_ctx *ctx, cli_file_t type)
+         if (ret != CL_SUCCESS) {
+             early_ret_from_magicscan(ret);
+         }
+-        res = CL_VIRUS;
+     }
+ #endif
+ 

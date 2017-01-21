@@ -3,7 +3,7 @@
 # Slackware build script for postgresql
 #
 # Copyright 2007-2015 Adis Nezirovic <adis_at_linux.org.ba>
-# Copyright 2016 Corrado Franco (http://conraid.net)
+# Copyright 2016-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ CWD=$(pwd)
 PKGNAM=postgresql
 VERSION=9.6.1
 PG_VERSION=$(echo $VERSION | cut -d. -f-2)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM

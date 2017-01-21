@@ -2,7 +2,7 @@
 #
 # Slackware build script for clamav
 #
-# Copyright 2015-2016 Corrado Franco (http://conraid.net)
+# Copyright 2015-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=clamav
 VERSION=0.99.2
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -71,6 +71,17 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
+# Apply patches
+if [ -e $CWD/patches ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
+
+# Fix zlib check in configure
+# https://github.com/vrtadmin/clamav-devel/commit/f0bcd186190fe6e67b3f0eaaceb7a99aa6a98865
+sed 's/"ZLIB_VERSION \\"1.2.1"/"ZLIB_VERSION \\"1.2.1\\"/' -i configure
+
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
@@ -104,29 +115,27 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 # Install config files
-install -Dm644 $CWD/clamd.conf $PKG/etc/clamav/clamd.conf.new
-install -Dm644 $CWD/freshclam.conf $PKG/etc/clamav/freshclam.conf.new
+install -Dm644 $CWD/files/clamd.conf $PKG/etc/clamav/clamd.conf.new
+install -Dm644 $CWD/files/freshclam.conf $PKG/etc/clamav/freshclam.conf.new
 
 # Install rc script and logrotate entry (thanks to SBo)
-install -Dm755 $CWD/rc.clamav $PKG/etc/rc.d/rc.clamav.new
-install -Dm644 $CWD/logrotate.clamav $PKG/etc/logrotate.d/clamav.new
+install -Dm755 $CWD/files/rc.clamav $PKG/etc/rc.d/rc.clamav.new
+install -Dm644 $CWD/files/logrotate.clamav $PKG/etc/logrotate.d/clamav.new
 
 # Create directories and files for pid, socket, db, and log.
-install -dm771 -o clamav -g clamav $PKG/var/{lib,log,run}/clamav/ 
+mkdir -p $PKG/var/{lib,log,run}/clamav/
+chown clamav:clamav $PKG/var/{lib,log,run}/clamav/
 touch $PKG/var/log/clamav/{clamd,freshclam}.log.new
 
 # Fixup some ownership and permissions issues (thanks to SBo)
 chown clamav $PKG/usr/sbin/clamav-milter
 chmod 4700 $PKG/usr/sbin/clamav-milter
-touch $PKG/var/lib/clamav/main.cvd $PKG/var/lib/clamav/daily.cvd
-chmod 0660 $PKG/var/lib/clamav/*
-chown -R clamav:clamav $PKG/var/log/clamav 
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 

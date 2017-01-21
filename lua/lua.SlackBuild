@@ -2,7 +2,7 @@
 #
 # Slackware build script for lua (http://www.lua.org/)
 #
-# Copyright 2015-2016 Corrado Franco (http://conraid.net)
+# Copyright 2015-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,8 +29,8 @@ CWD=$(pwd)
 
 PKGNAM=lua
 VERSION=5.3.3
-MAINVERSION=${VERSION%.*}
-BUILD=${BUILD:-2}
+MAINVERSION=$(echo $VERSION | cut -d. -f-2)
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -73,8 +73,12 @@ chmod -R u+w,go+r-w,a+X-s .
 # Fix up a to-be-installed header and the pkgconfig file
 sed -i "s|lib/lua|lib${LIBDIRSUFFIX}/lua|" src/luaconf.h
 
-# Apply patch for shared libraries
-patch -p1 -i "$CWD/liblua.so.patch"
+# Apply patches
+if [ -e $CWD/patches/*.patch ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
 
 make \
 MYCFLAGS="$SLKCFLAGS -DLUA_COMPAT_5_2 -DLUA_COMPAT_5_1" \
@@ -88,6 +92,7 @@ INSTALL_DATA="cp -d" \
 INSTALL_TOP="$PKG/usr" \
 INSTALL_LIB=$PKG/usr/lib${LIBDIRSUFFIX} \
 INSTALL_CMOD=$PKG/usr/lib${LIBDIRSUFFIX}/lua/$MAINVERSION \
+INSTALL_INC="$PKG/usr/include/lua$MAINVERSION" \
 linux install
 
 # Install the pkg-config file so other apps can find LUA
@@ -95,9 +100,9 @@ mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
 sed -e "s|prefix}/lib|prefix}/lib${LIBDIRSUFFIX}|g" \
     -e "s|%VER%|$MAINVERSION|" \
     -e "s|%REL%|$VERSION|" \
-    $CWD/lua.pc > $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/lua.pc
+    $CWD/files/lua.pc > $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/lua.pc
 
-find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true                                                                     
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true
 
 if [ -d $PKG/usr/man ]; then
@@ -109,7 +114,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG

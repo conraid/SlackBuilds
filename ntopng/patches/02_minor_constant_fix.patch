@@ -1,0 +1,22 @@
+From 9144610706890ccdb2b81783c4c43e2e6bd15794 Mon Sep 17 00:00:00 2001
+From: Simone Mainardi <simonemainardi@gmail.com>
+Date: Wed, 29 Jun 2016 18:37:59 +0200
+Subject: [PATCH] Minor constant fix
+
+---
+ include/ntop_defines.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/ntop_defines.h b/include/ntop_defines.h
+index 0e215a6..7cd6672 100644
+--- a/include/ntop_defines.h
++++ b/include/ntop_defines.h
+@@ -447,7 +447,7 @@
+ #define NTOPNG_EMBEDDED_EDITION         1
+ #endif
+ 
+-#define NUM_MINUTES_PER_DAY   3600
++#define NUM_MINUTES_PER_DAY   1440 // == 60 * 24
+ 
+ #define DUMP_MAC_SIZE	6
+ #define MAC_SIZE	DUMP_MAC_SIZE
