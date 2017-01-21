@@ -289,10 +289,10 @@ SLACKBUILD SHORT DESCRIPTION:  browser-sync (Live CSS Reload & Browser Syncing f
 SLACKBUILD NAME: bundler
 SLACKBUILD LOCATION: ./bundler
 SLACKBUILD FILES: README bundler.SlackBuild bundler.info slack-desc
-SLACKBUILD VERSION: 1.13.7
+SLACKBUILD VERSION: 1.14.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://rubygems.org/downloads/bundler-1.13.7.gem
-SLACKBUILD MD5SUM: 44569534b9862cc134c8370714333ac8
+SLACKBUILD DOWNLOAD: https://rubygems.org/downloads/bundler-1.14.0.gem
+SLACKBUILD MD5SUM: 950836cc10bad889a10b133dcc84dc7b
 SLACKBUILD SHORT DESCRIPTION:  bundler (Manage Ruby application dependencies)
 
 SLACKBUILD NAME: bwctl
@@ -441,7 +441,7 @@ SLACKBUILD SHORT DESCRIPTION:  clamav-gui (Front-End for ClamAV)
 
 SLACKBUILD NAME: clamav
 SLACKBUILD LOCATION: ./clamav
-SLACKBUILD FILES: PKGNOTE README clamav.SlackBuild clamav.info clamd.conf doinst.sh freshclam.conf logrotate.clamav rc.clamav slack-desc
+SLACKBUILD FILES: PKGNOTE README clamav.SlackBuild clamav.info doinst.sh files/clamd.conf files/freshclam.conf files/logrotate.clamav files/rc.clamav patches/fix_unitialized_variable.patch patches/fix_zlib_check.patch slack-desc
 SLACKBUILD VERSION: 0.99.2
 SLACKBUILD REQUIRED: json-c
 SLACKBUILD DOWNLOAD: http://www.clamav.net/downloads/production/clamav-0.99.2.tar.gz
@@ -2016,7 +2016,7 @@ SLACKBUILD SHORT DESCRIPTION:  lshw (Hardware Lister)
 
 SLACKBUILD NAME: lua
 SLACKBUILD LOCATION: ./lua
-SLACKBUILD FILES: README liblua.so.patch lua.SlackBuild lua.info lua.pc slack-desc
+SLACKBUILD FILES: README files/lua.pc lua.SlackBuild lua.info patches/liblua.so.patch slack-desc
 SLACKBUILD VERSION: 5.3.3
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://www.lua.org/ftp/lua-5.3.3.tar.gz
@@ -2043,7 +2043,7 @@ SLACKBUILD SHORT DESCRIPTION:  lua51-mpack (lua 5.1 mspack)
 
 SLACKBUILD NAME: lua51
 SLACKBUILD LOCATION: ./lua51
-SLACKBUILD FILES: README liblua.so.patch lua51.SlackBuild lua51.info lua51.pc luaso.patch slack-desc
+SLACKBUILD FILES: README files/lua51.pc lua51.SlackBuild lua51.info patches/luaso.patch slack-desc
 SLACKBUILD VERSION: 5.1.5
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://www.lua.org/ftp/lua-5.1.5.tar.gz
@@ -2052,7 +2052,7 @@ SLACKBUILD SHORT DESCRIPTION:  Lua 5.1.* (powerful,fast,light-weight,embeddable 
 
 SLACKBUILD NAME: lua52
 SLACKBUILD LOCATION: ./lua52
-SLACKBUILD FILES: README liblua.so.patch lua52.SlackBuild lua52.info lua52.pc slack-desc
+SLACKBUILD FILES: README files/lua52.pc lua52.SlackBuild lua52.info patches/liblua.so.patch slack-desc
 SLACKBUILD VERSION: 5.2.4
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://www.lua.org/ftp/lua-5.2.4.tar.gz
@@ -2628,7 +2628,7 @@ SLACKBUILD SHORT DESCRIPTION:  nted (musical score editor for Linux)
 
 SLACKBUILD NAME: ntopng
 SLACKBUILD LOCATION: ./ntopng
-SLACKBUILD FILES: README doinst.sh ntopng.SlackBuild ntopng.info rc.ntopng slack-desc
+SLACKBUILD FILES: README doinst.sh ntopng.SlackBuild ntopng.info patches/02_minor_constant_fix.patch patches/03_Implements_asynchronous_database_schema_updates.patch patches/04_Makes_MySQL_counter_columns_unsigned.patch patches/05_secure_users_enumeration.patch patches/06_Improves_MySQL_errors_detection.patch patches/07_extra-check_against_null_for_MySQL.patch patches/08_Fixes_zflow.patch patches/09_avoid_users_tobe_manipulated_with_invalid_CSRF_token.patch patches/10_Add_some_CSRF_checks.patch rc.ntopng slack-desc
 SLACKBUILD VERSION: 2.4
 SLACKBUILD REQUIRED: hiredis luajit geoip rrdtool redis json-c
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/ntop/ntopng-2.4-stable.tar.gz
@@ -3105,7 +3105,7 @@ SLACKBUILD SHORT DESCRIPTION:  postfix (alternative to the widely-used Sendmail 
 
 SLACKBUILD NAME: postgresql
 SLACKBUILD LOCATION: ./postgresql
-SLACKBUILD FILES: README SLACKWARE.README doinst.sh postgresql.SlackBuild postgresql.info postgresql.logrotate rc.postgresql slack-desc
+SLACKBUILD FILES: README SLACKWARE.README doinst.sh postgresql.SlackBuild postgresql.info rc.postgresql slack-desc
 SLACKBUILD VERSION: 9.6.1
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://ftp.postgresql.org/pub/source/v9.6.1/postgresql-9.6.1.tar.bz2
@@ -3123,7 +3123,7 @@ SLACKBUILD SHORT DESCRIPTION:  potrace (bitmap utility)
 
 SLACKBUILD NAME: privoxy
 SLACKBUILD LOCATION: ./privoxy
-SLACKBUILD FILES: README config.tor.template doinst.sh privoxy.SlackBuild privoxy.info slack-desc
+SLACKBUILD FILES: README doinst.sh files/config.tor.template privoxy.SlackBuild privoxy.info slack-desc
 SLACKBUILD VERSION: 3.0.26
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/ijbswa/privoxy-3.0.26-stable-src.tar.gz
@@ -3219,6 +3219,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://github.com/seb-m/pyinotify/archive/0.9.6.tar.gz
 SLACKBUILD MD5SUM: 33f4e599c22a3ac31b684335b4a535a0
 SLACKBUILD SHORT DESCRIPTION:  pyinotify (Monitoring filesystems events)
+
+SLACKBUILD NAME: pyrit
+SLACKBUILD LOCATION: ./pyrit
+SLACKBUILD FILES: README pyrit.SlackBuild pyrit.info slack-desc
+SLACKBUILD VERSION: 0.5.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/JPaulMora/Pyrit/archive/v0.5.0.tar.gz
+SLACKBUILD MD5SUM: fbc25ae13a5fed2b2e3ffad7ede0dc71
+SLACKBUILD SHORT DESCRIPTION:  pyrit (WPA precomputed cracker)
 
 SLACKBUILD NAME: pyyaml
 SLACKBUILD LOCATION: ./pyyaml
@@ -3357,7 +3366,7 @@ SLACKBUILD SHORT DESCRIPTION:  reaver (Brute force attack against Wifi Protected
 
 SLACKBUILD NAME: redis
 SLACKBUILD LOCATION: ./redis
-SLACKBUILD FILES: README doinst.sh patches/jemalloc.patch rc.redis redis.SlackBuild redis.info redis.logrotate slack-desc
+SLACKBUILD FILES: README doinst.sh patches/jemalloc.patch rc.redis redis.SlackBuild redis.info slack-desc
 SLACKBUILD VERSION: 3.2.6
 SLACKBUILD REQUIRED: hiredis
 SLACKBUILD DOWNLOAD: http://download.redis.io/releases/redis-3.2.6.tar.gz
@@ -3735,7 +3744,7 @@ SLACKBUILD SHORT DESCRIPTION:  sqlmap (Automatic SQL injection and database take
 
 SLACKBUILD NAME: squid
 SLACKBUILD LOCATION: ./squid
-SLACKBUILD FILES: README SLACKWARE.README doinst.sh rc.squid slack-desc squid.SlackBuild squid.info squid.logrotate
+SLACKBUILD FILES: README SLACKWARE.README doinst.sh files/rc.squid files/squid.logrotate slack-desc squid.SlackBuild squid.info
 SLACKBUILD VERSION: 4.0.17
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://www.squid-cache.org/Versions/v4/squid-4.0.17.tar.bz2
