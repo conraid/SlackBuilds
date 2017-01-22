@@ -2,7 +2,7 @@
 #
 # Slackware build script for Suhosin Extension
 #
-# Copyright 2009-2016 Corrado Franco (http://conraid.net)
+# Copyright 2009-2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ CWD=$(pwd)
 PRGNAM=suhosin
 PKGNAM=php-suhosin
 VERSION=0.9.38
-BUILD=${BUILD:-17}
+BUILD=${BUILD:-18}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -89,8 +89,8 @@ strip --strip-unneeded $PKG/usr/lib${LIBDIRSUFFIX}/php/extensions/suhosin.so
 
 # Copy config files and add recommended configuration for phpmyadmin and composer
 install -Dm644 suhosin.ini $PKG/etc/php.d/suhosin.ini.new
-cat $CWD/suhosin.ini >> $PKG/etc/php.d/suhosin.ini.new
- 
+cat $CWD/files/suhosin.ini >> $PKG/etc/php.d/suhosin.ini.new
+
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
