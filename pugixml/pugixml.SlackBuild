@@ -30,8 +30,9 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=pugixml
-VERSION=1.8
-BUILD=${BUILD:-2}
+VERSION=1.8.1
+SRCVERSION=1.8
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -64,9 +65,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
+rm -rf $PKGNAM-$SRCVERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
