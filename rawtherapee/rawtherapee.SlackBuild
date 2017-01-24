@@ -31,8 +31,8 @@ CWD=$(pwd)
 
 PRGNAM=RawTherapee
 PKGNAM=rawtherapee
-VERSION=4.2.1256_git
-COMMIT=dd7d69f86967a0157c1e3c226d2fe01d0a226061
+SRCVERSION=5.0-gtk3
+VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -66,14 +66,15 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$COMMIT
-tar xf $CWD/$PRGNAM-$COMMIT.tar.gz || tar xf $CWD/$COMMIT.tar.gz
-cd $PRGNAM-$COMMIT
+rm -rf $PRGNAM-$SRCVERSION
+tar xf $CWD/$PRGNAM-$SRCVERSION.tar.gz || tar xf $CWD/$SRCVERSION.tar.gz
+cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Copy cmake utility file
+# The script only work with git source
 cp $CWD/files/ReleaseInfo.cmake .
 
 # Fix man and doc path
