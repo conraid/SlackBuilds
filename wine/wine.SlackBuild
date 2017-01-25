@@ -33,7 +33,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=wine
-SRCVERSION=2.0-rc5
+SRCVERSION=2.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -73,14 +73,12 @@ cd $TMP
 rm -rf $PKGNAM-$SRCVERSION $PKGNAM-staging-$SRCVERSION
 tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.bz2
 tar xvf $CWD/$PKGNAM-staging-$SRCVERSION.tar.gz || tar xvf $CWD/v$SRCVERSION.tar.gz
-tar xvf $CWD/$PKGNAM-d3d9-patches-wine-d3d9-$SRCVERSION.tar.gz || tar xvf $CWD/$PKGNAM-d3d9-$SRCVERSION.tar.gz
 
-# Apply staging and d3d9 patches
+# Apply staging patches
 cd $PKGNAM-staging-$SRCVERSION/patches
 ./patchinstall.sh --all DESTDIR=$TMP/$PKGNAM-$SRCVERSION
-cd $TMP/$PKGNAM-$SRCVERSION
-patch -p1 -i ../$PKGNAM-d3d9-patches-$PKGNAM-d3d9-$SRCVERSION/staging-helper.patch
-patch -p1 -i ../$PKGNAM-d3d9-patches-$PKGNAM-d3d9-$SRCVERSION/wine-d3d9.patch
+
+cd $TMP/$PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -100,7 +98,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --${WINE64}-win64 \
   --with-x \
   --with-gstreamer \
-  --with-d3d9-nine \
   --with-xattr \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
@@ -125,7 +122,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
