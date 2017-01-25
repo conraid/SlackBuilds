@@ -1,0 +1,33 @@
+#!/bin/bash
+#
+set -e
+
+PIDFILE=/var/run/netdata.pid
+
+service_start() {
+	echo "Starting real-time performance monitoring" "netdata"
+	/usr/sbin/netdata -P $PIDFILE
+}
+
+service_stop() {
+	echo "Stopping real-time performance monitoring" "netdata"
+  kill -9 $( cat $PIDFILE )
+}
+
+case "$1" in
+	'start')
+		service_start
+		;;
+
+	'stop')
+		service_stop
+		;;
+
+	'restart')
+		service_stop
+		service_start
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+esac
