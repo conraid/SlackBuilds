@@ -1,0 +1,85 @@
+From f6644eebf95baea3356290ecd6364f0a4a456406 Mon Sep 17 00:00:00 2001
+From: Christian Mehlmauer <firefart@gmail.com>
+Date: Tue, 17 Jan 2017 20:24:32 +0100
+Subject: [PATCH] make wpscan ruby 2.4.0 compatible
+
+fixes #1044
+---
+ .ruby-version               |  2 +-
+ Dockerfile                  |  2 +-
+ Gemfile                     |  3 ++-
+ lib/common/common_helper.rb |  4 +++-
+ lib/common/hacks.rb         | 13 -------------
+ 5 files changed, 7 insertions(+), 17 deletions(-)
+
+diff --git a/.ruby-version b/.ruby-version
+index 0bee604..197c4d5 100644
+--- a/.ruby-version
++++ b/.ruby-version
+@@ -1 +1 @@
+-2.3.1
++2.4.0
+diff --git a/Dockerfile b/Dockerfile
+index 8053944..e97eec0 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -1,4 +1,4 @@
+-FROM ruby:2.3-slim
++FROM ruby:2.4-slim
+ MAINTAINER WPScan Team <team@wpscan.org>
+ 
+ RUN DEBIAN_FRONTEND=noninteractive && \
+diff --git a/Gemfile b/Gemfile
+index 3f6950f..ed59cab 100644
+--- a/Gemfile
++++ b/Gemfile
+@@ -1,11 +1,12 @@
+ source 'https://rubygems.org'
+ 
+ gem 'typhoeus', '>=1.0.0'
+-gem 'nokogiri', '>=1.6.7.2'
++gem 'nokogiri', '>=1.7.0.1'
+ gem 'addressable'
+ gem 'yajl-ruby' # Better JSON parser regarding memory usage
+ gem 'terminal-table', '>=1.6.0'
+ gem 'ruby-progressbar', '>=1.6.0'
++gem 'xmlrpc'
+ 
+ group :test do
+   gem 'webmock', '>=1.17.2'
+diff --git a/lib/common/common_helper.rb b/lib/common/common_helper.rb
+index ac06569..28d8093 100644
+--- a/lib/common/common_helper.rb
++++ b/lib/common/common_helper.rb
+@@ -96,7 +96,9 @@ def last_update
+ 
+ def update_required?
+   date = last_update
+-  (true if date.nil?) or (date < 5.days.ago)
++  day_seconds = 24 * 60 * 60
++  five_days_ago = Time.now - (5 * day_seconds)
++  (true if date.nil?) or (date < five_days_ago)
+ end
+ 
+ # Define colors
+diff --git a/lib/common/hacks.rb b/lib/common/hacks.rb
+index a68ce57..8b159ac 100644
+--- a/lib/common/hacks.rb
++++ b/lib/common/hacks.rb
+@@ -35,16 +35,3 @@ def bytes_to_human
+     s.sub(/\.?0*$/, ' ' + units[e])
+   end
+ end
+-
+-# time calculations
+-class Fixnum
+-  SECONDS_IN_DAY = 24 * 60 * 60
+-
+-  def days
+-    self * SECONDS_IN_DAY
+-  end
+-
+-  def ago
+-    Time.now - self
+-  end
+-end
