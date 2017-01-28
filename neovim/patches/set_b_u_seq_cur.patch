@@ -1,0 +1,146 @@
+From 357723216b43c2498838579bf5d305f36ca2d168 Mon Sep 17 00:00:00 2001
+From: Matthew Malcomson <hardenedapple@gmail.com>
+Date: Thu, 26 Jan 2017 10:41:05 +0000
+Subject: [PATCH] Set b_u_seq_cur correctly when undoing
+
+Previously alternate branches were not accounted for properly, with this
+change g- after an undo to a branch point works.
+---
+ src/nvim/undo.c                        |  6 ++--
+ test/functional/helpers.lua            |  2 +-
+ test/functional/normal/undo_spec.lua   | 58 ++++++++++++++++++++++++++++++++++
+ test/functional/ui/inccommand_spec.lua | 12 +++++--
+ 4 files changed, 72 insertions(+), 6 deletions(-)
+ create mode 100644 test/functional/normal/undo_spec.lua
+
+diff --git a/src/nvim/undo.c b/src/nvim/undo.c
+index 4d56046..60214e3 100644
+--- a/src/nvim/undo.c
++++ b/src/nvim/undo.c
+@@ -1710,7 +1710,8 @@ bool u_undo_and_forget(int count)
+   if (curbuf->b_u_curhead) {
+     to_forget->uh_alt_next.ptr = NULL;
+     curbuf->b_u_curhead->uh_alt_prev.ptr = to_forget->uh_alt_prev.ptr;
+-    curbuf->b_u_seq_cur = curbuf->b_u_curhead->uh_seq-1;
++    curbuf->b_u_seq_cur = curbuf->b_u_curhead->uh_next.ptr ?
++        curbuf->b_u_curhead->uh_next.ptr->uh_seq : 0;
+   } else if (curbuf->b_u_newhead) {
+     curbuf->b_u_seq_cur = curbuf->b_u_newhead->uh_seq;
+   }
+@@ -2321,7 +2322,8 @@ static void u_undoredo(int undo)
+   if (undo)
+     /* We are below the previous undo.  However, to make ":earlier 1s"
+      * work we compute this as being just above the just undone change. */
+-    --curbuf->b_u_seq_cur;
++    curbuf->b_u_seq_cur =  curhead->uh_next.ptr ?
++        curhead->uh_next.ptr->uh_seq : 0;
+ 
+   /* Remember where we are for ":earlier 1f" and ":later 1f". */
+   if (curhead->uh_save_nr != 0) {
+diff --git a/test/functional/helpers.lua b/test/functional/helpers.lua
+index 7de1d0f..880cb65 100644
+--- a/test/functional/helpers.lua
++++ b/test/functional/helpers.lua
+@@ -195,7 +195,7 @@ local function dedent(str)
+       indent = line_indent
+     end
+   end
+-  if #indent == 0 then
++  if indent == nil or #indent == 0 then
+     -- no minimum common indent
+     return str
+   end
+diff --git a/test/functional/normal/undo_spec.lua b/test/functional/normal/undo_spec.lua
+new file mode 100644
+index 0000000..7969112
+--- /dev/null
++++ b/test/functional/normal/undo_spec.lua
+@@ -0,0 +1,58 @@
++local helpers = require('test.functional.helpers')(after_each)
++
++local clear = helpers.clear
++local expect = helpers.expect
++local feed = helpers.feed
++local insert = helpers.insert
++
++describe('undo/redo command', function()
++  local function create_history(num_steps)
++    if num_steps == 0 then return end
++    insert('1')
++    if num_steps == 1 then return end
++    feed('o2<esc>')
++    feed('o3<esc>')
++    feed('u')
++    if num_steps == 2 then return end
++    feed('o4<esc>')
++    if num_steps == 3 then return end
++    feed('u')
++  end
++
++  local function undo_and_redo(hist_pos, undo, redo, expect_str)
++    clear()
++    create_history(hist_pos)
++    local cur_contents = helpers.curbuf_contents()
++    feed(undo)
++    expect(expect_str)
++    feed(redo)
++    expect(cur_contents)
++  end
++
++  -- TODO Look for message saying 'Already at oldest change'
++  it('Does nothing when no changes have happened', function()
++    undo_and_redo(0, 'u', '<C-r>', '')
++    undo_and_redo(0, 'g-', 'g+', '')
++  end)
++  it('Undoes a change when at a leaf', function()
++    undo_and_redo(1, 'u', '<C-r>', '')
++    undo_and_redo(1, 'g-', 'g+', '')
++  end)
++  it('Undoes a change when in a non-leaf', function()
++    undo_and_redo(2, 'u', '<C-r>', '1')
++    undo_and_redo(2, 'g-', 'g+', '1')
++  end)
++  it('Undoes properly around a branch point', function()
++    undo_and_redo(3, 'u', '<C-r>', [[
++      1
++      2]])
++    undo_and_redo(3, 'g-', 'g+', [[
++      1
++      2
++      3]])
++  end)
++  it('Can find the previous sequence after undoing to a branch', function()
++    undo_and_redo(4, 'u', '<C-r>', '1')
++    undo_and_redo(4, 'g-', 'g+', '1')
++  end)
++end)
+diff --git a/test/functional/ui/inccommand_spec.lua b/test/functional/ui/inccommand_spec.lua
+index 41ebfd2..6da22b6 100644
+--- a/test/functional/ui/inccommand_spec.lua
++++ b/test/functional/ui/inccommand_spec.lua
+@@ -352,6 +352,14 @@ describe(":substitute, 'inccommand' preserves undo", function()
+ 
+     feed("2u")
+     feed(substring .. "<esc>")
++    expect([[
++      1]])
++    feed("g-")
++    expect([[
++      ]])
++    feed("g+")
++    expect([[
++      1]])
+     feed("<c-r>")
+     expect([[
+       1
+@@ -374,9 +382,7 @@ describe(":substitute, 'inccommand' preserves undo", function()
+       2]])
+   end
+ 
+-  -- TODO(vim): This does not work, even in Vim.
+-  -- Waiting for fix (perhaps from upstream).
+-  pending("at a non-leaf of the undo tree", function()
++  it("at a non-leaf of the undo tree", function()
+    for _, case in pairs(cases) do
+      for _, str in pairs(substrings) do
+        for _, redoable in pairs({true}) do
