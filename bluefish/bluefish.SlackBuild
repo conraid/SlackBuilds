@@ -28,8 +28,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=bluefish
-VERSION=2.2.9
-BUILD=${BUILD:-2}
+VERSION=2.2.10
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -84,7 +84,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
-make 
+make
 make DESTDIR=$PKG install-strip
 
 if [ -d $PKG/usr/man ]; then
