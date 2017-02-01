@@ -32,8 +32,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=redis
-VERSION=3.2.6
-BUILD=${BUILD:-2}
+VERSION=3.2.7
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -81,7 +81,7 @@ if [ -e $CWD/patches ]; then
 fi
 
 # Use our flags (thanks to SBo)
-sed "s|-O3||" -i deps/Makefile -i deps/hiredis/Makefile 
+sed "s|-O3||" -i deps/Makefile -i deps/hiredis/Makefile
 
 make CFLAGS="$SLKCFLAGS"
 make PREFIX=$PKG/usr install
@@ -107,16 +107,16 @@ install -Dm0644 sentinel.conf $PKG/etc/redis/sentinel.conf.new
 install -dm0700 $PKG/var/lib/redis
 
 # Install init script.
-install -Dm644 $CWD/rc.redis $PKG/etc/rc.d/rc.redis.new
+install -Dm644 $CWD/files/rc.redis $PKG/etc/rc.d/rc.redis.new
 
 # Install logrotate script.
-install -Dm644 $CWD/redis.logrotate $PKG/etc/logrotate.d/redis.new
+install -Dm644 $CWD/files/redis.logrotate $PKG/etc/logrotate.d/redis.new
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
