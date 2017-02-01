@@ -35,7 +35,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=node
-VERSION=7.4.0
+VERSION=7.5.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -96,6 +96,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --shared-zlib \
   --shared-openssl \
   --shared-libuv \
+  --shared-cares \
   --without-npm
 
 make PREFIX="/usr" CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS" 
@@ -128,7 +129,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
