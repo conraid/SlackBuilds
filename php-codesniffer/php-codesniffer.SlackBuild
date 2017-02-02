@@ -31,8 +31,8 @@ CWD=$(pwd)
 
 PRGNAM=PHP_CodeSniffer
 PKGNAM=php-codesniffer
-VERSION=2.7.1
-BUILD=${BUILD:-5}
+VERSION=2.8.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -51,18 +51,24 @@ fi
 rm -rf $PKG
 mkdir -p $PKG $TMP $OUTPUT
 
-pear install -P $PKG $PRGNAM-$VERSION.tgz
+pear install -P $PKG $CWD/$PRGNAM-$VERSION.tgz
 
 # Remove channel, metadata etc...
 cd $PKG/usr/lib${LIBDIRSUFFIX}/php
 rm -r $(ls -A | grep '^\.')
 cd -
 
+# Install man pages (from Debian package)
+install -Dm644 $CWD/files/*.1.gz -t $PKG/usr/man/man1
+
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $PKG/usr/lib${LIBDIRSUFFIX}/php/doc/$PRGNAM/* $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+# Move svn script in doc dir
+mv $PKG/usr/bin/scripts $PKG/usr/doc/$PKGNAM-$VERSION
+
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
