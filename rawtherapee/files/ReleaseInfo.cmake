@@ -1,4 +1,0 @@
-set(GIT_BRANCH master)
-set(GIT_VERSION 5.0.5.0-gtk3)
-set(GIT_CHANGESET 7fe7c4f60f85b47bc1d24b2cfece43444028e3a6)
-set(GIT_TAGDISTANCE 5.0-gtk3)

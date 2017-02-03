@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PRGNAM=RawTherapee
 PKGNAM=rawtherapee
-SRCVERSION=5.0-gtk3
+SRCVERSION=5.0-r1-gtk3
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -72,10 +72,6 @@ cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
-
-# Copy cmake utility file
-# The script only work with git source
-cp $CWD/files/ReleaseInfo.cmake .
 
 # Fix man and doc path
 sed -e "s|/share/doc/rawtherapee|/doc/$PKGNAM-$VERSION|g" \
