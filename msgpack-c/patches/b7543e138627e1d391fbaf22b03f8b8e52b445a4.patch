@@ -1,0 +1,117 @@
+From b7543e138627e1d391fbaf22b03f8b8e52b445a4 Mon Sep 17 00:00:00 2001
+From: raeraex2 <rerardd@gmail.com>
+Date: Tue, 17 Jan 2017 22:16:05 +0100
+Subject: [PATCH] Fix compilation warnings about possible loss of data
+
+---
+ include/msgpack/v1/adaptor/carray.hpp | 12 ++++++------
+ include/msgpack/v2/parse.hpp          | 10 +++++-----
+ 2 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/include/msgpack/v1/adaptor/carray.hpp b/include/msgpack/v1/adaptor/carray.hpp
+index 44e71f5..c023233 100644
+--- a/include/msgpack/v1/adaptor/carray.hpp
++++ b/include/msgpack/v1/adaptor/carray.hpp
+@@ -101,7 +101,7 @@ struct pack<char[N]> {
+         char const* p = v;
+         uint32_t size = checked_get_container_size(N);
+         char const* p2 = static_cast<char const*>(std::memchr(p, '\0', size));
+-        uint32_t adjusted_size = p2 ? p2 - p : size;
++        uint32_t adjusted_size = p2 ? static_cast<uint32_t>(p2 - p) : size;
+         o.pack_str(adjusted_size);
+         o.pack_str_body(p, adjusted_size);
+         return o;
+@@ -115,7 +115,7 @@ struct pack<const char[N]> {
+         uint32_t size = checked_get_container_size(N);
+         char const* p = v;
+         char const* p2 = static_cast<char const*>(std::memchr(p, '\0', size));
+-        uint32_t adjusted_size = p2 ? p2 - p : size;
++        uint32_t adjusted_size = p2 ? static_cast<uint32_t>(p2 - p) : size;
+         o.pack_str(adjusted_size);
+         o.pack_str_body(p, adjusted_size);
+         return o;
+@@ -167,7 +167,7 @@ struct object_with_zone<char[N]> {
+         char const* p = v;
+         uint32_t size = checked_get_container_size(N);
+         char const* p2 = static_cast<char const*>(std::memchr(p, '\0', size));
+-        uint32_t adjusted_size = p2 ? p2 - p : size;
++        uint32_t adjusted_size = p2 ? static_cast<uint32_t>(p2 - p) : size;
+         o.type = msgpack::type::STR;
+         char* ptr = static_cast<char*>(o.zone.allocate_align(adjusted_size));
+         o.via.str.ptr = ptr;
+@@ -182,7 +182,7 @@ struct object_with_zone<const char[N]> {
+         char const* p = v;
+         uint32_t size = checked_get_container_size(N);
+         char const* p2 = static_cast<char const*>(std::memchr(p, '\0', size));
+-        uint32_t adjusted_size = p2 ? p2 - p : size;
++        uint32_t adjusted_size = p2 ? static_cast<uint32_t>(p2 - p) : size;
+         o.type = msgpack::type::STR;
+         char* ptr = static_cast<char*>(o.zone.allocate_align(adjusted_size));
+         o.via.str.ptr = ptr;
+@@ -221,7 +221,7 @@ struct object<char[N]> {
+         char const* p = v;
+         uint32_t size = checked_get_container_size(N);
+         char const* p2 = static_cast<char const*>(std::memchr(p, '\0', size));
+-        uint32_t adjusted_size = p2 ? p2 - p : size;
++        uint32_t adjusted_size = p2 ? static_cast<uint32_t>(p2 - p) : size;
+         o.type = msgpack::type::STR;
+         o.via.str.ptr = p;
+         o.via.str.size = adjusted_size;
+@@ -234,7 +234,7 @@ struct object<const char[N]> {
+         char const* p = v;
+         uint32_t size = checked_get_container_size(N);
+         char const* p2 = static_cast<char const*>(std::memchr(p, '\0', size));
+-        uint32_t adjusted_size = p2 ? p2 - p : size;
++        uint32_t adjusted_size = p2 ? static_cast<uint32_t>(p2 - p) : size;
+         o.type = msgpack::type::STR;
+         o.via.str.ptr = p;
+         o.via.str.size = adjusted_size;
+diff --git a/include/msgpack/v2/parse.hpp b/include/msgpack/v2/parse.hpp
+index fdc9734..ba250a3 100644
+--- a/include/msgpack/v2/parse.hpp
++++ b/include/msgpack/v2/parse.hpp
+@@ -459,7 +459,7 @@ inline parse_return context<VisitorHolder>::execute(const char* data, std::size_
+                 load<uint8_t>(tmp, n);
+                 m_trail = tmp + 1;
+                 if(m_trail == 0) {
+-                    bool visret = holder().visitor().visit_ext(n, m_trail);
++                    bool visret = holder().visitor().visit_ext(n, static_cast<uint32_t>(m_trail));
+                     parse_return upr = after_visit_proc(visret, off);
+                     if (upr != PARSE_CONTINUE) return upr;
+                 }
+@@ -501,7 +501,7 @@ inline parse_return context<VisitorHolder>::execute(const char* data, std::size_
+                 load<uint16_t>(tmp, n);
+                 m_trail = tmp + 1;
+                 if(m_trail == 0) {
+-                    bool visret = holder().visitor().visit_ext(n, m_trail);
++                    bool visret = holder().visitor().visit_ext(n, static_cast<uint32_t>(m_trail));
+                     parse_return upr = after_visit_proc(visret, off);
+                     if (upr != PARSE_CONTINUE) return upr;
+                 }
+@@ -545,7 +545,7 @@ inline parse_return context<VisitorHolder>::execute(const char* data, std::size_
+                 m_trail = tmp;
+                 ++m_trail;
+                 if(m_trail == 0) {
+-                    bool visret = holder().visitor().visit_ext(n, m_trail);
++                    bool visret = holder().visitor().visit_ext(n, static_cast<uint32_t>(m_trail));
+                     parse_return upr = after_visit_proc(visret, off);
+                     if (upr != PARSE_CONTINUE) return upr;
+                 }
+@@ -555,7 +555,7 @@ inline parse_return context<VisitorHolder>::execute(const char* data, std::size_
+                 }
+             } break;
+             case MSGPACK_ACS_STR_VALUE: {
+-                bool visret = holder().visitor().visit_str(n, m_trail);
++                bool visret = holder().visitor().visit_str(n, static_cast<uint32_t>(m_trail));
+                 parse_return upr = after_visit_proc(visret, off);
+                 if (upr != PARSE_CONTINUE) return upr;
+             } break;
+@@ -565,7 +565,7 @@ inline parse_return context<VisitorHolder>::execute(const char* data, std::size_
+                 if (upr != PARSE_CONTINUE) return upr;
+             } break;
+             case MSGPACK_ACS_EXT_VALUE: {
+-                bool visret = holder().visitor().visit_ext(n, m_trail);
++                bool visret = holder().visitor().visit_ext(n, static_cast<uint32_t>(m_trail));
+                 parse_return upr = after_visit_proc(visret, off);
+                 if (upr != PARSE_CONTINUE) return upr;
+             } break;
