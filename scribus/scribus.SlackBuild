@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=scribus
 VERSION=1.4.6
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -69,14 +69,11 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Fix doc path
-sed -e 's|/share/doc/|/doc/|g' -e "s|/share/doc/scribus/|/doc/scribus-$VERSION/|g" -i scribus/scpaths.cpp
-
 # Fix man path
-sed -e 's|CMAKE_INSTALL_DATAROOTDIR}/man/|CMAKE_INSTALL_PREFIX}/man/|g' \
-    -e 's|CMAKE_INSTALL_DATAROOTDIR}/doc/${MAIN_DIR_NAME}${TAG_VERSION}/|CMAKE_INSTALL_PREFIX}/doc/${MAIN_DIR_NAME}-$VERSION/|g' \
-    -e 's|CMAKE_INSTALL_DATAROOTDIR}/doc/${MAIN_DIR_NAME}/|CMAKE_INSTALL_PREFIX}/doc/${MAIN_DIR_NAME}-$VERSION/|g' \
-    -e 's|CMAKE_INSTALL_DATAROOTDIR}/doc/|CMAKE_INSTALL_PREFIX}/man/|g' \
+sed -e "s|CMAKE_INSTALL_DATAROOTDIR}/man/|CMAKE_INSTALL_PREFIX}/man/|g" \
+    -e "s|CMAKE_INSTALL_DATAROOTDIR}/doc/\${MAIN_DIR_NAME}\${TAG_VERSION}/|CMAKE_INSTALL_PREFIX}/doc/\${MAIN_DIR_NAME}-$VERSION/|g" \
+    -e "s|CMAKE_INSTALL_DATAROOTDIR}/doc/\${MAIN_DIR_NAME}/|CMAKE_INSTALL_PREFIX}/doc/\${MAIN_DIR_NAME}-$VERSION/|g" \
+    -e "s|CMAKE_INSTALL_DATAROOTDIR}/doc/|CMAKE_INSTALL_PREFIX}/man/|g" \
     -i CMakeLists.txt
 
 mkdir -p build
@@ -109,7 +106,7 @@ fi
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
