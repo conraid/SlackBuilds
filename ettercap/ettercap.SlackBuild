@@ -28,7 +28,7 @@ CWD=$(pwd)
 
 PKGNAM=ettercap
 VERSION=0.8.2
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -67,6 +67,13 @@ cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
+
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
 
 sed "s/\(CMAKE_C_FLAGS_RELEASE \".*2\)\"/\1 ${SLKCFLAGS}\"/" -i CMakeLists.txt
 mkdir -p build

@@ -1,0 +1,35 @@
+From 6181876ce551bb1c09fbbf5359652b7568a7dc8d Mon Sep 17 00:00:00 2001
+From: Alexander Koeppe <format_c@online.de>
+Date: Mon, 21 Nov 2016 23:10:07 +0100
+Subject: [PATCH] flush max messages per interval in text interface
+
+---
+ src/ec_ui.c                   | 1 +
+ src/interfaces/text/ec_text.c | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/ec_ui.c b/src/ec_ui.c
+index 4554216..eb960ab 100644
+--- a/src/ec_ui.c
++++ b/src/ec_ui.c
+@@ -303,6 +303,7 @@ int ui_msg_purge_all(void)
+       /* free the message */
+       SAFE_FREE(msg->message);
+       SAFE_FREE(msg);
++      i++;
+    }
+    
+    UI_MSG_UNLOCK;
+diff --git a/src/interfaces/text/ec_text.c b/src/interfaces/text/ec_text.c
+index 0abdf5e..77000e9 100644
+--- a/src/interfaces/text/ec_text.c
++++ b/src/interfaces/text/ec_text.c
+@@ -378,7 +378,7 @@ void text_interface(void)
+       }
+ 
+       /* print pending USER_MSG messages */
+-      ui_msg_flush(10);
++      ui_msg_flush(INT_MAX);
+                                  
+    }
+   

@@ -1,0 +1,25 @@
+From 7a103d3fcb994961e27c5b123059f5c5ad62500e Mon Sep 17 00:00:00 2001
+From: Gianfranco Costamagna <costamagnagianfranco@yahoo.it>
+Date: Thu, 5 Mar 2015 12:09:13 +0100
+Subject: [PATCH] Fix const warning on libnet_init
+
+---
+ src/ec_network.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/ec_network.c b/src/ec_network.c
+index 370b415..419d135 100644
+--- a/src/ec_network.c
++++ b/src/ec_network.c
+@@ -417,9 +417,9 @@ static void l3_init(void)
+    libnet_t *l6;
+ #endif
+ #ifdef OS_WINDOWS
+-   const char *name = GBL_OPTIONS->iface;
++   char *name = GBL_OPTIONS->iface;
+ #else
+-   const char *name = NULL;
++   char *name = NULL;
+ #endif
+ 
+ 
