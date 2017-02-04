@@ -88,6 +88,15 @@ SLACKBUILD DOWNLOAD: https://github.com/matejak/argbash/archive/2.2.3.tar.gz
 SLACKBUILD MD5SUM: 0f1fe7f446e4b782295850f26644ce27
 SLACKBUILD SHORT DESCRIPTION:  argbash (Bash argument parsing code generator)
 
+SLACKBUILD NAME: argparse
+SLACKBUILD LOCATION: ./argparse
+SLACKBUILD FILES: README argparse.SlackBuild argparse.info slack-desc
+SLACKBUILD VERSION: 1.4.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/18/dd/e617cfc3f6210ae183374cd9f6a26b20514bbb5a792af97949c5aacddf0f/argparse-1.4.0.tar.gz
+SLACKBUILD MD5SUM: 08062d2ceb6596fcbc5a7e725b53746f
+SLACKBUILD SHORT DESCRIPTION:  argparse (Python command-line parsing library)
+
 SLACKBUILD NAME: aria2
 SLACKBUILD LOCATION: ./aria2
 SLACKBUILD FILES: README aria2.SlackBuild aria2.info slack-desc
@@ -375,6 +384,15 @@ SLACKBUILD REQUIRED: pcsc-lite
 SLACKBUILD DOWNLOAD: https://alioth.debian.org/frs/download.php/file/4205/ccid-1.4.26.tar.bz2
 SLACKBUILD MD5SUM: 852325456ad4db531c96c30b09fdd36f
 SLACKBUILD SHORT DESCRIPTION:  ccid (PC/SC driver for USB CCID smart card readers)
+
+SLACKBUILD NAME: cffi
+SLACKBUILD LOCATION: ./cffi
+SLACKBUILD FILES: README cffi.SlackBuild cffi.info slack-desc
+SLACKBUILD VERSION: 1.9.1
+SLACKBUILD REQUIRED: pycparser
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/a1/32/e3d6c3a8b5461b903651dd6ce958ed03c093d2e00128e3f33ea69f1d7965/cffi-1.9.1.tar.gz
+SLACKBUILD MD5SUM: b8fa7ccb87790531db3316ab17aa8244
+SLACKBUILD SHORT DESCRIPTION:  cffi (C Foreign Function Interface for Python) 
 
 SLACKBUILD NAME: checkbashisms
 SLACKBUILD LOCATION: ./checkbashisms
@@ -2032,6 +2050,15 @@ SLACKBUILD DOWNLOAD: http://fejes.net/frank/lifstat/files/lifstat-20100318.tar.g
 SLACKBUILD MD5SUM: 16821505ce1fb1611a11f91f78718fda
 SLACKBUILD SHORT DESCRIPTION:  lifstat
 
+SLACKBUILD NAME: livestreamer
+SLACKBUILD LOCATION: ./livestreamer
+SLACKBUILD FILES: README doinst.sh livestreamer.SlackBuild livestreamer.info slack-desc
+SLACKBUILD VERSION: 1.12.2
+SLACKBUILD REQUIRED: argparse futures python-request singledispatch rtmpdump pycrypto python-librtmp cffi pycparser
+SLACKBUILD DOWNLOAD: http://pypi.python.org/packages/ee/d6/efbe3456160a2c62e3dd841c5d9504d071c94449a819148bb038b50d862a/livestreamer-1.12.2.tar.gz
+SLACKBUILD MD5SUM: 63fb477bb3e28b7fe26b3cbba6f7937c
+SLACKBUILD SHORT DESCRIPTION:  livestreamer (CLI stream extractor) 
+
 SLACKBUILD NAME: lnav
 SLACKBUILD LOCATION: ./lnav
 SLACKBUILD FILES: README lnav.SlackBuild lnav.info slack-desc
@@ -2286,11 +2313,11 @@ SLACKBUILD SHORT DESCRIPTION:  ms-sys (Program for writing Microsoft compatible 
 
 SLACKBUILD NAME: msgpack-c
 SLACKBUILD LOCATION: ./msgpack-c
-SLACKBUILD FILES: README msgpack-c.SlackBuild msgpack-c.info patches/088ce946b9f14bc1ad61c006330f11050fc922c2.patch patches/b7543e138627e1d391fbaf22b03f8b8e52b445a4.patch slack-desc
-SLACKBUILD VERSION: 2.1.0
+SLACKBUILD FILES: README msgpack-c.SlackBuild msgpack-c.info slack-desc
+SLACKBUILD VERSION: 2.1.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/msgpack/msgpack-c/releases/download/cpp-2.1.0/msgpack-2.1.0.tar.gz
-SLACKBUILD MD5SUM: fd31020d9b3b215fce195a2faae57e4f
+SLACKBUILD DOWNLOAD: https://github.com/msgpack/msgpack-c/releases/download/cpp-2.1.1/msgpack-2.1.1.tar.gz
+SLACKBUILD MD5SUM: 197f84cac9efb1dbad6d909ccb498035
 SLACKBUILD SHORT DESCRIPTION:  msgpack-c (msgpack for C/C++)
 
 SLACKBUILD NAME: msgpack-python
@@ -3301,6 +3328,15 @@ SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/pyasn1/pyasn1-0.1.9.tar.gz
 SLACKBUILD MD5SUM: f00a02a631d4016818659d1cc38d229a
 SLACKBUILD SHORT DESCRIPTION:  pyasn1 (http://sourceforge.net/projects/pyasn1/
 
+SLACKBUILD NAME: pycparser
+SLACKBUILD LOCATION: ./pycparser
+SLACKBUILD FILES: README pycparser.SlackBuild pycparser.info slack-desc
+SLACKBUILD VERSION: 2.17
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/be/64/1bb257ffb17d01f4a38d7ce686809a736837ad4371bcc5c42ba7a715c3ac/pycparser-2.17.tar.gz
+SLACKBUILD MD5SUM: ca98dcb50bc1276f230118f6af5a40c7
+SLACKBUILD SHORT DESCRIPTION:  pycparser (Complete C99 parser in pure Python )
+
 SLACKBUILD NAME: pycrypto
 SLACKBUILD LOCATION: ./pycrypto
 SLACKBUILD FILES: README pycrypto.SlackBuild pycrypto.info slack-desc
@@ -3327,6 +3363,24 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://github.com/JPaulMora/Pyrit/archive/v0.5.0.tar.gz
 SLACKBUILD MD5SUM: fbc25ae13a5fed2b2e3ffad7ede0dc71
 SLACKBUILD SHORT DESCRIPTION:  pyrit (WPA precomputed cracker)
+
+SLACKBUILD NAME: python-librtmp
+SLACKBUILD LOCATION: ./python-librtmp
+SLACKBUILD FILES: README python-librtmp.SlackBuild python-librtmp.info slack-desc
+SLACKBUILD VERSION: 0.3.0
+SLACKBUILD REQUIRED: rtmpdump cffi pycparser
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/48/a6/33b1a5864e22de3e59dd29fcbc2602462511c04a31057b16baec639d7d4f/python-librtmp-0.3.0.tar.gz
+SLACKBUILD MD5SUM: f7afe8d463214072281998fa84553927
+SLACKBUILD SHORT DESCRIPTION:  python-librtmpi (python RTMP client library)
+
+SLACKBUILD NAME: python-requests
+SLACKBUILD LOCATION: ./python-requests
+SLACKBUILD FILES: README python-requests.SlackBuild python-requests.info slack-desc
+SLACKBUILD VERSION: 2.13.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/kennethreitz/requests/archive/v2.13.0.tar.gz
+SLACKBUILD MD5SUM: 94ad79c2e57917aca999308b1fb4cbb4
+SLACKBUILD SHORT DESCRIPTION:  python-requests (Requests: HTTP for Humans)
 
 SLACKBUILD NAME: pyyaml
 SLACKBUILD LOCATION: ./pyyaml
@@ -3507,6 +3561,15 @@ SLACKBUILD REQUIRED: pyasn1
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/rsa/rsa-3.4.2.tar.gz
 SLACKBUILD MD5SUM: b315f47882c24030ee6b5aad628cccdb
 SLACKBUILD SHORT DESCRIPTION:  rsa (Pure-Python RSA implementation)
+
+SLACKBUILD NAME: rtmpdump
+SLACKBUILD LOCATION: ./rtmpdump
+SLACKBUILD FILES: README patches/librtmp-makefile.patch rtmpdump.SlackBuild rtmpdump.info slack-desc
+SLACKBUILD VERSION: 2.4_fa8646d
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://git.ffmpeg.org/gitweb/rtmpdump.git/snapshot/fa8646daeb19dfd12c181f7d19de708d623704c0.tar.gz
+SLACKBUILD MD5SUM: d9572fe5e1dedabb68b7949ec84308dd
+SLACKBUILD SHORT DESCRIPTION:  rtmpdump (RTMP streams toolkit)
 
 SLACKBUILD NAME: rtorrent
 SLACKBUILD LOCATION: ./rtorrent
@@ -3696,6 +3759,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/40/ad/52c1f3a562df3b210e8f165e1aa243a178c454ead65476a39fa3ce1847b6/simplejson-3.10.0.tar.gz
 SLACKBUILD MD5SUM: 426a9631d22851a7a970b1a677368b15
 SLACKBUILD SHORT DESCRIPTION:  simplejson (extensible JSON encoder and decoder for Python)
+
+SLACKBUILD NAME: singledispatch
+SLACKBUILD LOCATION: ./singledispatch
+SLACKBUILD FILES: README singledispatch.SlackBuild singledispatch.info slack-desc
+SLACKBUILD VERSION: 3.4.0.3
+SLACKBUILD REQUIRED: six
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/d9/e9/513ad8dc17210db12cb14f2d4d190d618fb87dd38814203ea71c87ba5b68/singledispatch-3.4.0.3.tar.gz
+SLACKBUILD MD5SUM: af2fc6a3d6cc5a02d0bf54d909785fcb
+SLACKBUILD SHORT DESCRIPTION:  singledispatch (backport library)
 
 SLACKBUILD NAME: sipcalc
 SLACKBUILD LOCATION: ./sipcalc
