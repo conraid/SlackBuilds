@@ -783,7 +783,7 @@ SLACKBUILD SHORT DESCRIPTION:  etherwake
 
 SLACKBUILD NAME: ettercap
 SLACKBUILD LOCATION: ./ettercap
-SLACKBUILD FILES: README doinst.sh ettercap.SlackBuild ettercap.info slack-desc
+SLACKBUILD FILES: README doinst.sh ettercap.SlackBuild ettercap.info patches/6181876ce551bb1c09fbbf5359652b7568a7dc8d.patch patches/7a103d3fcb994961e27c5b123059f5c5ad62500e.patch slack-desc
 SLACKBUILD VERSION: 0.8.2
 SLACKBUILD REQUIRED: libnet
 SLACKBUILD DOWNLOAD: https://github.com/Ettercap/ettercap/releases/download/v0.8.2/ettercap-0.8.2.tar.gz
@@ -1206,11 +1206,11 @@ SLACKBUILD SHORT DESCRIPTION:  Httping is like 'ping' but for http-requests.
 
 SLACKBUILD NAME: httplib2
 SLACKBUILD LOCATION: ./httplib2
-SLACKBUILD FILES: README httplib2.SlackBuild httplib2.info patches/cert.patch patches/ssl_hostname.patch slack-desc
-SLACKBUILD VERSION: 0.9.2
+SLACKBUILD FILES: README httplib2.SlackBuild httplib2.info slack-desc
+SLACKBUILD VERSION: 0.10.2
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/jcgregorio/httplib2/archive/0.9.2.tar.gz
-SLACKBUILD MD5SUM: eb39d90dc64bd12a94184d76bddc65a3
+SLACKBUILD DOWNLOAD: https://github.com/httplib2/httplib2/archive/v0.10.2.tar.gz
+SLACKBUILD MD5SUM: c33883fd0f685b704a37b1a723add684
 SLACKBUILD SHORT DESCRIPTION:  httplib2 (python HTTP client library)
 
 SLACKBUILD NAME: httpry
@@ -2286,7 +2286,7 @@ SLACKBUILD SHORT DESCRIPTION:  ms-sys (Program for writing Microsoft compatible 
 
 SLACKBUILD NAME: msgpack-c
 SLACKBUILD LOCATION: ./msgpack-c
-SLACKBUILD FILES: README msgpack-c.SlackBuild msgpack-c.info slack-desc
+SLACKBUILD FILES: README msgpack-c.SlackBuild msgpack-c.info patches/088ce946b9f14bc1ad61c006330f11050fc922c2.patch patches/b7543e138627e1d391fbaf22b03f8b8e52b445a4.patch slack-desc
 SLACKBUILD VERSION: 2.1.0
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://github.com/msgpack/msgpack-c/releases/download/cpp-2.1.0/msgpack-2.1.0.tar.gz
@@ -2512,10 +2512,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-bower (A package manager for the web)
 SLACKBUILD NAME: node-clean-css
 SLACKBUILD LOCATION: ./node-clean-css
 SLACKBUILD FILES: README node-clean-css.SlackBuild node-clean-css.info slack-desc
-SLACKBUILD VERSION: 4.0.3
+SLACKBUILD VERSION: 4.0.4
 SLACKBUILD REQUIRED: node npm
-SLACKBUILD DOWNLOAD: https://github.com/jakubpawlowicz/clean-css/archive/v4.0.3.tar.gz
-SLACKBUILD MD5SUM: 5865d8d75b236219c342de440ccd362f
+SLACKBUILD DOWNLOAD: https://github.com/jakubpawlowicz/clean-css/archive/v4.0.4.tar.gz
+SLACKBUILD MD5SUM: 70b26798d9ce442420ac8946dbd5a520
 SLACKBUILD SHORT DESCRIPTION:  node-clean-css (CSS minifier for node.js)
 
 SLACKBUILD NAME: node-cross-spawn
@@ -3133,10 +3133,10 @@ SLACKBUILD SHORT DESCRIPTION:  pngcrush
 SLACKBUILD NAME: podofo
 SLACKBUILD LOCATION: ./podofo
 SLACKBUILD FILES: README podofo.SlackBuild podofo.info slack-desc
-SLACKBUILD VERSION: 0.9.4
+SLACKBUILD VERSION: 0.9.5
 SLACKBUILD REQUIRED: lua
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/podofo/podofo-0.9.4.tar.gz
-SLACKBUILD MD5SUM: 929c9d2bd367fb6cb1f178cd4eb93dd3
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/podofo/podofo-0.9.5.tar.gz
+SLACKBUILD MD5SUM: 4751a6cf41250bea550a73ff960b7228
 SLACKBUILD SHORT DESCRIPTION:  PoDoFo (Is a library to work with the PDF file format)
 
 SLACKBUILD NAME: poedit
@@ -3655,28 +3655,28 @@ SLACKBUILD SHORT DESCRIPTION:  setconf (Utility for changing settings in configu
 SLACKBUILD NAME: shorewall-core
 SLACKBUILD LOCATION: ./shorewall-core
 SLACKBUILD FILES: PKGNOTE README doinst.sh shorewall-core.SlackBuild shorewall-core.info slack-desc
-SLACKBUILD VERSION: 5.1.0.1
+SLACKBUILD VERSION: 5.1.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/5.1/shorewall-5.1.0/shorewall-core-5.1.0.1.tar.bz2
-SLACKBUILD MD5SUM: 316b3872afef350e8c3b92ae706e9f29
+SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/5.1/shorewall-5.1.1/shorewall-core-5.1.1.tar.bz2
+SLACKBUILD MD5SUM: 8611683a51ed33b1326e70ba746d468a
 SLACKBUILD SHORT DESCRIPTION:  Shorewall-core (Core Shorewall libraries)
 
 SLACKBUILD NAME: shorewall
 SLACKBUILD LOCATION: ./shorewall
 SLACKBUILD FILES: PKGNOTE README doinst.sh shorewall.SlackBuild shorewall.info slack-desc
-SLACKBUILD VERSION: 5.1.0.1
+SLACKBUILD VERSION: 5.1.1
 SLACKBUILD REQUIRED: shorewall-core
-SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/5.1/shorewall-5.1.0/shorewall-5.1.0.1.tar.bz2
-SLACKBUILD MD5SUM: 37e8b28486c4afe9d6d3432d8bcb767a
+SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/5.1/shorewall-5.1.1/shorewall-5.1.1.tar.bz2
+SLACKBUILD MD5SUM: 2dc15428b2003b889808701d54a572cf
 SLACKBUILD SHORT DESCRIPTION:  Shorewall (An iptables-based firewall for Linux systems)
 
 SLACKBUILD NAME: shorewall6
 SLACKBUILD LOCATION: ./shorewall6
 SLACKBUILD FILES: PKGNOTE README doinst.sh shorewall6.SlackBuild shorewall6.info slack-desc
-SLACKBUILD VERSION: 5.1.0.1
+SLACKBUILD VERSION: 5.1.1
 SLACKBUILD REQUIRED: shorewall-core
-SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/5.1/shorewall-5.1.0/shorewall6-5.1.0.1.tar.bz2
-SLACKBUILD MD5SUM: 817e01bb16f5f4e568bd054838c6281a
+SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/5.1/shorewall-5.1.1/shorewall6-5.1.1.tar.bz2
+SLACKBUILD MD5SUM: 321db7bb9665aa760b853ac806a31c2b
 SLACKBUILD SHORT DESCRIPTION:  Shorewall6 (An IPv6 iptables-based firewall for Linux systems)
 
 SLACKBUILD NAME: siege
@@ -3781,10 +3781,10 @@ SLACKBUILD SHORT DESCRIPTION:  smem (memory reporting tool)
 SLACKBUILD NAME: smplayer
 SLACKBUILD LOCATION: ./smplayer
 SLACKBUILD FILES: README doinst.sh slack-desc smplayer.SlackBuild smplayer.info
-SLACKBUILD VERSION: 17.1.0
+SLACKBUILD VERSION: 17.2.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/smplayer/smplayer-17.1.0.tar.bz2
-SLACKBUILD MD5SUM: aa28e0ec45bc184e4304700313a8f6e9
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/smplayer/smplayer-17.2.0.tar.bz2
+SLACKBUILD MD5SUM: 468cdda028221a153646ce8855329838
 SLACKBUILD SHORT DESCRIPTION:  SMplayer (Qt4 Mplayer front-end)
 
 SLACKBUILD NAME: smtube
@@ -3952,10 +3952,10 @@ SLACKBUILD SHORT DESCRIPTION:  tcptrack (tcp sniffer)
 SLACKBUILD NAME: tellico
 SLACKBUILD LOCATION: ./tellico
 SLACKBUILD FILES: README doinst.sh slack-desc tellico.SlackBuild tellico.info
-SLACKBUILD VERSION: 2.3.11
+SLACKBUILD VERSION: 2.3.12
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://tellico-project.org/files/tellico-2.3.11.tar.bz2
-SLACKBUILD MD5SUM: 8f79b02147167f95111c334cf6c0376c
+SLACKBUILD DOWNLOAD: http://tellico-project.org/files/tellico-2.3.12.tar.bz2
+SLACKBUILD MD5SUM: 607e94e0141aadf741aab7fa6db15a5c
 SLACKBUILD SHORT DESCRIPTION:  Tellico (KDE application for keeping track of your collections)
 
 SLACKBUILD NAME: tesseract
