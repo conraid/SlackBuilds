@@ -342,7 +342,7 @@ SLACKBUILD SHORT DESCRIPTION:  byacc (Berkeley Yacc)
 
 SLACKBUILD NAME: bzr
 SLACKBUILD LOCATION: ./bzr
-SLACKBUILD FILES: README bzr.SlackBuild bzr.info slack-desc
+SLACKBUILD FILES: README bzr.SlackBuild bzr.info patches/bzr-lazy-regex.patch slack-desc
 SLACKBUILD VERSION: 2.7.0
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://launchpad.net/bzr/2.7/2.7.0/+download/bzr-2.7.0.tar.gz
@@ -1531,10 +1531,10 @@ SLACKBUILD SHORT DESCRIPTION:  KeePassX
 SLACKBUILD NAME: kencfs
 SLACKBUILD LOCATION: ./kencfs
 SLACKBUILD FILES: README doinst.sh kencfs.SlackBuild kencfs.info slack-desc
-SLACKBUILD VERSION: 1.6.3
+SLACKBUILD VERSION: 1.6.4
 SLACKBUILD REQUIRED: encfs
-SLACKBUILD DOWNLOAD: https://dl.opendesktop.org/api/files/download/id/1466630522/134003-kencfs-1.6.3.tar.gz
-SLACKBUILD MD5SUM: 79b582d69bcf0fd60fb84f8c88b48040
+SLACKBUILD DOWNLOAD: https://dl.opendesktop.org/api/files/download/id/1486311191/kencfs-1.6.4.tar.gz
+SLACKBUILD MD5SUM: 067c979aab2960dc6604c47906e56115
 SLACKBUILD SHORT DESCRIPTION:  kencfs (kde frontend for encfs)
 
 SLACKBUILD NAME: kenotaph-daemon
@@ -2907,7 +2907,7 @@ SLACKBUILD SHORT DESCRIPTION:  p0f (passive os fingerprint tool)
 
 SLACKBUILD NAME: p7zip
 SLACKBUILD LOCATION: ./p7zip
-SLACKBUILD FILES: README doinst.sh files/7zFM.desktop p7zip.SlackBuild p7zip.info slack-desc
+SLACKBUILD FILES: README doinst.sh files/7zFM.desktop p7zip.SlackBuild p7zip.info patches/CVE-2016-9296.patch slack-desc
 SLACKBUILD VERSION: 16.02
 SLACKBUILD REQUIRED: wxgtk
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/p7zip/p7zip_16.02_src_all.tar.bz2
@@ -3205,10 +3205,10 @@ SLACKBUILD SHORT DESCRIPTION:  postcss-cli (Simple CLI for postcss)
 SLACKBUILD NAME: postcss
 SLACKBUILD LOCATION: ./postcss
 SLACKBUILD FILES: README postcss.SlackBuild postcss.info slack-desc
-SLACKBUILD VERSION: 5.2.11
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/postcss/postcss/archive/5.2.11.tar.gz
-SLACKBUILD MD5SUM: a8bd2b1b60d99dd5f615c7e411774444
+SLACKBUILD VERSION: 5.2.12
+SLACKBUILD REQUIRED: node npm
+SLACKBUILD DOWNLOAD: https://github.com/postcss/postcss/archive/5.2.12.tar.gz
+SLACKBUILD MD5SUM: c710f8ac9873c0cc488f7e1b6b0e1648
 SLACKBUILD SHORT DESCRIPTION:  postcss (Transforming styles with JS plugins)
 
 SLACKBUILD NAME: postfix
@@ -4582,10 +4582,10 @@ SLACKBUILD SHORT DESCRIPTION:  yersinia
 SLACKBUILD NAME: youtube-dl
 SLACKBUILD LOCATION: ./youtube-dl
 SLACKBUILD FILES: README patches/makefile.patch patches/setup.patch slack-desc youtube-dl.SlackBuild youtube-dl.info
-SLACKBUILD VERSION: 2017.02.01
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://yt-dl.org/downloads/2017.02.01/youtube-dl-2017.02.01.tar.gz
-SLACKBUILD MD5SUM: 38f159d4aa41583786907be6d2e05053
+SLACKBUILD VERSION: 2017.02.04.1
+SLACKBUILD REQUIRED: rtmpdump
+SLACKBUILD DOWNLOAD: https://yt-dl.org/downloads/2017.02.04.1/youtube-dl-2017.02.04.1.tar.gz
+SLACKBUILD MD5SUM: 3cfb714a63de099ff04a16418bc38e75
 SLACKBUILD SHORT DESCRIPTION:  youtube-dl (YouTube video download utility)
 
 SLACKBUILD NAME: zenity
