@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=kencfs
-VERSION=1.6.3
-BUILD=${BUILD:-3}
+VERSION=1.6.4
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -63,7 +63,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/*$PKGNAM-$VERSION.tar.gz
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
@@ -83,7 +83,7 @@ find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r st
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
