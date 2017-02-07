@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=neomutt
-VERSION=20170128
+VERSION=20170206
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -64,7 +64,7 @@ mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
-cd $PKGNAM-$PKGNAM-$VERSION 
+cd $PKGNAM-$PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -122,7 +122,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 # Move man files (present in mutt standard package) in doc dir
 mv $PKG/usr/man/ $PKG/usr/doc/$PKGNAM-$VERSION/
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
