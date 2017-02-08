@@ -32,7 +32,7 @@ CWD=$(pwd)
 PRGNAM=PokerTH
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 VERSION=1.1.1
-BUILD=${BUILD:-10}
+BUILD=${BUILD:-11}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -62,9 +62,11 @@ else
   LIBDIRSUFFIX=""
 fi
 
+
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
+
 rm -rf $PRGNAM-$VERSION-src
 tar xvf $CWD/$PRGNAM-$VERSION-src.tar.bz2
 cd $PRGNAM-$VERSION-src
@@ -98,7 +100,6 @@ find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r st
 
 # Install man
 install -Dm0644 docs/pokerth.1 $PKG/usr/man/man1/pokerth.1
-install -Dm0644 $CWD/pokerth_server.1 $PKG/usr/man/man1/pokerth_server.1 #Thanks to Debian project
 
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec gzip -9 {} \;
@@ -109,7 +110,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
