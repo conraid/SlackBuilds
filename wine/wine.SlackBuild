@@ -33,7 +33,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=wine
-SRCVERSION=2.0
+SRCVERSION=2.1
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -71,7 +71,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$SRCVERSION $PKGNAM-staging-$SRCVERSION
-tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.bz2
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.xz
 tar xvf $CWD/$PKGNAM-staging-$SRCVERSION.tar.gz || tar xvf $CWD/v$SRCVERSION.tar.gz
 
 # Apply staging patches
