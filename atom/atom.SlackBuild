@@ -31,7 +31,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=atom
-VERSION=1.13.1
+VERSION=1.14.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -67,8 +67,8 @@ if [ -e $CWD/patches ]; then
   done
 fi
 
-# Update APM to the lastest version (for node7)
-sed '/atom-package-manager/s/"1.*"/"1.15.2"/' -i apm/package.json
+# Build with for node7
+sed '/majorVersion/s/7/8/g' -i script/lib/verify-machine-requirements.js
 
 # Disable send metrics to Google Analytics module
 sed -e '/"metrics":/d' -e '/"exception-reporting":/d' -i package.json
@@ -77,7 +77,7 @@ sed -e '/"metrics":/d' -e '/"exception-reporting":/d' -i package.json
 sed "/userLocalDirPath/s|path.join('/usr', 'local')|path.join('$PKG/usr', '')|" -i script/lib/install-application.js
 
 ./script/bootstrap
-./script/build --install 
+./script/build --install
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
@@ -100,7 +100,7 @@ sed -e 's/<%= appName %>/Atom/' \
   -e 's/<%= iconPath %>/atom/' \
   resources/linux/atom.desktop.in > $PKG/usr/share/applications/atom.desktop
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
