@@ -30,7 +30,7 @@ CWD=$(pwd)
 PKGNAM=cmus
 SRCVERSION=2.8.0-rc0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -78,7 +78,6 @@ CXXFLAGS="$SLKCFLAGS" \
   libdir=/usr/lib${LIBDIRSUFFIX} \
   mandir=/usr/man \
   exampledir="/usr/doc/$PKGNAM-$VERSION/examples" \
-  CONFIG_FFMPEG=n \
   DEBUG=0
 
 make
