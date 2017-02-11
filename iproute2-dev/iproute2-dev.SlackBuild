@@ -28,8 +28,8 @@
 set -eu
 
 PKGNAM=iproute2-dev
-VERSION=4.4.0
-BUILD=${BUILD:-2}
+VERSION=4.9.0
+BUILD=${BUILD:-1}
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -84,7 +84,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat COPYING > $PKG/usr/doc/$PKGNAM-$VERSION/COPYING
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
