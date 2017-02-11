@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=collectd
 VERSION=5.7.1
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -77,6 +77,8 @@ autoreconf -if
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 KERNEL_CFLAGS="-I/usr/include" \
 KERNEL_DIR="/usr/src/linux" \
+LUA_LIBS="-llua -lm -ldl" \
+LUA_CFLAGS="-I/usr/include/lua5.3" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 LIBS="-lpthread" \
@@ -89,6 +91,7 @@ LIBS="-lpthread" \
   --disable-static \
   --disable-java \
   --enable-postgresql \
+  --enable-lua \
   --with-perl-bindings="INSTALLDIRS=vendor INSTALLVENDORMAN3DIR=/usr/man/man3" \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
