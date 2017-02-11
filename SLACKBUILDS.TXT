@@ -1456,6 +1456,15 @@ SLACKBUILD DOWNLOAD: https://github.com/stedolan/jq/releases/download/jq-1.5/jq-
 SLACKBUILD MD5SUM: 0933532b086bd8b6a41c1b162b1731f9
 SLACKBUILD SHORT DESCRIPTION:  jq (Command-line JSON processor)
 
+SLACKBUILD NAME: json-c
+SLACKBUILD LOCATION: ./json-c
+SLACKBUILD FILES: README json-c.SlackBuild json-c.info slack-desc
+SLACKBUILD VERSION: 0.12
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://s3.amazonaws.com/json-c_releases/releases/json-c-0.12.1.tar.gz
+SLACKBUILD MD5SUM: 55f7853f7d8cf664554ce3fa71bf1c7d
+SLACKBUILD SHORT DESCRIPTION:  json-c (JSON library in C)
+
 SLACKBUILD NAME: json-glib
 SLACKBUILD LOCATION: ./json-glib
 SLACKBUILD FILES: README json-glib.SlackBuild json-glib.info slack-desc
@@ -1726,15 +1735,6 @@ SLACKBUILD DOWNLOAD: https://github.com/dugsong/libdnet/archive/libdnet-1.12.tar
 SLACKBUILD MD5SUM: d2f1b72eac2a1070959667e9e61dcf20
 SLACKBUILD SHORT DESCRIPTION:  libdnet 
 
-SLACKBUILD NAME: libedit
-SLACKBUILD LOCATION: ./libedit
-SLACKBUILD FILES: README libedit.SlackBuild libedit.info slack-desc
-SLACKBUILD VERSION: 20160903-3.1
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://thrysoee.dk/editline/libedit-20160903-3.1.tar.gz
-SLACKBUILD MD5SUM: 0467d27684c453a351fbcefebbcb16a3
-SLACKBUILD SHORT DESCRIPTION:  libedit (Command line editor library)
-
 SLACKBUILD NAME: libesmtp
 SLACKBUILD LOCATION: ./libesmtp
 SLACKBUILD FILES: README libesmtp.SlackBuild libesmtp.info slack-desc
@@ -1827,7 +1827,7 @@ SLACKBUILD SHORT DESCRIPTION:  libmaxminddb (C Library)
 
 SLACKBUILD NAME: libmemcached
 SLACKBUILD LOCATION: ./libmemcached
-SLACKBUILD FILES: README libmemcached.SlackBuild libmemcached.info libpthread.patch slack-desc
+SLACKBUILD FILES: README libmemcached.SlackBuild libmemcached.info slack-desc
 SLACKBUILD VERSION: 1.0.18
 SLACKBUILD REQUIRED: memcached
 SLACKBUILD DOWNLOAD: http://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz
@@ -2806,15 +2806,6 @@ SLACKBUILD DOWNLOAD: http://kcat.strangesoft.net/openal-releases/openal-soft-1.1
 SLACKBUILD MD5SUM: 1764e0d8fec499589b47ebc724e0913d
 SLACKBUILD SHORT DESCRIPTION:  OpenAL Soft (a cross-platform 3D audio API)
 
-SLACKBUILD NAME: opencl-headers
-SLACKBUILD LOCATION: ./opencl-headers
-SLACKBUILD FILES: README files/LICENSE.txt opencl-headers.SlackBuild opencl-headers.info slack-desc
-SLACKBUILD VERSION: 20170120_git
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/KhronosGroup/OpenCL-Headers/archive/abb29588550c77f8340a6c3683531407013bf26b.tar.gz
-SLACKBUILD MD5SUM: dac7585c0c78fe4e76f89b15eae491ac
-SLACKBUILD SHORT DESCRIPTION:  opencl-headers
-
 SLACKBUILD NAME: opencv
 SLACKBUILD LOCATION: ./opencv
 SLACKBUILD FILES: README opencv.SlackBuild opencv.info patches/CMakeLists.patch patches/test_unix.patch slack-desc
@@ -3042,7 +3033,7 @@ SLACKBUILD SHORT DESCRIPTION:  php-composer (Dependency Manager for PHP)
 
 SLACKBUILD NAME: php-imagick
 SLACKBUILD LOCATION: ./php-imagick
-SLACKBUILD FILES: README doinst.sh imagick.ini php-imagick.SlackBuild php-imagick.info slack-desc
+SLACKBUILD FILES: README doinst.sh php-imagick.SlackBuild php-imagick.info slack-desc
 SLACKBUILD VERSION: 3.4.2
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://pecl.php.net/get/imagick-3.4.2.tgz
@@ -3087,7 +3078,7 @@ SLACKBUILD SHORT DESCRIPTION:  php-suhosin (An advanced protection system for PH
 
 SLACKBUILD NAME: php-xdebug
 SLACKBUILD LOCATION: ./php-xdebug
-SLACKBUILD FILES: README doinst.sh php-xdebug.SlackBuild php-xdebug.info slack-desc xdebug.ini
+SLACKBUILD FILES: README doinst.sh php-xdebug.SlackBuild php-xdebug.info slack-desc
 SLACKBUILD VERSION: 2.5.0
 SLACKBUILD REQUIRED: libedit
 SLACKBUILD DOWNLOAD: https://pecl.php.net/get/xdebug-2.5.0.tgz
@@ -3287,7 +3278,7 @@ SLACKBUILD NAME: psensor
 SLACKBUILD LOCATION: ./psensor
 SLACKBUILD FILES: README doinst.sh psensor.SlackBuild psensor.info slack-desc
 SLACKBUILD VERSION: 1.2.0
-SLACKBUILD REQUIRED: libgtop libmicrohttpd
+SLACKBUILD REQUIRED: libgtop libmicrohttpd json-c
 SLACKBUILD DOWNLOAD: http://wpitchoune.net/psensor/files/psensor-1.2.0.tar.gz
 SLACKBUILD MD5SUM: 0d8ac0a1312e96f2101ecc7c684e2863
 SLACKBUILD SHORT DESCRIPTION:  psensor (graphical hardware temperature monitor)
