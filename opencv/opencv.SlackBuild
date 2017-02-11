@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=opencv
 VERSION=3.2.0
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -103,7 +103,7 @@ cmake \
   -DWITH_OPENGL=ON \
   -DWITH_QT=ON \
   -DWITH_XINE=ON \
-  -DWITH_FFMPEG=OFF \
+  -DWITH_FFMPEG=ON \
   -DENABLE_SSE41=OFF \
   -DENABLE_SSE42=OFF \
   -DOPENCV_EXTRA_MODULES_PATH=../${PKGNAM}_contrib-$VERSION/modules \
