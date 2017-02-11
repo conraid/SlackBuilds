@@ -30,7 +30,7 @@
 #
 #  # groupadd -g 220 tor
 #  # useradd -u 220 -g tor -d /dev/null -s /bin/false tor
-# 
+#
 if ! grep -q "^tor:" /etc/passwd; then
   echo "You must have a tor user"
   exit
@@ -45,7 +45,7 @@ CWD=$(pwd)
 
 PKGNAM=tor
 VERSION=0.2.9.9
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -126,7 +126,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
