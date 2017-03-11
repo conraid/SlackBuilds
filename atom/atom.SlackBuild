@@ -31,7 +31,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=atom
-VERSION=1.14.4
+VERSION=1.15.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -60,13 +60,6 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-# Apply patches (if any)
-if [ -e $CWD/patches ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
-fi
-
 # Build with for node7
 sed '/majorVersion/s/< 7/<= 7/g' -i script/lib/verify-machine-requirements.js
 
@@ -82,21 +75,23 @@ sed "/userLocalDirPath/s|path.join('/usr', 'local')|path.join('$PKG/usr', '')|" 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
-# move apm symlink to atom-apm for prevent conflicts with apmd package.
-mv $PKG/usr/bin/apm $PKG/usr/bin/atom-apm
-
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a *.md docs $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-install -Dm644 resources/$PKGNAM.png $PKG/usr/share/pixmaps/$PKGNAM.png || \
-install -Dm644 resources/app-icons/stable/png/1024.png $PKG/usr/share/pixmaps/$PKGNAM.png
+# Install icons
+cd resources/app-icons/stable/png
+for IMG in *.png; do
+  DIR_NAME=${IMG%.*}x${IMG%.*}
+  install -Dm644 $IMG $PKG/usr/share/icons/hicolor/$DIR_NAME/apps/$PKGNAM.png
+done
+cd -
 
+# Install .desktop file
 mkdir -p $PKG/usr/share/applications
 sed -e 's/<%= appName %>/Atom/' \
   -e 's/<%= description %>/Hackable text editor/' \
   -e 's|^\(Exec=\).*|\1/usr/bin/atom %U|' \
-  -e 's/<%= iconName %>/atom/' \
   -e 's/<%= iconPath %>/atom/' \
   resources/linux/atom.desktop.in > $PKG/usr/share/applications/atom.desktop
 
