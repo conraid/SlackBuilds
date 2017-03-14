@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=filezilla
-SRCVERSION=3.24.1
+SRCVERSION=3.25.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -102,9 +102,6 @@ fi
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
-
-# Fix desktop file (original is whit BOM)
-cat $CWD/filezilla.desktop > $PKG/usr/share/applications/filezilla.desktop
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
