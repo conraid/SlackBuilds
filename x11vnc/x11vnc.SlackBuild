@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=x11vnc
-VERSION=0.9.13
-BUILD=${BUILD:-7}
+VERSION=0.9.14
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -65,12 +65,13 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.*
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
+autoreconf -fi
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -81,10 +82,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --localstatedir=/var \
   --mandir=/usr/man \
   --infodir=/usr/info \
-  --enable-static=no \
-  --enable-shared=yes \
   --without-avahi \
-  --with-system-libvncserver \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
