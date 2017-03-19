@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=postcss-cli
-VERSION=2.6.0
+VERSION=3.0.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -52,7 +52,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-${VERSION}.tar.gz || tar xvf $CWD/${VERSION}.tar.gz
+tar xvf $CWD/$PKGNAM-${VERSION}.tar.gz || tar xvf $CWD/v${VERSION}.tar.gz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
