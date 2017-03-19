@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PKGNAM=qemu
 VERSION=2.8.0
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -64,7 +64,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
+tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
 cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -90,7 +90,7 @@ ARFLAGS="rv" \
   --disable-debug-info \
   --enable-gnutls \
   --enable-sdl \
-  --with-sdlabi=1.2 \
+  --with-sdlabi=2.0 \
   --enable-gtk \
   --with-gtkabi=3.0 \
   --enable-curses \
@@ -111,6 +111,8 @@ ARFLAGS="rv" \
   --disable-tpm \
   --enable-libssh2 \
   --enable-vte \
+  --enable-jemalloc \
+  --enable-nettle \
   --audio-drv-list="alsa,sdl,pa" \
   --target-list="arm-softmmu,i386-softmmu,x86_64-softmmu,arm-linux-user,armeb-linux-user,i386-linux-user,x86_64-linux-user"
 
