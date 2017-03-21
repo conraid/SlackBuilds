@@ -44,7 +44,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=netdata
-VERSION=1.5.0
+VERSION=1.6.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -126,10 +126,10 @@ for CONF in $(find $PKG/etc/netdata -name "*.conf"); do
 done
 
 # Install init file
-install -Dm755 $CWD/rc.netdata $PKG/etc/rc.d/rc.netdata.new
+install -Dm755 $CWD/files/rc.netdata $PKG/etc/rc.d/rc.netdata.new
 
 # Install conf file
-install -Dm644 $CWD/netdata.conf $PKG/etc/netdata/netdata.conf.new
+install -Dm644 $CWD/files/netdata.conf $PKG/etc/netdata/netdata.conf.new
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
