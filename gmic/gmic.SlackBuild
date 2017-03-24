@@ -32,7 +32,7 @@ CWD=$(pwd)
 PKGNAM=gmic
 SRCVERSION=1.7.9
 VERSION=1.7.9.1
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -65,15 +65,18 @@ mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM*
 tar xvf $CWD/${PKGNAM}_$VERSION.tar.gz
-tar xvf $CWD/$PKGNAM-community-*.tar.gz 
-mv $PKGNAM-community-* $PKGNAM-community 
+tar xvf $CWD/$PKGNAM-community-*.tar.gz
+mv $PKGNAM-community-* $PKGNAM-community
 ln -s $PKGNAM-$SRCVERSION $PKGNAM
 cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-# Make symlinks
+# Fix libdir to gimp plugin
+sed -i "s|lib/gimp|lib$LIBDIRSUFFIX/gimp|g" -i CMakeLists.txt
+
+# Make symlinks to build gimp plugin and zart
 ln -sf ../gmic-community/zart zart
 
 mkdir -p build
