@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=poedit
-VERSION=1.8.12
+VERSION=2.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -82,7 +82,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --mandir=/usr/man \
   --infodir=/usr/info \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --disable-legacytm \
   --with-cld2 \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
