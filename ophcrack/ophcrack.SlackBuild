@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=ophcrack
 VERSION=3.6.1
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -97,12 +97,12 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 # Add a desktop file
-install -Dm744 $CWD/$PKGNAM.desktop $PKG/usr/share/applications/$PKGNAM.desktop
+install -Dm744 $CWD/files/$PKGNAM.desktop $PKG/usr/share/applications/$PKGNAM.desktop
 
 # Add an icon
 install -Dm744 src/gui/pixmaps/os.xpm $PKG/usr/share/pixmaps/$PKGNAM.png
