@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=libmemcached
 VERSION=1.0.18
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,10 +72,7 @@ chmod -R u+w,go+r-w,a+X-s .
 # Have configure find mysqld (thanks to SBo)
 export PATH="/usr/libexec:$PATH"
 
-# Fix bug: https://bugzilla.redhat.com/show_bug.cgi?id=1037707
-patch -p1 -i $CWD/libpthread.patch
-
-LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
+LDFLAGS="-L/usr/lib${LIBDIRSUFFIX} -lpthread" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
