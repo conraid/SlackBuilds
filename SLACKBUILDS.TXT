@@ -524,7 +524,7 @@ SLACKBUILD NAME: collectd
 SLACKBUILD LOCATION: ./collectd
 SLACKBUILD FILES: README collectd.SlackBuild collectd.info doinst.sh rc.collectd slack-desc
 SLACKBUILD VERSION: 5.7.1
-SLACKBUILD REQUIRED: audit hiredis libdbi libesmtp libmemcached libmicrohttpd liboping libstatgrab libvirt lua protobuf-c rrdtool yajl
+SLACKBUILD REQUIRED: audit hiredis libdbi libesmtp libmemcached libmicrohttpd liboping libstatgrab libvirt lua protobuf-c rrdtool yajl postgresql
 SLACKBUILD DOWNLOAD: http://collectd.org/files/collectd-5.7.1.tar.bz2
 SLACKBUILD MD5SUM: dc36141ed3058c4919bbd54b87c07873
 SLACKBUILD SHORT DESCRIPTION:  collectd (system statistics collection daemon)
@@ -675,7 +675,7 @@ SLACKBUILD SHORT DESCRIPTION:  dcfldd (dd replacement with hashing)
 
 SLACKBUILD NAME: dcraw
 SLACKBUILD LOCATION: ./dcraw
-SLACKBUILD FILES: README dcraw.SlackBuild dcraw.info rawphoto.c slack-desc
+SLACKBUILD FILES: README dcraw.SlackBuild dcraw.info slack-desc
 SLACKBUILD VERSION: 9.27.0
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://www.cybercom.net/~dcoffin/dcraw/archive/dcraw-9.27.0.tar.gz
@@ -2071,10 +2071,10 @@ SLACKBUILD SHORT DESCRIPTION:  libtermkey (keyboard entry processing library)
 SLACKBUILD NAME: libtorrent-rasterbar
 SLACKBUILD LOCATION: ./libtorrent-rasterbar
 SLACKBUILD FILES: README libtorrent-rasterbar.SlackBuild libtorrent-rasterbar.info slack-desc
-SLACKBUILD VERSION: 1.0.10
+SLACKBUILD VERSION: 1.0.11
 SLACKBUILD REQUIRED: geoip
-SLACKBUILD DOWNLOAD: https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_0_10/libtorrent-rasterbar-1.0.10.tar.gz
-SLACKBUILD MD5SUM: e917dc024e956e80d3d6ca19e40d7f42
+SLACKBUILD DOWNLOAD: https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_0_11/libtorrent-rasterbar-1.0.11.tar.gz
+SLACKBUILD MD5SUM: f49e43286a64e8bbdef9ea59baa78b55
 SLACKBUILD SHORT DESCRIPTION:  libtorrent-rasterbar
 
 SLACKBUILD NAME: libtorrent
@@ -2107,10 +2107,10 @@ SLACKBUILD SHORT DESCRIPTION:  libuv (Cross-platform asychronous I/O)
 SLACKBUILD NAME: libvirt
 SLACKBUILD LOCATION: ./libvirt
 SLACKBUILD FILES: README doinst.sh libvirt.SlackBuild libvirt.info rc.libvirt slack-desc
-SLACKBUILD VERSION: 2.5.0
-SLACKBUILD REQUIRED: urlgrabber yajl
-SLACKBUILD DOWNLOAD: http://libvirt.org/sources/libvirt-2.5.0.tar.xz
-SLACKBUILD MD5SUM: 001af1ca2545971c6b46628678fd4afa
+SLACKBUILD VERSION: 3.2.0
+SLACKBUILD REQUIRED: audit urlgrabber yajl
+SLACKBUILD DOWNLOAD: http://libvirt.org/sources/libvirt-3.2.0.tar.xz
+SLACKBUILD MD5SUM: 389030d5961d7a0a1c720abbec0b9b78
 SLACKBUILD SHORT DESCRIPTION:  libvirt (The virtualization API)
 
 SLACKBUILD NAME: libvterm
@@ -2917,10 +2917,10 @@ SLACKBUILD SHORT DESCRIPTION:  Omping (Open Multicast Ping)
 SLACKBUILD NAME: oniguruma
 SLACKBUILD LOCATION: ./oniguruma
 SLACKBUILD FILES: README oniguruma.SlackBuild oniguruma.info slack-desc
-SLACKBUILD VERSION: 5.9.6_p1
+SLACKBUILD VERSION: 6.2.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/kkos/oniguruma/releases/download/v6.1.3/onig-6.1.3.tar.gz
-SLACKBUILD MD5SUM: 2d105d352c3f852d662414f639e7e859
+SLACKBUILD DOWNLOAD: https://github.com/kkos/oniguruma/releases/download/v6.2.0/onig-6.2.0.tar.gz
+SLACKBUILD MD5SUM: cda60e2faed8068801fdd226a7d1870b
 SLACKBUILD SHORT DESCRIPTION:  oniguruma (Regular expression library)
 
 SLACKBUILD NAME: openal
@@ -3168,7 +3168,7 @@ SLACKBUILD SHORT DESCRIPTION:  php-composer (Dependency Manager for PHP)
 
 SLACKBUILD NAME: php-imagick
 SLACKBUILD LOCATION: ./php-imagick
-SLACKBUILD FILES: README doinst.sh php-imagick.SlackBuild php-imagick.info slack-desc
+SLACKBUILD FILES: README doinst.sh files/imagick.ini php-imagick.SlackBuild php-imagick.info slack-desc
 SLACKBUILD VERSION: 3.4.2
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://pecl.php.net/get/imagick-3.4.2.tgz
@@ -3367,10 +3367,10 @@ SLACKBUILD SHORT DESCRIPTION:  postgresql (object-relational database management
 SLACKBUILD NAME: potrace
 SLACKBUILD LOCATION: ./potrace
 SLACKBUILD FILES: README potrace.SlackBuild potrace.info slack-desc
-SLACKBUILD VERSION: 1.13
+SLACKBUILD VERSION: 1.14
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://potrace.sourceforge.net/download/1.13/potrace-1.13.tar.gz
-SLACKBUILD MD5SUM: f26888fc2fbfa96fa79ce07fdcf4bb70
+SLACKBUILD DOWNLOAD: http://potrace.sourceforge.net/download/1.14/potrace-1.14.tar.gz
+SLACKBUILD MD5SUM: cd8086c8afa700ad912fd98562299360
 SLACKBUILD SHORT DESCRIPTION:  potrace (bitmap utility)
 
 SLACKBUILD NAME: privoxy
@@ -3546,11 +3546,11 @@ SLACKBUILD SHORT DESCRIPTION:  q4wine (Qt4 GUI for wine)
 
 SLACKBUILD NAME: qbittorrent
 SLACKBUILD LOCATION: ./qbittorrent
-SLACKBUILD FILES: README doinst.sh patches/3b5e7eb0eac107ad9b1795e7b355443cf9532d18.patch patches/ea9d65f377c3f7111679e627e10532e5eabea1cb.patch qbittorrent.SlackBuild qbittorrent.info slack-desc
-SLACKBUILD VERSION: 3.3.11
+SLACKBUILD FILES: README doinst.sh qbittorrent.SlackBuild qbittorrent.info slack-desc
+SLACKBUILD VERSION: 3.3.12
 SLACKBUILD REQUIRED: libtorrent-rasterbar
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/qbittorrent/qbittorrent-3.3.11.tar.xz
-SLACKBUILD MD5SUM: c0b23cc43bb99cf2bf51a2e4d4f6d926
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/qbittorrent/qbittorrent-3.3.12.tar.xz
+SLACKBUILD MD5SUM: 2537a5afa16e2b9b86e88412dc59f7fb
 SLACKBUILD SHORT DESCRIPTION:  qBittorrent (a C++/Qt4 Bittorrent Client)
 
 SLACKBUILD NAME: qdirstat
