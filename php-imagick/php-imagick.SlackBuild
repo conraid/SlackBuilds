@@ -32,7 +32,7 @@ CWD=$(pwd)
 PRGNAM=imagick
 PKGNAM=php-imagick
 VERSION=3.4.2
-BUILD=${BUILD:-10}
+BUILD=${BUILD:-11}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -91,13 +91,13 @@ find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cu
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 # Install config file
-install -Dm644 $CWD/imagick.ini  $PKG/etc/php.d/imagick.ini.new
+install -Dm644 $CWD/files/imagick.ini  $PKG/etc/php.d/imagick.ini.new
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
