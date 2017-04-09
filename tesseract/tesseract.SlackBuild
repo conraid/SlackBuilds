@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=tesseract
 VERSION=3.05.00
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -103,7 +103,7 @@ make DESTDIR=$PKG training-install
 # Install language files
 mkdir -p $PKG/usr/share/tessdata
 for LANG in $LANGS; do
-  wget https://github.com/tesseract-ocr/tessdata/raw/master/$LANG.traineddata
+  wget --no-check-certificate https://github.com/tesseract-ocr/tessdata/raw/master/$LANG.traineddata
   cp $LANG.traineddata $PKG/usr/share/tessdata/
 done
 
