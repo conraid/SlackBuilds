@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=notmuch
-VERSION=0.23.7
+VERSION=0.24.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -119,11 +119,9 @@ cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat vim/notmuch.txt > $PKG/usr/doc/$PKGNAM-$VERSION/notmuch_vim.txt
 cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
-
-install -Dm644 ${PKGNAM}.desktop $PKG/usr/share/applications/${PKGNAM}.desktop
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD${TAG}.txz
