@@ -1,0 +1,77 @@
+#!/bin/sh
+#
+# Slackware build script for yarn
+#
+# Copyright 2017 Corrado Franco (http://conraid.net)
+# All rights reserved.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version, with the following exception:
+# the text of the GPL license may be omitted.
+
+# This program is distributed in the hope that it will be useful, but
+# without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose. Compiling,
+# interpreting, executing or merely reading the text of the program
+# may result in lapses of consciousness and/or very being, up to and
+# including the end of all existence and the Universe as we know it.
+# See the GNU General Public License for more details.
+
+# You may have received a copy of the GNU General Public License along
+# with this program (most likely, a file named COPYING).  If not, see
+# <http://www.gnu.org/licenses/>.
+#
+# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+
+set -eu
+
+CWD=$(pwd)
+
+PKGNAM=yarn
+VERSION=0.23.2
+BUILD=${BUILD:-1}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+PKG=$TMP/package-$PKGNAM
+OUTPUT=${OUTPUT:-/tmp}
+
+DOCFILES="dist/LICENSE dist/README*"
+
+if [ -z ${ARCH:=""} ]; then
+  case "$( uname -m )" in
+  i?86) ARCH=i686 ;;
+  arm*) ARCH=arm ;;
+  *) ARCH=$( uname -m ) ;;
+  esac
+fi
+[ "$ARCH" = "x86_64" ] && LIBDIRSUFFIX="64" || LIBDIRSUFFIX=""
+
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+rm -rf $PKGNAM-$VERSION
+mkdir -p $PKGNAM-$VERSION
+cd $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-v$VERSION.tar.gz
+
+chown -R root:root .
+chmod -R u+w,go+r-w,a+X-s .
+
+mkdir -p $PKG/usr/lib$LIBDIRSUFFIX/node_modules/yarn
+cp -r dist/* $PKG/usr/lib$LIBDIRSUFFIX/node_modules/yarn
+
+mkdir -p $PKG/usr/bin
+ln -s /usr/lib$LIBDIRSUFFIX/node_modules/yarn/bin/yarn $PKG/usr/bin/yarn
+ln -s /usr/lib$LIBDIRSUFFIX/node_modules/yarn/bin/yarnpkg $PKG/usr/bin/yarnpkg
+
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
