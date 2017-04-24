@@ -28,9 +28,9 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=memcached
-PKGNAM=php-memcached
-VERSION=2.2.0
-BUILD=${BUILD:-33}
+PKGNAM=php-$PRGNAM
+VERSION=3.0.3
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -95,7 +95,7 @@ mkdir -p $PKG/etc/php.d/
 echo ';extension=memcached.so' > $PKG/etc/php.d/memcached.ini.new
 grep "^memcached" memcached.ini | sed 's/igbinary/php/' >> $PKG/etc/php.d/memcached.ini.new
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 

@@ -28,9 +28,9 @@ set -eu
 CWD=$(pwd)
 
 PRGNAM=oauth
-PKGNAM=php-oauth
-VERSION=1.2.3
-BUILD=${BUILD:-16}
+PKGNAM=php-$PRGNAM
+VERSION=2.0.2
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -40,9 +40,9 @@ DOCFILES="LICENSE"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-    i?86) ARCH=i686 ;;
-    arm*) ARCH=arm ;;
-    *) ARCH=$( uname -m ) ;;
+  i?86) ARCH=i686 ;;
+  arm*) ARCH=arm ;;
+  *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -92,7 +92,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 mkdir -p $PKG/etc/php.d
 echo 'extension=oauth.so' > $PKG/etc/php.d/oauth.ini.new
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 

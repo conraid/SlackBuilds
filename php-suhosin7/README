@@ -1,0 +1,31 @@
+
+Slackware Current Repository by Conraid
+
+======================================================================
+
+php-suhosin7 (An advanced protection system for PHP)
+
+Suhosin is an advanced protection system for PHP installations.
+It was designed to protect servers and users from known and unknown
+flaws in PHP applications and the PHP core.
+
+HOME: https://www.suhosin.org
+
+======================================================================
+NOTE: 
+
+FOR TESTING AND DEVELOPMENT ONLY
+
+Suhosin extension produces an segfault when apache is started with
+mpm_worker_module or mpm_event_module.
+So it is advisable to start apache with mpm_prefork_module.
+
+Even the PHP documentation recommends:
+  If you want to use a threaded MPM, look at a FastCGI configuration
+  where PHP is running in its own memory space. 
+(http://php.net/manual/en/faq.installation.php#faq.installation.apache2)
+
+I didn't done other tests, especially with fastcgi.
+If you have suggestions are welcome.
+
+======================
