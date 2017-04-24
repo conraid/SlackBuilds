@@ -1,0 +1,29 @@
+#
+# mod_php - PHP Hypertext Preprocessor module
+#
+
+# Load the PHP module:
+LoadModule php5_module lib/httpd/modules/libphp5.so
+
+# Tell Apache to feed all *.php files through PHP.  If you'd like to
+# parse PHP embedded in files with different extensions, comment out
+# these lines and see the example below.
+<FilesMatch \.php$>
+    SetHandler application/x-httpd-php
+</FilesMatch>
+
+# Tell Apache to feed all *.php, *.html, and *.htm files through
+# the PHP module.  Add or subtract extensions here as desired.  Please
+# note that running pages through PHP for no reason can be both slow
+# and insecure, so be sure to know what you're doing.  It's a convenient
+# shortcut, but probably isn't suitible for high-traffic sites if you
+# write any of your pages in straight HTML.
+#<FilesMatch "\.(php|html|htm)$">
+#    SetHandler application/x-httpd-php
+#</FilesMatch>
+
+# This will display PHP files in colored syntax form.  Use with caution.
+#<FilesMatch "\.phps$">
+#    SetHandler application/x-httpd-php-source
+#</FilesMatch>
+

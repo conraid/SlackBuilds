@@ -1,0 +1,312 @@
+#!/bin/sh
+
+# Build and package mod_php on Slackware.
+# by:  David Cantrell <david@slackware.com>
+# Modified for PHP 4-5 by volkerdi@slackware.com
+# Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015  Patrick Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Modified for PHP7 and PGSQL by Corrado Franco <http://conraid.net>
+# Copyright 2017 Corrado Franco
+
+set -eu
+
+VERSION=7.1.4
+ALPINE=2.21
+BUILD=${BUILD:-1}
+TAG=${TAG:-cf}
+
+# Automatically determine the architecture we're building on:
+if [ -z ${ARCH:=""} ]; then
+  case "$( uname -m )" in
+    i?86) export ARCH=i586 ;;
+    arm*) export ARCH=arm ;;
+    # Unless $ARCH is already set, use uname -m for all other archs:
+       *) export ARCH=$( uname -m ) ;;
+  esac
+fi
+
+CWD=$(pwd)
+TMP=${TMP:-/tmp}
+PKG=$TMP/package-php/
+OUTPUT=${OUTPUT:-/tmp}
+
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i586" ]; then
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  LIBDIRSUFFIX="64"
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+fi
+
+# we need to compile alpine to get c-client.a for IMAP support:
+IMAPLIBDIR=/usr/local/lib${LIBDIRSUFFIX}/c-client
+if [ -r $IMAPLIBDIR/lib${LIBDIRSUFFIX}/c-client.a ]; then
+  echo "Using IMAP library:"
+  ls -l $IMAPLIBDIR/lib${LIBDIRSUFFIX}/c-client.a
+  sleep 5
+else
+  ( cd $CWD/../alpine ; VERSION=${ALPINE} ; ./alpine.SlackBuild || exit 1 ) || exit 1
+  ( cd $TMP/alpine-${ALPINE}/imap/c-client
+    strip -g c-client.a
+    mkdir -p $IMAPLIBDIR/lib${LIBDIRSUFFIX}
+    cp c-client.a $IMAPLIBDIR/lib${LIBDIRSUFFIX}
+    mkdir -p $IMAPLIBDIR/include
+    cp *.h $IMAPLIBDIR/include
+  )
+fi
+
+mkdir -p $PKG/etc/httpd
+mkdir -p $PKG/etc/php.d
+# A trick from DaMouse to enable building php into $PKG.
+# We'll remove this later on.
+cat /etc/httpd/original/httpd.conf > $PKG/etc/httpd/httpd.conf
+if [ ! -e /etc/httpd/original/httpd.conf ]; then
+  echo "FATAL:  no /etc/httpd/original/httpd.conf found."
+  exit 1
+fi
+
+cd $TMP
+rm -rf php-$VERSION
+tar xvf $CWD/php-$VERSION.tar.?z* || exit 1
+cd php-$VERSION
+
+# cleanup:
+find . -name "*.orig" -delete
+
+# Add missing(?) PEAR modules back:
+if [ -d php-$VERSION/pear/packages ]; then
+  ( cd php-$VERSION/pear/packages
+    cp -a $CWD/pear/*.bz2 . 2> /dev/null
+    bzip2 -d *.bz2 2> /dev/null
+  )
+fi
+
+# Fixup perms/owners:
+chown -R root:root .
+find . \
+  \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
+
+find . -name "*.h" -exec chmod 644 {} \;
+
+# Sometimes they ship a few of these:
+find . -name "*.orig" -exec rm {} \;
+
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
+
+# Install the build folder into /usr/lib$LIBDIRSUFFIX/php/build
+# and adapt phpize accordingly:
+sed -i "s|build$|php/build|" scripts/Makefile.frag
+sed -i "s|build\"$|php/build\"|" scripts/phpize.in
+
+# Generic "kitchen sink" configure function, with as many things as possible (and
+# maybe then some ;-) compiled as shared extensions:
+EXTENSION_DIR=/usr/lib${LIBDIRSUFFIX}/php/extensions \
+CFLAGS="$SLKCFLAGS" \
+./configure \
+  --prefix=/usr \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --with-libdir=lib${LIBDIRSUFFIX} \
+  --localstatedir=/var \
+  --sysconfdir=/etc \
+  --datarootdir=/usr/share \
+  --datadir=/usr/share \
+  --infodir=/usr/info \
+  --mandir=/usr/man \
+  --with-apxs2=/usr/bin/apxs \
+  --enable-fpm \
+  --with-fpm-user=apache \
+  --with-fpm-group=apache \
+  --enable-maintainer-zts \
+  --enable-pcntl \
+  --enable-mbregex \
+  --enable-tokenizer=shared \
+  --with-config-file-scan-dir=/etc/php.d \
+  --with-config-file-path=/etc \
+  --with-layout=PHP \
+  --disable-sigchild \
+  --enable-xml \
+  --with-libxml-dir=/usr \
+  --enable-simplexml \
+  --enable-xmlreader=shared \
+  --enable-dom=shared \
+  --enable-filter \
+  --disable-debug \
+  --with-openssl=shared \
+  --with-pcre-regex=/usr \
+  --with-zlib=shared,/usr \
+  --enable-bcmath=shared \
+  --with-bz2=shared,/usr \
+  --enable-calendar=shared \
+  --enable-ctype=shared \
+  --with-curl=shared \
+  --with-mcrypt=/usr \
+  --enable-dba=shared \
+  --with-gdbm=/usr \
+  --with-db4=/usr \
+  --enable-exif=shared \
+  --enable-ftp=shared \
+  --with-gd=shared \
+  --with-jpeg-dir=/usr \
+  --with-png-dir=/usr \
+  --with-zlib-dir=/usr \
+  --with-xpm-dir=/usr \
+  --with-freetype-dir=/usr \
+  --enable-gd-native-ttf \
+  --with-gettext=shared,/usr \
+  --with-gmp=shared,/usr \
+  --with-iconv=shared \
+  --with-imap-ssl=/usr \
+  --with-imap=$IMAPLIBDIR \
+  --with-ldap=shared \
+  --enable-mbstring=shared \
+  --enable-hash \
+  --with-mysqli=shared,mysqlnd \
+  --with-mysql-sock=/var/run/mysql/mysql.sock \
+  --with-pgsql=shared \
+  --with-iodbc=shared,/usr \
+  --enable-pdo=shared \
+  --with-pdo-mysql=shared,mysqlnd \
+  --with-pdo-sqlite=shared,/usr \
+  --with-pdo-odbc=shared,iODBC,/usr \
+  --with-pdo-pgsql=shared \
+  --with-pspell=shared,/usr \
+  --with-enchant=shared,/usr \
+  --enable-shmop=shared \
+  --with-snmp=shared,/usr \
+  --enable-soap=shared \
+  --enable-sockets \
+  --with-sqlite3=shared \
+  --enable-sysvmsg \
+  --enable-sysvsem \
+  --enable-sysvshm \
+  --enable-wddx=shared \
+  --with-xsl=shared,/usr \
+  --enable-zip=shared \
+  --with-tsrm-pthreads \
+  --enable-intl=shared \
+  --enable-opcache \
+  --enable-shared=yes \
+  --enable-static=no \
+  --with-gnu-ld \
+  --with-pic \
+  --enable-phpdbg \
+  --build=$ARCH-slackware-linux
+
+# I am told this option is worse than nothing.  :-)
+#  --enable-safe-mode
+#
+# I would recommend *against* and will take no responbility for turning on
+# "safe" mode.
+
+make
+make install INSTALL_ROOT=$PKG
+
+mkdir -p $PKG/etc/{rc.d,php-fpm.d}
+cp sapi/fpm/init.d.php-fpm $PKG/etc/rc.d/rc.php-fpm.new
+chmod 644 $PKG/etc/rc.d/rc.php-fpm.new
+
+# PHP (used to) install Pear with some strange permissions.
+chmod 755 $PKG/usr/bin/pear
+
+# PHP sometimes puts junk in the root directory:
+( cd $PKG
+  rm -rf .channels .depdb .depdblock .filemap .lock .registry
+)
+
+# We do not package static extension libraries:
+rm -f $PKG/usr/lib${LIBDIRSUFFIX}/php/extensions/*.a
+
+# Fix $PKG/usr/lib/php perms:
+( cd $PKG/usr/lib${LIBDIRSUFFIX}/php
+  find . \
+   \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+   -exec chmod 755 {} \; -o \
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \;
+)
+
+mkdir -p $PKG/usr/doc/php-$VERSION
+cp -a \
+  CODING_STANDARDS CREDITS EXTENSIONS INSTALL LICENSE NEWS README* UPGRADING* \
+  sapi/cgi/README.FastCGI \
+  $PKG/usr/doc/php-$VERSION || true
+chown -R root:root $PKG/usr/doc/php-$VERSION
+chmod 644 $PKG/usr/doc/php-$VERSION/UPGRADING*
+
+mkdir -p $PKG/etc/httpd
+cat $CWD/files/mod_php.conf.example | sed -e "s#lib/httpd#lib${LIBDIRSUFFIX}/httpd#" \
+  > $PKG/etc/httpd/mod_php.conf.example
+chmod 644 $PKG/etc/httpd/*
+chown root:root $PKG/etc/httpd/*
+
+cp -a php.ini-development php.ini-production $PKG/etc
+chmod 755 $PKG/etc/php.d $PKG/etc/php-fpm.d $PKG/etc/httpd
+chown root:root $PKG/etc/*
+
+# This can go now.
+rm -f $PKG/etc/httpd/httpd*
+
+# Session directory for PHP:
+mkdir -p $PKG/var/lib/php
+chmod 770 $PKG/var/lib/php
+chown root:apache $PKG/var/lib/php
+
+# Strip ELF objects.
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF \
+  | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+
+gzip -9 $PKG/usr/man/man?/*.?
+
+mkdir -p $PKG/install
+zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+#if [ -d "$IMAPLIBDIR" ]; then
+#  ( cd $IMAPLIBDIR && rm -rf * )
+#  rmdir $IMAPLIBDIR
+#fi
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/php-$VERSION-$ARCH-${BUILD}${TAG}.txz
+
