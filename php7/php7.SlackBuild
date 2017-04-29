@@ -28,24 +28,23 @@
 
 set -eu
 
+PKGNAM=php7
 VERSION=7.1.4
 ALPINE=2.21
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 
-# Automatically determine the architecture we're building on:
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
     i?86) export ARCH=i586 ;;
     arm*) export ARCH=arm ;;
-    # Unless $ARCH is already set, use uname -m for all other archs:
        *) export ARCH=$( uname -m ) ;;
   esac
 fi
 
 CWD=$(pwd)
 TMP=${TMP:-/tmp}
-PKG=$TMP/package-php/
+PKG=$TMP/package-$PKGNAM/
 OUTPUT=${OUTPUT:-/tmp}
 
 rm -rf $PKG
@@ -308,5 +307,5 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 #fi
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/php-$VERSION-$ARCH-${BUILD}${TAG}.txz
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz
 
