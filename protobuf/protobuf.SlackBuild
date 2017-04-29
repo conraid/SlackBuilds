@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=protobuf
-VERSION=3.2.0
+VERSION=3.3.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -99,23 +99,6 @@ make DESTDIR=$PKG install-strip
 if [ $BUILD_PYTHON = "YES" ]; then
   cd python
   python setup.py install --root=$PKG
-  cd -
-fi
-
-# PHP
-if [ $BUILD_PHP = "YES" ]; then
-  cd php/ext/google/protobuf/
-  phpize --clean
-  phpize
-  CFLAGS="$SLKCFLAGS" \
-  ./configure \
-  --with-libdir=lib${LIBDIRSUFFIX} \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --disable-static \
-  --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
   cd -
 fi
 
