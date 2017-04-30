@@ -31,8 +31,8 @@ CWD=$(pwd)
 
 SRCNAM=MySQLTuner-perl
 PRGNAM=mysqltuner
-VERSION=1.6.18
-BUILD=${BUILD:-2}
+TARVERSION=1.6.18
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -44,14 +44,16 @@ DOCFILES="*.md LICENSE *.tlp *.png"
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $SRCNAM-$VERSION
-tar xvf $CWD/$SRCNAM-${VERSION}.tar.gz || tar xvf $CWD/${VERSION}.tar.gz
-cd $SRCNAM-$VERSION
+rm -rf $SRCNAM-$TARVERSION
+tar xvf $CWD/$SRCNAM-${TARVERSION}.tar.gz || tar xvf $CWD/${TARVERSION}.tar.gz
+cd $SRCNAM-$TARVERSION
+
+VERSION=$(grep "^# mysqltuner.pl - Version" $CWD/mysqltuner.pl | cut -d" " -f5)
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-install -Dm755 mysqltuner.pl $PKG/usr/bin/mysqltuner
+install -Dm755 $CWD/mysqltuner.pl $PKG/usr/bin/mysqltuner
 install -Dm644 vulnerabilities.csv $PKG/usr/share/mysqltuner/vulnerabilities.csv
 install -Dm644 basic_passwords.txt $PKG/usr/share/mysqltuner/basic_passwords.txt
 
@@ -59,7 +61,7 @@ mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
