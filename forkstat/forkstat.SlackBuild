@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=forkstat
-VERSION=0.01.16
+VERSION=0.01.17
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -80,7 +80,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 install -Dm644 $CWD/${PKGNAM}.SlackBuild $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBuild
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
