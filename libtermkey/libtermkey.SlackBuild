@@ -30,7 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=libtermkey
-VERSION=0.20
+COMMIT=205c743ad93bae3939e96c27ac2fbfc5a7008c73
+VERSION=$(echo $COMMIT | cut -c -7)_git
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -62,9 +63,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM-$COMMIT
+tar xvf $CWD/$PKGNAM-$COMMIT.tar.gz || tar xvf $CWD/$COMMIT.tar.gz
+cd $PKGNAM-$COMMIT
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
