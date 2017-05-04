@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PRGNAM=PHP_CodeSniffer
 PKGNAM=php-codesniffer
-VERSION=2.8.1
+VERSION=2.9.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -64,9 +64,6 @@ install -Dm644 $CWD/files/*.1.gz -t $PKG/usr/man/man1
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $PKG/usr/lib${LIBDIRSUFFIX}/php/doc/$PRGNAM/* $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
-
-# Move svn script in doc dir
-mv $PKG/usr/bin/scripts $PKG/usr/doc/$PKGNAM-$VERSION
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
