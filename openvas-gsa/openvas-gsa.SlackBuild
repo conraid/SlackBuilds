@@ -32,7 +32,7 @@ CWD=$(pwd)
 PRGNAM=greenbone-security-assistant
 PKGNAM=openvas-gsa
 VERSION=7.0.2
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -103,7 +103,7 @@ fi
 mv $PKG/etc/openvas/gsad_log.conf $PKG/etc/openvas/gsad_log.conf.new
 
 # Add init config file
-install -Dm644 $CWD/gsad.conf $PKG/etc/openvas/gsad.conf.new
+install -Dm644 $CWD/files/gsad.conf $PKG/etc/openvas/gsad.conf.new
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
@@ -115,9 +115,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 install -Dm755 $CWD/openvas-check-setup $PKG/usr/sbin/openvas-check-setup
 
 # Install rc script (thanks to SBo)
-install -Dm644 $CWD/rc.gsad $PKG/etc/rc.d/rc.gsad.new
+install -Dm644 $CWD/files/rc.gsad $PKG/etc/rc.d/rc.gsad.new
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
