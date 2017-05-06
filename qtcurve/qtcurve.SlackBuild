@@ -28,7 +28,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=qtcurve
-VERSION=16eef6f
+COMMIT=a249871e95d4d64a0f2a7c95020d54b1435a4e93
+VERSION=$(echo $COMMIT | head -c7)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -61,9 +62,9 @@ fi
 
 mkdir -p $PKG $TMP $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-${VERSION}*
-tar xvf $CWD/$PKGNAM-${VERSION}*.tar.gz || tar xvf ${VERSION}*.tar.gz
-cd $PKGNAM-${VERSION}*
+rm -rf $PKGNAM-$COMMIT
+tar xvf $CWD/$PKGNAM-$COMMIT.tar.gz || tar xvf $COMMIT.tar.gz
+cd $PKGNAM-$COMMIT
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -78,7 +79,7 @@ cmake \
  -DMAN_INSTALL_DIR=/usr/man \
  -DSYSCONF_INSTALL_DIR=/etc \
  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
- -DENABLE_QT5=Off \
+ -DENABLE_QT5=OFF \
  ..
 
 make VERBOSE=1
@@ -89,7 +90,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
