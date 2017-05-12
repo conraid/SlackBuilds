@@ -468,7 +468,7 @@ SLACKBUILD SHORT DESCRIPTION:  clamav-gui (Front-End for ClamAV)
 
 SLACKBUILD NAME: clamav
 SLACKBUILD LOCATION: ./clamav
-SLACKBUILD FILES: PKGNOTE README clamav.SlackBuild clamav.info doinst.sh files/clamd.conf files/freshclam.conf files/logrotate.clamav files/rc.clamav patches/Add-support-for-LLVM-3.7.patch patches/Add-support-for-LLVM-3.8.patch patches/Add-support-for-LLVM-3.9.patch patches/fix_unitialized_variable.patch patches/fix_zlib_check.patch slack-desc
+SLACKBUILD FILES: PKGNOTE README clamav.SlackBuild clamav.info doinst.sh files/clamd.conf files/freshclam.conf files/logrotate.clamav files/rc.clamav patches/Add-support-for-LLVM-3.7.patch patches/Add-support-for-LLVM-3.8.patch patches/Add-support-for-LLVM-3.9.patch patches/clamav-0.99.2-gcc-6.patch patches/fix_unitialized_variable.patch patches/fix_zlib_check.patch slack-desc
 SLACKBUILD VERSION: 0.99.2
 SLACKBUILD REQUIRED: json-c pcre2
 SLACKBUILD DOWNLOAD: http://www.clamav.net/downloads/production/clamav-0.99.2.tar.gz
@@ -865,10 +865,10 @@ SLACKBUILD SHORT DESCRIPTION:  extundelete (utility to undelete files from ext3/
 SLACKBUILD NAME: fail2ban
 SLACKBUILD LOCATION: ./fail2ban
 SLACKBUILD FILES: README doinst.sh fail2ban.SlackBuild fail2ban.info files/fail2ban.logrotate files/paths-slackware.conf files/rc.fail2ban slack-desc
-SLACKBUILD VERSION: 0.9.6
+SLACKBUILD VERSION: 0.9.7
 SLACKBUILD REQUIRED: pyinotify
-SLACKBUILD DOWNLOAD: https://github.com/fail2ban/fail2ban/archive/0.9.6.tar.gz
-SLACKBUILD MD5SUM: 8758789d40366f5e212b4e6b629297d1
+SLACKBUILD DOWNLOAD: https://github.com/fail2ban/fail2ban/archive/0.9.7.tar.gz
+SLACKBUILD MD5SUM: 5e9deaea5237382940d5d58f22ca607a
 SLACKBUILD SHORT DESCRIPTION:  Fail2Ban (bans IP that makes too many password failures)
 
 SLACKBUILD NAME: fdupes
@@ -1351,10 +1351,10 @@ SLACKBUILD SHORT DESCRIPTION:  hungrycat
 SLACKBUILD NAME: hwinfo
 SLACKBUILD LOCATION: ./hwinfo
 SLACKBUILD FILES: README hwinfo.SlackBuild hwinfo.info patches/tiocgdev.patch slack-desc
-SLACKBUILD VERSION: 21.44
+SLACKBUILD VERSION: 21.45
 SLACKBUILD REQUIRED: libx86emu
-SLACKBUILD DOWNLOAD: https://github.com/openSUSE/hwinfo/archive/21.44.tar.gz
-SLACKBUILD MD5SUM: df349d9dc9f40385aade098f2676f4d3
+SLACKBUILD DOWNLOAD: https://github.com/openSUSE/hwinfo/archive/21.45.tar.gz
+SLACKBUILD MD5SUM: 037db1dbab5355134a640db8319e3bd1
 SLACKBUILD SHORT DESCRIPTION:  hwinfo (hardware detection tool used in SuSE Linux)
 
 SLACKBUILD NAME: hydra
@@ -2710,10 +2710,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-clean-css-cli (The command line interface to
 SLACKBUILD NAME: node-clean-css
 SLACKBUILD LOCATION: ./node-clean-css
 SLACKBUILD FILES: README node-clean-css.SlackBuild node-clean-css.info slack-desc
-SLACKBUILD VERSION: 4.1.1
-SLACKBUILD REQUIRED: npm
-SLACKBUILD DOWNLOAD: https://github.com/jakubpawlowicz/clean-css/archive/v4.1.1.tar.gz
-SLACKBUILD MD5SUM: ba49f713809b7639c56abb6e7c28dffa
+SLACKBUILD VERSION: 4.1.2
+SLACKBUILD REQUIRED: node npm
+SLACKBUILD DOWNLOAD: https://github.com/jakubpawlowicz/clean-css/archive/v4.1.2.tar.gz
+SLACKBUILD MD5SUM: 80aa8620bf7d844296f77fe587cc19da
 SLACKBUILD SHORT DESCRIPTION:  node-clean-css (CSS minifier for node.js)
 
 SLACKBUILD NAME: node-cross-spawn
@@ -2809,10 +2809,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-stylus (CSS language built for nodejs)
 SLACKBUILD NAME: node-uglifyjs
 SLACKBUILD LOCATION: ./node-uglifyjs
 SLACKBUILD FILES: README node-uglifyjs.SlackBuild node-uglifyjs.info slack-desc
-SLACKBUILD VERSION: 3.0.3
+SLACKBUILD VERSION: 3.0.4
 SLACKBUILD REQUIRED: npm
-SLACKBUILD DOWNLOAD: https://github.com/mishoo/UglifyJS2/archive/v3.0.3.tar.gz
-SLACKBUILD MD5SUM: c1504efbb879af7eefada34a3d228b44
+SLACKBUILD DOWNLOAD: https://github.com/mishoo/UglifyJS2/archive/v3.0.4.tar.gz
+SLACKBUILD MD5SUM: 29520572bae8cd4218c0c11be84df4b2
 SLACKBUILD SHORT DESCRIPTION:  node-uglify-js (JavaScript compressor/minifier)
 
 SLACKBUILD NAME: node-watcherjs
@@ -2872,10 +2872,10 @@ SLACKBUILD SHORT DESCRIPTION:  npm-check-updates (Find newer versions of npm pac
 SLACKBUILD NAME: npm-check
 SLACKBUILD LOCATION: ./npm-check
 SLACKBUILD FILES: README npm-check.SlackBuild npm-check.info slack-desc
-SLACKBUILD VERSION: 5.4.0
-SLACKBUILD REQUIRED: npm grunt-cli
-SLACKBUILD DOWNLOAD: https://github.com/dylang/npm-check/archive/v5.4.0.tar.gz
-SLACKBUILD MD5SUM: ba4c1878ebff8888105b57ab4616e830
+SLACKBUILD VERSION: 5.4.4
+SLACKBUILD REQUIRED: grunt-cli
+SLACKBUILD DOWNLOAD: https://github.com/dylang/npm-check/archive/v5.4.4.tar.gz
+SLACKBUILD MD5SUM: 99a3f3e87d80e96bd87fa8c62cae0f11
 SLACKBUILD SHORT DESCRIPTION:  npm-check (check node dependencies)
 
 SLACKBUILD NAME: npm
@@ -2926,10 +2926,10 @@ SLACKBUILD SHORT DESCRIPTION:  nuttcp (TCP/UDP network testing tool)
 SLACKBUILD NAME: oauth2client
 SLACKBUILD LOCATION: ./oauth2client
 SLACKBUILD FILES: README oauth2client.SlackBuild oauth2client.info slack-desc
-SLACKBUILD VERSION: 4.0.0
+SLACKBUILD VERSION: 4.1.0
 SLACKBUILD REQUIRED: httplib2
-SLACKBUILD DOWNLOAD: https://github.com/google/oauth2client/archive/v4.0.0.tar.gz
-SLACKBUILD MD5SUM: c3270b853d66227960b9e04131faf604
+SLACKBUILD DOWNLOAD: https://github.com/google/oauth2client/archive/v4.1.0.tar.gz
+SLACKBUILD MD5SUM: 7761a9618e328ee539fef4ada5b0c189
 SLACKBUILD SHORT DESCRIPTION:  oauth2client (OAuth 2.0 Python library)
 
 SLACKBUILD NAME: offlineimap
@@ -3375,7 +3375,7 @@ SLACKBUILD SHORT DESCRIPTION:  poedit (Gettext translations editor)
 
 SLACKBUILD NAME: pokerth
 SLACKBUILD LOCATION: ./pokerth
-SLACKBUILD FILES: README doinst.sh patches/pokerth-1.1.1-Qualify-std-ifstream-and-std-ofstream.patch patches/pokerth-c++11.patch pokerth.SlackBuild pokerth.info slack-desc
+SLACKBUILD FILES: README doinst.sh patches/01-pokerth-1.1.1-Qualify-std-ifstream-and-std-ofstream.patch patches/02-pokerth-gcc6.patch patches/03-pokerth-c++11.patch pokerth.SlackBuild pokerth.info slack-desc
 SLACKBUILD VERSION: 1.1.1
 SLACKBUILD REQUIRED: libgsasl tinyxml protobuf libircclient
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/pokerth/pokerth/1.1/PokerTH-1.1.1-src.tar.bz2
@@ -3556,10 +3556,10 @@ SLACKBUILD SHORT DESCRIPTION:  pyrit (WPA precomputed cracker)
 SLACKBUILD NAME: python-requests
 SLACKBUILD LOCATION: ./python-requests
 SLACKBUILD FILES: README python-requests.SlackBuild python-requests.info slack-desc
-SLACKBUILD VERSION: 2.14.1
+SLACKBUILD VERSION: 2.14.2
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/kennethreitz/requests/archive/v2.14.1.tar.gz
-SLACKBUILD MD5SUM: 8f9752b0cfe764b34db64b3919239edc
+SLACKBUILD DOWNLOAD: https://github.com/kennethreitz/requests/archive/v2.14.2.tar.gz
+SLACKBUILD MD5SUM: 2873f97eab3b20f8269d608bc5b58ce3
 SLACKBUILD SHORT DESCRIPTION:  python-requests (Requests: HTTP for Humans)
 
 SLACKBUILD NAME: pyyaml
