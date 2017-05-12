@@ -27,11 +27,25 @@
 
 set -eu
 
+# You must have clamav user and group to run this script
+#
+#  groupadd -g 210 clamav
+#  useradd -d /dev/null -s /bin/false -c "Clam AntiVirus" -g clamav clamav
+#
+
+if ! grep ^clamav: /etc/passwd 2>&1 > /dev/null; then
+  echo "You must have a clamav user to run this script"
+  exit
+elif ! grep ^clamav: /etc/group 2>&1 > /dev/null; then
+  echo "You must have a clamav group to run this script"
+  exit
+fi
+
 CWD=$(pwd)
 
 PKGNAM=clamav
 VERSION=0.99.2
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
