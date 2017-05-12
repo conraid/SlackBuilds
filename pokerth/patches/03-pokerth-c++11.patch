@@ -14,7 +14,7 @@ index 6ab18b9..e9f1e3a 100644
 @@ -246,6 +246,8 @@ win32{
  	##### My release static build options
  	#QMAKE_CXXFLAGS += -ffunction-sections -fdata-sections
- 	INCLUDEPATH += $${PREFIX}/include /opt/gsasl/include
+ 	INCLUDEPATH += /opt/gsasl/include
 +        DEFINES += _WEBSOCKETPP_CPP11_STL_
 +        QMAKE_CXXFLAGS += -std=gnu++11
  }
