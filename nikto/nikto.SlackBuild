@@ -30,7 +30,9 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=nikto
-VERSION=2.1.6
+COMMIT="0b80a7fce2fe99123db102973319c4da85628803"
+SRCVERSION=$COMMIT
+VERSION=20170430_git
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -64,9 +66,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION.tar.gz
+cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
