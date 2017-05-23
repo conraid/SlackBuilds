@@ -44,9 +44,9 @@ fi
 CWD=$(pwd)
 
 PKGNAM=postgresql
-VERSION=9.6.1
+VERSION=9.6.3
 PG_VERSION=$(echo $VERSION | cut -d. -f-2)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -155,12 +155,12 @@ chmod 700 $PKG/var/lib/pgsql/$PG_VERSION/data
 mkdir -p $PKG/etc/rc.d
 sed -e "s|%PG_VERSION%|$PG_VERSION|g" \
   -e "s|%LIBDIRSUFFIX%|${LIBDIRSUFFIX}|g" \
-  $CWD/rc.$PKGNAM > $PKG/etc/rc.d/rc.$PKGNAM.new
+  $CWD/files/rc.$PKGNAM > $PKG/etc/rc.d/rc.$PKGNAM.new
 
 # Install logrotate script
 mkdir -p $PKG/etc/logrotate.d
 sed -e "s|%PG_VERSION%|$PG_VERSION|g" \
-  $CWD/$PKGNAM.logrotate > $PKG/etc/logrotate.d/$PKGNAM.new
+  $CWD/files/$PKGNAM.logrotate > $PKG/etc/logrotate.d/$PKGNAM.new
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
