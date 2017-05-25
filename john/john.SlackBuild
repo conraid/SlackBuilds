@@ -26,9 +26,11 @@ set -eu
 
 CWD=$(pwd)
 
+PRGNAM=JohnTheRipper
 PKGNAM=john
-VERSION=1.8.0
-BUILD=${BUILD:-6}
+SRCVERSION=1.8.0-jumbo-1
+VERSION=$(echo $SRCVERSION | tr - _)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -37,17 +39,19 @@ OUTPUT=${OUTPUT:-/tmp}
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
     i?86) ARCH=x86 ;;
-    arm*) ARCH=arm ;;
-       *) ARCH=$( uname -m ) ;;
+    x86_64) ARCH=x86_64 ;;
+    *) echo "Platform $(uname -m) not supported"
+       exit
+       ;;
   esac
 fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
-cd $PKGNAM-$VERSION
+rm -rf $PRGNAM-$SRCVERSION
+tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz
+cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
@@ -59,25 +63,32 @@ if [ -e $CWD/patches ]; then
   done
 fi
 
-SLKCFLAGS="-c -DJOHN_SYSTEMWIDE=1 -Wall -O2 -fomit-frame-pointer"
-if [ $ARCH = "x86" ]; then
-  make -C src clean
-  make -C src CFLAGS="$SLKCFLAGS" linux-x86-sse2
-  install -Dsm755 run/john $PKG/usr/libexec/john/john-sse2
-  make -C src clean
-  make -C src CFLAGS="$SLKCFLAGS" linux-x86-mmx
-  install -Dsm755 run/john $PKG/usr/libexec/john/john-mmx
-  make -C src clean
-  make -C src CFLAGS="$SLKCFLAGS" linux-x86-any
-  install -Dsm755 run/john $PKG/usr/libexec/john/john-any
-  install -Dm755 $CWD/files/john.sh $PKG/usr/bin/john
-elif [ $ARCH = "x86_64" ]; then
-  SLKCFLAGS="$SLKCFLAGS -fPIC"
-  make -C src clean
-  make -C src CFLAGS="$SLKCFLAGS" linux-x86-64
-  install -Dsm755 run/john $PKG/usr/libexec/john/john-64
-  install -Dm755 $CWD/files/john-64.sh $PKG/usr/bin/john
+SLKCFLAGS="-DJOHN_SYSTEMWIDE=1 -Wall -O2 -fomit-frame-pointer"
+SLKCONF="--prefix=/usr --disable-native-tests --enable-openmp --enable-opencl --enable-pkg-config --enable-pcap"
+cd src
+if [[ "$ARCH" == "x86_64" ]]; then
+    ./configure "$SLKCONF" CFLAGS="$SLKCFLAGS -fPIC"
+    make clean; make
+    install -Dsm755 ../run/john $PKG/usr/libexec/john/john
+    install -Dm755 $CWD/files/john-64.sh $PKG/usr/bin/john
+elif [[ "$ARCH" == "x86" ]]; then
+    ./configure $SLKCONF CFLAGS="$SLKCFLAGS -msse2"
+    make clean; make
+    install -Dsm755 ../run/john $PKG/usr/libexec/john/john-sse2
+    ./configure $SLKCONF CFLAGS="$SLKCFLAGS -mmmx"
+    make clean; make
+    install -Dsm755 ../run/john $PKG/usr/libexec/john/john-mmx
+    ./configure $SLKCONF CFLAGS="$SLKCFLAGS"
+    make clean; make
+    install -Dsm755 ../run/john $PKG/usr/libexec/john/john-any
+    install -Dm755 $CWD/files/john.sh $PKG/usr/bin/john
 fi
+cd -
+
+# Add binaries
+for BIN in calc_stat cprepair genmkvpwd luks2john mkvcalcproba raw2dyna relbench tgtsnarf uaf2john wpapcap2john vncpcap2john SIPdump; do
+  install -Dm755 run/$BIN -t $PKG/usr/libexec/john
+done
 
 # Add mailer script
 mkdir -p $PKG/usr/bin
@@ -91,12 +102,8 @@ mkdir -p $PKG/usr/share/john
 cp run/*.chr $PKG/usr/share/john
 cp run/*.lst $PKG/usr/share/john
 
-# Add extra chr from http://www.openwall.com/john/j/john-extra-20130529.tar.xz
-mkdir -p $TMP/$PKGNAM-$VERSION/extra
-cd $TMP/$PKGNAM-$VERSION/extra
-tar -xvf $CWD/john-extra-20130529.tar.xz 
-cp john-extra-20130529/* $PKG/usr/share/john
-cd -
+# Add bash completion
+install -Dm644 run/john.bash_completion $PKG/etc/bash_completion.d/john
 
 # Make symbolic link
 (

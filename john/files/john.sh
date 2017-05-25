@@ -6,6 +6,6 @@ if grep -q '^flags.* sse2' /proc/cpuinfo; then
 elif grep -q '^flags.* mmx' /proc/cpuinfo; then
     ${JOHNDIR}/john-mmx $*
 else
-    ${JOHNDIR}/john-any $*
+    ${JOHNDIR}/john $*
 fi
 
