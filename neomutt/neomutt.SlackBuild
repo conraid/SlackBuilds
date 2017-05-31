@@ -32,7 +32,7 @@ CWD=$(pwd)
 PKGNAM=neomutt
 SRCVERSION=20170526
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -88,17 +88,13 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-ssl \
   --with-sasl \
   --with-idn \
-  --enable-pop \
-  --enable-smtp \
-  --enable-imap \
-  --enable-hcache \
   --with-gdbm \
   --enable-gpgme \
-  --enable-sidebar \
   --enable-notmuch \
   --enable-nfs-fix \
   --enable-exact-address \
-  --enable-compressed \
+  --enable-lua \
+  --enable-locales-fix \
   --program-prefix=neo \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
