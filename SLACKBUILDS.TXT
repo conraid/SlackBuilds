@@ -2152,10 +2152,10 @@ SLACKBUILD SHORT DESCRIPTION:  liburcu (RCU Library)
 SLACKBUILD NAME: libuv
 SLACKBUILD LOCATION: ./libuv
 SLACKBUILD FILES: README files/libuv.1.gz libuv.SlackBuild libuv.info slack-desc
-SLACKBUILD VERSION: 1.11.0
+SLACKBUILD VERSION: 1.12.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/libuv/libuv/archive/v1.11.0.tar.gz
-SLACKBUILD MD5SUM: 15550a9f5f45f7f32ae2d9bb0a21a2a7
+SLACKBUILD DOWNLOAD: https://github.com/libuv/libuv/archive/v1.12.0.tar.gz
+SLACKBUILD MD5SUM: f1a89e5c26ba3b378a49e6c37ebfa708
 SLACKBUILD SHORT DESCRIPTION:  libuv (Cross-platform asychronous I/O)
 
 SLACKBUILD NAME: libvirt
@@ -2594,7 +2594,7 @@ SLACKBUILD NAME: neomutt
 SLACKBUILD LOCATION: ./neomutt
 SLACKBUILD FILES: README doinst.sh files/neomutt.desktop files/neomutt.xpm neomutt.SlackBuild neomutt.info slack-desc
 SLACKBUILD VERSION: 20170526
-SLACKBUILD REQUIRED: notmuch
+SLACKBUILD REQUIRED: notmuch lua
 SLACKBUILD DOWNLOAD: https://github.com/neomutt/neomutt/archive/neomutt-20170526.tar.gz
 SLACKBUILD MD5SUM: f0a93e031916490be2447d7b54e57260
 SLACKBUILD SHORT DESCRIPTION:  neomutt (Bringing together all the Mutt code)
@@ -2827,10 +2827,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-stylus (CSS language built for nodejs)
 SLACKBUILD NAME: node-uglifyjs
 SLACKBUILD LOCATION: ./node-uglifyjs
 SLACKBUILD FILES: README node-uglifyjs.SlackBuild node-uglifyjs.info slack-desc
-SLACKBUILD VERSION: 3.0.13
+SLACKBUILD VERSION: 3.0.14
 SLACKBUILD REQUIRED: npm
-SLACKBUILD DOWNLOAD: https://github.com/mishoo/UglifyJS2/archive/v3.0.13.tar.gz
-SLACKBUILD MD5SUM: b078e28f4ac6bbe12df0ec15d475008d
+SLACKBUILD DOWNLOAD: https://github.com/mishoo/UglifyJS2/archive/v3.0.14.tar.gz
+SLACKBUILD MD5SUM: e7322319fbd96443f8da4221553d13e3
 SLACKBUILD SHORT DESCRIPTION:  node-uglify-js (JavaScript compressor/minifier)
 
 SLACKBUILD NAME: node-watcherjs
@@ -3175,14 +3175,14 @@ SLACKBUILD DOWNLOAD: http://ludovic.rousseau.free.fr/softwares/pcsc-tools/pcsc-t
 SLACKBUILD MD5SUM: 8ed881400d89f89cba13e4d70f524fb3
 SLACKBUILD SHORT DESCRIPTION:  pcsc-tools (various tools to interact with pcsc-lite)
 
-SLACKBUILD NAME: pdftk
-SLACKBUILD LOCATION: ./pdftk
-SLACKBUILD FILES: README patches/pdftk-1.44-add_custom_optflags.patch pdftk.SlackBuild pdftk.info slack-desc
-SLACKBUILD VERSION: 2.02
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk-2.02-src.zip
-SLACKBUILD MD5SUM: 6534365fd6727724f288a556ede33faa
-SLACKBUILD SHORT DESCRIPTION:  pdftk (pdf toolkit)
+SLACKBUILD NAME: pdfshuffler
+SLACKBUILD LOCATION: ./pdfshuffler
+SLACKBUILD FILES: README doinst.sh patches/pdfshuffler-PyPDF2.diff pdfshuffler.SlackBuild pdfshuffler.info slack-desc
+SLACKBUILD VERSION: 0.6.0
+SLACKBUILD REQUIRED: pypdf2 pypoppler
+SLACKBUILD DOWNLOAD: https://downloads.sourceforge.net/pdfshuffler/pdfshuffler-0.6.0.tar.gz
+SLACKBUILD MD5SUM: 573f42e8392d20e6f03557096c85c178
+SLACKBUILD SHORT DESCRIPTION:  pdfshuffler (merge, split and re-arrange pages from PDF documents)
 
 SLACKBUILD NAME: perl-io-tty
 SLACKBUILD LOCATION: ./perl-io-tty
@@ -3570,6 +3570,24 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://github.com/seb-m/pyinotify/archive/0.9.6.tar.gz
 SLACKBUILD MD5SUM: 33f4e599c22a3ac31b684335b4a535a0
 SLACKBUILD SHORT DESCRIPTION:  pyinotify (Monitoring filesystems events)
+
+SLACKBUILD NAME: pypdf2
+SLACKBUILD LOCATION: ./pypdf2
+SLACKBUILD FILES: README pypdf2.SlackBuild pypdf2.info slack-desc
+SLACKBUILD VERSION: 1.26.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/b4/01/68fcc0d43daf4c6bdbc6b33cc3f77bda531c86b174cac56ef0ffdb96faab/PyPDF2-1.26.0.tar.gz
+SLACKBUILD MD5SUM: 2301acc0ecbab0633d4c9b883d50ee5e
+SLACKBUILD SHORT DESCRIPTION:  pypdf2 (Python PDF toolkit)
+
+SLACKBUILD NAME: pypoppler
+SLACKBUILD LOCATION: ./pypoppler
+SLACKBUILD FILES: README patches/pypoppler-0.12.1-poppler-0.16.0.patch patches/python-poppler-0.12.1-poppler-0.39.0-changes.patch pypoppler.SlackBuild pypoppler.info slack-desc
+SLACKBUILD VERSION: 0.12.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://launchpad.net/poppler-python/trunk/development/+download/pypoppler-0.12.1.tar.gz
+SLACKBUILD MD5SUM: 1a89e5ed3042afc81bbd4d02e0cf640a
+SLACKBUILD SHORT DESCRIPTION:  pypoppler (Poppler Python Bindings)
 
 SLACKBUILD NAME: pyrit
 SLACKBUILD LOCATION: ./pyrit
@@ -3997,10 +4015,10 @@ SLACKBUILD SHORT DESCRIPTION:  sk1libs (python libs for sK1 Project)
 SLACKBUILD NAME: sleuthkit
 SLACKBUILD LOCATION: ./sleuthkit
 SLACKBUILD FILES: README slack-desc sleuthkit.SlackBuild sleuthkit.info
-SLACKBUILD VERSION: 4.4.0
+SLACKBUILD VERSION: 4.4.1
 SLACKBUILD REQUIRED: afflib libewf
-SLACKBUILD DOWNLOAD: https://github.com/sleuthkit/sleuthkit/releases/download/sleuthkit-4.4.0/sleuthkit-4.4.0.tar.gz
-SLACKBUILD MD5SUM: 67d615791d5096031aaab11e5b19dfa1
+SLACKBUILD DOWNLOAD: https://github.com/sleuthkit/sleuthkit/releases/download/sleuthkit-4.4.1/sleuthkit-4.4.1.tar.gz
+SLACKBUILD MD5SUM: be41d8e1cfe67ef73eb1e541b17a966a
 SLACKBUILD SHORT DESCRIPTION:  sleuthkit (tsk)
 
 SLACKBUILD NAME: slurm
