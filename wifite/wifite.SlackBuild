@@ -30,9 +30,9 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=wifite
-COMMIT="edbdedd149254f58a99d2f53e5e9b8105c4c61bb"
-VERSION="git_edbdedd"
-BUILD=${BUILD:-3}
+COMMIT=918a499786afdfefcc9582a29df79d0959294ba2
+VERSION=20160602_git
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -60,7 +60,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$COMMIT
-tar xf $CWD/$PKGNAM-${COMMIT}.tar.gz
+tar xf $CWD/$PKGNAM-${COMMIT}.tar.gz || tar xf $CWD/${COMMIT}.tar.gz
 cd $PKGNAM-$COMMIT
 
 chown -R root:root .
@@ -73,7 +73,7 @@ cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/files/gpl-2.0.txt > $PKG/usr/doc/$PKGNAM-$VERSION/COPYING
 cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
