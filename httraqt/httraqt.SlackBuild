@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=httraqt
-VERSION=1.4.8
+VERSION=1.4.9
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -71,13 +71,19 @@ cd $PKGNAM
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
+# Set QT to 4
+sed 's|SET(USE_QT_VERSION 5)|SET(USE_QT_VERSION 4)|' -i CMakeLists.txt
+
 mkdir -p build
 cd build
 cmake \
-  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DCMAKE_BUILD_TYPE=None \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DUSE_QT_VERSION=4 \
   ..
 
 make
