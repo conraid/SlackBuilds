@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=wireshark
-VERSION=2.2.6
+VERSION=2.2.7
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -68,6 +68,9 @@ cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
+
+# Fix with QT<5.1
+sed '/setTextInteractionFlags/d' -i ui/qt/simple_dialog.cpp
 
 LUA_LIBS="-llua5.2 -lm" \
 LUA_CFLAGS="-I/usr/include/lua5.2" \
