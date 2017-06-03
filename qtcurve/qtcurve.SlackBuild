@@ -28,8 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=qtcurve
-COMMIT=a249871e95d4d64a0f2a7c95020d54b1435a4e93
-VERSION=$(echo $COMMIT | head -c7)
+VERSION=1.9.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -62,9 +61,9 @@ fi
 
 mkdir -p $PKG $TMP $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$COMMIT
-tar xvf $CWD/$PKGNAM-$COMMIT.tar.gz || tar xvf $COMMIT.tar.gz
-cd $PKGNAM-$COMMIT
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
