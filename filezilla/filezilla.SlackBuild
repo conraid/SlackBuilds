@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=filezilla
-SRCVERSION=3.25.2
+SRCVERSION=3.26.1
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -70,6 +70,7 @@ cd $PKGNAM-$SRCVERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
+LIBS="-lhogweed -lnettle" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
@@ -85,7 +86,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --disable-autoupdatecheck \
   --disable-manualupdatecheck \
   --enable-locales \
-  --with-pugixml=builtin \
+  --with-pugixml=system \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
