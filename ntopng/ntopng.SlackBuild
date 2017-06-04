@@ -30,12 +30,13 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=ntopng
-VERSION=2.4
-BUILD=${BUILD:-2}
+VERSION=3.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
+NDPI_COMMIT=5570e6cbeebbccf1cb4890fc4845e882cf7759a8
 
 DOCFILES="COPYING* LICENSE* README* packages/etc/init.d doc/*"
 
@@ -64,15 +65,40 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION-stable
-tar xvf $CWD/$PKGNAM-$VERSION-stable.tar.gz
-cd $PKGNAM-$VERSION-stable
+rm -rf $PKGNAM-$VERSION
+rm -rf nDPI
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
+tar xvf $CWD/nDPI-$NDPI_COMMIT.tar.gz || tar xvf $CWD/$NDPI_COMMIT.tar.gz
+
+# Build nDPI git version in ../nDPI
+mv nDPI-$NDPI_COMMIT nDPI
+cd nDPI
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./autogen.sh \
+  --prefix=$PKG/usr \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --sysconfdir=/etc \
+  --localstatedir=/var \
+  --mandir=/usr/man \
+  --infodir=/usr/info \
+  --docdir=/usr/doc/$PKGNAM-$VERSION \
+  --host=$ARCH-slackware-linux \
+  --build=$ARCH-slackware-linux
+make
+
+cd ../$PKGNAM-$VERSION
+
+chown -R root:root .
+chmod -R u+w,go+r-w,a+X-s .
+
+
 # Apply patches
-if [ -e $CWD/patches ]; then
+if [ -e $CWD/patches/ ]; then
   for PATCH in $CWD/patches/*.patch; do
     patch -p1 -i $PATCH
   done
@@ -80,8 +106,8 @@ fi
 
 ./autogen.sh
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
+CFLAGS="$SLKCFLAGS -fpermissive" \
+CXXFLAGS="$SLKCFLAGS -fpermissive" \
 ./configure \
   --prefix=$PKG/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -93,6 +119,9 @@ CXXFLAGS="$SLKCFLAGS" \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
+LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
+CFLAGS="$SLKCFLAGS -fpermissive" \
+CXXFLAGS="$SLKCFLAGS -fpermissive" \
 make
 make geoip
 make install

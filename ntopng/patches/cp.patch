@@ -1,0 +1,22 @@
+From 8355d0b3c4f3d8ca63298c224e565a1f825c020d Mon Sep 17 00:00:00 2001
+From: Luca Deri <deri@ntop.org>
+Date: Sun, 4 Jun 2017 10:19:29 +0200
+Subject: [PATCH] Fix for #1285
+
+---
+ Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index 9caea5f2..1b3eec8f 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -230,7 +230,7 @@ install: ntopng
+ 	cp ntopng $(INSTALL_DIR)/bin
+ 	cp ./ntopng.8 $(MAN_DIR)/man8
+ 	cp -r ./httpdocs $(INSTALL_DIR)/share/ntopng
+-	cp -Lr ./scripts $(INSTALL_DIR)/share/ntopng # L dereference symlinks
++	cp -LR ./scripts $(INSTALL_DIR)/share/ntopng # L dereference symlinks
+ 	find $(INSTALL_DIR)/share/ntopng -name "*~"   | xargs /bin/rm -f
+ 	find $(INSTALL_DIR)/share/ntopng -name ".git" | xargs /bin/rm -rf
+ 
