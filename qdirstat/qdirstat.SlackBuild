@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=qdirstat
-VERSION=1.3
+VERSION=1.4
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -72,17 +72,12 @@ chmod -R u+w,go+r-w,a+X-s .
 # Fix doc path
 sed "s|^doc.path.*|doc.path=/usr/doc/$PKGNAM-$VERSION|" -i doc/doc.pro
 
-# Apply patches
-if [ -e $CWD/patches/ ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
-fi
-
 qmake \
   PREFIX=/usr \
-  QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" \
-  QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" \
+  QMAKE_CFLAGS="" \
+  QMAKE_CXXFLAGS="" \
+  QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" \
+  QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" \
   -o Makefile $PKGNAM.pro
 
 make
