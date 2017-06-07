@@ -30,9 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=masscan
-SRCVERSION=dc88677a11dc3d9a5f6aa55cc1377bc17dba1496
-VERSION="20161107_git"
-BUILD=${BUILD:-2}
+VERSION=1.0.4
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -65,9 +64,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$SRCVERSION
-tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION.tar.gz
-cd $PKGNAM-$SRCVERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -85,7 +84,7 @@ cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat doc/bot.hml > $PKG/usr/doc/$PKGNAM-$VERSION/bot.html
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
