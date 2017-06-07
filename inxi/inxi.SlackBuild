@@ -45,6 +45,13 @@ mkdir -p $PKGNAM
 cd $PKGNAM
 tar xvf $CWD/$PKGNAM.tar.gz
 
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
+
 VERSION=$( grep "^#*[[:space:]]*Version:" $PKGNAM | cut -d" " -f4)
 
 install -Dm755 inxi $PKG/usr/bin/inxi
