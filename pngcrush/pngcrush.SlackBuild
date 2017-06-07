@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=pngcrush
 VERSION=1.8.11
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -68,6 +68,10 @@ cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
+
+# 20170603 bkw: this appears to be the right way to fix bug #75:
+# https://sourceforge.net/p/pmt/bugs/75/ (Thanks to SBo)
+sed -i '/typedef long ptrdiff_t;/s,long,__PTRDIFF_TYPE__,' zutil.h
 
 make CFLAGS="$SLKCFLAGS"
 install -Dsm755 pngcrush $PKG/usr/bin/pngcrush
