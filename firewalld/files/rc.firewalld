@@ -1,0 +1,71 @@
+#!/bin/sh
+#
+# firewalld     Startup script for the firewall daemon
+#
+# description:  The firewall deamon manages the firewall and handles dynamic
+#               firewall changes.
+#
+# config:       /etc/firewalld
+# pidfile:      /var/run/firewalld.pid
+#
+# Start/stop/restart firewalld.
+
+_start() {
+  [ -r /etc/sysconfig/firewalld ] && source /etc/sysconfig/firewalld
+  echo -n "Starting FireWallD: "
+  /usr/sbin/firewalld $FIREWALLD_ARGS
+  echo
+}
+
+_stop() {
+  echo -n "Stopping FireWallD: "
+  if [ -r /var/run/firewalld.pid ]; then
+    kill -HUP $(cat /var/run/firewalld.pid)
+    rm -f /var/run/firewalld.pid
+  else
+    killall -HUP -q firewalld
+  fi
+  echo
+}
+
+_restart() {
+  echo -n "Stopping FireWallD: "
+  _stop
+  sleep 1
+  _start
+}
+
+_reload() {
+    echo -n "Reloading FireWallD: "
+    /usr/bin/firewall-cmd --reload
+    echo
+}
+
+_status() {
+  if [ -e /var/run/firewalld.pid ]; then
+    echo "FireWallD is running as pid $(cat /var/run/firewalld.pid)."
+  else
+    echo "FireWallD is stopped."
+    exit 1
+  fi
+}
+
+case "$1" in
+  'start')
+    _start
+    ;;
+  'stop')
+    _stop
+    ;;
+  'restart')
+    _restart
+    ;;
+  'reload')
+    _reload
+    ;;
+  'status')
+    _status
+    ;;
+  *)
+    echo "usage $0 start|stop|restart|reload|status"
+esac
