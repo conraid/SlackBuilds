@@ -35,7 +35,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=node
-VERSION=7.10.0
+VERSION=8.1.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -87,7 +87,12 @@ fi
 sed -e "s|share/doc/node/|doc/$PKGNAM-$VERSION/|g" \
   -e 's|share/man|man|g' \
   -e "s|\(['/]\)lib/|\1lib${LIBDIRSUFFIX}/|g" -i tools/install.py
-sed "s|'lib'|'lib${LIBDIRSUFFIX}'|" -i lib/module.js
+sed -e "s|'lib'|'lib${LIBDIRSUFFIX}'|" -i lib/module.js
+sed -e '/var manRoot/ s/"share",//' -i deps/npm/lib/{,un}build.js
+sed -e "/globalPrefix/s/lib/lib${LIBDIRSUFFIX}/g" \
+  -i deps/npm/lib/install.js \
+  -i deps/npm/lib/npm.js \
+  -i deps/npm/lib/doctor.js
 
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -96,8 +101,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --shared-zlib \
   --shared-openssl \
   --shared-libuv \
-  --shared-cares \
-  --without-npm
+  --shared-cares
 
 make PREFIX="/usr" CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS"
 make PREFIX="/usr" DESTDIR=$PKG install
