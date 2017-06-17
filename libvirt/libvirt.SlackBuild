@@ -34,7 +34,7 @@ CWD=$(pwd)
 
 PKGNAM=libvirt
 VERSION=3.4.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -108,7 +108,7 @@ rm -fr $PKG/usr/share/augeas
 # Add an rc.libvirt to start/stop/restart the daemon
 install -Dm755 $CWD/rc.libvirt $PKG/etc/rc.d/rc.libvirt.new
 
-# We use $VIRTGROUP as our virtualization group, fix auth permissions, and
+# We use "users" as our virtualization group, fix auth permissions, and
 # consider the fact that by default we got no certs
 sed -e 's|^\#unix_sock_group\ =\ "libvirt"|unix_sock_group = "users"|' \
     -e 's|^\#unix_sock_rw_perms\ =\ "0770"|unix_sock_rw_perms = "0770"|' \
@@ -132,7 +132,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
