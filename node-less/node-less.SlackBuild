@@ -29,16 +29,14 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=less.js
+PRGNAM=less
 PKGNAM=node-less
 VERSION=2.7.2
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
-
-DOCFILES="AUTHORS BUGS CHANGES COPYING* COPYRIGHT ChangeLog INSTALL LICENSE MANIFEST NEWS README* THANKS TODO VERSION"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -51,15 +49,12 @@ fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
-cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
-cd $PRGNAM-$VERSION
 
-chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+DESTDIR=$PKG npm install --user root -g $CWD/$PRGNAM-$VERSION.tgz
 
-DESTDIR=$PKG npm install --user root -g
+cd $PKG 
+chown -R root:root . 
+chmod -R u+w,go+r-w,a+X-s . 
 
 # Remove empty /usr/etc dir
 rmdir $PKG/usr/etc
@@ -68,16 +63,13 @@ rmdir $PKG/usr/etc
 find $PKG -name "package.json" \
   -exec sed -e "s|$TMP/$PRGNAM-build||" \
             -e "s|$TMP/$PRGNAM-$VERSION|/usr/lib${LIBDIRSUFFIX}/node_modules/less|" \
+            -e "s|$CWD||g" \
             -i '{}' \;
 
-find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
-find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
-
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG

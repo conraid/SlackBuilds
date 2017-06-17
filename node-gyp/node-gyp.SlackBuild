@@ -32,13 +32,11 @@ CWD=$(pwd)
 
 PKGNAM=node-gyp
 VERSION=3.0.3
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
-
-DOCFILES="CHANGELOG* LICENSE README*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -51,18 +49,12 @@ fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
-cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
-cd $PKGNAM-$VERSION
 
-chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+DESTDIR=$PKG npm install --user root -g $CWD/$PKGNAM-$VERSION.tgz
 
-DESTDIR=$PKG npm install --user root -g
-
-find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
-find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+cd $PKG 
+chown -R root:root . 
+chmod -R u+w,go+r-w,a+X-s . 
 
 # Remove empty dir
 rmdir $PKG/usr/etc
@@ -71,13 +63,13 @@ rmdir $PKG/usr/etc
 find $PKG -name "package.json" \
   -exec sed -e "s|$TMP/$PKGNAM-build||" \
             -e "s|$TMP/$PKGNAM-$VERSION|/usr/lib${LIBDIRSUFFIX}/node_modules/${PKGNAM}|" \
+            -e "s|$CWD||g" \
             -i '{}' \;
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
