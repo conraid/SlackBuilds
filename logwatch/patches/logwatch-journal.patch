@@ -1,0 +1,95 @@
+commit 23e714ad43285d59c5b5852ef2c6013593d64671
+Author: bjorn <bjorn1@users.sourceforge.net>
+Date:   Sun May 15 13:49:08 2016 -0700
+
+    [journalctl] Added shared script contributed by Mark Grimes.
+
+diff --git a/scripts/shared/journalctl b/scripts/shared/journalctl
+new file mode 100755
+index 0000000..1627fd4
+--- /dev/null
++++ b/scripts/shared/journalctl
+@@ -0,0 +1,83 @@
++#!/usr/bin/perl
++#
++# The purpose of this script is to pass the output of the journalctl
++# command to the logwatch parsers.  The corresponding conf/logfile 
++# can be simple.  The following example shows a logfile with two lines:
++# LogFile = /dev/null
++# *JournalCtl = "--output=cat --unit=service_name.service"
++#
++# In the example above, the arguments to the JournalCtl command are
++# passed to the journalctl system command.  It is advised to delimit
++# the arguments in double quotes to preserve mixed case, if
++# applicable.
++
++use strict;
++use warnings;
++
++eval "use Date::Manip";
++my $hasDM = $@ ? 0 : 1;
++
++# logwatch passes arguments as one string delimited by single quotes
++my @args  = split(" ", $ARGV[0]);
++my @range = get_range( $ENV{LOGWATCH_DATE_RANGE} );
++
++my $Debug = $ENV{'LOGWATCH_DEBUG'} || 0;
++
++if ($Debug > 5) {
++   warn join " ", 'journalctl', @args, @range, "\n";
++}
++
++system( 'journalctl', @args, @range );
++
++sub get_range {
++    my $range = lc( shift || 'all' );
++    my @range;
++
++    if ( !$range || $range eq 'all' ) {
++        @range = ();
++    } elsif ( $range eq 'yesterday' ) {
++        push @range, '--since', 'yesterday', '--until', 'today';
++    } elsif ( $range eq 'today' ) {
++        push @range, '--since', 'today', '--until', 'tomorrow';
++    } elsif ($hasDM) {
++
++        # Strip off any period
++        $range =~
++          s/for\s+(?:those|that|this)\s+((year|month|day|hour|minute|second)s?)\s*$//;
++
++        # Look for between x and y
++        my ( $range1, $range2 ) =
++          ( $range =~ /^between\s+(.*)\s+and\s+(.*)\s*$/ );
++
++        # Look for since x
++        if ( $range =~ /^\s*since\s+/ ) {
++            ($range1) = ( $range =~ /\s*since\s+(.*)/ );
++            $range2 = "now";
++        }
++
++        # Now convert to journalctl friendly dates
++        if ( $range1 && $range2 ) {
++
++            # Parse dates
++            my $date1 = ParseDate($range1);
++            my $date2 = ParseDate($range2);
++
++            # Switch if date2 is before date1
++            if ( $date1 && $date2 and Date_Cmp( $date1, $date2 ) > 0 ) {
++                my $switch_date = $date1;
++                $date1 = $date2;
++                $date2 = $switch_date;
++            }
++
++            # If we ask for 1/1 to 1/2, we mean 1/2 inclusive. DM returns
++            # 1/2 00:00:00. So we add 1 day to the end time.
++            $date2 = DateCalc( $date2, '1 day' );
++
++            my $fmt = "%Y-%m-%d %H:%M:%S";
++            push @range, '--since', UnixDate( $date1, $fmt ), '--until',
++              UnixDate( $date2, $fmt );
++        }
++    }
++
++    return @range;
++}
