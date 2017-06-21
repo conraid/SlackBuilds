@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=inkscape
 VERSION=0.92.1
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,11 +72,14 @@ chmod -R u+w,go+r-w,a+X-s .
 # Fix man path
 sed 's|\${SHARE_INSTALL}/man/man|man/man|g' -i CMakeScripts/Pod2man.cmake
 
+# Fix for gsl 2.4
+sed 's| abs(| std::fabs(|g' -i src/ui/tools/flood-tool.cpp
+
 mkdir -p build
 cd build
 cmake -Wno-dev \
-  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
-  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -fopenmp -pthread" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -fopenmp -pthread" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DWITH_GNOME_VFS=OFF \
