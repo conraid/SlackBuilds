@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=vifm
-VERSION="0.8.2"
-BUILD=${BUILD:-5}
+VERSION=0.9
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -97,10 +97,10 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true 
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
