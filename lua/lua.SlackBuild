@@ -30,7 +30,7 @@ CWD=$(pwd)
 PKGNAM=lua
 VERSION=5.3.4
 MAINVERSION=$(echo $VERSION | cut -d. -f-2)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -94,6 +94,9 @@ INSTALL_LIB=$PKG/usr/lib${LIBDIRSUFFIX} \
 INSTALL_CMOD=$PKG/usr/lib${LIBDIRSUFFIX}/lua/$MAINVERSION \
 INSTALL_INC="$PKG/usr/include/lua$MAINVERSION" \
 linux install
+
+# Make symlink like 5.2 and 5.1 legacy packages
+ln -sf /usr/lib/liblua.so.$VERSION $PKG/usr/lib${LIBDIRSUFFIX}/liblua${MAINVERSION}.so
 
 # Install the pkg-config file so other apps can find LUA
 mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
