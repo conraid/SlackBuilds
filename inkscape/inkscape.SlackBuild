@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=inkscape
 VERSION=0.92.1
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -75,22 +75,27 @@ sed 's|\${SHARE_INSTALL}/man/man|man/man|g' -i CMakeScripts/Pod2man.cmake
 # Fix for gsl 2.4
 sed 's| abs(| std::fabs(|g' -i src/ui/tools/flood-tool.cpp
 
-mkdir -p build
-cd build
-cmake -Wno-dev \
-  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -fopenmp -pthread" \
-  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -fopenmp -pthread" \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_INSTALL_PREFIX=/usr \
-  -DWITH_GNOME_VFS=OFF \
-  -DENABLE_LCMS=ON \
-  -DENABLE_POPPLER=ON \
-  -DENABLE_POPPLER_CAIRO=ON \
-  ..
+./autogen.sh
+
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+  --prefix=/usr \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --sysconfdir=/etc \
+  --localstatedir=/var \
+  --mandir=/usr/man \
+  --docdir=/usr/doc/$PKGNAM-$VERSION \
+	--with-python \
+	--with-perl \
+	--enable-lcms \
+	--enable-poppler-cairo \
+	--disable-strict-build \
+	--disable-dependency-tracking \
+  --build=$ARCH-slackware-linux
 
 make
 make DESTDIR=$PKG install
-cd ..
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
