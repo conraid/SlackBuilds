@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=encfs
 VERSION=1.9.1
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -69,6 +69,13 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
+
 # Fix man path
 sed 's|share/man/man1|man/man1|' -i CMakeLists.txt
 
@@ -78,14 +85,17 @@ cmake -Wno-dev \
   -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DLOCALSTATEDIR=/var \
+  -DUSE_INTERNAL_TINYXML=OFF \
+  -DINSTALL_LIBENCFS=ON \
+  -DBUILD_SHARED_LIBS=ON \
+  -DLIB_INSTALL_DIR=lib$LIBDIRSUFFIX \
   ..
 
 make
 make DESTDIR=$PKG install
 cd ..
 
-# Make encfssh script executable 
+# Make encfssh script executable
 # https://github.com/vgough/encfs/commit/0ae1d81b5ebb8ac54b5880bb6d832190188c7ed7
 chmod +x $PKG/usr/bin/encfssh
 
