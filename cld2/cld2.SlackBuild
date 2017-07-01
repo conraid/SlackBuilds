@@ -32,7 +32,7 @@ CWD=$(pwd)
 PKGNAM=cld2
 SRCVERSION=b56fa78a2fe44ac2851bae5bf4f4693a0644da7b
 VERSION=20150820_git
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -81,8 +81,8 @@ g++ $SLKCFLAGS compact_lang_det_test.cc -I. -L. libcld2.so -o cld2
 
 install -Dsm755 cld2 $PKG/usr/bin/cld2
 install -Dsm755 cld2-full $PKG/usr/bin/cld2-full
-install -Dsm755 libcld2.so ${PKG}/usr/lib/libcld2.so
-install -Dsm755 libcld2_full.so ${PKG}/usr/lib/libcld2_full.so
+install -Dsm755 libcld2.so ${PKG}/usr/lib${LIBDIRSUFFIX}/libcld2.so
+install -Dsm755 libcld2_full.so ${PKG}/usr/lib${LIBDIRSUFFIX}/libcld2_full.so
 cd -
 
 for header in internal/*.h public/*.h; do
