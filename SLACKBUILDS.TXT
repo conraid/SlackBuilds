@@ -801,9 +801,9 @@ SLACKBUILD SHORT DESCRIPTION:  ecryptfs-utils (ecryptfs cryptographic filesystem
 
 SLACKBUILD NAME: encfs
 SLACKBUILD LOCATION: ./encfs
-SLACKBUILD FILES: README encfs.SlackBuild encfs.info slack-desc
+SLACKBUILD FILES: README encfs.SlackBuild encfs.info patches/encfs-openssl-1.1.patch slack-desc
 SLACKBUILD VERSION: 1.9.1
-SLACKBUILD REQUIRED: rlog
+SLACKBUILD REQUIRED: rlog tinyxml2
 SLACKBUILD DOWNLOAD: https://github.com/vgough/encfs/releases/download/v1.9.1/encfs-1.9.1.tar.gz
 SLACKBUILD MD5SUM: 7cbf9cc3c5af49b46703ce6ba70d22a4
 SLACKBUILD SHORT DESCRIPTION:  encfs - encrypted virtual filesystem
@@ -1089,10 +1089,10 @@ SLACKBUILD SHORT DESCRIPTION:  gimp-plugin-guetzli (guetzli gimp wrapper)
 
 SLACKBUILD NAME: gimp-refocus
 SLACKBUILD LOCATION: ./gimp-refocus
-SLACKBUILD FILES: README gimp-refocus.SlackBuild gimp-refocus.info refocus.patch slack-desc
+SLACKBUILD FILES: README gimp-refocus.SlackBuild gimp-refocus.info slack-desc
 SLACKBUILD VERSION: 0.9.0
 SLACKBUILD REQUIRED: lapack
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/refocus/refocus/0.9.0/refocus-0.9.0.tar.gz
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/refocus/refocus-0.9.0.tar.gz
 SLACKBUILD MD5SUM: 8d4eac4ef45c904fb5e73021696bec94
 SLACKBUILD SHORT DESCRIPTION:  gimp-refocus (Sharpen Gimp plugin)
 
@@ -1459,10 +1459,10 @@ SLACKBUILD SHORT DESCRIPTION:  instant-markdown-d (Instant Markdown previews fro
 SLACKBUILD NAME: inxi
 SLACKBUILD LOCATION: ./inxi
 SLACKBUILD FILES: README files/LICENSE.txt files/README.txt inxi.SlackBuild inxi.info slack-desc
-SLACKBUILD VERSION: 2.3.20
+SLACKBUILD VERSION: 2.3.23
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/smxi/inxi/raw/2fedfa84faaaee9c777824e37853a83403d4d241/inxi.tar.gz
-SLACKBUILD MD5SUM: 0cb7f11b4780c0df26c72dafe8a1fe84
+SLACKBUILD DOWNLOAD: https://github.com/smxi/inxi/raw/3aafcbe18cc7ab963996c60c050580b17acd74c5/inxi.tar.gz
+SLACKBUILD MD5SUM: 0d8018916b6474d9585cd67d08409772
 SLACKBUILD SHORT DESCRIPTION:  inxi (a command line system information tool)
 
 SLACKBUILD NAME: ioping
@@ -1783,10 +1783,10 @@ SLACKBUILD SHORT DESCRIPTION:  kssh4 (kde4 ssh frontend)
 SLACKBUILD NAME: lapack
 SLACKBUILD LOCATION: ./lapack
 SLACKBUILD FILES: README lapack.SlackBuild lapack.info slack-desc
-SLACKBUILD VERSION: 3.7.0
+SLACKBUILD VERSION: 3.7.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.netlib.org/lapack/lapack-3.7.0.tgz
-SLACKBUILD MD5SUM: 697bb8d67c7d336a0f339cc9dd0fa72f
+SLACKBUILD DOWNLOAD: http://www.netlib.org/lapack/lapack-3.7.1.tgz
+SLACKBUILD MD5SUM: eaab3317b4d0361be31567f252fbed67
 SLACKBUILD SHORT DESCRIPTION:  LAPACK (linear algebra routines)
 
 SLACKBUILD NAME: lensfun
@@ -2080,10 +2080,10 @@ SLACKBUILD SHORT DESCRIPTION:  libotr (OTR Messaging Library and Toolkit)
 SLACKBUILD NAME: libpwquality
 SLACKBUILD LOCATION: ./libpwquality
 SLACKBUILD FILES: README libpwquality.SlackBuild libpwquality.info slack-desc
-SLACKBUILD VERSION: 1.3.0
+SLACKBUILD VERSION: 1.4.0
 SLACKBUILD REQUIRED: cracklib
-SLACKBUILD DOWNLOAD: https://fedorahosted.org/releases/l/i/libpwquality/libpwquality-1.3.0.tar.bz2
-SLACKBUILD MD5SUM: 2a3d4ba1d11b52b4f6a7f39622ebf736
+SLACKBUILD DOWNLOAD: https://github.com/libpwquality/libpwquality/releases/download/libpwquality-1.4.0/libpwquality-1.4.0.tar.bz2
+SLACKBUILD MD5SUM: b8defcc7280a90e9400d6689c93a279c
 SLACKBUILD SHORT DESCRIPTION:  libpwquality (Library for password quality checking)
 
 SLACKBUILD NAME: libsass
@@ -2854,10 +2854,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-stylus (CSS language built for nodejs)
 SLACKBUILD NAME: node-uglifyjs
 SLACKBUILD LOCATION: ./node-uglifyjs
 SLACKBUILD FILES: README node-uglifyjs.SlackBuild node-uglifyjs.info slack-desc
-SLACKBUILD VERSION: 3.0.21
+SLACKBUILD VERSION: 3.0.22
 SLACKBUILD REQUIRED: node
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/uglify-js/-/uglify-js-3.0.21.tgz
-SLACKBUILD MD5SUM: f5875d4238912e0afb01489548e1bd27
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/uglify-js/-/uglify-js-3.0.22.tgz
+SLACKBUILD MD5SUM: 7b9efbf433adb40974b54fa751e38caa
 SLACKBUILD SHORT DESCRIPTION:  node-uglify-js (JavaScript compressor/minifier)
 
 SLACKBUILD NAME: node
@@ -2944,10 +2944,10 @@ SLACKBUILD SHORT DESCRIPTION:  nuttcp (TCP/UDP network testing tool)
 SLACKBUILD NAME: oauth2client
 SLACKBUILD LOCATION: ./oauth2client
 SLACKBUILD FILES: README oauth2client.SlackBuild oauth2client.info slack-desc
-SLACKBUILD VERSION: 4.1.1
+SLACKBUILD VERSION: 4.1.2
 SLACKBUILD REQUIRED: httplib2
-SLACKBUILD DOWNLOAD: https://github.com/google/oauth2client/archive/v4.1.1.tar.gz
-SLACKBUILD MD5SUM: 9643d11c5f703587a7552a00c08f720d
+SLACKBUILD DOWNLOAD: https://github.com/google/oauth2client/archive/v4.1.2.tar.gz
+SLACKBUILD MD5SUM: 0b3a7e3949b634e7e50ad9b6e50e93ae
 SLACKBUILD SHORT DESCRIPTION:  oauth2client (OAuth 2.0 Python library)
 
 SLACKBUILD NAME: offlineimap
@@ -3430,10 +3430,10 @@ SLACKBUILD SHORT DESCRIPTION:  postcss-cli (Simple CLI for postcss)
 SLACKBUILD NAME: postcss
 SLACKBUILD LOCATION: ./postcss
 SLACKBUILD FILES: README postcss.SlackBuild postcss.info slack-desc
-SLACKBUILD VERSION: 6.0.3
+SLACKBUILD VERSION: 6.0.4
 SLACKBUILD REQUIRED: node
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/postcss/-/postcss-6.0.3.tgz
-SLACKBUILD MD5SUM: 709a241557a7799b477c7f8463c40f5a
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/postcss/-/postcss-6.0.4.tgz
+SLACKBUILD MD5SUM: 9528d487433804e6bc00932f24fad7de
 SLACKBUILD SHORT DESCRIPTION:  postcss (Transforming styles with JS plugins)
 
 SLACKBUILD NAME: postfix
@@ -4233,7 +4233,7 @@ SLACKBUILD LOCATION: ./suricata
 SLACKBUILD FILES: README doinst.sh rc.suricata slack-desc suricata.SlackBuild suricata.info
 SLACKBUILD VERSION: 4.0.0-rc1
 SLACKBUILD REQUIRED: hiredis geoip jansson libnet lua libhtp
-SLACKBUILD DOWNLOAD: http://www.openinfosecfoundation.org/download/suricata-4.0.0-rc1.tar.gz
+SLACKBUILD DOWNLOAD: https://www.openinfosecfoundation.org/download/suricata-4.0.0-rc1.tar.gz
 SLACKBUILD MD5SUM: 5b99226bf7fb0d7402f2921895ab54a4
 SLACKBUILD SHORT DESCRIPTION:  suricata (Network Security Monitoring)
 
@@ -4326,6 +4326,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/tinyxml/tinyxml/2.6.2/tinyxml_2_6_2.tar.gz
 SLACKBUILD MD5SUM: c1b864c96804a10526540c664ade67f0
 SLACKBUILD SHORT DESCRIPTION:  tinyxml (A small xml parser)
+
+SLACKBUILD NAME: tinyxml2
+SLACKBUILD LOCATION: ./tinyxml2
+SLACKBUILD FILES: README slack-desc tinyxml2.SlackBuild tinyxml2.info
+SLACKBUILD VERSION: 5.0.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/leethomason/tinyxml2/archive/5.0.1.tar.gz
+SLACKBUILD MD5SUM: ed8f0bccfd5cfb97d1317235f45935b2
+SLACKBUILD SHORT DESCRIPTION:  tinyxml2 (C++ XML Parser)
 
 SLACKBUILD NAME: tomb
 SLACKBUILD LOCATION: ./tomb
@@ -4672,10 +4681,10 @@ SLACKBUILD SHORT DESCRIPTION:  wifite (automated wireless auditor)
 SLACKBUILD NAME: wine
 SLACKBUILD LOCATION: ./wine
 SLACKBUILD FILES: README doinst.sh files/wine.svg files/winecfg.desktop files/winecfg.png files/winecfg.svg slack-desc wine.SlackBuild wine.info
-SLACKBUILD VERSION: 2.10
+SLACKBUILD VERSION: 2.11
 SLACKBUILD REQUIRED: openal fontforge
-SLACKBUILD DOWNLOAD: https://dl.winehq.org/wine/source/2.x/wine-2.10.tar.xz
-SLACKBUILD MD5SUM: 6f0798c73752ad22a1a3d69c49157e31
+SLACKBUILD DOWNLOAD: https://dl.winehq.org/wine/source/2.x/wine-2.11.tar.xz
+SLACKBUILD MD5SUM: 03685363b094448f96c915f42df35465
 SLACKBUILD SHORT DESCRIPTION:  wine (Wine Is Not an Emulator)
 
 SLACKBUILD NAME: winetricks
@@ -4834,10 +4843,10 @@ SLACKBUILD SHORT DESCRIPTION:  yapet
 SLACKBUILD NAME: yarn
 SLACKBUILD LOCATION: ./yarn
 SLACKBUILD FILES: README slack-desc yarn.SlackBuild yarn.info
-SLACKBUILD VERSION: 0.27.2
+SLACKBUILD VERSION: 0.27.5
 SLACKBUILD REQUIRED: node
-SLACKBUILD DOWNLOAD: https://github.com/yarnpkg/yarn/releases/download/v0.27.2/yarn-v0.27.2.tar.gz
-SLACKBUILD MD5SUM: 48975e76fdd9121d7e1086ce84e49d04
+SLACKBUILD DOWNLOAD: https://github.com/yarnpkg/yarn/releases/download/v0.27.5/yarn-v0.27.5.tar.gz
+SLACKBUILD MD5SUM: 7300299755265c169a8f05a1c7dfd4db
 SLACKBUILD SHORT DESCRIPTION:  yarn (Fast, reliable, and secure dependency management)
 
 SLACKBUILD NAME: yersinia
