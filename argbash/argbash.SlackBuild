@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=argbash
 VERSION=2.4.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -73,7 +73,7 @@ chmod -R u+w,go+r-w,a-s .
 
 # install:
 cd resources
-sed "s|/lib/|/lib${LIBDIRSUFFIX}/|g" -i Makefile
+sed "s|/lib|/lib${LIBDIRSUFFIX}|g" -i Makefile
 make ROOT=$PKG PREFIX="/usr" install
 cd ..
 
@@ -81,7 +81,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
