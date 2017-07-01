@@ -30,14 +30,14 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=lapack
-VERSION=3.7.0
-BUILD=${BUILD:-3}
+VERSION=3.7.1
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="LICENSE README"  
+DOCFILES="LICENSE README*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -92,7 +92,7 @@ cd ..
 # Install BLAS
 cd build/BLAS
   make DESTDIR="$PKG" install
-cd -  
+cd -
 
 # Install CBLAS
 cd build/CBLAS
@@ -108,10 +108,10 @@ find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cu
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION
-install -Dm644 $CWD/$PKGNAM.SlackBuild $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
