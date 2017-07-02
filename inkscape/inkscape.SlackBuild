@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=inkscape
 VERSION=0.92.1
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -75,27 +75,30 @@ sed 's|\${SHARE_INSTALL}/man/man|man/man|g' -i CMakeScripts/Pod2man.cmake
 # Fix for gsl 2.4
 sed 's| abs(| std::fabs(|g' -i src/ui/tools/flood-tool.cpp
 
-./autogen.sh
+# Fix lib path
+sed "/INKSCAPE_LIBDIR/s/lib/lib$LIBDIRSUFFIX/g" -i CMakeScripts/ConfigPaths.cmake
+sed -e "s|lib/inkscape|lib$LIBDIRSUFFIX/inkscape|g" \
+    -e "/LIBRARY_OUTPUT_PATH/s|/lib|/lib$LIBDIRSUFFIX|" \
+    -i CMakeLists.txt
+sed -e "s|lib/inkscape|lib$LIBDIRSUFFIX/inkscape|g" -i src/CMakeLists.txt -i CMakeScripts/HelperMacros.cmake
 
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --docdir=/usr/doc/$PKGNAM-$VERSION \
-	--with-python \
-	--with-perl \
-	--enable-lcms \
-	--enable-poppler-cairo \
-	--disable-strict-build \
-	--disable-dependency-tracking \
-  --build=$ARCH-slackware-linux
+mkdir -p build
+cd build
+cmake -Wno-dev \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -fopenmp -pthread -DNDEBUG" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -fopenmp -pthread -DNDEBUG" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DCMAKE_INSTALL_LIBDIR=/usr/lib$LIBDIRSUFFIX \
+  -DWITH_GNOME_VFS=OFF \
+  -DENABLE_LCMS=ON \
+  -DENABLE_POPPLER=ON \
+  -DENABLE_POPPLER_CAIRO=ON \
+  ..
 
 make
 make DESTDIR=$PKG install
+cd ..
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
