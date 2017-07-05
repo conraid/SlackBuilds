@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=postcss
-VERSION=6.0.4
+VERSION=6.0.5
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -51,9 +51,9 @@ mkdir -p $TMP $PKG $OUTPUT
 
 DESTDIR=$PKG npm install --user root -g $CWD/$PKGNAM-$VERSION.tgz
 
-cd $PKG 
-chown -R root:root . 
-chmod -R u+w,go+r-w,a+X-s . 
+cd $PKG
+chown -R root:root .
+chmod -R u+w,go+r-w,a+X-s .
 
 # Remove empty dir
 rmdir $PKG/usr/etc
