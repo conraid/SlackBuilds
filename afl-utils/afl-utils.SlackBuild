@@ -29,11 +29,9 @@ set -eu
 
 CWD=$(pwd)
 
-PRGNAM=afl-utils
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=1.32a
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+PKGNAM=afl-utils
+VERSION=1.33a
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -66,9 +64,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$SRCVERSION
-tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/v$SRCVERSION.tar.gz
-cd $PRGNAM-$SRCVERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
