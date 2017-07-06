@@ -1,0 +1,64 @@
+#!/bin/sh
+
+# Slackware build script for osinfo-db
+
+# Copyright 2016-2017 Matteo Bernardini <ponce@slackbuilds.org>, Pisa, Italy
+# Copyright 2017 Corrado Franco (http://conraid.net)
+# All rights reserved.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version, with the following exception:
+# the text of the GPL license may be omitted.
+
+# This program is distributed in the hope that it will be useful, but
+# without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose. Compiling,
+# interpreting, executing or merely reading the text of the program
+# may result in lapses of consciousness and/or very being, up to and
+# including the end of all existence and the Universe as we know it.
+# See the GNU General Public License for more details.
+
+# You may have received a copy of the GNU General Public License along
+# with this program (most likely, a file named COPYING).  If not, see
+# <http://www.gnu.org/licenses/>.
+
+# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+
+set -eu
+
+CWD=$(pwd)
+
+PKGNAM=osinfo-db
+VERSION=20161026
+SLVERSION=20161227
+BUILD=${BUILD:-1}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+PKG=$TMP/package-$PKGNAM
+OUTPUT=${OUTPUT:-/tmp}
+
+ARCH=noarch
+
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
+osinfo-db-import --root $PKG --dir /usr/share/osinfo $CWD/$PKGNAM-$VERSION.tar.xz
+osinfo-db-import --root $PKG --dir /usr/share/osinfo $CWD/$PKGNAM-slackware-$SLVERSION.tar.xz
+
+chown -R root:root $PKG
+find -L $PKG \
+ \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
+ -o -perm 511 \) -exec chmod 755 {} \; -o \
+ \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
+ -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
+
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+mv $PKG/usr/share/osinfo/{VERSION,LICENSE} $PKG/usr/doc/$PKGNAM-$VERSION
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
