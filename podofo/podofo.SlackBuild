@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=podofo
 VERSION=0.9.5
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -54,7 +54,6 @@ elif [ "$ARCH" = "i686" ]; then
 elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
-  CONF64="-DWANT_LIB64:BOOL=ON"
 else
   SLKCFLAGS="-O2"
   LIBDIRSUFFIX=""
@@ -70,7 +69,16 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
+
+# Fix man path
 sed 's|share/man/|man/|' -i CMakeLists.txt
+
 mkdir build
 cd build
 cmake \
@@ -81,11 +89,14 @@ cmake \
   -DPODOFO_BUILD_STATIC:BOOL=FALSE \
   -DPODOFO_BUILD_SHARED:BOOL=TRUE \
   -DPODOFO_USE_VISIBILITY=1 \
-  -DLUA_INCLUDE_DIR="/usr/include/lua5.1" \
-  -DWANT_BOOST:BOOL=1 $CONF64 \
+  -DLUA_INCLUDE_DIR="/usr/include/lua5.3" \
+  -DPODOFO_USE_VISIBILITY:BOOL=1 \
+  -DCMAKE_CXX_STANDARD:STRING=11 \
+  -DLIB_SUFFIX:STRING="$LIBDIRSUFFIX" \
+  -DWANT_BOOST:BOOL=1 \
   ..
 
-make 
+make
 make DESTDIR=$PKG install/strip
 cd ..
 
@@ -98,7 +109,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
