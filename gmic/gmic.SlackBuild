@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=gmic
-SRCVERSION=2.0.0
-VERSION=2.0.0
+SRCVERSION=2.0.2
+VERSION=2.0.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -47,13 +47,13 @@ if [ -z ${ARCH:=""} ]; then
 fi
 
 if [ "$ARCH" = "i586" ]; then
-  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686 -fno-fast-math"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "i686" ]; then
-  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686 -fno-fast-math"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer -fno-fast-math"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -74,10 +74,12 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 # Fix libdir to gimp plugin
-sed -i "s|lib/gimp|lib$LIBDIRSUFFIX/gimp|g" -i CMakeLists.txt
+sed -i "s|lib/gimp|lib$LIBDIRSUFFIX/gimp|g" -i resources/CMakeLists.txt
 
-# Make symlinks to build gimp plugin and zart
+# Make symlinks to build zart
 ln -sf ../gmic-community/zart zart
+
+cp resources/CMakeLists.txt .
 
 mkdir -p build
 cd build
@@ -87,7 +89,6 @@ cmake -Wno-dev \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DCMAKE_INSTALL_MANDIR=/usr/man \
   -DLOCALSTATEDIR=/var \
-  -DENABLE_FFMPEG=OFF \
   -DBUILD_LIB_STATIC=OFF \
   ..
 
@@ -98,7 +99,7 @@ cd ..
 # Build and install Zart
 cd zart
 qmake PREFIX=/usr QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" -o Makefile zart.pro
-make -j1 LIB=lib${LIBDIRSUFFIX} OPT_CFLAGS="$SLKCFLAGS" all 
+make -j1 LIB=lib${LIBDIRSUFFIX} OPT_CFLAGS="$SLKCFLAGS" WGET=/bin/true all
 install -Dm755 zart $PKG/usr/bin/zart
 cd -
 
@@ -107,7 +108,7 @@ cp -a COPYING README $PKG/usr/doc/$PKGNAM-$VERSION
 cat zart/README > $PKG/usr/doc/$PKGNAM-$VERSION/README_zart.txt
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 # Remove empty dir
