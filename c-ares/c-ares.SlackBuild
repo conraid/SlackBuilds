@@ -23,13 +23,13 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 
-set -e 
+set -eu
 
 CWD=$(pwd)
 
 PKGNAM=c-ares
-VERSION=1.12.0
-BUILD=${BUILD:-2}
+VERSION=1.13.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
