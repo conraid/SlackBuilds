@@ -33,7 +33,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=wine
-SRCVERSION=2.11
+SRCVERSION=2.12
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -73,16 +73,24 @@ cd $TMP
 rm -rf $PKGNAM-$SRCVERSION $PKGNAM-staging-$SRCVERSION
 tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.xz
 tar xvf $CWD/$PKGNAM-staging-$SRCVERSION.tar.gz || tar xvf $CWD/v$SRCVERSION.tar.gz
+tar xvf $CWD/$PKGNAM-d3d9-*-$SRCVERSION.tar.gz
 
 # Apply staging patches
+echo "Apply staging patches..."
 cd $PKGNAM-staging-$SRCVERSION/patches
 ./patchinstall.sh --all DESTDIR=$TMP/$PKGNAM-$SRCVERSION
 
 cd $TMP/$PKGNAM-$VERSION
 
+# Apply d3d9 patches
+echo "Apply d3d9 patches..."
+patch -Np1 -i $TMP/wine-d3d9-patches-wine-d3d9-$SRCVERSION/staging-helper.patch
+patch -Np1 -i $TMP/wine-d3d9-patches-wine-d3d9-$SRCVERSION/wine-d3d9.patch
+
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
+autoreconf -f
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
