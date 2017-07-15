@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=gimp-elsamuko
 VERSION=b3f4e3e
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -50,13 +50,13 @@ chmod -R u+w,go+r-w,a-s .
 
 # Install scripts:
 mkdir -p $PKG/usr/share/gimp/2.0/scripts
-cp -a scripts/*.scm $PKG/usr/share/gimp/2.0/scripts
+cp scripts/*.scm $PKG/usr/share/gimp/2.0/scripts
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a *README LICENSE $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
