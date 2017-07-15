@@ -32,7 +32,7 @@ CWD=$(pwd)
 PRGNAM=PHPCompatibility
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 VERSION=7.1.4
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -62,7 +62,7 @@ chmod -R u+w,go+r-w,a+X-s .
 
 PHPCSDIR="$PKG/usr/lib${LIBDIRSUFFIX}/php/PHP/CodeSniffer/Standards/$PRGNAM"
 mkdir -p $PHPCSDIR
-cp -a . $PHPCSDIR
+cp -r . $PHPCSDIR
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
