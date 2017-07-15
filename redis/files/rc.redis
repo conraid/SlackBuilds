@@ -5,8 +5,8 @@
 PORT=6379
 SERV=/usr/bin/redis-server
 CLI=/usr/bin/redis-cli
-PIDFILE=/var/run/redis.pid
 CONF=/etc/redis/redis.conf
+PIDFILE=$(grep pidfile $CONF | cut -d" " -f2)
 
 redis_start() {
   if [ ! -r $CONF ]; then
