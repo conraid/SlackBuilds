@@ -33,7 +33,7 @@ PKGNAM=nikto
 COMMIT="0b80a7fce2fe99123db102973319c4da85628803"
 SRCVERSION=$COMMIT
 VERSION=20170430_git
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -77,7 +77,7 @@ chmod -R u+w,go+r-w,a+X-s .
 mkdir -p $PKG/usr/share/nikto
 sed '/EXECDIR/ a\EXECDIR=/usr/share/nikto' -i program/nikto.conf
 install -Dm644 program/nikto.conf $PKG/etc/nikto.conf.new
-cp -a program/* $PKG/usr/share/nikto/
+cp -r program/* $PKG/usr/share/nikto/
 install -Dm755 $CWD/files/nikto.sh $PKG/usr/bin/nikto
 install -Dm644 documentation/nikto.1 $PKG/usr/man/man1/nikto.1
 
