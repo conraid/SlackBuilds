@@ -32,7 +32,7 @@ CWD=$(pwd)
 PKGNAM=unix-privesc-check
 VERSION=2.1_git4239100
 COMMIT=4239100762c287b4bde2cf158f949983ec4bb86d
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -76,7 +76,7 @@ touch {files,privileged}_cache.temp
 install -Dm0755 $CWD/files/${PKGNAM}.sh $PKG/usr/bin/$PKGNAM
 mkdir -p $PKG/usr/share/$PKGNAM
 install -m0666 {files,privileged}_cache.temp $PKG/usr/share/$PKGNAM
-cp -a upc.sh lib tools $PKG/usr/share/$PKGNAM
+cp -r upc.sh lib tools $PKG/usr/share/$PKGNAM
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
