@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=arpwatch
 VERSION=2.1a15
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-7}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -68,17 +68,12 @@ rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM.tar.gz
 cd $PKGNAM-$VERSION
 
-# Apply patch. From SBo
-patch -p1 -i $CWD/patches/arpwatch-2.1a4-fhs.patch
-patch -p1 -i $CWD/patches/arpwatch-2.1a10-man.patch
-patch -p1 -i $CWD/patches/arpwatch-drop.patch
-patch -p0 -i $CWD/patches/arpwatch-drop-man.patch
-patch -p1 -i $CWD/patches/arpwatch-addr.patch
-patch -p1 -i $CWD/patches/arpwatch-dir-man.patch
-patch -p1 -i $CWD/patches/arpwatch-scripts.patch
-patch -p1 -i $CWD/patches/arpwatch-2.1a15-nolocalpcap.patch
-patch -p1 -i $CWD/patches/arpwatch-2.1a15-bogon.patch
-patch -p1 -i $CWD/patches/arpwatch-2.1a15-extraman.patch
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
@@ -99,8 +94,8 @@ make ARPDIR=/var/lib/$PKGNAM
 mkdir -p $PKG/usr/sbin $PKG/usr/man/man8
 make DESTDIR=$PKG install install-man
 
-# Install utility script 
-cp -a arp2ethers arpfetch massagevendor massagevendor-old $PKG/usr/sbin
+# Install utility script
+cp arp2ethers arpfetch massagevendor massagevendor-old $PKG/usr/sbin
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
@@ -123,9 +118,9 @@ cp -a arp.dat ethercodes.dat d.awk duplicates.awk e.awk euppertolower.awk p.awk 
 $PKG/var/lib/$PKGNAM
 
 # Add init script
-install -Dm644 $CWD/rc.$PKGNAM $PKG/etc/rc.d/rc.$PKGNAM.new
+install -Dm644 $CWD/files/rc.$PKGNAM $PKG/etc/rc.d/rc.$PKGNAM.new
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
