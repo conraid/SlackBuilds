@@ -144,7 +144,7 @@ SLACKBUILD SHORT DESCRIPTION:  arpalert (monitoring ethernet networks)
 
 SLACKBUILD NAME: arpwatch
 SLACKBUILD LOCATION: ./arpwatch
-SLACKBUILD FILES: README arpwatch.SlackBuild arpwatch.info doinst.sh files/ethercodes.txt patches/arpwatch-2.1a10-man.patch patches/arpwatch-2.1a15-bogon.patch patches/arpwatch-2.1a15-extraman.patch patches/arpwatch-2.1a15-nolocalpcap.patch patches/arpwatch-2.1a4-fhs.patch patches/arpwatch-addr.patch patches/arpwatch-dir-man.patch patches/arpwatch-drop-man.patch patches/arpwatch-drop.patch patches/arpwatch-scripts.patch rc.arpwatch slack-desc
+SLACKBUILD FILES: README arpwatch.SlackBuild arpwatch.info doinst.sh files/ethercodes.txt files/rc.arpwatch patches/01-fhx.patch patches/02-man.patch patches/03-drop.patch patches/03b-dropman.patch patches/04-addr.patch patches/05-dirman.patch patches/06-scripts.patch patches/07-nolookup.patch patches/08-bogon.patch patches/09-extraman.patch slack-desc
 SLACKBUILD VERSION: 2.1a15
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: ftp://ftp.ee.lbl.gov/arpwatch.tar.gz
@@ -2692,10 +2692,10 @@ SLACKBUILD SHORT DESCRIPTION:  neofetch (system info script)
 SLACKBUILD NAME: neomutt
 SLACKBUILD LOCATION: ./neomutt
 SLACKBUILD FILES: README doinst.sh files/neomutt.desktop files/neomutt.xpm neomutt.SlackBuild neomutt.info slack-desc
-SLACKBUILD VERSION: 20170707
+SLACKBUILD VERSION: 20170714
 SLACKBUILD REQUIRED: notmuch lua
-SLACKBUILD DOWNLOAD: https://github.com/neomutt/neomutt/archive/neomutt-20170707.tar.gz
-SLACKBUILD MD5SUM: 81a8dde5127637dcfc739ae58237edb2
+SLACKBUILD DOWNLOAD: https://github.com/neomutt/neomutt/archive/neomutt-20170714.tar.gz
+SLACKBUILD MD5SUM: 5333a3f0bcc52d9c2cbe22b6485a55e5
 SLACKBUILD SHORT DESCRIPTION:  neomutt (Bringing together all the Mutt code)
 
 SLACKBUILD NAME: neovim-python
@@ -2827,10 +2827,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-clean-css-cli (The command line interface to
 SLACKBUILD NAME: node-clean-css
 SLACKBUILD LOCATION: ./node-clean-css
 SLACKBUILD FILES: README node-clean-css.SlackBuild node-clean-css.info slack-desc
-SLACKBUILD VERSION: 4.1.6
+SLACKBUILD VERSION: 4.1.7
 SLACKBUILD REQUIRED: node
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/clean-css/-/clean-css-4.1.6.tgz
-SLACKBUILD MD5SUM: a81ad1df226dfbc33fad0a08cb0ccd08
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/clean-css/-/clean-css-4.1.7.tgz
+SLACKBUILD MD5SUM: 75d5f44b58358242172a8a5794d4e2de
 SLACKBUILD SHORT DESCRIPTION:  node-clean-css (CSS minifier for node.js)
 
 SLACKBUILD NAME: node-cross-spawn
@@ -2863,10 +2863,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-doctoc (Generates table of contents for mark
 SLACKBUILD NAME: node-fs-extra
 SLACKBUILD LOCATION: ./node-fs-extra
 SLACKBUILD FILES: README node-fs-extra.SlackBuild node-fs-extra.info slack-desc
-SLACKBUILD VERSION: 3.0.1
+SLACKBUILD VERSION: 4.0.0
 SLACKBUILD REQUIRED: node
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/fs-extra/-/fs-extra-3.0.1.tgz
-SLACKBUILD MD5SUM: 60cb56ce9b8e3e0159b04700f1d54e25
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/fs-extra/-/fs-extra-4.0.0.tgz
+SLACKBUILD MD5SUM: 57fa8e23962fe0db36538949b87e9cb7
 SLACKBUILD SHORT DESCRIPTION:  node-fs-extra (node extra methods for the fs object)
 
 SLACKBUILD NAME: node-gyp
@@ -3889,10 +3889,10 @@ SLACKBUILD SHORT DESCRIPTION:  reaver (Brute force attack against Wifi Protected
 SLACKBUILD NAME: redis
 SLACKBUILD LOCATION: ./redis
 SLACKBUILD FILES: README doinst.sh files/rc.redis files/redis.logrotate patches/jemalloc.patch redis.SlackBuild redis.info slack-desc
-SLACKBUILD VERSION: 3.2.9
+SLACKBUILD VERSION: 4.0.0
 SLACKBUILD REQUIRED: hiredis
-SLACKBUILD DOWNLOAD: http://download.redis.io/releases/redis-3.2.9.tar.gz
-SLACKBUILD MD5SUM: 3d0a35985b4414c9376b6bcda0ef72ae
+SLACKBUILD DOWNLOAD: http://download.redis.io/releases/redis-4.0.0.tar.gz
+SLACKBUILD MD5SUM: f220ea7468eb87986435d69e9ce080c6
 SLACKBUILD SHORT DESCRIPTION:  Redis (Key-Value Store)
 
 SLACKBUILD NAME: rkhunter
@@ -4393,10 +4393,10 @@ SLACKBUILD SHORT DESCRIPTION:  Subtitle Composer (KDE/QT Subtitle Editor9
 SLACKBUILD NAME: suricata
 SLACKBUILD LOCATION: ./suricata
 SLACKBUILD FILES: README doinst.sh rc.suricata slack-desc suricata.SlackBuild suricata.info
-SLACKBUILD VERSION: 4.0.0-rc1
+SLACKBUILD VERSION: 4.0.0-rc2
 SLACKBUILD REQUIRED: hiredis geoip jansson libnet lua libhtp
-SLACKBUILD DOWNLOAD: https://www.openinfosecfoundation.org/download/suricata-4.0.0-rc1.tar.gz
-SLACKBUILD MD5SUM: 5b99226bf7fb0d7402f2921895ab54a4
+SLACKBUILD DOWNLOAD: https://www.openinfosecfoundation.org/download/suricata-4.0.0-rc2.tar.gz
+SLACKBUILD MD5SUM: bbdba49880dc54009425dc6a417f9903
 SLACKBUILD SHORT DESCRIPTION:  suricata (Network Security Monitoring)
 
 SLACKBUILD NAME: tcpflow
@@ -4591,10 +4591,10 @@ SLACKBUILD SHORT DESCRIPTION:  uget (Download Manager)
 SLACKBUILD NAME: unetbootin
 SLACKBUILD LOCATION: ./unetbootin
 SLACKBUILD FILES: README doinst.sh slack-desc unetbootin.SlackBuild unetbootin.info
-SLACKBUILD VERSION: 647
+SLACKBUILD VERSION: 654
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/unetbootin/unetbootin/archive/647.tar.gz
-SLACKBUILD MD5SUM: 51ea90d09661758165c5a8378855d53f
+SLACKBUILD DOWNLOAD: https://github.com/unetbootin/unetbootin/archive/654.tar.gz
+SLACKBUILD MD5SUM: 024687393822fdff151e4bbe0e32230e
 SLACKBUILD SHORT DESCRIPTION:  UNetbootin (create bootable Live USB drives)
 
 SLACKBUILD NAME: unhide
@@ -5032,10 +5032,10 @@ SLACKBUILD SHORT DESCRIPTION:  yersinia
 SLACKBUILD NAME: youtube-dl
 SLACKBUILD LOCATION: ./youtube-dl
 SLACKBUILD FILES: README patches/makefile.patch patches/setup.patch slack-desc youtube-dl.SlackBuild youtube-dl.info
-SLACKBUILD VERSION: 2017.07.09
+SLACKBUILD VERSION: 2017.07.15
 SLACKBUILD REQUIRED: rtmpdump
-SLACKBUILD DOWNLOAD: https://yt-dl.org/downloads/2017.07.09/youtube-dl-2017.07.09.tar.gz
-SLACKBUILD MD5SUM: 802ee79756488cf684b7190355b6bb3b
+SLACKBUILD DOWNLOAD: https://yt-dl.org/downloads/2017.07.15/youtube-dl-2017.07.15.tar.gz
+SLACKBUILD MD5SUM: 03926f2e46cfe993725734aa395a9413
 SLACKBUILD SHORT DESCRIPTION:  youtube-dl (YouTube video download utility)
 
 SLACKBUILD NAME: zenity
