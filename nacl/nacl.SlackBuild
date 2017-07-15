@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=nacl
 VERSION=20110221
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -86,12 +86,12 @@ install -Dm644 build/$shost/lib/*/libnacl.a "$PKG/usr/lib${LIBDIRSUFFIX}/libnacl
 install -Dm644 build/$shost/lib/*/randombytes.o "$PKG/usr/lib${LIBDIRSUFFIX}/randombytes.o"
 
 mkdir -p $PKG/usr/include/nacl
-cp -a build/$shost/include/*/* $PKG/usr/include/nacl
+cp build/$shost/include/*/* $PKG/usr/include/nacl
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
