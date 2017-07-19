@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=nomacs
 VERSION=2.4.6
-BUILD=${BUILD:-7}
+BUILD=${BUILD:-8}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,9 +72,13 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 # Fix man path
-sed -i 's|share/man/|man/|' cmake/UnixBuildTarget.cmake
+sed 's|share/man/|man/|' -i cmake/UnixBuildTarget.cmake
+
 # Fix opencv > 2.1.0
-sed -i 's|2.1.0 ||g' cmake/Unix.cmake
+sed 's/2.1.0 //g' -i cmake/Unix.cmake
+
+# Fix duplicate else in CMakeLists
+sed '/UNIX/s/else/elseif/g' -i CMakeLists.txt
 
 mkdir -p build
 cd build
