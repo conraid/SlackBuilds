@@ -36,7 +36,7 @@ CWD=$(pwd)
 
 PKGNAM=node
 VERSION=8.1.4
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -101,7 +101,8 @@ CXXFLAGS="$SLKCFLAGS" \
   --shared-zlib \
   --shared-openssl \
   --shared-libuv \
-  --shared-cares
+  --shared-cares \
+  --without-npm
 
 make PREFIX="/usr" CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS"
 make PREFIX="/usr" DESTDIR=$PKG install
