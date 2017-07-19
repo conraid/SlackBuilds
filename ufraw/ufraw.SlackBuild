@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=ufraw
 VERSION=0.22
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-7}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -69,9 +69,16 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
+
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS -Wno-literal-suffix" \
 ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
