@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=wireshark
-VERSION=2.2.7
+VERSION=2.4.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -63,14 +63,11 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
+tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
-
-# Fix with QT<5.1
-sed '/setTextInteractionFlags/d' -i ui/qt/simple_dialog.cpp
 
 LUA_LIBS="-llua5.2 -lm" \
 LUA_CFLAGS="-I/usr/include/lua5.2" \
@@ -84,16 +81,14 @@ CXXFLAGS="$SLKCFLAGS" \
   --mandir=/usr/man \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
   --disable-static \
-  --disable-usr-local \
   --enable-tfshark \
   --enable-setuid-install \
   --with-lua \
   --with-ssl=/usr/lib${LIBDIRSUFFIX} \
   --with-geoip \
   --with-plugins=/usr/lib${LIBDIRSUFFIX}/wireshark/plugins/ \
-  --with-gtk2=no \
-  --with-gtk3=yes \
-  --with-qt=4 \
+  --with-qt=no \
+  --with-gtk=3 \
   --enable-tfshark \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
@@ -101,14 +96,17 @@ CXXFLAGS="$SLKCFLAGS" \
 make
 make DESTDIR=$PKG install
 
+# Link wireshark to wireshark-gtk
+ln -s wireshark-gtk $PKG/usr/bin/$PKGNAM
+
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 # Add headers files
-install -dm755 $PKG/usr/include/$PKGNAM/{epan/{crypt,dfilter,dissectors,ftypes,wmem},wiretap,wsutil}
-install -m644 config.h register.h ws_*.h "$PKG/usr/include/$PKGNAM"
-for d in epan epan/crypt epan/dfilter epan/dissectors epan/ftypes epan/wmem wiretap wsutil; do
-  install -m644 ${d}/*.h $PKG/usr/include/$PKGNAM/${d}
+mkdir -p $PKG/usr/include/$PKGNAM/{epan/{crypt,dfilter,dissectors,ftypes,wmem},wiretap,wsutil}
+install -m644 config.h register.h ws_*.h $PKG/usr/include/$PKGNAM
+for DH in epan epan/crypt epan/dfilter epan/dissectors epan/ftypes epan/wmem wiretap wsutil; do
+  install -m644 $DH/*.h $PKG/usr/include/$PKGNAM/$DH
 done
 
 if [ -d $PKG/usr/man ]; then
@@ -120,7 +118,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
