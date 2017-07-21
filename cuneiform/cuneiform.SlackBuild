@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=cuneiform
 VERSION=1.1.0
-BUILD=${BUILD:-7}
+BUILD=${BUILD:-8}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -70,6 +70,13 @@ cd $PKGNAM-linux-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
+
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
 
 # dos2unix license.txt
 sed -i 's/\r//g' cuneiform_src/Addfiles/license.txt
