@@ -639,7 +639,7 @@ SLACKBUILD SHORT DESCRIPTION:  ctunnel  (Crypto Tunnel for Proxying and Forwardi
 
 SLACKBUILD NAME: cuneiform
 SLACKBUILD LOCATION: ./cuneiform
-SLACKBUILD FILES: README cuneiform.SlackBuild cuneiform.info slack-desc
+SLACKBUILD FILES: README cuneiform.SlackBuild cuneiform.info patches/build-fix.patch slack-desc
 SLACKBUILD VERSION: 1.1.0
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://launchpad.net/cuneiform-linux/1.1/1.1/+download/cuneiform-linux-1.1.0.tar.bz2
@@ -1423,10 +1423,10 @@ SLACKBUILD SHORT DESCRIPTION:  hwinfo (hardware detection tool used in SuSE Linu
 SLACKBUILD NAME: hydra
 SLACKBUILD LOCATION: ./hydra
 SLACKBUILD FILES: README doinst.sh hydra.SlackBuild hydra.desktop hydra.info patches/fix-locations.patch slack-desc
-SLACKBUILD VERSION: 8.5
+SLACKBUILD VERSION: 8.6
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/vanhauser-thc/thc-hydra/archive/v8.5.tar.gz
-SLACKBUILD MD5SUM: abb22fea48aa8c8ebbc37bc29770ecbf
+SLACKBUILD DOWNLOAD: https://github.com/vanhauser-thc/thc-hydra/archive/8.6.tar.gz
+SLACKBUILD MD5SUM: b2411efb9f708e5ccb8b274d7cef2bf2
 SLACKBUILD SHORT DESCRIPTION:  Hydra (A very fast network login cracker)
 
 SLACKBUILD NAME: i2util
@@ -2926,10 +2926,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-uglify-js (JavaScript compressor/minifier)
 SLACKBUILD NAME: node
 SLACKBUILD LOCATION: ./node
 SLACKBUILD FILES: README node.SlackBuild node.info slack-desc
-SLACKBUILD VERSION: 8.2.0
+SLACKBUILD VERSION: 8.2.1
 SLACKBUILD REQUIRED: libuv c-ares
-SLACKBUILD DOWNLOAD: https://github.com/nodejs/node/archive/v8.2.0.tar.gz
-SLACKBUILD MD5SUM: e8d9d1505f9c3d5203edc27da38bd66c
+SLACKBUILD DOWNLOAD: https://github.com/nodejs/node/archive/v8.2.1.tar.gz
+SLACKBUILD MD5SUM: d5d85160d260828108fb1bd8d96b63fa
 SLACKBUILD SHORT DESCRIPTION:  Node (Evented I/O for V8 JavaScript)
 
 SLACKBUILD NAME: nomacs
@@ -4096,28 +4096,28 @@ SLACKBUILD SHORT DESCRIPTION:  setconf (Utility for changing settings in configu
 SLACKBUILD NAME: shorewall-core
 SLACKBUILD LOCATION: ./shorewall-core
 SLACKBUILD FILES: PKGNOTE README doinst.sh shorewall-core.SlackBuild shorewall-core.info slack-desc
-SLACKBUILD VERSION: 5.1.4.3
+SLACKBUILD VERSION: 5.1.5
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/5.1/shorewall-5.1.4/shorewall-core-5.1.4.3.tar.bz2
-SLACKBUILD MD5SUM: 37bab60a25c166ab9d048b284f3b1203
+SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/5.1/shorewall-5.1.5/shorewall-core-5.1.5.tar.bz2
+SLACKBUILD MD5SUM: 34ee096f49ad2794b151f813fa7cb868
 SLACKBUILD SHORT DESCRIPTION:  Shorewall-core (Core Shorewall libraries)
 
 SLACKBUILD NAME: shorewall
 SLACKBUILD LOCATION: ./shorewall
 SLACKBUILD FILES: PKGNOTE README doinst.sh shorewall.SlackBuild shorewall.info slack-desc
-SLACKBUILD VERSION: 5.1.4.3
+SLACKBUILD VERSION: 5.1.5
 SLACKBUILD REQUIRED: shorewall-core
-SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/5.1/shorewall-5.1.4/shorewall-5.1.4.3.tar.bz2
-SLACKBUILD MD5SUM: 29ad0068ac5dd4c6a33d4b2c0b50eb16
+SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/5.1/shorewall-5.1.5/shorewall-5.1.5.tar.bz2
+SLACKBUILD MD5SUM: c872b85d39e5e01a62589a59028caa84
 SLACKBUILD SHORT DESCRIPTION:  Shorewall (An iptables-based firewall for Linux systems)
 
 SLACKBUILD NAME: shorewall6
 SLACKBUILD LOCATION: ./shorewall6
 SLACKBUILD FILES: PKGNOTE README doinst.sh shorewall6.SlackBuild shorewall6.info slack-desc
-SLACKBUILD VERSION: 5.1.4.3
+SLACKBUILD VERSION: 5.1.5
 SLACKBUILD REQUIRED: shorewall-core
-SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/5.1/shorewall-5.1.4/shorewall6-5.1.4.3.tar.bz2
-SLACKBUILD MD5SUM: 750a86a1f41bf70341ce7b7e9368375f
+SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/5.1/shorewall-5.1.5/shorewall6-5.1.5.tar.bz2
+SLACKBUILD MD5SUM: dad8491efa5c5abf2f67292680c00783
 SLACKBUILD SHORT DESCRIPTION:  Shorewall6 (An IPv6 iptables-based firewall for Linux systems)
 
 SLACKBUILD NAME: siege
@@ -4160,7 +4160,7 @@ SLACKBUILD NAME: sk1
 SLACKBUILD LOCATION: ./sk1
 SLACKBUILD FILES: README doinst.sh sk1.SlackBuild sk1.info slack-desc
 SLACKBUILD VERSION: 2.0rc2
-SLACKBUILD REQUIRED: 
+SLACKBUILD REQUIRED: sk1libs
 SLACKBUILD DOWNLOAD: http://downloads.sk1project.net/sk1/2.0rc2/sk1-2.0rc2.tar.gz
 SLACKBUILD MD5SUM: f4933f65a0be9b153bcbcb3390a50cc9
 SLACKBUILD SHORT DESCRIPTION:  sk1 (vector graphics editor)
@@ -4906,10 +4906,10 @@ SLACKBUILD SHORT DESCRIPTION:  wol (Wake On Lan)
 SLACKBUILD NAME: wordpress-coding-standards
 SLACKBUILD LOCATION: ./wordpress-coding-standards
 SLACKBUILD FILES: PKGNOTE README slack-desc wordpress-coding-standards.SlackBuild wordpress-coding-standards.info
-SLACKBUILD VERSION: 0.11.0
+SLACKBUILD VERSION: 0.12.0
 SLACKBUILD REQUIRED: php-codesniffer
-SLACKBUILD DOWNLOAD: https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/archive/0.11.0.tar.gz
-SLACKBUILD MD5SUM: 1e7c1875aa2c446e0e25052bf057ff3b
+SLACKBUILD DOWNLOAD: https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/archive/0.12.0.tar.gz
+SLACKBUILD MD5SUM: 1ff75ab759385058de52b979eb0bbbf3
 SLACKBUILD SHORT DESCRIPTION:  wordpress-coding-standards (PHP_CodeSniffer WordPress conventions)
 
 SLACKBUILD NAME: wpscan
