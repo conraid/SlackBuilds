@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=smplayer
-VERSION=17.6.0
+VERSION=17.7.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -69,11 +69,10 @@ chmod -R u+w,go+r-w,a+X-s .
 
 # Patch Makefile
 QCONF="QMAKE_CFLAGS=\"$SLKCFLAGS\" QMAKE_CXXFLAGS=\"$SLKCFLAGS\""
-
 sed -e 's|/share/man/|/man/|g' \
-  -e "s|(QMAKE_OPTS)|(QMAKE_OPTS) $QCONF|" \
-  -e "s|/share/doc/.*|/doc/smplayer-$VERSION|" \
-  -i Makefile
+    -e "s|(QMAKE_OPTS)|(QMAKE_OPTS) $QCONF|" \
+    -e "s|/share/doc/.*|/doc/smplayer-$VERSION|" \
+    -i Makefile
 
 make PREFIX=/usr
 make PREFIX=/usr DESTDIR=$PKG install
