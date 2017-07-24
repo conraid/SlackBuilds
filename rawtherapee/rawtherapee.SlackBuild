@@ -31,9 +31,9 @@ CWD=$(pwd)
 
 PRGNAM=RawTherapee
 PKGNAM=rawtherapee
-SRCVERSION=5.1
+SRCVERSION=5.2
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -67,7 +67,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PRGNAM-$SRCVERSION
-tar xf $CWD/$PRGNAM-$SRCVERSION.tar.gz || tar xf $CWD/$SRCVERSION.tar.gz
+tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz || tar xf $CWD/$SRCVERSION.tar.gz
 cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
@@ -75,17 +75,19 @@ chmod -R u+w,go+r-w,a-s .
 
 # Fix man and doc path
 sed -e "s|/share/doc/rawtherapee|/doc/$PKGNAM-$VERSION|g" \
-  -e "s|/share/man/|/man/|g" \
-  -i CMakeLists.txt
+    -e "s|/share/man/|/man/|g" \
+    -i CMakeLists.txt
 
 mkdir -p build
 cd build
 cmake -Wno-dev \
-  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -Werror=unused-label -fopenmp -Werror=unknown-pragmas -g" \
-  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -std=c++11 -Werror=unused-label -fopenmp -Werror=unknown-pragmas -g" \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -Werror=unused-label -fopenmp -Werror=unknown-pragmas -DNDEBUG" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -Werror=unused-label -fopenmp -Werror=unknown-pragmas -DNDEBUG" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DBUILD_SHARED_LIBS:BOOL=ON \
+  -DBUILD_SHARED=ON \
+  -DBUILD_SHARED_LIBS=ON \
+  -DCACHE_NAME_SUFFIX="" \
   ..
 
 make
