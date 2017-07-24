@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PRGNAM=uglify-js
 PKGNAM=node-uglifyjs
-VERSION=3.0.25
+VERSION=3.0.26
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -53,9 +53,9 @@ cd $TMP
 
 DESTDIR=$PKG npm install --user root -g $CWD/$PRGNAM-$VERSION.tgz
 
-cd $PKG 
-chown -R root:root . 
-chmod -R u+w,go+r-w,a+X-s . 
+cd $PKG
+chown -R root:root .
+chmod -R u+w,go+r-w,a+X-s .
 
 # Remove empty dir
 rmdir $PKG/usr/etc
