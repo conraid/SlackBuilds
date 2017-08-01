@@ -52,7 +52,7 @@ if [ -e $CWD/patches/ ]; then
   done
 fi
 
-VERSION=$( grep "^#*[[:space:]]*Version:" $PKGNAM | cut -d" " -f4)
+VERSION=$( grep "^SELF_VERSION=" $PKGNAM | cut -d= -f2)
 
 install -Dm755 inxi $PKG/usr/bin/inxi
 install -Dm644 inxi.1.gz $PKG/usr/man/man1/inxi.1.gz
