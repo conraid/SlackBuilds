@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PRGNAM=PHPCompatibility
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-VERSION=7.1.5
+VERSION=8.0.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -60,9 +60,11 @@ cd $PRGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-PHPCSDIR="$PKG/usr/lib${LIBDIRSUFFIX}/php/PHP/CodeSniffer/Standards/$PRGNAM"
+PHPCSDIR="$PKG/usr/lib${LIBDIRSUFFIX}/php/PHP/CodeSniffer/src/Standards/"
 mkdir -p $PHPCSDIR
-cp -r . $PHPCSDIR
+cp -r $PRGNAM $PHPCSDIR
+cp PHPCSAliases.php $PHPCSDIR/$PRGNAM
+sed '/PHPCSAliases/s|./../|./|' -i $PHPCSDIR/$PRGNAM/ruleset.xml
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
