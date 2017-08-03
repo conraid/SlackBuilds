@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PRGNAM=WordPress-Coding-Standards
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-VERSION=0.12.0
+VERSION=0.13.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -60,7 +60,7 @@ cd $PRGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-WCSDIR="$PKG/usr/lib${LIBDIRSUFFIX}/php/PHP/CodeSniffer/Standards"
+WCSDIR="$PKG/usr/lib${LIBDIRSUFFIX}/php/PHP/CodeSniffer/src/Standards"
 mkdir -p $WCSDIR
 cp -r WordPress* $WCSDIR
 
@@ -68,7 +68,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
