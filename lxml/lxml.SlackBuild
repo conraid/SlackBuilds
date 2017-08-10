@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=lxml
-VERSION=3.7.2
+VERSION=3.8.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -69,6 +69,9 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
+# Fix missing xlocale.h
+ln -s /usr/include/locale.h xlocale.h
+
 CFLAGS="$SLKCFLAGS" python setup.py install --with-unicode-strings --root=$PKG
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
@@ -78,7 +81,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
