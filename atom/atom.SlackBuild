@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=atom
-SRCVERSION=1.18.0
+SRCVERSION=1.19.0
 VERSION=$(echo $SRCVERSION | tr - _ )
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -63,9 +63,6 @@ cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
-
-# Build with for node7/8
-sed '/majorVersion/s/< 7/<= 8/g' -i script/lib/verify-machine-requirements.js
 
 ./script/clean
 ./script/build --install=$PKG/usr
