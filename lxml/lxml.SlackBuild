@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=lxml
 VERSION=3.8.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -69,10 +69,7 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Fix missing xlocale.h
-ln -s /usr/include/locale.h xlocale.h
-
-CFLAGS="$SLKCFLAGS" python setup.py install --with-unicode-strings --root=$PKG
+CFLAGS="$SLKCFLAGS -fno-strict-aliasing" python setup.py install --with-unicode-strings --root=$PKG
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true
