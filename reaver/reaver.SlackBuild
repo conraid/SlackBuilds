@@ -30,14 +30,14 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=reaver
-VERSION=1.4
-BUILD=${BUILD:-4}
+VERSION=1.6.1
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="docs/README docs/LICENSE"
+DOCFILES="docs/README* docs/LICENSE"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -65,7 +65,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
+tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
@@ -83,18 +83,16 @@ CXXFLAGS="$SLKCFLAGS" \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
-make
+make CONFDIR=/etc/reaver
+make DESTDIR=$PKG CONFDIR=/etc/reaver install
 cd -
-install -Dsm0755 src/wash $PKG/usr/sbin/wash
-install -Dsm0755 src/reaver $PKG/usr/sbin/reaver
-install -Dm0644 src/reaver.db $PKG/etc/reaver/reaver.db.new
-install -Dm0644 docs/reaver.1.gz $PKG/usr/man/man1/reaver.1.gz
+install -Dm644 docs/reaver.1.gz $PKG/usr/man/man1/reaver.1.gz
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
