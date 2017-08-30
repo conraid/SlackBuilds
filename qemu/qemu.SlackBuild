@@ -29,8 +29,9 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=qemu
-VERSION=2.9.0
-BUILD=${BUILD:-2}
+SRCVERSION=2.10.0-rc4
+VERSION=$(echo $SRCVERSION | tr - _)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -63,15 +64,17 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.xz
+cd $PKGNAM-$SRCVERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-# Fix VTE version
-sed 's/vte-2\.90/vte-2.91/g' -i configure
+# Remove double CFLAGS
+sed "s|^\ \ CFLAGS=\"-O2\ |  CFLAGS=\"|" -i configure
 
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
 ARFLAGS="rv" \
 ./configure \
   --extra-cflags="$SLKCFLAGS" \
@@ -116,7 +119,8 @@ ARFLAGS="rv" \
   --audio-drv-list="alsa,sdl,pa" \
   --target-list="arm-softmmu,i386-softmmu,x86_64-softmmu,arm-linux-user,armeb-linux-user,i386-linux-user,x86_64-linux-user"
 
-make
+make config-all-devices.mak config-all-disas.mak
+make V=1
 make DESTDIR=$PKG install
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
@@ -137,6 +141,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-
+echo "8"
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
