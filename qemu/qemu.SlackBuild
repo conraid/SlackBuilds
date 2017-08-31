@@ -29,8 +29,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=qemu
-SRCVERSION=2.10.0-rc4
-VERSION=$(echo $SRCVERSION | tr - _)
+VERSION=2.10.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -64,9 +63,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$SRCVERSION
-tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.xz
-cd $PKGNAM-$SRCVERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
+cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
