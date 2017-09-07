@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=yarn
-VERSION=0.28.4
+VERSION=1.0.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -60,7 +60,7 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 mkdir -p $PKG/usr/lib$LIBDIRSUFFIX/node_modules/yarn
-cp -r dist/* $PKG/usr/lib$LIBDIRSUFFIX/node_modules/yarn
+cp -r */* $PKG/usr/lib$LIBDIRSUFFIX/node_modules/yarn
 
 mkdir -p $PKG/usr/bin
 ln -s /usr/lib$LIBDIRSUFFIX/node_modules/yarn/bin/yarn $PKG/usr/bin/yarn
