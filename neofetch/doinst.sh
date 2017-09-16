@@ -11,4 +11,4 @@ config() {
   # Otherwise, we leave the .new copy for the admin to consider...
 }
 
-config etc/neofetch/config.new
+config etc/neofetch/config.conf.new
