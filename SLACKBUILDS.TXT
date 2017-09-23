@@ -621,7 +621,7 @@ SLACKBUILD SHORT DESCRIPTION:  cracklib (password crack library)
 
 SLACKBUILD NAME: cryfs
 SLACKBUILD LOCATION: ./cryfs
-SLACKBUILD FILES: README cryfs.SlackBuild cryfs.info slack-desc
+SLACKBUILD FILES: README cryfs.SlackBuild cryfs.info patches/spdlog.patch slack-desc
 SLACKBUILD VERSION: 0.9.7
 SLACKBUILD REQUIRED: cryptopp
 SLACKBUILD DOWNLOAD: https://github.com/cryfs/cryfs/archive/0.9.7.tar.gz
@@ -771,15 +771,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://www.mavetju.org/download/dnstracer-1.9.tar.gz
 SLACKBUILD MD5SUM: 7db73ce3070119c98049a617fe52ea84
 SLACKBUILD SHORT DESCRIPTION:  dnstracer (trace a chain of DNS servers to the source)
-
-SLACKBUILD NAME: docutils
-SLACKBUILD LOCATION: ./docutils
-SLACKBUILD FILES: README docutils.SlackBuild docutils.info slack-desc
-SLACKBUILD VERSION: 0.13.1
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/docutils/docutils/0.13.1/docutils-0.13.1.tar.gz
-SLACKBUILD MD5SUM: ea4a893c633c788be9b8078b6b305d53
-SLACKBUILD SHORT DESCRIPTION:  docutils (Python Documentation Utilities)
 
 SLACKBUILD NAME: dos2unix
 SLACKBUILD LOCATION: ./dos2unix
@@ -2214,7 +2205,7 @@ SLACKBUILD SHORT DESCRIPTION:  libtermkey (keyboard entry processing library)
 
 SLACKBUILD NAME: libtorrent-rasterbar
 SLACKBUILD LOCATION: ./libtorrent-rasterbar
-SLACKBUILD FILES: README libtorrent-rasterbar.SlackBuild libtorrent-rasterbar.info slack-desc
+SLACKBUILD FILES: README libtorrent-rasterbar.SlackBuild libtorrent-rasterbar.info patches/7eb3cf6b.patch slack-desc
 SLACKBUILD VERSION: 1.1.4
 SLACKBUILD REQUIRED: geoip
 SLACKBUILD DOWNLOAD: https://github.com/arvidn/libtorrent/releases/download/libtorrent-1_1_4/libtorrent-rasterbar-1.1.4.tar.gz
@@ -3062,7 +3053,7 @@ SLACKBUILD NAME: offlineimap
 SLACKBUILD LOCATION: ./offlineimap
 SLACKBUILD FILES: README offlineimap.SlackBuild offlineimap.info slack-desc
 SLACKBUILD VERSION: 7.1.1
-SLACKBUILD REQUIRED: docutils
+SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://github.com/OfflineIMAP/offlineimap/archive/v7.1.1.tar.gz
 SLACKBUILD MD5SUM: f10c16c682ff40afa519d6dbe19869bf
 SLACKBUILD SHORT DESCRIPTION:  offlineimap (Read/sync your IMAP mailboxes)
@@ -3475,10 +3466,10 @@ SLACKBUILD SHORT DESCRIPTION:  phpmd (PHP Mass Detector)
 SLACKBUILD NAME: phpmetrics
 SLACKBUILD LOCATION: ./phpmetrics
 SLACKBUILD FILES: LICENSE README phpmetrics.SlackBuild phpmetrics.info slack-desc
-SLACKBUILD VERSION: 2.2.0
+SLACKBUILD VERSION: 2.3.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/Halleck45/PhpMetrics/raw/v2.2.0/build/phpmetrics.phar
-SLACKBUILD MD5SUM: b79eb1beff9a539a5ceee3cdb85a844b
+SLACKBUILD DOWNLOAD: https://github.com/Halleck45/PhpMetrics/raw/v2.3.0/build/phpmetrics.phar
+SLACKBUILD MD5SUM: 025c8c9467d344f87d9c2e3b13e2c48a
 SLACKBUILD SHORT DESCRIPTION:  phpmetrics (static analysis tool for PHP)
 
 SLACKBUILD NAME: pixiewps
@@ -3546,7 +3537,7 @@ SLACKBUILD SHORT DESCRIPTION:  poedit (Gettext translations editor)
 
 SLACKBUILD NAME: pokerth
 SLACKBUILD LOCATION: ./pokerth
-SLACKBUILD FILES: README doinst.sh patches/01-pokerth-1.1.1-Qualify-std-ifstream-and-std-ofstream.patch patches/02-pokerth-gcc6.patch patches/03-pokerth-c++11.patch pokerth.SlackBuild pokerth.info slack-desc
+SLACKBUILD FILES: README doinst.sh patches/01-pokerth-1.1.1-Qualify-std-ifstream-and-std-ofstream.patch patches/02-pokerth-gcc6.patch patches/03-pokerth-c++11.patch patches/pokerth-1.1.1-boost-1.65-ambiguous-advance.patch pokerth.SlackBuild pokerth.info slack-desc
 SLACKBUILD VERSION: 1.1.1
 SLACKBUILD REQUIRED: libgsasl tinyxml protobuf libircclient
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/pokerth/pokerth/1.1/PokerTH-1.1.1-src.tar.bz2
@@ -3751,42 +3742,6 @@ SLACKBUILD DOWNLOAD: https://github.com/JPaulMora/Pyrit/archive/v0.5.0.tar.gz
 SLACKBUILD MD5SUM: fbc25ae13a5fed2b2e3ffad7ede0dc71
 SLACKBUILD SHORT DESCRIPTION:  pyrit (WPA precomputed cracker)
 
-SLACKBUILD NAME: python-certifi
-SLACKBUILD LOCATION: ./python-certifi
-SLACKBUILD FILES: README python-certifi.SlackBuild python-certifi.info slack-desc
-SLACKBUILD VERSION: 2017.4.17
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/dd/0e/1e3b58c861d40a9ca2d7ea4ccf47271d4456ae4294c5998ad817bd1b4396/certifi-2017.4.17.tar.gz
-SLACKBUILD MD5SUM: db40445044feda1437ce3ccd5fc28a57
-SLACKBUILD SHORT DESCRIPTION:  python-certifi (Python SSL Certificates)
-
-SLACKBUILD NAME: python-chardet
-SLACKBUILD LOCATION: ./python-chardet
-SLACKBUILD FILES: README python-chardet.SlackBuild python-chardet.info slack-desc
-SLACKBUILD VERSION: 3.0.4
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/fc/bb/a5768c230f9ddb03acc9ef3f0d4a3cf93462473795d18e9535498c8f929d/chardet-3.0.4.tar.gz
-SLACKBUILD MD5SUM: 7dd1ba7f9c77e32351b0a0cfacf4055c
-SLACKBUILD SHORT DESCRIPTION:  python-chardet (autodetection of character encoding in python)
-
-SLACKBUILD NAME: python-idna
-SLACKBUILD LOCATION: ./python-idna
-SLACKBUILD FILES: README python-idna.SlackBuild python-idna.info slack-desc
-SLACKBUILD VERSION: 2.5
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/d8/82/28a51052215014efc07feac7330ed758702fc0581347098a81699b5281cb/idna-2.5.tar.gz
-SLACKBUILD MD5SUM: fc1d992bef73e8824db411bb5d21f012
-SLACKBUILD SHORT DESCRIPTION:  python-idna (Internationalized Domain Names in Applications)
-
-SLACKBUILD NAME: python-requests
-SLACKBUILD LOCATION: ./python-requests
-SLACKBUILD FILES: README python-requests.SlackBuild python-requests.info slack-desc
-SLACKBUILD VERSION: 2.18.4
-SLACKBUILD REQUIRED: python-idna python-certifi python-chardet python-urllib3
-SLACKBUILD DOWNLOAD: https://github.com/kennethreitz/requests/archive/v2.18.4.tar.gz
-SLACKBUILD MD5SUM: ee668fdec015db44b3a85ae8c877d3d7
-SLACKBUILD SHORT DESCRIPTION:  python-requests (Requests: HTTP for Humans)
-
 SLACKBUILD NAME: python-slip
 SLACKBUILD LOCATION: ./python-slip
 SLACKBUILD FILES: README python-slip.SlackBuild python-slip.info slack-desc
@@ -3795,15 +3750,6 @@ SLACKBUILD REQUIRED: decorator
 SLACKBUILD DOWNLOAD: https://github.com/nphilipp/python-slip/releases/download/python-slip-0.4.1/python-slip-0.4.1.tar.bz2
 SLACKBUILD MD5SUM: d84a372a723487007004c9d74f7d36d4
 SLACKBUILD SHORT DESCRIPTION:  python-slip (convenience, extension and workaround code)
-
-SLACKBUILD NAME: python-urllib3
-SLACKBUILD LOCATION: ./python-urllib3
-SLACKBUILD FILES: README python-urllib3.SlackBuild python-urllib3.info slack-desc
-SLACKBUILD VERSION: 1.21.1
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/96/d9/40e4e515d3e17ed0adbbde1078e8518f8c4e3628496b56eb8f026a02b9e4/urllib3-1.21.1.tar.gz
-SLACKBUILD MD5SUM: ef6c72c79b9c6bcd68c204f9b92abc86
-SLACKBUILD SHORT DESCRIPTION:  python-urllib3 (HTTP library)
 
 SLACKBUILD NAME: pyyaml
 SLACKBUILD LOCATION: ./pyyaml
@@ -3943,10 +3889,10 @@ SLACKBUILD SHORT DESCRIPTION:  reaver (Brute force attack against Wifi Protected
 SLACKBUILD NAME: redis
 SLACKBUILD LOCATION: ./redis
 SLACKBUILD FILES: README doinst.sh files/rc.redis files/redis.logrotate patches/jemalloc.patch redis.SlackBuild redis.info slack-desc
-SLACKBUILD VERSION: 4.0.1
+SLACKBUILD VERSION: 4.0.2
 SLACKBUILD REQUIRED: hiredis
-SLACKBUILD DOWNLOAD: http://download.redis.io/releases/redis-4.0.1.tar.gz
-SLACKBUILD MD5SUM: 26d17312b3fb4d0ac9cecda886d00421
+SLACKBUILD DOWNLOAD: http://download.redis.io/releases/redis-4.0.2.tar.gz
+SLACKBUILD MD5SUM: f0497cc1311cd10dfdf215e9e6fd7416
 SLACKBUILD SHORT DESCRIPTION:  Redis (Key-Value Store)
 
 SLACKBUILD NAME: rkhunter
@@ -4718,7 +4664,7 @@ SLACKBUILD NAME: universal-ctags
 SLACKBUILD LOCATION: ./universal-ctags
 SLACKBUILD FILES: README slack-desc universal-ctags.SlackBuild universal-ctags.info
 SLACKBUILD VERSION: fc89f9a
-SLACKBUILD REQUIRED: docutils
+SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://github.com/universal-ctags/ctags/archive/fc89f9a9c5ea2cff8892caca15f524047acc5027.tar.gz
 SLACKBUILD MD5SUM: 1f67557ef4a856c1cd75d2c27c0ab0e9
 SLACKBUILD SHORT DESCRIPTION:  universal-ctags (A maintained ctags implementation)
@@ -4817,7 +4763,7 @@ SLACKBUILD NAME: varnish
 SLACKBUILD LOCATION: ./varnish
 SLACKBUILD FILES: README doinst.sh rc.varnishd slack-desc varnish.SlackBuild varnish.info
 SLACKBUILD VERSION: 4.1.7
-SLACKBUILD REQUIRED: docutils
+SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://repo.varnish-cache.org/source/varnish-4.1.7.tar.gz
 SLACKBUILD MD5SUM: f20b4e200b49684db89a66207dcef666
 SLACKBUILD SHORT DESCRIPTION:  varnish (high-performance HTTP accelerator)
@@ -4853,7 +4799,7 @@ SLACKBUILD NAME: virt-manager
 SLACKBUILD LOCATION: ./virt-manager
 SLACKBUILD FILES: README doinst.sh patches/slackware.patch slack-desc virt-manager.SlackBuild virt-manager.info
 SLACKBUILD VERSION: 1.4.2
-SLACKBUILD REQUIRED: gnome-python-gconf libosinfo vte3 tunctl ipaddr-py gtk-vnc libvirt-glib libvirt-python spice-gtk python-requests
+SLACKBUILD REQUIRED: gnome-python-gconf libosinfo vte3 tunctl ipaddr-py gtk-vnc libvirt-glib libvirt-python spice-gtk s
 SLACKBUILD DOWNLOAD: https://virt-manager.org/download/sources/virt-manager/virt-manager-1.4.2.tar.gz
 SLACKBUILD MD5SUM: e143252290501b21da1a213885c12ed8
 SLACKBUILD SHORT DESCRIPTION:  virt-manager (a gtk interface for libvirt)

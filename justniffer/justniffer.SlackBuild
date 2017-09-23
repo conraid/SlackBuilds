@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=justniffer
 VERSION=0.5.15
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -69,7 +69,15 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-automake --add-missing
+# Fix macro
+sed '/^ACLOCAL_AMFLAGS =/d' -i Makefile.am
+
+rm -f m4/*
+autoreconf -fi
+CPPFLAGS="-P" \
+CXXFLAGS="$SLKCFLAGS" \
+CFLAGS="$SLKCFLAGS" \
+LDFLAGS='-Wl,-z,defs' \
 ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
