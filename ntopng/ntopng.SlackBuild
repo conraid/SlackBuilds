@@ -30,13 +30,14 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=ntopng
-VERSION=3.0
+COMMIT=c58efebb7a69bf1dd018b17d9b46bd8e439b0e99
+VERSION=$(echo $COMMIT | head -c7)_git
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
-NDPI_COMMIT=5570e6cbeebbccf1cb4890fc4845e882cf7759a8
+NDPI_COMMIT=662ef2f65bc9b5864e6ac1b7080e43d3d576463f
 
 DOCFILES="COPYING* LICENSE* README* packages/etc/init.d doc/*"
 
@@ -65,9 +66,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
+rm -rf $PKGNAM-$COMMIT
 rm -rf nDPI
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
+tar xvf $CWD/$PKGNAM-$COMMIT.tar.gz || tar xvf $CWD/$COMMIT.tar.gz
 tar xvf $CWD/nDPI-$NDPI_COMMIT.tar.gz || tar xvf $CWD/$NDPI_COMMIT.tar.gz
 
 # Build nDPI git version in ../nDPI
@@ -91,18 +92,10 @@ CXXFLAGS="$SLKCFLAGS" \
   --build=$ARCH-slackware-linux
 make
 
-cd ../$PKGNAM-$VERSION
+cd ../$PKGNAM-$COMMIT
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
-
-
-# Apply patches
-if [ -e $CWD/patches/ ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
-fi
 
 ./autogen.sh
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \

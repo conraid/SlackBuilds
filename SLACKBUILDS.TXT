@@ -497,7 +497,7 @@ SLACKBUILD NAME: clamav
 SLACKBUILD LOCATION: ./clamav
 SLACKBUILD FILES: PKGNOTE README clamav.SlackBuild clamav.info doinst.sh files/clamd.conf files/freshclam.conf files/logrotate.clamav files/rc.clamav patches/Add-support-for-LLVM-3.7.patch patches/Add-support-for-LLVM-3.8.patch patches/Add-support-for-LLVM-3.9.patch patches/clamav-0.99.2-gcc-6.patch patches/fix_unitialized_variable.patch patches/fix_zlib_check.patch slack-desc
 SLACKBUILD VERSION: 0.99.2
-SLACKBUILD REQUIRED: json-c pcre2
+SLACKBUILD REQUIRED: json-c 
 SLACKBUILD DOWNLOAD: http://www.clamav.net/downloads/production/clamav-0.99.2.tar.gz
 SLACKBUILD MD5SUM: 61b51a04619aeafd965892a53f86d192
 SLACKBUILD SHORT DESCRIPTION:  clamav (open source antivirus engine)
@@ -2644,15 +2644,6 @@ SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/multibootusb/multibootusb-
 SLACKBUILD MD5SUM: 154f9bbb9231a61d0a4b4b858383fa0c
 SLACKBUILD SHORT DESCRIPTION:  multibootusb (Create multi boot live Linux on a USB disk)
 
-SLACKBUILD NAME: mysql-python
-SLACKBUILD LOCATION: ./mysql-python
-SLACKBUILD FILES: README mysql-python.SlackBuild mysql-python.info slack-desc
-SLACKBUILD VERSION: 1.2.5
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/a5/e9/51b544da85a36a68debe7a7091f068d802fc515a3a202652828c73453cad/MySQL-python-1.2.5.zip
-SLACKBUILD MD5SUM: 654f75b302db6ed8dc5a898c625e030c
-SLACKBUILD SHORT DESCRIPTION:  mysql-python (Python interface to MySQL)
-
 SLACKBUILD NAME: mysqltuner
 SLACKBUILD LOCATION: ./mysqltuner
 SLACKBUILD FILES: README mysqltuner.SlackBuild mysqltuner.info slack-desc
@@ -2738,7 +2729,7 @@ SLACKBUILD NAME: netdata
 SLACKBUILD LOCATION: ./netdata
 SLACKBUILD FILES: README doinst.sh files/netdata.conf files/rc.netdata netdata.SlackBuild netdata.info slack-desc
 SLACKBUILD VERSION: 1.8.0
-SLACKBUILD REQUIRED: npm mysql-python psycopg2
+SLACKBUILD REQUIRED: npm psycopg2
 SLACKBUILD DOWNLOAD: https://github.com/firehol/netdata/releases/download/v1.8.0/netdata-1.8.0.tar.xz
 SLACKBUILD MD5SUM: 4058c3acdda1af5968e7dc636ba322e2
 SLACKBUILD SHORT DESCRIPTION:  netdata (Real-time performance monitoring)
@@ -3015,11 +3006,11 @@ SLACKBUILD SHORT DESCRIPTION:  nsoq (Network Security over a 'Q'rawler and RSOI 
 
 SLACKBUILD NAME: ntopng
 SLACKBUILD LOCATION: ./ntopng
-SLACKBUILD FILES: README doinst.sh ntopng.SlackBuild ntopng.info patches/cp.patch patches/trim.patch rc.ntopng slack-desc
+SLACKBUILD FILES: README doinst.sh ntopng.SlackBuild ntopng.info patches/git.patch rc.ntopng slack-desc
 SLACKBUILD VERSION: 3.0
-SLACKBUILD REQUIRED: hiredis luajit geoip rrdtool redis json-c zeromq
-SLACKBUILD DOWNLOAD: https://github.com/ntop/ntopng/archive/3.0.tar.gz
-SLACKBUILD MD5SUM: 87acb348c5f547b3ae471360ab4d0551
+SLACKBUILD REQUIRED: hiredis geoip rrdtool redis json-c zeromq
+SLACKBUILD DOWNLOAD: https://github.com/ntop/ntopng/archive/c58efebb7a69bf1dd018b17d9b46bd8e439b0e99.tar.gz
+SLACKBUILD MD5SUM: ea0606ca73565fe7e9e16cded70944ee
 SLACKBUILD SHORT DESCRIPTION:  ntopng (next generation network top)
 
 SLACKBUILD NAME: numpy
@@ -3265,15 +3256,6 @@ SLACKBUILD DOWNLOAD: https://launchpad.net/pbzip2/1.1/1.1.13/+download/pbzip2-1.
 SLACKBUILD MD5SUM: 4cb87da2dba05540afce162f34b3a9a6
 SLACKBUILD SHORT DESCRIPTION:  PBZIP2 (Parallel BZIP2)
 
-SLACKBUILD NAME: pcre2
-SLACKBUILD LOCATION: ./pcre2
-SLACKBUILD FILES: README pcre2.SlackBuild pcre2.info slack-desc
-SLACKBUILD VERSION: 10.23
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre2-10.23.tar.gz
-SLACKBUILD MD5SUM: 959c6645a4dc3f3200e7bf671b17f6af
-SLACKBUILD SHORT DESCRIPTION:  pcre2 (Perl 5-style regular expressions. 2nd version)
-
 SLACKBUILD NAME: pcsc-lite
 SLACKBUILD LOCATION: ./pcsc-lite
 SLACKBUILD FILES: README SLACKWARE.README doinst.sh pcsc-lite.SlackBuild pcsc-lite.info rc.pcscd slack-desc
@@ -3394,9 +3376,9 @@ SLACKBUILD SHORT DESCRIPTION:  PHP OAuth (OAuth 1.0 consumer and provider extens
 SLACKBUILD NAME: php-redis
 SLACKBUILD LOCATION: ./php-redis
 SLACKBUILD FILES: README doinst.sh php-redis.SlackBuild php-redis.info slack-desc
-SLACKBUILD VERSION: 3.1.3
+SLACKBUILD VERSION: 3.1.4
 SLACKBUILD REQUIRED: php7 redis
-SLACKBUILD DOWNLOAD: https://pecl.php.net/get/redis-3.1.3.tgz
+SLACKBUILD DOWNLOAD: https://pecl.php.net/get/redis-3.1.4.tgz
 SLACKBUILD MD5SUM: 08bdf15da0533a0cadf21f4e1723bf48
 SLACKBUILD SHORT DESCRIPTION:  php-redis (PHP extension for interfacing with Redis)
 
@@ -3489,15 +3471,6 @@ SLACKBUILD REQUIRED: dpkg wdiff
 SLACKBUILD DOWNLOAD: https://github.com/lvc/pkgdiff/archive/1.7.2.tar.gz
 SLACKBUILD MD5SUM: edd0d709f1c45be93665300b4aa834da
 SLACKBUILD SHORT DESCRIPTION:  pkgdiff (A tool for visualizing changes in Linux software packages)
-
-SLACKBUILD NAME: pmacct
-SLACKBUILD LOCATION: ./pmacct
-SLACKBUILD FILES: README doinst.sh pmacct.SlackBuild pmacct.info rc.pmacctd slack-desc
-SLACKBUILD VERSION: 1.6.2
-SLACKBUILD REQUIRED: libmaxminddb jansson
-SLACKBUILD DOWNLOAD: http://www.pmacct.net/pmacct-1.6.2.tar.gz
-SLACKBUILD MD5SUM: 5f6d2c0fa1d045dde2bc26378899b3a8
-SLACKBUILD SHORT DESCRIPTION:  pmacct (a small set of passive network monitoring tools)
 
 SLACKBUILD NAME: pmount
 SLACKBUILD LOCATION: ./pmount
@@ -3791,7 +3764,7 @@ SLACKBUILD NAME: qemu
 SLACKBUILD LOCATION: ./qemu
 SLACKBUILD FILES: README files/65-kvm.rules qemu.SlackBuild qemu.info slack-desc
 SLACKBUILD VERSION: 2.10.0
-SLACKBUILD REQUIRED: libseccomp usbredir vde2 vte3 pcre2
+SLACKBUILD REQUIRED: libseccomp usbredir vde2 vte3 
 SLACKBUILD DOWNLOAD: http://download.qemu-project.org/qemu-2.10.0.tar.xz
 SLACKBUILD MD5SUM: a89e3293cf69c32cf4be4188dfa25544
 SLACKBUILD SHORT DESCRIPTION:  qemu (open source processor emulator)
@@ -4762,10 +4735,10 @@ SLACKBUILD SHORT DESCRIPTION:  Valgrind (A tool to help find memory-management p
 SLACKBUILD NAME: varnish
 SLACKBUILD LOCATION: ./varnish
 SLACKBUILD FILES: README doinst.sh rc.varnishd slack-desc varnish.SlackBuild varnish.info
-SLACKBUILD VERSION: 4.1.7
+SLACKBUILD VERSION: 5.2.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://repo.varnish-cache.org/source/varnish-4.1.7.tar.gz
-SLACKBUILD MD5SUM: f20b4e200b49684db89a66207dcef666
+SLACKBUILD DOWNLOAD: https://varnish-cache.org/_downloads/varnish-5.2.0.tgz
+SLACKBUILD MD5SUM: 115e3e8646cc6ef2013ff09a1583bc58
 SLACKBUILD SHORT DESCRIPTION:  varnish (high-performance HTTP accelerator)
 
 SLACKBUILD NAME: vde2
@@ -4817,7 +4790,7 @@ SLACKBUILD NAME: vte3
 SLACKBUILD LOCATION: ./vte3
 SLACKBUILD FILES: README slack-desc vte3.SlackBuild vte3.info
 SLACKBUILD VERSION: 0.49.1
-SLACKBUILD REQUIRED: vala pcre2
+SLACKBUILD REQUIRED: vala 
 SLACKBUILD DOWNLOAD: http://ftp.gnome.org/pub/GNOME/sources/vte/0.49/vte-0.49.1.tar.xz
 SLACKBUILD MD5SUM: 845d8d0262390ec4bb097ca11951a71a
 SLACKBUILD SHORT DESCRIPTION:  vte3 (vte terminal widget)

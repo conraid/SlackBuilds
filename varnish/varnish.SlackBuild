@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=varnish
-VERSION=4.1.7
+VERSION=5.2.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -65,7 +65,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
+tar xvf $CWD/$PKGNAM-$VERSION.tgz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
