@@ -28,7 +28,7 @@ CWD=$(pwd)
 
 PKGNAM=ettercap
 VERSION=0.8.2
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -86,7 +86,7 @@ cmake \
  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
  -DENABLE_GTK=ON \
  -DENABLE_IPV6=ON \
- -DGTK_BUILD_TYPE=GTK2 \
+ -DENABLE_LUA=ON \
  -DMAN_INSTALLDIR=/usr/man \
  ..
 
