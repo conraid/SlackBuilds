@@ -30,9 +30,9 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=neomutt
-SRCVERSION=20170912
+SRCVERSION=20171006
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -70,15 +70,13 @@ cd $PKGNAM-$PKGNAM-$SRCVERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-# Rename NAME to fix locales
-sed "/AC_INIT/s/mutt/$PKGNAM/g" -i configure.ac
-
-autoreconf -i
+autoreconf --install
 
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
   --localstatedir=/var \
   --mandir=/usr/man \
   --infodir=/usr/info \
@@ -95,7 +93,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-exact-address \
   --enable-lua \
   --enable-locales-fix \
-  --program-prefix=neo \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
@@ -111,14 +108,10 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 # Rename conf files
-mv $PKG/etc/$PKGNAM/Muttrc $PKG/etc/$PKGNAM/Muttrc.new
-mv $PKG/etc/$PKGNAM/mime.types $PKG/etc/$PKGNAM/mime.types.new
+mv $PKG/etc/$PKGNAM/neomuttrc $PKG/etc/$PKGNAM/neomuttrc.new
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
-
-# Move man files (present in mutt standard package) in doc dir
-mv $PKG/usr/man/ $PKG/usr/doc/$PKGNAM-$VERSION/
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
