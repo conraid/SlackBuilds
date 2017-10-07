@@ -29,8 +29,9 @@ CWD=$(pwd)
 
 PRGNAM=xdebug
 PKGNAM=php-xdebug
-VERSION=2.5.5
-BUILD=${BUILD:-5}
+COMMIT=83b6032a159564e51d6e7bdc091563e74e6cd92c
+VERSION=2.6.0dev_$(echo $COMMIT | head -c7)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -63,9 +64,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xzvf $CWD/$PRGNAM-$VERSION.tgz
-cd $PRGNAM-$VERSION
+rm -rf $PRGNAM-$COMMIT
+tar xzvf $CWD/$PRGNAM-$COMMIT.tar.gz || tar xzvf $CWD/$COMMIT.tar.gz
+cd $PRGNAM-$COMMIT
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .

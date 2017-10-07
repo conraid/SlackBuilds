@@ -31,7 +31,7 @@ PRGNAM=suhosin7
 PKGNAM=php-$PRGNAM
 SRCVERSION=f24aa1084ee50d8e0e290b4e24b9dc236350cbe9
 VERSION=$(echo $SRCVERSION | head -c7 )
-BUILD=${BUILD:-7}
+BUILD=${BUILD:-8}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -71,6 +71,10 @@ cd $PRGNAM-$SRCVERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
+# Fix to build with php 7.2
+# use only to testing
+sed '/PHP_VERSION_ID >= 70200/s/>=/>/' -i php_suhosin7.h
+
 phpize --clean
 phpize
 CFLAGS="$SLKCFLAGS" \
@@ -79,7 +83,6 @@ CFLAGS="$SLKCFLAGS" \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
   --sysconfdir=/etc \
   --localstatedir=/var \
-  --enable-suhosin \
   --disable-static \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
