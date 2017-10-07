@@ -29,7 +29,7 @@
 set -eu
 
 PKGNAM=php7
-VERSION=7.1.10
+VERSION=7.2.0RC3
 ALPINE=2.21
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -119,13 +119,6 @@ find . -name "*.h" -exec chmod 644 {} \;
 
 # Sometimes they ship a few of these:
 find . -name "*.orig" -exec rm {} \;
-
-# Apply patches
-if [ -e $CWD/patches/ ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
-fi
 
 # Install the build folder into /usr/lib$LIBDIRSUFFIX/php/build
 # and adapt phpize accordingly:
