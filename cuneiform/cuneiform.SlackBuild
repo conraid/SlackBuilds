@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=cuneiform
 VERSION=1.1.0
-BUILD=${BUILD:-9}
+BUILD=${BUILD:-10}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -79,18 +79,26 @@ if [ -e $CWD/patches/ ]; then
 fi
 
 # dos2unix license.txt
-sed -i 's/\r//g' cuneiform_src/Addfiles/license.txt
+sed 's/\r//g' -i cuneiform_src/Addfiles/license.txt
+
+# respect LDFLAGS
+LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}"
+sed "s|\(set[(]CMAKE_SHARED_LINKER_FLAGS \"[^\"]*\)|\1 $LDFLAGS|" -i cuneiform_src/CMakeLists.txt
+
+# Fix strings.h
+mv cuneiform_src/Kern/hhh/tigerh/h/strings.h cuneiform_src/Kern/hhh/tigerh/h/strings.h.old
 
 LIBMAGICK=$(ls -1 /usr/lib${LIBDIRSUFFIX}/libMagick++*.so.?)
 mkdir -p build
 cd build
 cmake \
-  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_BUILD_TYPE=none \
+  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -DNDEBUG -std=c++98" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG -std=c++98" \
+  -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DImageMagick_Magick++_LIBRARY=$LIBMAGICK \
-  -DImageMagick_Magick++_INCLUDE_DIR=/usr/include/ImageMagick-6 \
+  -DCMAKE_SKIP_RPATH:BOOL=YES \
   ..
 
 make
