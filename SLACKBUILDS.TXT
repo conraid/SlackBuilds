@@ -648,7 +648,7 @@ SLACKBUILD SHORT DESCRIPTION:  ctunnel  (Crypto Tunnel for Proxying and Forwardi
 
 SLACKBUILD NAME: cuneiform
 SLACKBUILD LOCATION: ./cuneiform
-SLACKBUILD FILES: README cuneiform.SlackBuild cuneiform.info patches/build-fix.patch slack-desc
+SLACKBUILD FILES: README cuneiform.SlackBuild cuneiform.info patches/20-libdm.patch patches/30-casser.patch patches/build-fix.patch slack-desc
 SLACKBUILD VERSION: 1.1.0
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://launchpad.net/cuneiform-linux/1.1/1.1/+download/cuneiform-linux-1.1.0.tar.bz2
@@ -775,10 +775,10 @@ SLACKBUILD SHORT DESCRIPTION:  dnstracer (trace a chain of DNS servers to the so
 SLACKBUILD NAME: dos2unix
 SLACKBUILD LOCATION: ./dos2unix
 SLACKBUILD FILES: README dos2unix.SlackBuild dos2unix.info slack-desc
-SLACKBUILD VERSION: 7.3.5
+SLACKBUILD VERSION: 7.4.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/dos2unix/dos2unix-7.3.5.tar.gz
-SLACKBUILD MD5SUM: 9e384013c2161c5b00bc46c33aa3263c
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/dos2unix/dos2unix-7.4.0.tar.gz
+SLACKBUILD MD5SUM: a615de542899e53d6f9575ad3cb32b19
 SLACKBUILD SHORT DESCRIPTION:  dos2unix (DOS/MAC to UNIX text file format converter)
 
 SLACKBUILD NAME: dpkg
@@ -4080,8 +4080,8 @@ SLACKBUILD LOCATION: ./shorewall-core
 SLACKBUILD FILES: PKGNOTE README doinst.sh shorewall-core.SlackBuild shorewall-core.info slack-desc
 SLACKBUILD VERSION: 5.1.7
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/5.1/shorewall-5.1.7/shorewall-core-5.1.7.1.tar.bz2
-SLACKBUILD MD5SUM: 625302164e034fa5ab35461021599265
+SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/5.1/shorewall-5.1.7/shorewall-core-5.1.7.2.tar.bz2
+SLACKBUILD MD5SUM: d98d36c23769b7579f589caf58ab3c74
 SLACKBUILD SHORT DESCRIPTION:  Shorewall-core (Core Shorewall libraries)
 
 SLACKBUILD NAME: shorewall
@@ -4089,8 +4089,8 @@ SLACKBUILD LOCATION: ./shorewall
 SLACKBUILD FILES: PKGNOTE README doinst.sh shorewall.SlackBuild shorewall.info slack-desc
 SLACKBUILD VERSION: 5.1.7
 SLACKBUILD REQUIRED: shorewall-core
-SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/5.1/shorewall-5.1.7/shorewall-5.1.7.1.tar.bz2
-SLACKBUILD MD5SUM: 130b3a56953fd0e4b940f498115b4d8e
+SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/5.1/shorewall-5.1.7/shorewall-5.1.7.2.tar.bz2
+SLACKBUILD MD5SUM: bbfee0c7a31968a501b08b0a5d355509
 SLACKBUILD SHORT DESCRIPTION:  Shorewall (An iptables-based firewall for Linux systems)
 
 SLACKBUILD NAME: shorewall6
@@ -4098,8 +4098,8 @@ SLACKBUILD LOCATION: ./shorewall6
 SLACKBUILD FILES: PKGNOTE README doinst.sh shorewall6.SlackBuild shorewall6.info slack-desc
 SLACKBUILD VERSION: 5.1.7
 SLACKBUILD REQUIRED: shorewall-core
-SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/5.1/shorewall-5.1.7/shorewall6-5.1.7.1.tar.bz2
-SLACKBUILD MD5SUM: f070b6976ed15b48a052e7c5ce1a0bfe
+SLACKBUILD DOWNLOAD: http://www.shorewall.net/pub/shorewall/5.1/shorewall-5.1.7/shorewall6-5.1.7.2.tar.bz2
+SLACKBUILD MD5SUM: 27568d22c9ef4273a1e7ea79c7a926d3
 SLACKBUILD SHORT DESCRIPTION:  Shorewall6 (An IPv6 iptables-based firewall for Linux systems)
 
 SLACKBUILD NAME: siege
@@ -4299,6 +4299,15 @@ SLACKBUILD REQUIRED: celt051 pyparsing spice-protocol
 SLACKBUILD DOWNLOAD: https://www.spice-space.org/download/releases/spice-0.13.3.tar.bz2
 SLACKBUILD MD5SUM: 81113782704848d3afefa43bb93f2184
 SLACKBUILD SHORT DESCRIPTION:  spice (remote computing solution)
+
+SLACKBUILD NAME: splitjob
+SLACKBUILD LOCATION: ./splitjob
+SLACKBUILD FILES: README slack-desc splitjob.SlackBuild splitjob.info
+SLACKBUILD VERSION: 1.2
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://downloads.sourceforge.net/splitjob/splitjob-1.2.tar.xz
+SLACKBUILD MD5SUM: fc36de81834244f875221aeb61427c1a
+SLACKBUILD SHORT DESCRIPTION:  splitjob (split jobs utility)
 
 SLACKBUILD NAME: sqlitebrowser
 SLACKBUILD LOCATION: ./sqlitebrowser
@@ -4735,10 +4744,10 @@ SLACKBUILD SHORT DESCRIPTION:  uuid (OSSP Universally Unique Identifier)
 SLACKBUILD NAME: vala
 SLACKBUILD LOCATION: ./vala
 SLACKBUILD FILES: README slack-desc vala.SlackBuild vala.info
-SLACKBUILD VERSION: 0.38.0
+SLACKBUILD VERSION: 0.38.2
 SLACKBUILD REQUIRED: graphviz
-SLACKBUILD DOWNLOAD: http://download.gnome.org/sources/vala/0.38/vala-0.38.0.tar.xz
-SLACKBUILD MD5SUM: 8bf68d1bde90f62b20fec57c34fb2179
+SLACKBUILD DOWNLOAD: http://download.gnome.org/sources/vala/0.38/vala-0.38.2.tar.xz
+SLACKBUILD MD5SUM: 720846116448fc20b0ab3c0921e19798
 SLACKBUILD SHORT DESCRIPTION:  vala (Compiler for the GObject type system)
 
 SLACKBUILD NAME: valgrind
@@ -4897,10 +4906,10 @@ SLACKBUILD SHORT DESCRIPTION:  wipe (a secure file wiping utility)
 SLACKBUILD NAME: wireshark
 SLACKBUILD LOCATION: ./wireshark
 SLACKBUILD FILES: README doinst.sh patches/main_window_slots.cpp patches/main_window_slots.orig slack-desc wireshark.SlackBuild wireshark.info
-SLACKBUILD VERSION: 2.4.1
+SLACKBUILD VERSION: 2.4.2
 SLACKBUILD REQUIRED: c-ares geoip lua52
-SLACKBUILD DOWNLOAD: https://www.wireshark.org/download/src/wireshark-2.4.1.tar.xz
-SLACKBUILD MD5SUM: 655106f8cf3bb8f521336d3a8ab5b10b
+SLACKBUILD DOWNLOAD: https://www.wireshark.org/download/src/wireshark-2.4.2.tar.xz
+SLACKBUILD MD5SUM: 237525d8f189f1253ca18b00a055eccb
 SLACKBUILD SHORT DESCRIPTION:  WireShark (packet sniffer and protocol analyzer)
 
 SLACKBUILD NAME: wol
@@ -5041,10 +5050,10 @@ SLACKBUILD SHORT DESCRIPTION:  yapet
 SLACKBUILD NAME: yarn
 SLACKBUILD LOCATION: ./yarn
 SLACKBUILD FILES: README slack-desc yarn.SlackBuild yarn.info
-SLACKBUILD VERSION: 1.0.2
+SLACKBUILD VERSION: 1.2.0
 SLACKBUILD REQUIRED: npm
-SLACKBUILD DOWNLOAD: https://github.com/yarnpkg/yarn/releases/download/v1.0.2/yarn-v1.0.2.tar.gz
-SLACKBUILD MD5SUM: bcdf44691092302858de5df1012861e3
+SLACKBUILD DOWNLOAD: https://github.com/yarnpkg/yarn/releases/download/v1.2.0/yarn-v1.2.0.tar.gz
+SLACKBUILD MD5SUM: 95b6c1c0e6504e5d4e31b720505471c9
 SLACKBUILD SHORT DESCRIPTION:  yarn (Fast, reliable, and secure dependency management)
 
 SLACKBUILD NAME: yersinia
