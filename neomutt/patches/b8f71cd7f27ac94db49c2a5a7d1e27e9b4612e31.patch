@@ -1,0 +1,31 @@
+From b8f71cd7f27ac94db49c2a5a7d1e27e9b4612e31 Mon Sep 17 00:00:00 2001
+From: Pietro Cerutti <gahr@gahr.ch>
+Date: Sat, 14 Oct 2017 13:08:23 +0000
+Subject: [PATCH] Allow to specify --docdir at configure time
+
+Issue #857
+---
+ auto.def | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/auto.def b/auto.def
+index 83de37690..06da5eb1e 100644
+--- a/auto.def
++++ b/auto.def
+@@ -30,6 +30,7 @@ options {
+   logging=0                 => "Enable debug logging"
+   doc=1                     => "Disable building the documentation"
+   full-doc=0                => "Build the full documentation set"
++  docdir:path               => "Documentation root"
+   flock=0                   => "Use flock() to lock files"
+   fcntl=1                   => "Do NOT use fcntl() to lock files"
+   fmemopen=0                => "Use fmemopen() for temporary in-memory files"
+@@ -125,7 +126,7 @@ if {1} {
+ define BINDIR           [get-define bindir]
+ define MUTTLOCALEDIR    [get-define datadir]/locale
+ define PKGDATADIR       [get-define datadir]/neomutt
+-define PKGDOCDIR        [get-define datadir]/doc/neomutt
++define PKGDOCDIR        [opt-val docdir [get-define datadir]/doc/neomutt]
+ define SYSCONFDIR       [get-define sysconfdir]
+ ###############################################################################
+ 
