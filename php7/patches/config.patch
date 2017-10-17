@@ -1,0 +1,116 @@
+86c86
+< ; This is php.ini-development INI file.
+---
+> ; This is php.ini-production INI file.
+155a156,160
+> ; track_errors
+> ;   Default Value: Off
+> ;   Development Value: On
+> ;   Production Value: Off
+> 
+455c460
+< error_reporting = E_ALL
+---
+> error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT
+472c477
+< display_errors = On
+---
+> display_errors = Off
+483c488
+< display_startup_errors = On
+---
+> display_startup_errors = Off
+520c525,527
+< ; Store the last error/warning message in $php_errormsg (boolean).
+---
+> ; Store the last error/warning message in $php_errormsg (boolean). Setting this value
+> ; to On can assist in debugging and is appropriate for development servers. It should
+> ; however be disabled on production servers.
+886,919c893,932
+< ;extension=bz2
+< ;extension=curl
+< ;extension=fileinfo
+< ;extension=gd2
+< ;extension=gettext
+< ;extension=gmp
+< ;extension=intl
+< ;extension=imap
+< ;extension=interbase
+< ;extension=ldap
+< ;extension=mbstring
+< ;extension=exif      ; Must be after mbstring as it depends on it
+< ;extension=mysqli
+< ;extension=oci8_12c  ; Use with Oracle Database 12c Instant Client
+< ;extension=openssl
+< ;extension=pdo_firebird
+< ;extension=pdo_mysql
+< ;extension=pdo_oci
+< ;extension=pdo_odbc
+< ;extension=pdo_pgsql
+< ;extension=pdo_sqlite
+< ;extension=pgsql
+< ;extension=shmop
+< 
+< ; The MIBS data available in the PHP distribution must be installed.
+< ; See http://www.php.net/manual/en/snmp.installation.php
+< ;extension=snmp
+< 
+< ;extension=soap
+< ;extension=sockets
+< ;extension=sqlite3
+< ;extension=tidy
+< ;extension=xmlrpc
+< ;extension=xsl
+---
+> 
+> extension=bcmath.so
+> extension=bz2.so
+> extension=calendar.so
+> extension=ctype.so
+> extension=curl.so
+> extension=dba.so
+> extension=dom.so
+> extension=enchant.so
+> extension=exif.so
+> extension=ftp.so
+> extension=gd.so
+> extension=gettext.so
+> extension=gmp.so
+> extension=iconv.so
+> extension=intl.so
+> extension=ldap.so
+> extension=mbstring.so
+> extension=mysqli.so
+> extension=odbc.so
+> zend_extension=opcache.so
+> extension=openssl.so
+> extension=pdo.so
+> extension=pdo_mysql.so
+> extension=pdo_odbc.so
+> extension=pdo_pgsql.so
+> extension=pdo_sqlite.so
+> extension=pgsql.so
+> extension=pspell.so
+> extension=shmop.so
+> extension=snmp.so
+> extension=soap.so
+> extension=sqlite3.so
+> extension=tidy.so
+> extension=tokenizer.so
+> extension=wddx.so
+> extension=xmlreader.so
+> extension=xsl.so
+> extension=zip.so
+> extension=zlib.so
+1189c1202
+< mysqlnd.collect_memory_statistics = On
+---
+> mysqlnd.collect_memory_statistics = Off
+1567c1580
+< zend.assertions = 1
+---
+> zend.assertions = -1
+1878c1891
+< ;opcache.huge_code_pages=0
+---
+> ;opcache.huge_code_pages=1

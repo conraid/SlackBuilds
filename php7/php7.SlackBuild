@@ -29,7 +29,7 @@
 set -eu
 
 PKGNAM=php7
-VERSION=7.2.0RC3
+VERSION=7.2.0RC4
 ALPINE=2.21
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -125,6 +125,13 @@ find . -name "*.orig" -exec rm {} \;
 sed -i "s|build$|php/build|" scripts/Makefile.frag
 sed -i "s|build\"$|php/build\"|" scripts/phpize.in
 
+# Fix to build with tidy5 in my repository
+sed -e 's|include/tidy/|include/tidy5/|g' -i configure -i ext/tidy/config.m4
+sed -e 's|^#include "tidy.h"|#include "tidy5/tidy.h"|' \
+    -e 's|^#include "tidybuffio.h"|#include "tidy5/tidybuffio.h"|' \
+    -e 's|^#include "buffio.h"|#include "tidy5/tidybuffio.h"|' \
+    -i ext/tidy/tidy.c
+
 # Generic "kitchen sink" configure function, with as many things as possible (and
 # maybe then some ;-) compiled as shared extensions:
 EXTENSION_DIR=/usr/lib${LIBDIRSUFFIX}/php/extensions \
@@ -166,7 +173,6 @@ CFLAGS="$SLKCFLAGS" \
   --enable-calendar=shared \
   --enable-ctype=shared \
   --with-curl=shared \
-  --with-mcrypt=/usr \
   --enable-dba=shared \
   --with-gdbm=/usr \
   --with-db4=/usr \
@@ -175,10 +181,8 @@ CFLAGS="$SLKCFLAGS" \
   --with-gd=shared \
   --with-jpeg-dir=/usr \
   --with-png-dir=/usr \
-  --with-zlib-dir=/usr \
   --with-xpm-dir=/usr \
   --with-freetype-dir=/usr \
-  --enable-gd-native-ttf \
   --with-gettext=shared,/usr \
   --with-gmp=shared,/usr \
   --with-iconv=shared \
@@ -209,6 +213,7 @@ CFLAGS="$SLKCFLAGS" \
   --enable-wddx=shared \
   --with-xsl=shared,/usr \
   --enable-zip=shared \
+  --with-libzip \
   --with-tsrm-pthreads \
   --enable-intl=shared \
   --enable-opcache \
@@ -216,6 +221,7 @@ CFLAGS="$SLKCFLAGS" \
   --enable-static=no \
   --with-gnu-ld \
   --with-pic \
+  --with-tidy=shared \
   --enable-phpdbg \
   --build=$ARCH-slackware-linux
 
