@@ -31,7 +31,7 @@ set -eu
 PKGNAM=php7
 VERSION=7.2.0RC4
 ALPINE=2.21
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 
 # Set if clean IMAPLIBDIR after building
@@ -95,6 +95,13 @@ cd $TMP
 rm -rf php-$VERSION
 tar xvf $CWD/php-$VERSION.tar.?z* || exit 1
 cd php-$VERSION
+
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
 
 # cleanup:
 find . -name "*.orig" -delete
