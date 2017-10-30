@@ -30,14 +30,14 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=libconfig
-VERSION=1.6
+VERSION=1.7
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="AUTHORS COPYING.LIB ChangeLog INSTALL NEWS README TODO"
+DOCFILES="AUTHORS COPYING.LIB ChangeLog INSTALL LICENSE NEWS README* TODO"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -71,12 +71,7 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Apply patches
-if [ -e $CWD/patches/ ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
-fi
+autoreconf
 
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
