@@ -172,10 +172,10 @@ SLACKBUILD SHORT DESCRIPTION:  arpwatch (Monitoring tools for tracking IP addres
 SLACKBUILD NAME: atom
 SLACKBUILD LOCATION: ./atom
 SLACKBUILD FILES: README atom.SlackBuild atom.info doinst.sh slack-desc
-SLACKBUILD VERSION: 1.22.0
+SLACKBUILD VERSION: 1.22.1
 SLACKBUILD REQUIRED: grunt-cli node-fs-extra
-SLACKBUILD DOWNLOAD: https://github.com/atom/atom/archive/v1.22.0.tar.gz
-SLACKBUILD MD5SUM: f99de68f8e00b1232417223ba63c2509
+SLACKBUILD DOWNLOAD: https://github.com/atom/atom/archive/v1.22.1.tar.gz
+SLACKBUILD MD5SUM: 72c64246ea7bbd258ee9460ffd8b6398
 SLACKBUILD SHORT DESCRIPTION:  atom (text editor)
 
 SLACKBUILD NAME: atool
@@ -1125,7 +1125,7 @@ SLACKBUILD SHORT DESCRIPTION:  gimp-plugin-guetzli (guetzli gimp wrapper)
 
 SLACKBUILD NAME: gimp-refocus
 SLACKBUILD LOCATION: ./gimp-refocus
-SLACKBUILD FILES: README gimp-refocus.SlackBuild gimp-refocus.info slack-desc
+SLACKBUILD FILES: README gimp-refocus.SlackBuild gimp-refocus.info patches/refocus-gimp-2.0.patch patches/refocus-gimp-preview.patch patches/refocus-mirror-fix.patch slack-desc
 SLACKBUILD VERSION: 0.9.0
 SLACKBUILD REQUIRED: lapack
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/refocus/refocus-0.9.0.tar.gz
@@ -1882,10 +1882,10 @@ SLACKBUILD SHORT DESCRIPTION:  kssh4 (kde4 ssh frontend)
 SLACKBUILD NAME: lapack
 SLACKBUILD LOCATION: ./lapack
 SLACKBUILD FILES: README lapack.SlackBuild lapack.info slack-desc
-SLACKBUILD VERSION: 3.7.1
+SLACKBUILD VERSION: 3.8.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.netlib.org/lapack/lapack-3.7.1.tgz
-SLACKBUILD MD5SUM: eaab3317b4d0361be31567f252fbed67
+SLACKBUILD DOWNLOAD: http://www.netlib.org/lapack/lapack-3.8.0.tar.gz
+SLACKBUILD MD5SUM: 96591affdbf58c450d45c1daa540dbd2
 SLACKBUILD SHORT DESCRIPTION:  LAPACK (linear algebra routines)
 
 SLACKBUILD NAME: lensfun
@@ -2112,15 +2112,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://ftp.gnu.org/gnu/libmicrohttpd/libmicrohttpd-0.9.55.tar.gz
 SLACKBUILD MD5SUM: 1c20f84a8b9cf692dd50b558b3571a3a
 SLACKBUILD SHORT DESCRIPTION:  libmicrohttpd (HTTP server C library)
-
-SLACKBUILD NAME: libmilter
-SLACKBUILD LOCATION: ./libmilter
-SLACKBUILD FILES: PKGNOTE README doinst.sh libmilter.SlackBuild libmilter.info slack-desc
-SLACKBUILD VERSION: 8.15.2
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: ftp://ftp.slackware.com/pub/slackware/slackware64-current/slackware64/n/sendmail-8.15.2-x86_64-2.txz
-SLACKBUILD MD5SUM: 6b117f84aac6d84d043e8a7931ed8822
-SLACKBUILD SHORT DESCRIPTION:  libmilter (Implementation of the sendmail Mail Filter API)
 
 SLACKBUILD NAME: libmp3splt
 SLACKBUILD LOCATION: ./libmp3splt
@@ -3616,15 +3607,6 @@ SLACKBUILD DOWNLOAD: https://registry.npmjs.org/postcss/-/postcss-6.0.14.tgz
 SLACKBUILD MD5SUM: 18df19fda454fd6dfa232a46e3a5ce9b
 SLACKBUILD SHORT DESCRIPTION:  postcss (Transforming styles with JS plugins)
 
-SLACKBUILD NAME: postfix
-SLACKBUILD LOCATION: ./postfix
-SLACKBUILD FILES: PKGNOTE README doinst.sh postfix.SlackBuild postfix.info rc.postfix slack-desc
-SLACKBUILD VERSION: 3.2.4
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://cdn.postfix.johnriley.me/mirrors/postfix-release/official/postfix-3.2.4.tar.gz
-SLACKBUILD MD5SUM: 60d8418278ef9f3c7d1251480ea84a42
-SLACKBUILD SHORT DESCRIPTION:  postfix (alternative to the widely-used Sendmail program)
-
 SLACKBUILD NAME: postgresql
 SLACKBUILD LOCATION: ./postgresql
 SLACKBUILD FILES: README SLACKWARE.README doinst.sh files/postgresql.logrotate files/rc.postgresql postgresql.SlackBuild postgresql.info slack-desc
@@ -3759,15 +3741,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://github.com/seb-m/pyinotify/archive/0.9.6.tar.gz
 SLACKBUILD MD5SUM: 33f4e599c22a3ac31b684335b4a535a0
 SLACKBUILD SHORT DESCRIPTION:  pyinotify (Monitoring filesystems events)
-
-SLACKBUILD NAME: pyparsing
-SLACKBUILD LOCATION: ./pyparsing
-SLACKBUILD FILES: README pyparsing.SlackBuild pyparsing.info slack-desc
-SLACKBUILD VERSION: 2.2.0
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/3c/ec/a94f8cf7274ea60b5413df054f82a8980523efd712ec55a59e7c3357cf7c/pyparsing-2.2.0.tar.gz
-SLACKBUILD MD5SUM: 0214e42d63af850256962b6744c948d9
-SLACKBUILD SHORT DESCRIPTION:  pyparsing (Python parsing module)
 
 SLACKBUILD NAME: pypdf2
 SLACKBUILD LOCATION: ./pypdf2
@@ -4367,7 +4340,7 @@ SLACKBUILD NAME: spice
 SLACKBUILD LOCATION: ./spice
 SLACKBUILD FILES: README slack-desc spice.SlackBuild spice.info
 SLACKBUILD VERSION: 0.13.3
-SLACKBUILD REQUIRED: celt051 pyparsing spice-protocol
+SLACKBUILD REQUIRED: celt051 spice-protocol
 SLACKBUILD DOWNLOAD: https://www.spice-space.org/download/releases/spice-0.13.3.tar.bz2
 SLACKBUILD MD5SUM: 81113782704848d3afefa43bb93f2184
 SLACKBUILD SHORT DESCRIPTION:  spice (remote computing solution)
