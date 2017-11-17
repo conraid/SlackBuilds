@@ -32,7 +32,7 @@ CWD=$(pwd)
 PRGNAM=refocus
 PKGNAM=gimp-refocus
 VERSION=0.9.0
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,8 +72,12 @@ cd $PRGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Patch for new gimp release. Thanks archlinux
-patch -p1 -i $CWD/refocus.patch
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
 
 aclocal
 autoconf
