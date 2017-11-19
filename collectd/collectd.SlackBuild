@@ -28,8 +28,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=collectd
-VERSION=5.7.2
-BUILD=${BUILD:-7}
+VERSION=5.8.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -71,7 +71,6 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 sed 's|@prefix@/var|/var|g' -i src/collectd.conf.*
-sed 's/-Werror//g' -i *.ac */*.{am,in} */*/*.{am,in}
 
 autoreconf -if
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
@@ -93,6 +92,7 @@ LIBS="-lpthread" \
   --enable-postgresql \
   --enable-lua \
   --enable-dbi \
+  --disable-werror \
   --with-perl-bindings="INSTALLDIRS=vendor INSTALLVENDORMAN3DIR=/usr/man/man3" \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
