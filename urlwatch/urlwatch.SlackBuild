@@ -2,7 +2,7 @@
 #
 # Slackware build script for urlwatch
 #
-# Copyright 2015-2017 Corrado Franco (http://conraid.net)
+# Copyright 2017 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,20 +30,20 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=urlwatch
-VERSION=1.18
-BUILD=${BUILD:-3}
+VERSION=2.7
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="COPYING ChangeLog PKG-INFO"
+DOCFILES="COPYING* ChangeLog README*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-    i?86) ARCH=i686 ;;
-    arm*) ARCH=arm ;;
-    *) ARCH=$( uname -m ) ;;
+  i?86) ARCH=i686 ;;
+  arm*) ARCH=arm ;;
+     *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -69,14 +69,15 @@ tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a-s .
+chmod -R u+w,go+r-w,a+X-s .
 
-python setup.py install --root=$PKG
+# Fix man path
+sed 's|share/man|man|' -i setup.py
 
-#Sane man path
-if [ -d $PKG/usr/share/man ]; then
-  mv $PKG/usr/share/man $PKG/usr
-fi
+CFLAGS="$SLKCFLAGS" python3 setup.py install --root=$PKG
+
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
@@ -87,8 +88,8 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD${TAG}.txz
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
