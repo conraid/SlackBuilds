@@ -713,9 +713,9 @@ SLACKBUILD NAME: daq
 SLACKBUILD LOCATION: ./daq
 SLACKBUILD FILES: README daq.SlackBuild daq.info slack-desc
 SLACKBUILD VERSION: 2.0.6
-SLACKBUILD REQUIRED: 
+SLACKBUILD REQUIRED: libdnet
 SLACKBUILD DOWNLOAD: http://www.snort.org/downloads/snort/daq-2.0.6.tar.gz
-SLACKBUILD MD5SUM: 2cd6da422a72c129c685fc4bb848c24c
+SLACKBUILD MD5SUM: 67b915f10c0cb2f7554686cdc9476946
 SLACKBUILD SHORT DESCRIPTION:  daq (Data Acquisition libary)
 
 SLACKBUILD NAME: darkstat
@@ -1969,6 +1969,15 @@ SLACKBUILD DOWNLOAD: https://downloads.sourceforge.net/libb64/libb64-1.2.1.zip
 SLACKBUILD MD5SUM: 8a5dc72eb7e32f074605260bc127c764
 SLACKBUILD SHORT DESCRIPTION:  libb64 (C routines for base64 encoding/decoding)
 
+SLACKBUILD NAME: libbfio
+SLACKBUILD LOCATION: ./libbfio
+SLACKBUILD FILES: README libbfio.SlackBuild libbfio.info slack-desc
+SLACKBUILD VERSION: 20170123
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/libyal/libbfio/releases/download/20170123/libbfio-alpha-20170123.tar.gz
+SLACKBUILD MD5SUM: d2737a8fd99f3ad2e32c8e210fc30871
+SLACKBUILD SHORT DESCRIPTION:  libbfio (basic file input/output abstraction)
+
 SLACKBUILD NAME: libbsd
 SLACKBUILD LOCATION: ./libbsd
 SLACKBUILD FILES: README libbsd.SlackBuild libbsd.info slack-desc
@@ -2116,10 +2125,10 @@ SLACKBUILD SHORT DESCRIPTION:  liblqr (Liquid Rescale Library)
 SLACKBUILD NAME: libmaxminddb
 SLACKBUILD LOCATION: ./libmaxminddb
 SLACKBUILD FILES: README libmaxminddb.SlackBuild libmaxminddb.info slack-desc
-SLACKBUILD VERSION: 1.3.0
+SLACKBUILD VERSION: 1.3.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/maxmind/libmaxminddb/releases/download/1.3.0/libmaxminddb-1.3.0.tar.gz
-SLACKBUILD MD5SUM: 91a2538ddb19078ad05302710f3d6ed8
+SLACKBUILD DOWNLOAD: https://github.com/maxmind/libmaxminddb/releases/download/1.3.1/libmaxminddb-1.3.1.tar.gz
+SLACKBUILD MD5SUM: 094d5bdbad89307386788080e8092cc4
 SLACKBUILD SHORT DESCRIPTION:  libmaxminddb (C Library)
 
 SLACKBUILD NAME: libmemcached
@@ -2323,10 +2332,10 @@ SLACKBUILD SHORT DESCRIPTION:  liburcu (RCU Library)
 SLACKBUILD NAME: libuv
 SLACKBUILD LOCATION: ./libuv
 SLACKBUILD FILES: README files/libuv.1.gz libuv.SlackBuild libuv.info slack-desc
-SLACKBUILD VERSION: 1.16.1
+SLACKBUILD VERSION: 1.17.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/libuv/libuv/archive/v1.16.1.tar.gz
-SLACKBUILD MD5SUM: acc92e4dba275bf852426f72487ab3e6
+SLACKBUILD DOWNLOAD: https://github.com/libuv/libuv/archive/v1.17.0.tar.gz
+SLACKBUILD MD5SUM: 1cd3b73810851911ff657313e9b5eec7
 SLACKBUILD SHORT DESCRIPTION:  libuv (Cross-platform asychronous I/O)
 
 SLACKBUILD NAME: libvirt-glib
@@ -2725,15 +2734,6 @@ SLACKBUILD DOWNLOAD: https://github.com/djcb/mu/releases/download/0.9.18/mu-0.9.
 SLACKBUILD MD5SUM: 735cd8cef0de979f3f2d43ae7e923523
 SLACKBUILD SHORT DESCRIPTION:  mu (collection of utilties for indexing and searching Maildirs)
 
-SLACKBUILD NAME: multibootusb
-SLACKBUILD LOCATION: ./multibootusb
-SLACKBUILD FILES: README doinst.sh multibootusb.SlackBuild multibootusb.info slack-desc
-SLACKBUILD VERSION: 8.8.0
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/multibootusb/multibootusb-8.8.0.tar.gz
-SLACKBUILD MD5SUM: 8f6f31fa95066546ea3a84cfcdc851f6
-SLACKBUILD SHORT DESCRIPTION:  multibootusb (Create multi boot live Linux on a USB disk)
-
 SLACKBUILD NAME: mysqltuner
 SLACKBUILD LOCATION: ./mysqltuner
 SLACKBUILD FILES: README mysqltuner.SlackBuild mysqltuner.info slack-desc
@@ -3025,10 +3025,10 @@ SLACKBUILD SHORT DESCRIPTION:  nan (Native Abstractions for Node.js )
 SLACKBUILD NAME: node-sass
 SLACKBUILD LOCATION: ./node-sass
 SLACKBUILD FILES: PKGNOTE README node-sass.SlackBuild node-sass.info slack-desc
-SLACKBUILD VERSION: 4.7.1
+SLACKBUILD VERSION: 4.7.2
 SLACKBUILD REQUIRED: node
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/node-sass/-/node-sass-4.7.1.tgz
-SLACKBUILD MD5SUM: c679b2ec024b536f6b63fe1859b5cb1f
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/node-sass/-/node-sass-4.7.2.tgz
+SLACKBUILD MD5SUM: 8f689cbd0099fb5faf7486121542ed47
 SLACKBUILD SHORT DESCRIPTION:  node-sass (Wrapper around libsass)
 
 SLACKBUILD NAME: node-stylus
@@ -3108,8 +3108,8 @@ SLACKBUILD LOCATION: ./ntopng
 SLACKBUILD FILES: README doinst.sh ntopng.SlackBuild ntopng.info patches/git.patch rc.ntopng slack-desc
 SLACKBUILD VERSION: 3.0
 SLACKBUILD REQUIRED: hiredis geoip rrdtool redis json-c zeromq
-SLACKBUILD DOWNLOAD: https://github.com/ntop/ntopng/archive/c58efebb7a69bf1dd018b17d9b46bd8e439b0e99.tar.gz
-SLACKBUILD MD5SUM: ea0606ca73565fe7e9e16cded70944ee
+SLACKBUILD DOWNLOAD: https://github.com/ntop/ntopng/archive/f50a5330b234ecce7201f2ecf672d134eaa03734.tar.gz
+SLACKBUILD MD5SUM: a32e37462644e288141f7ebcb43ac815
 SLACKBUILD SHORT DESCRIPTION:  ntopng (next generation network top)
 
 SLACKBUILD NAME: numpy
@@ -3466,10 +3466,10 @@ SLACKBUILD SHORT DESCRIPTION:  php-imagick (PHP Wrapper for ImageMagick)
 SLACKBUILD NAME: php-memcached
 SLACKBUILD LOCATION: ./php-memcached
 SLACKBUILD FILES: README doinst.sh php-memcached.SlackBuild php-memcached.info slack-desc
-SLACKBUILD VERSION: 3.0.3
+SLACKBUILD VERSION: 3.0.4
 SLACKBUILD REQUIRED: php7 libmemcached 
-SLACKBUILD DOWNLOAD: http://pecl.php.net/get/memcached-3.0.3.tgz
-SLACKBUILD MD5SUM: 001341afeded3724c19a740148737444
+SLACKBUILD DOWNLOAD: http://pecl.php.net/get/memcached-3.0.4.tgz
+SLACKBUILD MD5SUM: 7e37aae409be7fc25ac31f918f5fa2eb
 SLACKBUILD SHORT DESCRIPTION:  PHP Memcached
 
 SLACKBUILD NAME: php-oauth
@@ -4240,10 +4240,10 @@ SLACKBUILD SHORT DESCRIPTION:  siege (http server benchmark)
 SLACKBUILD NAME: simplejson
 SLACKBUILD LOCATION: ./simplejson
 SLACKBUILD FILES: README simplejson.SlackBuild simplejson.info slack-desc
-SLACKBUILD VERSION: 3.12.0
+SLACKBUILD VERSION: 3.13.2
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/e8/46/4ab77251fbe4af3091cdd8a38aa7d1c0b2082dd502735b9774614cf39c89/simplejson-3.12.0.tar.gz
-SLACKBUILD MD5SUM: 048548acae58984b3e939b3bcf182c8e
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/0d/3f/3a16847fe5c010110a8f54dd8fe7b091b4e22922def374fe1cce9c1cb7e9/simplejson-3.13.2.tar.gz
+SLACKBUILD MD5SUM: 870bf6257465ce2ee8cad14e2394f7eb
 SLACKBUILD SHORT DESCRIPTION:  simplejson (extensible JSON encoder and decoder for Python)
 
 SLACKBUILD NAME: sipcalc
