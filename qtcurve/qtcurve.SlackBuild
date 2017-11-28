@@ -28,7 +28,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=qtcurve
-VERSION=1.9.1
+SRCVERSION=1.9.0-rc1
+VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -36,6 +37,13 @@ PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="AUTHORS Bugs* COPYING README* ChangeLog.md README* TODO*"
+
+# Enable or disable QT/KDE 4/5 support
+# Set yes to QT4 and KDE4 (default in Slackware current)
+ENABLE_QT4=${ENABLE_QT4:-YES}
+ENABLE_QT5=${ENABLE_QT5:-NO}
+ENABLE_KDE4=${ENABLE_KDE4:-YES}
+ENABLE_KDE5=${ENABLE_KDE5:-NO}
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -61,12 +69,18 @@ fi
 
 mkdir -p $PKG $TMP $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION.tar.gz
+cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
+
+# Set QT/KDE 4/5 support
+[[ $ENABLE_QT4 == "YES" ]] && QT4="ON" || QT4="OFF"
+[[ $ENABLE_QT5 == "YES" ]] && QT5="ON" || QT5="OFF"
+[[ $ENABLE_KDE4 == "YES" ]] && KDE4="ON" || KDE4="OFF"
+[[ $ENABLE_KDE5 == "YES" ]] && KDE5="ON" || KDE5="OFF"
 
 mkdir build
 cd build
@@ -78,7 +92,11 @@ cmake \
  -DMAN_INSTALL_DIR=/usr/man \
  -DSYSCONF_INSTALL_DIR=/etc \
  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
- -DENABLE_QT5=OFF \
+ -DENABLE_TEST=OFF \
+ -DENABLE_QT4=$QT4 \
+ -DQTC_QT4_ENABLE_KDE=$KDE4 \
+ -DENABLE_QT5=$QT5 \
+ -DQTC_QT5_ENABLE_KDE=$KDE5 \
  ..
 
 make VERBOSE=1
