@@ -30,14 +30,13 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=ntopng
-COMMIT=f50a5330b234ecce7201f2ecf672d134eaa03734
-VERSION=$(echo $COMMIT | head -c7)_git
+VERSION=3.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
-NDPI_COMMIT=8eaf0cefa1330c9b01b21b7f63f41f9ba1980eeb
+NDPI_VERSION=2.2
 
 DOCFILES="COPYING* LICENSE* README* packages/etc/init.d doc/*"
 
@@ -66,13 +65,13 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$COMMIT
+rm -rf $PKGNAM-$VERSION
 rm -rf nDPI
-tar xvf $CWD/$PKGNAM-$COMMIT.tar.gz || tar xvf $CWD/$COMMIT.tar.gz
-tar xvf $CWD/nDPI-$NDPI_COMMIT.tar.gz || tar xvf $CWD/$NDPI_COMMIT.tar.gz
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
+tar xvf $CWD/nDPI-$NDPI_VERSION.tar.gz || tar xvf $CWD/$NDPI_VERSION.tar.gz
 
-# Build nDPI git version in ../nDPI
-mv nDPI-$NDPI_COMMIT nDPI
+# Build nDPI ../nDPI
+mv nDPI-$NDPI_VERSION nDPI
 cd nDPI
 
 chown -R root:root .
@@ -92,14 +91,14 @@ CXXFLAGS="$SLKCFLAGS" \
   --build=$ARCH-slackware-linux
 make
 
-cd ../$PKGNAM-$COMMIT
+cd ../$PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 ./autogen.sh
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS -fpermissive" \
+CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS -fpermissive" \
 ./configure \
   --prefix=$PKG/usr \
@@ -113,15 +112,11 @@ CXXFLAGS="$SLKCFLAGS -fpermissive" \
   --build=$ARCH-slackware-linux
 
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS -fpermissive" \
+CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS -fpermissive" \
 make
 make geoip
 make install
-
-# Copy init and config file
-mkdir -p $PKG/etc/ntopng
-install -Dm644 $CWD/rc.ntopng $PKG/etc/rc.d/rc.ntopng.new
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
@@ -130,6 +125,10 @@ if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
+
+# Copy init and config file
+mkdir -p $PKG/etc/ntopng
+install -Dm644 $CWD/rc.ntopng $PKG/etc/rc.d/rc.ntopng.new
 
 # Add config file
 cat contrib/ntopng.conf.example > $PKG/etc/ntopng/ntopng.conf.new

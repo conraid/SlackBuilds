@@ -1,60 +1,161 @@
-#!/bin/bash
+#! /bin/bash
 #
 # Init file for the NTOPNG network monitor
 #
 # Changelog
 # 1.0 First version. Testing only. See man page for options
-# 1.1 Add exit if redis not running
+# 1.1 Added exit if redis not running
+# 1.2 Rewritten based on https://github.com/ntop/ntopng/blob/dev/packages/etc/init.d/ntopng
 
-set -e
+CONF_FILE="/etc/ntopng/ntopng.conf"
 
-if [ -e $1 ]; then
-    OPTIONS="-i $1"
-fi
+get_ntopng_pid() {
+  PID=0
 
-start() {
+  if [ -f "/etc/ntopng/ntopng.conf" ]; then
+    PID_FILE=$(grep -v '^#' $CONF_FILE | grep -E '\-G=|--pid'|cut -d '=' -f 2)
+  else
+    PID_FILE="/var/run/ntopng.pid"
+  fi
 
-    echo -n $"Starting ntopng: "
+  if [ -z "$PID_FILE" ]; then
+  	return 0
+  fi
 
-    if [ -z $(pidof redis-server) ]; then
-      echo "Redis is not running."
-      exit 0
+  if [ -f "$PID_FILE" ]; then
+ 	  PID=$(cat $PID_FILE)
+    if [ -z "${PID}" ]; then
+	    /bin/rm $PID_FILE
+	  else
+      if [ "${PID}" -gt 0 ]; then
+		    IS_EXISTING=$(ps auxw | grep -w "$PID" | grep -v grep | wc -l)
+		    if [ "${IS_EXISTING}" -gt 0 ]; then
+		      return "$PID"
+		    else
+		      /bin/rm $PID_FILE
+		    fi
+	    fi
+    fi
+  fi
+
+  return 0
+}
+
+start_ntopng() {
+
+  if [ ! -d "/etc/ntopng" ]; then
+	  echo "Creating directory /etc/ntopng"
+	  mkdir /etc/ntopng
+  fi
+
+  if [ ! -f "$CONF_FILE" ]; then
+    echo "-d=/storage/ntopng" >> $CONF_FILE
+  fi
+
+	echo -n "Starting ntopng: "
+
+  get_ntopng_pid
+
+  if [ "${PID}" -gt 0 ]; then
+    echo "ntopng already running. Quitting"
+	  exit 99
+	fi
+	if [ ! -d /var/log/ntopng/ ]; then
+	   mkdir -p /var/log/ntopng/
+	   touch  /var/log/ntopng/ntopng.log
+	   chmod 777  /var/log/ntopng/ntopng.log
+	fi
+	/usr/bin/ntopng $CONF_FILE >> /var/log/ntopng/ntopng.log &
+
+  sleep 5
+
+  get_ntopng_pid
+
+  if [ "${PID}" -gt 0 ]; then
+		echo "Started ntopng with PID $PID"
+		break
+  else
+		echo "Unable to start ntopng"
+  fi
+}
+
+
+stop_ntopng() {
+    echo -n "Stopping ntopng: "
+
+    get_ntopng_pid
+
+    if [ -z "${PID}" ]; then
+	    return 0
     fi
 
-    /usr/bin/ntopng $OPTIONS 2> /dev/null
+    if [ "${PID}" -eq 0 ]; then
+      if [ ! -f "$CONF_FILE" ]; then
+        echo "Missing $CONF_FILE"
+	    fi
 
-    if [[ $? -ne 0 ]]; then
-	    echo "Error in starting process"
+	    return 0
+    fi
+  for i in {1..5}; do
+      get_ntopng_pid
+        if [ "${PID}" -gt 0 ] && [ -d "/proc/${PID}" ]; then
+            if grep -q ntopng "/proc/${PID}/comm"; then
+              kill -15 "$PID" &> /dev/null
+              echo "Sent kill to ntop PID $PID"
+              sleep 1
+            else
+              echo "Refusing to kill a process (PID=${PID}) which is not ntopng"
+            fi
+        else
+            echo "Stopped ntopng PID $PID"
+            break
+        fi
+  done
+}
+
+status_ntopng() {
+    if [ ! -d "/etc/ntopng" ]; then
+      echo "Default directory is missing. Quitting"
+    fi
+
+    if [ ! -f "$CONF_FILE" ]; then
+        echo "Configuration file is missing. Quitting"
+    fi
+
+    get_ntopng_pid
+    if [ "${PID}" -gt 0 ]; then
+      echo "ntopng running as ${PID}"
+    else
+    	echo "ntopng is not running"
 	    exit 1
     fi
-    echo 'OK'
+
+    return 0
 }
 
-stop() {
-    echo -n $"Stopping ntopng: "
-    killall ntopng
-    echo 'OK'
-}
 
-restart() {
-	stop
-	sleep 2
-	start
-}
 
 case "$1" in
   start)
-	start
-	;;
+	  start_ntopng;
+	  ;;
+
   stop)
-	stop
-	;;
-  restart|reload)
-	restart
-	;;
+    stop_ntopng;
+	  ;;
+
+  status)
+	  status_ntopng;
+	  ;;
+
+  reload | restart)
+    stop_ntopng;
+	  start_ntopng;
+	  ;;
+
   *)
-	echo "Usage: $0 {start|stop|restart} [interface(s)]"
+	echo "Usage: /etc/rc.d/rc.ntopng {start|stop|restart|status}]"
+	exit 1
 esac
-exit
 
-
+exit 0
