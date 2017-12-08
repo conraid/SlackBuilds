@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=unoconv
-VERSION=0.7
-BUILD=${BUILD:-3}
+VERSION=0.8.2
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -71,8 +71,10 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-install -Dm0755 unoconv $PKG/usr/bin/unoconv
-install -Dm0644 doc/unoconv.1 $PKG/usr/man/man1/unoconv.1
+# Fix man path
+sed '/^mandir/s/datadir/prefix/' -i Makefile
+
+make DESTDIR=$PKG install
 
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec gzip -9 {} \;
