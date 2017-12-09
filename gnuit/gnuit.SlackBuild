@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=gnuit
 VERSION=4.9.5
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -85,7 +85,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-static=no \
   --enable-shared=yes \
   --disable-transition \
-  --program-transform-name='s/git/gnuit/' \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
