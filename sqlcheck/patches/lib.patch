@@ -1,0 +1,19 @@
+diff -Naupr a/src/CMakeLists.txt b/src/CMakeLists.txt
+--- a/src/CMakeLists.txt	2017-12-14 14:47:48.577915357 +0100
++++ b/src/CMakeLists.txt	2017-12-14 15:00:16.025570975 +0100
+@@ -3,7 +3,7 @@
+ # --[ SQLCheck
+ 
+ # Set output directory
+-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
++set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib${LIB_SUFFIX})
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+ 
+ # Make sure the compiler can find include files for our sqlcheck library
+@@ -22,4 +22,5 @@ gflags
+ )
+ 
+ # Add installation target
+-install (TARGETS sqlcheck sqlcheck_library DESTINATION bin)
++install (TARGETS sqlcheck DESTINATION bin)
++install (TARGETS sqlcheck_library DESTINATION lib${LIB_SUFFIX})
