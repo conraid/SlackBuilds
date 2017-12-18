@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=neomutt
-SRCVERSION=20171208
+SRCVERSION=20171215
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -79,7 +79,7 @@ fi
 
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
-./configure.autosetup \
+./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
   --localstatedir=/var \
