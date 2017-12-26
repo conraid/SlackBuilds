@@ -1,6 +1,7 @@
---- a/CMakeLists.txt.orig	2017-01-02 09:55:39.000000000 +0100
-+++ b/CMakeLists.txt	2017-01-02 10:05:45.292284941 +0100
-@@ -326,7 +326,7 @@ endif()
+diff -Naupr a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2017-12-22 20:46:21.000000000 +0100
++++ b/CMakeLists.txt	2017-12-25 14:10:50.799712624 +0100
+@@ -351,7 +351,7 @@ endif()
  if(ANDROID OR WIN32)
    ocv_update(OPENCV_DOC_INSTALL_PATH doc)
  else()
@@ -9,7 +10,7 @@
  endif()
  
  if(WIN32 AND CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
-@@ -367,7 +367,7 @@ if(ANDROID)
+@@ -392,7 +392,7 @@ if(ANDROID)
  elseif(WIN32)
    ocv_update(OPENCV_TEST_DATA_INSTALL_PATH "testdata")
  else()
@@ -18,10 +19,10 @@
  endif()
  
  if(ANDROID)
-@@ -396,17 +396,17 @@ else()
-     ocv_update(OPENCV_CONFIG_INSTALL_PATH  ".")
+@@ -422,17 +422,17 @@ else()
    else()
-     ocv_update(OPENCV_LIB_INSTALL_PATH     lib${LIB_SUFFIX})
+     include(GNUInstallDirs)
+     ocv_update(OPENCV_LIB_INSTALL_PATH     ${CMAKE_INSTALL_LIBDIR}${LIB_SUFFIX})
 -    ocv_update(OPENCV_3P_LIB_INSTALL_PATH  share/OpenCV/3rdparty/${OPENCV_LIB_INSTALL_PATH})
 -    ocv_update(OPENCV_SAMPLES_SRC_INSTALL_PATH    share/OpenCV/samples)
 -    ocv_update(OPENCV_JAR_INSTALL_PATH share/OpenCV/java)
@@ -34,10 +35,22 @@
      if(NOT DEFINED OPENCV_CONFIG_INSTALL_PATH)
        math(EXPR SIZEOF_VOID_P_BITS "8 * ${CMAKE_SIZEOF_VOID_P}")
        if(LIB_SUFFIX AND NOT SIZEOF_VOID_P_BITS EQUAL LIB_SUFFIX)
-         ocv_update(OPENCV_CONFIG_INSTALL_PATH lib${LIB_SUFFIX}/cmake/opencv)
+         ocv_update(OPENCV_CONFIG_INSTALL_PATH ${CMAKE_INSTALL_LIBDIR}${LIB_SUFFIX}/cmake/opencv)
        else()
 -        ocv_update(OPENCV_CONFIG_INSTALL_PATH share/OpenCV)
 +        ocv_update(OPENCV_CONFIG_INSTALL_PATH share/opencv)
        endif()
      endif()
    endif()
+diff -Naupr a/cmake/templates/opencv_run_all_tests_unix.sh.in b/cmake/templates/opencv_run_all_tests_unix.sh.in
+--- a/cmake/templates/opencv_run_all_tests_unix.sh.in	2017-12-22 20:46:21.000000000 +0100
++++ b/cmake/templates/opencv_run_all_tests_unix.sh.in	2017-12-25 14:11:15.938398347 +0100
+@@ -53,7 +53,7 @@ fi
+ 
+ OPENCV_TEST_PATH=@CMAKE_INSTALL_PREFIX@/@OPENCV_TEST_INSTALL_PATH@
+ OPENCV_PYTHON_TESTS=@OPENCV_PYTHON_TESTS_LIST@
+-export OPENCV_TEST_DATA_PATH=@CMAKE_INSTALL_PREFIX@/share/OpenCV/testdata
++export OPENCV_TEST_DATA_PATH=@CMAKE_INSTALL_PREFIX@/share/opencv/testdata
+ 
+ CUR_DIR=`pwd`
+ if [ -d "$CUR_DIR" -a -w "$CUR_DIR" ]; then
