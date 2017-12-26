@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=darktable
-VERSION=2.2.5
-BUILD=${BUILD:-3}
+VERSION=2.4.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -76,14 +76,15 @@ cd build
 cmake \
   -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -DNDEBUG" \
-  -DCMAKE_BUILD_TYPE=none \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DCMAKE_INSTALL_MANDIR=/usr/man \
   -DCMAKE_INSTALL_DOCDIR=/usr/doc/$PKGNAM-$VERSION \
   -DBINARY_PACKAGE_BUILD=On \
   -DUSE_DARKTABLE_PROFILING=On \
   -DUSE_LUA=On \
-  -DLUA52=ON \
   -DDONT_USE_INTERNAL_LUA=On \
   -DUSE_LIBSECRET=On \
   ..
@@ -118,7 +119,7 @@ cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 install -Dm755 tools/basecurve/README.md $PKG/usr/doc/$PKGNAM-$VERSION/basecurve.md
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
