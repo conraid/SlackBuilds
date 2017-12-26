@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=gmic
-SRCVERSION=2.1.5
+SRCVERSION=2.1.7
 VERSION=$SRCVERSION
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -63,36 +63,26 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM*
+rm -rf $PKGNAM* zart*
 tar xvf $CWD/${PKGNAM}_$VERSION.tar.gz
 tar xvf $CWD/$PKGNAM-community-*.tar.gz
+tar xvf $CWD/zart-*.tar.gz
 mv $PKGNAM-community-* $PKGNAM-community
+mv zart-* zart
 ln -s $PKGNAM-$SRCVERSION $PKGNAM
 cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-# Fix libdir to gimp plugin
-sed -i "s|lib/gimp|lib$LIBDIRSUFFIX/gimp|g" -i resources/CMakeLists.txt
+# Fix libpath
+sed "/^LIB/s/lib/lib$LIBDIRSUFFIX/" -i src/Makefile
 
 # Make symlinks to build zart
-ln -sf ../gmic-community/zart zart
+ln -sf ../zart zart
 
-cp resources/CMakeLists.txt .
-
-mkdir -p build
-cd build
-cmake -Wno-dev \
-  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_INSTALL_PREFIX=/usr \
-  -DCMAKE_INSTALL_MANDIR=/usr/man \
-  -DLOCALSTATEDIR=/var \
-  -DBUILD_LIB_STATIC=OFF \
-  ..
-
-make -j1
+cd src
+make CFLAGS="$SLKCFLAGS" WGET=/dev/true -j1 cli lib libc gimp_gtk
 make DESTDIR=$PKG install
 cd ..
 
