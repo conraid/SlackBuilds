@@ -181,10 +181,10 @@ SLACKBUILD SHORT DESCRIPTION:  asn1crypto (Python ASN.1 library)
 SLACKBUILD NAME: atom
 SLACKBUILD LOCATION: ./atom
 SLACKBUILD FILES: README atom.SlackBuild atom.info doinst.sh slack-desc
-SLACKBUILD VERSION: 1.23.2
+SLACKBUILD VERSION: 1.23.3
 SLACKBUILD REQUIRED: grunt-cli node-fs-extra
-SLACKBUILD DOWNLOAD: https://github.com/atom/atom/archive/v1.23.2.tar.gz
-SLACKBUILD MD5SUM: 9973558b2e5aeafc99b353a01d7f1573
+SLACKBUILD DOWNLOAD: https://github.com/atom/atom/archive/v1.23.3.tar.gz
+SLACKBUILD MD5SUM: 1dfc819b29c910daaed20c11a629b28f
 SLACKBUILD SHORT DESCRIPTION:  atom (text editor)
 
 SLACKBUILD NAME: atool
@@ -1820,7 +1820,7 @@ SLACKBUILD NAME: kid3
 SLACKBUILD LOCATION: ./kid3
 SLACKBUILD FILES: README doinst.sh kid3.SlackBuild kid3.info slack-desc
 SLACKBUILD VERSION: 3.5.1
-SLACKBUILD REQUIRED: id3lib libmp4v2 
+SLACKBUILD REQUIRED: libmp4v2 
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/kid3/kid3-3.5.1.tar.gz
 SLACKBUILD MD5SUM: 959024e2d080d92344a8161cc384334a
 SLACKBUILD SHORT DESCRIPTION:  Kid3 (Efficient Audio Tagger)
@@ -2193,6 +2193,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/libnet-dev/libnet-1.1.6.tar.gz
 SLACKBUILD MD5SUM: 710296fe424a49344e5fcc0d09e53317
 SLACKBUILD SHORT DESCRIPTION:  Libnet (Network library to forge packets) 
+
+SLACKBUILD NAME: libnghttp2
+SLACKBUILD LOCATION: ./libnghttp2
+SLACKBUILD FILES: README libnghttp2.SlackBuild libnghttp2.info slack-desc
+SLACKBUILD VERSION: 1.29.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/nghttp2/nghttp2/releases/download/v1.29.0/nghttp2-1.29.0.tar.xz
+SLACKBUILD MD5SUM: 32160aab09960e22962b88dfe1079371
+SLACKBUILD SHORT DESCRIPTION:  libnghttp2 (HTTP/2 implementation)
 
 SLACKBUILD NAME: libnids
 SLACKBUILD LOCATION: ./libnids
@@ -2851,15 +2860,6 @@ SLACKBUILD DOWNLOAD: http://pub.netsniff-ng.org/netsniff-ng/netsniff-ng-0.6.4.ta
 SLACKBUILD MD5SUM: 1b9639d503015e3edbb6d26baf3f7974
 SLACKBUILD SHORT DESCRIPTION:  netsniff-ng
 
-SLACKBUILD NAME: nghttp2
-SLACKBUILD LOCATION: ./nghttp2
-SLACKBUILD FILES: README nghttp2.SlackBuild nghttp2.info slack-desc
-SLACKBUILD VERSION: 1.29.0
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/nghttp2/nghttp2/releases/download/v1.29.0/nghttp2-1.29.0.tar.xz
-SLACKBUILD MD5SUM: 32160aab09960e22962b88dfe1079371
-SLACKBUILD SHORT DESCRIPTION:  nghttp2 (HTTP/2 implementation)
-
 SLACKBUILD NAME: nginx
 SLACKBUILD LOCATION: ./nginx
 SLACKBUILD FILES: README doinst.sh nginx.SlackBuild nginx.info rc.nginx slack-desc
@@ -3043,10 +3043,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-uglify-js (JavaScript compressor/minifier)
 SLACKBUILD NAME: node
 SLACKBUILD LOCATION: ./node
 SLACKBUILD FILES: README node.SlackBuild node.info slack-desc
-SLACKBUILD VERSION: 9.3.0
-SLACKBUILD REQUIRED: libuv c-ares
-SLACKBUILD DOWNLOAD: https://github.com/nodejs/node/archive/v9.3.0.tar.gz
-SLACKBUILD MD5SUM: aef76a1ee923a89766db67a60afb7568
+SLACKBUILD VERSION: 9.4.0
+SLACKBUILD REQUIRED: libuv c-ares libnghttp2
+SLACKBUILD DOWNLOAD: https://github.com/nodejs/node/archive/v9.4.0.tar.gz
+SLACKBUILD MD5SUM: fea2b4fe8bd952fca705a7b0ee6ff656
 SLACKBUILD SHORT DESCRIPTION:  Node (Evented I/O for V8 JavaScript)
 
 SLACKBUILD NAME: nomacs
@@ -4330,10 +4330,10 @@ SLACKBUILD SHORT DESCRIPTION:  SMTube (small youtube browser)
 SLACKBUILD NAME: snort
 SLACKBUILD LOCATION: ./snort
 SLACKBUILD FILES: README SLACKWARE.README doinst.sh rc.snort slack-desc snort.SlackBuild snort.info
-SLACKBUILD VERSION: 2.9.11
-SLACKBUILD REQUIRED: daq libdnet nghttp2
-SLACKBUILD DOWNLOAD: https://www.snort.org/downloads/snort/snort-2.9.11.tar.gz
-SLACKBUILD MD5SUM: fd3012bf36710481d66b40ad046b231d
+SLACKBUILD VERSION: 2.9.11.1
+SLACKBUILD REQUIRED: daq libdnet libnghttp2
+SLACKBUILD DOWNLOAD: https://www.snort.org/downloads/snort/snort-2.9.11.1.tar.gz
+SLACKBUILD MD5SUM: 378e3938b2b5c8e358f942d0ffce18cc
 SLACKBUILD SHORT DESCRIPTION:  Snort (Intrusion Detection and Prevention System)
 
 SLACKBUILD NAME: socat
