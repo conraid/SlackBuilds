@@ -2,7 +2,9 @@
 #
 # Slackware build script for clamav
 #
-# Copyright 2015-2017 Corrado Franco (http://conraid.net)
+# Copyright (c) 2006,2007 Eric Hameleers <alien@slackware.com>
+# Copyright (c) 2011-2018 Matteo Bernardini <ponce@slackbuilds.org>
+# Copyright 2015-2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -25,6 +27,8 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
+# Based on https://slackbuilds.org/slackbuilds/14.2/system/clamav/clamav.SlackBuild
+
 set -eu
 
 # You must have clamav user and group to run this script
@@ -44,12 +48,13 @@ fi
 CWD=$(pwd)
 
 PKGNAM=clamav
-VERSION=0.99.2
-BUILD=${BUILD:-6}
+VERSION=0.99.3
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
+COUNTRY=${COUNTRY:-it}
 
 DOCFILES="AUTHORS BUGS COPYING* ChangeLog FAQ INSTALL NEWS README UPGRADE docs/*.pdf docs/html examples"
 
@@ -92,9 +97,37 @@ if [ -e $CWD/patches ]; then
   done
 fi
 
-# Fix zlib check in configure
-# https://github.com/vrtadmin/clamav-devel/commit/f0bcd186190fe6e67b3f0eaaceb7a99aa6a98865
-sed 's/"ZLIB_VERSION \\"1.2.1"/"ZLIB_VERSION \\"1.2.1\\"/' -i configure
+# Specify the desired mirror in the update config file
+# http://www.iana.org/cctld/cctld-whois.htm
+sed -i "s/^\#DatabaseMirror.*/DatabaseMirror db.${COUNTRY}.clamav.net/" \
+  etc/freshclam.conf.sample
+
+sed \
+  -e "s/^Example/#Example/" \
+  -e "s/^\#LogSyslog/LogSyslog/" \
+  -e "s/^\#LogFacility/LogFacility/" \
+  -e "s/^\#PidFile.*/PidFile \/var\/run\/clamav\/freshclam.pid/" \
+  -e "s/^\#UpdateLogFile.*/UpdateLogFile \/var\/log\/clamav\/freshclam.log/" \
+  -e "s/^\#AllowSupplementaryGroups.*/AllowSupplementaryGroups yes/" \
+  -e "s/^\#DatabaseOwner.*/DatabaseOwner clamav/" \
+  -e "s/^\#NotifyClamd.*/NotifyClamd \/etc\/clamd.conf/" \
+  -i etc/freshclam.conf.sample
+sed \
+  -e "s/^Example/#Example/" \
+  -e "s/^\#LogSyslog/LogSyslog/" \
+  -e "s/^\#LogFacility/LogFacility/" \
+  -e "s/^\#LogFile\ .*/LogFile \/var\/log\/clamav\/clamd.log/" \
+  -e "s/^\#PidFile.*/PidFile \/var\/run\/clamav\/clamd.pid/" \
+  -e "s/^\#LocalSocket\ .*/LocalSocket \/var\/run\/clamav\/clamd.socket/" \
+  -e "s/^\#LocalSocketGroup.*/LocalSocketGroup clamav/" \
+  -e "s/^\#LocalSocketMode/LocalSocketMode/" \
+  -e "s/^\#FixStaleSocket/FixStaleSocket/" \
+  -e "s/^\#User.*/User clamav/" \
+  -e "s/^\#AllowSupplementaryGroups.*/AllowSupplementaryGroups yes/" \
+  -e "s/^\#ExitOnOOM/ExitOnOOM/" \
+  -i etc/clamd.conf.sample
+
+autoreconf -fi
 
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -114,6 +147,8 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-milter \
   --with-dbdir=/var/lib/clamav \
   --with-libjson \
+  --disable-zlib-check \
+  --disable-llvm \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
@@ -128,11 +163,10 @@ if [ -d $PKG/usr/man ]; then
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
-# Install config files
-install -Dm644 $CWD/files/clamd.conf $PKG/etc/clamav/clamd.conf.new
-install -Dm644 $CWD/files/freshclam.conf $PKG/etc/clamav/freshclam.conf.new
+# Prepare the config files:
+rename .sample .new $PKG/etc/clamav/*.sample
 
-# Install rc script and logrotate entry (thanks to SBo)
+# Install rc script and logrotate entry
 install -Dm755 $CWD/files/rc.clamav $PKG/etc/rc.d/rc.clamav.new
 install -Dm644 $CWD/files/logrotate.clamav $PKG/etc/logrotate.d/clamav.new
 
@@ -141,9 +175,23 @@ mkdir -p $PKG/var/{lib,log,run}/clamav/
 chown clamav:clamav $PKG/var/{lib,log,run}/clamav/
 touch $PKG/var/log/clamav/{clamd,freshclam}.log.new
 
-# Fixup some ownership and permissions issues (thanks to SBo)
+# Fixup some ownership and permissions issues
+chown -R root:root $PKG
+chmod -R o-w $PKG
 chown clamav $PKG/usr/sbin/clamav-milter
 chmod 4700 $PKG/usr/sbin/clamav-milter
+chmod 0770 $PKG/var/lib/clamav
+touch $PKG/var/lib/clamav/main.cvd $PKG/var/lib/clamav/daily.cvd
+chmod 0660 $PKG/var/lib/clamav/*
+
+# Create log files in such a way that they won't clobber existing ones
+touch $PKG/var/log/clamav/clamd.log.new \
+  $PKG/var/log/clamav/freshclam.log.new
+chmod 660 $PKG/var/log/clamav/clamd.log.new \
+  $PKG/var/log/clamav/freshclam.log.new
+
+chown -R clamav:clamav $PKG/var/lib/clamav $PKG/var/log/clamav \
+  $PKG/var/run/clamav
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
