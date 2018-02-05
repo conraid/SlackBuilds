@@ -658,10 +658,10 @@ SLACKBUILD SHORT DESCRIPTION:  cracklib (password crack library)
 SLACKBUILD NAME: cryfs
 SLACKBUILD LOCATION: ./cryfs
 SLACKBUILD FILES: README cryfs.SlackBuild cryfs.info slack-desc
-SLACKBUILD VERSION: 0.9.8
+SLACKBUILD VERSION: 0.9.9
 SLACKBUILD REQUIRED: cryptopp
-SLACKBUILD DOWNLOAD: https://github.com/cryfs/cryfs/archive/0.9.8.tar.gz
-SLACKBUILD MD5SUM: 8638fecd678e3f8a3ce3c992b93574c1
+SLACKBUILD DOWNLOAD: https://github.com/cryfs/cryfs/archive/0.9.9.tar.gz
+SLACKBUILD MD5SUM: 93010635099764418bea99b07937f37f
 SLACKBUILD SHORT DESCRIPTION:  cryfs (Cryptographic filesystem for the cloud)
 
 SLACKBUILD NAME: cryptography
@@ -2142,7 +2142,7 @@ SLACKBUILD SHORT DESCRIPTION:  libmaxminddb (C Library)
 
 SLACKBUILD NAME: libmemcached
 SLACKBUILD LOCATION: ./libmemcached
-SLACKBUILD FILES: README libmemcached.SlackBuild libmemcached.info slack-desc
+SLACKBUILD FILES: README libmemcached.SlackBuild libmemcached.info patches/libmemcached-fix-linking-with-libpthread.patch slack-desc
 SLACKBUILD VERSION: 1.0.18
 SLACKBUILD REQUIRED: memcached
 SLACKBUILD DOWNLOAD: http://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz
@@ -2601,11 +2601,11 @@ SLACKBUILD SHORT DESCRIPTION:  md5deep (Advanced checksum hashing tool)
 
 SLACKBUILD NAME: memcached
 SLACKBUILD LOCATION: ./memcached
-SLACKBUILD FILES: README memcached.SlackBuild memcached.info slack-desc
-SLACKBUILD VERSION: 1.4.36
+SLACKBUILD FILES: README doinst.sh files/memcached.conf files/rc.memcached memcached.SlackBuild memcached.info slack-desc
+SLACKBUILD VERSION: 1.5.4
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.memcached.org/files/memcached-1.4.36.tar.gz
-SLACKBUILD MD5SUM: 1e028fbab7288911fcaa5ed2a21817fe
+SLACKBUILD DOWNLOAD: http://www.memcached.org/files/memcached-1.5.4.tar.gz
+SLACKBUILD MD5SUM: 82cf5ef64dfdbf0f952b263a9b7db733
 SLACKBUILD SHORT DESCRIPTION:  memcached (object caching system)
 
 SLACKBUILD NAME: minidb
@@ -2710,10 +2710,10 @@ SLACKBUILD SHORT DESCRIPTION:  msgpack-c (msgpack for C/C++)
 SLACKBUILD NAME: msgpack-python
 SLACKBUILD LOCATION: ./msgpack-python
 SLACKBUILD FILES: README msgpack-python.SlackBuild msgpack-python.info slack-desc
-SLACKBUILD VERSION: 0.5.2
+SLACKBUILD VERSION: 0.5.4
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/msgpack/msgpack-python/archive/0.5.2.tar.gz
-SLACKBUILD MD5SUM: d6fbcaeb980e3110ac4342588e49f2f1
+SLACKBUILD DOWNLOAD: https://github.com/msgpack/msgpack-python/archive/0.5.4.tar.gz
+SLACKBUILD MD5SUM: aa8943bd4f13cdd9f52a666a5c5b8a4a
 SLACKBUILD SHORT DESCRIPTION:  msgpack-python (MessagePack for Python)
 
 SLACKBUILD NAME: msmtp
@@ -2737,10 +2737,10 @@ SLACKBUILD SHORT DESCRIPTION:  mtpfs (mount MS Media Transport Protocol devices 
 SLACKBUILD NAME: mu
 SLACKBUILD LOCATION: ./mu
 SLACKBUILD FILES: README mu.SlackBuild mu.info slack-desc
-SLACKBUILD VERSION: 0.9.18
+SLACKBUILD VERSION: 1.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/djcb/mu/releases/download/0.9.18/mu-0.9.18.tar.gz
-SLACKBUILD MD5SUM: 735cd8cef0de979f3f2d43ae7e923523
+SLACKBUILD DOWNLOAD: https://github.com/djcb/mu/releases/download/v1.0/mu-1.0.tar.xz
+SLACKBUILD MD5SUM: 64827831247adb6b36b8a157ac8be4ee
 SLACKBUILD SHORT DESCRIPTION:  mu (collection of utilties for indexing and searching Maildirs)
 
 SLACKBUILD NAME: mysqltuner
@@ -2818,10 +2818,10 @@ SLACKBUILD SHORT DESCRIPTION:  neomutt (Bringing together all the Mutt code)
 SLACKBUILD NAME: neovim-python
 SLACKBUILD LOCATION: ./neovim-python
 SLACKBUILD FILES: README neovim-python.SlackBuild neovim-python.info slack-desc
-SLACKBUILD VERSION: 0.2.0
+SLACKBUILD VERSION: 0.2.1
 SLACKBUILD REQUIRED: click greenlet msgpack-python neovim
-SLACKBUILD DOWNLOAD: https://github.com/neovim/python-client/archive/0.2.0.tar.gz
-SLACKBUILD MD5SUM: 32003df269d77e45978162010a5a0ca6
+SLACKBUILD DOWNLOAD: https://github.com/neovim/python-client/archive/0.2.1.tar.gz
+SLACKBUILD MD5SUM: af7a7249cfa763523e67e254fdf1eb35
 SLACKBUILD SHORT DESCRIPTION:  neovim-python (Python client for neovim)
 
 SLACKBUILD NAME: neovim
@@ -3943,10 +3943,10 @@ SLACKBUILD SHORT DESCRIPTION:  reaver (Brute force attack against Wifi Protected
 SLACKBUILD NAME: redis
 SLACKBUILD LOCATION: ./redis
 SLACKBUILD FILES: README doinst.sh files/rc.redis files/redis.logrotate patches/jemalloc.patch redis.SlackBuild redis.info slack-desc
-SLACKBUILD VERSION: 4.0.7
+SLACKBUILD VERSION: 4.0.8
 SLACKBUILD REQUIRED: hiredis
-SLACKBUILD DOWNLOAD: http://download.redis.io/releases/redis-4.0.7.tar.gz
-SLACKBUILD MD5SUM: 2b2a3891b86f87b56f790c00ff681cc4
+SLACKBUILD DOWNLOAD: http://download.redis.io/releases/redis-4.0.8.tar.gz
+SLACKBUILD MD5SUM: c75b11e4177e153e4dc1d8dd3a6174e4
 SLACKBUILD SHORT DESCRIPTION:  Redis (Key-Value Store)
 
 SLACKBUILD NAME: rkhunter
@@ -4843,10 +4843,10 @@ SLACKBUILD SHORT DESCRIPTION:  uuid (OSSP Universally Unique Identifier)
 SLACKBUILD NAME: vala
 SLACKBUILD LOCATION: ./vala
 SLACKBUILD FILES: README slack-desc vala.SlackBuild vala.info
-SLACKBUILD VERSION: 0.39.6
+SLACKBUILD VERSION: 0.39.7
 SLACKBUILD REQUIRED: graphviz
-SLACKBUILD DOWNLOAD: http://download.gnome.org/sources/vala/0.39/vala-0.39.6.tar.xz
-SLACKBUILD MD5SUM: 45c5f5a7d699deb6704e2ef61d49eabe
+SLACKBUILD DOWNLOAD: http://download.gnome.org/sources/vala/0.39/vala-0.39.7.tar.xz
+SLACKBUILD MD5SUM: ae70c01e0acfa83069ccb55224bfcfba
 SLACKBUILD SHORT DESCRIPTION:  vala (Compiler for the GObject type system)
 
 SLACKBUILD NAME: valgrind
@@ -5095,10 +5095,10 @@ SLACKBUILD SHORT DESCRIPTION:  wxgtk (cross-platform GUI toolkit)
 SLACKBUILD NAME: x11vnc
 SLACKBUILD LOCATION: ./x11vnc
 SLACKBUILD FILES: README slack-desc x11vnc.SlackBuild x11vnc.info
-SLACKBUILD VERSION: 0.9.14
+SLACKBUILD VERSION: 0.9.15
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/LibVNC/x11vnc/archive/0.9.14.tar.gz
-SLACKBUILD MD5SUM: 994de25a538ec24049734b26355aa8d5
+SLACKBUILD DOWNLOAD: https://github.com/LibVNC/x11vnc/archive/0.9.15.tar.gz
+SLACKBUILD MD5SUM: 2aaa0b9c9f2046d1e9f4484d7e2c17e1
 SLACKBUILD SHORT DESCRIPTION:  x11vnc (VNC server for real X displays)
 
 SLACKBUILD NAME: xbill
@@ -5194,19 +5194,19 @@ SLACKBUILD SHORT DESCRIPTION:  yersinia
 SLACKBUILD NAME: youtube-dl
 SLACKBUILD LOCATION: ./youtube-dl
 SLACKBUILD FILES: README patches/makefile.patch patches/setup.patch slack-desc youtube-dl.SlackBuild youtube-dl.info
-SLACKBUILD VERSION: 2018.01.27
+SLACKBUILD VERSION: 2018.02.04
 SLACKBUILD REQUIRED: rtmpdump
-SLACKBUILD DOWNLOAD: https://yt-dl.org/downloads/2018.01.27/youtube-dl-2018.01.27.tar.gz
-SLACKBUILD MD5SUM: be5e9fd3de7906b5784f567bc2db8d48
+SLACKBUILD DOWNLOAD: https://yt-dl.org/downloads/2018.02.04/youtube-dl-2018.02.04.tar.gz
+SLACKBUILD MD5SUM: d3270df83dacc3166f4eb17058a1771e
 SLACKBUILD SHORT DESCRIPTION:  youtube-dl (YouTube video download utility)
 
 SLACKBUILD NAME: zenity
 SLACKBUILD LOCATION: ./zenity
 SLACKBUILD FILES: README slack-desc zenity.SlackBuild zenity.info
-SLACKBUILD VERSION: 3.24.0
+SLACKBUILD VERSION: 3.27.90
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://download.gnome.org/sources/zenity/3.24/zenity-3.24.0.tar.xz
-SLACKBUILD MD5SUM: c905318c3ca76172d53829ed2471ac53
+SLACKBUILD DOWNLOAD: https://download.gnome.org/sources/zenity/3.27/zenity-3.27.90.tar.xz
+SLACKBUILD MD5SUM: 745f0b264d02ee64f668b68a6beaba5e
 SLACKBUILD SHORT DESCRIPTION:  zenity (display gtk dialog boxes from cli)
 
 SLACKBUILD NAME: zeromq
