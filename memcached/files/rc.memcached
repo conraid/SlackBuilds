@@ -1,0 +1,151 @@
+#!/bin/sh
+
+# Copyright 2015 Marcel Saegebarth <marc@mos6581.de>
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+OPTIONS=""
+RUN_USER=nobody
+
+set -e
+
+if [ -f /etc/memcached.conf ]; then
+  . /etc/memcached.conf
+else
+  echo "/etc/memcached.conf not readable or missing."
+  exit 1
+fi
+
+if [ -n "$ADDR" ]; then
+  OPTIONS="$OPTIONS -l $ADDR"
+fi
+
+if [ -n "$PORT_TCP" ]; then
+  OPTIONS="$OPTIONS -p $PORT_TCP"
+fi
+
+if [ -n "$PORT_UDP" ]; then
+  OPTIONS="$OPTIONS -U $PORT_UDP"
+fi
+
+if [ -n "$UNIX_SOCKET" ]; then
+  OPTIONS="$OPTIONS -s $UNIX_SOCKET"
+fi
+
+if [ -n "$UNIX_SOCKET_MASK" ]; then
+  OPTIONS="$OPTIONS -a $UNIX_SOCKET_MASK"
+fi
+
+if [ "$RUN_DAEMON" == "true" ]; then
+  OPTIONS="$OPTIONS -d"
+fi
+
+if [ -n "$RUN_USER" ]; then
+  OPTIONS="$OPTIONS -u $RUN_USER"
+else
+  OPTIONS="$OPTIONS -u nobody"
+fi
+
+if [ -n "$MAX_MEMORY" ]; then
+  OPTIONS="$OPTIONS -m $MAX_MEMORY"
+fi
+
+if [ -n "$MIN_SPACE" ]; then
+  OPTIONS="$OPTIONS -n $MIN_SPACE"
+fi
+
+if [ -n "$CHUNK_SIZE" ]; then
+  OPTIONS="$OPTIONS -f $CHUNK_SIZE"
+fi
+
+if [ -n "$MAX_CONNECTIONS" ]; then
+  OPTIONS="$OPTIONS -c $MAX_CONNECTIONS"
+fi
+
+if [ -n "$MAX_THREADS" ]; then
+  OPTIONS="$OPTIONS -t $MAX_THREADS"
+fi
+
+if [ -n "$MAX_REQUESTS" ]; then
+  OPTIONS="$OPTIONS -R $MAX_REQUESTS"
+fi
+
+if [ "$MAX_LOCKDOWN" == "true" ]; then
+  OPTIONS="$OPTIONS -k"
+fi
+
+if [ "$NO_MEMORY_PURGE" == "true" ]; then
+  OPTIONS="$OPTIONS -M"
+fi
+
+if [ "$MAX_FILE_SIZE" == "true" ]; then
+  OPTIONS="$OPTIONS -r"
+fi
+
+if [ "$DISABLE_CAS" == "true" ]; then
+  OPTIONS="$OPTIONS -C"
+fi
+
+if [ -n "$DELIMITER" ]; then
+  OPTIONS="$OPTIONS -D $DELIMITER"
+fi
+
+if [ "$LARGE_MEMORY_PAGES" == "true" ]; then
+  OPTIONS="$OPTIONS -L"
+fi
+
+if [ "$PROTOCOL" == "ascii" ] || [ "$PROTOCOL" == "binary" ] ; then
+  OPTIONS="$OPTIONS -B $PROTOCOL"
+fi
+
+if [ -n "$SLAB_PAGE_SIZE" ]; then
+  OPTIONS="$OPTIONS -I $SLAB_PAGE_SIZE"
+fi
+
+if [ "$DISABLE_FLUSH_ALL" == "true" ]; then
+  OPTIONS="$OPTIONS -F"
+fi
+
+PID="/var/run/memcached/memcached.pid"
+
+memcached_start() {
+  mkdir -p /var/run/memcached
+  chown $RUN_USER:nogroup /var/run/memcached
+  chmod 700 /var/run/memcached
+  memcached -d -P $PID $OPTIONS
+}
+
+memcached_stop() {
+  kill $(cat $PID)
+  rm $PID
+}
+
+memcached_restart() {
+  memcached_stop
+  sleep 2
+  memcached_start
+}
+
+case "$1" in
+    start) memcached_start ;;
+     stop) memcached_stop ;;
+  restart) memcached_restart ;;
+        *) echo "USAGE: $0 start|stop|restart"
+           exit 1 ;;
+esac

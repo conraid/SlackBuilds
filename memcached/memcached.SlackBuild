@@ -2,7 +2,7 @@
 #
 # Slackware build script for memcached http://memcached.org/
 #
-# Copyright 2009-2017 Corrado Franco (http://conraid.net)
+# Copyright 2009-2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=memcached
-VERSION=1.4.36
+VERSION=1.5.4
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -59,6 +59,7 @@ else
   LIBDIRSUFFIX=""
 fi
 
+rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
@@ -89,6 +90,14 @@ CXXFLAGS="$SLKCFLAGS" \
 make
 make DESTDIR=$PKG install-strip
 
+# Install memcached-tool
+install -Dm755 scripts/memcached-tool $PKG/usr/bin/memcached-tool
+install -Dm644 scripts/memcached-tool.1 $PKG/usr/man/man1/memcached-tool.1
+
+# Install init and conf files (thanks to Marcel Saegebarth)
+install -Dm644 $CWD/files/rc.memcached $PKG/etc/rc.d/rc.memcached.new
+install -Dm644 $CWD/files/memcached.conf $PKG/etc/memcached.conf.new
+
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
@@ -100,6 +109,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
