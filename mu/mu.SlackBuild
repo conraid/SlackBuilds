@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=mu
-VERSION=0.9.18
-BUILD=${BUILD:-3}
+VERSION=1.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -65,7 +65,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
+tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
