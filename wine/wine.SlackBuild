@@ -2,7 +2,7 @@
 #
 # Slackware build script for wine
 #
-# Copyright 2015-2017 Corrado Franco (http://conraid.net)
+# Copyright 2015-2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=wine
-SRCVERSION=2.19
+SRCVERSION=3.2
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -72,20 +72,22 @@ mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$SRCVERSION $PKGNAM-staging-$SRCVERSION
 tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.xz
-tar xvf $CWD/$PKGNAM-staging-$SRCVERSION.tar.gz || tar xvf $CWD/v$SRCVERSION.tar.gz
-tar xvf $CWD/$PKGNAM-d3d9-*-$SRCVERSION.tar.gz
 
 # Apply staging patches
-echo "Apply staging patches..."
-cd $PKGNAM-staging-$SRCVERSION/patches
-./patchinstall.sh --all DESTDIR=$TMP/$PKGNAM-$SRCVERSION
-
+if [ -e $CWD/$PKGNAM-staging-$SRCVERSION.tar.gz ]; then
+  tar xvf $CWD/$PKGNAM-staging-$SRCVERSION.tar.gz
+  echo "Apply staging patches..."
+  cd $PKGNAM-staging-$SRCVERSION/patches
+  ./patchinstall.sh --all DESTDIR=$TMP/$PKGNAM-$SRCVERSION
+fi
 cd $TMP/$PKGNAM-$VERSION
-
 # Apply d3d9 patches
-echo "Apply d3d9 patches..."
-patch -Np1 -i $TMP/wine-d3d9-patches-wine-d3d9-$SRCVERSION/staging-helper.patch
-patch -Np1 -i $TMP/wine-d3d9-patches-wine-d3d9-$SRCVERSION/wine-d3d9.patch
+if [ -e $CWD/$PKGNAM-d3d9-*-$SRCVERSION.tar.gz ]; then
+  tar xvf $CWD/$PKGNAM-d3d9-*-$SRCVERSION.tar.gz
+  echo "Apply d3d9 patches..."
+  patch -Np1 -i $TMP/wine-d3d9-patches-wine-d3d9-$SRCVERSION/staging-helper.patch
+  patch -Np1 -i $TMP/wine-d3d9-patches-wine-d3d9-$SRCVERSION/wine-d3d9.patch
+fi
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
