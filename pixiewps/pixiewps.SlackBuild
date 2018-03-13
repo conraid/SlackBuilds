@@ -2,7 +2,7 @@
 #
 # Slackware build script for pixiewps
 #
-# Copyright 2017 Corrado Franco (http://conraid.net)
+# Copyright 2017-2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=pixiewps
-VERSION=1.2.2
+VERSION=1.4.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -65,21 +65,14 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
+tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-# Apply patches
-if [ -e $CWD/patches ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
-fi
-
-make -C src CCFLAGS="$SLKCFLAGS -std=c99"
-make -C src DESTDIR=$PKG install
+make PREFIX=/usr OPENSSL=1 CCFLAGS="$SLKCFLAGS"
+make PREFIX=/usr MANDIR=/usr/man DESTDIR=$PKG install
 
 install -Dm644 $PKGNAM.1 $PKG/usr/man/man1/$PKGNAM.1
 
