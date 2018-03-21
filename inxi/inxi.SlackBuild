@@ -30,6 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=inxi
+SRCVERSION=2.9.02-2018-03-20-01-42-25
+VERSION=2.9.02
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -37,29 +39,21 @@ PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 ARCH=noarch
 
+DOCFILES="*.txt *.changelog"
+
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM
-mkdir -p $PKGNAM
-cd $PKGNAM
-tar xvf $CWD/$PKGNAM.tar.gz
-
-# Apply patches
-if [ -e $CWD/patches/ ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
-fi
-
-VERSION=$( grep "^SELF_VERSION=" $PKGNAM | cut -d= -f2)
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz
+cd $PKGNAM-$SRCVERSION
 
 install -Dm755 inxi $PKG/usr/bin/inxi
-install -Dm644 inxi.1.gz $PKG/usr/man/man1/inxi.1.gz
+install -Dm644 inxi.1 $PKG/usr/man/man1/inxi.1
+gzip -9 $PKG/usr/man/man1/inxi.1
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cat inxi.changelog > $PKG/usr/doc/$PKGNAM-$VERSION/ChangeLog
-cp $CWD/files/*.txt $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
