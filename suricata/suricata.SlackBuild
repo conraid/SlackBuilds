@@ -30,7 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=suricata
-VERSION=4.0.4
+SRCVERSION=4.1.0-beta1
+VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -64,15 +65,15 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz
+cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 # Change magic file path with default slackware magic file path.
-sed "s|/usr/share/file/magic|/etc/file/magic.mgc|g" -i configure* -i suricata.yaml.in
+sed "s|/usr/share/file/magic|/etc/file/magic.mgc|g" -i suricata.yaml.in
 
 autoreconf
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
@@ -94,7 +95,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-nflog \
   --enable-af-packet \
   --enable-geoip \
-  --enable-lua \
+  --enable-luajit \
   --enable-unix-socket \
   --enable-non-bundled-htp \
   --enable-python \
