@@ -1672,15 +1672,6 @@ SLACKBUILD DOWNLOAD: https://gitlab.com/iucode-tool/releases/raw/master/iucode-t
 SLACKBUILD MD5SUM: 8f6ca9f09b6bd24e09be42c348c31d72
 SLACKBUILD SHORT DESCRIPTION:  iucode_tool (Intel Processor Microcode Tool)
 
-SLACKBUILD NAME: jansson
-SLACKBUILD LOCATION: ./jansson
-SLACKBUILD FILES: README jansson.SlackBuild jansson.info slack-desc
-SLACKBUILD VERSION: 2.10
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.digip.org/jansson/releases/jansson-2.10.tar.bz2
-SLACKBUILD MD5SUM: 8f85f653fba3ac8220ad8f2f47646ef1
-SLACKBUILD SHORT DESCRIPTION:  jansson (JSON C library)
-
 SLACKBUILD NAME: jasmine-node
 SLACKBUILD LOCATION: ./jasmine-node
 SLACKBUILD FILES: README jasmine-node.SlackBuild jasmine-node.info slack-desc
@@ -2229,15 +2220,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/libnet-dev/libnet-1.1.6.tar.gz
 SLACKBUILD MD5SUM: 710296fe424a49344e5fcc0d09e53317
 SLACKBUILD SHORT DESCRIPTION:  Libnet (Network library to forge packets) 
-
-SLACKBUILD NAME: libnghttp2
-SLACKBUILD LOCATION: ./libnghttp2
-SLACKBUILD FILES: README libnghttp2.SlackBuild libnghttp2.info slack-desc
-SLACKBUILD VERSION: 1.31.0
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/nghttp2/nghttp2/releases/download/v1.31.0/nghttp2-1.31.0.tar.xz
-SLACKBUILD MD5SUM: 64b864e1b0765bc876ea83afe63b6e8e
-SLACKBUILD SHORT DESCRIPTION:  libnghttp2 (HTTP/2 implementation)
 
 SLACKBUILD NAME: libnids
 SLACKBUILD LOCATION: ./libnids
@@ -3584,7 +3566,7 @@ SLACKBUILD NAME: pmacct
 SLACKBUILD LOCATION: ./pmacct
 SLACKBUILD FILES: README doinst.sh patches/9ebfb8d38595d860d5df314897729c8f5dca1643.patch pmacct.SlackBuild pmacct.info rc.pmacctd slack-desc
 SLACKBUILD VERSION: 1.7.0
-SLACKBUILD REQUIRED: libmaxminddb jansson postgresql
+SLACKBUILD REQUIRED: libmaxminddb postgresql
 SLACKBUILD DOWNLOAD: http://www.pmacct.net/pmacct-1.7.0.tar.gz
 SLACKBUILD MD5SUM: 582182c413e578a535c4f293355f3d19
 SLACKBUILD SHORT DESCRIPTION:  pmacct (a small set of passive network monitoring tools)
@@ -3858,15 +3840,6 @@ SLACKBUILD REQUIRED: pycrypto
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/47/b9/66278631430fe688b2e6c84df16619f1d1e27c9c6ebca28371f7c6fbb346/oauthlib-2.0.7.tar.gz
 SLACKBUILD MD5SUM: 1fca21cda1c106ff4c5110cc355dca22
 SLACKBUILD SHORT DESCRIPTION:  python-oauthlib (OAuth Implementation)
-
-SLACKBUILD NAME: python-pip
-SLACKBUILD LOCATION: ./python-pip
-SLACKBUILD FILES: README python-pip.SlackBuild python-pip.info slack-desc
-SLACKBUILD VERSION: 9.0.21
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/e5/8f/3fc66461992dc9e9fcf5e005687d5f676729172dda640df2fd8b597a6da7/pip-9.0.2.tar.gz
-SLACKBUILD MD5SUM: 2fddd680422326b9d1fbf56112cf341d
-SLACKBUILD SHORT DESCRIPTION:  python-pip (a better easy_install replacement)
 
 SLACKBUILD NAME: python-requests-oauthlib
 SLACKBUILD LOCATION: ./python-requests-oauthlib
@@ -4565,7 +4538,7 @@ SLACKBUILD NAME: suricata
 SLACKBUILD LOCATION: ./suricata
 SLACKBUILD FILES: README doinst.sh rc.suricata slack-desc suricata.SlackBuild suricata.info
 SLACKBUILD VERSION: 4.1.0-beta1
-SLACKBUILD REQUIRED: hiredis geoip jansson libnet luajit libhtp
+SLACKBUILD REQUIRED: hiredis geoip libnet luajit libhtp
 SLACKBUILD DOWNLOAD: https://www.openinfosecfoundation.org/download/suricata-4.1.0-beta1.tar.gz
 SLACKBUILD MD5SUM: 31b1d2316b0ad37f4ee730ea1996ae41
 SLACKBUILD SHORT DESCRIPTION:  suricata (Network Security Monitoring)
@@ -4727,7 +4700,7 @@ SLACKBUILD NAME: tweepy
 SLACKBUILD LOCATION: ./tweepy
 SLACKBUILD FILES: README slack-desc tweepy.SlackBuild tweepy.info
 SLACKBUILD VERSION: 3.6.0
-SLACKBUILD REQUIRED: python-pip python-requests-oauthlib
+SLACKBUILD REQUIRED: python-requests-oauthlib
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/94/98/d71f906d8de68cec033de6a7e86bc3d66f466ef9e8011ce6e079327721a6/tweepy-3.6.0.tar.gz
 SLACKBUILD MD5SUM: 155ac71282190b53f12c72511676cf58
 SLACKBUILD SHORT DESCRIPTION:  tweepy (Twitter python library)
@@ -4816,10 +4789,10 @@ SLACKBUILD SHORT DESCRIPTION:  unibilium (a terminfo parsing library )
 SLACKBUILD NAME: uniconvertor
 SLACKBUILD LOCATION: ./uniconvertor
 SLACKBUILD FILES: README slack-desc uniconvertor.SlackBuild uniconvertor.info
-SLACKBUILD VERSION: 1.1.5
+SLACKBUILD VERSION: 2.0rc3_20171226
 SLACKBUILD REQUIRED: sk1libs
-SLACKBUILD DOWNLOAD: https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/uniconvertor/uniconvertor-1.1.5.tar.gz
-SLACKBUILD MD5SUM: d1272315a58304ece2ff588834e23f72
+SLACKBUILD DOWNLOAD: https://downloads.sk1project.net/uniconvertor/nightbuilds/uniconvertor-2.0rc3_20171226.tar.gz
+SLACKBUILD MD5SUM: db8d546d2e99e91449626dfb6d4dc14e
 SLACKBUILD SHORT DESCRIPTION:  uniconvertor (universal vector graphics translator)
 
 SLACKBUILD NAME: uniconvw
