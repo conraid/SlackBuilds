@@ -2,7 +2,7 @@
 #
 # Slackware build script for neomutt-vim
 #
-# Copyright 2017 Corrado Franco (http://conraid.net)
+# Copyright 2017-2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,8 +31,7 @@ CWD=$(pwd)
 
 PRGNAM=neomutt.vim
 PKGNAM=$(echo $PRGNAM | tr . -)
-SRCVERSION=b224ff5f5bf65199abc2ea787cdbc632ef037883
-VERSION=$(echo $SRCVERSION | head -c7)
+VERSION=20180323
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -45,9 +44,9 @@ DOCFILES="*.md"
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$SRCVERSION
-tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION.tar.gz
-cd $PRGNAM-$SRCVERSION
+rm -rf $PRGNAM-neomutt-$VERSION
+tar xvf $CWD/$PRGNAM-neomutt-$VERSION.tar.gz || tar xvf $CWD/neomutt-$VERSION.tar.gz
+cd $PRGNAM-neomutt-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
