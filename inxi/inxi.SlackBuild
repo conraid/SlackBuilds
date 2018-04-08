@@ -30,7 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=inxi
-VERSION=2.9.10
+SRCVERSION=2.9.12-2
+VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -43,9 +44,9 @@ DOCFILES="*.txt *.changelog"
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION*
-tar xvf $CWD/$PKGNAM-$VERSION*.tar.gz
-cd $PKGNAM-$VERSION*
+rm -rf $PKGNAM-$SRCVERSION*
+tar xvf $CWD/$PKGNAM-$SRCVERSION*.tar.gz
+cd $PKGNAM-$SRCVERSION*
 
 install -Dm755 inxi $PKG/usr/bin/inxi
 install -Dm644 inxi.1 $PKG/usr/man/man1/inxi.1
