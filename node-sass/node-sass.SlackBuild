@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=node-sass
-VERSION=4.8.2
+VERSION=4.8.3
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -46,10 +46,8 @@ if [ -z ${ARCH:=""} ]; then
 fi
 
 if [ "$ARCH" = "x86_64" ]; then
-  BINDING_ARCH="x64";
   LIBDIRSUFFIX="64"
 elif [ "$ARCH" = "i686" ]; then
-  BINDING_ARCH="ia32";
   LIBDIRSUFFIX=""
 else
   echo "platform not supported"
@@ -58,12 +56,14 @@ fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
-DESTDIR=$PKG npm install --user root -g --nowarn_template_set $CWD/$PKGNAM-$VERSION.tgz
+chown -R root:root .
+chmod -R u+w,go+r-w,a+X-s .
 
-cd $PKG 
-chown -R root:root . 
-chmod -R u+w,go+r-w,a+X-s . 
+DESTDIR=$PKG npm install --user root -g $(npm pack | tail -1)
 
 # Remove empty dir
 rmdir $PKG/usr/etc
@@ -81,7 +81,7 @@ find $PKG -name "package.json" \
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
