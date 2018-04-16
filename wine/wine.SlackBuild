@@ -33,7 +33,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=wine
-SRCVERSION=3.2
+SRCVERSION=3.6
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -75,19 +75,24 @@ tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.xz
 
 # Apply staging patches
 if [ -e $CWD/$PKGNAM-staging-$SRCVERSION.tar.gz ]; then
-  tar xvf $CWD/$PKGNAM-staging-$SRCVERSION.tar.gz
   echo "Apply staging patches..."
-  cd $PKGNAM-staging-$SRCVERSION/patches
+  tar xvf $CWD/$PKGNAM-staging-$SRCVERSION.tar.gz
+  cd $TMP/$PKGNAM-staging-$SRCVERSION/patches
   ./patchinstall.sh --all DESTDIR=$TMP/$PKGNAM-$SRCVERSION
+  cd -
 fi
-cd $TMP/$PKGNAM-$VERSION
+
 # Apply d3d9 patches
 if [ -e $CWD/$PKGNAM-d3d9-*-$SRCVERSION.tar.gz ]; then
-  tar xvf $CWD/$PKGNAM-d3d9-*-$SRCVERSION.tar.gz
   echo "Apply d3d9 patches..."
+  tar xvf $CWD/$PKGNAM-d3d9-*-$SRCVERSION.tar.gz
+  cd $TMP/$PKGNAM-$VERSION
   patch -Np1 -i $TMP/wine-d3d9-patches-wine-d3d9-$SRCVERSION/staging-helper.patch
   patch -Np1 -i $TMP/wine-d3d9-patches-wine-d3d9-$SRCVERSION/wine-d3d9.patch
+  cd -
 fi
+
+cd $TMP/$PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
