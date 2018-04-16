@@ -2,7 +2,7 @@
 #
 # Slackware build script for markdown-d
 #
-# Copyright 2015-2017 Corrado Franco (http://conraid.net)
+# Copyright 2015-2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,13 +29,16 @@ set -eu
 
 CWD=$(pwd)
 
-PKGNAM=instant-markdown-d
-VERSION=0.1.0
-BUILD=${BUILD:-3}
+PKGNAM=instant-markdown
+SRCVERSION=0a297fdeed49cfdfd292f6389a4e3ea3c4af0793
+VERSION=1.0.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
+
+DOCFILES="README*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -48,12 +51,15 @@ fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION.tar.gz
+cd $PKGNAM-$SRCVERSION
 
-DESTDIR=$PKG npm install --user root -g $CWD/$PKGNAM-$VERSION.tgz
-
-cd $PKG
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
+
+DESTDIR=$PKG npm install --user root -g $(npm pack | tail -1)
 
 # Remove empty dir
 rmdir $PKG/usr/etc
@@ -66,6 +72,7 @@ find $PKG -name "package.json" \
             -i '{}' \;
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
