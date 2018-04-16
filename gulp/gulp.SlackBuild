@@ -37,7 +37,7 @@ TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="AUTHORS BUGS CHANGES COPYING* COPYRIGHT ChangeLog INSTALL LICENSE MANIFEST NEWS README* THANKS TODO VERSION"
+DOCFILES="LICENSE *.md"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -50,13 +50,15 @@ fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
-DESTDIR=$PKG npm install --user root -g $CWD/$PKGNAM-$VERSION.tgz
-
-
-cd $PKG
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
+
+DESTDIR=$PKG npm install --user root -g $(npm pack | tail -1)
 
 # Remove empty dir
 rmdir $PKG/usr/etc

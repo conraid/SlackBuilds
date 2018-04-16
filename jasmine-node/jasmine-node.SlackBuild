@@ -2,7 +2,7 @@
 #
 # Slackware build script for jasmine-node
 #
-# Copyright 2015-2017 Corrado Franco (http://conraid.net)
+# Copyright 2015-2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,11 +31,13 @@ CWD=$(pwd)
 
 PKGNAM=jasmine-node
 VERSION=1.14.5
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-7}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
+
+DOCFILES="*.md LICENSE"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -61,12 +63,15 @@ fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
-DESTDIR=$PKG npm install --user root -g $CWD/$PKGNAM-$VERSION.tgz
-
-cd $PKG
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
+
+DESTDIR=$PKG npm install --user root -g $(npm pack | tail -1)
 
 # Remove empty dir
 rmdir $PKG/usr/etc
@@ -79,7 +84,8 @@ find $PKG -name "package.json" \
             -i '{}' \;
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBuild
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc

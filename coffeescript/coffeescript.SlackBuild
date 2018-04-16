@@ -31,11 +31,13 @@ CWD=$(pwd)
 
 PKGNAM=coffeescript
 VERSION=2.2.4
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
+
+DOCFILES="LICENSE *.md"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -48,12 +50,15 @@ fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
-DESTDIR=$PKG npm install --user root -g $CWD/$PKGNAM-$VERSION.tgz
-
-cd $PKG
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
+
+DESTDIR=$PKG npm install --user root -g $(npm pack | tail -1)
 
 # Remove empty dir
 rmdir $PKG/usr/etc
@@ -69,6 +74,7 @@ find $PKG -name "package.json" \
             -i '{}' \;
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
