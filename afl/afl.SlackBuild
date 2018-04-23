@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=afl
 VERSION=2.52b
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -74,6 +74,9 @@ chmod -R u+w,go+r-w,a+X-s .
 CFLAGS="$SLKCFLAGS" make PREFIX=/usr HELPER_PATH=/usr/lib${LIBDIRSUFFIX}/afl DOC_PATH=/usr/doc/afl-$VERSION
 CFLAGS="$SLKCFLAGS" make PREFIX=/usr HELPER_PATH=/usr/lib${LIBDIRSUFFIX}/afl -C llvm_mode
 make PREFIX=/usr HELPER_PATH=/usr/lib${LIBDIRSUFFIX}/afl DOC_PATH=/usr/doc/afl-$VERSION DESTDIR=$PKG install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true

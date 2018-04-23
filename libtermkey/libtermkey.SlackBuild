@@ -2,7 +2,7 @@
 #
 # Slackware build script for libtermkey
 #
-# Copyright 2015-2017 Corrado Franco (http://conraid.net)
+# Copyright 2015-2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ CWD=$(pwd)
 PKGNAM=libtermkey
 COMMIT=205c743ad93bae3939e96c27ac2fbfc5a7008c73
 VERSION=$(echo $COMMIT | cut -c -7)_git
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,6 +72,9 @@ chmod -R u+w,go+r-w,a+X-s .
 
 make CFLAGS="$SLKCFLAGS" PREFIX=/usr LIBDIR=/usr/lib${LIBDIRSUFFIX}
 make install DESTDIR=$PKG PREFIX=/usr LIBDIR=/usr/lib${LIBDIRSUFFIX} MANDIR=/usr/man
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 # Delete static lib
 rm $PKG/usr/lib${LIBDIRSUFFIX}/${PKGNAM}.a

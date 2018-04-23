@@ -2,7 +2,7 @@
 #
 # Slackware build script for p7zip
 #
-# Copyright 2009-2017 Corrado Franco (http://conraid.net)
+# Copyright 2009-2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=p7zip
 VERSION=16.02
-BUILD=${BUILD:-7}
+BUILD=${BUILD:-8}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -89,6 +89,9 @@ rm -rf CPP/7zip/Compress/Rar
 sed -e 's|cp -r DOC|cp -r DOC/*|g' -e 's|${DEST_SHARE_DOC}/DOC|${DEST_SHARE_DOC}|g' -i install.sh
 make all5 OPTFLAGS="$SLKCFLAGS"
 make install \
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
   DEST_HOME=/usr \
   DEST_SHARE_DOC=/usr/doc/$PKGNAM-$VERSION \
   DEST_MAN=/usr/man \

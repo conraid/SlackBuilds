@@ -32,7 +32,7 @@ CWD=$(pwd)
 PKGNAM=gmic
 SRCVERSION=2.2.1
 VERSION=$SRCVERSION
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -84,6 +84,9 @@ ln -sf ../zart zart
 cd src
 make CFLAGS="$SLKCFLAGS" WGET=/dev/true -j1 cli lib libc gimp_gtk
 make DESTDIR=$PKG install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 cd ..
 
 # Build and install Zart

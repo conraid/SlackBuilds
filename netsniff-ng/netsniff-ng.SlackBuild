@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=netsniff-ng
 VERSION=0.6.4
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -76,6 +76,9 @@ CXXFLAGS="$SLKCFLAGS" \
 
 make PREFIX=/usr ETCDIR=/etc MAN8DIR=/usr/man/man8 DISTRO=1 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" CFLAGS_DEF+="$SLKCFLAGS" 
 make PREFIX=/usr ETCDIR=/etc MAN8DIR=/usr/man/man8 DESTDIR=$PKG install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true

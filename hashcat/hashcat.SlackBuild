@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=hashcat
 VERSION=4.1.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -78,6 +78,9 @@ MAKE_OPTIONS="PREFIX=/usr SHARED=1 LIBRARY_FOLDER=/usr/lib$LIBDIRSUFFIX VERSION_
 
 make $MAKE_OPTIONS
 make $MAKE_OPTIONS DOCUMENT_FOLDER=/usr/doc/$PKGNAM-$VERSION DESTDIR=$PKG install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true

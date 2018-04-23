@@ -2,7 +2,7 @@
 #
 # Slackware build script for gtkimageview
 #
-# Copyright 2009-2017 Corrado Franco (http://conraid.net)
+# Copyright 2009-2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=gtkimageview
 VERSION=1.6.4
-BUILD=${BUILD:-7}
+BUILD=${BUILD:-8}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -88,6 +88,9 @@ CXXFLAGS="$SLKCFLAGS" \
 
 make
 make DESTDIR=$PKG install-strip
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true

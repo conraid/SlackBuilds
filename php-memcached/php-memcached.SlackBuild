@@ -30,7 +30,7 @@ CWD=$(pwd)
 PRGNAM=memcached
 PKGNAM=php-$PRGNAM
 VERSION=3.0.4
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -84,6 +84,9 @@ CFLAGS="$SLKCFLAGS" \
 
 make
 make INSTALL_ROOT=$PKG install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 strip --strip-unneeded $PKG/usr/lib${LIBDIRSUFFIX}/php/extensions/memcached.so
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION

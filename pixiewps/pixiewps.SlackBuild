@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=pixiewps
 VERSION=1.4.2
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -73,6 +73,9 @@ chmod -R u+w,go+r-w,a+X-s .
 
 make PREFIX=/usr OPENSSL=1 CCFLAGS="$SLKCFLAGS"
 make PREFIX=/usr MANDIR=/usr/man DESTDIR=$PKG install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 install -Dm644 $PKGNAM.1 $PKG/usr/man/man1/$PKGNAM.1
 

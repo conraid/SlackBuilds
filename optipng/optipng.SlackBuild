@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=optipng
 VERSION=0.7.7
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -87,6 +87,9 @@ CFLAGS="$SLKCFLAGS" \
 
 make CFLAGS="$SLKCFLAGS -W -Wall" -C src
 make install DESTDIR=$PKG prefix=/usr -C  src
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 

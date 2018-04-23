@@ -3,7 +3,7 @@
 # Slackware build script for lua (http://www.lua.org/)
 #
 # Copyright 2008 Menno Duursma from SlackBuilds.org
-# Copyright 2015-2017 Corrado Franco (http://conraid.net)
+# Copyright 2015-2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ PRGNAM=lua
 PKGNAM=lua51
 VERSION=5.1.5
 MAINVERSION=$(echo $VERSION | cut -d. -f-2)
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -89,10 +89,7 @@ sed -i "s|lib/lua|lib${LIBDIRSUFFIX}/lua|" src/luaconf.h
 # Fix lua 5.1
 sed -r -e "/^LUA_(SO|A|T)=/ s/lua/lua$MAINVERSION/" -e "/^LUAC_T=/ s/luac/luac$MAINVERSION/" -i src/Makefile
 
-make \
-CFLAGS="$SLKCFLAGS" \
-MYLIBS="-lncurses" \
-linux
+make CFLAGS="$SLKCFLAGS" MYLIBS="-lncurses" linux
 
 make linux install \
 TO_BIN="lua$MAINVERSION luac$MAINVERSION" \
@@ -108,6 +105,9 @@ mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
 sed -e "s|prefix}/lib|prefix}/lib${LIBDIRSUFFIX}|g" \
   -e "s/%VER%/$MAINVERSION/g;s/%REL%/$VERSION/g" \
   $CWD/files/lua51.pc > $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/lua51.pc
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true

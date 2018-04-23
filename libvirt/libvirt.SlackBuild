@@ -34,7 +34,7 @@ CWD=$(pwd)
 
 PKGNAM=libvirt
 VERSION=4.2.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -98,6 +98,9 @@ CXXFLAGS="$SLKCFLAGS" \
 
 make HTML_DIR=/usr/doc/$PKGNAM-$VERSION EXAMPLE_DIR=/usr/doc/$PKGNAM-$VERSION/examples
 make HTML_DIR=/usr/doc/$PKGNAM-$VERSION EXAMPLE_DIR=/usr/doc/$PKGNAM-$VERSION/examples DESTDIR=$PKG install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 # We don't have augeas
 rm -fr $PKG/usr/share/augeas

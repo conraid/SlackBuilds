@@ -2,7 +2,7 @@
 #
 # Slackware build script for ms-sys
 #
-# Copyright 2015-2017 Corrado Franco (http://conraid.net)
+# Copyright 2015-2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=ms-sys
 VERSION=2.5.3
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -73,6 +73,9 @@ chmod -R u+w,go+r-w,a+X-s .
 
 make PREFIX=/usr EXTRA_CFLAGS="$SLKCFLAGS"
 make PREFIX=/usr DESTDIR=$PKG install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 strip --strip-unneeded $PKG/usr/bin/$PKGNAM
 

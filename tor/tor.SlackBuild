@@ -33,10 +33,10 @@
 #
 if ! grep -q "^tor:" /etc/passwd; then
   echo "You must have a tor user"
-  exit
+  exit 1
 elif ! grep -q "^tor:" /etc/group; then
   echo "You must have a tor group"
-  exit
+  exit 1
 fi
 
 set -eu
@@ -45,7 +45,7 @@ CWD=$(pwd)
 
 PKGNAM=tor
 VERSION=0.3.1.10
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -103,6 +103,9 @@ CXXFLAGS="$SLKCFLAGS" \
 
 make
 make DESTDIR=$PKG install-strip
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 # Create/install stuff that makes tor work (better). Thanks to SBo project
 mkdir -p $PKG/var/{run,log,lib}/tor

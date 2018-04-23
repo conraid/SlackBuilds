@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=poedit
-VERSION=2.0.6
-BUILD=${BUILD:-2}
+VERSION=2.0.7
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -96,6 +96,9 @@ CPPFLAGS="$SLKCFLAGS -DUCHAR_TYPE=uint16_t" \
 
 make
 make DESTDIR=$PKG install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 # Remove dir if empty
 rmdir $PKG/usr/libexec || true

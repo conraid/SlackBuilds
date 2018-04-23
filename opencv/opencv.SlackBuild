@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=opencv
 VERSION=3.4.1
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -48,17 +48,17 @@ fi
 if [ "$ARCH" = "i586" ]; then
   SLKCFLAGS="-O2 -march=i586 -mtune=i686"
   LIBDIRSUFFIX=""
-  CONFSSE="-DENABLE_SSE3=OFF -DENABLE_SSE2=OFF -DENABLE_SSE=OFF"
+  CONFSSE="-DCPU_BASELINE_DISABLE=SSE3 -DCPU_BASELINE_DISABLE=SSE2 -DCPU_BASELINE_DISABLE=SSE"
 elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
   # SSE only available from Pentium 3 onwards (i686 is way older)
-  CONFSSE="-DENABLE_SSE3=OFF -DENABLE_SSE2=OFF -DENABLE_SSE=OFF"
+   CONFSSE="-DCPU_BASELINE_DISABLE=SSE3 -DCPU_BASELINE_DISABLE=SSE2 -DCPU_BASELINE_DISABLE=SSE"
 elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
   # all x64 CPUs support SSE2 but not SSE3
-  CONFSSE="-DENABLE_SSE3=OFF -DENABLE_SSE2=ON -DENABLE_SSE=ON"
+  CONFSSE="-DCPU_BASELINE_DIBALE=SSE3 -DCPU_BASELINE_REQUIRE=SSE2 -DCPU_BASELINE_REQUIRE=SSE"
 else
   SLKCFLAGS="-O2"
   LIBDIRSUFFIX=""
@@ -70,7 +70,7 @@ cd $TMP
 rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
 cd $PKGNAM-$VERSION
-tar xvf $CWD/${PKGNAM}_contrib-$VERSION.tar.gz 
+tar xvf $CWD/${PKGNAM}_contrib-$VERSION.tar.gz
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -94,23 +94,31 @@ cmake \
   -DBUILD_PERF_TESTS=OFF \
   -DBUILD_TIFF=ON \
   -DBUILD_JPEG=ON \
+  -DBUILD_PROTOBUF=OFF \
   -DBUILD_NEW_PYTHON_SUPPORT=ON \
   -DENABLE_PRECOMPILED_HEADERS=OFF \
   -DINSTALL_PYTHON_EXAMPLES=OFF \
   -DWITH_GSTREAMER=ON \
   -DWITH_OPENCL=ON \
   -DWITH_OPENGL=ON \
+  -DWITH_OPENMP=ON \
   -DWITH_QT=ON \
   -DWITH_XINE=ON \
   -DWITH_FFMPEG=ON \
-  -DENABLE_SSE41=OFF \
-  -DENABLE_SSE42=OFF \
+  -DWITH_IPP=OFF \
+  -DWITH_PROTOBUF=ON \
+  -DWITH_LAPACK=OFF \
+  -DCPU_BASELINE_DISABLE=SSE41 \
+  -DCPU_BASELINE_DISABLE=SSE42= \
   -DOPENCV_EXTRA_MODULES_PATH=../${PKGNAM}_contrib-$VERSION/modules \
   ${CONFSSE:=""} ..
 
 make
 make DESTDIR=$PKG install
 cd ..
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
@@ -119,7 +127,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG

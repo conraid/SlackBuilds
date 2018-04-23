@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=libmemcached
 VERSION=1.0.18
-BUILD=${BUILD:-7}
+BUILD=${BUILD:-8}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -95,6 +95,9 @@ CXXFLAGS="$SLKCFLAGS -fpermissive" \
 
 make
 make DESTDIR=$PKG install-strip
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;

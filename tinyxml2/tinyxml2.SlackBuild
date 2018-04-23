@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=tinyxml2
 VERSION=6.2.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -77,6 +77,9 @@ for i in *.cpp *.h; do
 done
 
 # Fix Cmake install directory.
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 sed -i "s|lib/cmake|lib${LIBDIRSUFFIX}/cmake|" CMakeLists.txt
 
 mkdir -p build
@@ -96,6 +99,9 @@ cmake -Wno-dev \
 
 make
 make DESTDIR=$PKG install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 cd ..
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true

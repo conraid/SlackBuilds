@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=unicode-emoji
 VERSION=11.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -45,7 +45,7 @@ cd $PKG/usr/share/unicode
 # Download data files
 FILES="data sequences test variation-sequences zwj-sequences"
 for FILE in $FILES; do
-  wget https://www.unicode.org/Public/emoji/11.0/emoji-$FILE.txt
+  wget --no-check-certificate https://www.unicode.org/Public/emoji/11.0/emoji-$FILE.txt
 done
 
 chown -R root:root .

@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=node-sass
 VERSION=4.8.3
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -51,7 +51,7 @@ elif [ "$ARCH" = "i686" ]; then
   LIBDIRSUFFIX=""
 else
   echo "platform not supported"
-  exit
+  exit 1
 fi
 
 rm -rf $PKG

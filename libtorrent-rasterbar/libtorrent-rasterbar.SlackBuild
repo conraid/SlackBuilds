@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=libtorrent-rasterbar
 VERSION=1.1.7
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -80,7 +80,7 @@ fi
 
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX} $(/usr/bin/pkg-config --libs python)" \
 CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS -std=c++11" \
 ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -91,16 +91,18 @@ CXXFLAGS="$SLKCFLAGS" \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
   --enable-static=no \
   --enable-shared=yes \
-  --with-libgeoip \
   --with-libiconv \
   --enable-python-binding \
-  --with-boost-libdir=/usr/lib${LIBDIRSUFFIX} \
   --with-boost-system=boost_system \
+  --with-boost-python \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
-make
+make -j1
 make DESTDIR=$PKG install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true

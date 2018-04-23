@@ -30,7 +30,7 @@ CWD=$(pwd)
 PRGNAM=apcu
 PKGNAM=php-apcu
 VERSION=5.1.11
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -85,6 +85,9 @@ CFLAGS="$SLKCFLAGS" \
 
 make
 make INSTALL_ROOT=$PKG install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 strip --strip-unneeded $PKG/usr/lib${LIBDIRSUFFIX}/php/extensions/apcu.so
 

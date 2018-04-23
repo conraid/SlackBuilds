@@ -2,7 +2,7 @@
 #
 # Slackware build script for qtcurve
 #
-# Copyright 2008-2017 Corrado Franco (http://conraid.net)
+# Copyright 2008-2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ CWD=$(pwd)
 PKGNAM=qtcurve
 SRCVERSION=1.9.0-rc1
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -101,6 +101,9 @@ cmake \
 
 make VERBOSE=1
 make install/strip VERBOSE=1 DESTDIR=$PKG
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 cd ..
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION

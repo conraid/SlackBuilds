@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=php-cs-fixer
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -39,7 +39,7 @@ ARCH=noarch
 
 if ! [ -f $CWD/php-cs-fixer.phar ]; then
   echo "You must download phar file"
-  exit
+  exit 1
 fi
 
 rm -rf $PKG

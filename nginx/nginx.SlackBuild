@@ -2,7 +2,7 @@
 #
 # Slackware build script for nginx
 #
-# Copyright 2017 Corrado Franco (http://conraid.net)
+# Copyright 2017-2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ CWD=$(pwd)
 
 PKGNAM=nginx
 VERSION=1.13.6
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -140,6 +140,9 @@ CXXFLAGS="$SLKCFLAGS" \
 make
 make DESTDIR=$PKG INSTALLDIRS=vendor INSTALLVENDORMAN3DIR=/usr/man/man3install install
 
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
+
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
@@ -165,10 +168,10 @@ mv $PKG/usr/html $PKG/var/www
 
 # Add an init script
 mkdir -p $PKG/etc/rc.d
-cat $CWD/rc.nginx > $PKG/etc/rc.d/rc.nginx.new
+cat $CWD/files/rc.nginx > $PKG/etc/rc.d/rc.nginx.new
 
 mkdir -p $PKG/etc/logrotate.d
-cat $CWD/nginx.logrotate > $PKG/etc/logrotate.d/nginx.new
+cat $CWD/files/nginx.logrotate > $PKG/etc/logrotate.d/nginx.new
 
 # Set the permissions for the log directory.
 chown nobody $PKG/var/log/$PKGNAM

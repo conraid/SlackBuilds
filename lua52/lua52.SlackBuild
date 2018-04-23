@@ -3,7 +3,7 @@
 # Slackware build script for lua (http://www.lua.org/)
 #
 # Copyright 2008 Menno Duursma from SlackBuilds.org
-# Copyright 2015-2017 Corrado Franco (http://conraid.net)
+# Copyright 2015-2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ PRGNAM=lua
 PKGNAM=lua52
 VERSION=5.2.4
 MAINVERSION=$(echo $VERSION | cut -d. -f-2)
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -108,6 +108,9 @@ mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
 sed -e "s|prefix}/lib|prefix}/lib${LIBDIRSUFFIX}|g" \
   -e "s/%VER%/$MAINVERSION/g;s/%REL%/$VERSION/g" \
   $CWD/files/lua52.pc > $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/lua52.pc
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true

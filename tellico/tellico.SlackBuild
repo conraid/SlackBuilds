@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PKGNAM=tellico
 VERSION=2.3.12
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -85,6 +85,9 @@ cmake \
 
 make
 make DESTDIR=$PKG install/strip
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 cd ..
 
 if [ -d $PKG/usr/man ]; then

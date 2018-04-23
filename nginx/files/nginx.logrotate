@@ -1,0 +1,12 @@
+/var/log/nginx/*.log {
+  su nobody nogroup
+  rotate 10
+  notifempty
+  size=5M
+  compress
+  delaycompress
+  sharedscripts
+  postrotate
+    /etc/rc.d/rc.nginx rotate
+  endscript
+}

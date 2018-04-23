@@ -27,7 +27,7 @@ set -eu
 
 PKGNAM=pmacct
 VERSION=1.7.0
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-7}
 TAG=${TAG:-cf}
 CWD=$(pwd)
 TMP=${TMP:-/tmp/pkg}
@@ -96,6 +96,9 @@ CXXFLAGS="$SLKCFLAGS" \
 
 make
 make DESTDIR=$PKG install-strip
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 # Install config file
 install -Dm644 examples/pmacctd-imt.conf.example $PKG/etc/pmacct/pmacctd.conf.new

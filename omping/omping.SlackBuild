@@ -2,7 +2,7 @@
 #
 # Slackware build script for omping
 #
-# Copyright 2013-2017 Corrado Franco (http://conraid.net)
+# Copyright 2013-2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=omping
 VERSION=0.0.4
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -73,6 +73,9 @@ chmod -R u+w,go+r-w,a-s .
 
 make PREFIX=/usr/ MANDIR=/usr/man CFLAGS="$SLKCFLAGS" LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}"
 make DESTDIR=$PKG MANDIR=/usr/man PREFIX=/usr/ install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true

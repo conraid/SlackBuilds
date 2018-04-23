@@ -3,7 +3,7 @@
 # Slackware build script for xsel
 # (http://www.vergenet.net/~conrad/software/xsel/)
 #
-# Copyright 2008-2017 Corrado Franco (http://conraid.net)
+# Copyright 2008-2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ CWD=$(pwd)
 
 PKGNAM=xsel
 VERSION=1.2.0
-BUILD=${BUILD:-8}
+BUILD=${BUILD:-9}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -84,6 +84,9 @@ CXXFLAGS="$SLKCFLAGS" \
 
 make
 make DESTDIR=$PKG install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 find $PKG | xargs file | grep -e "executable" -e "shared object"| grep ELF | \
   cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true

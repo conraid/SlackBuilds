@@ -30,7 +30,7 @@ CWD=$(pwd)
 PKGNAM=wxgtk
 PRGNAM=wxWidgets
 VERSION=3.0.4
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -100,6 +100,9 @@ CXXFLAGS="$SLKCFLAGS" \
 make
 make -C locale allmo
 make DESTDIR=$PKG install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 mv $PKG/usr/bin/wx-config{,-gtk2}
 rm -r $PKG/usr/{include,share,lib$LIBDIRSUFFIX/libwx_base*,bin/wxrc*}
 
@@ -129,6 +132,9 @@ CXXFLAGS="$SLKCFLAGS" \
 make
 make -C locale allmo
 make DESTDIR=$PKG install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs strip -g 2> /dev/null || true

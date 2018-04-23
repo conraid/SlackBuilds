@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=smtube
-VERSION=18.1.0
+VERSION=18.3.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -71,6 +71,9 @@ chmod -R u+w,go+r-w,a+X-s .
 
 make QMAKE_OPTS="QMAKE_CFLAGS=\"$SLKCFLAGS\" QMAKE_CXXFLAGS=\"$SLKCFLAGS\"" PREFIX=/usr
 make PREFIX=/usr DOC_PATH=/usr/doc/$PKGNAM-$VERSION DESTDIR=$PKG install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true

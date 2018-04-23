@@ -2,7 +2,7 @@
 #
 # Slackware build script for luajit
 #
-# Copyright 2015-2017 Corrado Franco (http://conraid.net)
+# Copyright 2015-2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ CWD=$(pwd)
 PRGNAM=LuaJIT
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 VERSION=2.0.5
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -74,6 +74,9 @@ chmod -R u+w,go+r-w,a+X-s .
 
 make PREFIX=/usr MULTILIB=lib${LIBDIRSUFFIX} INSTALL_MAN=/usr/man/man1 
 make DESTDIR=$PKG PREFIX=/usr MULTILIB=lib${LIBDIRSUFFIX} INSTALL_MAN=$PKG/usr/man/man1 install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
