@@ -1,0 +1,46 @@
+diff -Naupr a/Makefile b/Makefile
+--- a/Makefile	2018-04-24 20:11:43.000000000 +0200
++++ b/Makefile	2018-04-25 17:19:38.028631679 +0200
+@@ -5,11 +5,11 @@ clean:
+ 	find . -name "*.pyc" -delete
+ 	find . -name "*.class" -delete
+ 
+-PREFIX ?= /usr/local
++PREFIX ?= /usr/
+ BINDIR ?= $(PREFIX)/bin
+ MANDIR ?= $(PREFIX)/man
+ SHAREDIR ?= $(PREFIX)/share
+-PYTHON ?= /usr/bin/env python
++PYTHON ?= /usr/bin/python
+ 
+ # set SYSCONFDIR to /etc if PREFIX=/usr or PREFIX=/usr/local
+ SYSCONFDIR = $(shell if [ $(PREFIX) = /usr -o $(PREFIX) = /usr/local ]; then echo /etc; else echo $(PREFIX)/etc; fi)
+@@ -85,11 +85,9 @@ supportedsites:
+ 	$(PYTHON) devscripts/make_supportedsites.py docs/supportedsites.md
+ 
+ README.txt: README.md
+-	pandoc -f $(MARKDOWN) -t plain README.md -o README.txt
+ 
+ youtube-dl.1: README.md
+ 	$(PYTHON) devscripts/prepare_manpage.py youtube-dl.1.temp.md
+-	pandoc -s -f $(MARKDOWN) -t man youtube-dl.1.temp.md -o youtube-dl.1
+ 	rm -f youtube-dl.1.temp.md
+ 
+ youtube-dl.bash-completion: youtube_dl/*.py youtube_dl/*/*.py devscripts/bash-completion.in
+diff -Naupr a/setup.py b/setup.py
+--- a/setup.py	2018-04-24 20:11:37.000000000 +0200
++++ b/setup.py	2018-04-25 17:20:52.784697099 +0200
+@@ -59,10 +59,9 @@ if len(sys.argv) >= 2 and sys.argv[1] ==
+     params = py2exe_params
+ else:
+     files_spec = [
+-        ('etc/bash_completion.d', ['youtube-dl.bash-completion']),
+-        ('etc/fish/completions', ['youtube-dl.fish']),
+-        ('share/doc/youtube_dl', ['README.txt']),
+-        ('share/man/man1', ['youtube-dl.1'])
++        ('/etc/bash_completion.d', ['youtube-dl.bash-completion']),
++        ('/etc/fish/completions', ['youtube-dl.fish']),
++        ('man/man1', ['youtube-dl.1'])
+     ]
+     root = os.path.dirname(os.path.abspath(__file__))
+     data_files = []
