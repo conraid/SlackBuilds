@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=ctunnel
 VERSION=0.7
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,9 +72,12 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 # Remove debug option
-sed -i "/^CFLAGS/s/-g//" src/Makefile
+sed -e '/^CFLAGS/s/-g//' -i src/Makefile
 
-make OPTS="$SLKCFLAGS"
+# Use ssl 1.0
+sed -e "s|-lcrypto|-lcrypto -L/usr/lib${LIBDIRSUFFIX}/openssl-1.0|" -i src/Makefile
+
+make OPTS="-I/usr/include/openssl-1.0"
 install -Dsm755 src/ctunnel $PKG/usr/bin/ctunnel
 install -Dm644 ctunnel.1 $PKG/usr/man/man1/ctunnel.1
 gzip -9 $PKG/usr/man/man1/ctunnel.1

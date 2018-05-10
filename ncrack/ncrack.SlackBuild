@@ -30,8 +30,9 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=ncrack
-VERSION=0.5
-BUILD=${BUILD:-4}
+SRCVERSION=0.6
+VERSION=0.6.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -65,7 +66,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
@@ -91,6 +92,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
   --enable-static=no \
   --enable-shared=yes \
+  --without-openssl-header-check \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 

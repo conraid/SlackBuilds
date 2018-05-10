@@ -32,7 +32,7 @@ CWD=$(pwd)
 PKGNAM=rtmpdump
 COMMIT=fa8646d
 VERSION=2.4_$COMMIT
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -78,6 +78,9 @@ if [ -e $CWD/patches ]; then
     patch -p1 -i $PATCH
   done
 fi
+
+# Use GNUTLS
+sed -e 's/^CRYPTO=OPENSSL/#CRYPTO=OPENSSL/' -e 's/#CRYPTO=GNUTLS/CRYPTO=GNUTLS/' -i Makefile -i librtmp/Makefile
 
 XLDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
 XCFLAGS="$SLKCFLAGS" \
