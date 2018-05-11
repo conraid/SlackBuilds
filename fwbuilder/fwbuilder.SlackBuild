@@ -25,8 +25,9 @@
 set -eu
 
 PKGNAM=fwbuilder
-VERSION=5.3.7
-BUILD=${BUILD:-3}
+SRCVERSION=6.0.0-beta
+VERSION=$(echo $SRCVERSION | tr - _)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 CWD=$(pwd)
 TMP=${TMP:-/tmp/pkg}
@@ -58,9 +59,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v${VERSION}.tar.gz 
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/v${SRCVERSION}.tar.gz
+cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -68,10 +69,15 @@ chmod -R u+w,go+r-w,a+X-s .
 # Fix man path
 sed -e 's|share/man|man|g' -i configure.in -i qmake.inc.in
 
-./autogen.sh
+# Disable DEBUG
+sed -e 's/^\(CONFIG += debug\)/#\1/' \
+    -e 's/^# \(CONFIG += release\)/\1/' \
+    -i qmake.inc.in
+
+NOCONFIGURE=1 ./autogen.sh
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
+CFLAGS="$SLKCFLAGS -Wno-error" \
+CXXFLAGS="$SLKCFLAGS -Wno-error" \
 ./autogen.sh \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -99,7 +105,7 @@ fi
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
