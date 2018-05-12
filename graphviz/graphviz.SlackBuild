@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=graphviz
-VERSION=2.40.1
-BUILD=${BUILD:-3}
+VERSION=2.41.20171026.1811
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -65,14 +65,11 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$PKGNAM.tar.gz
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$PKGNAM-working.tar.gz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
-
-# Install PHP bindings to proper location.
-sed -i 's|/php/modules|/php/extensions|' configure
 
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
@@ -88,6 +85,12 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-static=no \
   --enable-shared=yes \
   --disable-php \
+  --enable-python2 \
+  --enable-python3 \
+  --enable-lua \
+  --enable-perl \
+  --enable-ruby \
+  --enable-tcl \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
@@ -104,10 +107,6 @@ if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
-
-# Make php .ini
-mkdir -p $PKG/etc/php
-echo "; extension=gv.so" > $PKG/etc/php/gv.ini.new
 
 # Remove empty dir
 find $PKG/usr/lib${LIBDIRSUFFIX}/graphviz -depth -type d -empty -exec rmdir {} \;
