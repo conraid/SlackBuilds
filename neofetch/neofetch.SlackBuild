@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=neofetch
-VERSION=3.4.0
-BUILD=${BUILD:-2}
+VERSION=4.0.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -54,9 +54,6 @@ chmod -R u+w,go+r-w,a+X-s .
 sed 's|share/man|man|g' -i Makefile
 
 make DESTDIR=$PKG install
-
-# Rename config file
-mv $PKG/etc/$PKGNAM/config.conf $PKG/etc/$PKGNAM/config.conf.new
 
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;

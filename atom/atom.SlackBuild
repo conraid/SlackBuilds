@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=atom
-SRCVERSION=1.26.1
+SRCVERSION=1.27.0
 VERSION=$(echo $SRCVERSION | tr - _ )
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -65,10 +65,6 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 ./script/clean
-
-# Fix apm version
-sed 's/1.18.8/1.18.10/' -i apm/package.json
-
 ./script/build --install=$PKG/usr
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
