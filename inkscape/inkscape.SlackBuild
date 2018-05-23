@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=inkscape
 VERSION=0.92.3
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -89,6 +89,9 @@ sed -e "s|lib/inkscape|lib$LIBDIRSUFFIX/inkscape|g" \
     -i CMakeLists.txt
 sed -e "s|lib/inkscape|lib$LIBDIRSUFFIX/inkscape|g" -i src/CMakeLists.txt -i CMakeScripts/HelperMacros.cmake
 
+# Fix for poppler 0.65
+sed '/GooHash.h/d' -i src/extension/internal/pdfinput/pdf-parser.cpp
+
 mkdir -p build
 cd build
 cmake -Wno-dev \
@@ -101,6 +104,7 @@ cmake -Wno-dev \
   -DENABLE_LCMS=ON \
   -DENABLE_POPPLER=ON \
   -DENABLE_POPPLER_CAIRO=ON \
+  -DCMAKE_WITH_NLS=ON \
   ..
 
 make
