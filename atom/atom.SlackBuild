@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=atom
-SRCVERSION=1.27.0
+SRCVERSION=1.27.1
 VERSION=$(echo $SRCVERSION | tr - _ )
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -63,6 +63,22 @@ cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
+
+
+# Workaround for Node 10
+sed -e 's|"electron-link": "0.2.0"|"electron-link": "../../electron-link"|' \
+    -i script/package.json
+cd ..
+git clone https://github.com/atom/electron-link.git
+cd electron-link
+git checkout v0.2.0
+sed -e 's/"leveldown": "^1.6.0"/"leveldown": "^2.0.1"/' -i package.json
+npm install
+npx babel src -d lib
+cd node_modules/levelup
+sed -e 's/"leveldown": "^1.1.0"/"leveldown": "^2.0.1"/' -i package.json
+
+cd $TMP/$PKGNAM-$VERSION
 
 ./script/clean
 ./script/build --install=$PKG/usr
