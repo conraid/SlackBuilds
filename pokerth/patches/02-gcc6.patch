@@ -1,0 +1,45 @@
+diff -Naupr pokerth-1.1.2-rc-orig/pokerth_db.pro pokerth-1.1.2-rc/pokerth_db.pro
+--- pokerth-1.1.2-rc-orig/pokerth_db.pro	2017-08-16 14:24:03.000000000 +0200
++++ pokerth-1.1.2-rc/pokerth_db.pro	2018-01-09 08:52:17.018180417 +0100
+@@ -52,7 +52,6 @@ win32{
+ !win32{
+ 	##### My release static build options
+ 	#QMAKE_CXXFLAGS += -ffunction-sections -fdata-sections
+-	INCLUDEPATH += $${PREFIX}/include
+ }
+ 
+ mac{
+diff -Naupr pokerth-1.1.2-rc-orig/pokerth_game.pro pokerth-1.1.2-rc/pokerth_game.pro
+--- pokerth-1.1.2-rc-orig/pokerth_game.pro	2017-08-16 14:24:03.000000000 +0200
++++ pokerth-1.1.2-rc/pokerth_game.pro	2018-01-09 08:52:52.946731248 +0100
+@@ -405,7 +405,6 @@ unix:!mac {
+ 	# #### My release static build options
+ 	# QMAKE_CXXFLAGS += -ffunction-sections -fdata-sections
+ 	# QMAKE_LFLAGS += -Wl,--gc-sections
+-	INCLUDEPATH += $${PREFIX}/include
+ 	QMAKE_LIBDIR += lib
+ 	!android{
+ 		LIBPATH += $${PREFIX}/lib /opt/gsasl/lib
+diff -Naupr pokerth-1.1.2-rc-orig/pokerth_lib.pro pokerth-1.1.2-rc/pokerth_lib.pro
+--- pokerth-1.1.2-rc-orig/pokerth_lib.pro	2017-08-16 14:24:03.000000000 +0200
++++ pokerth-1.1.2-rc/pokerth_lib.pro	2018-01-09 08:51:57.489424560 +0100
+@@ -286,7 +286,7 @@ win32{
+ !win32{
+ 	##### My release static build options
+ 	#QMAKE_CXXFLAGS += -ffunction-sections -fdata-sections
+-	INCLUDEPATH += $${PREFIX}/include /opt/gsasl/include
++	INCLUDEPATH += /opt/gsasl/include
+ }
+ 
+ mac{
+diff -Naupr pokerth-1.1.2-rc-orig/pokerth_server.pro pokerth-1.1.2-rc/pokerth_server.pro
+--- pokerth-1.1.2-rc-orig/pokerth_server.pro	2017-08-16 14:24:03.000000000 +0200
++++ pokerth-1.1.2-rc/pokerth_server.pro	2018-01-09 08:53:14.862457264 +0100
+@@ -177,7 +177,6 @@ unix : !mac {
+ 	#QMAKE_LFLAGS += -Wl,--gc-sections
+ 
+ 	LIBPATH += lib $${PREFIX}/lib /opt/gsasl/lib
+-	INCLUDEPATH += $${PREFIX}/include
+ 	# see issue https://github.com/pokerth/pokerth/issues/282
+ 	INCLUDEPATH += $${PREFIX}/include/libircclient
+ 	LIB_DIRS = $${PREFIX}/lib $${PREFIX}/lib64 $$system(qmake -query QT_INSTALL_LIBS)
