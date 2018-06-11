@@ -30,9 +30,9 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=libtermkey
-COMMIT=205c743ad93bae3939e96c27ac2fbfc5a7008c73
+COMMIT=698f9e3b23a29ce03ea513cfd96a4971a288a5d9
 VERSION=$(echo $COMMIT | cut -c -7)_git
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
