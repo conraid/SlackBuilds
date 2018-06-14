@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=spice-gtk
-VERSION=0.34
-BUILD=${BUILD:-4}
+VERSION=0.35
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -98,6 +98,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-dbus=yes \
   --enable-usbredir \
   --with-gtk=3.0 \
+  --enable-celt051 \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
