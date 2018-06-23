@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=postcss
-VERSION=6.0.22
+VERSION=6.0.23
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -61,7 +61,7 @@ chmod -R u+w,go+r-w,a+X-s .
 DESTDIR=$PKG npm install --user root -g $(npm pack | tail -1)
 
 # Remove empty dir
-rmdir $PKG/usr/etc
+rmdir $PKG/usr/etc || true
 
 # Remove unneeded files.
 find $PKG/usr \( -name '.git*' -o -name '.travis.yml' \) -exec rm -f {} \;
