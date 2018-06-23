@@ -30,9 +30,9 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=gmic
-SRCVERSION=2.2.1
+SRCVERSION=2.3.0
 VERSION=$SRCVERSION
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -63,41 +63,44 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM* zart*
+rm -rf $PKGNAM
 tar xvf $CWD/${PKGNAM}_$VERSION.tar.gz
-tar xvf $CWD/$PKGNAM-community-*.tar.gz
-tar xvf $CWD/zart-*.tar.gz
-mv $PKGNAM-community-* $PKGNAM-community
-mv zart-* zart
-ln -s $PKGNAM-$SRCVERSION $PKGNAM
 cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-# Fix libpath
-sed "/^LIB/s/lib/lib$LIBDIRSUFFIX/" -i src/Makefile
+# Fix path
+sed -e "/^LIB/s/lib/lib$LIBDIRSUFFIX/" \
+    -e "s|share/doc/gmic|doc/gmic-$VERSION|g" \
+    -e 's|/share/man|/man|g' -i src/Makefile
 
-# Make symlinks to build zart
-ln -sf ../zart zart
+make CFLAGS="$SLKCFLAGS" WGET=/dev/true cli lib libc -C src
 
-cd src
-make CFLAGS="$SLKCFLAGS" WGET=/dev/true -j1 cli lib libc gimp_gtk
-make DESTDIR=$PKG install
+if [ -x /usr/bin/qmake-qt5 ]; then
+  cd gmic-qt
+  for PLUGIN_TYPE in none gimp krita; do
+    # Use qmake here because fftw cmake is wrong
+    qmake-qt5 GMIC_PATH=../src GMIC_DYNAMIC_LINKING=on HOST=$PLUGIN_TYPE
+    make
+  done
+  cd ..
+fi
 
-# Don't ship .la files:
-rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
-cd ..
+make -C src DESTDIR=$PKG install
 
 # Build and install Zart
 cd zart
-qmake PREFIX=/usr QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" -o Makefile zart.pro
+qmake PREFIX=/usr QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" GMIC_DYNAMIC_LINKING=on -o Makefile zart.pro
 make -j1 LIB=lib${LIBDIRSUFFIX} OPT_CFLAGS="$SLKCFLAGS" WGET=/bin/true all
 install -Dm755 zart $PKG/usr/bin/zart
 cd -
 
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
+
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cp -a COPYING README $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a COPYING README* $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat zart/README > $PKG/usr/doc/$PKGNAM-$VERSION/README_zart.txt
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
