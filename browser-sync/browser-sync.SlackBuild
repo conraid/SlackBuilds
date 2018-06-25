@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=browser-sync
-VERSION=2.24.4
+VERSION=2.24.5
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -74,7 +74,7 @@ chmod -R u+w,go+r-w,a+X-s .
 DESTDIR=$PKG npm install --user root -g --no-bin-links $(npm pack | tail -1)
 
 # Remove empty /usr/etc dir
-rmdir $PKG/usr/etc
+rmdir $PKG/usr/etc || true
 
 # Remove occurrences of $PKG
 find $PKG -name "package.json" \
