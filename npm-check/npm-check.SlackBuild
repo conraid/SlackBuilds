@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=npm-check
 VERSION=5.7.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -58,7 +58,7 @@ chmod -R u+w,go+r-w,a+X-s .
 DESTDIR=$PKG npm install --user root -g $(npm pack | tail -1)
 
 # Remove empty dir
-rmdir $PKG/usr/etc
+rmdir $PKG/usr/etc || true
 
 # Remove unneeded files.
 find $PKG/usr \( -name '.git*' -o -name '.travis.yml' \) -exec rm -f {} \;

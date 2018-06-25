@@ -32,7 +32,7 @@ CWD=$(pwd)
 PRGNAM=nan
 PKGNAM=node-$(echo $PRGNAM | tr A-Z a-z)
 VERSION=2.10.0
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -59,7 +59,7 @@ chmod -R u+w,go+r-w,a+X-s .
 DESTDIR=$PKG npm install --user root -g $(npm pack | tail -1)
 
 # Remove empty dir
-rmdir $PKG/usr/etc
+rmdir $PKG/usr/etc || true
 
 # Remove occurrences of $PKG
 find $PKG -name "package.json" \

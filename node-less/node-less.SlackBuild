@@ -32,7 +32,7 @@ CWD=$(pwd)
 PRGNAM=less.js
 PKGNAM=node-less
 VERSION=3.0.0
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -60,7 +60,7 @@ chmod -R u+w,go+r-w,a+X-s .
 DESTDIR=$PKG npm install --user root -g $(npm pack | tail -1)
 
 # Remove empty /usr/etc dir
-rmdir $PKG/usr/etc
+rmdir $PKG/usr/etc || true
 
 # Remove occurrences of $PKG
 find $PKG -name "package.json" \

@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=node-cross-spawn
 VERSION=6.0.5
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-7}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -58,7 +58,7 @@ chmod -R u+w,go+r-w,a+X-s .
 DESTDIR=$PKG npm install --user root -g $(npm pack | tail -1)
 
 # Remove empty dir
-rmdir $PKG/usr/etc
+rmdir $PKG/usr/etc || true
 
 # Remove occurrences of $PKG
 find $PKG -name "package.json" \
