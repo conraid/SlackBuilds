@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=gmic
-SRCVERSION=2.3.0
+SRCVERSION=2.3.1
 VERSION=$SRCVERSION
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -75,27 +75,10 @@ sed -e "/^LIB/s/lib/lib$LIBDIRSUFFIX/" \
     -e "s|share/doc/gmic|doc/gmic-$VERSION|g" \
     -e 's|/share/man|/man|g' -i src/Makefile
 
-make CFLAGS="$SLKCFLAGS" WGET=/dev/true cli lib libc -C src
-
-if [ -x /usr/bin/qmake-qt5 ]; then
-  cd gmic-qt
-  for PLUGIN_TYPE in none gimp krita; do
-    # Use qmake here because fftw cmake is wrong
-    qmake-qt5 GMIC_PATH=../src GMIC_DYNAMIC_LINKING=on HOST=$PLUGIN_TYPE
-    make
-  done
-  cd ..
-fi
-
-make -C src DESTDIR=$PKG install
-
-# Build and install Zart
-cd zart
-qmake PREFIX=/usr QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" GMIC_DYNAMIC_LINKING=on -o Makefile zart.pro
-make -j1 LIB=lib${LIBDIRSUFFIX} OPT_CFLAGS="$SLKCFLAGS" WGET=/bin/true all
-install -Dm755 zart $PKG/usr/bin/zart
+cd src
+make QMAKE=qmake-qt5 CFLAGS="$SLKCFLAGS" WGET=/dev/true cli lib libc zart
+make DESTDIR=$PKG install
 cd -
-
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
