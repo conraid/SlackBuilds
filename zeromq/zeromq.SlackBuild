@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=zeromq
-VERSION=4.2.1
-BUILD=${BUILD:-2}
+VERSION=4.2.5
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -71,6 +71,9 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
+# Fix for libsodium
+sed 's/libzmq_werror="yes"/libzmq_werror="no"/' -i configure
+
 LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -84,6 +87,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
   --enable-static=no \
   --enable-shared=yes \
+  --with-libsodium \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
