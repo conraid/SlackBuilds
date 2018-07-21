@@ -7,17 +7,10 @@
 # 1.1 Added exit if redis not running
 # 1.2 Rewritten based on https://github.com/ntop/ntopng/blob/dev/packages/etc/init.d/ntopng
 
-CONF_FILE="/etc/ntopng/ntopng.conf"
-
 get_ntopng_pid() {
   PID=0
-
-  if [ -f "/etc/ntopng/ntopng.conf" ]; then
-    PID_FILE=$(grep -v '^#' $CONF_FILE | grep -E '\-G=|--pid'|cut -d '=' -f 2)
-  else
-    PID_FILE="/var/run/ntopng.pid"
-  fi
-
+  PID_FILE="/var/run/ntopng.pid"
+ 
   if [ -z "$PID_FILE" ]; then
   	return 0
   fi
@@ -48,8 +41,9 @@ start_ntopng() {
 	  mkdir /etc/ntopng
   fi
 
-  if [ ! -f "$CONF_FILE" ]; then
-    echo "-d=/storage/ntopng" >> $CONF_FILE
+  if ! [ "$(redis-cli ping)" == "PONG" ]; then
+    echo "Redis not running"
+    exit 1
   fi
 
 	echo -n "Starting ntopng: "
@@ -65,7 +59,7 @@ start_ntopng() {
 	   touch  /var/log/ntopng/ntopng.log
 	   chmod 777  /var/log/ntopng/ntopng.log
 	fi
-	/usr/bin/ntopng $CONF_FILE >> /var/log/ntopng/ntopng.log &
+	/usr/bin/ntopng >> /var/log/ntopng/ntopng.log &
 
   sleep 5
 
@@ -81,7 +75,7 @@ start_ntopng() {
 
 
 stop_ntopng() {
-    echo -n "Stopping ntopng: "
+    echo "Stopping ntopng: "
 
     get_ntopng_pid
 
@@ -90,10 +84,6 @@ stop_ntopng() {
     fi
 
     if [ "${PID}" -eq 0 ]; then
-      if [ ! -f "$CONF_FILE" ]; then
-        echo "Missing $CONF_FILE"
-	    fi
-
 	    return 0
     fi
   for i in {1..5}; do
@@ -116,10 +106,6 @@ stop_ntopng() {
 status_ntopng() {
     if [ ! -d "/etc/ntopng" ]; then
       echo "Default directory is missing. Quitting"
-    fi
-
-    if [ ! -f "$CONF_FILE" ]; then
-        echo "Configuration file is missing. Quitting"
     fi
 
     get_ntopng_pid
