@@ -1,0 +1,295 @@
+From 7b68405c81db889f83c32846462b238ccae5be80 Mon Sep 17 00:00:00 2001
+From: Alex Gaynor <alex.gaynor@gmail.com>
+Date: Sat, 26 Aug 2017 09:26:59 -0400
+Subject: [PATCH] Make pyyaml safe by default.
+
+Change yaml.load/yaml.dump to be yaml.safe_load/yaml.safe_dump, introduced yaml.danger_dump/yaml.danger_load, and the same for various other classes.
+
+(python2 only at this moment)
+
+Refs #5
+---
+ lib/yaml/__init__.py          | 41 +++++++++++++++++++++--------------
+ lib/yaml/cyaml.py             | 15 +++++++------
+ lib/yaml/dumper.py            |  8 +++----
+ lib/yaml/loader.py            |  8 +++----
+ tests/lib/test_constructor.py |  5 ++---
+ tests/lib/test_recursive.py   |  7 +++---
+ 6 files changed, 46 insertions(+), 38 deletions(-)
+
+diff --git a/lib/yaml/__init__.py b/lib/yaml/__init__.py
+index 87c15d3..153a74d 100644
+--- a/lib/yaml/__init__.py
++++ b/lib/yaml/__init__.py
+@@ -65,17 +65,24 @@ def load(stream, Loader=Loader):
+     """
+     Parse the first YAML document in a stream
+     and produce the corresponding Python object.
++
++    By default resolve only basic YAML tags, if an alternate Loader is
++    provided, may be dangerous.
+     """
+     loader = Loader(stream)
+     try:
+         return loader.get_single_data()
+     finally:
+         loader.dispose()
++safe_load = load
+ 
+ def load_all(stream, Loader=Loader):
+     """
+     Parse all YAML documents in a stream
+     and produce corresponding Python objects.
++
++    By default resolve only basic YAML tags, if an alternate Loader is
++    provided, may be dangerous.
+     """
+     loader = Loader(stream)
+     try:
+@@ -83,22 +90,23 @@ def load_all(stream, Loader=Loader):
+             yield loader.get_data()
+     finally:
+         loader.dispose()
++safe_load_all = load_all
+ 
+-def safe_load(stream):
++def danger_load(stream):
+     """
+     Parse the first YAML document in a stream
+     and produce the corresponding Python object.
+-    Resolve only basic YAML tags.
++    When used on untrusted input, can result in arbitrary code execution.
+     """
+-    return load(stream, SafeLoader)
++    return load(stream, DangerLoader)
+ 
+-def safe_load_all(stream):
++def danger_load_all(stream):
+     """
+     Parse all YAML documents in a stream
+     and produce corresponding Python objects.
+-    Resolve only basic YAML tags.
++    When used on untrusted input, can result in arbitrary code execution.
+     """
+-    return load_all(stream, SafeLoader)
++    return load_all(stream, DangerLoader)
+ 
+ def emit(events, stream=None, Dumper=Dumper,
+         canonical=None, indent=None, width=None,
+@@ -193,29 +201,31 @@ def dump_all(documents, stream=None, Dumper=Dumper,
+         dumper.dispose()
+     if getvalue:
+         return getvalue()
++safe_dump_all = dump_all
+ 
+-def dump(data, stream=None, Dumper=Dumper, **kwds):
++def danger_dump_all(documents, stream=None, **kwds):
+     """
+-    Serialize a Python object into a YAML stream.
++    Serialize a sequence of Python objects into a YAML stream.
++    Produce only basic YAML tags.
+     If stream is None, return the produced string instead.
+     """
+-    return dump_all([data], stream, Dumper=Dumper, **kwds)
++    return dump_all(documents, stream, Dumper=DangerDumper, **kwds)
+ 
+-def safe_dump_all(documents, stream=None, **kwds):
++def dump(data, stream=None, Dumper=Dumper, **kwds):
+     """
+-    Serialize a sequence of Python objects into a YAML stream.
+-    Produce only basic YAML tags.
++    Serialize a Python object into a YAML stream.
+     If stream is None, return the produced string instead.
+     """
+-    return dump_all(documents, stream, Dumper=SafeDumper, **kwds)
++    return dump_all([data], stream, Dumper=Dumper, **kwds)
++safe_dump = dump
+ 
+-def safe_dump(data, stream=None, **kwds):
++def danger_dump(data, stream=None, **kwds):
+     """
+     Serialize a Python object into a YAML stream.
+     Produce only basic YAML tags.
+     If stream is None, return the produced string instead.
+     """
+-    return dump_all([data], stream, Dumper=SafeDumper, **kwds)
++    return dump_all([data], stream, Dumper=DangerDumper, **kwds)
+ 
+ def add_implicit_resolver(tag, regexp, first=None,
+         Loader=Loader, Dumper=Dumper):
+@@ -312,4 +322,3 @@ def to_yaml(cls, dumper, data):
+         return dumper.represent_yaml_object(cls.yaml_tag, data, cls,
+                 flow_style=cls.yaml_flow_style)
+     to_yaml = classmethod(to_yaml)
+-
+diff --git a/lib/yaml/cyaml.py b/lib/yaml/cyaml.py
+index 68dcd75..5371f63 100644
+--- a/lib/yaml/cyaml.py
++++ b/lib/yaml/cyaml.py
+@@ -1,6 +1,6 @@
+ 
+-__all__ = ['CBaseLoader', 'CSafeLoader', 'CLoader',
+-        'CBaseDumper', 'CSafeDumper', 'CDumper']
++__all__ = ['CBaseLoader', 'CSafeLoader', 'CLoader', 'CDangerLoader',
++        'CBaseDumper', 'CSafeDumper', 'CDumper', 'CDangerDumper']
+ 
+ from _yaml import CParser, CEmitter
+ 
+@@ -18,14 +18,15 @@ def __init__(self, stream):
+         BaseConstructor.__init__(self)
+         BaseResolver.__init__(self)
+ 
+-class CSafeLoader(CParser, SafeConstructor, Resolver):
++class CLoader(CParser, SafeConstructor, Resolver):
+ 
+     def __init__(self, stream):
+         CParser.__init__(self, stream)
+         SafeConstructor.__init__(self)
+         Resolver.__init__(self)
++CSafeLoader = CLoader
+ 
+-class CLoader(CParser, Constructor, Resolver):
++class CDangerLoader(CParser, Constructor, Resolver):
+ 
+     def __init__(self, stream):
+         CParser.__init__(self, stream)
+@@ -49,7 +50,7 @@ def __init__(self, stream,
+                 default_flow_style=default_flow_style)
+         Resolver.__init__(self)
+ 
+-class CSafeDumper(CEmitter, SafeRepresenter, Resolver):
++class CDumper(CEmitter, SafeRepresenter, Resolver):
+ 
+     def __init__(self, stream,
+             default_style=None, default_flow_style=None,
+@@ -65,8 +66,9 @@ def __init__(self, stream,
+         SafeRepresenter.__init__(self, default_style=default_style,
+                 default_flow_style=default_flow_style)
+         Resolver.__init__(self)
++CSafeDumper = CDumper
+ 
+-class CDumper(CEmitter, Serializer, Representer, Resolver):
++class CDangerDumper(CEmitter, Serializer, Representer, Resolver):
+ 
+     def __init__(self, stream,
+             default_style=None, default_flow_style=None,
+@@ -82,4 +84,3 @@ def __init__(self, stream,
+         Representer.__init__(self, default_style=default_style,
+                 default_flow_style=default_flow_style)
+         Resolver.__init__(self)
+-
+diff --git a/lib/yaml/dumper.py b/lib/yaml/dumper.py
+index f811d2c..fcf1f28 100644
+--- a/lib/yaml/dumper.py
++++ b/lib/yaml/dumper.py
+@@ -1,5 +1,5 @@
+ 
+-__all__ = ['BaseDumper', 'SafeDumper', 'Dumper']
++__all__ = ['BaseDumper', 'SafeDumper', 'Dumper', 'DangerDumper']
+ 
+ from emitter import *
+ from serializer import *
+@@ -24,7 +24,7 @@ def __init__(self, stream,
+                 default_flow_style=default_flow_style)
+         Resolver.__init__(self)
+ 
+-class SafeDumper(Emitter, Serializer, SafeRepresenter, Resolver):
++class Dumper(Emitter, Serializer, SafeRepresenter, Resolver):
+ 
+     def __init__(self, stream,
+             default_style=None, default_flow_style=None,
+@@ -41,8 +41,9 @@ def __init__(self, stream,
+         SafeRepresenter.__init__(self, default_style=default_style,
+                 default_flow_style=default_flow_style)
+         Resolver.__init__(self)
++SafeDumper = Dump
+ 
+-class Dumper(Emitter, Serializer, Representer, Resolver):
++class DangerDumper(Emitter, Serializer, Representer, Resolver):
+ 
+     def __init__(self, stream,
+             default_style=None, default_flow_style=None,
+@@ -59,4 +60,3 @@ def __init__(self, stream,
+         Representer.__init__(self, default_style=default_style,
+                 default_flow_style=default_flow_style)
+         Resolver.__init__(self)
+-
+diff --git a/lib/yaml/loader.py b/lib/yaml/loader.py
+index 293ff46..6b18527 100644
+--- a/lib/yaml/loader.py
++++ b/lib/yaml/loader.py
+@@ -1,5 +1,5 @@
+ 
+-__all__ = ['BaseLoader', 'SafeLoader', 'Loader']
++__all__ = ['BaseLoader', 'SafeLoader', 'Loader', 'DangerLoader']
+ 
+ from reader import *
+ from scanner import *
+@@ -18,7 +18,7 @@ def __init__(self, stream):
+         BaseConstructor.__init__(self)
+         BaseResolver.__init__(self)
+ 
+-class SafeLoader(Reader, Scanner, Parser, Composer, SafeConstructor, Resolver):
++class Loader(Reader, Scanner, Parser, Composer, SafeConstructor, Resolver):
+ 
+     def __init__(self, stream):
+         Reader.__init__(self, stream)
+@@ -27,8 +27,9 @@ def __init__(self, stream):
+         Composer.__init__(self)
+         SafeConstructor.__init__(self)
+         Resolver.__init__(self)
++SafeLoader = Loader
+ 
+-class Loader(Reader, Scanner, Parser, Composer, Constructor, Resolver):
++class DangerLoader(Reader, Scanner, Parser, Composer, Constructor, Resolver):
+ 
+     def __init__(self, stream):
+         Reader.__init__(self, stream)
+@@ -37,4 +38,3 @@ def __init__(self, stream):
+         Composer.__init__(self)
+         Constructor.__init__(self)
+         Resolver.__init__(self)
+-
+diff --git a/tests/lib/test_constructor.py b/tests/lib/test_constructor.py
+index beee7b0..12d5391 100644
+--- a/tests/lib/test_constructor.py
++++ b/tests/lib/test_constructor.py
+@@ -19,9 +19,9 @@ def _make_objects():
+             NewArgs, NewArgsWithState, Reduce, ReduceWithState, MyInt, MyList, MyDict,  \
+             FixedOffset, today, execute
+ 
+-    class MyLoader(yaml.Loader):
++    class MyLoader(yaml.DangerLoader):
+         pass
+-    class MyDumper(yaml.Dumper):
++    class MyDumper(yaml.DangerDumper):
+         pass
+ 
+     class MyTestClass1:
+@@ -272,4 +272,3 @@ def test_constructor_types(data_filename, code_filename, verbose=False):
+     sys.modules['test_constructor'] = sys.modules['__main__']
+     import test_appliance
+     test_appliance.run(globals())
+-
+diff --git a/tests/lib/test_recursive.py b/tests/lib/test_recursive.py
+index 6707fd4..c67c170 100644
+--- a/tests/lib/test_recursive.py
++++ b/tests/lib/test_recursive.py
+@@ -29,9 +29,9 @@ def test_recursive(recursive_filename, verbose=False):
+     value2 = None
+     output2 = None
+     try:
+-        output1 = yaml.dump(value1)
+-        value2 = yaml.load(output1)
+-        output2 = yaml.dump(value2)
++        output1 = yaml.danger_dump(value1)
++        value2 = yaml.danger_load(output1)
++        output2 = yaml.danger_dump(value2)
+         assert output1 == output2, (output1, output2)
+     finally:
+         if verbose:
+@@ -47,4 +47,3 @@ def test_recursive(recursive_filename, verbose=False):
+ if __name__ == '__main__':
+     import test_appliance
+     test_appliance.run(globals())
+-

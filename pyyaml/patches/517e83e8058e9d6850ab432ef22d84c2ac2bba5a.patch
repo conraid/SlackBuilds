@@ -1,0 +1,22 @@
+From 517e83e8058e9d6850ab432ef22d84c2ac2bba5a Mon Sep 17 00:00:00 2001
+From: Alex Gaynor <alex.gaynor@gmail.com>
+Date: Sat, 26 Aug 2017 09:29:39 -0400
+Subject: [PATCH] wtf, how did this typo happen
+
+---
+ lib/yaml/dumper.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/yaml/dumper.py b/lib/yaml/dumper.py
+index fcf1f28..22fd927 100644
+--- a/lib/yaml/dumper.py
++++ b/lib/yaml/dumper.py
+@@ -41,7 +41,7 @@ def __init__(self, stream,
+         SafeRepresenter.__init__(self, default_style=default_style,
+                 default_flow_style=default_flow_style)
+         Resolver.__init__(self)
+-SafeDumper = Dump
++SafeDumper = Dumper
+ 
+ class DangerDumper(Emitter, Serializer, Representer, Resolver):
+ 
