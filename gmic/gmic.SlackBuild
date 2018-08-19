@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=gmic
-SRCVERSION=2.3.3
+SRCVERSION=2.3.4
 VERSION=$SRCVERSION
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -80,6 +80,7 @@ make QMAKE=qmake CFLAGS="$SLKCFLAGS" WGET=/dev/true -C src cli lib libc
 
 # Build plugins
 if [ -x /usr/bin/qmake-qt5 ]; then
+  VERSION=${VERSION}_qt5
   cd gmic-qt
   for PLUGIN_TYPE in none gimp krita; do
     # Use qmake here because fftw cmake is wrong
