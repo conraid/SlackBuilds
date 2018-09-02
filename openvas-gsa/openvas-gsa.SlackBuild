@@ -32,7 +32,7 @@ CWD=$(pwd)
 PRGNAM=gsa
 PKGNAM=openvas-gsa
 VERSION=7.0.3
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -114,7 +114,7 @@ cat $CWD/SLACKWARE.README > $PKG/usr/doc/$PKGNAM-$VERSION/SLACKWARE.README
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 # Install utility check script
-# https://svn.wald.intevation.org/svn/openvas/trunk/tools/openvas-check-setup
+# https://svn.wald.intevation.org/svn/openvas/branches/tools-attic/openvas-check-setup
 install -Dm755 $CWD/openvas-check-setup $PKG/usr/sbin/openvas-check-setup
 
 # Install rc script (thanks to SBo)

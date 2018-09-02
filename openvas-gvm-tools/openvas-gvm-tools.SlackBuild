@@ -1,8 +1,8 @@
 #!/bin/sh
 #
-# Slackware build script for openvas-cli
+# Slackware build script for openvas-gvm-tools
 #
-# Copyright 2014-2018 Corrado Franco (http://conraid.net)
+# Copyright 2018 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,21 +29,22 @@ set -eu
 
 CWD=$(pwd)
 
-PKGNAM=openvas-cli
-VERSION=1.4.5
-BUILD=${BUILD:-6}
+PRGNAM=gvm-tools
+PKGNAM=openvas-gvm-tools
+VERSION=1.4.1
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="CHANGES COPYING* ChangeLog INSTALL README*"
+DOCFILES="*.rst *.txt LICENSE VERSION"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-    i?86) ARCH=i686 ;;
-    arm*) ARCH=arm ;;
-    *) ARCH=$( uname -m ) ;;
+  i?86) ARCH=i686 ;;
+  arm*) ARCH=arm ;;
+     *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -64,32 +65,14 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+rm -rf $PRGNAM-$VERSION
+tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
+cd $PRGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-# Sane man path
-sed '/man/s/DATADIR/CMAKE_INSTALL_PREFIX/' -i doc/CMakeLists.txt
-
-mkdir -p build
-cd build
-cmake \
-  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_BUILD_TYPE=none \
-  -DCMAKE_INSTALL_PREFIX=/usr \
-  -DSYSCONF_INSTALL_DIR=/etc \
-  -DLOCALSTATEDIR=/var \
-  ..
-
-make
-make DESTDIR=$PKG install
-cd ..
-
-# Don't ship .la files:
-rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
+CFLAGS="$SLKCFLAGS" python3 setup.py install --root=$PKG
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
@@ -103,7 +86,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
