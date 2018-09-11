@@ -19,9 +19,9 @@ wget, with some servers, doesn't set the correct filename
 
 If exists FILENAME variable means that it contains the filename.
 
-if exists DOWNLOAD extra variables, do also
+if exists DOWNLOAD__* extra variables, do also
 
- `wget --no-check-certificate --content-disposition $DOWNLOAD_XXX [$DOWNLOAD_YYY]`
+ `wget --no-check-certificate --content-disposition $DOWNLOAD [$DOWNLOAD_1] [$DOWNLOAD_2]`
 
 ## Build
 
