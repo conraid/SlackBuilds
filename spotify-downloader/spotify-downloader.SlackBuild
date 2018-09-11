@@ -30,8 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=spotify-downloader
-SRCVERSION=0a3b7bd7d84fd0622fdca01413d8a82f57d44fe3
-VERSION=$(echo $SRCVERSION | head -c7)
+VERSION=1.0.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -65,9 +64,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$SRCVERSION
-tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz
-cd $PKGNAM-$SRCVERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
