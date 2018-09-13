@@ -28,9 +28,9 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=qtcurve
-SRCVERSION=1.9.0-rc1
+SRCVERSION=1.9.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
