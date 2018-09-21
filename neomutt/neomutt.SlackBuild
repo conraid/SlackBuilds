@@ -32,7 +32,7 @@ CWD=$(pwd)
 PKGNAM=neomutt
 SRCVERSION=20180716
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -95,6 +95,8 @@ CXXFLAGS="$SLKCFLAGS" \
   --notmuch \
   --lua \
   --locales-fix \
+  --disable-idn \
+  --idn2 \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
