@@ -30,8 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=atom
-SRCVERSION=1.29.0
-VERSION=$(echo $SRCVERSION | tr - _ )
+VERSION=1.33.0_dev
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -54,31 +53,14 @@ else
   LIBDIRSUFFIX=""
 fi
 
-rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
-cd $TMP
-rm -rf $PKGNAM-$SRCVERSION
-tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/v$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION.tar.gz
-cd $PKGNAM-$SRCVERSION
+
+cd $CWD/$PKGNAM-git
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-
-# Workaround for Node 10
-sed -e 's|"electron-link": "0.2.0"|"electron-link": "../../electron-link"|' \
-    -i script/package.json
-cd ..
-git clone https://github.com/atom/electron-link.git
-cd electron-link
-git checkout v0.2.0
-sed -e 's/"leveldown": "^1.6.0"/"leveldown": "^2.0.1"/' -i package.json
-npm install
-npx babel src -d lib
-cd node_modules/levelup
-sed -e 's/"leveldown": "^1.1.0"/"leveldown": "^2.0.1"/' -i package.json
-
-cd $TMP/$PKGNAM-$VERSION
+#sed '/electronVersion/s/2\.0\.9/2.0.10/g' -i package.json
 
 ./script/clean
 ./script/build --install=$PKG/usr
@@ -109,12 +91,6 @@ sed -e 's/<%= appName %>/Atom/' \
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
-
-if [ "$DELETE_CACHE" = "yes" ]; then
-  ./script/clean
-  rm -rf $TMP/npm-*
-  rm -rf $TMP/electron-*
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
