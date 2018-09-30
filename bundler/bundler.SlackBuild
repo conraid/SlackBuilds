@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=bundler
 VERSION=1.16.5
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -53,9 +53,7 @@ DESTDIR="$(ruby -e'puts Gem.default_dir')"
 HOME="/tmp"  \
 GEM_HOME="$DESTDIR" GEM_PATH="$DESTDIR" \
 gem install \
-   --local \
    --no-update-sources \
-   --ignore-dependencies \
    --backtrace \
    --no-user-install \
    --install-dir $PKG/$DESTDIR \
