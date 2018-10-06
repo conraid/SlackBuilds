@@ -64,16 +64,8 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
-cd $PKGNAM-$VERSION
 
-chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
-
-# Get the full path of the ruby installation, for gems
 DESTDIR="$(ruby -e'puts Gem.default_dir')"
-
 HOME="/tmp"  \
 GEM_HOME="$DESTDIR" GEM_PATH="$DESTDIR" \
 gem install \
@@ -83,6 +75,9 @@ gem install \
    --install-dir $PKG/$DESTDIR \
    --bindir $PKG/usr/bin \
    $CWD/$PKGNAM-$VERSION.gem
+
+# Delete cache
+rm -rf $DESTDIR/cache
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
