@@ -613,10 +613,10 @@ SLACKBUILD SHORT DESCRIPTION:  collectd (system statistics collection daemon)
 SLACKBUILD NAME: colorama
 SLACKBUILD LOCATION: ./colorama
 SLACKBUILD FILES: README colorama.SlackBuild colorama.info slack-desc
-SLACKBUILD VERSION: 0.3.9
+SLACKBUILD VERSION: 0.4.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/e6/76/257b53926889e2835355d74fec73d82662100135293e17d382e2b74d1669/colorama-0.3.9.tar.gz
-SLACKBUILD MD5SUM: 3a0e415259690f4dd7455c2683ee5850
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/colorama/colorama-0.4.0.zip
+SLACKBUILD MD5SUM: 53cb89274cf211cfd43f22b06dc98e03
 SLACKBUILD SHORT DESCRIPTION:  colorama (cross-platform colored terminal text)
 
 SLACKBUILD NAME: colordiff
@@ -2311,6 +2311,15 @@ SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/libnet-dev/libnet-1.1.6.ta
 SLACKBUILD MD5SUM: 710296fe424a49344e5fcc0d09e53317
 SLACKBUILD SHORT DESCRIPTION:  Libnet (Network library to forge packets) 
 
+SLACKBUILD NAME: libnfs
+SLACKBUILD LOCATION: ./libnfs
+SLACKBUILD FILES: README libnfs.SlackBuild libnfs.info patches/5a5a5c1e7073f21c6036c7b5b32ab9dd514c4e12.patch slack-desc
+SLACKBUILD VERSION: 3.0.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/sahlberg/libnfs/archive/libnfs-3.0.0.tar.gz
+SLACKBUILD MD5SUM: 
+SLACKBUILD SHORT DESCRIPTION:  libnfs (NFS client library)
+
 SLACKBUILD NAME: libnids
 SLACKBUILD LOCATION: ./libnids
 SLACKBUILD FILES: README libnids.SlackBuild libnids.info slack-desc
@@ -2728,10 +2737,10 @@ SLACKBUILD SHORT DESCRIPTION:  md5deep (Advanced checksum hashing tool)
 SLACKBUILD NAME: memcached
 SLACKBUILD LOCATION: ./memcached
 SLACKBUILD FILES: README doinst.sh files/memcached.conf files/rc.memcached memcached.SlackBuild memcached.info slack-desc
-SLACKBUILD VERSION: 1.5.10
+SLACKBUILD VERSION: 1.5.11
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.memcached.org/files/memcached-1.5.10.tar.gz
-SLACKBUILD MD5SUM: 8462616b554183a75845b03c56837cca
+SLACKBUILD DOWNLOAD: http://www.memcached.org/files/memcached-1.5.11.tar.gz
+SLACKBUILD MD5SUM: d44eb29e92c34ba662df25d382d8d2a4
 SLACKBUILD SHORT DESCRIPTION:  memcached (object caching system)
 
 SLACKBUILD NAME: minidb
@@ -3196,10 +3205,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-uglify-js (JavaScript compressor/minifier)
 SLACKBUILD NAME: node
 SLACKBUILD LOCATION: ./node
 SLACKBUILD FILES: README node.SlackBuild node.info slack-desc
-SLACKBUILD VERSION: 10.11.0
+SLACKBUILD VERSION: 10.12.0
 SLACKBUILD REQUIRED: libuv c-ares http-parser
-SLACKBUILD DOWNLOAD: https://nodejs.org/dist/v10.11.0/node-v10.11.0.tar.gz
-SLACKBUILD MD5SUM: 45faed093923d1c7bfcf041ac81b5084
+SLACKBUILD DOWNLOAD: https://nodejs.org/dist/v10.12.0/node-v10.12.0.tar.gz
+SLACKBUILD MD5SUM: 398d2cdabdb84b3d6961afc876ed2039
 SLACKBUILD SHORT DESCRIPTION:  Node (Evented I/O for V8 JavaScript)
 
 SLACKBUILD NAME: nomacs
@@ -4194,9 +4203,9 @@ SLACKBUILD SHORT DESCRIPTION:  qdirstat (Qt-based directory statistics)
 
 SLACKBUILD NAME: qemu
 SLACKBUILD LOCATION: ./qemu
-SLACKBUILD FILES: README files/65-kvm.rules qemu.SlackBuild qemu.info slack-desc
+SLACKBUILD FILES: README files/65-kvm.rules patches/allow_elf64.patch patches/db812c4073c77c8a64db8d6663b3416a587c7b4a.patch qemu.SlackBuild qemu.info slack-desc
 SLACKBUILD VERSION: 3.0.0
-SLACKBUILD REQUIRED: device-tree-compiler libcacard libseccomp usbredir vde2 virglrenderer spice spice-protocol
+SLACKBUILD REQUIRED: device-tree-compiler libcacard libnfs libseccomp usbredir vde2 virglrenderer spice spice-protocol
 SLACKBUILD DOWNLOAD: http://download.qemu-project.org/qemu-3.0.0.tar.xz
 SLACKBUILD MD5SUM: 6a5c8df583406ea24ef25b239c3243e0
 SLACKBUILD SHORT DESCRIPTION:  qemu (open source processor emulator)
