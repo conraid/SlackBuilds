@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PRGNAM=Audacity
 PKGNAM=audacity
-VERSION=2.3.0
+VERSION=2.2.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -82,8 +82,8 @@ CXXFLAGS="$SLKCFLAGS -std=gnu++11" \
   --mandir=/usr/man \
   --infodir=/usr/info \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --enable-static=yes \
-  --enable-shared=no \
+  --enable-static=no \
+  --enable-shared=yes \
   --enable-unicode \
   --enable-nyquist \
   --with-libsoxr \
@@ -99,6 +99,7 @@ CXXFLAGS="$SLKCFLAGS -std=gnu++11" \
   --with-ladspa \
   --with-soundtouch=system \
   --with-vamp-plugin \
+  --with-libtwolame=system \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
