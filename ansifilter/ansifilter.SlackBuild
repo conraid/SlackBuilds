@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=ansifilter
-VERSION=2.10
-BUILD=${BUILD:-2}
+VERSION=2.11
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -69,7 +69,7 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-make CFLAGS="$SLKCFLAGS -c -DNDEBUG -std=c++11"
+make EXTRA_CXXFLAGS="$SLKCFLAGS"
 make DESTDIR=$PKG man_dir=/usr/man/man1 doc_dir=/usr/doc/$PKGNAM-$VERSION install
 
 # Don't ship .la files:
