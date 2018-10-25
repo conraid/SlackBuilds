@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=atom
-SRCVERSION=1.32.0-beta3
+SRCVERSION=1.32.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -86,7 +86,7 @@ cd -
 mkdir -p $PKG/usr/share/applications
 sed -e 's/<%= appName %>/Atom/' \
   -e 's/<%= description %>/Hackable text editor/' \
-  -e 's|^\(Exec=\).*|\1/usr/bin/atom %U|' \
+  -e 's|^\(Exec=\).*|\1/usr/bin/atom %F|' \
   -e 's/<%= iconPath %>/atom/' \
   resources/linux/atom.desktop.in > $PKG/usr/share/applications/atom.desktop
 
