@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=p7zip
 VERSION=16.02
-BUILD=${BUILD:-8}
+BUILD=${BUILD:-9}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -87,16 +87,21 @@ sed \
 rm -rf CPP/7zip/Compress/Rar
 
 sed -e 's|cp -r DOC|cp -r DOC/*|g' -e 's|${DEST_SHARE_DOC}/DOC|${DEST_SHARE_DOC}|g' -i install.sh
-make all5 OPTFLAGS="$SLKCFLAGS"
-make install \
+make all5 OPTFLAGS="$SLKCFLAGS" \
+  DEST_HOME=/usr \
+  DEST_SHARE_DOC=/usr/doc/$PKGNAM-$VERSION \
+  DEST_MAN=/usr/man \
+  DEST_SHARE=/usr/lib${LIBDIRSUFFIX}/p7zip
 
-# Don't ship .la files:
-rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
+make install \
   DEST_HOME=/usr \
   DEST_SHARE_DOC=/usr/doc/$PKGNAM-$VERSION \
   DEST_MAN=/usr/man \
   DEST_SHARE=/usr/lib${LIBDIRSUFFIX}/p7zip \
   DEST_DIR=$PKG
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
