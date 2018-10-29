@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=hashcat
-VERSION=4.2.1
+VERSION=5.0.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -70,6 +70,15 @@ cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
+
+
+# Install opencl-headers and xxhash from git
+cd deps/git
+git clone https://github.com/KhronosGroup/OpenCL-Headers.git
+cd OpenCL-Headers; git checkout d516924; cd -
+git clone https://github.com/Cyan4973/xxHash.git
+cd xxHash; git checkout 0f2dd4a; cd -
+cd ../..
 
 # USE $SLKCFLAGS
 sed "s/-pipe/-pipe $SLKCFLAGS/" -i src/Makefile
