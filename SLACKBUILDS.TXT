@@ -1315,10 +1315,10 @@ SLACKBUILD SHORT DESCRIPTION:  gitpython (Python git library)
 SLACKBUILD NAME: gmic
 SLACKBUILD LOCATION: ./gmic
 SLACKBUILD FILES: README gmic.SlackBuild gmic.info slack-desc
-SLACKBUILD VERSION: 2.4.0
+SLACKBUILD VERSION: 2.4.1
 SLACKBUILD REQUIRED: opencv graphicsmagick cimg
-SLACKBUILD DOWNLOAD: http://gmic.eu/files/source/gmic_2.4.0.tar.gz
-SLACKBUILD MD5SUM: 038d31774030e154c344a26facf383cf
+SLACKBUILD DOWNLOAD: http://gmic.eu/files/source/gmic_2.4.1.tar.gz
+SLACKBUILD MD5SUM: f5e69b94a0bc559e0cf29efb95bb277c
 SLACKBUILD SHORT DESCRIPTION:  GMIC (Image converter and gimp plugin)
 
 SLACKBUILD NAME: gnome-python-gconf
@@ -1477,10 +1477,10 @@ SLACKBUILD SHORT DESCRIPTION:  hashcat-utils (Small utilities for hashcat)
 SLACKBUILD NAME: hashcat
 SLACKBUILD LOCATION: ./hashcat
 SLACKBUILD FILES: README hashcat.SlackBuild hashcat.info slack-desc
-SLACKBUILD VERSION: 4.2.1
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/hashcat/hashcat/archive/v4.2.1.tar.gz
-SLACKBUILD MD5SUM: e55a3235e87612b449cf2d9bc47a96ed
+SLACKBUILD VERSION: 5.0.0
+SLACKBUILD REQUIRED: xxhash
+SLACKBUILD DOWNLOAD: https://hashcat.net/files/hashcat-5.0.0.tar.gz
+SLACKBUILD MD5SUM: b38542cbf4a242759859f6f215adb359
 SLACKBUILD SHORT DESCRIPTION:  hashcat (password recovery utility)
 
 SLACKBUILD NAME: hexedit
@@ -1612,10 +1612,10 @@ SLACKBUILD SHORT DESCRIPTION:  hungrycat
 SLACKBUILD NAME: hwinfo
 SLACKBUILD LOCATION: ./hwinfo
 SLACKBUILD FILES: README hwinfo.SlackBuild hwinfo.info patches/tiocgdev.patch slack-desc
-SLACKBUILD VERSION: 21.60
+SLACKBUILD VERSION: 21.61
 SLACKBUILD REQUIRED: libx86emu
-SLACKBUILD DOWNLOAD: https://github.com/openSUSE/hwinfo/archive/21.60.tar.gz
-SLACKBUILD MD5SUM: 9235748ba1ab37778909d91aaa9f592f
+SLACKBUILD DOWNLOAD: https://github.com/openSUSE/hwinfo/archive/21.61.tar.gz
+SLACKBUILD MD5SUM: d2944f64f0ce862fe58d22d2e905dd17
 SLACKBUILD SHORT DESCRIPTION:  hwinfo (hardware detection tool used in SuSE Linux)
 
 SLACKBUILD NAME: hydra
@@ -3193,6 +3193,15 @@ SLACKBUILD DOWNLOAD: https://github.com/nodejs/nan/archive/v2.11.1.tar.gz
 SLACKBUILD MD5SUM: fdca299208e6a093d36447afb743138a
 SLACKBUILD SHORT DESCRIPTION:  nan (Native Abstractions for Node.js )
 
+SLACKBUILD NAME: node-nativefier
+SLACKBUILD LOCATION: ./node-nativefier
+SLACKBUILD FILES: README node-nativefier.SlackBuild node-nativefier.info slack-desc
+SLACKBUILD VERSION: 7.6.8
+SLACKBUILD REQUIRED: node
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/nativefier/-/nativefier-7.6.8.tgz
+SLACKBUILD MD5SUM: a76248d4ebb3e892257bcc01f2584dc8
+SLACKBUILD SHORT DESCRIPTION:  node-nativefier (Make any web page a desktop application)
+
 SLACKBUILD NAME: node-sass
 SLACKBUILD LOCATION: ./node-sass
 SLACKBUILD FILES: PKGNOTE README node-sass.SlackBuild node-sass.info slack-desc
@@ -3501,11 +3510,11 @@ SLACKBUILD SHORT DESCRIPTION:  p0f (passive os fingerprint tool)
 
 SLACKBUILD NAME: p7zip
 SLACKBUILD LOCATION: ./p7zip
-SLACKBUILD FILES: README doinst.sh files/7zFM.desktop p7zip.SlackBuild p7zip.info patches/CVE-2016-9296.patch slack-desc
+SLACKBUILD FILES: README doinst.sh files/7zFM.desktop p7zip.SlackBuild p7zip.info patches/10_CVE-2016-9296.patch patches/20_CVE-2017-17969.patch patches/30_CVE-2018-5996.patch patches/40_CVE-2018-10115.patch slack-desc
 SLACKBUILD VERSION: 16.02
 SLACKBUILD REQUIRED: wxgtk
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/p7zip/p7zip_16.02_src_all.tar.bz2
-SLACKBUILD MD5SUM: a0128d661cfe7cc8c121e73519c54fbf
+SLACKBUILD MD5SUM: 8ec682e387f2d0217a0ca59b68c01fce
 SLACKBUILD SHORT DESCRIPTION:  p7zip (File Compression/Decompression Utility)
 
 SLACKBUILD NAME: packeth
@@ -3715,6 +3724,15 @@ SLACKBUILD DOWNLOAD: https://github.com/wimg/PHPCompatibility/archive/8.0.1.tar.
 SLACKBUILD MD5SUM: 85cae39b2b1289915295189e2ab2f427
 SLACKBUILD SHORT DESCRIPTION:  phpcompatibility (PHP Compatibility check for PHP_CodeSniffer)
 
+SLACKBUILD NAME: phpdocumentor
+SLACKBUILD LOCATION: ./phpdocumentor
+SLACKBUILD FILES: README phpdocumentor.SlackBuild phpdocumentor.info slack-desc
+SLACKBUILD VERSION: 2.9.0
+SLACKBUILD REQUIRED: graphviz
+SLACKBUILD DOWNLOAD: https://github.com/phpDocumentor/phpDocumentor2/releases/download/v2.9.0/phpDocumentor-2.9.0.tgz
+SLACKBUILD MD5SUM: 6a5a906039a273a8e623429178630df0
+SLACKBUILD SHORT DESCRIPTION:  phpdocumentor (Documentation Generator for PHP)
+
 SLACKBUILD NAME: phpmd
 SLACKBUILD LOCATION: ./phpmd
 SLACKBUILD FILES: LICENSE README phpmd.SlackBuild phpmd.info slack-desc
@@ -3732,6 +3750,24 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://github.com/Halleck45/PhpMetrics/raw/v2.3.2/build/phpmetrics.phar
 SLACKBUILD MD5SUM: 025c8c9467d344f87d9c2e3b13e2c48a
 SLACKBUILD SHORT DESCRIPTION:  phpmetrics (static analysis tool for PHP)
+
+SLACKBUILD NAME: phpunit-skelgen
+SLACKBUILD LOCATION: ./phpunit-skelgen
+SLACKBUILD FILES: README files/LICENSE phpunit-skelgen.SlackBuild phpunit-skelgen.info slack-desc
+SLACKBUILD VERSION: 2.0.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://phar.phpunit.de/phpunit-skelgen-2.0.1.phar
+SLACKBUILD MD5SUM: 6b85b28491939d994aca112cda310a8b
+SLACKBUILD SHORT DESCRIPTION:  phpunit-skelgen (skeleton test classes  for phpunit)
+
+SLACKBUILD NAME: phpunit
+SLACKBUILD LOCATION: ./phpunit
+SLACKBUILD FILES: README files/LICENSE phpunit.SlackBuild phpunit.info slack-desc
+SLACKBUILD VERSION: 7.4.3
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://phar.phpunit.de/phpunit-7.4.3.phar
+SLACKBUILD MD5SUM: d7ba9b2f3369db0a57eb5fb523c37592
+SLACKBUILD SHORT DESCRIPTION:  phpunit (testing framework for PHP)
 
 SLACKBUILD NAME: pixiewps
 SLACKBUILD LOCATION: ./pixiewps
@@ -3898,10 +3934,10 @@ SLACKBUILD SHORT DESCRIPTION:  psensor (graphical hardware temperature monitor)
 SLACKBUILD NAME: psutil
 SLACKBUILD LOCATION: ./psutil
 SLACKBUILD FILES: README psutil.SlackBuild psutil.info slack-desc
-SLACKBUILD VERSION: 5.4.7
+SLACKBUILD VERSION: 5.4.8
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/psutil/psutil-5.4.7.tar.gz
-SLACKBUILD MD5SUM: 434cd8f9a1fdc93ce7903fdc9b5e3906
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/psutil/psutil-5.4.8.tar.gz
+SLACKBUILD MD5SUM: 0f08bf02400f81c28c4581619ca3e6cb
 SLACKBUILD SHORT DESCRIPTION:  psutil (python interface for process and system info)
 
 SLACKBUILD NAME: psycopg2
@@ -4539,8 +4575,8 @@ SLACKBUILD LOCATION: ./shorewall-core
 SLACKBUILD FILES: PKGNOTE README doinst.sh shorewall-core.SlackBuild shorewall-core.info slack-desc
 SLACKBUILD VERSION: 5.2.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.shorewall.org/pub/shorewall/5.2/shorewall-5.2.1/shorewall-core-5.2.1.tar.bz2
-SLACKBUILD MD5SUM: ca867aed49a68c58be90add6be937fb2
+SLACKBUILD DOWNLOAD: http://www.shorewall.org/pub/shorewall/5.2/shorewall-5.2.1/shorewall-core-5.2.1.1.tar.bz2
+SLACKBUILD MD5SUM: dbf8042f5c5460538cccdb567b367869
 SLACKBUILD SHORT DESCRIPTION:  Shorewall-core (Core Shorewall libraries)
 
 SLACKBUILD NAME: shorewall
@@ -4548,8 +4584,8 @@ SLACKBUILD LOCATION: ./shorewall
 SLACKBUILD FILES: PKGNOTE README doinst.sh shorewall.SlackBuild shorewall.info slack-desc
 SLACKBUILD VERSION: 5.2.1
 SLACKBUILD REQUIRED: shorewall-core
-SLACKBUILD DOWNLOAD: http://www.shorewall.org/pub/shorewall/5.2/shorewall-5.2.1/shorewall-5.2.1.tar.bz2
-SLACKBUILD MD5SUM: 904a6b38d97bbdfc97b2713ac7f902e2
+SLACKBUILD DOWNLOAD: http://www.shorewall.org/pub/shorewall/5.2/shorewall-5.2.1/shorewall-5.2.1.1.tar.bz2
+SLACKBUILD MD5SUM: 5ff4a1db0e2247a852ea98f1ecb87438
 SLACKBUILD SHORT DESCRIPTION:  Shorewall (An iptables-based firewall for Linux systems)
 
 SLACKBUILD NAME: shorewall6
@@ -4557,8 +4593,8 @@ SLACKBUILD LOCATION: ./shorewall6
 SLACKBUILD FILES: PKGNOTE README doinst.sh shorewall6.SlackBuild shorewall6.info slack-desc
 SLACKBUILD VERSION: 5.2.1
 SLACKBUILD REQUIRED: shorewall-core
-SLACKBUILD DOWNLOAD: http://www.shorewall.org/pub/shorewall/5.2/shorewall-5.2.1/shorewall6-5.2.1.tar.bz2
-SLACKBUILD MD5SUM: d6597b128ff6affef5d7d1dc8b6cd90c
+SLACKBUILD DOWNLOAD: http://www.shorewall.org/pub/shorewall/5.2/shorewall-5.2.1/shorewall6-5.2.1.1.tar.bz2
+SLACKBUILD MD5SUM: c81fb6dd7c7748a7fec83fcfdf4df65f
 SLACKBUILD SHORT DESCRIPTION:  Shorewall6 (An IPv6 iptables-based firewall for Linux systems)
 
 SLACKBUILD NAME: siege
@@ -4942,10 +4978,10 @@ SLACKBUILD SHORT DESCRIPTION:  Tellico (KDE application for keeping track of you
 SLACKBUILD NAME: tesseract
 SLACKBUILD LOCATION: ./tesseract
 SLACKBUILD FILES: PKGNOTE README slack-desc tesseract.SlackBuild tesseract.info
-SLACKBUILD VERSION: 3.05.02
+SLACKBUILD VERSION: 4.0.0
 SLACKBUILD REQUIRED: leptonica 
-SLACKBUILD DOWNLOAD: https://github.com/tesseract-ocr/tesseract/archive/3.05.02.tar.gz
-SLACKBUILD MD5SUM: d3b8661f878aed931cf3a7595e69b989
+SLACKBUILD DOWNLOAD: https://github.com/tesseract-ocr/tesseract/archive/4.0.0.tar.gz
+SLACKBUILD MD5SUM: ebed139edb16f10c5ba6ee3bf38f7dc5
 SLACKBUILD SHORT DESCRIPTION:  tesseract (Open Source OCR Engine)
 
 SLACKBUILD NAME: testdisk
@@ -5614,6 +5650,15 @@ SLACKBUILD DOWNLOAD: http://www.vergenet.net/~conrad/software/xsel/download/xsel
 SLACKBUILD MD5SUM: 75983f143ce83dc259796c6eaf85c8f5
 SLACKBUILD SHORT DESCRIPTION:  XSel
 
+SLACKBUILD NAME: xxhash
+SLACKBUILD LOCATION: ./xxhash
+SLACKBUILD FILES: README slack-desc xxhash.SlackBuild xxhash.info
+SLACKBUILD VERSION: 0.6.5
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/Cyan4973/xxHash/archive/v0.6.5.tar.gz
+SLACKBUILD MD5SUM: 6af3a964f3c2accebce66e54b44b6446
+SLACKBUILD SHORT DESCRIPTION:  xxhash (Extremely fast non-cryptographic hash algorithm)
+
 SLACKBUILD NAME: yagf
 SLACKBUILD LOCATION: ./yagf
 SLACKBUILD FILES: README doinst.sh slack-desc yagf.SlackBuild yagf.info
@@ -5689,10 +5734,10 @@ SLACKBUILD SHORT DESCRIPTION:  yersinia
 SLACKBUILD NAME: youtube-dl
 SLACKBUILD LOCATION: ./youtube-dl
 SLACKBUILD FILES: README patches/slack.patch slack-desc youtube-dl.SlackBuild youtube-dl.info
-SLACKBUILD VERSION: 2018.10.05
+SLACKBUILD VERSION: 2018.10.29
 SLACKBUILD REQUIRED: rtmpdump
-SLACKBUILD DOWNLOAD: https://yt-dl.org/downloads/2018.10.05/youtube-dl-2018.10.05.tar.gz
-SLACKBUILD MD5SUM: e99ccfc0f3e045047041d8dc7241bb4b
+SLACKBUILD DOWNLOAD: https://yt-dl.org/downloads/2018.10.29/youtube-dl-2018.10.29.tar.gz
+SLACKBUILD MD5SUM: a7652ba69a829cf53e674f38120ba65e
 SLACKBUILD SHORT DESCRIPTION:  youtube-dl (YouTube video download utility)
 
 SLACKBUILD NAME: zenity
