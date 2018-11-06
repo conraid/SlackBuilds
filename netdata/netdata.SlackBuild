@@ -44,8 +44,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=netdata
-VERSION=1.10.0
-BUILD=${BUILD:-2}
+VERSION=1.11.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -78,9 +78,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM-${VERSION}_rolling
+tar xvf $CWD/$PKGNAM-v$VERSION.tar.gz
+cd $PKGNAM-${VERSION}_rolling
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
