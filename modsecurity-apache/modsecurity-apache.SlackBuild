@@ -1,0 +1,129 @@
+#!/bin/sh
+#
+# Slackware build script for ModSecurity Apache module
+#
+# Copyright 2015-2018 Corrado Franco (http://conraid.net)
+# All rights reserved.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version, with the following exception:
+# the text of the GPL license may be omitted.
+
+# This program is distributed in the hope that it will be useful, but
+# without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose. Compiling,
+# interpreting, executing or merely reading the text of the program
+# may result in lapses of consciousness and/or very being, up to and
+# including the end of all existence and the Universe as we know it.
+# See the GNU General Public License for more details.
+
+# You may have received a copy of the GNU General Public License along
+# with this program (most likely, a file named COPYING).  If not, see
+# <http://www.gnu.org/licenses/>.
+#
+# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+
+set -eu
+
+CWD=$(pwd)
+
+PKGNAM=modsecurity-apache
+SRCVERSION=v0.0.9-beta1
+VERSION=$(echo $SRCVERSION | tr - _ | sed 's/^v//')
+CRSVERSION=3.1.0-rc1
+BUILD=${BUILD:-1}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+PKG=$TMP/package-$PKGNAM
+OUTPUT=${OUTPUT:-/tmp}
+
+DOCFILES="AUTHORS CHANGES LICENSE README*"
+
+if [ -z ${ARCH:=""} ]; then
+  case "$( uname -m )" in
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    *) ARCH=$( uname -m ) ;;
+  esac
+fi
+
+if [ "$ARCH" = "i586" ]; then
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  LIBDIRSUFFIX="64"
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+fi
+
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz
+cd $PKGNAM-$SRCVERSION
+tar xvf $CWD/owasp-modsecurity-crs-${CRSVERSION}.tar.gz || tar xvf $CWD/${CRSVERSION}.tar.gz
+
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
+
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
+
+sed '/V3PATH/s|lib/|lib64/|' -i build/find_libmodsec.m4
+
+./autogen.sh
+LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+  --prefix=/usr \
+  --libdir=/usr/lib${LIBDIRSUFFIX}/modsecurity \
+  --sysconfdir=/etc \
+  --localstatedir=/var \
+  --mandir=/usr/man \
+  --docdir=/usr/doc/$PKGNAM-$VERSION \
+  --host=$ARCH-slackware-linux \
+  --build=$ARCH-slackware-linux
+
+make
+install -Dsm755 src/.libs/mod_security3.so $PKG/usr/lib$LIBDIRSUFFIX/httpd/modules/mod_security3.so
+
+# Add conf files
+mkdir -p $PKG/etc/httpd/modsecurity.d
+sed "s|%LIBDIRSUFFIX%|$LIBDIRSUFFIX|" $CWD/files/mod_security3.conf > $PKG/etc/httpd/mod_security3.conf.new
+
+# Install Core Rule Set
+cd owasp-modsecurity-crs-$CRSVERSION
+  mkdir -p $PKG/etc/httpd/modsecurity.d/crs/rules
+  install -m644 crs-setup.conf.example $PKG/etc/httpd/modsecurity.d/crs/crs-setup.conf.new
+  cd rules
+  rename .conf.example .conf *.conf.example
+  cd ..
+  cp -r rules $PKG/etc/httpd/modsecurity.d/crs
+cd ..
+
+install -Dm644 $CWD/files/include.conf $PKG/etc/httpd/modsecurity.d/include.conf.new
+
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION/owasp
+cp -r $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cp owasp-modsecurity-crs-$CRSVERSION/[A-Z]* $PKG/usr/doc/$PKGNAM-$VERSION/owasp || true
+cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBuild
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+sed "s/%LIBSUFFIX%/${LIBDIRSUFFIX}/" $CWD/doinst.sh > $PKG/install/doinst.sh
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD${TAG}.txz
