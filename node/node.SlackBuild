@@ -35,7 +35,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=node
-VERSION=11.1.0
+VERSION=11.2.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -102,9 +102,9 @@ CXXFLAGS="$SLKCFLAGS" \
   --shared-libuv \
   --shared-cares \
   --shared-nghttp2 \
-  --shared-http-parser \
   --shared-openssl \
-  --with-intl=system-icu
+  --with-intl=system-icu \
+  --experimental-http-parser
 
 make PREFIX="/usr" CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS"
 make PREFIX="/usr" DESTDIR=$PKG install
