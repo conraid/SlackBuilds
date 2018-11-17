@@ -28,9 +28,9 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=gimp-script-fu
-VERSION=42
-SRCVERSION=2.8.14a
-BUILD=${BUILD:-4}
+VERSION=48
+SRCVERSION=2.10
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -44,10 +44,12 @@ rm -rf gimp_scripts-$SRCVERSION
 tar -xjf $CWD/gimp_scripts-$SRCVERSION.tar.bz2
 cd gimp_scripts-$SRCVERSION
 
-mkdir -p $PKG/usr/share/gimp/2.0/{scripts,gradients,patterns,gimpressionist/Presets}
-cp *.scm $PKG/usr/share/gimp/2.0/scripts
-cp -r gimpressionist gradients patterns $PKG/usr/share/gimp/2.0
-chmod a+r $PKG/usr/share/gimp/2.0/* -R
+install -Dm644 *.scm -t $PKG/usr/share/gimp/2.0/scripts
+install -Dm644 gimpressionist/Presets/* -t $PKG/usr/share/gimp/2.0/scripts/gimpressionist/Presets
+install -Dm644 gradients/PictureFrames/* -t $PKG/usr/share/gimp/2.0/scripts/gradients/PictureFrames
+install -Dm644 images/* -t $PKG/usr/share/gimp/2.0/scripts/images
+install -Dm644 patterns/* -t $PKG/usr/share/gimp/2.0/scripts/patterns
+install -Dm644 plug-ins/* -t $PKG/usr/share/gimp/2.0/scripts/plug-ins
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp README* $PKG/usr/doc/$PKGNAM-$VERSION
