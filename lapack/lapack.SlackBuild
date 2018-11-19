@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=lapack
 VERSION=3.8.0
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -83,6 +83,7 @@ cmake \
   -DLAPACKE=ON \
   -DCBLAS=ON \
   -DBUILD_DEPRECATED=ON \
+  -DLAPACKE_WITH_TMG=ON \
   ..
 
 make
