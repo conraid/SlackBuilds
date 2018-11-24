@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=tcpflow
-VERSION=1.5.0
+VERSION=1.5.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -64,9 +64,13 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+rm -rf *$PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$PKGNAM-$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION || cd $PKGNAM-$PKGNAM-$VERSION
+
+git clone https://github.com/simsong/be13_api.git src/be13_api/
+git clone https://github.com/simsong/dfxml.git src/dfxml/
+git clone https://github.com/joyent/http-parser.git src/http-parser/
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
@@ -78,7 +82,7 @@ if [ -e $CWD/patches/ ]; then
   done
 fi
 
-autoreconf -vi
+./bootstrap.sh
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
