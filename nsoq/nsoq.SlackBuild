@@ -32,7 +32,7 @@ CWD=$(pwd)
 PRGNAM=Nsoq
 PKGNAM=nsoq
 VERSION=1.9.5
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -66,7 +66,7 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$VERSION || rm -rf $PKGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-${VERSION}.tar.gz || tar xvf $CWD/v${VERSION}.tar.gz
 cd $PRGNAM-$VERSION || cd $PKGNAM-$VERSION
 
