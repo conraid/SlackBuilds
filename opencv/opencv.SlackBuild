@@ -28,7 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=opencv
-VERSION=3.4.3
+VERSION=4.0.0
 BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -75,14 +75,11 @@ tar xvf $CWD/${PKGNAM}_contrib-$VERSION.tar.gz
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-# Apply patches
-for PATCH in $CWD/patches/*.patch; do
-  patch -p1 -i $PATCH
-done
+PYTHONPATH=`python3 -c "from sysconfig import get_path; print(get_path('platlib'))"`
 
 mkdir -p build
 cd build
-cmake \
+cmake -Wno-dev \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
@@ -92,30 +89,39 @@ cmake \
   -DBUILD_WITH_DEBUG_INFO=OFF \
   -DBUILD_TESTS=OFF \
   -DBUILD_PERF_TESTS=OFF \
-  -DBUILD_TIFF=ON \
-  -DBUILD_JPEG=ON \
-  -DBUILD_PROTOBUF=OFF \
-  -DBUILD_NEW_PYTHON_SUPPORT=ON \
-  -DENABLE_PRECOMPILED_HEADERS=OFF \
-  -DINSTALL_PYTHON_EXAMPLES=OFF \
+  -DBUILD_PROTOBUF=ON \
+  -DWITH_VTK=OFF \
+  -DWITH_CUDA=OFF \
+  -DWITH_QT=ON \
   -DWITH_GSTREAMER=ON \
   -DWITH_OPENCL=ON \
   -DWITH_OPENGL=ON \
   -DWITH_OPENMP=ON \
-  -DWITH_QT=ON \
   -DWITH_XINE=ON \
   -DWITH_FFMPEG=ON \
-  -DWITH_IPP=OFF \
-  -DWITH_LAPACK=OFF \
-  -DBUILD_PROTOBUF=ON \
+  -DWITH_PROTOBUF=ON \
+  -DWITH_GPHOTO2=ON \
+  -DWITH_LAPACK=ON \
+  -DWITH_TBB=ON \
   -DCPU_BASELINE_DISABLE=SSE41 \
   -DCPU_BASELINE_DISABLE=SSE42= \
   -DOPENCV_EXTRA_MODULES_PATH=../${PKGNAM}_contrib-$VERSION/modules \
+  -DOPENCV_SKIP_PYTHON_LOADER=ON \
+  -DOPENCV_PYTHON3_INSTALL_PATH=$PYTHONPATH \
+  -DOPENCV_GENERATE_PKGCONFIG=ON \
+  -DLAPACK_LIBRARIES="/usr/lib${LIBDIRSUFFIX}/liblapack.so;/usr/lib${LIBDIRSUFFIX}/libblas.so;/usr/lib${LIBDIRSUFFIX}/libcblas.so" \
+  -DLAPACK_CBLAS_H="/usr/include/cblas.h" \
+  -DLAPACK_LAPACKE_H="/usr/include/lapacke.h" \
   ${CONFSSE:=""} ..
 
 make
 make DESTDIR=$PKG install
 cd ..
+
+# install missing headers https://github.com/opencv/opencv/issues/13201
+for _module in imgcodecs videoio photo; do
+  cp -r modules/$_module/include/opencv2/$_module/legacy $PKG/usr/include/opencv4/opencv2/$_module
+done
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
