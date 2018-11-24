@@ -30,8 +30,8 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=sslh
-VERSION=1.19c
-BUILD=${BUILD:-2}
+VERSION=1.20
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -64,7 +64,7 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-v$VERSION || rm -rf $PKGNAM-$VERSION
+rm -rf $PKGNAM-v$VERSION $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$PKGNAM-v${VERSION}.tar.gz || tar xvf $CWD/v${VERSION}.tar.gz
 cd $PKGNAM-v$VERSION || cd $PKGNAM-$VERSION
 
