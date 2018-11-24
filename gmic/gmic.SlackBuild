@@ -30,9 +30,9 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=gmic
-SRCVERSION=2.4.1
+SRCVERSION=2.4.0
 VERSION=$SRCVERSION
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -70,20 +70,32 @@ cd $PKGNAM-$SRCVERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
+
 # Fix path
 sed -e "/^LIB/s/lib/lib$LIBDIRSUFFIX/" \
     -e "s|share/doc/gmic|doc/gmic-$VERSION|g" \
     -e 's|/share/man|/man|g' -i src/Makefile
 
+# fix opencv4
+sed -e 's/pkg-config opencv --libs ||//' -e 's/-lopencv_highgui/-lopencv_videoio/' \
+    -e 's/pkg-config opencv/pkg-config opencv4/' -i src/Makefile
+
 # Build library and command line
-make QMAKE=qmake CFLAGS="$SLKCFLAGS" WGET=/dev/true -C src cli lib libc
+make CFLAGS="$SLKCFLAGS" WGET=/dev/true -C src cli lib libc
 
 # Build plugins
 if [ -x /usr/bin/qmake-qt5 ]; then
+  VERSION=${VERSION}_qt5
   cd gmic-qt
   for PLUGIN_TYPE in none gimp krita; do
     # Use qmake here because fftw cmake is wrong
-    qmake-qt5 QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" WGET=/dev/true GMIC_PATH=../src GMIC_DYNAMIC_LINKING=on HOST=$PLUGIN_TYPE
+    qmake-qt5 QMAKE_CXXFLAGS="-DOPENCV2_HEADERS" QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS -DOPENCV2_HEADERS" WGET=/dev/true GMIC_PATH=../src GMIC_DYNAMIC_LINKING=on HOST=$PLUGIN_TYPE
     make
   done
   cd ..
@@ -91,7 +103,7 @@ fi
 
 # Build zart
 cd zart
-qmake PREFIX=/usr QMAKE_CFLAGS="$SLKCFLAGS" QMAKE_CXXFLAGS="$SLKCFLAGS" QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" GMIC_DYNAMIC_LINKING=on GMIC_PATH=../src -o Makefile zart.pro
+qmake PREFIX=/usr QMAKE_CFLAGS="$SLKCFLAGS" QMAKE_CXXFLAGS="$SLKCFLAGS -DOPENCV2_HEADERS" QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS -DOPENCV2_HEADERS" GMIC_DYNAMIC_LINKING=on GMIC_PATH=../src -o Makefile zart.pro
 make
 cd ..
 
