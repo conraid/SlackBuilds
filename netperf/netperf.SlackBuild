@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=netperf
 VERSION=2.7.0
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -62,7 +62,7 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION || rm -rf $PKGNAM-$PKGNAM-$VERSION
+rm -rf *$PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$PKGNAM-$PKGNAM-$VERSION.tar.gz
 cd $PKGNAM-$VERSION || cd $PKGNAM-$PKGNAM-$VERSION
 
