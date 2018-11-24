@@ -271,10 +271,10 @@ SLACKBUILD SHORT DESCRIPTION:  barnyard2 (Snort output processor)
 SLACKBUILD NAME: bash-language-server
 SLACKBUILD LOCATION: ./bash-language-server
 SLACKBUILD FILES: README bash-language-server.SlackBuild bash-language-server.info slack-desc
-SLACKBUILD VERSION: 1.5.3
+SLACKBUILD VERSION: 1.5.5
 SLACKBUILD REQUIRED: node
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/bash-language-server/-/bash-language-server-1.5.3.tgz
-SLACKBUILD MD5SUM: 8e44a797fd9b9d4801cda8062e052c52
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/bash-language-server/-/bash-language-server-1.5.5.tgz
+SLACKBUILD MD5SUM: b04d52afa9cd222872bd358f1836071d
 SLACKBUILD SHORT DESCRIPTION:  bash-language-server (A language server for Bash)
 
 SLACKBUILD NAME: bashdb
@@ -721,10 +721,10 @@ SLACKBUILD SHORT DESCRIPTION:  cryfs (Cryptographic filesystem for the cloud)
 SLACKBUILD NAME: cryptography
 SLACKBUILD LOCATION: ./cryptography
 SLACKBUILD FILES: README cryptography.SlackBuild cryptography.info slack-desc
-SLACKBUILD VERSION: 2.4.1
+SLACKBUILD VERSION: 2.4.2
 SLACKBUILD REQUIRED: cffi pyasn1 asn1crypto
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/cryptography/cryptography-2.4.1.tar.gz
-SLACKBUILD MD5SUM: 464f180ff64622760cca7167f97b3ff4
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/cryptography/cryptography-2.4.2.tar.gz
+SLACKBUILD MD5SUM: 26bad6a40a373e2ad43dfa13dc4b162b
 SLACKBUILD SHORT DESCRIPTION:  cryptography (Python cryptography library)
 
 SLACKBUILD NAME: cryptopp
@@ -1314,11 +1314,11 @@ SLACKBUILD SHORT DESCRIPTION:  gitpython (Python git library)
 
 SLACKBUILD NAME: gmic
 SLACKBUILD LOCATION: ./gmic
-SLACKBUILD FILES: README gmic.SlackBuild gmic.info slack-desc
-SLACKBUILD VERSION: 2.4.1
+SLACKBUILD FILES: README gmic.SlackBuild gmic.info patches/gmic-opencv4.patch patches/zart-opencv4.patch slack-desc
+SLACKBUILD VERSION: 2.4.0
 SLACKBUILD REQUIRED: opencv graphicsmagick cimg
-SLACKBUILD DOWNLOAD: http://gmic.eu/files/source/gmic_2.4.1.tar.gz
-SLACKBUILD MD5SUM: f5e69b94a0bc559e0cf29efb95bb277c
+SLACKBUILD DOWNLOAD: http://gmic.eu/files/source/gmic_2.4.0.tar.gz
+SLACKBUILD MD5SUM: 038d31774030e154c344a26facf383cf
 SLACKBUILD SHORT DESCRIPTION:  GMIC (Image converter and gimp plugin)
 
 SLACKBUILD NAME: gnome-python-gconf
@@ -1406,7 +1406,7 @@ SLACKBUILD NAME: gtk-vnc
 SLACKBUILD LOCATION: ./gtk-vnc
 SLACKBUILD FILES: README gtk-vnc.SlackBuild gtk-vnc.info slack-desc
 SLACKBUILD VERSION: 0.7.1
-SLACKBUILD REQUIRED: vala
+SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://ftp.gnome.org/pub/gnome/sources/gtk-vnc/0.7/gtk-vnc-0.7.1.tar.xz
 SLACKBUILD MD5SUM: 474644cfaf9c65d800c51d009bd32408
 SLACKBUILD SHORT DESCRIPTION:  gtk-vnc (VNC viewer widget for GTK)
@@ -1531,10 +1531,10 @@ SLACKBUILD SHORT DESCRIPTION:  ht (Hex editor and debugger)
 SLACKBUILD NAME: http-parser
 SLACKBUILD LOCATION: ./http-parser
 SLACKBUILD FILES: README http-parser.SlackBuild http-parser.info slack-desc
-SLACKBUILD VERSION: 2.8.0
+SLACKBUILD VERSION: 2.8.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/joyent/http-parser/archive/v2.8.0.tar.gz
-SLACKBUILD MD5SUM: 43ea1e49447aa0be4ed6adc6cf300a38
+SLACKBUILD DOWNLOAD: https://github.com/joyent/http-parser/archive/v2.8.1.tar.gz
+SLACKBUILD MD5SUM: cb8cbe17d68c4101eebe80229e32efdb
 SLACKBUILD SHORT DESCRIPTION:  http-parser (http request/response parser for c )
 
 SLACKBUILD NAME: httperf
@@ -2387,7 +2387,7 @@ SLACKBUILD NAME: libosinfo
 SLACKBUILD LOCATION: ./libosinfo
 SLACKBUILD FILES: README libosinfo.SlackBuild libosinfo.info patches/add_slackware_data.patch slack-desc
 SLACKBUILD VERSION: 1.1.0
-SLACKBUILD REQUIRED: vala osinfo-db
+SLACKBUILD REQUIRED: osinfo-db
 SLACKBUILD DOWNLOAD: https://releases.pagure.org/libosinfo/libosinfo-1.1.0.tar.gz
 SLACKBUILD MD5SUM: e7d98c72a643315af36dae7832aff80b
 SLACKBUILD SHORT DESCRIPTION:  libosinfo (operating systems library)
@@ -2513,7 +2513,7 @@ SLACKBUILD NAME: libvirt-glib
 SLACKBUILD LOCATION: ./libvirt-glib
 SLACKBUILD FILES: README libvirt-glib.SlackBuild libvirt-glib.info slack-desc
 SLACKBUILD VERSION: 2.0.0
-SLACKBUILD REQUIRED: libvirt vala
+SLACKBUILD REQUIRED: libvirt
 SLACKBUILD DOWNLOAD: ftp://libvirt.org/libvirt/glib/libvirt-glib-2.0.0.tar.gz
 SLACKBUILD MD5SUM: b470b5524c29b61a8ce8e0d094e6c835
 SLACKBUILD SHORT DESCRIPTION:  libvirt-glib (glib wrapper for libvirt)
@@ -3025,10 +3025,10 @@ SLACKBUILD SHORT DESCRIPTION:  neovim (Vim-fork focused on extensibility and agi
 SLACKBUILD NAME: netdata
 SLACKBUILD LOCATION: ./netdata
 SLACKBUILD FILES: README doinst.sh files/netdata.conf files/rc.netdata netdata.SlackBuild netdata.info slack-desc
-SLACKBUILD VERSION: 1.11.0
+SLACKBUILD VERSION: 1.11.1
 SLACKBUILD REQUIRED: node psycopg2
-SLACKBUILD DOWNLOAD: https://github.com/netdata/netdata/releases/download/v1.11.0/netdata-v1.11.0.tar.gz
-SLACKBUILD MD5SUM: ffb98579daa954b5a38c7beb659eba01
+SLACKBUILD DOWNLOAD: https://github.com/netdata/netdata/releases/download/v1.11.1/netdata-v1.11.1.tar.gz
+SLACKBUILD MD5SUM: b87f907da365dd7bfd2dd53596343e75
 SLACKBUILD SHORT DESCRIPTION:  netdata (Real-time performance monitoring)
 
 SLACKBUILD NAME: nethogs
@@ -3160,10 +3160,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-csscomb (CSS coding style formatter)
 SLACKBUILD NAME: node-doctoc
 SLACKBUILD LOCATION: ./node-doctoc
 SLACKBUILD FILES: README node-doctoc.SlackBuild node-doctoc.info slack-desc
-SLACKBUILD VERSION: 1.3.1
+SLACKBUILD VERSION: 1.4.0
 SLACKBUILD REQUIRED: node
-SLACKBUILD DOWNLOAD: https://github.com/thlorenz/doctoc/archive/v1.3.1.tar.gz
-SLACKBUILD MD5SUM: 5826623b514c6096f6b655a0c8121b05
+SLACKBUILD DOWNLOAD: https://github.com/thlorenz/doctoc/archive/v1.4.0.tar.gz
+SLACKBUILD MD5SUM: 9329eccef8d047f2d728bf2ae3e55623
 SLACKBUILD SHORT DESCRIPTION:  node-doctoc (Generates table of contents for markdown files)
 
 SLACKBUILD NAME: node-fs-extra
@@ -3402,11 +3402,11 @@ SLACKBUILD SHORT DESCRIPTION:  OpenAL Soft (a cross-platform 3D audio API)
 
 SLACKBUILD NAME: opencv
 SLACKBUILD LOCATION: ./opencv
-SLACKBUILD FILES: README opencv.SlackBuild opencv.info patches/uppercase.patch slack-desc
-SLACKBUILD VERSION: 3.4.3
-SLACKBUILD REQUIRED: protobuf leptonica tesseract numpy
-SLACKBUILD DOWNLOAD: https://github.com/opencv/opencv/archive/3.4.3.tar.gz
-SLACKBUILD MD5SUM: 712896f5815938c014c199dde142d508
+SLACKBUILD FILES: README opencv.SlackBuild opencv.info slack-desc
+SLACKBUILD VERSION: 4.0.0
+SLACKBUILD REQUIRED: leptonica tesseract numpy libdc1394
+SLACKBUILD DOWNLOAD: https://github.com/opencv/opencv/archive/4.0.0.tar.gz
+SLACKBUILD MD5SUM: f051c1ff7b327b60123d71b53801b316
 SLACKBUILD SHORT DESCRIPTION:  OpenCV (Open Source Computer Vision)
 
 SLACKBUILD NAME: openjpeg1
@@ -3655,10 +3655,10 @@ SLACKBUILD SHORT DESCRIPTION:  perl-net-ssleay (Perl module for using OpenSSL)
 SLACKBUILD NAME: php-apcu
 SLACKBUILD LOCATION: ./php-apcu
 SLACKBUILD FILES: README doinst.sh files/apcu.ini php-apcu.SlackBuild php-apcu.info slack-desc
-SLACKBUILD VERSION: 5.1.13
+SLACKBUILD VERSION: 5.1.14
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://pecl.php.net/get/apcu-5.1.13.tgz
-SLACKBUILD MD5SUM: 75f7424bfc2560353df2b64b7241eb62
+SLACKBUILD DOWNLOAD: http://pecl.php.net/get/apcu-5.1.14.tgz
+SLACKBUILD MD5SUM: 785f6f8359a403fc73abc21bb6a5287d
 SLACKBUILD SHORT DESCRIPTION:  php-apc (APC Alternative PHP Cache)
 
 SLACKBUILD NAME: php-codesniffer
@@ -4366,10 +4366,10 @@ SLACKBUILD SHORT DESCRIPTION:  reaver (Brute force attack against Wifi Protected
 SLACKBUILD NAME: redis
 SLACKBUILD LOCATION: ./redis
 SLACKBUILD FILES: README doinst.sh files/rc.redis files/redis.logrotate patches/jemallochiredis.patch redis.SlackBuild redis.info slack-desc
-SLACKBUILD VERSION: 5.0.1
+SLACKBUILD VERSION: 5.0.2
 SLACKBUILD REQUIRED: hiredis
-SLACKBUILD DOWNLOAD: http://download.redis.io/releases/redis-5.0.1.tar.gz
-SLACKBUILD MD5SUM: 78bdba0e6caf9ba56af1054627b592f0
+SLACKBUILD DOWNLOAD: http://download.redis.io/releases/redis-5.0.2.tar.gz
+SLACKBUILD MD5SUM: 6161fbcbd6f7ee889f8057235de7371d
 SLACKBUILD SHORT DESCRIPTION:  Redis (Key-Value Store)
 
 SLACKBUILD NAME: reportlab
@@ -4799,7 +4799,7 @@ SLACKBUILD NAME: spice-gtk
 SLACKBUILD LOCATION: ./spice-gtk
 SLACKBUILD FILES: README slack-desc spice-gtk.SlackBuild spice-gtk.info
 SLACKBUILD VERSION: 0.35
-SLACKBUILD REQUIRED: vala spice usbredir
+SLACKBUILD REQUIRED: spice usbredir
 SLACKBUILD DOWNLOAD: https://www.spice-space.org/download/gtk/spice-gtk-0.35.tar.bz2
 SLACKBUILD MD5SUM: a8c919ee4a48dfeab619deb70900d788
 SLACKBUILD SHORT DESCRIPTION:  spice-gtk (spice gtk client/libraries)
@@ -4924,10 +4924,10 @@ SLACKBUILD SHORT DESCRIPTION:  sshrc (remote custom shell configuration)
 SLACKBUILD NAME: sslh
 SLACKBUILD LOCATION: ./sslh
 SLACKBUILD FILES: README doinst.sh files/COPYING rc.sslh slack-desc sslh.SlackBuild sslh.info
-SLACKBUILD VERSION: 1.19c
+SLACKBUILD VERSION: 1.20
 SLACKBUILD REQUIRED: libconfig
-SLACKBUILD DOWNLOAD: https://github.com/yrutschle/sslh/archive/v1.19c.tar.gz
-SLACKBUILD MD5SUM: 366b53060fa74199807888e91a06f5ab
+SLACKBUILD DOWNLOAD: https://github.com/yrutschle/sslh/archive/v1.20.tar.gz
+SLACKBUILD MD5SUM: 0db26ed2825b1ef6c83959a988279912
 SLACKBUILD SHORT DESCRIPTION:  sslh (SSL/SSH/OpenVPN/XMPP/tinc port multiplexer)
 
 SLACKBUILD NAME: sslsplit
@@ -4969,10 +4969,10 @@ SLACKBUILD SHORT DESCRIPTION:  tbb (Intel Threading Building Blocks)
 SLACKBUILD NAME: tcpflow
 SLACKBUILD LOCATION: ./tcpflow
 SLACKBUILD FILES: README slack-desc tcpflow.SlackBuild tcpflow.info
-SLACKBUILD VERSION: 1.5.0
+SLACKBUILD VERSION: 1.5.2
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://digitalcorpora.org/downloads/tcpflow/tcpflow-1.5.0.tar.gz
-SLACKBUILD MD5SUM: a2fa359d2f8b74297d276771f2f805ce
+SLACKBUILD DOWNLOAD: https://github.com/simsong/tcpflow/archive/tcpflow-1.5.2.tar.gz
+SLACKBUILD MD5SUM: ad22136f088bf35c6083f782fd7a5c21
 SLACKBUILD SHORT DESCRIPTION:  tcpflow (TCP/IP session demultiplexer)
 
 SLACKBUILD NAME: tcpick
@@ -5361,15 +5361,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: ftp://ftp.ossp.org/pkg/lib/uuid/uuid-1.6.2.tar.gz
 SLACKBUILD MD5SUM: 5db0d43a9022a6ebbbc25337ae28942f
 SLACKBUILD SHORT DESCRIPTION:  uuid (OSSP Universally Unique Identifier)
-
-SLACKBUILD NAME: vala
-SLACKBUILD LOCATION: ./vala
-SLACKBUILD FILES: README slack-desc vala.SlackBuild vala.info
-SLACKBUILD VERSION: 0.42.3
-SLACKBUILD REQUIRED: graphviz
-SLACKBUILD DOWNLOAD: http://download.gnome.org/sources/vala/0.42/vala-0.42.3.tar.xz
-SLACKBUILD MD5SUM: 6fdd6fadbef27e3dd05086d6a3220556
-SLACKBUILD SHORT DESCRIPTION:  vala (Compiler for the GObject type system)
 
 SLACKBUILD NAME: valgrind
 SLACKBUILD LOCATION: ./valgrind
@@ -5770,10 +5761,10 @@ SLACKBUILD SHORT DESCRIPTION:  yersinia
 SLACKBUILD NAME: youtube-dl
 SLACKBUILD LOCATION: ./youtube-dl
 SLACKBUILD FILES: README patches/slack.patch slack-desc youtube-dl.SlackBuild youtube-dl.info
-SLACKBUILD VERSION: 2018.11.18
+SLACKBUILD VERSION: 2018.11.23
 SLACKBUILD REQUIRED: rtmpdump
-SLACKBUILD DOWNLOAD: https://yt-dl.org/downloads/2018.11.18/youtube-dl-2018.11.18.tar.gz
-SLACKBUILD MD5SUM: f66ab6c0fbcbeab2a2fadd68b03b4c26
+SLACKBUILD DOWNLOAD: https://yt-dl.org/downloads/2018.11.23/youtube-dl-2018.11.23.tar.gz
+SLACKBUILD MD5SUM: 0a2de26557fb1cd16aaa677c16802df8
 SLACKBUILD SHORT DESCRIPTION:  youtube-dl (YouTube video download utility)
 
 SLACKBUILD NAME: zenity
