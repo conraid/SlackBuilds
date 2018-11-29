@@ -26,15 +26,15 @@
 set -eu
 
 PKGNAM=pmacct
-VERSION=1.7.1
-BUILD=${BUILD:-3}
+VERSION=1.7.2
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 CWD=$(pwd)
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="AUTHORS CONFIG-KEYS COPYING ChangeLog FAQS INSTALL QUICKSTART TOOLS UPGRADE examples"
+DOCFILES="AUTHORS CONFIG-KEYS COPYING ChangeLog FAQS INSTALL QUICKSTART UPGRADE examples"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -83,14 +83,15 @@ CXXFLAGS="$SLKCFLAGS" \
   --sysconfdir=/etc \
   --localstatedir=/var \
   --enable-mysql \
+  --enable-pgsql \
   --enable-sqlite3 \
   --enable-plabel \
-  --enable-threads \
   --enable-geoipv2 \
   --enable-jansson \
   --enable-static=no \
   --enable-shared=yes \
   --enable-nflog \
+  --enable-zmq \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
@@ -113,7 +114,7 @@ install -Dm644 sql/*.sqlite3 $PKG/usr/share/pmacct/sqlite3/
 install -Dm755 $CWD/rc.pmacctd $PKG/etc/rc.d/rc.pmacctd.new
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
