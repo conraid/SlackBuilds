@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PKGNAM=collectd
 VERSION=5.8.1
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,10 +72,12 @@ chmod -R u+w,go+r-w,a+X-s .
 
 sed 's|@prefix@/var|/var|g' -i src/collectd.conf.*
 
-
-# Disable ls_sensors because not supported yet 3.5.0
-# See https://github.com/collectd/collectd/issues/3006
-SENSORS=disable
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
 
 autoreconf -if
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
@@ -97,7 +99,6 @@ LIBS="-lpthread" \
   --enable-lua \
   --enable-dbi \
   --disable-werror \
-  --$SENSORS-sensors \
   --with-perl-bindings="INSTALLDIRS=vendor INSTALLVENDORMAN3DIR=/usr/man/man3" \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
