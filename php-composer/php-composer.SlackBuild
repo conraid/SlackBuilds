@@ -31,7 +31,7 @@ CWD=$(pwd)
 
 PKGNAM=php-composer
 VERSION=1.7.3
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -41,14 +41,13 @@ ARCH=noarch
 mkdir -p $OUTPUT
 rm -rf $PKG
 
-mkdir -p $PKG/usr/bin
 install -Dm755 $CWD/composer.phar $PKG/usr/bin/composer
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cat $CWD/LICENSE > $PKG/usr/doc/$PKGNAM-$VERSION/LICENSE 
+cat $CWD/LICENSE > $PKG/usr/doc/$PKGNAM-$VERSION/LICENSE
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
