@@ -30,7 +30,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=hashcat
-VERSION=5.0.0
+VERSION=5.1.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -71,22 +71,18 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-
-# Install opencl-headers and xxhash from git
-cd deps/git
-git clone https://github.com/KhronosGroup/OpenCL-Headers.git
-cd OpenCL-Headers; git checkout d516924; cd -
-git clone https://github.com/Cyan4973/xxHash.git
-cd xxHash; git checkout 0f2dd4a; cd -
-cd ../..
-
 # USE $SLKCFLAGS
 sed "s/-pipe/-pipe $SLKCFLAGS/" -i src/Makefile
 
-MAKE_OPTIONS="PREFIX=/usr SHARED=1 LIBRARY_FOLDER=/usr/lib$LIBDIRSUFFIX VERSION_TAG=v$VERSION"
+MAKE_OPTIONS="PREFIX=/usr \
+              SHARED=1 \
+              LIBRARY_FOLDER=/usr/lib$LIBDIRSUFFIX \
+              DOCUMENT_FOLDER=/usr/doc/$PKGNAM-$VERSION \
+              USE_SYSTEM_OPENCL=1 \
+              USE_SYSTEM_XXHASH=1"
 
 make $MAKE_OPTIONS
-make $MAKE_OPTIONS DOCUMENT_FOLDER=/usr/doc/$PKGNAM-$VERSION DESTDIR=$PKG install
+make $MAKE_OPTIONS DESTDIR=$PKG install
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
