@@ -200,7 +200,7 @@ SLACKBUILD NAME: atom
 SLACKBUILD LOCATION: ./atom
 SLACKBUILD FILES: README atom.SlackBuild atom.info doinst.sh slack-desc
 SLACKBUILD VERSION: 1.33.0
-SLACKBUILD REQUIRED: grunt-cli node-fs-extra node-mksnapshot trash-cli
+SLACKBUILD REQUIRED: grunt-cli node-fs-extra trash-cli
 SLACKBUILD DOWNLOAD: https://github.com/atom/atom/archive/v1.33.0.tar.gz
 SLACKBUILD MD5SUM: ec110246bfd5ca4fd1cddedf4b7e479b
 SLACKBUILD SHORT DESCRIPTION:  atom (text editor)
@@ -3688,15 +3688,6 @@ SLACKBUILD DOWNLOAD: https://github.com/nikic/php-ast/archive/v1.0.0.tar.gz
 SLACKBUILD MD5SUM: c613d50796ccf9ed0f9d842c764db7b8
 SLACKBUILD SHORT DESCRIPTION:  php-ast (Extension exposing PHP 7 abstract syntax tree)
 
-SLACKBUILD NAME: php-codesniffer
-SLACKBUILD LOCATION: ./php-codesniffer
-SLACKBUILD FILES: README files/phpcbf.1.gz files/phpcs.1.gz php-codesniffer.SlackBuild php-codesniffer.info slack-desc
-SLACKBUILD VERSION: 3.3.2
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://download.pear.php.net/package/PHP_CodeSniffer-3.3.2.tgz
-SLACKBUILD MD5SUM: 3ab3afdcc07b7309fc3877b3815149e5
-SLACKBUILD SHORT DESCRIPTION:  PHP_CodeSniffer (tokenizes PHP, JavaScript and CSS)
-
 SLACKBUILD NAME: php-composer
 SLACKBUILD LOCATION: ./php-composer
 SLACKBUILD FILES: LICENSE README php-composer.SlackBuild php-composer.info slack-desc
@@ -3760,15 +3751,6 @@ SLACKBUILD DOWNLOAD: https://xdebug.org/files/xdebug-2.6.1.tgz
 SLACKBUILD MD5SUM: 35cc0f2e8b7d40556a9ad9afd9c49aee
 SLACKBUILD SHORT DESCRIPTION:  php-xdebug (debug extension for php)
 
-SLACKBUILD NAME: phpcompatibility
-SLACKBUILD LOCATION: ./phpcompatibility
-SLACKBUILD FILES: README phpcompatibility.SlackBuild phpcompatibility.info slack-desc
-SLACKBUILD VERSION: 9.0.0
-SLACKBUILD REQUIRED: php-codesniffer
-SLACKBUILD DOWNLOAD: https://github.com/wimg/PHPCompatibility/archive/9.0.0.tar.gz
-SLACKBUILD MD5SUM: df5c5c8acc809cb03584b184229bd055
-SLACKBUILD SHORT DESCRIPTION:  phpcompatibility (PHP Compatibility check for PHP_CodeSniffer)
-
 SLACKBUILD NAME: phpdocumentor
 SLACKBUILD LOCATION: ./phpdocumentor
 SLACKBUILD FILES: README phpdocumentor.SlackBuild phpdocumentor.info slack-desc
@@ -3808,10 +3790,10 @@ SLACKBUILD SHORT DESCRIPTION:  phpunit-skelgen (skeleton test classes  for phpun
 SLACKBUILD NAME: phpunit
 SLACKBUILD LOCATION: ./phpunit
 SLACKBUILD FILES: README files/LICENSE phpunit.SlackBuild phpunit.info slack-desc
-SLACKBUILD VERSION: 7.5.0
+SLACKBUILD VERSION: 7.5.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://phar.phpunit.de/phpunit-7.5.0.phar
-SLACKBUILD MD5SUM: aa51a52da5f6f6e7fbdbc9f4cb970222
+SLACKBUILD DOWNLOAD: https://phar.phpunit.de/phpunit-7.5.1.phar
+SLACKBUILD MD5SUM: 4f3421546aac9bfa7a85053f34d6269c
 SLACKBUILD SHORT DESCRIPTION:  phpunit (testing framework for PHP)
 
 SLACKBUILD NAME: pixiewps
@@ -4123,10 +4105,10 @@ SLACKBUILD SHORT DESCRIPTION:  pyte (Simple VTXXX-compatible linux terminal emul
 SLACKBUILD NAME: python-bcrypt
 SLACKBUILD LOCATION: ./python-bcrypt
 SLACKBUILD FILES: README python-bcrypt.SlackBuild python-bcrypt.info slack-desc
-SLACKBUILD VERSION: 3.1.4
+SLACKBUILD VERSION: 3.1.5
 SLACKBUILD REQUIRED: cffi
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/bcrypt/bcrypt-3.1.4.tar.gz
-SLACKBUILD MD5SUM: 8408abc974446e64862a9742104e97b6
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/bcrypt/bcrypt-3.1.5.tar.gz
+SLACKBUILD MD5SUM: 7b441a7cdabf6d6f8ad44af2c0a91ab6
 SLACKBUILD SHORT DESCRIPTION:  python-bcrypt (password hashing)
 
 SLACKBUILD NAME: python-keyring
@@ -4302,11 +4284,11 @@ SLACKBUILD SHORT DESCRIPTION:  qdirstat (Qt-based directory statistics)
 
 SLACKBUILD NAME: qemu
 SLACKBUILD LOCATION: ./qemu
-SLACKBUILD FILES: README files/65-kvm.rules patches/allow_elf64.patch patches/db812c4073c77c8a64db8d6663b3416a587c7b4a.patch qemu.SlackBuild qemu.info slack-desc
-SLACKBUILD VERSION: 3.0.0
+SLACKBUILD FILES: README files/65-kvm.rules qemu.SlackBuild qemu.info slack-desc
+SLACKBUILD VERSION: 3.1.0
 SLACKBUILD REQUIRED: device-tree-compiler libcacard libnfs libseccomp usbredir vde2 virglrenderer spice spice-protocol
-SLACKBUILD DOWNLOAD: http://download.qemu-project.org/qemu-3.0.0.tar.xz
-SLACKBUILD MD5SUM: 6a5c8df583406ea24ef25b239c3243e0
+SLACKBUILD DOWNLOAD: http://download.qemu-project.org/qemu-3.1.0.tar.xz
+SLACKBUILD MD5SUM: fb687ce0b02d3bf4327e36d3b99427a8
 SLACKBUILD SHORT DESCRIPTION:  qemu (open source processor emulator)
 
 SLACKBUILD NAME: qoauth
@@ -4393,10 +4375,10 @@ SLACKBUILD SHORT DESCRIPTION:  reaver (Brute force attack against Wifi Protected
 SLACKBUILD NAME: redis
 SLACKBUILD LOCATION: ./redis
 SLACKBUILD FILES: README doinst.sh files/rc.redis files/redis.logrotate patches/jemallochiredis.patch redis.SlackBuild redis.info slack-desc
-SLACKBUILD VERSION: 5.0.2
+SLACKBUILD VERSION: 5.0.3
 SLACKBUILD REQUIRED: hiredis
-SLACKBUILD DOWNLOAD: http://download.redis.io/releases/redis-5.0.2.tar.gz
-SLACKBUILD MD5SUM: 6161fbcbd6f7ee889f8057235de7371d
+SLACKBUILD DOWNLOAD: http://download.redis.io/releases/redis-5.0.3.tar.gz
+SLACKBUILD MD5SUM: aee2e1d0e50f87d6c21abef1c45f9767
 SLACKBUILD SHORT DESCRIPTION:  Redis (Key-Value Store)
 
 SLACKBUILD NAME: reportlab
@@ -4561,15 +4543,6 @@ SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/scribus/scribus-1.4.7.tar.
 SLACKBUILD MD5SUM: ddd89731f97c7819fdd2c2e5ad6f016b
 SLACKBUILD SHORT DESCRIPTION:  Scribus (open-source professional page layout program)
 
-SLACKBUILD NAME: seahorse
-SLACKBUILD LOCATION: ./seahorse
-SLACKBUILD FILES: README doinst.sh seahorse.SlackBuild seahorse.info slack-desc
-SLACKBUILD VERSION: 3.20.0
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://download.gnome.org/sources/seahorse/3.20/seahorse-3.20.0.tar.xz
-SLACKBUILD MD5SUM: 06cdf9805d9d1adddd0140d13f1bd234
-SLACKBUILD SHORT DESCRIPTION:  seahorse (encryption made easy)
-
 SLACKBUILD NAME: secretstorage
 SLACKBUILD LOCATION: ./secretstorage
 SLACKBUILD FILES: README secretstorage.SlackBuild secretstorage.info slack-desc
@@ -4618,28 +4591,28 @@ SLACKBUILD SHORT DESCRIPTION:  setuptools-scm (manage versions by scm tags)
 SLACKBUILD NAME: shorewall-core
 SLACKBUILD LOCATION: ./shorewall-core
 SLACKBUILD FILES: PKGNOTE README doinst.sh shorewall-core.SlackBuild shorewall-core.info slack-desc
-SLACKBUILD VERSION: 5.2.1.2
+SLACKBUILD VERSION: 5.2.1.3
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.shorewall.org/pub/shorewall/5.2/shorewall-5.2.1/shorewall-core-5.2.1.2.tar.bz2
-SLACKBUILD MD5SUM: ef81c61a99f04b8a1f6653b319856328
+SLACKBUILD DOWNLOAD: http://www.shorewall.org/pub/shorewall/5.2/shorewall-5.2.1/shorewall-core-5.2.1.3.tar.bz2
+SLACKBUILD MD5SUM: 981993a29c8243f303eff8461453d287
 SLACKBUILD SHORT DESCRIPTION:  Shorewall-core (Core Shorewall libraries)
 
 SLACKBUILD NAME: shorewall
 SLACKBUILD LOCATION: ./shorewall
 SLACKBUILD FILES: PKGNOTE README doinst.sh shorewall.SlackBuild shorewall.info slack-desc
-SLACKBUILD VERSION: 5.2.1.2
+SLACKBUILD VERSION: 5.2.1.3
 SLACKBUILD REQUIRED: shorewall-core
-SLACKBUILD DOWNLOAD: http://www.shorewall.org/pub/shorewall/5.2/shorewall-5.2.1/shorewall-5.2.1.2.tar.bz2
-SLACKBUILD MD5SUM: 1d9ac8807f7a411b31934cd6f68c375e
+SLACKBUILD DOWNLOAD: http://www.shorewall.org/pub/shorewall/5.2/shorewall-5.2.1/shorewall-5.2.1.3.tar.bz2
+SLACKBUILD MD5SUM: 1699adbe27517cff63be775986b9617d
 SLACKBUILD SHORT DESCRIPTION:  Shorewall (An iptables-based firewall for Linux systems)
 
 SLACKBUILD NAME: shorewall6
 SLACKBUILD LOCATION: ./shorewall6
 SLACKBUILD FILES: PKGNOTE README doinst.sh shorewall6.SlackBuild shorewall6.info slack-desc
-SLACKBUILD VERSION: 5.2.1.2
+SLACKBUILD VERSION: 5.2.1.3
 SLACKBUILD REQUIRED: shorewall-core
-SLACKBUILD DOWNLOAD: http://www.shorewall.org/pub/shorewall/5.2/shorewall-5.2.1/shorewall6-5.2.1.2.tar.bz2
-SLACKBUILD MD5SUM: 35869acfd97d2d47df7df34b3ddec659
+SLACKBUILD DOWNLOAD: http://www.shorewall.org/pub/shorewall/5.2/shorewall-5.2.1/shorewall6-5.2.1.3.tar.bz2
+SLACKBUILD MD5SUM: b1243693cd28a780c5dc52b28d5c9e1a
 SLACKBUILD SHORT DESCRIPTION:  Shorewall6 (An IPv6 iptables-based firewall for Linux systems)
 
 SLACKBUILD NAME: siege
@@ -5595,15 +5568,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/wake-on-lan/wol/0.7.1/wol-0.7.1.tar.gz
 SLACKBUILD MD5SUM: c2fa9d7e771134ac8c89d56b8197d4ca
 SLACKBUILD SHORT DESCRIPTION:  wol (Wake On Lan)
-
-SLACKBUILD NAME: wordpress-coding-standards
-SLACKBUILD LOCATION: ./wordpress-coding-standards
-SLACKBUILD FILES: PKGNOTE README slack-desc wordpress-coding-standards.SlackBuild wordpress-coding-standards.info
-SLACKBUILD VERSION: 1.2.0
-SLACKBUILD REQUIRED: php-codesniffer
-SLACKBUILD DOWNLOAD: https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/archive/1.2.0.tar.gz
-SLACKBUILD MD5SUM: d0b144f2e537bb358de27bd2b2a1182f
-SLACKBUILD SHORT DESCRIPTION:  wordpress-coding-standards (PHP_CodeSniffer WordPress conventions)
 
 SLACKBUILD NAME: wp-cli
 SLACKBUILD LOCATION: ./wp-cli
