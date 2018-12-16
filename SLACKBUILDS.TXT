@@ -25,6 +25,15 @@ SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/acpitool/acpitool/
 SLACKBUILD MD5SUM: 9e4ec55201be0be71ffbc56d38b42b57
 SLACKBUILD SHORT DESCRIPTION:  acpitool (Configuration and Power Interface client Linux)
 
+SLACKBUILD NAME: adns
+SLACKBUILD LOCATION: ./adns
+SLACKBUILD FILES: README adns.SlackBuild adns.info slack-desc
+SLACKBUILD VERSION: 1.5.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://www.chiark.greenend.org.uk/~ian/adns/ftp/adns-1.5.1.tar.gz
+SLACKBUILD MD5SUM: 88bc7bbf3f62a8d4fb186b8f72ead853
+SLACKBUILD SHORT DESCRIPTION:  adns (asyncronous resolver library)
+
 SLACKBUILD NAME: afflib
 SLACKBUILD LOCATION: ./afflib
 SLACKBUILD FILES: README afflib.SlackBuild afflib.info slack-desc
@@ -105,6 +114,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://www.winfield.demon.nl/linux/antiword-0.37.tar.gz
 SLACKBUILD MD5SUM: f868e2a269edcbc06bf77e89a55898d1
 SLACKBUILD SHORT DESCRIPTION:  antiword (a free MS Word reader)
+
+SLACKBUILD NAME: apachetop
+SLACKBUILD LOCATION: ./apachetop
+SLACKBUILD FILES: README apachetop.SlackBuild apachetop.info slack-desc
+SLACKBUILD VERSION: 0.18.4
+SLACKBUILD REQUIRED: adns
+SLACKBUILD DOWNLOAD: https://github.com/tessus/apachetop/releases/download/0.18.4/apachetop-0.18.4.tar.gz
+SLACKBUILD MD5SUM: d3466777b9b61685d96509bc76fbc1ee
+SLACKBUILD SHORT DESCRIPTION:  apachetop (real time apache monitoring tool)
 
 SLACKBUILD NAME: apngasm
 SLACKBUILD LOCATION: ./apngasm
@@ -379,10 +397,10 @@ SLACKBUILD SHORT DESCRIPTION:  browser-sync (Live CSS Reload & Browser Syncing f
 SLACKBUILD NAME: bundler
 SLACKBUILD LOCATION: ./bundler
 SLACKBUILD FILES: README bundler.SlackBuild bundler.info slack-desc
-SLACKBUILD VERSION: 1.16.6
+SLACKBUILD VERSION: 1.17.2
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://rubygems.org/downloads/bundler-1.16.6.gem
-SLACKBUILD MD5SUM: 637976fc54aa60880166207450a01931
+SLACKBUILD DOWNLOAD: https://rubygems.org/downloads/bundler-1.17.2.gem
+SLACKBUILD MD5SUM: 06c603a6f6f11cf6e28723515be8814f
 SLACKBUILD SHORT DESCRIPTION:  bundler (Manage Ruby application dependencies)
 
 SLACKBUILD NAME: bwctl
@@ -874,10 +892,10 @@ SLACKBUILD SHORT DESCRIPTION:  diskscan (Scan HDD/SSD for failed and near failed
 SLACKBUILD NAME: distorm
 SLACKBUILD LOCATION: ./distorm
 SLACKBUILD FILES: README distorm.SlackBuild distorm.info slack-desc
-SLACKBUILD VERSION: 3.3.8
+SLACKBUILD VERSION: 3.4.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/gdabah/distorm/archive/v3.3.8.tar.gz
-SLACKBUILD MD5SUM: 8480c99d20a87394e78fa83467f7a2db
+SLACKBUILD DOWNLOAD: https://github.com/gdabah/distorm/archive/v3.4.1.tar.gz
+SLACKBUILD MD5SUM: f7a0c999e70bda01ded3f45f5ac827d4
 SLACKBUILD SHORT DESCRIPTION:  distorm (Powerful Disassembler Library For x86/AMD64)
 
 SLACKBUILD NAME: dnsscan
@@ -1000,10 +1018,10 @@ SLACKBUILD SHORT DESCRIPTION:  evtest (Input device event monitor and query tool
 SLACKBUILD NAME: exiftool
 SLACKBUILD LOCATION: ./exiftool
 SLACKBUILD FILES: README exiftool.SlackBuild exiftool.info slack-desc
-SLACKBUILD VERSION: 11.21
+SLACKBUILD VERSION: 11.22
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://owl.phy.queensu.ca/~phil/exiftool/Image-ExifTool-11.21.tar.gz
-SLACKBUILD MD5SUM: 19b1299a761cec88f4963b06c7cd6a20
+SLACKBUILD DOWNLOAD: http://owl.phy.queensu.ca/~phil/exiftool/Image-ExifTool-11.22.tar.gz
+SLACKBUILD MD5SUM: ad3e662a0e94819979f651d24aa56496
 SLACKBUILD SHORT DESCRIPTION:  exiftool (read, write, and edit EXIF and other meta information)
 
 SLACKBUILD NAME: eyed3
@@ -1342,11 +1360,11 @@ SLACKBUILD SHORT DESCRIPTION:  gnuit (GNU Interactive Tools)
 SLACKBUILD NAME: goaccess
 SLACKBUILD LOCATION: ./goaccess
 SLACKBUILD FILES: README doinst.sh goaccess.SlackBuild goaccess.info slack-desc
-SLACKBUILD VERSION: 1.2
-SLACKBUILD REQUIRED: geoip
-SLACKBUILD DOWNLOAD: http://tar.goaccess.io/goaccess-1.2.tar.gz
-SLACKBUILD MD5SUM: 00f41cf1fb72cfc459984c0fb087333d
-SLACKBUILD SHORT DESCRIPTION:  goaccess (real-time web log analyzer and interactive viewer)
+SLACKBUILD VERSION: 1.3
+SLACKBUILD REQUIRED: libmaxminddb tokyocabinet
+SLACKBUILD DOWNLOAD: https://tar.goaccess.io/goaccess-1.3.tar.gz
+SLACKBUILD MD5SUM: 5209c5d4e9e04b5b3e7f13134c5e146c
+SLACKBUILD SHORT DESCRIPTION:  goaccess (httpd log analyzer)
 
 SLACKBUILD NAME: goobook
 SLACKBUILD LOCATION: ./goobook
@@ -1528,6 +1546,15 @@ SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/hte/ht-2.1.0.tar.bz2
 SLACKBUILD MD5SUM: 09b2a4461d75e9cd03af1cd67fadc1ec
 SLACKBUILD SHORT DESCRIPTION:  ht (Hex editor and debugger)
 
+SLACKBUILD NAME: html-minifier
+SLACKBUILD LOCATION: ./html-minifier
+SLACKBUILD FILES: README html-minifier.SlackBuild html-minifier.info slack-desc
+SLACKBUILD VERSION: 3.5.21
+SLACKBUILD REQUIRED: node
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/html-minifier/-/html-minifier-3.5.21.tgz
+SLACKBUILD MD5SUM: cf49b1f95dedf2a92b48ee72c8e8381f
+SLACKBUILD SHORT DESCRIPTION:  html-minifier (HTML compressor/minifier)
+
 SLACKBUILD NAME: http-parser
 SLACKBUILD LOCATION: ./http-parser
 SLACKBUILD FILES: README http-parser.SlackBuild http-parser.info slack-desc
@@ -1693,10 +1720,10 @@ SLACKBUILD SHORT DESCRIPTION:  instant-markdown (Instant Markdown previews from 
 SLACKBUILD NAME: inxi
 SLACKBUILD LOCATION: ./inxi
 SLACKBUILD FILES: README inxi.SlackBuild inxi.info slack-desc
-SLACKBUILD VERSION: 3.0.28-1
+SLACKBUILD VERSION: 3.0.29-1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/smxi/inxi/archive/3.0.28-1.tar.gz
-SLACKBUILD MD5SUM: 73f804ce9038cd21677e086f9c487770
+SLACKBUILD DOWNLOAD: https://github.com/smxi/inxi/archive/3.0.29-1.tar.gz
+SLACKBUILD MD5SUM: 68f536d5cb9458040d42523cd63ee267
 SLACKBUILD SHORT DESCRIPTION:  inxi (a command line system information tool)
 
 SLACKBUILD NAME: ioping
@@ -2022,6 +2049,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://github.com/skoegl/kssh4/archive/0b861066c6cdd3660d53ebe8ebd675a4980d28d3.tar.gz
 SLACKBUILD MD5SUM: ccbb9ec646ca7ed4da5adc6ce4d45fb7
 SLACKBUILD SHORT DESCRIPTION:  kssh4 (kde4 ssh frontend)
+
+SLACKBUILD NAME: kyotocabinet
+SLACKBUILD LOCATION: ./kyotocabinet
+SLACKBUILD FILES: README kyotocabinet.SlackBuild kyotocabinet.info slack-desc
+SLACKBUILD VERSION: 1.2.77
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://fallabs.com/kyotocabinet/pkg/kyotocabinet-1.2.77.tar.gz
+SLACKBUILD MD5SUM: 0f1fa6d10cb5501ebc0ad6ded7a90f68
+SLACKBUILD SHORT DESCRIPTION:  kyotocabinet (straightforward implementation of DBM)
 
 SLACKBUILD NAME: ladspa_sdk
 SLACKBUILD LOCATION: ./ladspa_sdk
@@ -2808,7 +2844,7 @@ SLACKBUILD SHORT DESCRIPTION:  mjpegtools (video recording/playback tools)
 
 SLACKBUILD NAME: mkvtoolnix
 SLACKBUILD LOCATION: ./mkvtoolnix
-SLACKBUILD FILES: README mkvtoolnix.SlackBuild mkvtoolnix.info slack-desc
+SLACKBUILD FILES: README mkvtoolnix.SlackBuild mkvtoolnix.info patches/8383780e4ad9bc3e475f06e9485486b8b7d993d3.patch slack-desc
 SLACKBUILD VERSION: 29.0.0
 SLACKBUILD REQUIRED: cmark
 SLACKBUILD DOWNLOAD: https://mkvtoolnix.download/sources/mkvtoolnix-29.0.0.tar.xz
@@ -3008,7 +3044,7 @@ SLACKBUILD NAME: neomutt
 SLACKBUILD LOCATION: ./neomutt
 SLACKBUILD FILES: README doinst.sh files/neomutt.desktop files/neomutt.xpm neomutt.SlackBuild neomutt.info slack-desc
 SLACKBUILD VERSION: 20180716
-SLACKBUILD REQUIRED: notmuch lua
+SLACKBUILD REQUIRED: notmuch lua kyotocabinet
 SLACKBUILD DOWNLOAD: https://github.com/neomutt/neomutt/archive/neomutt-20180716.tar.gz
 SLACKBUILD MD5SUM: f628d1bcb31d36c926ed60f2105f742a
 SLACKBUILD SHORT DESCRIPTION:  neomutt (Bringing together all the Mutt code)
@@ -3256,6 +3292,15 @@ SLACKBUILD DOWNLOAD: https://github.com/stylus/stylus/archive/0.54.5.tar.gz
 SLACKBUILD MD5SUM: 97cbca520fed644b25ae1a74bda3500b
 SLACKBUILD SHORT DESCRIPTION:  node-stylus (CSS language built for nodejs) 
 
+SLACKBUILD NAME: node-uglifycss
+SLACKBUILD LOCATION: ./node-uglifycss
+SLACKBUILD FILES: README node-uglifycss.SlackBuild node-uglifycss.info slack-desc
+SLACKBUILD VERSION: 0.0.29
+SLACKBUILD REQUIRED: node
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/uglifycss/-/uglifycss-0.0.29.tgz
+SLACKBUILD MD5SUM: 4e9c29c58b20791ee54c6dc3350655ec
+SLACKBUILD SHORT DESCRIPTION:  node-uglifycss (minifier css)
+
 SLACKBUILD NAME: node-uglifyjs
 SLACKBUILD LOCATION: ./node-uglifyjs
 SLACKBUILD FILES: README node-uglifyjs.SlackBuild node-uglifyjs.info slack-desc
@@ -3394,10 +3439,10 @@ SLACKBUILD SHORT DESCRIPTION:  Omping (Open Multicast Ping)
 SLACKBUILD NAME: oniguruma
 SLACKBUILD LOCATION: ./oniguruma
 SLACKBUILD FILES: README oniguruma.SlackBuild oniguruma.info slack-desc
-SLACKBUILD VERSION: 6.9.0
+SLACKBUILD VERSION: 6.9.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/kkos/oniguruma/releases/download/v6.9.0/onig-6.9.0.tar.gz
-SLACKBUILD MD5SUM: 10fd7eee9a54ab1c2c3b99846888d00a
+SLACKBUILD DOWNLOAD: https://github.com/kkos/oniguruma/releases/download/v6.9.1/onig-6.9.1.tar.gz
+SLACKBUILD MD5SUM: 4e585b487dbf0b43286b3051392b088a
 SLACKBUILD SHORT DESCRIPTION:  oniguruma (Regular expression library)
 
 SLACKBUILD NAME: openal
@@ -5083,6 +5128,15 @@ SLACKBUILD DOWNLOAD: https://github.com/leethomason/tinyxml2/archive/7.0.1.tar.g
 SLACKBUILD MD5SUM: bc3c806033a2cb426db0fdb75e5b1bf2
 SLACKBUILD SHORT DESCRIPTION:  tinyxml2 (C++ XML Parser)
 
+SLACKBUILD NAME: tokyocabinet
+SLACKBUILD LOCATION: ./tokyocabinet
+SLACKBUILD FILES: README slack-desc tokyocabinet.SlackBuild tokyocabinet.info
+SLACKBUILD VERSION: 1.4.48
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://fallabs.com/tokyocabinet/tokyocabinet-1.4.48.tar.gz
+SLACKBUILD MD5SUM: fd03df6965f8f56dd5b8518ca43b4f5e
+SLACKBUILD SHORT DESCRIPTION:  tokyocabinet (Key-Value Store)
+
 SLACKBUILD NAME: tomb
 SLACKBUILD LOCATION: ./tomb
 SLACKBUILD FILES: README slack-desc tomb.SlackBuild tomb.info
@@ -5581,10 +5635,10 @@ SLACKBUILD SHORT DESCRIPTION:  wp-cli (A command line interface for WordPress)
 SLACKBUILD NAME: wpscan
 SLACKBUILD LOCATION: ./wpscan
 SLACKBUILD FILES: README slack-desc wpscan.SlackBuild wpscan.info
-SLACKBUILD VERSION: 3.4.0
+SLACKBUILD VERSION: 3.4.1
 SLACKBUILD REQUIRED: bundler
-SLACKBUILD DOWNLOAD: https://rubygems.org/downloads/wpscan-3.4.0.gem
-SLACKBUILD MD5SUM: be842133776cb41d5ae1db85619618bd
+SLACKBUILD DOWNLOAD: https://rubygems.org/downloads/wpscan-3.4.1.gem
+SLACKBUILD MD5SUM: c03fe3d37cf73a31967372ce93319e99
 SLACKBUILD SHORT DESCRIPTION:  wpscan (black box WordPress vulnerability scanner)
 
 SLACKBUILD NAME: wput
