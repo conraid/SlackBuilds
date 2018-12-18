@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+#
+# maldet    Linux Malware Detect monitoring
+#
+# chkconfig: 345 70 30
+# description: Linux Malware Detect file monitoring
+# processname: maldet
+
+inspath='/usr/share/maldetect'
+intcnf="$inspath/internals/internals.conf"
+
+if [ -f "$intcnf" ]; then
+	source $intcnf
+	source $cnf
+else
+	echo "$intcnf not found."
+	exit 1
+fi
+
+if [ -f "/etc/sysconfig/maldet" ]; then
+	. /etc/sysconfig/maldet
+elif [ -f "/etc/default/maldet" ]; then
+	. /etc/default/maldet
+fi
+
+if [ "$default_monitor_mode" ]; then
+	MONITOR_MODE="$default_monitor_mode"
+fi
+
+RETVAL=0
+prog="maldet"
+if [ -d /var/lock/subsys ]; then
+        LOCKFILE=/var/lock/subsys/$prog
+else
+        LOCKFILE=/var/lock/$prog
+fi
+
+if [ -z "$MONITOR_MODE" ]; then
+    echo "error no default monitor mode defined, set \$MONITOR_MODE in /etc/sysconfig/maldet, or \$default_monitor_mode in $cnf"
+    exit 1
+fi
+
+start() {
+        echo -n "Starting $prog: "
+        $inspath/maldet --monitor $MONITOR_MODE
+}
+
+stop() {
+        echo -n "Shutting down $prog: "
+        $inspath/maldet --kill-monitor && success || failure
+}
+
+restart() {
+        stop
+        start
+}
+
+status() {
+        echo -n "Checking $prog monitoring status: "
+        if [ "$(pgrep -f inotify.paths.[0-9]+)" ]; then
+            echo "Running"
+	    exit 0
+        else
+            echo "Not running"
+            exit 1
+        fi
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        status
+        ;;
+    restart)
+        restart
+        ;;
+    condrestart)
+        if [ -f $LOCKFILE ]; then
+            restart
+        fi
+        ;;
+    *)
+        echo "Usage: $prog {start|stop|status|restart|condrestart}"
+        exit 1
+        ;;
+esac
+exit $RETVAL
