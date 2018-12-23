@@ -28,8 +28,7 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=lyx
-SRCVERSION=2.3.1-2
-VERSION=2.3.1
+VERSION=2.3.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -64,11 +63,24 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.xz
+tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
+
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
+
+if [ -x /usr/bin/qmake-qt5 ]; then
+  QT5="--enable-qt5"
+else
+  QT5="--disable-qt5"
+fi
 
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
@@ -82,6 +94,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --infodir=/usr/info \
   --with-x \
   --without-included-boost \
+  $QT5 \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
