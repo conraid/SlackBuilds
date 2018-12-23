@@ -30,14 +30,13 @@ set -eu
 CWD=$(pwd)
 
 PKGNAM=ntopng
-COMMIT=54e01e81f77abc6fddbe154d4f4077c56ec3bb83
-VERSION=$(echo $COMMIT | head -c7)
+VERSION=3.8
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
-TMP=${TMP:-/tmp/pkg}
-PKG=$TMP/package-$PKGNAM
+TMP=${TMP:-/tmp/pkg/$PKGNAM}
+PKG=$TMP/package-$PKGNAM/
 OUTPUT=${OUTPUT:-/tmp}
-NDPI_VERSION=30b72eae64cb9379015a183a7d49da24b564c85f
+NDPI_VERSION=2.6
 
 DOCFILES="COPYING* LICENSE* README* packages/etc/init.d doc/*"
 
@@ -63,20 +62,18 @@ else
   LIBDIRSUFFIX=""
 fi
 
-rm -rf $PKG
+rm -rf $PKG $TMP
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-rm -rf nDPI
-tar xvf $CWD/$PKGNAM-$COMMIT.tar.gz || tar xvf $CWD/$COMMIT.tar.gz
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
 tar xvf $CWD/nDPI-$NDPI_VERSION.tar.gz || tar xvf $CWD/$NDPI_VERSION.tar.gz
+
+chown -R root:root .
+chmod -R u+w,go+r-w,a+X-s .
 
 # Build nDPI ../nDPI
 mv nDPI-$NDPI_VERSION nDPI
 cd nDPI
- 
-chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
 
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -92,10 +89,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --build=$ARCH-slackware-linux
 make
 
-cd ../$PKGNAM-$COMMIT
-
-chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+cd ../$PKGNAM-$VERSION
 
 ./autogen.sh
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
