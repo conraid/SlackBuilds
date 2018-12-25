@@ -29,7 +29,7 @@ CWD=$(pwd)
 
 PRGNAM=memcached
 PKGNAM=php-$PRGNAM
-VERSION=3.1.2
+VERSION=3.1.3
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -79,6 +79,8 @@ CFLAGS="$SLKCFLAGS" \
   --disable-static \
   --enable-memcached-json \
   --enable-memcached-sasl \
+  --enable-memcached-igbinary \
+  --enable-memcached-msgpack \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
@@ -95,8 +97,8 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 # Copy base config files (for options read memcached.ini in doc directory)
 mkdir -p $PKG/etc/php.d/
-echo ';extension=memcached.so' > $PKG/etc/php.d/memcached.ini.new
-grep "^memcached" memcached.ini | sed 's/igbinary/php/' >> $PKG/etc/php.d/memcached.ini.new
+echo 'extension=memcached.so' > $PKG/etc/php.d/memcached.ini.new
+grep "^.\?memcached" memcached.ini | sed 's/igbinary/php/' >> $PKG/etc/php.d/memcached.ini.new
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
