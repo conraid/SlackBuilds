@@ -802,10 +802,10 @@ SLACKBUILD SHORT DESCRIPTION:  darkstat (packet sniffing daemon that serves stat
 SLACKBUILD NAME: darktable
 SLACKBUILD LOCATION: ./darktable
 SLACKBUILD FILES: README darktable.SlackBuild darktable.info doinst.sh slack-desc
-SLACKBUILD VERSION: 2.4.4
+SLACKBUILD VERSION: 2.6.0
 SLACKBUILD REQUIRED: lensfun flickcurl  graphicsmagick lua pugixml openjpeg1
-SLACKBUILD DOWNLOAD: https://github.com/darktable-org/darktable/releases/download/release-2.4.4/darktable-2.4.4.tar.xz
-SLACKBUILD MD5SUM: 32e4b9e75758b5d3fc803b857fd101ff
+SLACKBUILD DOWNLOAD: https://github.com/darktable-org/darktable/releases/download/release-2.6.0/darktable-2.6.0.tar.xz
+SLACKBUILD MD5SUM: 720d6d4313d6aff0ea34885801846f95
 SLACKBUILD SHORT DESCRIPTION:  darktable (digital photography application)
 
 SLACKBUILD NAME: dcfldd
@@ -3484,10 +3484,10 @@ SLACKBUILD SHORT DESCRIPTION:  OpenAL Soft (a cross-platform 3D audio API)
 SLACKBUILD NAME: opencv
 SLACKBUILD LOCATION: ./opencv
 SLACKBUILD FILES: README opencv.SlackBuild opencv.info slack-desc
-SLACKBUILD VERSION: 4.0.0
+SLACKBUILD VERSION: 4.0.1
 SLACKBUILD REQUIRED: leptonica tesseract numpy libdc1394
-SLACKBUILD DOWNLOAD: https://github.com/opencv/opencv/archive/4.0.0.tar.gz
-SLACKBUILD MD5SUM: f051c1ff7b327b60123d71b53801b316
+SLACKBUILD DOWNLOAD: https://github.com/opencv/opencv/archive/4.0.1.tar.gz
+SLACKBUILD MD5SUM: 4f68d5e27232067641ee37a6ad1a6473
 SLACKBUILD SHORT DESCRIPTION:  OpenCV (Open Source Computer Vision)
 
 SLACKBUILD NAME: openjpeg1
@@ -3778,6 +3778,15 @@ SLACKBUILD DOWNLOAD: https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/downl
 SLACKBUILD MD5SUM: 5a3bad91379fb6181e231a715f9599ef
 SLACKBUILD SHORT DESCRIPTION:  php-cs-fixer (PHP Coding Standards Fixer)
 
+SLACKBUILD NAME: php-igbinary
+SLACKBUILD LOCATION: ./php-igbinary
+SLACKBUILD FILES: README doinst.sh php-igbinary.SlackBuild php-igbinary.info slack-desc
+SLACKBUILD VERSION: 2.0.8
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pecl.php.net/get/igbinary-2.0.8.tgz
+SLACKBUILD MD5SUM: d3cbbfe6224923fecdad266569b57535
+SLACKBUILD SHORT DESCRIPTION:  php-igbinary (php igbinary extension)
+
 SLACKBUILD NAME: php-imagick
 SLACKBUILD LOCATION: ./php-imagick
 SLACKBUILD FILES: README doinst.sh files/imagick.ini php-imagick.SlackBuild php-imagick.info slack-desc
@@ -3790,11 +3799,20 @@ SLACKBUILD SHORT DESCRIPTION:  php-imagick (PHP Wrapper for ImageMagick)
 SLACKBUILD NAME: php-memcached
 SLACKBUILD LOCATION: ./php-memcached
 SLACKBUILD FILES: README doinst.sh php-memcached.SlackBuild php-memcached.info slack-desc
-SLACKBUILD VERSION: 3.1.2
-SLACKBUILD REQUIRED:  libmemcached 
-SLACKBUILD DOWNLOAD: http://pecl.php.net/get/memcached-3.1.2.tgz
-SLACKBUILD MD5SUM: 07f6ad19a3cbba3dd302b36629b709de
+SLACKBUILD VERSION: 3.1.3
+SLACKBUILD REQUIRED:  libmemcached php-igbinary php-msgpack
+SLACKBUILD DOWNLOAD: http://pecl.php.net/get/memcached-3.1.3.tgz
+SLACKBUILD MD5SUM: 29e64c6b6484a2aed6185974c8108465
 SLACKBUILD SHORT DESCRIPTION:  PHP Memcached
+
+SLACKBUILD NAME: php-msgpack
+SLACKBUILD LOCATION: ./php-msgpack
+SLACKBUILD FILES: README doinst.sh php-msgpack.SlackBuild php-msgpack.info slack-desc
+SLACKBUILD VERSION: 2.0.3
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pecl.php.net/get/msgpack-2.0.3.tgz
+SLACKBUILD MD5SUM: 8ed9843595c3b183ee79fd76b3039384
+SLACKBUILD SHORT DESCRIPTION:  php-msgpack (PHP extension for interfacing with MessagePack)
 
 SLACKBUILD NAME: php-oauth
 SLACKBUILD LOCATION: ./php-oauth
@@ -4434,6 +4452,15 @@ SLACKBUILD REQUIRED: libiptcdata lensfun
 SLACKBUILD DOWNLOAD: https://github.com/Beep6581/RawTherapee/archive/5.5.tar.gz
 SLACKBUILD MD5SUM: a14d2b406e3636b94a4ad868b4532b28
 SLACKBUILD SHORT DESCRIPTION:  rawtherapee (Raw image processing software)
+
+SLACKBUILD NAME: rchardet
+SLACKBUILD LOCATION: ./rchardet
+SLACKBUILD FILES: README rchardet.SlackBuild rchardet.info slack-desc
+SLACKBUILD VERSION: 1.8.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://rubygems.org/downloads/rchardet-1.8.0.gem
+SLACKBUILD MD5SUM: ab0402706df545715c008024b5c1669b
+SLACKBUILD SHORT DESCRIPTION:  rchardet (Character encoding auto-detection in Ruby)
 
 SLACKBUILD NAME: reaver
 SLACKBUILD LOCATION: ./reaver
@@ -5595,6 +5622,15 @@ SLACKBUILD REQUIRED: lua
 SLACKBUILD DOWNLOAD: http://www.weechat.org/files/src/weechat-2.3.tar.bz2
 SLACKBUILD MD5SUM: f6ac18fbc0653d99dae496367117aafd
 SLACKBUILD SHORT DESCRIPTION:  WeeChat (fast, light & extensible chat client)
+
+SLACKBUILD NAME: whatweb
+SLACKBUILD LOCATION: ./whatweb
+SLACKBUILD FILES: README patches/01.patch patches/02.patch slack-desc whatweb.SlackBuild whatweb.info
+SLACKBUILD VERSION: 0.4.9
+SLACKBUILD REQUIRED: rchardet
+SLACKBUILD DOWNLOAD: https://github.com/urbanadventurer/WhatWeb/archive/v0.4.9.tar.gz
+SLACKBUILD MD5SUM: 31d57457f34f6691ac20639ffdef8ad6
+SLACKBUILD SHORT DESCRIPTION:  WhatWeb (Next generation web scanner)
 
 SLACKBUILD NAME: whowatch
 SLACKBUILD LOCATION: ./whowatch
