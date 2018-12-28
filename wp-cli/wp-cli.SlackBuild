@@ -31,35 +31,12 @@ CWD=$(pwd)
 
 PKGNAM=wp-cli
 VERSION=2.1.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
-
-DOCFILES="CONTRIBUTING* LICENSE* README* VERSION"
-
-if [ -z ${ARCH:=""} ]; then
-  case "$( uname -m )" in
-    i?86) ARCH=i686 ;;
-    arm*) ARCH=arm ;;
-       *) ARCH=$( uname -m ) ;;
-  esac
-fi
-
-if [ "$ARCH" = "i586" ]; then
-  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
-  LIBDIRSUFFIX=""
-elif [ "$ARCH" = "i686" ]; then
-  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
-  LIBDIRSUFFIX=""
-elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
-  LIBDIRSUFFIX="64"
-else
-  SLKCFLAGS="-O2"
-  LIBDIRSUFFIX=""
-fi
+ARCH=noarch
 
 rm -rf $PKG
 mkdir -p $PKG $OUTPUT
@@ -70,7 +47,7 @@ install -Dm755 $CWD/$PKGNAM-$VERSION.phar $PKG/usr/bin/wp
 install -Dm644 $CWD/files/wp-completion.bash $PKG/etc/bash_completion.d/wp
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cp -a $CWD/files/ $PKG/usr/doc/$PKGNAM-$VERSION || true
+cp -a $CWD/files/LICENSE $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
