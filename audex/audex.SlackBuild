@@ -25,11 +25,11 @@
 
 set -eu
 
-CWD=$(pwd)
+cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=audex
 VERSION=0.79
-BUILD=${BUILD:-7}
+BUILD=${BUILD:-9}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -44,6 +44,14 @@ if [ -z ${ARCH:=""} ]; then
        *) ARCH=$( uname -m ) ;;
   esac
 fi
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what 
+# the name of the created package would be, and then exit. This information 
+# could be useful to other scripts. 
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then 
+  echo "$PKGNAM-$VERSION-$ARCH-$BUILD.txz "
+  exit 0 
+fi 
 
 if [ "$ARCH" = "i586" ]; then
   SLKCFLAGS="-O2 -march=i586 -mtune=i686"
@@ -81,18 +89,21 @@ cmake \
   -DLIB_SUFFIX=${LIBDIRSUFFIX} \
   ..
 
-make 
-make DESTDIR=$PKG install/strip
+make
+make DESTDIR=$PKG install
 cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
