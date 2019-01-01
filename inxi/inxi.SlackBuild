@@ -2,7 +2,7 @@
 #
 # Slackware build script for inxi
 #
-# Copyright 2011-2018 Corrado Franco (http://conraid.net)
+# Copyright 2011-2019 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -27,10 +27,10 @@
 #
 set -eu
 
-CWD=$(pwd)
+cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=inxi
-SRCVERSION=3.0.29-1
+SRCVERSION=3.0.30-1
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -40,6 +40,14 @@ OUTPUT=${OUTPUT:-/tmp}
 ARCH=noarch
 
 DOCFILES="*.txt *.changelog"
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  exit 0
+fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
