@@ -1,0 +1,28 @@
+diff -Naurp Diffimg-2.2.0-orig/src/DiffImgWindow.cpp Diffimg-2.2.0-src/src/DiffImgWindow.cpp
+--- Diffimg-2.2.0-orig/src/DiffImgWindow.cpp	2014-08-31 18:58:58.000000000 +0200
++++ Diffimg-2.2.0-src/src/DiffImgWindow.cpp	2019-01-01 10:26:08.338410505 +0100
+@@ -73,9 +73,9 @@ const int defaultThumbnailSize = 128;
+ const int updateWaitTime = 200;
+ 
+ // QWT
+-#include <qwt_plot.h>
+-#include <qwt_plot_curve.h>
+-#include <qwt_plot_grid.h>
++#include <qwt/qwt_plot.h>
++#include <qwt/qwt_plot_curve.h>
++#include <qwt/qwt_plot_grid.h>
+ 
+ class ChannelCurve : public QwtPlotCurve
+ {
+diff -Naurp Diffimg-2.2.0-orig/ui/DiffImgWindow.ui Diffimg-2.2.0-src/ui/DiffImgWindow.ui
+--- Diffimg-2.2.0-orig/ui/DiffImgWindow.ui	2014-08-31 18:59:16.000000000 +0200
++++ Diffimg-2.2.0-src/ui/DiffImgWindow.ui	2019-01-01 10:27:44.542207792 +0100
+@@ -916,7 +916,7 @@
+   <customwidget>
+    <class>QwtPlot</class>
+    <extends>QWidget</extends>
+-   <header>qwt_plot.h</header>
++   <header>qwt/qwt_plot.h</header>
+    <container>1</container>
+   </customwidget>
+   <customwidget>
