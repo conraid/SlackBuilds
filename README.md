@@ -1,4 +1,6 @@
-# Slackers (Slackware Current Repository by Conraid)
+# Slackers 
+
+Slackware Current Repository by Conraid
 
 ## Repository for Slackware Current packages
 
@@ -8,12 +10,12 @@ To *make package from slackbuild* do
 
 Download source code:
 
- `source .info`
- `curl -JOL $DOWNLOAD` 
+  source .info
+  curl -JOL $DOWNLOAD
 
 or
 
- `wget [--no-check-certificate] [--content-disposition] $DOWNLOAD`
+  wget [--no-check-certificate] [--content-disposition] $DOWNLOAD
 
 wget, with some servers, doesn't set the correct filename
 
@@ -21,13 +23,13 @@ If exists FILENAME variable means that it contains the filename.
 
 if exists DOWNLOAD__* extra variables, do also
 
- `wget --no-check-certificate --content-disposition $DOWNLOAD [$DOWNLOAD_1] [$DOWNLOAD_2]`
+ wget --no-check-certificate --content-disposition $DOWNLOAD [$DOWNLOAD_1] [$DOWNLOAD_2]
 
 ## Build
 
 To build:
 
- `sh .SlackBuild`
+  sh .SlackBuild
 
 This command builds a package which will be created in the same directory.
 
