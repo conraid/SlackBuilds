@@ -3,7 +3,7 @@
 # Slackware build script for atom
 #
 # Copyright 2013-2014 Dhaby Xiloj <slack.dhabyx@gmail.com>
-# Copyright 2015-2018 Corrado Franco (http://conraid.net)
+# Copyright 2015-2019 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -28,10 +28,10 @@
 
 set -eu
 
-CWD=$(pwd)
+cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=atom
-SRCVERSION=1.33.1
+SRCVERSION=1.34.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
