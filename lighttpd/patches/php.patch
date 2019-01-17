@@ -1,0 +1,30 @@
+diff -Naupr a/doc/config/conf.d/fastcgi.conf b/doc/config/conf.d/fastcgi.conf
+--- a/doc/config/conf.d/fastcgi.conf	2018-11-29 05:07:46.000000000 +0100
++++ b/doc/config/conf.d/fastcgi.conf	2019-01-17 16:43:05.150684564 +0100
+@@ -128,5 +128,14 @@ server.modules += ( "mod_fastcgi" )
+ #server.document-root = "/servers/wwww.example.org/htdocs/"
+ #
+ 
++fastcgi.server = ( ".php" =>
++                   ( "localhost" =>
++                     (
++                       "socket" => "/var/run/lighttpd/php-fastcgi.socket",
++                       "bin-path" => "/usr/bin/php-cgi -c /etc/php.ini"
++                     )
++                   )
++                 )
++
+ ##
+ #######################################################################
+diff -Naupr a/doc/config/modules.conf b/doc/config/modules.conf
+--- a/doc/config/modules.conf	2018-11-29 05:07:46.000000000 +0100
++++ b/doc/config/modules.conf	2019-01-17 16:41:13.621078876 +0100
+@@ -135,7 +135,7 @@ server.modules = (
+ ##
+ ## FastCGI (mod_fastcgi)
+ ##
+-#include "conf.d/fastcgi.conf"
++include "conf.d/fastcgi.conf"
+ 
+ ##
+ ## plain old CGI (mod_cgi)
