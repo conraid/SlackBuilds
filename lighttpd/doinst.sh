@@ -24,8 +24,10 @@ perms() {
 }
 
 perms etc/rc.d/rc.lighttpd.new
+config etc/logrotate.d/lighttpd.new
 config etc/lighttpd/lighttpd.conf.new
 config etc/lighttpd/modules.conf.new
+config etc/lighttpd/vhosts.d/vhosts.conf.new
 for NEW in etc/lighttpd/conf.d/*.new; do
   config $NEW
 done
