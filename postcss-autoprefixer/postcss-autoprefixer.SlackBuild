@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Slackware build script for autoprefixer
 #
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=autoprefixer
 PKGNAM=postcss-autoprefixer
-VERSION=9.4.5
+VERSION=9.4.6
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -47,6 +47,15 @@ if [ -z ${ARCH:=""} ]; then
   *) ARCH=$( uname -m ) ;;
   esac
 fi
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  exit 0
+fi
+
 [ "$ARCH" = "x86_64" ] && LIBDIRSUFFIX="64" || LIBDIRSUFFIX=""
 
 rm -rf $PKG
