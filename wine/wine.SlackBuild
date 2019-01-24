@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Slackware build script for wine
 #
-# Copyright 2015-2018 Corrado Franco (http://conraid.net)
+# Copyright 2015-2019 Corrado Franco (http://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,10 +30,10 @@
 
 set -eu
 
-CWD=$(pwd)
+cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=wine
-SRCVERSION=3.20
+SRCVERSION=4.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -51,13 +51,22 @@ if [ -z ${ARCH:=""} ]; then
   esac
 fi
 
-WINE64="disable"
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  exit 0
+fi
+
 if [ "$ARCH" = "i586" ]; then
   SLKCFLAGS="-O2 -march=i586 -mtune=i686"
   LIBDIRSUFFIX=""
+  WINE64="disable"
 elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
+  WINE64="disable"
 elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
@@ -65,6 +74,7 @@ elif [ "$ARCH" = "x86_64" ]; then
 else
   SLKCFLAGS="-O2"
   LIBDIRSUFFIX=""
+  WINE64="disable"
 fi
 
 rm -rf $PKG
