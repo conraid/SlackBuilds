@@ -33,13 +33,13 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=slpkg
 VERSION=3.4.1
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="LICENSE *.md *.rst *.txt TESTING *ISSUES REPOSITORIES"
+DOCFILES="LICENSE *.md *.rst *.txt TESTING *ISSUES REPOSITORIES conf/*.fish"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -94,17 +94,11 @@ if [ -d $PKG/usr/man ]; then
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
-# install configurations files
-mkdir -p $PKG/etc/slpkg
-CONFIGS="slpkg.conf repositories.conf blacklist slackware-mirrors default-repositories \
-    custom-repositories rlworkman.deps pkg_security"
+# Install configurations files
+CONFIGS="blacklist custom-repositories default-repositories pkg_security repositories.conf rlworkman.deps slackware-mirrors slpkg.conf"
 for file in $CONFIGS; do
-    install -D -m0644 conf/$file $PKG/etc/slpkg/${file}.new
+    install -Dm0644 conf/$file $PKG/etc/slpkg/${file}.new
 done
-
-# keep original configuration file for reset
-cp -p conf/slpkg.conf $PKG/etc/slpkg/slpkg.conf.orig
-
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
@@ -112,6 +106,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
