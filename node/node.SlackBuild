@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Slackware build script for node.js
 #
@@ -35,7 +35,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=node
-VERSION=11.7.0
+VERSION=11.9.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -140,7 +140,7 @@ cat > $PKG/etc/profile.d/node.csh << EOF
 setenv NODE_PATH /usr/lib${LIBDIRSUFFIX}/node_modules
 EOF
 cat > $PKG/etc/profile.d/node.sh << EOF
-#!/bin/sh
+#!/bin/bash
 export NODE_PATH=/usr/lib${LIBDIRSUFFIX}/node_modules
 EOF
 chmod 0755 $PKG/etc/profile.d/*
