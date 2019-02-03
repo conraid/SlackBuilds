@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Slackware build script for notmuch
 #
@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=notmuch
-VERSION=0.28
-BUILD=${BUILD:-2}
+VERSION=0.28.1
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -111,9 +111,9 @@ python setup.py install --prefix=/usr --root=$PKG
 cd -
 
 # Install vim plugin
-install -Dm644 vim/notmuch.vim $PKG/usr/share/vim/vim80/plugin/notmuch.vim
-mkdir -p $PKG/usr/share/vim/vim80/syntax/
-install -m644 vim/syntax/*.vim $PKG/usr/share/vim/vim80/syntax/
+install -Dm644 vim/notmuch.vim $PKG/usr/share/vim/vim81/plugin/notmuch.vim
+mkdir -p $PKG/usr/share/vim/vim81/syntax/
+install -m644 vim/syntax/*.vim $PKG/usr/share/vim/vim81/syntax/
 
 # Install mutt script (required some perl scripts at runtime)
 make -C contrib/notmuch-mutt
