@@ -1,0 +1,19 @@
+--- ./sapi/fpm/php-fpm.conf.in.orig	2017-11-21 21:02:19.000000000 -0600
++++ ./sapi/fpm/php-fpm.conf.in	2017-11-27 20:07:58.533458347 -0600
+@@ -14,14 +14,14 @@
+ ; Pid file
+ ; Note: the default prefix is @EXPANDED_LOCALSTATEDIR@
+ ; Default Value: none
+-;pid = run/php-fpm.pid
++pid = run/php-fpm.pid
+ 
+ ; Error log file
+ ; If it's set to "syslog", log is sent to syslogd instead of being written
+ ; into a local file.
+ ; Note: the default prefix is @EXPANDED_LOCALSTATEDIR@
+ ; Default Value: log/php-fpm.log
+-;error_log = log/php-fpm.log
++error_log = log/php-fpm.log
+ 
+ ; syslog_facility is used to specify what type of program is logging the
+ ; message. This lets syslogd specify that messages from different facilities
