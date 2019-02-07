@@ -111,4 +111,4 @@ cat $CWD/doinst.sh > $PKG/install/doinst.sh
 install -Dm644 $CWD/files/apcu.ini $PKG/etc/php.d/apcu.ini.new
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-${VERSION}_php73-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-${VERSION}-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
