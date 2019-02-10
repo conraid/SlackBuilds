@@ -1,0 +1,34 @@
+From a11aa2aaecff98d6b46035704d587920c10788f9 Mon Sep 17 00:00:00 2001
+From: Ian Lance Taylor <iant@golang.org>
+Date: Fri, 7 Dec 2018 14:19:01 -0800
+Subject: [PATCH] cmd/link: only create .init_array section if not empty
+
+This avoids a warning from old versions of the GNU linker or glibc.
+
+No test because these old versions are not readily available.
+I tested this by hand on CentOS 6.
+
+Fixes #28722
+
+Change-Id: I16640c9b83a79f759ec68fac64874803e74fbbfb
+Reviewed-on: https://go-review.googlesource.com/c/153257
+Run-TryBot: Ian Lance Taylor <iant@golang.org>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+---
+ src/cmd/link/internal/ld/data.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/cmd/link/internal/ld/data.go b/src/cmd/link/internal/ld/data.go
+index 848087d7436..5209878b78c 100644
+--- a/src/cmd/link/internal/ld/data.go
++++ b/src/cmd/link/internal/ld/data.go
+@@ -1313,7 +1313,7 @@ func (ctxt *Link) dodata() {
+ 	case BuildModeCArchive, BuildModeCShared, BuildModeShared, BuildModePlugin:
+ 		hasinitarr = true
+ 	}
+-	if hasinitarr {
++	if hasinitarr && len(data[sym.SINITARR]) > 0 {
+ 		sect := addsection(ctxt.Arch, &Segdata, ".init_array", 06)
+ 		sect.Align = dataMaxAlign[sym.SINITARR]
+ 		datsize = Rnd(datsize, int64(sect.Align))
