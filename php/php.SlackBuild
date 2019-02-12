@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=php
 VERSION=7.3.2
 ALPINE=2.21
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 
 # Set if clean IMAPLIBDIR after building
@@ -55,9 +55,7 @@ if [ ! -z "${PRINT_PACKAGE_NAME:=""}" ]; then
   exit 0
 fi
 
-NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
-
-TMP=${TMP:-/tmp}
+TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM/
 OUTPUT=${OUTPUT:-/tmp}
 
@@ -148,11 +146,9 @@ sed -i "s|build$|php/build|" scripts/Makefile.frag
 sed -i "s|build\"$|php/build\"|" scripts/phpize.in
 
 # Fix to build with tidy5 in my repository
-sed -e 's|include/tidy/|include/tidy5/|g' -i configure -i ext/tidy/config.m4
-sed -e 's|^#include "tidy.h"|#include "tidy5/tidy.h"|' \
-    -e 's|^#include "tidybuffio.h"|#include "tidy5/tidybuffio.h"|' \
-    -e 's|^#include "buffio.h"|#include "tidy5/tidybuffio.h"|' \
-    -i ext/tidy/tidy.c
+sed -e '/tidyp/s/tidy /tidy5 /g' \
+    -e 's/\$j\.h/tidy.h/g' \
+    -i ext/tidy/config.m4 -i configure
 
 # NOTE: Added -DU_USING_ICU_NAMESPACE=1 to CXXFLAGS, which should be a temporary
 # requirement. See the link below:
@@ -163,6 +159,7 @@ sed -e 's|^#include "tidy.h"|#include "tidy5/tidy.h"|' \
 EXTENSION_DIR=/usr/lib${LIBDIRSUFFIX}/php/extensions \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS -DU_USING_ICU_NAMESPACE=1" \
+LDFLAGS="-ltidy5" \
 ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
