@@ -1,0 +1,47 @@
+#!/bin/sh
+#
+# /etc/rc.d/rc.gvmd
+#
+# Start/stop/restart the Greenbone Vulnerability Manager
+#
+# To make Greenbone Vulnerability Manager start automatically at boot, make this
+# file executable:  chmod 755 /etc/rc.d/rc.gvmd
+# and add to rc.local:
+# if [ -x /etc/rc.d/rc.gvmd ]; then
+#   . /etc/rc.d/rc.gvmd start
+# fi
+#
+
+GVMD_PATH=/usr/sbin
+GVMD_BIN=gvmd
+GVMD_OPTIONS="-a 127.0.0.1 --gnutls-priorities=SECURE128:-VERS-SSL3.0"
+GVMD_CMD="$GVMD_PATH/$GVMD_BIN $GVMD_OPTIONS"
+
+gvmd_start() {
+  echo Starting Greenbone Vulnerability Manager: $GVMD_CMD
+  $GVMD_CMD
+}
+
+gvmd_stop() {
+  echo "Stopping Greenbone Vulnerability Manager"
+  /bin/killall $GVMD_BIN
+}
+
+gvmd_restart() {
+  gvmd_stop
+  gvmd_start
+}
+
+case "$1" in
+'start')
+  gvmd_start
+  ;;
+'stop')
+  gvmd_stop
+  ;;
+'restart')
+  gvmd_restart
+  ;;
+*)
+  echo "usage $0 start|stop|restart|reload"
+esac
