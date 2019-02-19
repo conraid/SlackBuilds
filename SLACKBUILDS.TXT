@@ -1411,6 +1411,15 @@ SLACKBUILD DOWNLOAD: https://github.com/gruntjs/grunt-cli/archive/v1.3.1.tar.gz
 SLACKBUILD MD5SUM: c98af79099dfba0b8aa82bf7d67def3a
 SLACKBUILD SHORT DESCRIPTION:  grunt-cli (Grunt's command line interface)
 
+SLACKBUILD NAME: gsa
+SLACKBUILD LOCATION: ./gsa
+SLACKBUILD FILES: PKGNOTE README SLACKWARE.README doinst.sh files/gsad.conf files/rc.gsad gsa.SlackBuild gsa.info slack-desc
+SLACKBUILD VERSION: 8.0-beta2
+SLACKBUILD REQUIRED: libmicrohttpd gvm-libs hiredis redis node
+SLACKBUILD DOWNLOAD: https://github.com/greenbone/gsa/archive/v8.0+beta2.tar.gz
+SLACKBUILD MD5SUM: 97aba4567985abaf1ffde1bb6aebba5f
+SLACKBUILD SHORT DESCRIPTION:  gsa (greenbone security assistant)
+
 SLACKBUILD NAME: gsmartcontrol
 SLACKBUILD LOCATION: ./gsmartcontrol
 SLACKBUILD FILES: README doinst.sh gsmartcontrol.SlackBuild gsmartcontrol.info slack-desc
@@ -1483,6 +1492,33 @@ SLACKBUILD DOWNLOAD: https://github.com/gulpjs/gulp/archive/v4.0.0.tar.gz
 SLACKBUILD MD5SUM: 1716037f20d9066863a384caac76c6b9
 SLACKBUILD SHORT DESCRIPTION:  gulp (The streaming build system)
 
+SLACKBUILD NAME: gvm-libs
+SLACKBUILD LOCATION: ./gvm-libs
+SLACKBUILD FILES: README gvm-libs.SlackBuild gvm-libs.info slack-desc
+SLACKBUILD VERSION: 1.0.0
+SLACKBUILD REQUIRED: hiredis redis
+SLACKBUILD DOWNLOAD: https://github.com/greenbone/gvm-libs/archive/1.0.0.tar.gz
+SLACKBUILD MD5SUM: 45aa7d9ffd85617e3b2dd7565d59fdc7
+SLACKBUILD SHORT DESCRIPTION:  gvm-libs (Greenbone Vulnerability Management Libraries )
+
+SLACKBUILD NAME: gvm-tools
+SLACKBUILD LOCATION: ./gvm-tools
+SLACKBUILD FILES: README gvm-tools.SlackBuild gvm-tools.info slack-desc
+SLACKBUILD VERSION: 2.0.0.beta1
+SLACKBUILD REQUIRED: gvm-libs python-gvm
+SLACKBUILD DOWNLOAD: https://github.com/greenbone/gvm-tools/archive/v2.0.0.beta1.tar.gz
+SLACKBUILD MD5SUM: f7d55fcc4717fcb3a5f8165978c3a418
+SLACKBUILD SHORT DESCRIPTION:  gvm-tools (Greenbone Vulnerability Management Tools)
+
+SLACKBUILD NAME: gvmd
+SLACKBUILD LOCATION: ./gvmd
+SLACKBUILD FILES: README doinst.sh gvmd.SlackBuild gvmd.info patches/0ac02fde22794d0b8219c32a0f1b02180bf36a92.patch rc.gvmd slack-desc
+SLACKBUILD VERSION: 8.0-beta2
+SLACKBUILD REQUIRED: gvm-libs hiredis redis
+SLACKBUILD DOWNLOAD: https://github.com/greenbone/gvmd/archive/v8.0+beta2.tar.gz
+SLACKBUILD MD5SUM: 5fa7ca5bfc3a92df30a66b6f1878bcee
+SLACKBUILD SHORT DESCRIPTION:  gvmd (Greenbone Vulnerability Manager)
+
 SLACKBUILD NAME: hashcat-utils
 SLACKBUILD LOCATION: ./hashcat-utils
 SLACKBUILD FILES: README hashcat-utils.SlackBuild hashcat-utils.info slack-desc
@@ -1500,6 +1536,15 @@ SLACKBUILD REQUIRED: xxhash
 SLACKBUILD DOWNLOAD: https://hashcat.net/files/hashcat-5.1.0.tar.gz
 SLACKBUILD MD5SUM: 59542bf01a07362a90de069ca562ab49
 SLACKBUILD SHORT DESCRIPTION:  hashcat (password recovery utility)
+
+SLACKBUILD NAME: heimdal
+SLACKBUILD LOCATION: ./heimdal
+SLACKBUILD FILES: README doinst.sh files/kadmind.acl files/kdc.conf files/krb5.conf files/rc.ipropd-master files/rc.ipropd-slave files/rc.kadmind files/rc.kdc files/rc.kpasswdd heimdal.SlackBuild heimdal.info slack-desc
+SLACKBUILD VERSION: 7.5.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/heimdal/heimdal/releases/download/heimdal-7.5.0/heimdal-7.5.0.tar.gz
+SLACKBUILD MD5SUM: 558f13b9d352750ab770f8ee7111ff0e
+SLACKBUILD SHORT DESCRIPTION:  heimdal (KTH Heimdal Kerberos)
 
 SLACKBUILD NAME: hexedit
 SLACKBUILD LOCATION: ./hexedit
@@ -3517,50 +3562,14 @@ SLACKBUILD DOWNLOAD: https://github.com/uclouvain/openjpeg/archive/version.1.5.2
 SLACKBUILD MD5SUM: 545f98923430369a6b046ef3632ef95c
 SLACKBUILD SHORT DESCRIPTION:  openjpeg (JPEG2000 Codec)
 
-SLACKBUILD NAME: openvas-gsa
-SLACKBUILD LOCATION: ./openvas-gsa
-SLACKBUILD FILES: PKGNOTE README SLACKWARE.README doinst.sh files/gsad.conf files/rc.gsad openvas-gsa.SlackBuild openvas-gsa.info slack-desc
-SLACKBUILD VERSION: 7.0.3
-SLACKBUILD REQUIRED: libmicrohttpd openvas-libraries hiredis redis
-SLACKBUILD DOWNLOAD: https://github.com/greenbone/gsa/archive/v7.0.3.tar.gz
-SLACKBUILD MD5SUM: 97aba4567985abaf1ffde1bb6aebba5f
-SLACKBUILD SHORT DESCRIPTION:  openvas-gsa (greenbone-security-assistant: OpenVAS web frontend)
-
-SLACKBUILD NAME: openvas-gvm-tools
-SLACKBUILD LOCATION: ./openvas-gvm-tools
-SLACKBUILD FILES: README openvas-gvm-tools.SlackBuild openvas-gvm-tools.info slack-desc
-SLACKBUILD VERSION: 1.4.1
-SLACKBUILD REQUIRED: lxml paramiko defusedxml pythondialog openvas-libraries
-SLACKBUILD DOWNLOAD: https://github.com/greenbone/gvm-tools/archive/v1.4.1.tar.gz
-SLACKBUILD MD5SUM: 9073d41561f14fb6dfc86acc8e345130
-SLACKBUILD SHORT DESCRIPTION:  openvas-gvm-tools (Greenbone Vulnerability Management Tools)
-
-SLACKBUILD NAME: openvas-libraries
-SLACKBUILD LOCATION: ./openvas-libraries
-SLACKBUILD FILES: README openvas-libraries.SlackBuild openvas-libraries.info slack-desc
-SLACKBUILD VERSION: 9.0.3
-SLACKBUILD REQUIRED: hiredis redis
-SLACKBUILD DOWNLOAD: https://github.com/greenbone/gvm-libs/releases/download/v9.0.3/openvas-libraries-9.0.3.tar.gz
-SLACKBUILD MD5SUM: b13e7035eab492d6e48c3a74546db5b5
-SLACKBUILD SHORT DESCRIPTION:  openvas-libraries (The OpenVAS libraries)
-
-SLACKBUILD NAME: openvas-manager
-SLACKBUILD LOCATION: ./openvas-manager
-SLACKBUILD FILES: README doinst.sh openvas-manager.SlackBuild openvas-manager.info rc.openvasmd slack-desc
-SLACKBUILD VERSION: 7.0.3
-SLACKBUILD REQUIRED: openvas-libraries hiredis redis
-SLACKBUILD DOWNLOAD: https://github.com/greenbone/gvm/releases/download/v7.0.3/openvas-manager-7.0.3.tar.gz
-SLACKBUILD MD5SUM: 5fa7ca5bfc3a92df30a66b6f1878bcee
-SLACKBUILD SHORT DESCRIPTION:  openvas-manager (A layer between the OpenVAS Scanner and client)
-
 SLACKBUILD NAME: openvas-scanner
 SLACKBUILD LOCATION: ./openvas-scanner
 SLACKBUILD FILES: README doinst.sh openvas-scanner.SlackBuild openvas-scanner.info rc.openvassd slack-desc
-SLACKBUILD VERSION: 5.1.3
-SLACKBUILD REQUIRED: openvas-libraries hiredis redis
-SLACKBUILD DOWNLOAD: https://github.com/greenbone/openvas-scanner/archive/v5.1.3.tar.gz
-SLACKBUILD MD5SUM: f5a4d531bd744ee7b41a3ad49f4a98d0
-SLACKBUILD SHORT DESCRIPTION:  openvas-scanner (The OpenVAS scanning daemon)
+SLACKBUILD VERSION: 6.0-beta2
+SLACKBUILD REQUIRED: gvm-libs hiredis redis
+SLACKBUILD DOWNLOAD: https://github.com/greenbone/openvas-scanner/archive/v6.0+beta2.tar.gz
+SLACKBUILD MD5SUM: ce97d708835ca4867dabb26fb04cdf5b
+SLACKBUILD SHORT DESCRIPTION:  openvas-scanner (OpenVAS remote network security scanner)
 
 SLACKBUILD NAME: ophcrack
 SLACKBUILD LOCATION: ./ophcrack
@@ -3597,6 +3606,15 @@ SLACKBUILD REQUIRED: osinfo-db-tools
 SLACKBUILD DOWNLOAD: https://releases.pagure.org/libosinfo/osinfo-db-20161026.tar.xz
 SLACKBUILD MD5SUM: d6091ff78cea522493dcc8028673a592
 SLACKBUILD SHORT DESCRIPTION:  osinfo-db (operating systems database)
+
+SLACKBUILD NAME: ospd
+SLACKBUILD LOCATION: ./ospd
+SLACKBUILD FILES: README ospd.SlackBuild ospd.info slack-desc
+SLACKBUILD VERSION: 1.3.2
+SLACKBUILD REQUIRED: paramiko lxml defusedxml
+SLACKBUILD DOWNLOAD: https://github.com/greenbone/ospd/archive/v1.3.2.tar.gz
+SLACKBUILD MD5SUM: b3029b398519557285a8b2318f12c37f
+SLACKBUILD SHORT DESCRIPTION:  ospd (Open Scanner Protocol Wrapper)
 
 SLACKBUILD NAME: ostinato
 SLACKBUILD LOCATION: ./ostinato
@@ -4209,6 +4227,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/python-dateutil/python-dateutil-2.7.5.tar.gz
 SLACKBUILD MD5SUM: 6357f8f42cbe0e0e0b1e543f3aad07b7
 SLACKBUILD SHORT DESCRIPTION:  python-dateutil (Python extensions datetime)
+
+SLACKBUILD NAME: python-gvm
+SLACKBUILD LOCATION: ./python-gvm
+SLACKBUILD FILES: README python-gvm.SlackBuild python-gvm.info slack-desc
+SLACKBUILD VERSION: 1.0.0.beta2
+SLACKBUILD REQUIRED: paramiko lxml defusedxml gvm-libs
+SLACKBUILD DOWNLOAD: https://github.com/greenbone/python-gvm/archive/v1.0.0.beta2.tar.gz
+SLACKBUILD MD5SUM: e3cea307a532b29026260d1755a79890
+SLACKBUILD SHORT DESCRIPTION:  python-gvm (GVM Python Library)
 
 SLACKBUILD NAME: python-keyring
 SLACKBUILD LOCATION: ./python-keyring
