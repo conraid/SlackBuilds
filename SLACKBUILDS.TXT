@@ -721,10 +721,10 @@ SLACKBUILD SHORT DESCRIPTION:  cpuid2cpuflags (Tool to generate CPU FLAGS)
 SLACKBUILD NAME: cracklib
 SLACKBUILD LOCATION: ./cracklib
 SLACKBUILD FILES: README cracklib.SlackBuild cracklib.info slack-desc
-SLACKBUILD VERSION: 2.9.6
+SLACKBUILD VERSION: 2.9.7
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://github.com/cracklib/cracklib/releases/download/cracklib-2.9.6/cracklib-2.9.6.tar.gz
-SLACKBUILD MD5SUM: c52f463585d85924b28cdc1e373ae06d
+SLACKBUILD DOWNLOAD: http://github.com/cracklib/cracklib/releases/download/v2.9.7/cracklib-2.9.7.tar.bz2
+SLACKBUILD MD5SUM: 0d68de25332cee5660850528a385427f
 SLACKBUILD SHORT DESCRIPTION:  cracklib (password crack library)
 
 SLACKBUILD NAME: cryfs
@@ -2611,19 +2611,19 @@ SLACKBUILD SHORT DESCRIPTION:  libvirt-glib (glib wrapper for libvirt)
 SLACKBUILD NAME: libvirt-python
 SLACKBUILD LOCATION: ./libvirt-python
 SLACKBUILD FILES: README libvirt-python.SlackBuild libvirt-python.info slack-desc
-SLACKBUILD VERSION: 5.0.0
+SLACKBUILD VERSION: 5.1.0
 SLACKBUILD REQUIRED: libvirt
-SLACKBUILD DOWNLOAD: ftp://libvirt.org/libvirt/python/libvirt-python-5.0.0.tar.gz
-SLACKBUILD MD5SUM: 1366ff0ab84bd5930cc903a0c83cb4b6
+SLACKBUILD DOWNLOAD: ftp://libvirt.org/libvirt/python/libvirt-python-5.1.0.tar.gz
+SLACKBUILD MD5SUM: 0885bce90c98a80571fc5472eb683937
 SLACKBUILD SHORT DESCRIPTION:  libvirt-python (python bindings for libvirt)
 
 SLACKBUILD NAME: libvirt
 SLACKBUILD LOCATION: ./libvirt
 SLACKBUILD FILES: README doinst.sh libvirt.SlackBuild libvirt.info rc.libvirt slack-desc
-SLACKBUILD VERSION: 5.0.0
+SLACKBUILD VERSION: 5.1.0
 SLACKBUILD REQUIRED: audit urlgrabber yajl
-SLACKBUILD DOWNLOAD: http://libvirt.org/sources/libvirt-5.0.0.tar.xz
-SLACKBUILD MD5SUM: b67b226b8f22fbe86991daec5d71ef82
+SLACKBUILD DOWNLOAD: http://libvirt.org/sources/libvirt-5.1.0.tar.xz
+SLACKBUILD MD5SUM: 74c6c2e90ca9c94d9255eec338615a0c
 SLACKBUILD SHORT DESCRIPTION:  libvirt (The virtualization API)
 
 SLACKBUILD NAME: libvterm
@@ -4858,6 +4858,15 @@ SLACKBUILD DOWNLOAD: https://registry.npmjs.org/sitespeed.io/-/sitespeed.io-8.6.
 SLACKBUILD MD5SUM: 7b8f2992f893b6f67372d993339c39e7
 SLACKBUILD SHORT DESCRIPTION:  sitespeed.io (complete web performance tool)
 
+SLACKBUILD NAME: sk1
+SLACKBUILD LOCATION: ./sk1
+SLACKBUILD FILES: README doinst.sh sk1.SlackBuild sk1.info slack-desc
+SLACKBUILD VERSION: 2.0rc3
+SLACKBUILD REQUIRED: sk1libs wxpython
+SLACKBUILD DOWNLOAD: http://downloads.sk1project.net/sk1/2.0rc3/sk1-2.0rc3.tar.gz
+SLACKBUILD MD5SUM: 64b7e5dd97a69a02843dcc357995d0ce
+SLACKBUILD SHORT DESCRIPTION:  sk1 (vector graphics editor)
+
 SLACKBUILD NAME: sk1libs
 SLACKBUILD LOCATION: ./sk1libs
 SLACKBUILD FILES: README sk1libs.SlackBuild sk1libs.info slack-desc
@@ -5670,7 +5679,7 @@ SLACKBUILD SHORT DESCRIPTION:  virglrenderer (virtio GL library)
 
 SLACKBUILD NAME: virt-manager
 SLACKBUILD LOCATION: ./virt-manager
-SLACKBUILD FILES: README doinst.sh patches/slackware.patch slack-desc virt-manager.SlackBuild virt-manager.info
+SLACKBUILD FILES: README doinst.sh patches/be15a01bb25ce67b40cbf8783ed50e32bb7abc1c.patch patches/slackware.patch slack-desc virt-manager.SlackBuild virt-manager.info
 SLACKBUILD VERSION: 2.1.0
 SLACKBUILD REQUIRED: gnome-python-gconf libosinfo tunctl ipaddr-py gtk-vnc libvirt-glib libvirt-python spice-gtk
 SLACKBUILD DOWNLOAD: https://virt-manager.org/download/sources/virt-manager/virt-manager-2.1.0.tar.gz
@@ -5680,10 +5689,10 @@ SLACKBUILD SHORT DESCRIPTION:  virt-manager (a gtk interface for libvirt)
 SLACKBUILD NAME: virt-viewer
 SLACKBUILD LOCATION: ./virt-viewer
 SLACKBUILD FILES: README doinst.sh slack-desc virt-viewer.SlackBuild virt-viewer.info
-SLACKBUILD VERSION: 7.0
+SLACKBUILD VERSION: 8.0
 SLACKBUILD REQUIRED: gtk-vnc libvirt spice-gtk libvirt-glib
-SLACKBUILD DOWNLOAD: https://virt-manager.org/download/sources/virt-viewer/virt-viewer-7.0.tar.gz
-SLACKBUILD MD5SUM: 64c9c4045a7a941a0be4050fc33fc6f5
+SLACKBUILD DOWNLOAD: https://virt-manager.org/download/sources/virt-viewer/virt-viewer-8.0.tar.gz
+SLACKBUILD MD5SUM: 8e31e9797aea982d0c70d360cbc328e7
 SLACKBUILD SHORT DESCRIPTION:  virt-viewer (display the graphical console for a virtual machine)
 
 SLACKBUILD NAME: vnstat
@@ -5856,6 +5865,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://github.com/wxWidgets/wxWidgets/releases/download/v3.0.4/wxWidgets-3.0.4.tar.bz2
 SLACKBUILD MD5SUM: b0035731777acc5597cea8982da10317
 SLACKBUILD SHORT DESCRIPTION:  wxgtk (cross-platform GUI toolkit)
+
+SLACKBUILD NAME: wxpython
+SLACKBUILD LOCATION: ./wxpython
+SLACKBUILD FILES: README doinst.sh slack-desc wxpython.SlackBuild wxpython.info
+SLACKBUILD VERSION: 3.0.2.0
+SLACKBUILD REQUIRED: wxgtk
+SLACKBUILD DOWNLOAD: https://netix.dl.sourceforge.net/project/wxpython/wxPython/3.0.2.0/wxPython-src-3.0.2.0.tar.bz2
+SLACKBUILD MD5SUM: 922b02ff2c0202a7bf1607c98bbbbc04
+SLACKBUILD SHORT DESCRIPTION:  wxpython (Cross platform GUI toolkit for Python)
 
 SLACKBUILD NAME: x11vnc
 SLACKBUILD LOCATION: ./x11vnc
