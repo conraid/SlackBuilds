@@ -1,0 +1,52 @@
+From be15a01bb25ce67b40cbf8783ed50e32bb7abc1c Mon Sep 17 00:00:00 2001
+From: Cole Robinson <crobinso@redhat.com>
+Date: Sat, 2 Mar 2019 16:52:24 -0500
+Subject: [PATCH] tests: test_urls: require explicit distro= value
+
+Most tests have a distro= value specified already. Make distro=none
+required for those tests since they are limited
+---
+ tests/test_urls.ini | 3 +++
+ tests/test_urls.py  | 8 ++++++--
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/tests/test_urls.ini b/tests/test_urls.ini
+index 988933b58..7353ae4cc 100644
+--- a/tests/test_urls.ini
++++ b/tests/test_urls.ini
+@@ -44,6 +44,7 @@ kernelarg = inst.repo
+ # Final centos5 trees, no distro detection since libosinfo doesn't track it
+ [centos-5.11]
+ url = http://vault.centos.org/5.11/os/x86_64
++distro = none
+ 
+ # Latest centos 6 w/ i686
+ [centos-6-latest]
+@@ -187,6 +188,8 @@ distro = ubuntu17.10
+ # Latest release
+ [mageia6]
+ url = http://distro.ibiblio.org/mageia/distrib/6/x86_64/
++distro = none
+ # Devel tree
+ [mageiacauldron]
+ url = http://distro.ibiblio.org/mageia/distrib/cauldron/x86_64/
++distro = none
+diff --git a/tests/test_urls.py b/tests/test_urls.py
+index 7bacfac8d..969277ff0 100644
+--- a/tests/test_urls.py
++++ b/tests/test_urls.py
+@@ -186,8 +186,12 @@ def _make_tests():
+     urls = {}
+     for name in cfg.sections():
+         vals = dict(cfg.items(name))
+-        d = _URLTestData(name, vals["url"],
+-                vals.get("distro", None),
++        url = vals["url"]
++
++        if "distro" not in vals:
++            print("url needs an explicit distro= value: %s" % url)
++            sys.exit(1)
++        d = _URLTestData(name, url, vals["distro"],
+                 vals.get("testxen", "0") == "1",
+                 vals.get("testshortcircuit", "0") == "1",
+                 vals.get("kernelarg", None),
