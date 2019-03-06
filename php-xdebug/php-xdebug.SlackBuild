@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=xdebug
 PKGNAM=php-xdebug
-VERSION=2.7.0RC2
+VERSION=2.7.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -72,7 +72,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PRGNAM-$VERSION
-tar xzvf $CWD/$PRGNAM-$VERSION.tgz
+tar xzvf $CWD/$PRGNAM-$VERSION.tar.gz
 cd $PRGNAM-$VERSION
 
 chown -R root:root .
@@ -92,6 +92,7 @@ make
 install -Dsm755 modules/xdebug.so $PKG/usr/lib${LIBDIRSUFFIX}/php/extensions/xdebug.so
 
 cd debugclient
+./buildconf
 CFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr \
@@ -109,7 +110,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 # Copy config example file
 mkdir -p $PKG/etc/php.d
-sed -e "s#/usr/lib/php#/usr/lib${LIBDIRSUFFIX}/php#" $CWD/files/xdebug.ini > $PKG/etc/php.d/xdebug.ini.new
+sed -e "s|/usr/lib/php|/usr/lib${LIBDIRSUFFIX}/php|" $CWD/files/xdebug.ini > $PKG/etc/php.d/xdebug.ini.new
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
