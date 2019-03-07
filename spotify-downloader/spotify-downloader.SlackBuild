@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=spotify-downloader
 VERSION=1.2.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -80,6 +80,9 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 CFLAGS="$SLKCFLAGS" python3 setup.py install --root=$PKG
+
+# Make bin with $PKGNAM
+ln -s /usr/bin/spotdl $PKG/usr/bin/$PKGNAM
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
