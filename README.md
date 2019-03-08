@@ -43,3 +43,6 @@ All scrips are released under the GPL License.
 
 Compiled packages are on http://slack.conraid.net/repository/ or https://sourceforge.net/projects/slackers/
 
+## Support
+
+Support me https://paypal.me/conraid
