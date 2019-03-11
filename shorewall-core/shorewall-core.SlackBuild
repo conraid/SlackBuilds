@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=shorewall-core
 VERSION=5.2.3.1
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 ARCH=noarch
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -66,6 +66,7 @@ find $PKG -depth -type d -empty -delete || true
 
 # Rename init script
 mv $PKG/etc/rc.d/rc.firewall $PKG/etc/rc.d/rc.firewall.new
+cat $PKG/etc/rc.d/rc.firewall.new > $PKG/etc/rc.firewall.shorewall
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
