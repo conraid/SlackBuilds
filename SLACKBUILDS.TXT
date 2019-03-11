@@ -64,10 +64,10 @@ SLACKBUILD SHORT DESCRIPTION:  afl (security-oriented fuzzer )
 SLACKBUILD NAME: aide
 SLACKBUILD LOCATION: ./aide
 SLACKBUILD FILES: README SLACKWARE.README aide.SlackBuild aide.info doinst.sh files/aide.conf slack-desc
-SLACKBUILD VERSION: 0.16
+SLACKBUILD VERSION: 0.16.1
 SLACKBUILD REQUIRED: audit
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/aide/aide-0.16.tar.gz
-SLACKBUILD MD5SUM: 25c616f67c667acd4088747ae7f6a9a3
+SLACKBUILD DOWNLOAD: https://github.com/aide/aide/releases/download/v0.16.1/aide-0.16.1.tar.gz
+SLACKBUILD MD5SUM: 1bb877023500451cbad76c8ab1f3ec55
 SLACKBUILD SHORT DESCRIPTION:  aide (Advanced Intrusion Detection Environment)
 
 SLACKBUILD NAME: aircrack-ng
@@ -2314,10 +2314,10 @@ SLACKBUILD SHORT DESCRIPTION:  libgsasl (GNU SASL Library)
 SLACKBUILD NAME: libgtop
 SLACKBUILD LOCATION: ./libgtop
 SLACKBUILD FILES: README libgtop.SlackBuild libgtop.info slack-desc
-SLACKBUILD VERSION: 2.38.0
+SLACKBUILD VERSION: 2.40.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://ftp.gnome.org/pub/gnome/sources/libgtop/2.38/libgtop-2.38.0.tar.xz
-SLACKBUILD MD5SUM: bb0ce7de6b28694b40405eedac8a31b5
+SLACKBUILD DOWNLOAD: https://github.com/GNOME/libgtop/archive/2.40.0/libgtop-2.40.0.tar.gz
+SLACKBUILD MD5SUM: b22c2529ffc8fe0058c5a38bd9bcd1e4
 SLACKBUILD SHORT DESCRIPTION:  libgtop (a top-like library)
 
 SLACKBUILD NAME: libhtp
@@ -3213,11 +3213,11 @@ SLACKBUILD SHORT DESCRIPTION:  nikto (Nikto web server scanner)
 
 SLACKBUILD NAME: njmon
 SLACKBUILD LOCATION: ./njmon
-SLACKBUILD FILES: README files/gpl.txt files/njmon.1.gz njmon.SlackBuild njmon.info slack-desc
-SLACKBUILD VERSION: v18
+SLACKBUILD FILES: README files/gpl.txt files/njmon.1.gz files/njmon_collector.1.gz njmon.SlackBuild njmon.info slack-desc
+SLACKBUILD VERSION: v20
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://sourceforge.net/projects/nmon/files/njmon_linux_v18.c
-SLACKBUILD MD5SUM: 0d7e312bd2eb89142b09d766773f7584
+SLACKBUILD DOWNLOAD: http://download.sourceforge.net/nmon/njmon_linux__code_v20.zip
+SLACKBUILD MD5SUM: 5ab2ca74ecd9e177492bd852846622a3
 SLACKBUILD SHORT DESCRIPTION:  njmon (Performance Monitoring)
 
 SLACKBUILD NAME: nload
@@ -5209,6 +5209,15 @@ SLACKBUILD DOWNLOAD: https://www.openinfosecfoundation.org/download/suricata-4.1
 SLACKBUILD MD5SUM: 35c4a8e6be3910831649a073950195df
 SLACKBUILD SHORT DESCRIPTION:  suricata (Network Security Monitoring)
 
+SLACKBUILD NAME: svgo
+SLACKBUILD LOCATION: ./svgo
+SLACKBUILD FILES: README slack-desc svgo.SlackBuild svgo.info
+SLACKBUILD VERSION: 1.2.0
+SLACKBUILD REQUIRED: node
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/svgo/-/svgo-1.2.0.tgz
+SLACKBUILD MD5SUM: ce28510bb2882d0ec3e6e61c9fe3e8ce
+SLACKBUILD SHORT DESCRIPTION:  svg  (Node.js tool for optimizing SVG files)
+
 SLACKBUILD NAME: tbb
 SLACKBUILD LOCATION: ./tbb
 SLACKBUILD FILES: README slack-desc tbb.SlackBuild tbb.info
@@ -5842,10 +5851,10 @@ SLACKBUILD SHORT DESCRIPTION:  wine (Wine Is Not an Emulator)
 SLACKBUILD NAME: winetricks
 SLACKBUILD LOCATION: ./winetricks
 SLACKBUILD FILES: README files/winetricks.desktop files/winetricks.svg slack-desc winetricks.SlackBuild winetricks.info
-SLACKBUILD VERSION: 20181203
+SLACKBUILD VERSION: 20190310
 SLACKBUILD REQUIRED: cabextract wine
-SLACKBUILD DOWNLOAD: https://github.com/Winetricks/winetricks/archive/20181203.tar.gz
-SLACKBUILD MD5SUM: f45c0eeb1a02fcca0d4de9b41553caf5
+SLACKBUILD DOWNLOAD: https://github.com/Winetricks/winetricks/archive/20190310/winetricks-20190310.tar.gz
+SLACKBUILD MD5SUM: baf42e1c439ff8b084830396444ba309
 SLACKBUILD SHORT DESCRIPTION:  winetricks (script for install runtime libraries in wine)
 
 SLACKBUILD NAME: wipe
@@ -5878,10 +5887,10 @@ SLACKBUILD SHORT DESCRIPTION:  wp-cli (A command line interface for WordPress)
 SLACKBUILD NAME: wpscan
 SLACKBUILD LOCATION: ./wpscan
 SLACKBUILD FILES: README slack-desc wpscan.SlackBuild wpscan.info
-SLACKBUILD VERSION: 3.4.4
+SLACKBUILD VERSION: 3.4.5
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://rubygems.org/downloads/wpscan-3.4.4.gem
-SLACKBUILD MD5SUM: 71982b3ccef4e25a9122b5c8719663e3
+SLACKBUILD DOWNLOAD: https://rubygems.org/downloads/wpscan-3.4.5.gem
+SLACKBUILD MD5SUM: a8d4a9a07af356732438506cd9b042c8
 SLACKBUILD SHORT DESCRIPTION:  wpscan (black box WordPress vulnerability scanner)
 
 SLACKBUILD NAME: wput
@@ -6058,10 +6067,10 @@ SLACKBUILD SHORT DESCRIPTION:  yersinia
 SLACKBUILD NAME: youtube-dl
 SLACKBUILD LOCATION: ./youtube-dl
 SLACKBUILD FILES: README patches/slack.patch slack-desc youtube-dl.SlackBuild youtube-dl.info
-SLACKBUILD VERSION: 2019.03.01
+SLACKBUILD VERSION: 2019.03.09
 SLACKBUILD REQUIRED: rtmpdump
-SLACKBUILD DOWNLOAD: https://yt-dl.org/downloads/2019.03.01/youtube-dl-2019.03.01.tar.gz
-SLACKBUILD MD5SUM: 5cdcca317666025943fa88fa7ce103ed
+SLACKBUILD DOWNLOAD: https://yt-dl.org/downloads/2019.03.09/youtube-dl-2019.03.09.tar.gz
+SLACKBUILD MD5SUM: 075b0e5c5c4e7e5f331737077384dd13
 SLACKBUILD SHORT DESCRIPTION:  youtube-dl (YouTube video download utility)
 
 SLACKBUILD NAME: zenity
