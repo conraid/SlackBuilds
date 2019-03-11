@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=njmon
-VERSION=18
+VERSION=20
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -67,24 +67,30 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-install -Dm644 $CWD/${PKGNAM}_linux_v${VERSION}.c $PKGNAM-$VERSION/$PKGNAM.c
+mkdir -p $PKGNAM-$VERSION
 cd $PKGNAM-$VERSION
+unzip $CWD/njmon_linux__code_v${VERSION}.zip
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a-s .
+chmod -R u+w,go+r-w,a+X-s .
 
-gcc -o njmon \
-  ${PKGNAM}.c $SLKCFLAGS \
-  -DJFS -DGETUSER -Wall -DLARGEMEM -lncurses -lm -DX86
+gcc -o njmon njmon_linux_v${VERSION}.c $SLKCFLAGS
 install -Dsm755 $PKGNAM $PKG/usr/bin/njmon
+
+gcc -o njmon_collector $CWD/njmon_collector_v15.c $SLKCFLAGS
+install -Dsm755 njmon_collector $PKG/usr/bin/njmon_collector
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 ./njmon -h > $PKG/usr/doc/$PKGNAM-$VERSION/njmon.txt
+./njmon_collector -h > $PKG/usr/doc/$PKGNAM-$VERSION/njmon_collector.txt
 cp -a $CWD/files/*.txt $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-# Install man page
-install -Dm644 $CWD/files/njmon.1.gz $PKG/usr/man/man1/njmon.1.gz
+# Install man pages
+install -Dm644 $CWD/files/njmon*.1.gz -t $PKG/usr/man/man1/
+
+# Install utilities
+install -Dm644 $CWD/*.py -t $PKG/usr/share/njmon/
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
