@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=njmon
-VERSION=20
+VERSION=21
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -69,7 +69,7 @@ cd $TMP
 rm -rf $PKGNAM-$VERSION
 mkdir -p $PKGNAM-$VERSION
 cd $PKGNAM-$VERSION
-unzip $CWD/njmon_linux__code_v${VERSION}.zip
+unzip $CWD/njmon_linux_code_v${VERSION}.zip
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
