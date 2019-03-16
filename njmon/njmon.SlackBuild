@@ -31,7 +31,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=njmon
 VERSION=21
-BUILD=${BUILD:-1}
+VERSION_COLLECTOR=16
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -77,7 +78,7 @@ chmod -R u+w,go+r-w,a+X-s .
 gcc -o njmon njmon_linux_v${VERSION}.c $SLKCFLAGS
 install -Dsm755 $PKGNAM $PKG/usr/bin/njmon
 
-gcc -o njmon_collector $CWD/njmon_collector_v15.c $SLKCFLAGS
+gcc -o njmon_collector $CWD/njmon_collector_v$VERSION_COLLECTOR.c $SLKCFLAGS
 install -Dsm755 njmon_collector $PKG/usr/bin/njmon_collector
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
