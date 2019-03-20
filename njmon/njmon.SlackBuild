@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=njmon
 VERSION=21
 VERSION_COLLECTOR=16
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -88,7 +88,10 @@ cp -a $CWD/files/*.txt $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 # Install man pages
-install -Dm644 $CWD/files/njmon*.1.gz -t $PKG/usr/man/man1/
+mkdir -p $PKG/usr/man/man1
+help2man ./$PKGNAM | gzip -9 > $PKG/usr/man/man1/$PKGNAM.1.gz
+help2man ./njmon_collector | gzip -9 > $PKG/usr/man/man1/njmon_collector.1.gz
+
 
 # Install utilities
 install -Dm644 $CWD/*.py -t $PKG/usr/share/njmon/
