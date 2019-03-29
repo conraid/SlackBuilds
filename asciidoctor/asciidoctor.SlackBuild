@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=asciidoctor
-VERSION=1.5.8
+VERSION=2.0.3
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -65,7 +65,7 @@ cd $TMP
 
 
 # Get the full path of the ruby installation, for gems
-DESTDIR="$(ruby -e'puts Gem.default_dir')"
+DESTDIR="$(ruby -e 'puts Gem.default_dir')"
 
 HOME="/tmp"  \
 GEM_HOME="$DESTDIR" GEM_PATH="$DESTDIR" \
@@ -80,6 +80,9 @@ gem install \
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+
+install -Dm644 $PKG/$DESTDIR/gems/asciidoctor-2.0.3/man/asciidoctor.1 $PKG/usr/man/man1/asciidoctor.1
+gzip -9 $PKG/usr/man/man1/asciidoctor.1
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
