@@ -30,13 +30,12 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=asciidoctor
-VERSION=2.0.3
+VERSION=2.0.4
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
-
 
 # Insert document files in this variable
 DOCFILES="AUTHORS BUGS CHANGES COPYING* COPYRIGHT ChangeLog INSTALL LICENSE MANIFEST NEWS README* THANKS TODO VERSION"
@@ -63,7 +62,6 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 
-
 # Get the full path of the ruby installation, for gems
 DESTDIR="$(ruby -e 'puts Gem.default_dir')"
 
@@ -81,7 +79,7 @@ gem install \
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
-install -Dm644 $PKG/$DESTDIR/gems/asciidoctor-2.0.3/man/asciidoctor.1 $PKG/usr/man/man1/asciidoctor.1
+install -Dm644 $PKG/$DESTDIR/gems/asciidoctor-$VERSION/man/asciidoctor.1 $PKG/usr/man/man1/asciidoctor.1
 gzip -9 $PKG/usr/man/man1/asciidoctor.1
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
