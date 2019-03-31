@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Slackware build script for ntopng
 #
-# Copyright 2013-2018 Corrado Franco (http://conraid.net)
+# Copyright 2013-2019 Corrado Franco (https://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -27,16 +27,17 @@
 #
 set -eu
 
-CWD=$(pwd)
+cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=ntopng
-VERSION=3.8
+VERSION=3.9git
+COMMIT=23c5d92b105d2680c0a26171bf2571035c92e246
+NDPI_VERSION=2.8
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
-TMP=${TMP:-/tmp/pkg/$PKGNAM}
+TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM/
 OUTPUT=${OUTPUT:-/tmp}
-NDPI_VERSION=2.6
 
 DOCFILES="COPYING* LICENSE* README* packages/etc/init.d doc/*"
 
@@ -46,6 +47,14 @@ if [ -z ${ARCH:=""} ]; then
   arm*) ARCH=arm ;;
   *) ARCH=$( uname -m ) ;;
   esac
+fi
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  exit 0
 fi
 
 if [ "$ARCH" = "i586" ]; then
@@ -65,53 +74,33 @@ fi
 rm -rf $PKG $TMP
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
-tar xvf $CWD/nDPI-$NDPI_VERSION.tar.gz || tar xvf $CWD/$NDPI_VERSION.tar.gz
+rm -rf $PKGNAM-$COMMIT
+tar xvf $CWD/$PKGNAM-$COMMIT.tar.gz || tar xvf $CWD/$COMMIT.tar.gz
+cd $PKGNAM-$COMMIT
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
-
-# Build nDPI ../nDPI
-mv nDPI-$NDPI_VERSION nDPI
-cd nDPI
-
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./autogen.sh \
-  --prefix=$PKG/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --infodir=/usr/info \
-  --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
-make
-
-cd ../$PKGNAM-$VERSION
 
 ./autogen.sh
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS -fpermissive" \
 ./configure \
-  --prefix=$PKG/usr \
+  --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
   --sysconfdir=/etc \
   --localstatedir=/var \
   --mandir=/usr/man \
   --infodir=/usr/info \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
+  --with-ndpi-static-lib=/usr/lib$LIBDIRSUFFIX/ \
+  --with-ndpi-includes=/usr/include/ndpi \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
-LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS -fpermissive" \
 make
 make geoip
-make install
+make DESTDIR=$PKG install
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
