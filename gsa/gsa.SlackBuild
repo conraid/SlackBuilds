@@ -2,7 +2,7 @@
 #
 # Slackware build script for greenbone-security-assistant
 #
-# Copyright 2014-2019 Corrado Franco (http://conraid.net)
+# Copyright 2014-2019 Corrado Franco (https://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=gsa
-SRCVERSION=8.0-beta2
+SRCVERSION=8.0.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -81,7 +81,10 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 # Sane man path
-sed -i 's|\${DATADIR}/man/man|${CMAKE_INSTALL_PREFIX}/man/man|g' */doc/CMakeLists.txt
+sed 's|\${DATADIR}/man/man|${CMAKE_INSTALL_PREFIX}/man/man|g' -i */doc/CMakeLists.txt
+
+# Fix git error
+sed 's/GIT_REV_AVAILABLE/GIT_REVISION/' -i gsad/src/gsad.c
 
 mkdir -p build
 cd build
