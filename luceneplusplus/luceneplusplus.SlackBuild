@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Slackware build script for luceneplusplus
 #
-# Copyright 2016-2018 Corrado Franco (http://conraid.net)
+# Copyright 2016-2019 Corrado Franco (https://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -27,13 +27,13 @@
 
 set -eu
 
-CWD=$(pwd)
+cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=LucenePlusPlus
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=rel_3.0.7
-VERSION=$(echo $SRCVERSION | sed 's/rel_//')
-BUILD=${BUILD:-8}
+SRCVERSION=e6feb35c326b70b32b65bf5bebe1037f1c284746
+VERSION=$(echo $SRCVERSION | head -c7)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -47,6 +47,14 @@ if [ -z ${ARCH:=""} ]; then
     arm*) ARCH=arm ;;
        *) ARCH=$( uname -m ) ;;
   esac
+fi
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  exit 0
 fi
 
 if [ "$ARCH" = "i586" ]; then
@@ -77,11 +85,13 @@ mkdir -p build
 cd build
 cmake -Wno-dev \
   -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
-  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DENABLE_DEMO=Off \
   -DENABLE_TEST=Off \
+  -DBUILD_SHARED_LIBS=On \
+  -DBoost_USE_STATIC_LIBS=OFF \
   ..
 
 make
@@ -98,7 +108,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
