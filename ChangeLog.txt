@@ -1,3 +1,16 @@
+Sat Apr 13 11:11:32 UTC 2019
+Recompiled programs that require BOOST.
+Unfortunately some are not yet compatible and I can't find any patches.
+To make them work just create symbolic links, for example with this command:
+# cd /usr/lib64; for i in libboost_*1.70.0; do ln -s $i ${i%%.*}.so.1.69.0; done
+amule-r11004-x86_64-5cf.txz:  Rebuilt.
+	- Recompiled against boost-1.70.0.
+justniffer-0.5.15-x86_64-9cf.txz:  Rebuilt.
+	- Recompiled against boost-1.70.0.
+luceneplusplus-e6feb35-x86_64-1cf.txz:  Upgraded.
+sitespeedio-8.12.0-x86_64-1cf.txz:  Upgraded.
+websocketpp-0.8.1-x86_64-1cf.txz:  Added.
++--------------------------+
 Fri Apr 12 13:39:24 UTC 2019
 atom-1.36.0-x86_64-1cf.txz:  Upgraded.
 nmon-16j-x86_64-1cf.txz:  Upgraded.
