@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=njmon
-VERSION=22
+VERSION=24
 VERSION_COLLECTOR=16
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -70,12 +70,8 @@ cd $TMP
 rm -rf $PKGNAM-$VERSION
 mkdir -p $PKGNAM-$VERSION
 cd $PKGNAM-$VERSION
-unzip $CWD/njmon_linux_code_v${VERSION}.zip
 
-chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
-
-gcc -o njmon njmon_linux_v${VERSION}.c $SLKCFLAGS
+gcc -o njmon $CWD/njmon_linux_v${VERSION}.c $SLKCFLAGS
 install -Dsm755 $PKGNAM $PKG/usr/bin/njmon
 
 gcc -o njmon_collector $CWD/njmon_collector_v$VERSION_COLLECTOR.c $SLKCFLAGS
@@ -91,7 +87,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 mkdir -p $PKG/usr/man/man1
 help2man ./$PKGNAM | gzip -9 > $PKG/usr/man/man1/$PKGNAM.1.gz
 help2man ./njmon_collector | gzip -9 > $PKG/usr/man/man1/njmon_collector.1.gz
-
 
 # Install utilities
 install -Dm644 $CWD/*.py -t $PKG/usr/share/njmon/
