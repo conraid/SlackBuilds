@@ -199,9 +199,9 @@ SLACKBUILD SHORT DESCRIPTION:  arpwatch (Monitoring tools for tracking IP addres
 SLACKBUILD NAME: asciidoctor
 SLACKBUILD LOCATION: ./asciidoctor
 SLACKBUILD FILES: README asciidoctor.SlackBuild asciidoctor.info slack-desc
-SLACKBUILD VERSION: 2.0.7
+SLACKBUILD VERSION: 2.0.8
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://rubygems.org/downloads/asciidoctor-2.0.7.gem
+SLACKBUILD DOWNLOAD: https://rubygems.org/downloads/asciidoctor-2.0.8.gem
 SLACKBUILD MD5SUM: 0169c7ca6360bddf42b6e3dd4a6f3fc2
 SLACKBUILD SHORT DESCRIPTION:  asciidoctor (text processor and publishing toolchain)
 
@@ -1063,10 +1063,10 @@ SLACKBUILD SHORT DESCRIPTION:  etherwake
 SLACKBUILD NAME: ettercap
 SLACKBUILD LOCATION: ./ettercap
 SLACKBUILD FILES: README doinst.sh ettercap.SlackBuild ettercap.info patches/0001-First-draft-of-openssl-1.1-compatibility-layer-from-.patch patches/6181876ce551bb1c09fbbf5359652b7568a7dc8d.patch patches/7a103d3fcb994961e27c5b123059f5c5ad62500e.patch patches/CVE-2017-6430.patch patches/CVE-2017-8366.patch slack-desc
-SLACKBUILD VERSION: 0.8.2
-SLACKBUILD REQUIRED: libbsd libnet luajit
-SLACKBUILD DOWNLOAD: https://github.com/Ettercap/ettercap/releases/download/v0.8.2/ettercap-0.8.2.tar.gz
-SLACKBUILD MD5SUM: b6b20851862f55644d5f296f77b785d1
+SLACKBUILD VERSION: ffeaac7
+SLACKBUILD REQUIRED: libbsd libnet luajit geoip
+SLACKBUILD DOWNLOAD: https://github.com/Ettercap/ettercap/archive/ffeaac725d31f10b270cd3ece14e5a7b83a1f1ff.tar.gz
+SLACKBUILD MD5SUM: ab8918b655061a5bda482b8cb9608417
 SLACKBUILD SHORT DESCRIPTION:  ettercap (Program for sniff and monitoring the network)
 
 SLACKBUILD NAME: evtest
@@ -2242,10 +2242,10 @@ SLACKBUILD SHORT DESCRIPTION:  libbfio (basic file input/output abstraction)
 SLACKBUILD NAME: libbsd
 SLACKBUILD LOCATION: ./libbsd
 SLACKBUILD FILES: README libbsd.SlackBuild libbsd.info slack-desc
-SLACKBUILD VERSION: 0.8.6
+SLACKBUILD VERSION: 0.9.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://libbsd.freedesktop.org/releases/libbsd-0.8.6.tar.xz
-SLACKBUILD MD5SUM: 4ab7bec639af17d0aacb50222b479110
+SLACKBUILD DOWNLOAD: https://libbsd.freedesktop.org/releases/libbsd-0.9.1.tar.xz
+SLACKBUILD MD5SUM: a74b80c4143afa032c90226a4518fffe
 SLACKBUILD SHORT DESCRIPTION:  libbsd (library of BSD functions)
 
 SLACKBUILD NAME: libcacard
@@ -3250,10 +3250,10 @@ SLACKBUILD SHORT DESCRIPTION:  nghttp2 (HTTP/2 implementation, APP only)
 SLACKBUILD NAME: nginx
 SLACKBUILD LOCATION: ./nginx
 SLACKBUILD FILES: README doinst.sh files/nginx.logrotate files/rc.nginx nginx.SlackBuild nginx.info slack-desc
-SLACKBUILD VERSION: 1.15.12
+SLACKBUILD VERSION: 1.16.0
 SLACKBUILD REQUIRED: geoip
-SLACKBUILD DOWNLOAD: https://nginx.org/download/nginx-1.15.12.tar.gz
-SLACKBUILD MD5SUM: db2e39efc4cff854a887ee5bbeb27fb9
+SLACKBUILD DOWNLOAD: https://nginx.org/download/nginx-1.16.0.tar.gz
+SLACKBUILD MD5SUM: 97207283f30cd90cdba638c3ea30323a
 SLACKBUILD SHORT DESCRIPTION:  nginx (http/imap/pop3 proxy)
 
 SLACKBUILD NAME: ngrep
@@ -3458,10 +3458,19 @@ SLACKBUILD NAME: node-sass
 SLACKBUILD LOCATION: ./node-sass
 SLACKBUILD FILES: PKGNOTE README node-sass.SlackBuild node-sass.info slack-desc
 SLACKBUILD VERSION: 4.9.4
-SLACKBUILD REQUIRED: npm
-SLACKBUILD DOWNLOAD: https://github.com/sass/node-sass/archive/v4.9.4.tar.gz
-SLACKBUILD MD5SUM: 26163235f8d81084f45da0c436f115b6
+SLACKBUILD REQUIRED: npm node-gyp node-nan
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/node-sass/-/node-sass-4.9.4.tgz
+SLACKBUILD MD5SUM: de3ab59c5693b79236fa81e1cc7975fb
 SLACKBUILD SHORT DESCRIPTION:  node-sass (Wrapper around libsass)
+
+SLACKBUILD NAME: node-semver
+SLACKBUILD LOCATION: ./node-semver
+SLACKBUILD FILES: README node-semver.SlackBuild node-semver.info slack-desc
+SLACKBUILD VERSION: 6.0.0
+SLACKBUILD REQUIRED: npm node
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/semver/-/semver-6.0.0.tgz
+SLACKBUILD MD5SUM: 2ee5aa88ad6235981e0366064c85fa2c
+SLACKBUILD SHORT DESCRIPTION:  node-semver (The semantic versioner for npm)
 
 SLACKBUILD NAME: node-stylus
 SLACKBUILD LOCATION: ./node-stylus
@@ -3484,10 +3493,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-uglifycss (minifier css)
 SLACKBUILD NAME: node-uglifyjs
 SLACKBUILD LOCATION: ./node-uglifyjs
 SLACKBUILD FILES: README node-uglifyjs.SlackBuild node-uglifyjs.info slack-desc
-SLACKBUILD VERSION: 3.5.6
+SLACKBUILD VERSION: 3.5.7
 SLACKBUILD REQUIRED: npm
-SLACKBUILD DOWNLOAD: https://github.com/mishoo/UglifyJS2/archive/v3.5.6.tar.gz
-SLACKBUILD MD5SUM: 6ac907939a7df063b1bb36b672787fe7
+SLACKBUILD DOWNLOAD: https://github.com/mishoo/UglifyJS2/archive/v3.5.7.tar.gz
+SLACKBUILD MD5SUM: 5cc7f590b4a3d6e9e8f9b900e279a54f
 SLACKBUILD SHORT DESCRIPTION:  node-uglify-js (JavaScript compressor/minifier)
 
 SLACKBUILD NAME: node
@@ -3512,7 +3521,7 @@ SLACKBUILD NAME: npm-check-updates
 SLACKBUILD LOCATION: ./npm-check-updates
 SLACKBUILD FILES: README npm-check-updates.SlackBuild npm-check-updates.info slack-desc
 SLACKBUILD VERSION: 3.1.7
-SLACKBUILD REQUIRED: npm-check
+SLACKBUILD REQUIRED: npm-check node-semver
 SLACKBUILD DOWNLOAD: http://registry.npmjs.org/npm-check-updates/-/npm-check-updates-3.1.7.tgz
 SLACKBUILD MD5SUM: 5bfe64a7faf66705fa7ad86566947c50
 SLACKBUILD SHORT DESCRIPTION:  npm-check-updates (Find newer versions of npm package dependencies)
@@ -5644,10 +5653,10 @@ SLACKBUILD SHORT DESCRIPTION:  txt2man (converts text to man page)
 SLACKBUILD NAME: typescript
 SLACKBUILD LOCATION: ./typescript
 SLACKBUILD FILES: README slack-desc typescript.SlackBuild typescript.info
-SLACKBUILD VERSION: 3.4.3
+SLACKBUILD VERSION: 3.4.5
 SLACKBUILD REQUIRED: npm
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/typescript/-/typescript-3.4.3.tgz
-SLACKBUILD MD5SUM: 29fd0d1b165d6720e6f0d3161de51b01
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/typescript/-/typescript-3.4.5.tgz
+SLACKBUILD MD5SUM: fc46b3c9fbe7472e55527ec4f16c47a2
 SLACKBUILD SHORT DESCRIPTION:  typescript (superset of JavaScript)
 
 SLACKBUILD NAME: udiskie
@@ -6094,10 +6103,10 @@ SLACKBUILD SHORT DESCRIPTION:  wol (Wake On Lan)
 SLACKBUILD NAME: wp-cli
 SLACKBUILD LOCATION: ./wp-cli
 SLACKBUILD FILES: PKGNOTE README files/LICENSE files/wp-completion.bash slack-desc wp-cli.SlackBuild wp-cli.info
-SLACKBUILD VERSION: 2.1.0
+SLACKBUILD VERSION: 2.2.0
 SLACKBUILD REQUIRED: php-composer
-SLACKBUILD DOWNLOAD: https://github.com/wp-cli/wp-cli/releases/download/v2.1.0/wp-cli-2.1.0.phar
-SLACKBUILD MD5SUM: fa0fb31d1462a5c39a8d4d2cdb369462
+SLACKBUILD DOWNLOAD: https://github.com/wp-cli/wp-cli/releases/download/v2.2.0/wp-cli-2.2.0.phar
+SLACKBUILD MD5SUM: 9d1ead73e678fa2f51a70a933b0bf017
 SLACKBUILD SHORT DESCRIPTION:  wp-cli (A command line interface for WordPress)
 
 SLACKBUILD NAME: wpscan
@@ -6283,10 +6292,10 @@ SLACKBUILD SHORT DESCRIPTION:  yersinia
 SLACKBUILD NAME: youtube-dl
 SLACKBUILD LOCATION: ./youtube-dl
 SLACKBUILD FILES: README patches/slack.patch slack-desc youtube-dl.SlackBuild youtube-dl.info
-SLACKBUILD VERSION: 2019.04.17
+SLACKBUILD VERSION: 2019.04.24
 SLACKBUILD REQUIRED: rtmpdump
-SLACKBUILD DOWNLOAD: https://yt-dl.org/downloads/2019.04.17/youtube-dl-2019.04.17.tar.gz
-SLACKBUILD MD5SUM: dfdc53ed092fc496d82e05a70a63ccbb
+SLACKBUILD DOWNLOAD: https://yt-dl.org/downloads/2019.04.24/youtube-dl-2019.04.24.tar.gz
+SLACKBUILD MD5SUM: ee594cc3dae339c8e7c74674a15c9a65
 SLACKBUILD SHORT DESCRIPTION:  youtube-dl (YouTube video download utility)
 
 SLACKBUILD NAME: zenity
