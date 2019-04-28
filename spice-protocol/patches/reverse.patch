@@ -1,0 +1,84 @@
+diff -Naupr b/spice/enums.h a/spice/enums.h
+--- b/spice/enums.h	2019-04-04 10:42:57.000000000 +0200
++++ a/spice/enums.h	2018-07-04 19:13:36.000000000 +0200
+@@ -119,6 +119,21 @@ typedef enum SpiceMouseMode {
+     SPICE_MOUSE_MODE_MASK = 0x3
+ } SpiceMouseMode;
+ 
++typedef enum SpicePubkeyType {
++    SPICE_PUBKEY_TYPE_INVALID,
++    SPICE_PUBKEY_TYPE_RSA,
++    SPICE_PUBKEY_TYPE_RSA2,
++    SPICE_PUBKEY_TYPE_DSA,
++    SPICE_PUBKEY_TYPE_DSA1,
++    SPICE_PUBKEY_TYPE_DSA2,
++    SPICE_PUBKEY_TYPE_DSA3,
++    SPICE_PUBKEY_TYPE_DSA4,
++    SPICE_PUBKEY_TYPE_DH,
++    SPICE_PUBKEY_TYPE_EC,
++
++    SPICE_PUBKEY_TYPE_ENUM_END
++} SpicePubkeyType;
++
+ typedef enum SpiceDataCompressionType {
+     SPICE_DATA_COMPRESSION_TYPE_NONE,
+     SPICE_DATA_COMPRESSION_TYPE_LZ4,
+@@ -382,6 +397,21 @@ typedef enum SpiceAudioFmt {
+     SPICE_AUDIO_FMT_ENUM_END
+ } SpiceAudioFmt;
+ 
++typedef enum SpiceTunnelServiceType {
++    SPICE_TUNNEL_SERVICE_TYPE_INVALID,
++    SPICE_TUNNEL_SERVICE_TYPE_GENERIC,
++    SPICE_TUNNEL_SERVICE_TYPE_IPP,
++
++    SPICE_TUNNEL_SERVICE_TYPE_ENUM_END
++} SpiceTunnelServiceType;
++
++typedef enum SpiceTunnelIpType {
++    SPICE_TUNNEL_IP_TYPE_INVALID,
++    SPICE_TUNNEL_IP_TYPE_IPv4,
++
++    SPICE_TUNNEL_IP_TYPE_ENUM_END
++} SpiceTunnelIpType;
++
+ typedef enum SpiceVscMessageType {
+     SPICE_VSC_MESSAGE_TYPE_Init = 1,
+     SPICE_VSC_MESSAGE_TYPE_Error,
+@@ -584,6 +614,33 @@ enum {
+ };
+ 
+ enum {
++    SPICE_MSG_TUNNEL_INIT = 101,
++    SPICE_MSG_TUNNEL_SERVICE_IP_MAP,
++    SPICE_MSG_TUNNEL_SOCKET_OPEN,
++    SPICE_MSG_TUNNEL_SOCKET_FIN,
++    SPICE_MSG_TUNNEL_SOCKET_CLOSE,
++    SPICE_MSG_TUNNEL_SOCKET_DATA,
++    SPICE_MSG_TUNNEL_SOCKET_CLOSED_ACK,
++    SPICE_MSG_TUNNEL_SOCKET_TOKEN,
++
++    SPICE_MSG_END_TUNNEL
++};
++
++enum {
++    SPICE_MSGC_TUNNEL_SERVICE_ADD = 101,
++    SPICE_MSGC_TUNNEL_SERVICE_REMOVE,
++    SPICE_MSGC_TUNNEL_SOCKET_OPEN_ACK,
++    SPICE_MSGC_TUNNEL_SOCKET_OPEN_NACK,
++    SPICE_MSGC_TUNNEL_SOCKET_FIN,
++    SPICE_MSGC_TUNNEL_SOCKET_CLOSED,
++    SPICE_MSGC_TUNNEL_SOCKET_CLOSED_ACK,
++    SPICE_MSGC_TUNNEL_SOCKET_DATA,
++    SPICE_MSGC_TUNNEL_SOCKET_TOKEN,
++
++    SPICE_MSGC_END_TUNNEL
++};
++
++enum {
+     SPICE_MSG_SMARTCARD_DATA = 101,
+ 
+     SPICE_MSG_END_SMARTCARD
+diff -Naupr b/spice/stats.h a/spice/stats.h
+diff -Naupr b/spice/stream-device.h a/spice/stream-device.h
+diff -Naupr b/spice/vd_agent.h a/spice/vd_agent.h
