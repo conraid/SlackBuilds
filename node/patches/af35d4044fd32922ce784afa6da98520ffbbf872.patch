@@ -1,0 +1,73 @@
+From af35d4044fd32922ce784afa6da98520ffbbf872 Mon Sep 17 00:00:00 2001
+From: cjihrig <cjihrig@gmail.com>
+Date: Sun, 31 Mar 2019 10:33:23 -0400
+Subject: [PATCH] report: use uv_gettimeofday for dumpEventTimeStamp
+
+dumpEventTimeStamp was not implemented on Windows, and did not
+include any error checking. This commit adds Windows support
+and error checking.
+
+PR-URL: https://github.com/nodejs/node/pull/27029
+Reviewed-By: Refael Ackermann <refack@gmail.com>
+---
+ src/node_report.cc    | 11 +++++++----
+ src/node_report.h     |  5 +----
+ test/common/report.js |  6 +-----
+ 3 files changed, 9 insertions(+), 13 deletions(-)
+
+diff --git a/src/node_report.cc b/src/node_report.cc
+index 74391cd4c1bc..8a257b0c9c6e 100644
+--- a/src/node_report.cc
++++ b/src/node_report.cc
+@@ -209,11 +209,14 @@ static void WriteNodeReport(Isolate* isolate,
+            tm_struct.tm_min,
+            tm_struct.tm_sec);
+   writer.json_keyvalue("dumpEventTime", timebuf);
+-  struct timeval ts;
+-  gettimeofday(&ts, nullptr);
+-  writer.json_keyvalue("dumpEventTimeStamp",
+-                       std::to_string(ts.tv_sec * 1000 + ts.tv_usec / 1000));
+ #endif
++
++  uv_timeval64_t ts;
++  if (uv_gettimeofday(&ts) == 0) {
++    writer.json_keyvalue("dumpEventTimeStamp",
++                         std::to_string(ts.tv_sec * 1000 + ts.tv_usec / 1000));
++  }
++
+   // Report native process ID
+   writer.json_keyvalue("processId", pid);
+ 
+diff --git a/src/node_report.h b/src/node_report.h
+index 5ae041b9fe92..27ace3c8efed 100644
+--- a/src/node_report.h
++++ b/src/node_report.h
+@@ -5,10 +5,7 @@
+ #include "uv.h"
+ #include "v8.h"
+ 
+-#ifdef _WIN32
+-#include <time.h>
+-#else
+-#include <sys/time.h>
++#ifndef _WIN32
+ #include <sys/types.h>
+ #include <unistd.h>
+ #endif
+diff --git a/test/common/report.js b/test/common/report.js
+index f3942c5d298a..f97cf10669ca 100644
+--- a/test/common/report.js
++++ b/test/common/report.js
+@@ -70,11 +70,7 @@ function _validateContent(data) {
+   assert(typeof header.filename === 'string' || header.filename === null);
+   assert.notStrictEqual(new Date(header.dumpEventTime).toString(),
+                         'Invalid Date');
+-  if (isWindows)
+-    assert.strictEqual(header.dumpEventTimeStamp, undefined);
+-  else
+-    assert(String(+header.dumpEventTimeStamp), header.dumpEventTimeStamp);
+-
++  assert(String(+header.dumpEventTimeStamp), header.dumpEventTimeStamp);
+   assert(Number.isSafeInteger(header.processId));
+   assert.strictEqual(typeof header.cwd, 'string');
+   assert(Array.isArray(header.commandLine));
