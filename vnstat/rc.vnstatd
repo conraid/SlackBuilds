@@ -1,52 +1,43 @@
 #!/bin/sh
-# Start/Stop/Restart vnStat
-# Copyright 2009-2015 Corrado Franco
-#
 
 VNSTATBIN="/usr/sbin/vnstatd"
 CONFIGFILE="/etc/vnstat.conf"
 BASEDIR="/var/lib/vnstat/"
 PIDFILE="/var/run/vnstat/vnstat.pid"
 INTERFACE=$(grep Interface $CONFIGFILE | cut -d" " -f2 | cut -d'"' -f2)
-echo $INTERFACE
 
 start_vnstat() {
-    if [ -e "$PIDFILE" ]; then
-		echo "Already running"
-		return 0 
-    else
-		if [ ! -e "$BASEDIR/$INTERFACE" ]; then
-			/usr/bin/vnstat -u -i "$INTERFACE"
-			sleep 2
-			if [ $? -gt 0 ]; then
-				echo "Failed"
-				return 0 
-			fi
-		fi
-		echo -n "Starting vnStat daemon: "
-		$VNSTATBIN -d --config $CONFIGFILE
-		if [ $? -gt 0 ]; then
+  if [ -e "$PIDFILE" ]; then
+	  echo "Already running"
+	  return 0
+  elif [ ! -e "$BASEDIR/$INTERFACE" ]; then
+		if ! $VNSTATBIN -u -i "$INTERFACE"; then
 			echo "Failed"
-			return 0 
-		else
-			echo "Done"
+			return 0
 		fi
 	fi
+	printf "Starting vnStat daemon: "
+	if ! $VNSTATBIN -d --config "$CONFIGFILE"; then
+    echo "Failed"
+		return 0
+	else
+		echo "Done"
+	fi
+
 }
 
 stop_vnstat() {
-    if [ ! -e "$PIDFILE" ]; then
-		echo "Not running"
-		return 0 
-    else
-	    echo -n "Stopping vnStat daemon: "
-		kill $(cat $PIDFILE)
-		if [ $? -gt 0 ]; then
-			echo "Failed"
-			return 0 
-		else
-			echo "Done"
-		fi
+  if [ ! -e "$PIDFILE" ]; then
+	  echo "Not running"
+	  return 0
+  else
+	  printf "Stopping vnStat daemon: "
+    if ! kill "$(cat $PIDFILE)"; then
+      echo "Failed"
+		  return 0
+	  else
+		  echo "Done"
+	  fi
 	fi
 }
 
