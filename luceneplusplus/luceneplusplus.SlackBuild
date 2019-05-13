@@ -33,7 +33,7 @@ PRGNAM=LucenePlusPlus
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=e6feb35c326b70b32b65bf5bebe1037f1c284746
 VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -92,6 +92,7 @@ cmake -Wno-dev \
   -DENABLE_TEST=Off \
   -DBUILD_SHARED_LIBS=On \
   -DBoost_USE_STATIC_LIBS=OFF \
+  -DBoost_NO_BOOST_CMAKE=ON \
   ..
 
 make
