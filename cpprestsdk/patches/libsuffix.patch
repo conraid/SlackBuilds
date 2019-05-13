@@ -1,0 +1,14 @@
+diff -ur a/Release/src/CMakeLists.txt b/Release/src/CMakeLists.txt
+--- a/Release/src/CMakeLists.txt	2018-02-07 00:23:26.000000000 +0100
++++ b/Release/src/CMakeLists.txt	2018-04-01 14:22:46.179580886 +0200
+@@ -251,8 +251,8 @@
+     TARGETS ${CPPREST_TARGETS}
+     EXPORT cpprestsdk-targets
+     RUNTIME DESTINATION bin
+-    LIBRARY DESTINATION lib
+-    ARCHIVE DESTINATION lib
++    LIBRARY DESTINATION lib${LIB_SUFFIX}
++    ARCHIVE DESTINATION lib${LIB_SUFFIX}
+   )
+ 
+   configure_file(../cmake/cpprestsdk-config.in.cmake "${CMAKE_CURRENT_BINARY_DIR}/cpprestsdk-config.cmake" @ONLY)
