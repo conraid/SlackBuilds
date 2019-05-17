@@ -4,7 +4,7 @@ Slackware Current Repository by Conraid
 
 ## Repository for Slackware Current packages
 
-Repository contains everything (SlackBuild script, slack-desc file, plus all possible patch) you'll need when you want to build the packages yourself.
+Each directory contains everything (SlackBuild script, slack-desc file, plus all possible patch) you'll need when you want to build the packages yourself.
 
 To *make package from slackbuild* do
 
