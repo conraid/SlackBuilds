@@ -33,7 +33,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=heimdal
 VERSION=7.6.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -118,6 +118,9 @@ make DESTDIR=$PKG install
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
+
+# Rename "su" program.
+mv $PKG/usr/bin/su $PKG/usr/bin/su-heimdal
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
