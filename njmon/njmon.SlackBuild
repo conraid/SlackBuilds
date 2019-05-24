@@ -30,8 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=njmon
-VERSION=24
+VERSION=25
 VERSION_COLLECTOR=16
+VERSION_CHART=9
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -71,7 +72,9 @@ rm -rf $PKGNAM-$VERSION
 mkdir -p $PKGNAM-$VERSION
 cd $PKGNAM-$VERSION
 
-gcc -o njmon $CWD/njmon_linux_v${VERSION}.c $SLKCFLAGS
+unzip $CWD/${PKGNAM}_linux_code_v${VERSION}.zip
+
+gcc -o njmon njmon_linux_v${VERSION}.c $SLKCFLAGS
 install -Dsm755 $PKGNAM $PKG/usr/bin/njmon
 
 gcc -o njmon_collector $CWD/njmon_collector_v$VERSION_COLLECTOR.c $SLKCFLAGS
