@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 # Slackware build script for John the Ripper (http://www.openwall.com/john/)
 #
-# Copyright 2008-2018 Corrado Franco (http://conraid.net)
+# Copyright 2008-2019 Corrado Franco (https://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -24,13 +24,13 @@
 
 set -eu
 
-CWD=$(pwd)
+cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=JohnTheRipper
+PRGNAM=john
 PKGNAM=john
-SRCVERSION=1.8.0-jumbo-1
+SRCVERSION=1.9.0-jumbo-1
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -41,6 +41,14 @@ if [ -z ${ARCH:=""} ]; then
     i?86) ARCH=i686 ;;
        *) ARCH=$( uname -m ) ;;
   esac
+fi
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  exit 0
 fi
 
 if [ "$ARCH" = "i586" ]; then
@@ -61,7 +69,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PRGNAM-$SRCVERSION
-tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz
+tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.xz
 cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
@@ -77,48 +85,87 @@ fi
  export PKG_CONFIG_PATH=/usr/lib${LIBDIRSUFFIX}/openssl-1.0/pkgconfig
 
 SLKCFLAGS="-DJOHN_SYSTEMWIDE=1 -Wall -O2 -fomit-frame-pointer"
-SLKCONF="--prefix=/usr --disable-native-tests --enable-openmp --enable-opencl --enable-pkg-config --enable-pcap"
+SLKCONF="--prefix=/usr --with-systemwide --disable-native-tests --enable-mpi --enable-openmp --enable-opencl --enable-pkg-config --enable-pcap"
 cd src
 if [[ "$ARCH" == "x86_64" ]]; then
   LIBDIRSUFFIX="64"
+  if grep -q '^flags.* avx' /proc/cpuinfo; then
+    ./configure "$SLKCONF" CFLAGS="$SLKCFLAGS -fPIC"
+    make clean; make
+    install -Dsm755 ../run/john $PKG/usr/libexec/john/john-avx
+  fi  
+
+  if grep -q "^flags.* xop" /proc/cpuinfo; then
+    ./configure "$SLKCONF" CFLAGS="$SLKCFLAGS -fPIC"
+    make clean; make
+    install -Dsm755 ../run/john $PKG/usr/libexec/john/john-xop
+  fi
+    
     ./configure "$SLKCONF" CFLAGS="$SLKCFLAGS -fPIC"
     make clean; make
     install -Dsm755 ../run/john $PKG/usr/libexec/john/john
+
     install -Dm755 $CWD/files/john-64.sh $PKG/usr/bin/john
 elif [[ "$ARCH" == "x86" ]]; then
   LIBDIRSUFFIX=""
+
+  if grep -q "^flags.* avx" /proc/cpuinfo; then
+    ./configure "$SLKCONF" CFLAGS="$SLKCFLAGS -fPIC"
+    make clean; make
+    install -Dsm755 ../run/john $PKG/usr/libexec/john/john-avx
+  fi  
+
+  if grep -q "^flags.* xop" /proc/cpuinfo; then
+    ./configure "$SLKCONF" CFLAGS="$SLKCFLAGS -fPIC"
+    make clean; make
+    install -Dsm755 ../run/john $PKG/usr/libexec/john/john-xop
+  fi
+    
+  if grep -q "^flags.* sse2" /proc/cpuinfo; then
     ./configure $SLKCONF CFLAGS="$SLKCFLAGS -msse2"
     make clean; make
     install -Dsm755 ../run/john $PKG/usr/libexec/john/john-sse2
+  fi
+
+  if grep -q "^flags.* mmx" /proc/cpuinfo; then
     ./configure $SLKCONF CFLAGS="$SLKCFLAGS -mmmx"
     make clean; make
     install -Dsm755 ../run/john $PKG/usr/libexec/john/john-mmx
+  fi  
+  
     ./configure $SLKCONF CFLAGS="$SLKCFLAGS"
     make clean; make
-    install -Dsm755 ../run/john $PKG/usr/libexec/john/john-any
+    install -Dsm755 ../run/john $PKG/usr/libexec/john/john
+
     install -Dm755 $CWD/files/john.sh $PKG/usr/bin/john
 fi
 cd -
 
 # Add binaries
-for BIN in calc_stat cprepair genmkvpwd luks2john mkvcalcproba raw2dyna relbench tgtsnarf uaf2john wpapcap2john vncpcap2john SIPdump; do
-  install -Dm755 run/$BIN -t $PKG/usr/libexec/john
+for BIN in calc_stat cprepair genmkvpwd luks2john* mkvcalcproba raw2dyna relbench tgtsnarf uaf2john wpapcap2john vncpcap2john SIPdump; do
+  install -Dm755 run/$BIN -t "$PKG/usr/libexec/john"
 done
 
+# Add scripts
+install -Dm755 run/*.py run/*.pl run/*.rb run/{mailer,benchmark-unify} -t "$PKG/usr/lib/john"
+
 # Add mailer script
-mkdir -p $PKG/usr/bin
-install -m 755 run/mailer $PKG/usr/libexec/john/john-mailer
+install -Dm755 run/mailer "$PKG/usr/libexec/john/john-mailer"
+
+# Add kernel files
+mkdir -p $PKG/usr/share/john/kernels
+install -Dm644 run/kernels/* -t "$PKG/usr/share/john/kernels"
 
 # Add config file
-install -Dm644 run/john.conf $PKG/etc/john/john.conf.new
+install -Dm644 run/john.conf "$PKG/etc/john/john.conf.new"
 
 # Add shared file
-mkdir -p $PKG/usr/share/john
-cp run/*.chr $PKG/usr/share/john
-cp run/*.lst $PKG/usr/share/john
+install -Dm644 run/*.chr run/*.lst run/dictionary* run/stats run/*.conf -t "${PKG}/usr/share/john"
+install -Dm644 run/rules/* -t "${PKG}/usr/share/john/rules"
 
-# Add bash completion
-install -Dm644 run/john.bash_completion $PKG/etc/bash_completion.d/john
+# Add shell completion
+install -Dm644 run/john.bash_completion "$PKG/etc/bash_completion.d/john"
+install -Dm644 run/john.zsh_completion "${PKG}/usr/share/zsh/site-functions/_john"
 
 # Make symbolic link
 (
