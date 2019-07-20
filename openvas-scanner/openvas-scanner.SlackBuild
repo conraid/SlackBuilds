@@ -29,8 +29,9 @@ set -eu
 
 cd $(dirname $0) ; CWD=$(pwd)
 
+PRGNAM=openvas
 PKGNAM=openvas-scanner
-SRCVERSION=6.0.0
+SRCVERSION=6.0.1
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -73,9 +74,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$SRCVERSION
-tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz
-cd $PKGNAM-$SRCVERSION
+rm -rf $PRGNAM-$SRCVERSION
+tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz
+cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
