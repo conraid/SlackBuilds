@@ -29,7 +29,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=qemu
-SRCVERSION=4.0.0
+SRCVERSION=4.1.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -105,6 +105,7 @@ ARFLAGS="rv" \
   --enable-user \
   --enable-linux-user \
   --enable-guest-agent \
+  --disable-docs \
   --enable-modules \
   --disable-debug-info \
   --enable-gnutls \
@@ -126,7 +127,7 @@ ARFLAGS="rv" \
   --enable-bzip2 \
   --enable-seccomp \
   --disable-tpm \
-  --enable-libssh2 \
+  --enable-libssh \
   --enable-vte \
   --enable-jemalloc \
   --enable-nettle \
