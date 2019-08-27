@@ -24,9 +24,10 @@ perms() {
 }
 
 perms etc/rc.d/rc.clamav.new
-config etc/clamav/freshclam.conf.new
-config etc/clamav/clamd.conf.new
 config etc/logrotate.d/clamav.new
+for NEW in etc/clamav/*.new; do
+  config $NEW
+done
 
 # Remove new log if one is already present (thanks to SBo)
 config var/log/clamav/clamd.log.new ; rm -f var/log/clamav/clamd.log.new
