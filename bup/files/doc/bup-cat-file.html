@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Rob Browning rlb@defaultvalue.org" />
+  <meta name="dcterms.date" content="2019-08-25" />
+  <title>bup-cat-file(1) Bup 0.29.3</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">bup-cat-file(1) Bup 0.29.3</h1>
+<p class="author">Rob Browning <a href="mailto:rlb@defaultvalue.org" class="email">rlb@defaultvalue.org</a></p>
+<p class="date">2019-08-25</p>
+</header>
+<h1 id="name">NAME</h1>
+<p>bup-cat-file - extract archive content (low-level)</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p>bup cat-file [–meta|–bupm] &lt;<em>path</em>&gt;</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><code>bup cat-file</code> extracts content associated with <em>path</em> from the archive and dumps it to standard output. If nothing special is requested, the actual data contained by <em>path</em> (which must be a regular file) will be dumped.</p>
+<h1 id="options">OPTIONS</h1>
+<dl>
+<dt>--meta</dt>
+<dd>retrieve the metadata entry associated with <em>path</em>. Note that currently this does not return the raw bytes for the entry recorded in the relevant .bupm in the archive, but rather a decoded and then re-encoded version. When that matters, it should be possible (though awkward) to use <code>--bupm</code> on the parent directory and then find the relevant entry in the output.
+</dd>
+<dt>--bupm</dt>
+<dd>retrieve the .bupm file associated with <em>path</em>, which must be a directory.
+</dd>
+</dl>
+<h1 id="examples">EXAMPLES</h1>
+<pre><code># Retrieve the content of somefile.
+$ bup cat-file /foo/latest/somefile &gt; somefile-content
+
+# Examine the metadata associated with something.
+$ bup cat-file --meta /foo/latest/something | bup meta -tvvf -
+
+# Examine the metadata for somedir, including the items it contains.
+$ bup cat-file --bupm /foo/latest/somedir | bup meta -tvvf -</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><code>bup-join</code>(1), <code>bup-meta</code>(1)</p>
+<h1 id="bup">BUP</h1>
+<p>Part of the <code>bup</code>(1) suite.</p>
+</body>
+</html>
