@@ -30,7 +30,7 @@ PRGNAM=john
 PKGNAM=john
 SRCVERSION=1.9.0-jumbo-1
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -82,10 +82,10 @@ if [ -e $CWD/patches ]; then
   done
 fi
 
- export PKG_CONFIG_PATH=/usr/lib${LIBDIRSUFFIX}/openssl-1.0/pkgconfig
+export PKG_CONFIG_PATH=/usr/lib${LIBDIRSUFFIX}/openssl-1.0/pkgconfig
 
 SLKCFLAGS="-DJOHN_SYSTEMWIDE=1 -Wall -O2 -fomit-frame-pointer"
-SLKCONF="--prefix=/usr --with-systemwide --disable-native-tests --enable-mpi --enable-openmp --enable-opencl --enable-pkg-config --enable-pcap"
+SLKCONF="--prefix=/usr --with-systemwide --disable-native-tests --enable-asan --enable-mpi --enable-openmp --enable-opencl --enable-pkg-config --enable-pcap"
 cd src
 if [[ "$ARCH" == "x86_64" ]]; then
   LIBDIRSUFFIX="64"
@@ -93,14 +93,14 @@ if [[ "$ARCH" == "x86_64" ]]; then
     ./configure "$SLKCONF" CFLAGS="$SLKCFLAGS -fPIC"
     make clean; make
     install -Dsm755 ../run/john $PKG/usr/libexec/john/john-avx
-  fi  
+  fi
 
   if grep -q "^flags.* xop" /proc/cpuinfo; then
     ./configure "$SLKCONF" CFLAGS="$SLKCFLAGS -fPIC"
     make clean; make
     install -Dsm755 ../run/john $PKG/usr/libexec/john/john-xop
   fi
-    
+
     ./configure "$SLKCONF" CFLAGS="$SLKCFLAGS -fPIC"
     make clean; make
     install -Dsm755 ../run/john $PKG/usr/libexec/john/john
@@ -113,14 +113,14 @@ elif [[ "$ARCH" == "x86" ]]; then
     ./configure "$SLKCONF" CFLAGS="$SLKCFLAGS -fPIC"
     make clean; make
     install -Dsm755 ../run/john $PKG/usr/libexec/john/john-avx
-  fi  
+  fi
 
   if grep -q "^flags.* xop" /proc/cpuinfo; then
     ./configure "$SLKCONF" CFLAGS="$SLKCFLAGS -fPIC"
     make clean; make
     install -Dsm755 ../run/john $PKG/usr/libexec/john/john-xop
   fi
-    
+
   if grep -q "^flags.* sse2" /proc/cpuinfo; then
     ./configure $SLKCONF CFLAGS="$SLKCFLAGS -msse2"
     make clean; make
@@ -131,8 +131,8 @@ elif [[ "$ARCH" == "x86" ]]; then
     ./configure $SLKCONF CFLAGS="$SLKCFLAGS -mmmx"
     make clean; make
     install -Dsm755 ../run/john $PKG/usr/libexec/john/john-mmx
-  fi  
-  
+  fi
+
     ./configure $SLKCONF CFLAGS="$SLKCFLAGS"
     make clean; make
     install -Dsm755 ../run/john $PKG/usr/libexec/john/john
@@ -142,12 +142,18 @@ fi
 cd -
 
 # Add binaries
-for BIN in calc_stat cprepair genmkvpwd luks2john* mkvcalcproba raw2dyna relbench tgtsnarf uaf2john wpapcap2john vncpcap2john SIPdump; do
+for BIN in bitlocker2john calc_stat cprepair dmg2john eapmd5tojohn genmkvpwd hccap2john keepass2john mkvcalcproba putty2john racf2john raw2dyna relbench tgtsnarf uaf2john vncpcap2john wpapcap2john SIPdump; do
   install -Dm755 run/$BIN -t "$PKG/usr/libexec/john"
+  ln -sf "/usr/libexec/john/$BIN" "$PKG/usr/bin/$BIN"
 done
 
 # Add scripts
-install -Dm755 run/*.py run/*.pl run/*.rb run/{mailer,benchmark-unify} -t "$PKG/usr/lib/john"
+install -Dm755 run/{*.py,*.pl,*.rb,*.lua,mailer,benchmark-unify} -t "$PKG/usr/libexec/john"
+for ext in py pl rb lua; do
+	for script in run/*.$ext; do
+		ln -sf "/usr/libexec/john/$(basename "${script}")" "$PKG/usr/bin/$(basename "${script/.${ext}/}")"
+	done
+done
 
 # Add mailer script
 install -Dm755 run/mailer "$PKG/usr/libexec/john/john-mailer"
@@ -160,12 +166,12 @@ install -Dm644 run/kernels/* -t "$PKG/usr/share/john/kernels"
 install -Dm644 run/john.conf "$PKG/etc/john/john.conf.new"
 
 # Add shared file
-install -Dm644 run/*.chr run/*.lst run/dictionary* run/stats run/*.conf -t "${PKG}/usr/share/john"
-install -Dm644 run/rules/* -t "${PKG}/usr/share/john/rules"
+install -Dm644 run/*.chr run/*.lst run/dictionary* run/stats run/*.conf -t "$PKG/usr/share/john"
+install -Dm644 run/rules/* -t "$PKG/usr/share/john/rules"
 
 # Add shell completion
 install -Dm644 run/john.bash_completion "$PKG/etc/bash_completion.d/john"
-install -Dm644 run/john.zsh_completion "${PKG}/usr/share/zsh/site-functions/_john"
+install -Dm644 run/john.zsh_completion "$PKG/usr/share/zsh/site-functions/_john"
 
 # Make symbolic link
 (
