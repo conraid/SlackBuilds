@@ -119,7 +119,6 @@ rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 mkdir -p $PKG/var/{run,log,lib}/tor
 chown tor:tor $PKG/var/{run,log,lib}/tor
 chmod 0700 $PKG/var/lib/tor
-install -Dm755 $CWD/files/rc.tor $PKG/etc/rc.d/rc.tor.new
 install -Dm755 contrib/dist/torctl $PKG/usr/bin/torctl
 rename .sample .new $PKG/etc/tor/torrc.sample
 mkdir -p $PKG/etc/logrotate.d
@@ -127,6 +126,9 @@ sed -e "s/_tor/tor/" \
   -e "s/_tor/tor/" \
   -e 's|/etc/init.d/tor|/etc/rc.d/rc.tor|' \
   contrib/operator-tools/tor.logrotate > $PKG/etc/logrotate.d/tor.new
+
+# install init file
+install -Dm755 $CWD/files/rc.tor $PKG/etc/rc.d/rc.tor.new
 
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
