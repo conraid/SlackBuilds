@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Slackware build script for libvterm
 #
-# Copyright 2015-2018 Corrado Franco (http://conraid.net)
+# Copyright 2015-2019 Corrado Franco (https://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -27,11 +27,11 @@
 
 set -eu
 
-CWD=$(pwd)
+cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libvterm
-COMMIT=005845cd58ca409a970d822b74e1a02a503d32e7
-VERSION=$(echo $COMMIT | cut -c -7)_git
+COMMIT=1aa95e24d8f07a396aa80b7cd52f93e2b5bcca79
+VERSION=$(echo $COMMIT | cut -c -7)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -44,6 +44,14 @@ if [ -z ${ARCH:=""} ]; then
   arm*) ARCH=arm ;;
   *) ARCH=$( uname -m ) ;;
   esac
+fi
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  exit 0
 fi
 
 if [ "$ARCH" = "i586" ]; then
@@ -88,7 +96,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat LICENSE > $PKG/usr/doc/$PKGNAM-$VERSION/LICENSE
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
