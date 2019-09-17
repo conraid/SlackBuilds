@@ -1,1 +1,0 @@
-.. |synopsis| replace::  [-a] [-b] [-c] [-C] [-d] [-D] [-E] [-F <format>] [-f <formatfile>] [-g <request|vxid>] [-h] [-L <limit>] [-n <dir>] [-P <file>] [-Q <file>] [-q <query>] [-r <filename>] [-R <limit[/duration]>] [-t <seconds|off>] [-V] [-w <filename>]
