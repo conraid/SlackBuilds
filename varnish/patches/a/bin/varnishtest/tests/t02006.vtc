@@ -1,0 +1,44 @@
+varnishtest "H2 POST w/ 100 Continue"
+
+barrier b1 cond 2
+
+server s1 {
+	rxreq
+	expect req.http.content-length == <undef>
+	expect req.http.transfer-encoding == chunked
+	expect req.proto == HTTP/1.1
+	barrier b1 sync
+	txresp -hdr "Content-Type: text/plain" -body response
+} -start
+
+varnish v1 -vcl+backend {} -cliok "param.set feature +http2" -start
+varnish v1 -cliok "param.set debug +syncvsl"
+
+client c1 {
+	stream 1 {
+		txreq \
+			-req POST \
+			-hdr content-type text/plain \
+			-nostrend \
+			-nohdrend
+		txcont \
+			-hdr expect 100-continue \
+			-nostrend
+
+		rxhdrs
+		expect resp.status == 100
+
+		txdata \
+			-data request
+
+		rxwinup
+		barrier b1 sync
+		rxresp
+		expect resp.status == 200
+		expect resp.http.content-Type == "text/plain"
+
+		# Then, payload checks
+		expect resp.body == response
+	} -run
+} -run
+

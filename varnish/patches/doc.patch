@@ -1,6 +1,6 @@
-diff -Naupr a/Makefile.am b/Makefile.am
---- a/Makefile.am	2019-08-27 12:35:20.000000000 -0000
-+++ b/Makefile.am	2019-09-04 09:36:10.192354083 -0000
+diff -Napur a/Makefile.am b/Makefile.am
+--- a/Makefile.am	2019-03-03 22:17:18.000000000 +0100
++++ b/Makefile.am	2019-09-17 13:16:59.035608850 +0200
 @@ -1,6 +1,6 @@
  ACLOCAL_AMFLAGS = -I m4 -I .
  
@@ -9,9 +9,9 @@ diff -Naupr a/Makefile.am b/Makefile.am
  
  pkgconfigdir = $(libdir)/pkgconfig
  pkgconfig_DATA = varnishapi.pc
-diff -Naupr a/Makefile.in b/Makefile.in
---- a/Makefile.in	2019-08-27 15:14:56.000000000 -0000
-+++ b/Makefile.in	2019-09-04 09:36:10.193354086 -0000
+diff -Napur a/Makefile.in b/Makefile.in
+--- a/Makefile.in	2019-09-16 11:47:21.000000000 +0200
++++ b/Makefile.in	2019-09-17 13:17:24.130608401 +0200
 @@ -417,7 +417,7 @@ top_build_prefix = @top_build_prefix@
  top_builddir = @top_builddir@
  top_srcdir = @top_srcdir@
@@ -21,9 +21,9 @@ diff -Naupr a/Makefile.in b/Makefile.in
  pkgconfigdir = $(libdir)/pkgconfig
  pkgconfig_DATA = varnishapi.pc
  m4dir = $(datadir)/aclocal
-diff -Naupr a/configure.ac b/configure.ac
---- a/configure.ac	2019-08-27 15:13:06.000000000 -0000
-+++ b/configure.ac	2019-09-04 10:21:05.192631357 -0000
+diff -Napur a/configure.ac b/configure.ac
+--- a/configure.ac	2019-09-16 11:46:39.000000000 +0200
++++ b/configure.ac	2019-09-17 13:18:44.935606954 +0200
 @@ -48,17 +48,6 @@ if test "x$RST2MAN" = "xno"; then
      [rst2man is needed to build Varnish, please install python3-docutils.])
  fi
@@ -32,7 +32,7 @@ diff -Naupr a/configure.ac b/configure.ac
 -  AS_HELP_STRING([--with-sphinx-build=PATH], [Location of sphinx-build (auto)]),
 -  [SPHINX="$withval"],
 -  AC_CHECK_PROGS(SPHINX,
--    [sphinx-build sphinx-build-3.6 sphinx-build-3],
+-    [sphinx-build-3.6 sphinx-build-3 sphinx-build],
 -    [no]))
 -if test "x$SPHINX" = "xno"; then
 -  AC_MSG_ERROR(
@@ -40,9 +40,9 @@ diff -Naupr a/configure.ac b/configure.ac
 -fi
 -
  AC_ARG_WITH([rst2html],
-                AS_HELP_STRING([--with-rst2html=PATH],
-                               [Location of rst2html (auto)]),
-@@ -802,9 +791,6 @@ VSC_GEN_H="$(echo $VSC_SRC | sed 's:\.vs
+   AS_HELP_STRING([--with-rst2html=PATH], [Location of rst2html (auto)]),
+   [RST2HTML="$withval"],
+@@ -804,9 +793,6 @@ VSC_GEN_H="$(echo $VSC_SRC | sed 's:\.vs
  AC_SUBST(VSC_GEN_C)
  AC_SUBST(VSC_GEN_H)
  
@@ -52,7 +52,7 @@ diff -Naupr a/configure.ac b/configure.ac
  # Generate output
  AC_CONFIG_FILES([
      Makefile
-@@ -817,10 +803,6 @@ AC_CONFIG_FILES([
+@@ -819,10 +805,6 @@ AC_CONFIG_FILES([
      bin/varnishhist/Makefile
      bin/varnishtest/Makefile
      bin/varnishncsa/Makefile

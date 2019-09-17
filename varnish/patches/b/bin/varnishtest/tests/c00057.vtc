@@ -1,0 +1,90 @@
+varnishtest	"test sigsegv handler"
+
+# Under ASAN, the stack layout is different and STACK OVERFLOW is
+# never printed.
+feature cmd "test -z $(env | grep ASAN_OPTIONS)"
+
+server s1 {
+	rxreq
+	txresp
+} -start
+
+varnish v1 \
+	-arg "-p feature=+no_coredump" \
+	-arg "-p vcc_allow_inline_c=true" \
+	-arg "-p thread_pool_stack=128k" \
+	-vcl+backend {
+	C{
+#include <signal.h>
+#include <unistd.h>
+#include <stdio.h>
+
+static void _accessor(volatile char *p) {
+     p[0] = 'V'; p[1] = '\0';
+     fprintf(stderr, "%p %s\n", p, p);
+}
+void (*accessor)(volatile char *p) = _accessor;
+
+}C
+	sub vcl_recv { C{
+	    const int stkkb = 128;
+	    int i;
+	    volatile char overflow[stkkb * 1024];
+
+	    /* for downwards stack, take care to hit a single guard page */
+	    for (i = (stkkb - 1) * 1024; i >= 0; i -= 1024)
+		accessor(overflow + i);
+	    /* NOTREACHED */
+	    sleep(2);
+	}C }
+} -start
+
+client c1 {
+	txreq
+	expect_close
+} -run
+
+varnish v1 -cliexpect "STACK OVERFLOW" "panic.show"
+varnish v1 -clijson "panic.show -j"
+
+varnish v1 -cliok "panic.clear"
+
+# Also check without the handler
+varnish v1 -cliok "param.set sigsegv_handler off"
+varnish v1 -vcl+backend {} -start
+
+client c1 {
+	txreq
+	rxresp
+} -run
+
+varnish v1 -expectexit 0x20
+
+####################
+
+varnish v2 \
+	-arg "-p feature=+no_coredump" \
+	-arg "-p vcc_allow_inline_c=true" \
+	-vcl+backend {
+
+	C{
+	#include <stdio.h>
+	}C
+
+	sub vcl_recv { C{
+	    int *i = (void *)VRT_GetHdr;
+	    *i = 42;
+	}C }
+} -start
+
+client c2 -connect ${v2_sock} {
+	txreq
+	expect_close
+} -run
+
+varnish v2 -cliexpect "[bB]us error|Segmentation [fF]ault" "panic.show"
+varnish v2 -clijson "panic.show -j"
+
+varnish v2 -cliok "panic.clear"
+
+varnish v2 -expectexit 0x20

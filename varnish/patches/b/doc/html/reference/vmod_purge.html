@@ -1,0 +1,235 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>VMOD purge - Varnish Purge Module &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="VMOD blob - Utilities for the VCL blob type, encoding and decoding" href="vmod_blob.html" />
+    <link rel="prev" title="VMOD directors - Varnish Directors Module" href="vmod_directors.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="vmod_blob.html" title="VMOD blob - Utilities for the VCL blob type, encoding and decoding"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vmod_directors.html" title="VMOD directors - Varnish Directors Module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Varnish Reference Manual</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="vmod-purge-varnish-purge-module">
+<span id="vmod-purge-3"></span><h1>VMOD purge - Varnish Purge Module<a class="headerlink" href="#vmod-purge-varnish-purge-module" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="synopsis">
+<h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
+<pre class="literal-block">
+import purge [as name] [from &quot;path&quot;]
+
+<a class="reference internal" href="#purge-hard"><span class="std std-ref">INT hard()</span></a>
+
+<a class="reference internal" href="#purge-soft"><span class="std std-ref">INT soft(DURATION ttl, DURATION grace, DURATION keep)</span></a>
+</pre>
+</div>
+<div class="section" id="description">
+<h2>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p><em>vmod_purge</em> contains functions that offer a finer-grained control
+than <code class="docutils literal"><span class="pre">return(purge)</span></code> from <code class="docutils literal"><span class="pre">vcl_recv{}</span></code>. The functions can only be
+called from <code class="docutils literal"><span class="pre">vcl_hit{}</span></code> or <code class="docutils literal"><span class="pre">vcl_miss{}</span></code> and they should in general
+be used in both to ensure that all variants of a same object are taken
+care of.</p>
+</div>
+<div class="section" id="example">
+<h2>EXAMPLE<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span>sub vcl_recv {
+    if (req.method == &quot;PURGE&quot;) {
+        if (client.ip !~ purge_acl) {
+            return (synth(405));
+        }
+        return (hash);
+    }
+}
+
+sub my_purge {
+    set req.http.purged = purge.hard();
+    if (req.http.purged == &quot;0&quot;) {
+        return (synth(404));
+    }
+    else {
+        return (synth(200));
+    }
+}
+
+sub vcl_hit {
+    if (req.method == &quot;PURGE&quot;) {
+        call my_purge;
+    }
+}
+
+sub vcl_miss {
+    if (req.method == &quot;PURGE&quot;) {
+        call my_purge;
+    }
+}
+
+sub vcl_synth {
+    if (req.method == &quot;PURGE&quot;) {
+        if (req.http.purged) {
+            set resp.http.purged = req.http.purged;
+        }
+        return (deliver);
+    }
+}
+</pre></div>
+</div>
+<div class="section" id="int-hard">
+<span id="purge-hard"></span><h3>INT hard()<a class="headerlink" href="#int-hard" title="Permalink to this headline">¶</a></h3>
+<p>This is equivalent to <code class="docutils literal"><span class="pre">return(purge)</span></code> but explicitly called from
+<code class="docutils literal"><span class="pre">vcl_hit{}</span></code> and <code class="docutils literal"><span class="pre">vcl_miss{}</span></code>. It returns the number of purged
+objects.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">purged</span> <span class="o">=</span> <span class="n">purge</span><span class="o">.</span><span class="n">hard</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="int-soft-duration-ttl-duration-grace-duration-keep">
+<span id="purge-soft"></span><h3>INT soft(DURATION ttl, DURATION grace, DURATION keep)<a class="headerlink" href="#int-soft-duration-ttl-duration-grace-duration-keep" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">INT</span> <span class="n">soft</span><span class="p">(</span><span class="n">DURATION</span> <span class="n">ttl</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">DURATION</span> <span class="n">grace</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">DURATION</span> <span class="n">keep</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Sets the <em>ttl</em>, <em>grace</em> and <em>keep</em>.</p>
+<p>By default, <em>ttl</em> is set to 0 with <em>grace</em> and <em>keep</em> periods left
+untouched. Setting a negative value for <em>grace</em> or <em>keep</em> periods
+leaves them untouched. Setting all three parameters to <code class="docutils literal"><span class="pre">0</span></code> is
+equivalent to a hard purge. It can only be called from <code class="docutils literal"><span class="pre">vcl_hit{}</span></code>
+or <code class="docutils literal"><span class="pre">vcl_miss{}</span></code>. It returns the number of soft-purged objects.</p>
+</div>
+</div>
+<div class="section" id="see-also">
+<h2>SEE ALSO<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="vcl.html#vcl-7"><span class="std std-ref">VCL</span></a></li>
+</ul>
+</div>
+<div class="section" id="copyright">
+<h2>COPYRIGHT<a class="headerlink" href="#copyright" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span>Copyright (c) 2017 Varnish Software AS
+All rights reserved.
+
+Author: Dridi Boukelmoune &lt;dridi.boukelmoune@gmail.com&gt;
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&#39;&#39; AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED.  IN NO EVENT SHALL AUTHOR OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">VMOD purge - Varnish Purge Module</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vmod_directors.html"
+                        title="previous chapter">VMOD directors - Varnish Directors Module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vmod_blob.html"
+                        title="next chapter">VMOD blob - Utilities for the VCL blob type, encoding and decoding</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/reference/vmod_purge.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="vmod_blob.html" title="VMOD blob - Utilities for the VCL blob type, encoding and decoding"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vmod_directors.html" title="VMOD directors - Varnish Directors Module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Reference Manual</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

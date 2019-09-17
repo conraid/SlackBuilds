@@ -1,0 +1,110 @@
+varnishtest "Test request byte counters"
+
+server s1 {
+	rxreq
+	expect req.url == "/1"
+	txresp -bodylen 1000
+
+	rxreq
+	expect req.url == "/2"
+	txresp -bodylen 2000
+} -start
+
+varnish v1 -vcl+backend {
+	sub vcl_backend_response {
+		set beresp.do_stream = false;
+	}
+	sub vcl_deliver {
+		unset resp.http.date;
+		unset resp.http.age;
+		unset resp.http.via;
+		unset resp.http.x-varnish;
+	}
+} -start
+
+# Request (1001):
+# GET /1 HTTP/1.1\r\n		 17 bytes
+# Host: foo\r\n			 11 bytes
+# Content-Length: 4\r\n		 19 bytes
+# \r\n				  2 bytes
+# Total:			 49 bytes
+# Response:
+# HTTP/1.1 200 OK\r\n		 17 bytes
+# Content-Length: 1000\r\n	 22 bytes
+# Connection: keep-alive\r\n	 24 bytes
+# Accept-Ranges: bytes\r\n	 22 bytes
+# \r\n				  2 bytes
+# Total:			 87 bytes
+
+# Request (1003):
+# GET /2 HTTP/1.1\r\n		 17 bytes
+# Host: foo\r\n			 11 bytes
+# \r\n				  2 bytes
+# Total:			 30 bytes
+# Response:
+# HTTP/1.1 200 OK\r\n		 17 bytes
+# Content-Length: 2000\r\n	 22 bytes
+# Connection: keep-alive\r\n	 24 bytes
+# Accept-Ranges: bytes\r\n	 22 bytes
+# \r\n				  2 bytes
+# Total:			 87 bytes
+
+# Request (1005):
+# GET /2 HTTP/1.1\r\n		 17 bytes
+# Host: foo\r\n			 11 bytes
+# \r\n				  2 bytes
+# Total:			 30 bytes
+# Response:
+# HTTP/1.1 200 OK\r\n		 17 bytes
+# Content-Length: 2000\r\n	 22 bytes
+# Connection: keep-alive\r\n	 24 bytes
+# Accept-Ranges: bytes\r\n	 22 bytes
+# \r\n				  2 bytes
+# Total:			 87 bytes
+
+# Request (1006):
+# GET\r\n			  5 bytes
+# \r\n				  2 bytes
+# Total:			  7 bytes
+# Response:
+# HTTP/1.1 400 Bad Request\r\n	 26 bytes
+# \r\n				  2 bytes
+# Total:			 28 bytes
+logexpect l1 -v v1 -g session {
+	expect * 1001	Begin	"^req .* rxreq"
+	expect * =	ReqAcct	"^49 4 53 87 1000 1087$"
+	expect 0 =	End
+	expect * 1003	Begin	"^req .* rxreq"
+	expect * =	ReqAcct "^30 0 30 87 2000 2087$"
+	expect 0 =	End
+	expect * 1005	Begin	"^req .* rxreq"
+	expect * =	ReqAcct "^30 0 30 87 2000 2087$"
+	expect 0 =	End
+	expect * 1006	Begin	"^req .* rxreq"
+	expect * =	ReqAcct	"^7 0 7 28 0 28$"
+	expect 0 =	End
+} -start
+
+# Request 1001
+client c1 {
+	txreq -url "/1" -hdr "Host: foo" -body "asdf"
+	rxresp
+	expect resp.status == 200
+
+	send "GET /2 HTTP/1.1\r\nHost: foo\r\n\r\nGET /2 HTTP/1.1\r\nHost: foo\r\n\r\n"
+	rxresp
+	expect resp.status == 200
+	rxresp
+	expect resp.status == 200
+
+	send "GET\r\n\r\n"
+	rxresp
+	expect resp.status == 400
+} -run
+
+logexpect l1 -wait
+
+varnish v1 -expect s_req_hdrbytes == 116
+varnish v1 -expect s_req_bodybytes == 4
+varnish v1 -expect s_resp_hdrbytes == 289
+varnish v1 -expect s_resp_bodybytes == 5000

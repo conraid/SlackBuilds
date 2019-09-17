@@ -1,0 +1,161 @@
+varnishtest "Test priv_task"
+
+server s1 {
+	rxreq
+	txresp
+	rxreq
+	txresp
+
+	rxreq
+	txresp
+	expect_close
+	accept
+
+	rxreq
+	txresp
+} -start
+
+varnish v1 -arg "-p debug=+vclrel -p workspace_client=1m" -vcl+backend {
+	import debug;
+	import std;
+
+	sub vcl_init {
+		new objx = debug.obj();
+	}
+
+	sub vcl_init {
+		debug.test_priv_task("something");
+		debug.test_priv_task("to remember");
+		std.log("func " + debug.test_priv_task());
+		std.log("obj "  + objx.test_priv_task());
+	}
+
+	sub vcl_recv {
+		if (req.url == "/perf") {
+			return (synth(200));
+		}
+		if (req.url == "/pipe") {
+			return (pipe);
+		}
+		debug.test_priv_task(req.url);
+		set req.http.x0 = debug.test_priv_task();
+		debug.test_priv_task("bazz");
+	}
+
+	sub vcl_pipe {
+		debug.test_priv_task(req.url);
+		set req.http.x0 = debug.test_priv_task();
+		debug.test_priv_task("bazz");
+	}
+
+	sub vcl_synth {
+		std.log("discard 1000 " + debug.priv_perf(1000));
+		std.log("perf    1 " + debug.priv_perf(1));
+		std.log("perf   10 " + debug.priv_perf(10));
+		std.log("perf  100 " + debug.priv_perf(100));
+		// std.log("perf 1000 " + debug.priv_perf(1000));
+		return (deliver);
+	}
+
+	sub vcl_deliver {
+		set resp.http.x0 = req.http.x0;
+		set resp.http.x1 = debug.test_priv_task();
+		set resp.http.o1 = objx.test_priv_task();
+	}
+
+	sub vcl_backend_fetch {
+		objx.test_priv_task("b");
+		std.log("foo");
+		set bereq.http.bx0 = debug.test_priv_task(bereq.url);
+		std.log("bar");
+	}
+
+	sub vcl_backend_response {
+		set beresp.http.bx0 = bereq.http.bx0;
+		set beresp.http.bx1 = debug.test_priv_task("");
+		set beresp.http.bo1 = objx.test_priv_task("");
+	}
+
+	sub vcl_fini {
+		debug.test_priv_task("cleaning");
+		debug.test_priv_task("up");
+		std.log("func " + debug.test_priv_task());
+		std.log("obj "  + objx.test_priv_task());
+	}
+
+} -start
+
+logexpect l1 -v v1 -g raw -d 1 {
+	expect 0 0    CLI		{^Rd vcl.load}
+	expect 0 =    Debug		{^test_priv_task.*new.$}
+	expect 0 =    Debug		{^test_priv_task.*update.$}
+	expect 0 =    Debug		{^test_priv_task.*exists.$}
+	expect 0 =    VCL_Log		{^func something to remember}
+	expect 0 =    Debug		{^test_priv_task.*exists.$}
+	expect 0 =    VCL_Log		{^obj something to remember}
+
+	expect * 1002 Begin		fetch$
+	expect * =    VCL_call		^BACKEND_FETCH
+	expect 0 =    VCL_Log		^foo
+	expect 0 =    BereqHeader	{^bx0: b /foobar}
+	expect 0 =    VCL_Log		^bar
+
+	expect * 1004 Begin		fetch$
+	expect * =    VCL_call		^BACKEND_FETCH
+	expect 0 =    VCL_Log		^foo
+	expect 0 =    BereqHeader	{^bx0: b /snafu}
+	expect 0 =    VCL_Log		^bar
+
+	expect * 0    Debug		{^vcl1: VCL_EVENT_COLD}
+	expect * 0    CLI		{^Rd vcl.discard}
+	expect 0 =    Debug		{^test_priv_task.*new.$}
+	expect 0 =    Debug		{^test_priv_task.*update.$}
+	expect 0 =    Debug		{^test_priv_task.*exists.$}
+	expect * =    VCL_Log		{^func cleaning up}
+	expect 0 =    Debug		{^test_priv_task.*exists.$}
+	expect 0 =    VCL_Log		{^obj cleaning up}
+	expect 0 =    Debug		{^priv_task_free}
+} -start
+
+client c1 {
+	txreq -url /foobar
+	rxresp
+	expect resp.http.x0 == /foobar
+	expect resp.http.x1 == "/foobar bazz"
+	expect resp.http.o1 == "/foobar bazz"
+	expect resp.http.bx0 == "b /foobar"
+	expect resp.http.bx1 == "b /foobar"
+	expect resp.http.bo1 == "b /foobar"
+
+	txreq -url /snafu
+	rxresp
+	expect resp.http.x0 == /snafu
+	expect resp.http.x1 == "/snafu bazz"
+	expect resp.http.o1 == "/snafu bazz"
+	expect resp.http.bx0 == "b /snafu"
+	expect resp.http.bx1 == "b /snafu"
+	expect resp.http.bo1 == "b /snafu"
+
+	txreq -url /perf
+	rxresp
+
+	txreq -url /pipe
+	rxresp
+} -run
+
+shell "echo 'vcl 4.0; backend foo { .host = \"${s1_addr}\"; .port = \"${s1_port}\"; }' > ${tmpdir}/_b00014.vcl"
+
+varnish v1 -cliok "vcl.load foo ${tmpdir}/_b00014.vcl" \
+	-cliok "vcl.use foo" \
+	-cliok "vcl.list" \
+	-cliok "vcl.discard vcl1" \
+	-cliok "vcl.list"
+
+client c1 {
+	txreq -url /foo
+	rxresp
+} -run
+
+varnish v1 -cliok "vcl.list"
+
+logexpect l1 -wait

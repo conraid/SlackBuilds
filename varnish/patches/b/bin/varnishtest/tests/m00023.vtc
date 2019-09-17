@@ -1,0 +1,38 @@
+varnishtest "Test VMOD ACLs (jail-compatible)"
+
+server s1 {
+	rxreq
+	txresp
+} -start
+
+varnish v1 -vcl+backend {
+	import debug;
+
+	acl loopback {
+		"127"/24;
+	}
+
+	acl locals {
+		// We assume c1 and s1 comes from same address
+		"${s1_addr}"/24;
+	}
+
+	sub vcl_init {
+		if (!debug.match_acl(loopback, "127.0.0.127")) {
+			debug.fail();
+		}
+	}
+
+	sub vcl_recv {
+		if (debug.match_acl(ip=client.ip, acl=locals)) {
+			return (hash);
+		}
+		return (synth(500));
+	}
+} -start
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.status == 200
+} -run

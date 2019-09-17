@@ -1,0 +1,35 @@
+varnishtest "varnishncsa outputs when UDS addresses are in use"
+
+# The %h formatter gets its value from ReqStart or BackendOpen,
+# which now may be a UDS address.
+
+# For UDS backends without a .host_header spec, the Host header is
+# set to "0.0.0.0" if the header is missing in the request.
+
+server s1 -listen "${tmpdir}/s1.sock" {
+	rxreq
+	txresp
+} -start
+
+varnish v1 -arg "-a ${tmpdir}/v1.sock" -vcl+backend {} -start
+
+client c1 -connect "${tmpdir}/v1.sock" {
+	txreq -proto HTTP/1.0
+	rxresp
+} -run
+
+shell -expect "0.0.0.0" {
+	varnishncsa -n ${v1_name} -d -c -F "%h"
+}
+
+shell -expect "http://localhost/" {
+	varnishncsa -n ${v1_name} -d -c -F "%r"
+}
+
+shell -expect "0.0.0.0" {
+	varnishncsa -n ${v1_name} -d -b -F "%h"
+}
+
+shell -expect "http://0.0.0.0/" {
+	varnishncsa -n ${v1_name} -d -b -F "%r"
+}

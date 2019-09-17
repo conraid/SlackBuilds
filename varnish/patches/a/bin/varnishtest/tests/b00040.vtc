@@ -1,0 +1,84 @@
+varnishtest "test certain mailformed requests"
+
+server s1 {
+	rxreq
+	expect req.url == /4
+	txresp
+} -start
+
+varnish v1 -vcl+backend { } -start
+
+logexpect l1 -v v1 -g raw {
+	expect * 1001 BogoHeader {1st header has white space:.*}
+	expect * 1003 BogoHeader {1st header has white space:.*}
+	expect * 1005 BogoHeader {Header has ctrl char 0x0d}
+	expect * 1010 BogoHeader {Header has ctrl char 0x01}
+	expect * 1012 BogoHeader {Header has ctrl char 0x0d}
+	expect * 1014 BogoHeader {Header has ctrl char 0x0d}
+	expect * 1016 BogoHeader {Missing header name:.*}
+} -start
+
+client c1 {
+	send "GET /1 HTTP/1.1\r\n"
+	send " Host: foo\r\n"
+	send "\r\n"
+	rxresp
+	expect resp.status == 400
+} -run
+delay .1
+
+client c1 {
+	send "GET /2 HTTP/1.1\r\n"
+	send " Host: foo\r\n"
+	send "\r\n"
+	rxresp
+	expect resp.status == 400
+} -run
+delay .1
+
+client c1 {
+	send "GET /3 HTTP/1.1\r\n"
+	send "\rHost: foo\r\n"
+	send "\r\n"
+	rxresp
+	expect resp.status == 400
+} -run
+delay .1
+
+client c1 {
+	send "GET /4 HTTP/1.1\r\n"
+	send "Host: foo\r\n\r\n"
+	rxresp
+	expect resp.status == 200
+} -run
+delay .1
+
+client c1 {
+	send "GET /5 HTTP/1.1\r\nHost: foo\r\nBogo: Header\001More\r\n\r\n"
+	rxresp
+	expect resp.status == 400
+} -run
+delay .1
+
+client c1 {
+	send "GET /6 HTTP/1.1\r\nHost: foo\r\nBogo: Header\r\r\n\r\n"
+	rxresp
+	expect resp.status == 400
+} -run
+delay .1
+
+client c1 {
+	send "GET /7 HTTP/1.1\r\nHost: foo\r\nBogo: Header\rMore\r\n\r\n"
+	rxresp
+	expect resp.status == 400
+} -run
+delay .1
+
+client c1 {
+	send "GET /8 HTTP/1.1\r\nHost: foo\r\n: Header\r\n\r\n"
+	rxresp
+	expect resp.status == 400
+} -run
+
+logexpect l1 -wait
+

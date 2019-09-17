@@ -1,0 +1,46 @@
+varnishtest "predictive vary"
+
+barrier b1 cond 2
+barrier b2 cond 2
+
+server s1 {
+	rxreq
+	txresp -hdr "Vary: foo" -bodylen 1
+	rxreq
+	barrier b2 sync
+	barrier b1 sync
+	txresp -hdr "Vary: foo" -bodylen 2
+} -start
+
+server s2 {
+	rxreq
+	txresp -hdr "Vary: foo" -bodylen 3
+} -start
+
+varnish v1 -vcl+backend {
+	sub vcl_backend_fetch {
+		if (bereq.http.bar) {
+			set bereq.backend = s2;
+		}
+	}
+} -start
+
+client c1 {
+	txreq -hdr "Foo: vary1"
+	rxresp
+	expect resp.bodylen == 1
+	txreq -hdr "Foo: vary2"
+	rxresp
+	expect resp.bodylen == 2
+} -start
+
+client c2 {
+	barrier b2 sync
+	txreq -hdr "Foo: vary3" -hdr "bar: yes"
+	rxresp
+	barrier b1 sync
+	expect resp.bodylen == 3
+} -start
+
+client c1 -wait
+client c2 -wait

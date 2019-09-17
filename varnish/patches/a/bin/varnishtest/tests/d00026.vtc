@@ -1,0 +1,52 @@
+varnishtest "shard director - same as d00017.vtc but setting backend in fetch"
+
+server s1 {
+	rxreq
+	txresp -body "ech3Ooj"
+} -start
+
+server s2 {
+	rxreq
+	txresp -body "ieQu2qua"
+} -start
+
+server s3 {
+	rxreq
+	txresp -body "xiuFi3Pe"
+} -start
+
+varnish v1 -vcl+backend {
+	import directors;
+	import blob;
+
+	sub vcl_init {
+		new vd = directors.shard();
+		vd.add_backend(s1);
+		vd.add_backend(s2);
+		vd.add_backend(s3);
+		vd.reconfigure(25);
+	}
+
+	sub vcl_backend_fetch {
+		set bereq.backend = vd.backend(by=BLOB,
+		    key_blob=blob.decode(HEX, encoded=
+			regsub(bereq.url, "^/", "")));
+		return(fetch);
+	}
+
+} -start
+
+
+client c1 {
+	txreq -url /68b902f7
+	rxresp
+	expect resp.body == "ech3Ooj"
+
+	txreq -url /39dc4613
+	rxresp
+	expect resp.body == "ieQu2qua"
+
+	txreq -url /c7793505
+	rxresp
+	expect resp.body == "xiuFi3Pe"
+} -run

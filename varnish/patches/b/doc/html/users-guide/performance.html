@@ -1,0 +1,171 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Varnish and Website Performance &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Achieving a high hitrate" href="increasing-your-hitrate.html" />
+    <link rel="prev" title="Statistics" href="operation-statistics.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="increasing-your-hitrate.html" title="Achieving a high hitrate"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="operation-statistics.html" title="Statistics"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Varnish Users Guide</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="varnish-and-website-performance">
+<span id="users-performance"></span><h1>Varnish and Website Performance<a class="headerlink" href="#varnish-and-website-performance" title="Permalink to this headline">¶</a></h1>
+<p>This section focuses on how to tune the performance of your Varnish server,
+and how to tune the performance of your website using Varnish.</p>
+<p>The section is split in three subsections. The first subsection deals with the various tools and
+functions of Varnish that you should be aware of. The next subsection focuses
+on the how to purge content out of your cache. Purging of content is
+essential in a performance context because it allows you to extend the
+<em>time-to-live</em> (TTL) of your cached objects. Having a long TTL allows
+Varnish to keep the content in cache longer, meaning Varnish will make fewer requests to your relatively slower backend.</p>
+<p>The final subsection deals with compression of web content. Varnish can
+gzip content when fetching it from the backend and then deliver it
+compressed. This will reduce the time it takes to download the content
+thereby increasing the performance of your website.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="increasing-your-hitrate.html">Achieving a high hitrate</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="increasing-your-hitrate.html#tool-varnishtop">Tool: varnishtop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="increasing-your-hitrate.html#tool-varnishlog">Tool: varnishlog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="increasing-your-hitrate.html#tool-lwp-request">Tool: lwp-request</a></li>
+<li class="toctree-l2"><a class="reference internal" href="increasing-your-hitrate.html#tool-live-http-headers">Tool: Live HTTP Headers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="increasing-your-hitrate.html#the-role-of-http-headers">The role of HTTP Headers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="increasing-your-hitrate.html#cookies">Cookies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="increasing-your-hitrate.html#cache-control">Cache-Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="increasing-your-hitrate.html#age">Age</a></li>
+<li class="toctree-l2"><a class="reference internal" href="increasing-your-hitrate.html#pragma">Pragma</a></li>
+<li class="toctree-l2"><a class="reference internal" href="increasing-your-hitrate.html#authorization">Authorization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="increasing-your-hitrate.html#overriding-the-time-to-live-ttl">Overriding the time-to-live (TTL)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="increasing-your-hitrate.html#forcing-caching-for-certain-requests-and-certain-responses">Forcing caching for certain requests and certain responses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="increasing-your-hitrate.html#normalizing-your-namespace">Normalizing your namespace</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="increasing-your-hitrate.html#http-vary">HTTP Vary</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="increasing-your-hitrate.html#vary-parse-errors">Vary parse errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="increasing-your-hitrate.html#pitfall-vary-user-agent">Pitfall - Vary: User-Agent</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="increasing-your-hitrate.html#cache-misses">Cache misses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="increasing-your-hitrate.html#uncacheable-content">Uncacheable content</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="increasing-your-hitrate.html#passing-client-requests">Passing client requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="increasing-your-hitrate.html#hit-for-miss">hit-for-miss</a></li>
+<li class="toctree-l2"><a class="reference internal" href="increasing-your-hitrate.html#hit-for-pass">hit-for-pass</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="purging.html">Purging and banning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="purging.html#http-purging">HTTP Purging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="purging.html#bans">Bans</a></li>
+<li class="toctree-l2"><a class="reference internal" href="purging.html#forcing-a-cache-miss">Forcing a cache miss</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="compression.html">Compression</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="compression.html#default-behaviour">Default behaviour</a></li>
+<li class="toctree-l2"><a class="reference internal" href="compression.html#compressing-content-if-backends-don-t">Compressing content if backends don't</a></li>
+<li class="toctree-l2"><a class="reference internal" href="compression.html#uncompressing-content-before-entering-the-cache">Uncompressing content before entering the cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="compression.html#gzip-and-esi">GZIP and ESI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="compression.html#turning-off-gzip-support">Turning off gzip support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="compression.html#a-random-outburst">A random outburst</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="operation-statistics.html"
+                        title="previous chapter">Statistics</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="increasing-your-hitrate.html"
+                        title="next chapter">Achieving a high hitrate</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/users-guide/performance.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="increasing-your-hitrate.html" title="Achieving a high hitrate"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="operation-statistics.html" title="Statistics"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Users Guide</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

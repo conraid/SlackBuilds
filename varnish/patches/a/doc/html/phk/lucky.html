@@ -1,0 +1,259 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Do you feel lucky ? &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API spaces" href="apispaces.html" />
+    <link rel="prev" title="A patently good idea" href="patent.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="apispaces.html" title="API spaces"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="patent.html" title="A patently good idea"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="do-you-feel-lucky">
+<span id="phk-lucky"></span><h1>Do you feel lucky ?<a class="headerlink" href="#do-you-feel-lucky" title="Permalink to this headline">¶</a></h1>
+<p>Whenever a corporate cotton-mouth says anything, their lawyers
+always make them add a footnote to the effect that <em>&quot;Past performance
+is not predictive of future results.&quot;</em> so they do not get sued for
+being insufficiently clairvoyant.</p>
+<p>The lawyers are wrong.</p>
+<p>Past performance <em>is</em> predictive of future results:  That is how
+we determine the odds.</p>
+<p>Just never forget that the roll of the dice is still pure luck.</p>
+<p>Or as author Neil Gaiman said it in
+<a class="reference external" href="https://www.youtube.com/watch?v=2OwRUyZMKwI">a commencement speech in 2012</a>:</p>
+<blockquote>
+<div><em>»Often you will discover that the harder you work,
+and the more wisely you work, the luckier you get.
+But there is luck, and it helps.«</em></div></blockquote>
+<p>Approximately four million real websites use Varnish now and the
+number seems to grow by half a million sites per year, as it has
+been doing for the last 8 years.</p>
+<p>That took a lot of luck, and wisdom was probably also involved, but
+mostly it was lot of hard work by a lot of people.</p>
+<p>Wisdom is a tricky thing, the hypothesized &quot;older—wiser&quot; correlation
+is still in clinical testing and in the meantime Neil Gaiman suggests:</p>
+<blockquote>
+<div><em>»So be wise, because the world needs more wisdom, and if you
+cannot be wise, pretend to be someone who is wise, and then just
+behave like they would.«</em></div></blockquote>
+<p>Works for me.</p>
+<div class="section" id="id1">
+<h2>2018<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Despite sucking in pretty much any other aspect, 2018 was a good
+year for Open Source Software in general and Varnish Cache in
+particular.</p>
+<p>People have finally started to understand that Free does not mean
+Gratis, and that quality software takes time and effort.</p>
+<p>From to the dot-com generation reinventing reproducible builds (like
+we had then in the 1980'ies) to the EU setting up a pot
+of <a class="reference external" href="https://juliareda.eu/2018/12/eu-fossa-bug-bounties/">850M€ bug-bounties</a> <a class="footnote-reference" href="#f1" id="id2">[1]</a>,
+things are moving in the right direction with respect to software
+quality.</p>
+<p>In 2018 the Varnish Cache project had settled into our &quot;March and
+September 15th&quot; release strategy, and released 6.0 in March and 6.1
+in September, as promised, and the next release will be out in ten
+weeks.</p>
+<p>We also had no security issues, and we have managed to keep the
+number of open issues and bug reports down.</p>
+<p>Writing it like that makes it sound boring, but with four million
+web sites depending on Varnish, boring is good thing.</p>
+<p>No news is indeed good news.</p>
+</div>
+<div class="section" id="and-http-3">
+<h2>2019 and HTTP/3<a class="headerlink" href="#and-http-3" title="Permalink to this headline">¶</a></h2>
+<p>The Next Big Thing in our world seems like it will be HTTP/3 (&quot;The
+protocol formerly known as QUIC&quot;), and I suspect it will drive
+much of our work in 2019.</p>
+<p>It is far too early to say anything about if, when or how, but I
+do spend a lot of time with pencil and paper, pretending to be
+somebody who is good at designing secure and efficient software.</p>
+<p>Around the time of the 2019-03-15 release we will gather for a VDD
+(Varnish Developer Day), and the big topic there will be HTTP/3,
+and then we will know and be ready to say something more detailed.</p>
+<p>I don't think it is realistic to roll out any kind of H3 support
+in the September release, that release will probably only contain
+a some of the necessary preparatory reorganization, so expect to
+run production on 6.0 LTS for a while.</p>
+</div>
+<div class="section" id="varnish-moral-license">
+<h2>Varnish Moral License<a class="headerlink" href="#varnish-moral-license" title="Permalink to this headline">¶</a></h2>
+<p>I want to thank the companies who have paid for a <a class="reference external" href="http://phk.freebsd.dk/VML/index.html">Varnish
+Moral License</a>:</p>
+<ul class="simple">
+<li>Fastly</li>
+<li>Uplex</li>
+<li>Varnish Software</li>
+<li>Section.io</li>
+<li>Globo</li>
+</ul>
+<p>The VML funding is why Varnish Cache is not on EU's hit-list and
+why another half million websites who started using Varnish in
+2018 will not regret it.</p>
+<p>Much appreciated!</p>
+</div>
+<div class="section" id="enoluck">
+<h2>ENOLUCK<a class="headerlink" href="#enoluck" title="Permalink to this headline">¶</a></h2>
+<p>For me 2018 ended on a sour note, when my dear friend <a class="reference external" href="http://www.jacob-sparre.dk/">Jacob Sparre
+Andersen</a> died from cancer a week
+before christmas.</p>
+<p>Society as such knows how to deal with deaths, and all sorts of
+procedures and rules kick in, to tie the loose ends up, respectfully
+and properly.</p>
+<p>The Internet is not there yet, people on the Internet have only
+just started dying, and there are not yet any automatic routines
+or generally perceived procedures for informing the people and
+communities who should know, or for tying up the loose ends, accounts,
+repositories and memberships on the Internet.</p>
+<p>But deaths happen, and I can tell you from personal experience that
+few things feel more awful, than having sent an email to somebody,
+to receive the reply from their heartbroken spouse, that you are
+many months too late <a class="footnote-reference" href="#f2" id="id4">[2]</a>.</p>
+<p>Jacob was not a major persona on the Internet, but between doing a
+lot of interesting stuff as a multi-discipline phd. in physics,
+being a really good Ada programmer, a huge Lego enthusiast, an
+incredibly helpful person <em>and</em> really <em>good</em> at helping, he had a
+lot of friends in many corners of the Internet.</p>
+<p>Jacob knew what was coming, and being his usual helpful self, he
+used the last few weeks to make a list of who to tell online, where
+things were stored, what the passwords were, and he even appointed
+a close friend to be his &quot;digital executor&quot;, who will help his widow
+sort all these things out in the coming months.</p>
+<p>When people die in our age-bracket, they usually do not get a few
+weeks notice.  If Jacob had been hit by a bus, his widow would have
+have been stuck in an almost impossible digital situation, starting
+with the need to guess, well, pretty much everything, including
+the passwords.</p>
+<p>In honour of my helpful friend Jacob, and for the sake of your loved
+ones, please sit down tonight, and write your own list of digital
+who, what and where, including how to gain access to the necessary
+passwords, and file it away in a way where it will be found, if
+you run out of luck.</p>
+<p>Good luck!</p>
+<p><em>phk</em></p>
+<p class="rubric">Footnotes</p>
+<table class="docutils footnote" frame="void" id="f1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>I am not a big fan of bug-bounties, but I will grudingly admit
+that wiser men than me, notably <a class="reference external" href="https://www.youtube.com/watch?v=nT-TGvYOBpI">Dan Geer</a>, have proposed that
+tax-money be used to snatch the vulnerabilities up, before bad guys
+get hold of them, and they seem to have a point.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[2]</a></td><td>And it does not feel any less awful if the loved ones
+left behind tries to fill the blanks by asking you how you knew
+each other and if you have any memories you could share with them.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Do you feel lucky ?</a><ul>
+<li><a class="reference internal" href="#id1">2018</a></li>
+<li><a class="reference internal" href="#and-http-3">2019 and HTTP/3</a></li>
+<li><a class="reference internal" href="#varnish-moral-license">Varnish Moral License</a></li>
+<li><a class="reference internal" href="#enoluck">ENOLUCK</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="patent.html"
+                        title="previous chapter">A patently good idea</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="apispaces.html"
+                        title="next chapter">API spaces</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/phk/lucky.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="apispaces.html" title="API spaces"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="patent.html" title="A patently good idea"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

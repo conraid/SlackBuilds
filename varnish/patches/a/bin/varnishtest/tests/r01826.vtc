@@ -1,0 +1,25 @@
+varnishtest "Check we ignore a zero C-L with a 204"
+
+server s1 {
+	rxreq
+	txresp -status 204 -bodylen 5
+	expect_close
+
+	accept
+	rxreq
+	txresp -status 204
+} -start
+
+varnish v1 -vcl+backend {
+} -start
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.status == 503
+
+	txreq
+	rxresp
+	expect resp.status == 204
+	expect resp.http.content-length == <undef>
+} -run

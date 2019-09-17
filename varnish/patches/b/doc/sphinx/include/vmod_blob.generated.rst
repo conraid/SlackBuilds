@@ -1,0 +1,523 @@
+..
+.. NB:  This file is machine generated, DO NOT EDIT!
+..
+.. Edit vmod.vcc and run make instead
+..
+
+
+:tocdepth: 1
+
+
+.. _vmod_blob(3):
+
+==================================================================
+VMOD blob - Utilities for the VCL blob type, encoding and decoding
+==================================================================
+
+SYNOPSIS
+========
+
+.. parsed-literal::
+
+  import blob [as name] [from "path"]
+  
+  :ref:`blob.decode()`
+   
+  :ref:`blob.encode()`
+   
+  :ref:`blob.transcode()`
+   
+  :ref:`blob.same()`
+   
+  :ref:`blob.equal()`
+   
+  :ref:`blob.length()`
+   
+  :ref:`blob.sub()`
+   
+  :ref:`blob.blob()`
+  
+      :ref:`xblob.get()`
+  
+      :ref:`xblob.encode()`
+  
+DESCRIPTION
+===========
+
+This VMOD provides utility functions and an object for the VCL data
+type ``BLOB``, which may contain arbitrary data of any length.
+
+Examples::
+
+  sub vcl_init {
+      # Create blob objects from encodings such as base64 or hex.
+      new myblob   = blob.blob(BASE64, "Zm9vYmFy");
+      new yourblob = blob.blob(encoded="666F6F", decoding=HEX);
+  }
+
+  sub vcl_deliver {
+      # The .get() method retrieves the BLOB from an object.
+      set resp.http.MyBlob-As-Hex
+	  = blob.encode(blob=myblob.get(), encoding=HEX);
+
+      # The .encode() method efficiently retrieves an encoding.
+      set resp.http.YourBlob-As-Base64 = yourblob.encode(BASE64);
+
+      # decode() and encode() functions convert blobs to text and
+      # vice versa at runtime.
+      set resp.http.Base64-Encoded
+	  = blob.encode(BASE64,
+			blob=blob.decode(HEX,
+					 encoded=req.http.Hex-Encoded));
+  }
+
+  sub vcl_recv {
+      # transcode() converts from one encoding to another.
+      # case=UPPER specifies upper-case hex digits A-F.
+      set req.http.Hex-Encoded
+	  = blob.transcode(decoding=BASE64, encoding=HEX,
+			   case=UPPER, encoded="YmF6");
+
+      # transcode() from URL to IDENTITY effects a URL decode.
+      set req.url = blob.transcode(encoded=req.url, decoding=URL);
+
+      # transcode() from IDENTITY to URL effects a URL encode.
+      set req.http.url_urlcoded
+	  = blob.transcode(encoded=req.url, encoding=URL);
+  }
+
+ENCODING SCHEMES
+----------------
+
+Binary-to-text encoding schemes are specified by ENUMs in the VMOD's
+constructor, methods and functions. Decodings convert a (possibly
+concatenated) string into a blob, while encodings convert a blob into
+a string.
+
+ENUM values for an encoding scheme can be one of:
+
+* ``IDENTITY``
+* ``BASE64``
+* ``BASE64URL``
+* ``BASE64URLNOPAD``
+* ``HEX``
+* ``URL``
+
+Empty strings are decoded into a "null blob" (of length 0), and
+conversely a null blob is encoded as the empty string.
+
+For encodings with ``HEX`` or ``URL``, you may also specify a *case*
+ENUM with one of the values ``LOWER``, ``UPPER`` or ``DEFAULT`` to
+produce a string with lower- or uppercase hex digits (in ``[a-f]`` or
+``[A-F]``). The default value for *case* is ``DEFAULT``, which for
+``HEX`` and ``URL`` means the same as ``LOWER``.
+
+The *case* ENUM is not relevant for decodings; ``HEX`` or ``URL``
+strings to be decoded as BLOBs may have hex digits in either case, or
+in mixed case.
+
+The *case* ENUM MUST be set to ``DEFAULT`` for the other encodings
+(``BASE64*`` and ``IDENTITY``).  You cannot, for example, produce an
+uppercase string by using the ``IDENTITY`` scheme with
+``case=UPPER``. To change the case of a string, use the ``std.toupper()`` or
+``std.tolower()`` functions from :ref:`vmod_std(3)`.
+
+IDENTITY
+~~~~~~~~
+
+The simplest encoding converts between the BLOB and STRING data types,
+leaving the contents byte-identical.
+
+Note that a BLOB may contain a null byte at any position before its
+end; if such a BLOB is decoded with ``IDENTITY``, the resulting STRING
+will have a null byte at that position. Since VCL strings, like C
+strings, are represented with a terminating null byte, the string will
+be truncated, appearing to contain less data than the original
+blob. For example::
+
+  # Decode from the hex encoding for "foo\0bar".
+  # The header will be seen as "foo".
+  set resp.http.Trunced-Foo1
+      = blob.encode(IDENTITY, blob=blob.decode(HEX,
+					       encoded="666f6f00626172"));
+
+``IDENTITY`` is the default encoding and decoding. So the above can
+also be written as::
+
+  # Decode from the hex encoding for "foo\0bar".
+  # The header will be seen as "foo".
+  set resp.http.Trunced-Foo2
+    = blob.encode(blob=blob.decode(HEX, encoded="666f6f00626172"));
+
+The *case* ENUM MUST be set to ``DEFAULT`` for ``IDENTITY`` encodings.
+
+BASE64*
+~~~~~~~
+
+The base64 encoding schemes use 4 characters to encode 3 bytes. There
+are no newlines or maximal line lengths -- whitespace is not
+permitted.
+
+The ``BASE64`` encoding uses the alphanumeric characters, ``+`` and
+``/``; and encoded strings are padded with the ``=`` character so that
+their length is always a multiple of four.
+
+The ``BASE64URL`` encoding also uses the alphanumeric characters, but
+``-`` and ``_`` instead of ``+`` and ``/``, so that an encoded string
+can be used safely in a URL. This scheme also uses the padding
+character ``=``.
+
+The ``BASE64URLNOPAD`` encoding uses the same alphabet as
+``BASE6URL``, but leaves out the padding. Thus the length of an
+encoding with this scheme is not necessarily a multiple of four.
+
+The *case* ENUM MUST be set to ``DEFAULT`` for for all of the
+``BASE64*`` encodings.
+
+HEX
+~~~
+
+The ``HEX`` encoding scheme converts hex strings into blobs and vice
+versa. For encodings, you may use the *case* ENUM to specify upper-
+or lowercase hex digits ``A`` through ``f`` (default ``DEFAULT``,
+which means the same as ``LOWER``).  A prefix such as ``0x`` is not
+used for an encoding and is illegal for a decoding.
+
+If a hex string to be decoded has an odd number of digits, it is
+decoded as if a ``0`` is prepended to it; that is, the first digit is
+interpreted as representing the least significant nibble of the first
+byte. For example::
+
+  # The concatenated string is "abcdef0", and is decoded as "0abcdef0".
+  set resp.http.First = "abc";
+  set resp.http.Second = "def0";
+  set resp.http.Hex-Decoded
+      = blob.encode(HEX, blob=blob.decode(HEX,
+			 encoded=resp.http.First + resp.http.Second));
+
+URL
+~~~
+
+The ``URL`` decoding replaces any ``%<2-hex-digits>`` substrings with
+the binary value of the hexadecimal number after the ``%`` sign.
+
+The ``URL`` encoding implements "percent encoding" as per RFC3986. The
+*case* ENUM determines the case of the hex digits, but does not
+affect alphabetic characters that are not percent-encoded.
+
+.. _blob.decode():
+
+BLOB decode(ENUM decoding, INT length, STRING encoded)
+------------------------------------------------------
+
+::
+
+   BLOB decode(
+      ENUM {IDENTITY, BASE64, BASE64URL, BASE64URLNOPAD, HEX, URL} decoding=IDENTITY,
+      INT length=0,
+      STRING encoded
+   )
+
+Returns the BLOB derived from the string *encoded* according to the
+scheme specified by *decoding*.
+
+If *length* > 0, only decode the first *length* characters of the
+encoded string. If *length* <= 0 or greater than the length of the
+string, then decode the entire string. The default value of *length*
+is 0.
+
+*decoding* defaults to IDENTITY.
+
+Example::
+
+	blob.decode(BASE64, encoded="Zm9vYmFyYmF6");
+
+	# same with named parameters
+	blob.decode(encoded="Zm9vYmFyYmF6", decoding=BASE64);
+
+	# convert string to blob
+	blob.decode(encoded="foo");
+
+.. _blob.encode():
+
+STRING encode(ENUM encoding, ENUM case, BLOB blob)
+--------------------------------------------------
+
+::
+
+   STRING encode(
+      ENUM {IDENTITY, BASE64, BASE64URL, BASE64URLNOPAD, HEX, URL} encoding=IDENTITY,
+      ENUM {LOWER, UPPER, DEFAULT} case=DEFAULT,
+      BLOB blob
+   )
+
+Returns a string representation of the BLOB *blob* as specified by
+*encoding*. *case* determines the case of hex digits for the ``HEX``
+and ``URL`` encodings, and is ignored for the other encodings.
+
+*encoding* defaults to ``IDENTITY``, and *case* defaults to
+``DEFAULT``.  ``DEFAULT`` is interpreted as ``LOWER`` for the ``HEX``
+and ``URL`` encodings, and is the required value for the other
+encodings.
+
+Example::
+
+	set resp.http.encode1
+	    = blob.encode(HEX,
+			  blob=blob.decode(BASE64, encoded="Zm9vYmFyYmF6"));
+
+	# same with named parameters
+	set resp.http.encode2
+	    = blob.encode(blob=blob.decode(encoded="Zm9vYmFyYmF6",
+						   decoding=BASE64),
+			      encoding=HEX);
+
+	# convert blob to string
+	set resp.http.encode3
+	    = blob.encode(blob=blob.decode(encoded="foo"));
+
+.. _blob.transcode():
+
+STRING transcode(ENUM decoding, ENUM encoding, ENUM case, INT length, STRING encoded)
+-------------------------------------------------------------------------------------
+
+::
+
+   STRING transcode(
+      ENUM {IDENTITY, BASE64, BASE64URL, BASE64URLNOPAD, HEX, URL} decoding=IDENTITY,
+      ENUM {IDENTITY, BASE64, BASE64URL, BASE64URLNOPAD, HEX, URL} encoding=IDENTITY,
+      ENUM {LOWER, UPPER, DEFAULT} case=DEFAULT,
+      INT length=0,
+      STRING encoded
+   )
+
+Translates from one encoding to another, by first decoding the string
+*encoded* according to the scheme *decoding*, and then returning
+the encoding of the resulting blob according to the scheme
+*encoding*. *case* determines the case of hex digits for the
+``HEX`` and ``URL`` encodings, and is ignored for other encodings.
+
+As with `blob.decode()`_: If *length* > 0, only decode the first
+*length* characters of the encoded string, otherwise decode the
+entire string. The default value of *length* is 0.
+
+*decoding* and *encoding* default to IDENTITY, and *case* defaults to
+``DEFAULT``. ``DEFAULT`` is interpreted as ``LOWER`` for the ``HEX``
+and ``URL`` encodings, and is the required value for the other
+encodings.
+
+Example::
+
+       set resp.http.Hex2Base64-1
+	    = blob.transcode(HEX, BASE64, encoded="666f6f");
+
+	# same with named parameters
+	set resp.http.Hex2Base64-2
+	   = blob.transcode(encoded="666f6f",
+				 encoding=BASE64, decoding=HEX);
+
+	# URL decode -- recall that IDENTITY is the default encoding.
+	set resp.http.urldecoded
+	   = blob.transcode(encoded="foo%20bar", decoding=URL);
+
+	# URL encode
+	set resp.http.urlencoded
+	    = blob.transcode(encoded="foo bar", encoding=URL);
+
+.. _blob.same():
+
+BOOL same(BLOB, BLOB)
+---------------------
+
+Returns ``true`` if and only if the two BLOB arguments are the same
+object, i.e. they specify exactly the same region of memory, or both
+are empty.
+
+If the BLOBs are both empty (length is 0 and/or the internal pointer
+is ``NULL``), then `blob.same()`_ returns ``true``. If any
+non-empty BLOB is compared to an empty BLOB, then `blob.same()`_
+returns ``false``.
+
+.. _blob.equal():
+
+BOOL equal(BLOB, BLOB)
+----------------------
+
+Returns true if and only if the two BLOB arguments have equal contents
+(possibly in different memory regions).
+
+As with `blob.same()`_: If the BLOBs are both empty, then `blob.equal()`_
+returns ``true``. If any non-empty BLOB is compared to an empty BLOB,
+then `blob.equal()`_ returns ``false``.
+
+.. _blob.length():
+
+INT length(BLOB)
+----------------
+
+Returns the length of the BLOB.
+
+.. _blob.sub():
+
+BLOB sub(BLOB, BYTES length, BYTES offset=0)
+--------------------------------------------
+
+Returns a new BLOB formed from *length* bytes of the BLOB argument
+starting at *offset* bytes from the start of its memory region. The
+default value of *offset* is ``0B``.
+
+`blob.sub()`_ fails and returns NULL if the BLOB argument is empty, or if
+``offset + length`` requires more bytes than are available in the
+BLOB.
+
+.. _blob.blob():
+
+new xblob = blob.blob(ENUM decoding, STRING encoded)
+----------------------------------------------------
+
+::
+
+   new xblob = blob.blob(
+      ENUM {IDENTITY, BASE64, BASE64URL, BASE64URLNOPAD, HEX, URL} decoding=IDENTITY,
+      STRING encoded
+   )
+
+Creates an object that contains the BLOB derived from the string
+*encoded* according to the scheme *decoding*.
+
+Example::
+
+	new theblob1 = blob.blob(BASE64, encoded="YmxvYg==");
+
+	# same with named arguments
+	new theblob2 = blob.blob(encoded="YmxvYg==", decoding=BASE64);
+
+	# string as a blob
+	new stringblob = blob.blob(encoded="bazz");
+
+.. _xblob.get():
+
+BLOB xblob.get()
+----------------
+
+Returns the BLOB created by the constructor.
+
+Example::
+
+	set resp.http.The-Blob1 =
+	    blob.encode(blob=theblob1.get());
+
+	set resp.http.The-Blob2 =
+	    blob.encode(blob=theblob2.get());
+
+	set resp.http.The-Stringblob =
+	    blob.encode(blob=stringblob.get());
+
+.. _xblob.encode():
+
+STRING xblob.encode(ENUM encoding, ENUM case)
+---------------------------------------------
+
+::
+
+      STRING xblob.encode(
+            ENUM {IDENTITY, BASE64, BASE64URL, BASE64URLNOPAD, HEX, URL} encoding=IDENTITY,
+            ENUM {LOWER, UPPER, DEFAULT} case=DEFAULT
+      )
+
+Returns an encoding of BLOB created by the constructor, according to
+the scheme *encoding*. *case* determines the case of hex digits
+for the ``HEX`` and ``URL`` encodings, and MUST be set to ``DEFAULT``
+for the other encodings.
+
+Example::
+
+	# blob as text
+	set resp.http.The-Blob = theblob1.encode();
+
+	# blob as base64
+	set resp.http.The-Blob-b64 = theblob1.encode(BASE64);
+
+For any `blob.blob()`_ object, `encoding` and `case`, encodings via
+the `xblob.encode()`_ method and the `blob.encode()`_
+function are equal::
+
+  # Always true:
+  blob.encode(ENC, CASE, blob.get()) == blob.encode(ENC, CASE)
+
+But the `xblob.encode()`_ object method is more efficient --
+the encoding is computed once and cached (with allocation in heap
+memory), and the cached encoding is retrieved on every subsequent
+call. The `blob.encode()`_ function computes the encoding on every
+call, allocating space for the string in Varnish workspaces.
+
+So if the data in a BLOB are fixed at VCL initialization time, so that
+its encodings will always be the same, it is better to create a
+`blob.blob()`_ object. The VMOD's functions should be used for data that are
+not known until runtime.
+
+ERRORS
+======
+
+The encoders, decoders and `blob.sub()`_ may fail if there is
+insufficient space to create the new blob or string. Decoders may also
+fail if the encoded string is an illegal format for the decoding
+scheme. Encoders will fail for the ``IDENTITY`` and ``BASE64*``
+encoding schemes if the *case* ENUM is not set to ``DEFAULT``.
+
+If any of the VMOD's methods, functions or constructor fail, then VCL
+failure is invoked, just as if ``return(fail)`` had been called in the
+VCL source. This means that:
+
+* If the ``blob.blob()`_ object constructor fails, or if any methods or
+  functions fail during ``vcl_init{}``, then the VCL program will fail
+  to load, and the VCC compiler will emit an error message.
+
+* If a method or function fails in any other VCL subroutine besides
+  ``vcl_synth{}``, then control is directed to ``vcl_synth{}``. The
+  response status is set to 503 with the reason string ``"VCL
+  failed"``, and an error message will be written to the :ref:`vsl(7)`
+  using the tag ``VCL_Error``.
+
+* If the failure occurs during ``vcl_synth{}``, then ``vcl_synth{}``
+  is aborted. The response line ``"503 VCL failed"`` is returned, and
+  the ``VCL_Error`` message is written to the log.
+
+LIMITATIONS
+===========
+
+The VMOD allocates memory in various ways for new blobs and
+strings. The `blob.blob()`_ object and its methods allocate memory
+from the heap, and hence they are only limited by available virtual
+memory.
+
+The `blob.encode()`_, `blob.decode()`_ and
+`blob.transcode()`_ functions allocate Varnish workspace, as does
+`blob.sub()`_ for the newly created BLOB.  If these functions are
+failing, as indicated by "out of space" messages in the Varnish log
+(with the ``VCL_Error`` tag), then you will need to increase the
+varnishd parameters ``workspace_client`` and/or ``workspace_backend``.
+
+The `blob.transcode()`_ function also allocates space on the stack
+for a temporary BLOB. If this function causes stack overflow, you may
+need to increase the varnishd parameter ``thread_pool_stack``.
+
+SEE ALSO
+========
+
+* :ref:`varnishd(1)`
+* :ref:`vcl(7)`
+* :ref:`vsl(7)`
+* :ref:`vmod_std(3)`
+
+COPYRIGHT
+=========
+
+::
+
+  This document is licensed under the same conditions as Varnish itself.
+  See LICENSE for details.
+ 
+  Authors: Nils Goroll <nils.goroll@uplex.de>
+           Geoffrey Simmons <geoffrey.simmons@uplex.de>
+ 

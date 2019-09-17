@@ -1,0 +1,554 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>VMOD blob - Utilities for the VCL blob type, encoding and decoding &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="VMOD unix - Utilities for Unix domain sockets" href="vmod_unix.html" />
+    <link rel="prev" title="VMOD purge - Varnish Purge Module" href="vmod_purge.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="vmod_unix.html" title="VMOD unix - Utilities for Unix domain sockets"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vmod_purge.html" title="VMOD purge - Varnish Purge Module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Varnish Reference Manual</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="vmod-blob-utilities-for-the-vcl-blob-type-encoding-and-decoding">
+<span id="vmod-blob-3"></span><h1>VMOD blob - Utilities for the VCL blob type, encoding and decoding<a class="headerlink" href="#vmod-blob-utilities-for-the-vcl-blob-type-encoding-and-decoding" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="synopsis">
+<h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
+<pre class="literal-block">
+import blob [as name] [from &quot;path&quot;]
+
+<a class="reference internal" href="#blob-decode"><span class="std std-ref">BLOB decode(ENUM decoding, INT length, STRING encoded)</span></a>
+
+<a class="reference internal" href="#blob-encode"><span class="std std-ref">STRING encode(ENUM encoding, ENUM case, BLOB blob)</span></a>
+
+<a class="reference internal" href="#blob-transcode"><span class="std std-ref">STRING transcode(ENUM decoding, ENUM encoding, ENUM case, INT length, STRING encoded)</span></a>
+
+<a class="reference internal" href="#blob-same"><span class="std std-ref">BOOL same(BLOB, BLOB)</span></a>
+
+<a class="reference internal" href="#blob-equal"><span class="std std-ref">BOOL equal(BLOB, BLOB)</span></a>
+
+<a class="reference internal" href="#blob-length"><span class="std std-ref">INT length(BLOB)</span></a>
+
+<a class="reference internal" href="#blob-sub"><span class="std std-ref">BLOB sub(BLOB, BYTES length, BYTES offset=0)</span></a>
+
+<a class="reference internal" href="#blob-blob"><span class="std std-ref">new xblob = blob.blob(ENUM decoding, STRING encoded)</span></a>
+
+    <a class="reference internal" href="#xblob-get"><span class="std std-ref">BLOB xblob.get()</span></a>
+
+    <a class="reference internal" href="#xblob-encode"><span class="std std-ref">STRING xblob.encode(ENUM encoding, ENUM case)</span></a>
+</pre>
+</div>
+<div class="section" id="description">
+<h2>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>This VMOD provides utility functions and an object for the VCL data
+type <code class="docutils literal"><span class="pre">BLOB</span></code>, which may contain arbitrary data of any length.</p>
+<p>Examples:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_init</span> <span class="p">{</span>
+    <span class="c1"># Create blob objects from encodings such as base64 or hex.</span>
+    <span class="n">new</span> <span class="n">myblob</span>   <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">blob</span><span class="p">(</span><span class="n">BASE64</span><span class="p">,</span> <span class="s2">&quot;Zm9vYmFy&quot;</span><span class="p">);</span>
+    <span class="n">new</span> <span class="n">yourblob</span> <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">blob</span><span class="p">(</span><span class="n">encoded</span><span class="o">=</span><span class="s2">&quot;666F6F&quot;</span><span class="p">,</span> <span class="n">decoding</span><span class="o">=</span><span class="n">HEX</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">sub</span> <span class="n">vcl_deliver</span> <span class="p">{</span>
+    <span class="c1"># The .get() method retrieves the BLOB from an object.</span>
+    <span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">MyBlob</span><span class="o">-</span><span class="n">As</span><span class="o">-</span><span class="n">Hex</span>
+        <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">blob</span><span class="o">=</span><span class="n">myblob</span><span class="o">.</span><span class="n">get</span><span class="p">(),</span> <span class="n">encoding</span><span class="o">=</span><span class="n">HEX</span><span class="p">);</span>
+
+    <span class="c1"># The .encode() method efficiently retrieves an encoding.</span>
+    <span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">YourBlob</span><span class="o">-</span><span class="n">As</span><span class="o">-</span><span class="n">Base64</span> <span class="o">=</span> <span class="n">yourblob</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">BASE64</span><span class="p">);</span>
+
+    <span class="c1"># decode() and encode() functions convert blobs to text and</span>
+    <span class="c1"># vice versa at runtime.</span>
+    <span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Base64</span><span class="o">-</span><span class="n">Encoded</span>
+        <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">BASE64</span><span class="p">,</span>
+                      <span class="n">blob</span><span class="o">=</span><span class="n">blob</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">HEX</span><span class="p">,</span>
+                                       <span class="n">encoded</span><span class="o">=</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Hex</span><span class="o">-</span><span class="n">Encoded</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="n">sub</span> <span class="n">vcl_recv</span> <span class="p">{</span>
+    <span class="c1"># transcode() converts from one encoding to another.</span>
+    <span class="c1"># case=UPPER specifies upper-case hex digits A-F.</span>
+    <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Hex</span><span class="o">-</span><span class="n">Encoded</span>
+        <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">transcode</span><span class="p">(</span><span class="n">decoding</span><span class="o">=</span><span class="n">BASE64</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">HEX</span><span class="p">,</span>
+                         <span class="n">case</span><span class="o">=</span><span class="n">UPPER</span><span class="p">,</span> <span class="n">encoded</span><span class="o">=</span><span class="s2">&quot;YmF6&quot;</span><span class="p">);</span>
+
+    <span class="c1"># transcode() from URL to IDENTITY effects a URL decode.</span>
+    <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">transcode</span><span class="p">(</span><span class="n">encoded</span><span class="o">=</span><span class="n">req</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">decoding</span><span class="o">=</span><span class="n">URL</span><span class="p">);</span>
+
+    <span class="c1"># transcode() from IDENTITY to URL effects a URL encode.</span>
+    <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">url_urlcoded</span>
+        <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">transcode</span><span class="p">(</span><span class="n">encoded</span><span class="o">=</span><span class="n">req</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">URL</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="encoding-schemes">
+<h3>ENCODING SCHEMES<a class="headerlink" href="#encoding-schemes" title="Permalink to this headline">¶</a></h3>
+<p>Binary-to-text encoding schemes are specified by ENUMs in the VMOD's
+constructor, methods and functions. Decodings convert a (possibly
+concatenated) string into a blob, while encodings convert a blob into
+a string.</p>
+<p>ENUM values for an encoding scheme can be one of:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">IDENTITY</span></code></li>
+<li><code class="docutils literal"><span class="pre">BASE64</span></code></li>
+<li><code class="docutils literal"><span class="pre">BASE64URL</span></code></li>
+<li><code class="docutils literal"><span class="pre">BASE64URLNOPAD</span></code></li>
+<li><code class="docutils literal"><span class="pre">HEX</span></code></li>
+<li><code class="docutils literal"><span class="pre">URL</span></code></li>
+</ul>
+<p>Empty strings are decoded into a &quot;null blob&quot; (of length 0), and
+conversely a null blob is encoded as the empty string.</p>
+<p>For encodings with <code class="docutils literal"><span class="pre">HEX</span></code> or <code class="docutils literal"><span class="pre">URL</span></code>, you may also specify a <em>case</em>
+ENUM with one of the values <code class="docutils literal"><span class="pre">LOWER</span></code>, <code class="docutils literal"><span class="pre">UPPER</span></code> or <code class="docutils literal"><span class="pre">DEFAULT</span></code> to
+produce a string with lower- or uppercase hex digits (in <code class="docutils literal"><span class="pre">[a-f]</span></code> or
+<code class="docutils literal"><span class="pre">[A-F]</span></code>). The default value for <em>case</em> is <code class="docutils literal"><span class="pre">DEFAULT</span></code>, which for
+<code class="docutils literal"><span class="pre">HEX</span></code> and <code class="docutils literal"><span class="pre">URL</span></code> means the same as <code class="docutils literal"><span class="pre">LOWER</span></code>.</p>
+<p>The <em>case</em> ENUM is not relevant for decodings; <code class="docutils literal"><span class="pre">HEX</span></code> or <code class="docutils literal"><span class="pre">URL</span></code>
+strings to be decoded as BLOBs may have hex digits in either case, or
+in mixed case.</p>
+<p>The <em>case</em> ENUM MUST be set to <code class="docutils literal"><span class="pre">DEFAULT</span></code> for the other encodings
+(<code class="docutils literal"><span class="pre">BASE64*</span></code> and <code class="docutils literal"><span class="pre">IDENTITY</span></code>).  You cannot, for example, produce an
+uppercase string by using the <code class="docutils literal"><span class="pre">IDENTITY</span></code> scheme with
+<code class="docutils literal"><span class="pre">case=UPPER</span></code>. To change the case of a string, use the <code class="docutils literal"><span class="pre">std.toupper()</span></code> or
+<code class="docutils literal"><span class="pre">std.tolower()</span></code> functions from <a class="reference internal" href="vmod_std.html#vmod-std-3"><span class="std std-ref">VMOD std - Varnish Standard Module</span></a>.</p>
+<div class="section" id="identity">
+<h4>IDENTITY<a class="headerlink" href="#identity" title="Permalink to this headline">¶</a></h4>
+<p>The simplest encoding converts between the BLOB and STRING data types,
+leaving the contents byte-identical.</p>
+<p>Note that a BLOB may contain a null byte at any position before its
+end; if such a BLOB is decoded with <code class="docutils literal"><span class="pre">IDENTITY</span></code>, the resulting STRING
+will have a null byte at that position. Since VCL strings, like C
+strings, are represented with a terminating null byte, the string will
+be truncated, appearing to contain less data than the original
+blob. For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Decode from the hex encoding for &quot;foo\0bar&quot;.</span>
+<span class="c1"># The header will be seen as &quot;foo&quot;.</span>
+<span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Trunced</span><span class="o">-</span><span class="n">Foo1</span>
+    <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">IDENTITY</span><span class="p">,</span> <span class="n">blob</span><span class="o">=</span><span class="n">blob</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">HEX</span><span class="p">,</span>
+                                             <span class="n">encoded</span><span class="o">=</span><span class="s2">&quot;666f6f00626172&quot;</span><span class="p">));</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">IDENTITY</span></code> is the default encoding and decoding. So the above can
+also be written as:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Decode from the hex encoding for &quot;foo\0bar&quot;.</span>
+<span class="c1"># The header will be seen as &quot;foo&quot;.</span>
+<span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Trunced</span><span class="o">-</span><span class="n">Foo2</span>
+  <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">blob</span><span class="o">=</span><span class="n">blob</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">HEX</span><span class="p">,</span> <span class="n">encoded</span><span class="o">=</span><span class="s2">&quot;666f6f00626172&quot;</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>The <em>case</em> ENUM MUST be set to <code class="docutils literal"><span class="pre">DEFAULT</span></code> for <code class="docutils literal"><span class="pre">IDENTITY</span></code> encodings.</p>
+</div>
+<div class="section" id="base64">
+<h4>BASE64*<a class="headerlink" href="#base64" title="Permalink to this headline">¶</a></h4>
+<p>The base64 encoding schemes use 4 characters to encode 3 bytes. There
+are no newlines or maximal line lengths -- whitespace is not
+permitted.</p>
+<p>The <code class="docutils literal"><span class="pre">BASE64</span></code> encoding uses the alphanumeric characters, <code class="docutils literal"><span class="pre">+</span></code> and
+<code class="docutils literal"><span class="pre">/</span></code>; and encoded strings are padded with the <code class="docutils literal"><span class="pre">=</span></code> character so that
+their length is always a multiple of four.</p>
+<p>The <code class="docutils literal"><span class="pre">BASE64URL</span></code> encoding also uses the alphanumeric characters, but
+<code class="docutils literal"><span class="pre">-</span></code> and <code class="docutils literal"><span class="pre">_</span></code> instead of <code class="docutils literal"><span class="pre">+</span></code> and <code class="docutils literal"><span class="pre">/</span></code>, so that an encoded string
+can be used safely in a URL. This scheme also uses the padding
+character <code class="docutils literal"><span class="pre">=</span></code>.</p>
+<p>The <code class="docutils literal"><span class="pre">BASE64URLNOPAD</span></code> encoding uses the same alphabet as
+<code class="docutils literal"><span class="pre">BASE6URL</span></code>, but leaves out the padding. Thus the length of an
+encoding with this scheme is not necessarily a multiple of four.</p>
+<p>The <em>case</em> ENUM MUST be set to <code class="docutils literal"><span class="pre">DEFAULT</span></code> for for all of the
+<code class="docutils literal"><span class="pre">BASE64*</span></code> encodings.</p>
+</div>
+<div class="section" id="hex">
+<h4>HEX<a class="headerlink" href="#hex" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="docutils literal"><span class="pre">HEX</span></code> encoding scheme converts hex strings into blobs and vice
+versa. For encodings, you may use the <em>case</em> ENUM to specify upper-
+or lowercase hex digits <code class="docutils literal"><span class="pre">A</span></code> through <code class="docutils literal"><span class="pre">f</span></code> (default <code class="docutils literal"><span class="pre">DEFAULT</span></code>,
+which means the same as <code class="docutils literal"><span class="pre">LOWER</span></code>).  A prefix such as <code class="docutils literal"><span class="pre">0x</span></code> is not
+used for an encoding and is illegal for a decoding.</p>
+<p>If a hex string to be decoded has an odd number of digits, it is
+decoded as if a <code class="docutils literal"><span class="pre">0</span></code> is prepended to it; that is, the first digit is
+interpreted as representing the least significant nibble of the first
+byte. For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># The concatenated string is &quot;abcdef0&quot;, and is decoded as &quot;0abcdef0&quot;.</span>
+<span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">First</span> <span class="o">=</span> <span class="s2">&quot;abc&quot;</span><span class="p">;</span>
+<span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Second</span> <span class="o">=</span> <span class="s2">&quot;def0&quot;</span><span class="p">;</span>
+<span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Hex</span><span class="o">-</span><span class="n">Decoded</span>
+    <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">HEX</span><span class="p">,</span> <span class="n">blob</span><span class="o">=</span><span class="n">blob</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">HEX</span><span class="p">,</span>
+                       <span class="n">encoded</span><span class="o">=</span><span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">First</span> <span class="o">+</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Second</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="url">
+<h4>URL<a class="headerlink" href="#url" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="docutils literal"><span class="pre">URL</span></code> decoding replaces any <code class="docutils literal"><span class="pre">%&lt;2-hex-digits&gt;</span></code> substrings with
+the binary value of the hexadecimal number after the <code class="docutils literal"><span class="pre">%</span></code> sign.</p>
+<p>The <code class="docutils literal"><span class="pre">URL</span></code> encoding implements &quot;percent encoding&quot; as per RFC3986. The
+<em>case</em> ENUM determines the case of the hex digits, but does not
+affect alphabetic characters that are not percent-encoded.</p>
+</div>
+</div>
+<div class="section" id="blob-decode-enum-decoding-int-length-string-encoded">
+<span id="blob-decode"></span><h3>BLOB decode(ENUM decoding, INT length, STRING encoded)<a class="headerlink" href="#blob-decode-enum-decoding-int-length-string-encoded" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">BLOB</span> <span class="n">decode</span><span class="p">(</span>
+   <span class="n">ENUM</span> <span class="p">{</span><span class="n">IDENTITY</span><span class="p">,</span> <span class="n">BASE64</span><span class="p">,</span> <span class="n">BASE64URL</span><span class="p">,</span> <span class="n">BASE64URLNOPAD</span><span class="p">,</span> <span class="n">HEX</span><span class="p">,</span> <span class="n">URL</span><span class="p">}</span> <span class="n">decoding</span><span class="o">=</span><span class="n">IDENTITY</span><span class="p">,</span>
+   <span class="n">INT</span> <span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+   <span class="n">STRING</span> <span class="n">encoded</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Returns the BLOB derived from the string <em>encoded</em> according to the
+scheme specified by <em>decoding</em>.</p>
+<p>If <em>length</em> &gt; 0, only decode the first <em>length</em> characters of the
+encoded string. If <em>length</em> &lt;= 0 or greater than the length of the
+string, then decode the entire string. The default value of <em>length</em>
+is 0.</p>
+<p><em>decoding</em> defaults to IDENTITY.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">blob</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">BASE64</span><span class="p">,</span> <span class="n">encoded</span><span class="o">=</span><span class="s2">&quot;Zm9vYmFyYmF6&quot;</span><span class="p">);</span>
+
+<span class="c1"># same with named parameters</span>
+<span class="n">blob</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoded</span><span class="o">=</span><span class="s2">&quot;Zm9vYmFyYmF6&quot;</span><span class="p">,</span> <span class="n">decoding</span><span class="o">=</span><span class="n">BASE64</span><span class="p">);</span>
+
+<span class="c1"># convert string to blob</span>
+<span class="n">blob</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoded</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="string-encode-enum-encoding-enum-case-blob-blob">
+<span id="blob-encode"></span><h3>STRING encode(ENUM encoding, ENUM case, BLOB blob)<a class="headerlink" href="#string-encode-enum-encoding-enum-case-blob-blob" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">STRING</span> <span class="n">encode</span><span class="p">(</span>
+   <span class="n">ENUM</span> <span class="p">{</span><span class="n">IDENTITY</span><span class="p">,</span> <span class="n">BASE64</span><span class="p">,</span> <span class="n">BASE64URL</span><span class="p">,</span> <span class="n">BASE64URLNOPAD</span><span class="p">,</span> <span class="n">HEX</span><span class="p">,</span> <span class="n">URL</span><span class="p">}</span> <span class="n">encoding</span><span class="o">=</span><span class="n">IDENTITY</span><span class="p">,</span>
+   <span class="n">ENUM</span> <span class="p">{</span><span class="n">LOWER</span><span class="p">,</span> <span class="n">UPPER</span><span class="p">,</span> <span class="n">DEFAULT</span><span class="p">}</span> <span class="n">case</span><span class="o">=</span><span class="n">DEFAULT</span><span class="p">,</span>
+   <span class="n">BLOB</span> <span class="n">blob</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Returns a string representation of the BLOB <em>blob</em> as specified by
+<em>encoding</em>. <em>case</em> determines the case of hex digits for the <code class="docutils literal"><span class="pre">HEX</span></code>
+and <code class="docutils literal"><span class="pre">URL</span></code> encodings, and is ignored for the other encodings.</p>
+<p><em>encoding</em> defaults to <code class="docutils literal"><span class="pre">IDENTITY</span></code>, and <em>case</em> defaults to
+<code class="docutils literal"><span class="pre">DEFAULT</span></code>.  <code class="docutils literal"><span class="pre">DEFAULT</span></code> is interpreted as <code class="docutils literal"><span class="pre">LOWER</span></code> for the <code class="docutils literal"><span class="pre">HEX</span></code>
+and <code class="docutils literal"><span class="pre">URL</span></code> encodings, and is the required value for the other
+encodings.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">encode1</span>
+    <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">HEX</span><span class="p">,</span>
+                  <span class="n">blob</span><span class="o">=</span><span class="n">blob</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">BASE64</span><span class="p">,</span> <span class="n">encoded</span><span class="o">=</span><span class="s2">&quot;Zm9vYmFyYmF6&quot;</span><span class="p">));</span>
+
+<span class="c1"># same with named parameters</span>
+<span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">encode2</span>
+    <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">blob</span><span class="o">=</span><span class="n">blob</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoded</span><span class="o">=</span><span class="s2">&quot;Zm9vYmFyYmF6&quot;</span><span class="p">,</span>
+                                           <span class="n">decoding</span><span class="o">=</span><span class="n">BASE64</span><span class="p">),</span>
+                      <span class="n">encoding</span><span class="o">=</span><span class="n">HEX</span><span class="p">);</span>
+
+<span class="c1"># convert blob to string</span>
+<span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">encode3</span>
+    <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">blob</span><span class="o">=</span><span class="n">blob</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoded</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="string-transcode-enum-decoding-enum-encoding-enum-case-int-length-string-encoded">
+<span id="blob-transcode"></span><h3>STRING transcode(ENUM decoding, ENUM encoding, ENUM case, INT length, STRING encoded)<a class="headerlink" href="#string-transcode-enum-decoding-enum-encoding-enum-case-int-length-string-encoded" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">STRING</span> <span class="n">transcode</span><span class="p">(</span>
+   <span class="n">ENUM</span> <span class="p">{</span><span class="n">IDENTITY</span><span class="p">,</span> <span class="n">BASE64</span><span class="p">,</span> <span class="n">BASE64URL</span><span class="p">,</span> <span class="n">BASE64URLNOPAD</span><span class="p">,</span> <span class="n">HEX</span><span class="p">,</span> <span class="n">URL</span><span class="p">}</span> <span class="n">decoding</span><span class="o">=</span><span class="n">IDENTITY</span><span class="p">,</span>
+   <span class="n">ENUM</span> <span class="p">{</span><span class="n">IDENTITY</span><span class="p">,</span> <span class="n">BASE64</span><span class="p">,</span> <span class="n">BASE64URL</span><span class="p">,</span> <span class="n">BASE64URLNOPAD</span><span class="p">,</span> <span class="n">HEX</span><span class="p">,</span> <span class="n">URL</span><span class="p">}</span> <span class="n">encoding</span><span class="o">=</span><span class="n">IDENTITY</span><span class="p">,</span>
+   <span class="n">ENUM</span> <span class="p">{</span><span class="n">LOWER</span><span class="p">,</span> <span class="n">UPPER</span><span class="p">,</span> <span class="n">DEFAULT</span><span class="p">}</span> <span class="n">case</span><span class="o">=</span><span class="n">DEFAULT</span><span class="p">,</span>
+   <span class="n">INT</span> <span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+   <span class="n">STRING</span> <span class="n">encoded</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Translates from one encoding to another, by first decoding the string
+<em>encoded</em> according to the scheme <em>decoding</em>, and then returning
+the encoding of the resulting blob according to the scheme
+<em>encoding</em>. <em>case</em> determines the case of hex digits for the
+<code class="docutils literal"><span class="pre">HEX</span></code> and <code class="docutils literal"><span class="pre">URL</span></code> encodings, and is ignored for other encodings.</p>
+<p>As with <a class="reference internal" href="#blob-decode">blob.decode()</a>: If <em>length</em> &gt; 0, only decode the first
+<em>length</em> characters of the encoded string, otherwise decode the
+entire string. The default value of <em>length</em> is 0.</p>
+<p><em>decoding</em> and <em>encoding</em> default to IDENTITY, and <em>case</em> defaults to
+<code class="docutils literal"><span class="pre">DEFAULT</span></code>. <code class="docutils literal"><span class="pre">DEFAULT</span></code> is interpreted as <code class="docutils literal"><span class="pre">LOWER</span></code> for the <code class="docutils literal"><span class="pre">HEX</span></code>
+and <code class="docutils literal"><span class="pre">URL</span></code> encodings, and is the required value for the other
+encodings.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Hex2Base64</span><span class="o">-</span><span class="mi">1</span>
+     <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">transcode</span><span class="p">(</span><span class="n">HEX</span><span class="p">,</span> <span class="n">BASE64</span><span class="p">,</span> <span class="n">encoded</span><span class="o">=</span><span class="s2">&quot;666f6f&quot;</span><span class="p">);</span>
+
+ <span class="c1"># same with named parameters</span>
+ <span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Hex2Base64</span><span class="o">-</span><span class="mi">2</span>
+    <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">transcode</span><span class="p">(</span><span class="n">encoded</span><span class="o">=</span><span class="s2">&quot;666f6f&quot;</span><span class="p">,</span>
+                          <span class="n">encoding</span><span class="o">=</span><span class="n">BASE64</span><span class="p">,</span> <span class="n">decoding</span><span class="o">=</span><span class="n">HEX</span><span class="p">);</span>
+
+ <span class="c1"># URL decode -- recall that IDENTITY is the default encoding.</span>
+ <span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">urldecoded</span>
+    <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">transcode</span><span class="p">(</span><span class="n">encoded</span><span class="o">=</span><span class="s2">&quot;foo%20bar&quot;</span><span class="p">,</span> <span class="n">decoding</span><span class="o">=</span><span class="n">URL</span><span class="p">);</span>
+
+ <span class="c1"># URL encode</span>
+ <span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">urlencoded</span>
+     <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">transcode</span><span class="p">(</span><span class="n">encoded</span><span class="o">=</span><span class="s2">&quot;foo bar&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">URL</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="bool-same-blob-blob">
+<span id="blob-same"></span><h3>BOOL same(BLOB, BLOB)<a class="headerlink" href="#bool-same-blob-blob" title="Permalink to this headline">¶</a></h3>
+<p>Returns <code class="docutils literal"><span class="pre">true</span></code> if and only if the two BLOB arguments are the same
+object, i.e. they specify exactly the same region of memory, or both
+are empty.</p>
+<p>If the BLOBs are both empty (length is 0 and/or the internal pointer
+is <code class="docutils literal"><span class="pre">NULL</span></code>), then <a class="reference internal" href="#blob-same">blob.same()</a> returns <code class="docutils literal"><span class="pre">true</span></code>. If any
+non-empty BLOB is compared to an empty BLOB, then <a class="reference internal" href="#blob-same">blob.same()</a>
+returns <code class="docutils literal"><span class="pre">false</span></code>.</p>
+</div>
+<div class="section" id="bool-equal-blob-blob">
+<span id="blob-equal"></span><h3>BOOL equal(BLOB, BLOB)<a class="headerlink" href="#bool-equal-blob-blob" title="Permalink to this headline">¶</a></h3>
+<p>Returns true if and only if the two BLOB arguments have equal contents
+(possibly in different memory regions).</p>
+<p>As with <a class="reference internal" href="#blob-same">blob.same()</a>: If the BLOBs are both empty, then <a class="reference internal" href="#blob-equal">blob.equal()</a>
+returns <code class="docutils literal"><span class="pre">true</span></code>. If any non-empty BLOB is compared to an empty BLOB,
+then <a class="reference internal" href="#blob-equal">blob.equal()</a> returns <code class="docutils literal"><span class="pre">false</span></code>.</p>
+</div>
+<div class="section" id="int-length-blob">
+<span id="blob-length"></span><h3>INT length(BLOB)<a class="headerlink" href="#int-length-blob" title="Permalink to this headline">¶</a></h3>
+<p>Returns the length of the BLOB.</p>
+</div>
+<div class="section" id="blob-sub-blob-bytes-length-bytes-offset-0">
+<span id="blob-sub"></span><h3>BLOB sub(BLOB, BYTES length, BYTES offset=0)<a class="headerlink" href="#blob-sub-blob-bytes-length-bytes-offset-0" title="Permalink to this headline">¶</a></h3>
+<p>Returns a new BLOB formed from <em>length</em> bytes of the BLOB argument
+starting at <em>offset</em> bytes from the start of its memory region. The
+default value of <em>offset</em> is <code class="docutils literal"><span class="pre">0B</span></code>.</p>
+<p><a class="reference internal" href="#blob-sub">blob.sub()</a> fails and returns NULL if the BLOB argument is empty, or if
+<code class="docutils literal"><span class="pre">offset</span> <span class="pre">+</span> <span class="pre">length</span></code> requires more bytes than are available in the
+BLOB.</p>
+</div>
+<div class="section" id="new-xblob-blob-blob-enum-decoding-string-encoded">
+<span id="blob-blob"></span><h3>new xblob = blob.blob(ENUM decoding, STRING encoded)<a class="headerlink" href="#new-xblob-blob-blob-enum-decoding-string-encoded" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">new</span> <span class="n">xblob</span> <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">blob</span><span class="p">(</span>
+   <span class="n">ENUM</span> <span class="p">{</span><span class="n">IDENTITY</span><span class="p">,</span> <span class="n">BASE64</span><span class="p">,</span> <span class="n">BASE64URL</span><span class="p">,</span> <span class="n">BASE64URLNOPAD</span><span class="p">,</span> <span class="n">HEX</span><span class="p">,</span> <span class="n">URL</span><span class="p">}</span> <span class="n">decoding</span><span class="o">=</span><span class="n">IDENTITY</span><span class="p">,</span>
+   <span class="n">STRING</span> <span class="n">encoded</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Creates an object that contains the BLOB derived from the string
+<em>encoded</em> according to the scheme <em>decoding</em>.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">new</span> <span class="n">theblob1</span> <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">blob</span><span class="p">(</span><span class="n">BASE64</span><span class="p">,</span> <span class="n">encoded</span><span class="o">=</span><span class="s2">&quot;YmxvYg==&quot;</span><span class="p">);</span>
+
+<span class="c1"># same with named arguments</span>
+<span class="n">new</span> <span class="n">theblob2</span> <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">blob</span><span class="p">(</span><span class="n">encoded</span><span class="o">=</span><span class="s2">&quot;YmxvYg==&quot;</span><span class="p">,</span> <span class="n">decoding</span><span class="o">=</span><span class="n">BASE64</span><span class="p">);</span>
+
+<span class="c1"># string as a blob</span>
+<span class="n">new</span> <span class="n">stringblob</span> <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">blob</span><span class="p">(</span><span class="n">encoded</span><span class="o">=</span><span class="s2">&quot;bazz&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="blob-xblob-get">
+<span id="xblob-get"></span><h3>BLOB xblob.get()<a class="headerlink" href="#blob-xblob-get" title="Permalink to this headline">¶</a></h3>
+<p>Returns the BLOB created by the constructor.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">The</span><span class="o">-</span><span class="n">Blob1</span> <span class="o">=</span>
+    <span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">blob</span><span class="o">=</span><span class="n">theblob1</span><span class="o">.</span><span class="n">get</span><span class="p">());</span>
+
+<span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">The</span><span class="o">-</span><span class="n">Blob2</span> <span class="o">=</span>
+    <span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">blob</span><span class="o">=</span><span class="n">theblob2</span><span class="o">.</span><span class="n">get</span><span class="p">());</span>
+
+<span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">The</span><span class="o">-</span><span class="n">Stringblob</span> <span class="o">=</span>
+    <span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">blob</span><span class="o">=</span><span class="n">stringblob</span><span class="o">.</span><span class="n">get</span><span class="p">());</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="string-xblob-encode-enum-encoding-enum-case">
+<span id="xblob-encode"></span><h3>STRING xblob.encode(ENUM encoding, ENUM case)<a class="headerlink" href="#string-xblob-encode-enum-encoding-enum-case" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">STRING</span> <span class="n">xblob</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+      <span class="n">ENUM</span> <span class="p">{</span><span class="n">IDENTITY</span><span class="p">,</span> <span class="n">BASE64</span><span class="p">,</span> <span class="n">BASE64URL</span><span class="p">,</span> <span class="n">BASE64URLNOPAD</span><span class="p">,</span> <span class="n">HEX</span><span class="p">,</span> <span class="n">URL</span><span class="p">}</span> <span class="n">encoding</span><span class="o">=</span><span class="n">IDENTITY</span><span class="p">,</span>
+      <span class="n">ENUM</span> <span class="p">{</span><span class="n">LOWER</span><span class="p">,</span> <span class="n">UPPER</span><span class="p">,</span> <span class="n">DEFAULT</span><span class="p">}</span> <span class="n">case</span><span class="o">=</span><span class="n">DEFAULT</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Returns an encoding of BLOB created by the constructor, according to
+the scheme <em>encoding</em>. <em>case</em> determines the case of hex digits
+for the <code class="docutils literal"><span class="pre">HEX</span></code> and <code class="docutils literal"><span class="pre">URL</span></code> encodings, and MUST be set to <code class="docutils literal"><span class="pre">DEFAULT</span></code>
+for the other encodings.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># blob as text</span>
+<span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">The</span><span class="o">-</span><span class="n">Blob</span> <span class="o">=</span> <span class="n">theblob1</span><span class="o">.</span><span class="n">encode</span><span class="p">();</span>
+
+<span class="c1"># blob as base64</span>
+<span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">The</span><span class="o">-</span><span class="n">Blob</span><span class="o">-</span><span class="n">b64</span> <span class="o">=</span> <span class="n">theblob1</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">BASE64</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>For any <a class="reference internal" href="#blob-blob">blob.blob()</a> object, <cite>encoding</cite> and <cite>case</cite>, encodings via
+the <a class="reference internal" href="#xblob-encode">xblob.encode()</a> method and the <a class="reference internal" href="#blob-encode">blob.encode()</a>
+function are equal:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Always true:</span>
+<span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">ENC</span><span class="p">,</span> <span class="n">CASE</span><span class="p">,</span> <span class="n">blob</span><span class="o">.</span><span class="n">get</span><span class="p">())</span> <span class="o">==</span> <span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">ENC</span><span class="p">,</span> <span class="n">CASE</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>But the <a class="reference internal" href="#xblob-encode">xblob.encode()</a> object method is more efficient --
+the encoding is computed once and cached (with allocation in heap
+memory), and the cached encoding is retrieved on every subsequent
+call. The <a class="reference internal" href="#blob-encode">blob.encode()</a> function computes the encoding on every
+call, allocating space for the string in Varnish workspaces.</p>
+<p>So if the data in a BLOB are fixed at VCL initialization time, so that
+its encodings will always be the same, it is better to create a
+<a class="reference internal" href="#blob-blob">blob.blob()</a> object. The VMOD's functions should be used for data that are
+not known until runtime.</p>
+</div>
+</div>
+<div class="section" id="errors">
+<h2>ERRORS<a class="headerlink" href="#errors" title="Permalink to this headline">¶</a></h2>
+<p>The encoders, decoders and <a class="reference internal" href="#blob-sub">blob.sub()</a> may fail if there is
+insufficient space to create the new blob or string. Decoders may also
+fail if the encoded string is an illegal format for the decoding
+scheme. Encoders will fail for the <code class="docutils literal"><span class="pre">IDENTITY</span></code> and <code class="docutils literal"><span class="pre">BASE64*</span></code>
+encoding schemes if the <em>case</em> ENUM is not set to <code class="docutils literal"><span class="pre">DEFAULT</span></code>.</p>
+<p>If any of the VMOD's methods, functions or constructor fail, then VCL
+failure is invoked, just as if <code class="docutils literal"><span class="pre">return(fail)</span></code> had been called in the
+VCL source. This means that:</p>
+<ul class="simple">
+<li>If the <code class="docutils literal"><span class="pre">blob.blob()`_</span> <span class="pre">object</span> <span class="pre">constructor</span> <span class="pre">fails,</span> <span class="pre">or</span> <span class="pre">if</span> <span class="pre">any</span> <span class="pre">methods</span> <span class="pre">or</span>
+<span class="pre">functions</span> <span class="pre">fail</span> <span class="pre">during</span> <span class="pre">``vcl_init{}</span></code>, then the VCL program will fail
+to load, and the VCC compiler will emit an error message.</li>
+<li>If a method or function fails in any other VCL subroutine besides
+<code class="docutils literal"><span class="pre">vcl_synth{}</span></code>, then control is directed to <code class="docutils literal"><span class="pre">vcl_synth{}</span></code>. The
+response status is set to 503 with the reason string <code class="docutils literal"><span class="pre">&quot;VCL</span>
+<span class="pre">failed&quot;</span></code>, and an error message will be written to the <a class="reference internal" href="vsl.html#vsl-7"><span class="std std-ref">VSL</span></a>
+using the tag <code class="docutils literal"><span class="pre">VCL_Error</span></code>.</li>
+<li>If the failure occurs during <code class="docutils literal"><span class="pre">vcl_synth{}</span></code>, then <code class="docutils literal"><span class="pre">vcl_synth{}</span></code>
+is aborted. The response line <code class="docutils literal"><span class="pre">&quot;503</span> <span class="pre">VCL</span> <span class="pre">failed&quot;</span></code> is returned, and
+the <code class="docutils literal"><span class="pre">VCL_Error</span></code> message is written to the log.</li>
+</ul>
+</div>
+<div class="section" id="limitations">
+<h2>LIMITATIONS<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h2>
+<p>The VMOD allocates memory in various ways for new blobs and
+strings. The <a class="reference internal" href="#blob-blob">blob.blob()</a> object and its methods allocate memory
+from the heap, and hence they are only limited by available virtual
+memory.</p>
+<p>The <a class="reference internal" href="#blob-encode">blob.encode()</a>, <a class="reference internal" href="#blob-decode">blob.decode()</a> and
+<a class="reference internal" href="#blob-transcode">blob.transcode()</a> functions allocate Varnish workspace, as does
+<a class="reference internal" href="#blob-sub">blob.sub()</a> for the newly created BLOB.  If these functions are
+failing, as indicated by &quot;out of space&quot; messages in the Varnish log
+(with the <code class="docutils literal"><span class="pre">VCL_Error</span></code> tag), then you will need to increase the
+varnishd parameters <code class="docutils literal"><span class="pre">workspace_client</span></code> and/or <code class="docutils literal"><span class="pre">workspace_backend</span></code>.</p>
+<p>The <a class="reference internal" href="#blob-transcode">blob.transcode()</a> function also allocates space on the stack
+for a temporary BLOB. If this function causes stack overflow, you may
+need to increase the varnishd parameter <code class="docutils literal"><span class="pre">thread_pool_stack</span></code>.</p>
+</div>
+<div class="section" id="see-also">
+<h2>SEE ALSO<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="varnishd.html#varnishd-1"><span class="std std-ref">varnishd</span></a></li>
+<li><a class="reference internal" href="vcl.html#vcl-7"><span class="std std-ref">VCL</span></a></li>
+<li><a class="reference internal" href="vsl.html#vsl-7"><span class="std std-ref">VSL</span></a></li>
+<li><a class="reference internal" href="vmod_std.html#vmod-std-3"><span class="std std-ref">VMOD std - Varnish Standard Module</span></a></li>
+</ul>
+</div>
+<div class="section" id="copyright">
+<h2>COPYRIGHT<a class="headerlink" href="#copyright" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">This</span> <span class="n">document</span> <span class="ow">is</span> <span class="n">licensed</span> <span class="n">under</span> <span class="n">the</span> <span class="n">same</span> <span class="n">conditions</span> <span class="k">as</span> <span class="n">Varnish</span> <span class="n">itself</span><span class="o">.</span>
+<span class="n">See</span> <span class="n">LICENSE</span> <span class="k">for</span> <span class="n">details</span><span class="o">.</span>
+
+<span class="n">Authors</span><span class="p">:</span> <span class="n">Nils</span> <span class="n">Goroll</span> <span class="o">&lt;</span><span class="n">nils</span><span class="o">.</span><span class="n">goroll</span><span class="nd">@uplex</span><span class="o">.</span><span class="n">de</span><span class="o">&gt;</span>
+         <span class="n">Geoffrey</span> <span class="n">Simmons</span> <span class="o">&lt;</span><span class="n">geoffrey</span><span class="o">.</span><span class="n">simmons</span><span class="nd">@uplex</span><span class="o">.</span><span class="n">de</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">VMOD blob - Utilities for the VCL blob type, encoding and decoding</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vmod_purge.html"
+                        title="previous chapter">VMOD purge - Varnish Purge Module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vmod_unix.html"
+                        title="next chapter">VMOD unix - Utilities for Unix domain sockets</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/reference/vmod_blob.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="vmod_unix.html" title="VMOD unix - Utilities for Unix domain sockets"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vmod_purge.html" title="VMOD purge - Varnish Purge Module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Reference Manual</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

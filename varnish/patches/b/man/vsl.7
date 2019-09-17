@@ -1,0 +1,1076 @@
+.\" Man page generated from reStructuredText.
+.
+.TH VSL 7 "" "" ""
+.SH NAME
+VSL \- Varnish Shared Memory Logging
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.SH OVERVIEW
+.sp
+This document describes the format and content of all the Varnish shared memory
+logging tags. These tags are used by the varnishlog(1), varnishtop(1), etc.
+logging tools supplied with Varnish.
+.SS VSL tags
+.INDENT 0.0
+.TP
+.B Backend \- Backend selected
+Logged when a connection is selected for handling a backend request.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%d %s %s
+|  |  |
+|  |  +\- Backend display name
+|  +\-\-\-\- VCL name
++\-\-\-\-\-\-\- Connection file descriptor
+
+NOTE: This tag is currently not in use in the Varnish log.
+It is mentioned here to document legacy versions of the log,
+or reserved for possible use in future versions.
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B BackendClose \- Backend connection closed
+Logged when a backend connection is closed.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%d %s [ %s ]
+|  |    |
+|  |    +\- Optional reason
+|  +\-\-\-\-\-\- Backend display name
++\-\-\-\-\-\-\-\-\- Connection file descriptor
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B BackendOpen \- Backend connection opened
+Logged when a new backend connection is opened.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%d %s %s %s %s %s
+|  |  |  |  |  |
+|  |  |  |  |  +\- Local port
+|  |  |  |  +\-\-\-\- Local address
+|  |  |  +\-\-\-\-\-\-\- Remote port
+|  |  +\-\-\-\-\-\-\-\-\-\- Remote address
+|  +\-\-\-\-\-\-\-\-\-\-\-\-\- Backend display name
++\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- Connection file descriptor
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B BackendReuse \- Backend connection put up for reuse
+Logged when a backend connection is put up for reuse by a later connection.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%d %s
+|  |
+|  +\- Backend display name
++\-\-\-\- Connection file descriptor
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B BackendStart \- Backend request start
+Start of backend processing. Logs the backend IP address and port number.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s %s
+|  |
+|  +\- Backend Port number
++\-\-\-\- Backend IP4/6 address
+
+NOTE: This tag is currently not in use in the Varnish log.
+It is mentioned here to document legacy versions of the log,
+or reserved for possible use in future versions.
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B Backend_health \- Backend health check
+The result of a backend health probe.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s %s %s %s %u %u %u %f %f %s
+|  |  |  |  |  |  |  |  |  |
+|  |  |  |  |  |  |  |  |  +\- Probe HTTP response / error information
+|  |  |  |  |  |  |  |  +\-\-\-\- Average response time
+|  |  |  |  |  |  |  +\-\-\-\-\-\-\- Response time
+|  |  |  |  |  |  +\-\-\-\-\-\-\-\-\-\- Probe window size
+|  |  |  |  |  +\-\-\-\-\-\-\-\-\-\-\-\-\- Probe threshold level
+|  |  |  |  +\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- Number of good probes in window
+|  |  |  +\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- Probe window bits
+|  |  +\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- "healthy" or "sick"
+|  +\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- "Back", "Still" or "Went"
++\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- Backend name
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Probe window bits are:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\(aq4\(aq: Good IPv4
+\(aq6\(aq: Good IPv6
+\(aqU\(aq: Good UNIX
+\(aqx\(aq: Error Xmit
+\(aqX\(aq: Good Xmit
+\(aqr\(aq: Error Recv
+\(aqR\(aq: Good Recv
+\(aqH\(aq: Happy
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B Begin \- Marks the start of a VXID
+The first record of a VXID transaction.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s %d %s
+|  |  |
+|  |  +\- Reason
+|  +\-\-\-\- Parent vxid
++\-\-\-\-\-\-\- Type ("sess", "req" or "bereq")
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B BereqAcct \- Backend request accounting
+Contains byte counters from backend request processing.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%d %d %d %d %d %d
+|  |  |  |  |  |
+|  |  |  |  |  +\- Total bytes received
+|  |  |  |  +\-\-\-\- Body bytes received
+|  |  |  +\-\-\-\-\-\-\- Header bytes received
+|  |  +\-\-\-\-\-\-\-\-\-\- Total bytes transmitted
+|  +\-\-\-\-\-\-\-\-\-\-\-\-\- Body bytes transmitted
++\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- Header bytes transmitted
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B BereqHeader \- Backend request header
+HTTP header contents.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s: %s
+|   |
+|   +\- Header value
++\-\-\-\-\- Header name
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B BereqMethod \- Backend request method
+The HTTP request method used.
+.TP
+.B BereqProtocol \- Backend request protocol
+The HTTP protocol version information.
+.TP
+.B BereqURL \- Backend request URL
+The HTTP request URL.
+.TP
+.B BerespHeader \- Backend response header
+HTTP header contents.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s: %s
+|   |
+|   +\- Header value
++\-\-\-\-\- Header name
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B BerespProtocol \- Backend response protocol
+The HTTP protocol version information.
+.TP
+.B BerespReason \- Backend response response
+The HTTP response string received.
+.TP
+.B BerespStatus \- Backend response status
+The HTTP status code received.
+.TP
+.B BogoHeader \- Bogus HTTP received
+Contains the first 20 characters of received HTTP headers we could not make sense of.  Applies to both req.http and beresp.http.
+.TP
+.B CLI \- CLI communication
+CLI communication between varnishd master and child process.
+.TP
+.B Debug \- Debug messages
+Debug messages can normally be ignored, but are sometimes helpful during trouble\-shooting.  Most debug messages must be explicitly enabled with parameters.
+.sp
+Debug messages may be added, changed or removed without prior notice and shouldn\(aqt be considered stable.
+.sp
+NB: This log record is masked by default.
+.TP
+.B ESI_xmlerror \- ESI parser error or warning message
+An error or warning was generated during parsing of an ESI object. The log record describes the problem encountered.
+.TP
+.B End \- Marks the end of a VXID
+The last record of a VXID transaction.
+.TP
+.B Error \- Error messages
+Error messages are stuff you probably want to know.
+.TP
+.B ExpBan \- Object evicted due to ban
+Logs the VXID when an object is banned.
+.TP
+.B ExpKill \- Object expiry event
+Logs events related to object expiry. The events are:
+.INDENT 7.0
+.TP
+.B EXP_Rearm
+Logged when the expiry time of an object changes.
+.TP
+.B EXP_Inbox
+Logged when the expiry thread picks an object from the inbox for processing.
+.TP
+.B EXP_Kill
+Logged when the expiry thread kills an object from the inbox.
+.TP
+.B EXP_When
+Logged when the expiry thread moves an object on the binheap.
+.TP
+.B EXP_Expired
+Logged when the expiry thread expires an object.
+.TP
+.B LRU_Cand
+Logged when an object is evaluated for LRU force expiry.
+.TP
+.B LRU
+Logged when an object is force expired due to LRU.
+.TP
+.B LRU_Fail
+Logged when no suitable candidate object is found for LRU force expiry.
+.UNINDENT
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+EXP_Rearm p=%p E=%f e=%f f=0x%x
+EXP_Inbox p=%p e=%f f=0x%x
+EXP_Kill p=%p e=%f f=0x%x
+EXP_When p=%p e=%f f=0x%x
+EXP_Expired x=%u t=%f
+LRU_Cand p=%p f=0x%x r=%d
+LRU x=%u
+LRU_Fail
+
+Legend:
+p=%p         Objcore pointer
+t=%f         Remaining TTL (s)
+e=%f         Expiry time (unix epoch)
+E=%f         Old expiry time (unix epoch)
+f=0x%x       Objcore flags
+r=%d         Objcore refcount
+x=%u         Object VXID
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B FetchError \- Error while fetching object
+Logs the error message of a failed fetch operation.
+.sp
+Error messages should be self\-explanatory, yet the http connection(HTC) class of errors is reported with these symbols:
+.INDENT 7.0
+.INDENT 3.5
+.INDENT 0.0
+.IP \(bu 2
+junk (\-5): Received unexpected data
+.IP \(bu 2
+close (\-4): Connection closed
+.IP \(bu 2
+timeout (\-3): Timed out
+.IP \(bu 2
+overflow (\-2): Buffer/workspace too small
+.IP \(bu 2
+eof (\-1): Unexpected end of input
+.IP \(bu 2
+empty (0): Empty response
+.IP \(bu 2
+more (1): More data required
+.IP \(bu 2
+complete (2): Data complete (no error)
+.IP \(bu 2
+idle (3): Connection was closed while idle
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+Notice that some HTC errors are never emitted.
+.TP
+.B Fetch_Body \- Body fetched from backend
+Ready to fetch body from backend.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%d (%s) %s
+|   |    |
+|   |    +\-\-\-\- \(aqstream\(aq or \(aq\-\(aq
+|   +\-\-\-\-\-\-\-\-\- Text description of body fetch mode
++\-\-\-\-\-\-\-\-\-\-\-\-\- Body fetch mode
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B Filters \- Body filters
+List of filters applied to the body
+.TP
+.B Gzip \- G(un)zip performed on object
+A Gzip record is emitted for each instance of gzip or gunzip work performed. Worst case, an ESI transaction stored in gzip\(aqed objects but delivered gunziped, will run into many of these.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%c %c %c %d %d %d %d %d
+|  |  |  |  |  |  |  |
+|  |  |  |  |  |  |  +\- Bit length of compressed data
+|  |  |  |  |  |  +\-\-\-\- Bit location of \(aqlast\(aq bit
+|  |  |  |  |  +\-\-\-\-\-\-\- Bit location of first deflate block
+|  |  |  |  +\-\-\-\-\-\-\-\-\-\- Bytes output
+|  |  |  +\-\-\-\-\-\-\-\-\-\-\-\-\- Bytes input
+|  |  +\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- \(aqE\(aq: ESI, \(aq\-\(aq: Plain object
+|  +\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- \(aqF\(aq: Fetch, \(aqD\(aq: Deliver
++\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- \(aqG\(aq: Gzip, \(aqU\(aq: Gunzip, \(aqu\(aq: Gunzip\-test
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Examples:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+U F E 182 159 80 80 1392
+G F E 159 173 80 1304 1314
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B H2RxBody \- Received HTTP2 frame body
+Binary data
+.TP
+.B H2RxHdr \- Received HTTP2 frame header
+Binary data
+.TP
+.B H2TxBody \- Transmitted HTTP2 frame body
+Binary data
+.TP
+.B H2TxHdr \- Transmitted HTTP2 frame header
+Binary data
+.TP
+.B Hash \- Value added to hash
+This value was added to the object lookup hash.
+.sp
+NB: This log record is masked by default.
+.TP
+.B Hit \- Hit object in cache
+Object looked up in cache.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%u %f %f %f
+|  |  |  |
+|  |  |  +\- Keep period
+|  |  +\-\-\-\- Grace period
+|  +\-\-\-\-\-\-\- Remaining TTL
++\-\-\-\-\-\-\-\-\-\- VXID of the object
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B HitMiss \- Hit for miss object in cache.
+Hit\-for\-miss object looked up in cache.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%u %f
+|  |
+|  +\- Remaining TTL
++\-\-\-\- VXID of the object
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B HitPass \- Hit for pass object in cache.
+Hit\-for\-pass object looked up in cache.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%u %f
+|  |
+|  +\- Remaining TTL
++\-\-\-\- VXID of the object
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B HttpGarbage \- Unparseable HTTP request
+Logs the content of unparseable HTTP requests.
+.TP
+.B Length \- Size of object body
+Logs the size of a fetch object body.
+.TP
+.B Link \- Links to a child VXID
+Links this VXID to any child VXID it initiates.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s %d %s
+|  |  |
+|  |  +\- Reason
+|  +\-\-\-\- Child vxid
++\-\-\-\-\-\-\- Child type ("req" or "bereq")
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B LostHeader \- Failed attempt to set HTTP header
+Logs the header name of a failed HTTP header operation due to resource exhaustion or configured limits.
+.TP
+.B ObjHeader \- Object  header
+HTTP header contents.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s: %s
+|   |
+|   +\- Header value
++\-\-\-\-\- Header name
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B ObjProtocol \- Object  protocol
+The HTTP protocol version information.
+.TP
+.B ObjReason \- Object  response
+The HTTP response string received.
+.TP
+.B ObjStatus \- Object  status
+The HTTP status code received.
+.TP
+.B PipeAcct \- Pipe byte counts
+Contains byte counters for pipe sessions.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%d %d %d %d
+|  |  |  |
+|  |  |  +\-\-\-\-\-\-\- Piped bytes to client
+|  |  +\-\-\-\-\-\-\-\-\-\- Piped bytes from client
+|  +\-\-\-\-\-\-\-\-\-\-\-\-\- Backend request headers
++\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- Client request headers
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B Proxy \- PROXY protocol information
+PROXY protocol information.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%d %s %d %s %d
+|  |  |  |  |
+|  |  |  |  +\- server port
+|  |  |  +\-\-\-\- server ip
+|  |  +\-\-\-\-\-\-\- client port
+|  +\-\-\-\-\-\-\-\-\-\- client ip
++\-\-\-\-\-\-\-\-\-\-\-\-\- PROXY protocol version
+
+All fields are "local" for PROXY local connections (command 0x0)
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B ProxyGarbage \- Unparseable PROXY request
+A PROXY protocol header was unparseable.
+.TP
+.B ReqAcct \- Request handling byte counts
+Contains byte counts for the request handling.
+The body bytes count includes transmission overhead (ie: chunked encoding).
+ESI sub\-requests show the body bytes this ESI fragment including any subfragments contributed to the top level request.
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%d %d %d %d %d %d
+|  |  |  |  |  |
+|  |  |  |  |  +\- Total bytes transmitted
+|  |  |  |  +\-\-\-\- Body bytes transmitted
+|  |  |  +\-\-\-\-\-\-\- Header bytes transmitted
+|  |  +\-\-\-\-\-\-\-\-\-\- Total bytes received
+|  +\-\-\-\-\-\-\-\-\-\-\-\-\- Body bytes received
++\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- Header bytes received
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B ReqHeader \- Client request header
+HTTP header contents.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s: %s
+|   |
+|   +\- Header value
++\-\-\-\-\- Header name
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B ReqMethod \- Client request method
+The HTTP request method used.
+.TP
+.B ReqProtocol \- Client request protocol
+The HTTP protocol version information.
+.TP
+.B ReqStart \- Client request start
+Start of request processing. Logs the client address, port number  and listener endpoint name (from the \-a command\-line argument).
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s %s %s
+|  |  |
+|  |  +\-\- Listener name (from \-a)
+|  +\-\-\-\-\- Client Port number (0 for Unix domain sockets)
++\-\-\-\-\-\-\-\- Client IP4/6 address (0.0.0.0 for UDS)
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B ReqURL \- Client request URL
+The HTTP request URL.
+.TP
+.B RespHeader \- Client response header
+HTTP header contents.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s: %s
+|   |
+|   +\- Header value
++\-\-\-\-\- Header name
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B RespProtocol \- Client response protocol
+The HTTP protocol version information.
+.TP
+.B RespReason \- Client response response
+The HTTP response string received.
+.TP
+.B RespStatus \- Client response status
+The HTTP status code received.
+.TP
+.B SessClose \- Client connection closed
+SessClose is the last record for any client connection.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s %f
+|  |
+|  +\- How long the session was open
++\-\-\-\- Why the connection closed
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B SessError \- Client connection accept failed
+Accepting a client connection has failed.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s %s %s %d %d %s
+|  |  |  |  |  |
+|  |  |  |  |  +\- Detailed error message
+|  |  |  |  +\-\-\-\- Error Number (errno) from accept(2)
+|  |  |  +\-\-\-\-\-\-\- File descriptor number
+|  |  +\-\-\-\-\-\-\-\-\-\- Local TCP port / 0 for UDS
+|  +\-\-\-\-\-\-\-\-\-\-\-\-\- Local IPv4/6 address / 0.0.0.0 for UDS
++\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- Socket name (from \-a argument)
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B SessOpen \- Client connection opened
+The first record for a client connection, with the socket\-endpoints of the connection.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s %d %s %s %s %d
+|  |  |  |  |  |
+|  |  |  |  |  +\- File descriptor number
+|  |  |  |  +\-\-\-\- Local TCP port / 0 for UDS
+|  |  |  +\-\-\-\-\-\-\- Local IPv4/6 address / 0.0.0.0 for UDS
+|  |  +\-\-\-\-\-\-\-\-\-\- Socket name (from \-a argument)
+|  +\-\-\-\-\-\-\-\-\-\-\-\-\- Remote TCP port / 0 for UDS
++\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- Remote IPv4/6 address / 0.0.0.0 for UDS
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B Storage \- Where object is stored
+Type and name of the storage backend the object is stored in.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s %s
+|  |
+|  +\- Name of storage backend
++\-\-\-\- Type ("malloc", "file", "persistent" etc.)
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B TTL \- TTL set on object
+A TTL record is emitted whenever the ttl, grace or keep values for an object is set as well as whether the object is  cacheable or not.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s %d %d %d %d [ %d %d %u %u ] %s
+|  |  |  |  |    |  |  |  |    |
+|  |  |  |  |    |  |  |  |    +\- "cacheable" or "uncacheable"
+|  |  |  |  |    |  |  |  +\-\-\-\-\-\- Max\-Age from Cache\-Control header
+|  |  |  |  |    |  |  +\-\-\-\-\-\-\-\-\- Expires header
+|  |  |  |  |    |  +\-\-\-\-\-\-\-\-\-\-\-\- Date header
+|  |  |  |  |    +\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- Age (incl Age: header value)
+|  |  |  |  +\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- Reference time for TTL
+|  |  |  +\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- Keep
+|  |  +\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- Grace
+|  +\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- TTL
++\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- "RFC", "VCL" or "HFP"
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The four optional fields are only present in "RFC" headers.
+.sp
+Examples:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+RFC 60 10 \-1 1312966109 1312966109 1312966109 0 60 cacheable
+VCL 120 10 0 1312966111 uncacheable
+HFP 2 0 0 1312966113 uncacheable
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B Timestamp \- Timing information
+Contains timing information for the Varnish worker threads.
+.sp
+Time stamps are issued by Varnish on certain events, and show the absolute time of the event, the time spent since the start of the work unit, and the time spent since the last timestamp was logged. See the TIMESTAMPS section below for information about the individual time stamps.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s: %f %f %f
+|   |  |  |
+|   |  |  +\- Time since last timestamp
+|   |  +\-\-\-\- Time since start of work unit
+|   +\-\-\-\-\-\-\- Absolute time of event
++\-\-\-\-\-\-\-\-\-\-\- Event label
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B VCL_Error \- VCL execution error message
+Logs error messages generated during VCL execution.
+.TP
+.B VCL_Log \- Log statement from VCL
+User generated log messages insert from VCL through std.log()
+.TP
+.B VCL_acl \- VCL ACL check results
+Logs VCL ACL evaluation results.
+.TP
+.B VCL_call \- VCL method called
+Logs the VCL method name when a VCL method is called.
+.TP
+.B VCL_return \- VCL method return value
+Logs the VCL method terminating statement.
+.TP
+.B VCL_trace \- VCL trace data
+Logs VCL execution trace data.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s %u %u.%u.%u
+|  |  |  |  |
+|  |  |  |  +\- VCL program line position
+|  |  |  +\-\-\-\- VCL program line number
+|  |  +\-\-\-\-\-\-\- VCL program source index
+|  +\-\-\-\-\-\-\-\-\-\- VCL trace point index
++\-\-\-\-\-\-\-\-\-\-\-\-\- VCL configname
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+NB: This log record is masked by default.
+.TP
+.B VCL_use \- VCL in use
+Records the name of the VCL being used.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s [ %s %s ]
+|    |  |
+|    |  +\- Name of label used to find it
+|    +\-\-\-\- "via"
++\-\-\-\-\-\-\-\-\- Name of VCL put in use
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B VSL \- VSL API warnings and error message
+Warnings and error messages generated by the VSL API while reading the shared memory log.
+.TP
+.B VfpAcct \- Fetch filter accounting
+Contains name of VFP and statistics.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%s %d %d
+|  |  |
+|  |  +\- Total bytes produced
+|  +\-\-\-\- Number of calls made
++\-\-\-\-\-\-\- Name of filter
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+NB: This log record is masked by default.
+.TP
+.B Witness \- Lock order witness records
+Diagnostic recording of locking order.
+.TP
+.B WorkThread \- Logs thread start/stop events
+Logs worker thread creation and termination events.
+.sp
+The format is:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+%p %s
+|  |
+|  +\- [start|end]
++\-\-\-\- Worker struct pointer
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+NB: This log record is masked by default.
+.UNINDENT
+.SH TIMESTAMPS
+.sp
+Timestamps are inserted in the log on completing certain events during
+the worker thread\(aqs task handling. The timestamps has a label showing
+which event was completed. The reported fields show the absolute time
+of the event, the time spent since the start of the task and the time
+spent since the last timestamp was logged.
+.sp
+The timestamps logged automatically by Varnish are inserted after
+completing events that are expected to have delays (e.g. network IO or
+spending time on a waitinglist). Timestamps can also be inserted from
+VCL using the std.timestamp() method. If one is doing time consuming
+tasks in the VCL configuration, it\(aqs a good idea to log a timestamp
+after completing that task. This keeps the timing information in
+subsequent timestamps from including the time spent on the VCL event.
+.SS Request handling timestamps
+.INDENT 0.0
+.TP
+.B Start
+The start of request processing (first byte received or
+restart).
+.TP
+.B Req
+Complete client request received.
+.TP
+.B ReqBody
+Client request body processed (discarded, cached or passed to
+the backend).
+.TP
+.B Waitinglist
+Came off waitinglist.
+.TP
+.B Fetch
+Fetch processing finished (completely fetched or ready for
+streaming).
+.TP
+.B Process
+Processing finished, ready to deliver the client response.
+.TP
+.B Resp
+Delivery of response to the client finished.
+.TP
+.B Restart
+Client request is being restarted.
+.UNINDENT
+.SS Pipe handling timestamps
+.INDENT 0.0
+.TP
+.B Pipe
+Opened a pipe to the backend and forwarded the request.
+.TP
+.B PipeSess
+The pipe session has finished.
+.UNINDENT
+.SS Backend fetch timestamps
+.INDENT 0.0
+.TP
+.B Start
+Start of the backend fetch processing.
+.TP
+.B Bereq
+Backend request sent.
+.TP
+.B Beresp
+Backend response headers received.
+.TP
+.B BerespBody
+Backend response body received.
+.TP
+.B Retry
+Backend request is being retried.
+.TP
+.B Error
+Backend request failed to vcl_backend_error.
+.UNINDENT
+.SH HISTORY
+.sp
+This document was initially written by Poul\-Henning Kamp, and later updated by
+Martin Blix Grydeland.
+.SH SEE ALSO
+.INDENT 0.0
+.IP \(bu 2
+\fIvarnishhist(1)\fP
+.IP \(bu 2
+\fIvarnishlog(1)\fP
+.IP \(bu 2
+\fIvarnishncsa(1)\fP
+.IP \(bu 2
+\fIvarnishtop(1)\fP
+.UNINDENT
+.SH COPYRIGHT
+.sp
+This document is licensed under the same licence as Varnish
+itself. See LICENCE for details.
+.INDENT 0.0
+.IP \(bu 2
+Copyright (c) 2006 Verdens Gang AS
+.IP \(bu 2
+Copyright (c) 2006\-2015 Varnish Software AS
+.UNINDENT
+.\" Generated by docutils manpage writer.
+.

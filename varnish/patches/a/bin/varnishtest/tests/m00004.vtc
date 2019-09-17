@@ -1,0 +1,146 @@
+varnishtest "Test fileread for std VMOD"
+
+shell {
+	printf "File One" > "${tmpdir}/m00004_file_one"
+	printf "File Two" > "${tmpdir}/m00004_file_two"
+	printf "File Three" > "${tmpdir}/m00004_file_three"
+	printf "File Four\n" > "${tmpdir}/m00004_file_four"
+}
+
+server s1 {
+	loop 4 {
+		rxreq
+		txresp -hdr "foo: bar" -bodylen 4
+	}
+} -start
+
+varnish v1 -vcl+backend {
+	import std;
+
+	sub vcl_recv {
+		if (req.url == "/five") {
+			return(synth(200));
+		}
+	}
+
+	sub vcl_backend_response {
+		if (bereq.url == "/four") {
+			set beresp.http.served-by
+			    = regsub(std.fileread("${tmpdir}/m00004_file_four"),
+				     "\R$", "");
+		}
+	}
+
+	sub vcl_deliver {
+		if (req.url == "/one") {
+			set resp.http.one = std.fileread("${tmpdir}/m00004_file_one");
+		} else if (req.url == "/two") {
+			set resp.http.two = std.fileread("${tmpdir}/m00004_file_two");
+		} else if (req.url == "/three") {
+			set resp.http.three = std.fileread("${tmpdir}/m00004_file_three");
+		}
+	}
+
+	sub vcl_synth {
+		set resp.body = "Response was served by "
+			+ std.fileread("${tmpdir}/m00004_file_four");
+		return(deliver);
+	}
+} -start
+
+client c1 {
+	txreq -url "/one"
+	rxresp
+	expect resp.status == 200
+	expect resp.bodylen == "4"
+	expect resp.http.foo == "bar"
+	expect resp.http.one == "File One"
+
+	txreq -url "/two"
+	rxresp
+	expect resp.status == 200
+	expect resp.bodylen == "4"
+	expect resp.http.foo == "bar"
+	expect resp.http.two == "File Two"
+
+	txreq -url "/three"
+	rxresp
+	expect resp.status == 200
+	expect resp.bodylen == "4"
+	expect resp.http.foo == "bar"
+	expect resp.http.three == "File Three"
+
+	txreq -url "/four"
+	rxresp
+	expect resp.status == 200
+	expect resp.bodylen == "4"
+	expect resp.http.foo == "bar"
+	expect resp.http.served-by == "File Four"
+
+	txreq -url "/five"
+	rxresp
+	expect resp.status == 200
+	expect resp.body == "Response was served by File Four\n"
+} -run
+
+varnish v1 -vcl+backend {
+	import std;
+
+	sub vcl_recv {
+		if (req.url == "/five") {
+			return(synth(200));
+		}
+	}
+
+	sub vcl_backend_response {
+		if (bereq.url == "/four") {
+			set beresp.http.served-by
+			    = regsub(std.fileread("${tmpdir}/m00004_file_four"),
+				     "\R$", "");
+		}
+	}
+
+	sub vcl_deliver {
+		if (req.url == "/one") {
+			set resp.http.one = std.fileread("${tmpdir}/m00004_file_one");
+		} else if (req.url == "/two") {
+			set resp.http.two = std.fileread("${tmpdir}/m00004_file_two");
+		} else if (req.url == "/three") {
+			set resp.http.three = std.fileread("${tmpdir}/m00004_file_three");
+		}
+	}
+
+	sub vcl_synth {
+		set resp.body = "Response was served by "
+			+ std.fileread("${tmpdir}/m00004_file_four");
+		return(deliver);
+	}
+}
+
+varnish v1 -cli "vcl.list"
+varnish v1 -cli "vcl.use vcl2"
+
+client c1 -run
+client c1 -run
+
+varnish v1 -cli "vcl.list"
+varnish v1 -cli "vcl.discard vcl1"
+
+varnish v1 -vcl+backend { }
+varnish v1 -cli "vcl.use vcl3"
+
+client c1 {
+	txreq -url "/one"
+	rxresp
+	txreq -url "/two"
+	rxresp
+	txreq -url "/three"
+	rxresp
+} -run
+
+varnish v1 -cli "vcl.list"
+varnish v1 -cli "vcl.discard vcl2"
+
+client c1 -run
+
+varnish v1 -cli "vcl.list"

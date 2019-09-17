@@ -1,0 +1,39 @@
+varnishtest "#345, ESI waitinglist trouble"
+
+barrier b1 cond 2
+
+server s1 {
+	rxreq
+	txresp -body {<esi:include src="someurl"/>}
+	rxreq
+	barrier b1 sync
+	delay 1
+	txresp -body {DATA}
+} -start
+
+varnish v1 -arg "-p debug=+workspace" -vcl+backend {
+	sub vcl_backend_response {
+		if (bereq.url == "/") {
+			set beresp.do_esi = true;
+		}
+	}
+} -start
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.bodylen == 4
+} -start
+
+client c2 {
+	txreq
+	barrier b1 sync
+	rxresp
+	expect resp.bodylen == 4
+} -run
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.bodylen == 4
+} -run

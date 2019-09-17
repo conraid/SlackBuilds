@@ -1,0 +1,167 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>VCL Expressions &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="IPv6 Suckage" href="ipv6suckage.html" />
+    <link rel="prev" title="How GZIP, and GZIP+ESI works in Varnish" href="gzip.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="ipv6suckage.html" title="IPv6 Suckage"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="gzip.html" title="How GZIP, and GZIP+ESI works in Varnish"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="vcl-expressions">
+<span id="phk-vcl-expr"></span><h1>VCL Expressions<a class="headerlink" href="#vcl-expressions" title="Permalink to this headline">¶</a></h1>
+<p>I have been working on VCL expressions recently, and we are approaching
+the home stretch now.</p>
+<p>The data types in VCL are &quot;sort of weird&quot; seen with normal programming
+language eyes, in that they are not &quot;general purpose&quot; types, but
+rather tailored types for the task at hand.</p>
+<p>For instance, we have both a TIME and a DURATION type, a quite
+unusual constellation for a programming language.</p>
+<p>But in HTTP context, it makes a lot of sense, you really have to
+keep track of what is a relative time (age) and what is absolute
+time (Expires).</p>
+<p>Obviously, you can add a TIME and DURATION, the result is a TIME.</p>
+<p>Equally obviously, you can not add TIME to TIME, but you can subtract
+TIME from TIME, resulting in a DURATION.</p>
+<p>VCL do also have &quot;naked&quot; numbers, like INT and REAL, but what you
+can do with them is very limited.  For instance you can multiply a
+duration by a REAL, but you can not multiply a TIME by anything.</p>
+<p>Given that we have our own types, the next question is what
+precedence operators have.</p>
+<p>The C programming language is famous for having a couple of gottchas
+in its precedence rules and given our limited and narrow type
+repertoire, blindly importing a set of precedence rules may confuse
+a lot more than it may help.</p>
+<p>Here are the precedence rules I have settled on, from highest to
+lowest precedence:</p>
+<dl class="docutils">
+<dt>Atomic</dt>
+<dd><p class="first">'true', 'false', constants</p>
+<p>function calls</p>
+<p>variables</p>
+<p class="last">'(' expression ')'</p>
+</dd>
+<dt>Multiply/Divide</dt>
+<dd><p class="first">INT * INT</p>
+<p>INT / INT</p>
+<p class="last">DURATION * REAL</p>
+</dd>
+<dt>Add/Subtract</dt>
+<dd><p class="first">STRING + STRING</p>
+<p>INT +/- INT</p>
+<p>TIME +/- DURATION</p>
+<p>TIME - TIME</p>
+<p class="last">DURATION +/- DURATION</p>
+</dd>
+<dt>Comparisons</dt>
+<dd><p class="first">'==', '!=', '&lt;', '&gt;', '~' and '!~'</p>
+<p class="last">string existence check (-&gt; BOOL)</p>
+</dd>
+<dt>Boolean not</dt>
+<dd>'!'</dd>
+<dt>Boolean and</dt>
+<dd>'&amp;&amp;'</dd>
+<dt>Boolean or</dt>
+<dd>'||'</dd>
+</dl>
+<p>Input and feedback most welcome!</p>
+<p>Until next time,</p>
+<p>Poul-Henning, 2010-09-21</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="gzip.html"
+                        title="previous chapter">How GZIP, and GZIP+ESI works in Varnish</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ipv6suckage.html"
+                        title="next chapter">IPv6 Suckage</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/phk/vcl_expr.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="ipv6suckage.html" title="IPv6 Suckage"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="gzip.html" title="How GZIP, and GZIP+ESI works in Varnish"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

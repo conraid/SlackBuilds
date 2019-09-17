@@ -1,0 +1,359 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Why HTTP/2.0 does not seem interesting &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Varnish Does Not Hash" href="varnish_does_not_hash.html" />
+    <link rel="prev" title="What SPDY did to my summer vacation" href="spdy.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="varnish_does_not_hash.html" title="Varnish Does Not Hash"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="spdy.html" title="What SPDY did to my summer vacation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="why-http-2-0-does-not-seem-interesting">
+<span id="phk-http20-lack-of-interest"></span><h1>Why HTTP/2.0 does not seem interesting<a class="headerlink" href="#why-http-2-0-does-not-seem-interesting" title="Permalink to this headline">¶</a></h1>
+<p>This is the email I sent to the IETF HTTP Working Group:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">From</span><span class="p">:</span>    <span class="n">Poul</span><span class="o">-</span><span class="n">Henning</span> <span class="n">Kamp</span> <span class="o">&lt;</span><span class="n">phk</span><span class="nd">@phk</span><span class="o">.</span><span class="n">freebsd</span><span class="o">.</span><span class="n">dk</span><span class="o">&gt;</span>
+<span class="n">Subject</span><span class="p">:</span> <span class="n">HTTP</span><span class="o">/</span><span class="mi">2</span> <span class="n">Expression</span> <span class="n">of</span> <span class="n">luke</span><span class="o">-</span><span class="n">warm</span> <span class="n">interest</span><span class="p">:</span> <span class="n">Varnish</span>
+<span class="n">To</span><span class="p">:</span>      <span class="n">HTTP</span> <span class="n">Working</span> <span class="n">Group</span> <span class="o">&lt;</span><span class="n">ietf</span><span class="o">-</span><span class="n">http</span><span class="o">-</span><span class="n">wg</span><span class="nd">@w3</span><span class="o">.</span><span class="n">org</span><span class="o">&gt;</span>
+<span class="n">Message</span><span class="o">-</span><span class="n">Id</span><span class="p">:</span> <span class="o">&lt;</span><span class="mf">41677.1342136900</span><span class="nd">@critter</span><span class="o">.</span><span class="n">freebsd</span><span class="o">.</span><span class="n">dk</span><span class="o">&gt;</span>
+<span class="n">Date</span><span class="p">:</span>    <span class="n">Thu</span><span class="p">,</span> <span class="mi">12</span> <span class="n">Jul</span> <span class="mi">2012</span> <span class="mi">23</span><span class="p">:</span><span class="mi">48</span><span class="p">:</span><span class="mi">20</span> <span class="n">GMT</span>
+</pre></div>
+</div>
+<p>This is Varnish' response to the call for expression of interest
+in HTTP/2[1].</p>
+<div class="section" id="varnish">
+<h2>Varnish<a class="headerlink" href="#varnish" title="Permalink to this headline">¶</a></h2>
+<p>Presently Varnish[2] only implements a subset of HTTP/1.1 consistent
+with its hybrid/dual &quot;http-server&quot; / &quot;http-proxy&quot; role.</p>
+<p>I cannot at this point say much about what Varnish will or will
+not implement protocol wise in the future.</p>
+<p>Our general policy is to only add protocols if we can do a better
+job than the alternative, which is why we have not implemented HTTPS
+for instance.</p>
+<p>Should the outcome of the HTTP/2.0 effort result in a protocol which
+gains traction, Varnish will probably implement it, but we are
+unlikely to become an early implementation, given the current
+proposals at the table.</p>
+</div>
+<div class="section" id="why-i-m-not-impressed">
+<h2>Why I'm not impressed<a class="headerlink" href="#why-i-m-not-impressed" title="Permalink to this headline">¶</a></h2>
+<p>I have read all, and participated in one, of the three proposals
+presently on the table.</p>
+<p>Overall, I find all three proposals are focused on solving yesteryears
+problems, rather than on creating a protocol that stands a chance
+to last us the next 20 years.</p>
+<p>Each proposal comes out of a particular &quot;camp&quot; and therefore
+all seem to suffer a certain amount from tunnel-vision.</p>
+<p>It is my considered opinion that none of the proposals have what
+it will take to replace HTTP/1.1 in practice.</p>
+</div>
+<div class="section" id="what-if-they-made-a-new-protocol-and-nobody-used-it">
+<h2>What if they made a new protocol, and nobody used it ?<a class="headerlink" href="#what-if-they-made-a-new-protocol-and-nobody-used-it" title="Permalink to this headline">¶</a></h2>
+<p>We have learned, painfully, that an IPv6 which is only marginally
+better than IPv4 and which offers no tangible benefit for the people
+who have the cost/trouble of the upgrade, does not penetrate the
+network on its own, and barely even on governments mandate.</p>
+<p>We have also learned that a protocol which delivers the goods can
+replace all competition in virtually no time.</p>
+<p>See for instance how SSH replaced TELNET, REXEC, RSH, SUPDUP, and
+to a large extent KERBEROS, in a matter of a few years.</p>
+<p>Or I might add, how HTTP replaced GOPHER[3].</p>
+<p>HTTP/1.1 is arguably in the top-five most used protocols, after
+IP, TCP, UDP and, sadly, ICMP, and therefore coming up with a
+replacement should be approached humbly.</p>
+</div>
+<div class="section" id="beating-http-1-1">
+<h2>Beating HTTP/1.1<a class="headerlink" href="#beating-http-1-1" title="Permalink to this headline">¶</a></h2>
+<p>Fortunately, there are many ways to improve over HTTP/1.1, which
+lacks support for several widely used features, and sports many
+trouble-causing weeds, both of which are ripe for HTTP/2.0 to pounce
+on.</p>
+<p>Most notably HTTP/1.1 lacks a working session/endpoint-identity
+facility, a shortcoming which people have pasted over with the
+ill-conceived Cookie hack.</p>
+<p>Cookies are, as the EU commission correctly noted, fundamentally
+flawed, because they store potentially sensitive information on
+whatever computer the user happens to use, and as a result of various
+abuses and incompetences, EU felt compelled to legislate a &quot;notice
+and announce&quot; policy for HTTP-cookies.</p>
+<p>But it doesn't stop there:  The information stored in cookies have
+potentially very high value for the HTTP server, and because the
+server has no control over the integrity of the storage, we are now
+seeing cookies being crypto-signed, to prevent forgeries.</p>
+<p>The term &quot;bass ackwards&quot; comes to mind.</p>
+<p>Cookies are also one of the main wasters of bandwidth, disabling
+caching by default, sending lots of cookies were they are are not
+needed, which made many sites register separate domains for image
+content, to &quot;save&quot; bandwidth by avoiding cookies.</p>
+<p>The term &quot;not really helping&quot; also comes to mind.</p>
+<p>In my view, HTTP/2.0 should kill Cookies as a concept, and replace
+it with a session/identity facility, which makes it easier to
+do things right with HTTP/2.0 than with HTTP/1.1.</p>
+<p>Being able to be &quot;automatically in compliance&quot; by using HTTP/2.0
+no matter how big dick-heads your advertisers are or how incompetent
+your web-developers are, would be a big selling point for HTTP/2.0
+over HTTP/1.1.</p>
+<p>However, as I read them, none of the three proposals try to address,
+much less remedy, this situation, nor for that matter any of the
+many other issues or troubles with HTTP/1.x.</p>
+<p>What's even worse, they are all additive proposals, which add a
+new layer of complexity without removing any of the old complexity
+from the protocol.</p>
+<p>My conclusion is that HTTP/2.0 is really just a grandiose name for
+HTTP/1.2:  An attempt to smooth out some sharp corners, to save a
+bit of bandwidth, but not get anywhere near all the architectural
+problems of HTTP/1.1 and to preserve faithfully its heritage of
+badly thought out sedimentary hacks.</p>
+<p>And therefore, I don't see much chance that the current crop of
+HTTP/2.0 proposals will fare significantly better than IPv6 with
+respect to adoption.</p>
+</div>
+<div class="section" id="http-routers">
+<h2>HTTP Routers<a class="headerlink" href="#http-routers" title="Permalink to this headline">¶</a></h2>
+<p>One particular hot-spot in the HTTP world these days is the
+&quot;load-balancer&quot; or as I prefer to call it, the &quot;HTTP router&quot;.</p>
+<p>These boxes sit at the DNS resolved IP numbers and distributes
+client requests to a farm of HTTP servers, based on simple criteria
+such as &quot;Host:&quot;, URI patterns and/or server availability, sometimes
+with an added twist of geo-location[4].</p>
+<p>HTTP routers see very high traffic densities, the highest traffic
+densities, because they are the focal point of DoS mitigation, flash
+mobs and special event traffic spikes.</p>
+<p>In the time frame where HTTP/2.0 will become standardized, HTTP
+routers will routinely deal with 40Gbit/s traffic and people will
+start to architect for 1Tbit/s traffic.</p>
+<p>HTTP routers are usually only interested in a small part of the
+HTTP request and barely in the response at all, usually only the
+status code.</p>
+<p>The demands for bandwidth efficiency has made makers of these devices
+take many unwarranted shortcuts, for instance assuming that requests
+always start on a packet boundary, &quot;nulling out&quot; HTTP headers by
+changing the first character and so on.</p>
+<p>Whatever HTTP/2.0 becomes, I strongly urge IETF and the WG to
+formally recognize the role of HTTP routers, and to actively design
+the protocol to make life easier for HTTP routers, so that they can
+fulfill their job, while being standards compliant.</p>
+<p>The need for HTTP routers does not disappear just because HTTPS is
+employed, and serious thought should be turned to the question of
+mixing HTTP and HTTPS traffic on the same TCP connection, while
+allowing a HTTP router on the server side to correctly distribute
+requests to different servers.</p>
+<p>One simple way to gain a lot of benefit for little cost in this
+area, would be to assign &quot;flow-labels&quot; which each are restricted
+to one particular Host: header, allowing HTTP routers to only examine
+the first request on each flow.</p>
+</div>
+<div class="section" id="spdy">
+<h2>SPDY<a class="headerlink" href="#spdy" title="Permalink to this headline">¶</a></h2>
+<p>SPDY has come a long way, and has served as a very worthwhile proof
+of concept prototype, to document that there are gains to be had.</p>
+<p>But as Frederick P. Brooks admonishes us:  Always throw the prototype
+away and start over, because you will throw it away eventually, and
+doing so early saves time and effort.</p>
+<p>Overall, I find the design approach taken in SPDY deeply flawed.</p>
+<p>For instance identifying the standardized HTTP headers, by a 4-byte
+length and textual name, and then applying a deflate compressor to
+save bandwidth is totally at odds with the job of HTTP routers which
+need to quickly extract the Host: header in order to route the
+traffic, preferably without committing extensive resources to each
+request.</p>
+<p>It is also not at all clear if the built-in dictionary is well
+researched or just happens to work well for some subset of present
+day websites, and at the very least some kind of versioning of this
+dictionary should be incorporated.</p>
+<p>It is still unclear for me if or how SPDY can be used on TCP port
+80 or if it will need a WKS allocation of its own, which would open
+a ton of issues with firewalling, filtering and proxying during
+deployment.</p>
+<p>(This is one of the things which makes it hard to avoid the feeling
+that SPDY really wants to do away with all the &quot;middle-men&quot;)</p>
+<p>With my security-analyst hat on, I see a lot of DoS potential in
+the SPDY protocol, many ways in which the client can make the server
+expend resources, and foresee a lot of complexity in implementing
+the server side to mitigate and deflect malicious traffic.</p>
+<p>Server Push breaks the HTTP transaction model, and opens a pile of
+cans of security and privacy issues, which would not be sneaked
+in during the design of a transport-encoding for HTTP/1+ traffic,
+but rather be standardized as an independent and well analysed
+extension to HTTP in general.</p>
+</div>
+<div class="section" id="http-speed-mobility">
+<h2>HTTP Speed+Mobility<a class="headerlink" href="#http-speed-mobility" title="Permalink to this headline">¶</a></h2>
+<p>Is really just SPDY with WebSockets underneath.</p>
+<p>I'm really not sure I see any benefit to that, except that the
+encoding chosen is marginally more efficient to implement in
+hardware than SPDY.</p>
+<p>I have not understood why it has &quot;mobility&quot; in the name, a word
+which only makes an appearance in the ID as part of the name.</p>
+<p>If the use of the word &quot;mobility&quot; only refers only to bandwidth
+usage, I would call its use borderline-deceptive.</p>
+<p>If it covers session stability across IP# changes for mobile
+devices, I have missed it in my reading.</p>
+</div>
+<div class="section" id="draft-tarreau-httpbis-network-friendly-00">
+<h2>draft-tarreau-httpbis-network-friendly-00<a class="headerlink" href="#draft-tarreau-httpbis-network-friendly-00" title="Permalink to this headline">¶</a></h2>
+<p>I have participated a little bit in this draft initially, but it
+uses a number of concepts which I think are very problematic for
+high performance (as in 1Tbit/s) implementations, for instance
+variant-size length fields etc.</p>
+<p>I do think the proposal is much better than the other two, taking
+a much more fundamental view of the task, and if for no other reason,
+because it takes an approach to bandwidth-saving based on enumeration
+and repeat markers, rather than throwing everything after deflate
+and hope for a miracle.</p>
+<p>I think this protocol is the best basis to start from, but like
+the other two, it has a long way to go, before it can truly
+earn the name HTTP/2.0.</p>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">¶</a></h2>
+<p>Overall, I don't see any of the three proposals offer anything that
+will make the majority of web-sites go &quot;Ohh we've been waiting for
+that!&quot;</p>
+<p>Bigger sites will be enticed by small bandwidth savings, but the
+majority of the HTTP users will see scant or no net positive benefit
+if one or more of these three proposals were to become HTTP/2.0</p>
+<p>Considering how sketchy the HTTP/1.1 interop is described it is hard
+to estimate how much trouble (as in: &quot;Why doesn't this website work ?&quot;)
+their deployment will cause, nor is it entirely clear to what extent
+the experience with SPDY is representative of a wider deployment or
+only of 'flying under the radar' with respect to people with an
+interest in intercepting HTTP traffic.</p>
+<p>Given the role of HTTP/1.1 in the net, I fear that the current rush
+to push out a HTTP/2.0 by purely additive means is badly misguided,
+and approaching a critical mass which will delay or prevent adoption
+on its own.</p>
+<p>At the end of the day, a HTTP request or a HTTP response is just
+some metadata and an optional chunk of bytes as body, and if it
+already takes 700 pages to standardize that, and HTTP/2.0 will add
+another 100 pages to it, we're clearly doing something wrong.</p>
+<p>I think it would be far better to start from scratch, look at what
+HTTP/2.0 should actually do, and then design a simple, efficient
+and future proof protocol to do just that, and leave behind all
+the aggregations of badly thought out hacks of HTTP/1.1.</p>
+<p>But to the extent that the WG produces a HTTP/2.0 protocol which
+people will start to use, the Varnish project will be interested.</p>
+<p>Poul-Henning Kamp</p>
+<p>Author of Varnish</p>
+<p>[1] <a class="reference external" href="http://trac.tools.ietf.org/wg/httpbis/trac/wiki/Http2CfI">http://trac.tools.ietf.org/wg/httpbis/trac/wiki/Http2CfI</a></p>
+<p>[2] <a class="reference external" href="https://www.varnish-cache.org/">https://www.varnish-cache.org/</a></p>
+<p>[3] Yes, I'm that old.</p>
+<dl class="docutils">
+<dt>[4] Which is really a transport level job, but it was left out of IPv6</dt>
+<dd>along with other useful features, to not delay adoption[5].</dd>
+</dl>
+<p>[5] No, I'm not kidding.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Why HTTP/2.0 does not seem interesting</a><ul>
+<li><a class="reference internal" href="#varnish">Varnish</a></li>
+<li><a class="reference internal" href="#why-i-m-not-impressed">Why I'm not impressed</a></li>
+<li><a class="reference internal" href="#what-if-they-made-a-new-protocol-and-nobody-used-it">What if they made a new protocol, and nobody used it ?</a></li>
+<li><a class="reference internal" href="#beating-http-1-1">Beating HTTP/1.1</a></li>
+<li><a class="reference internal" href="#http-routers">HTTP Routers</a></li>
+<li><a class="reference internal" href="#spdy">SPDY</a></li>
+<li><a class="reference internal" href="#http-speed-mobility">HTTP Speed+Mobility</a></li>
+<li><a class="reference internal" href="#draft-tarreau-httpbis-network-friendly-00">draft-tarreau-httpbis-network-friendly-00</a></li>
+<li><a class="reference internal" href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="spdy.html"
+                        title="previous chapter">What SPDY did to my summer vacation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="varnish_does_not_hash.html"
+                        title="next chapter">Varnish Does Not Hash</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/phk/http20.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="varnish_does_not_hash.html" title="Varnish Does Not Hash"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="spdy.html" title="What SPDY did to my summer vacation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

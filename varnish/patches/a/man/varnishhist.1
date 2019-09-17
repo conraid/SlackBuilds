@@ -1,0 +1,148 @@
+.\" Man page generated from reStructuredText.
+.
+.TH VARNISHHIST 1 "" "" ""
+.SH NAME
+varnishhist \- Varnish request histogram
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.SH SYNOPSIS
+.sp
+varnishhist [\-B <factor>] [\-C] [\-d] [\-g <request|vxid>] [\-h] [\-L <limit>] [\-n <dir>] [\-p <period>] [\-P responsetime] [\-P reqbodytime] [\-P size] [\-P Bereqtime] [\-P Beresptime] [\-P BerespBodytime] [\-P Besize] [\-P <[cb:]tag:[prefix]:field_num[:min:max]>] [\-Q <file>] [\-q <query>] [\-r <filename>] [\-t <seconds|off>] [\-T <seconds>] [\-V]
+.SH DESCRIPTION
+.sp
+The varnishhist utility reads varnishd(1) shared memory logs and
+presents a continuously updated histogram showing the distribution
+of the last N requests by their processing.  The value of N and the
+vertical scale are displayed in the top left corner.  The horizontal
+scale is logarithmic.  Hits are marked with a pipe character ("|"),
+and misses are marked with a hash character ("#").
+.sp
+The following options are available:
+.INDENT 0.0
+.TP
+.BI \-B \ <factor>
+Factor to bend time by. Particularly useful when [\-r]eading from a vsl file. =1 process in near real time, <1 slow\-motion, >1 time\-lapse (useless unless reading from a file). At runtime, < halves and > doubles.
+.TP
+.B \-C
+Do all regular expression and string matching caseless.
+.TP
+.B \-d
+Process log records at the head of the log and exit.
+.TP
+.BI \-g \ <request|vxid>
+The grouping of the log records. The default is to group by vxid.
+.TP
+.B \-h
+Print program usage and exit
+.TP
+.BI \-L \ <limit>
+Sets the upper limit of incomplete transactions kept before the oldest transaction is force completed. A warning record is synthesized when this happens. This setting keeps an upper bound on the memory usage of running queries. Defaults to 1000 transactions.
+.TP
+.BI \-n \ <dir>
+Specify the varnishd working directory (also known as instance name) to get logs from. If \-n is not specified, the host name is used.
+.TP
+.BI \-p \ <period>
+Specified the number of seconds between screen refreshes. Default is 1 second, and can be changed at runtime by pressing the [0\-9] keys (powers of 2 in seconds or + and \- (double/halve the speed).
+.TP
+.BI \-P \ responsetime
+Predefined client profile: graph the total time from start of request processing (first byte received) until ready to deliver the client response (field 3 of SLT_Timestamp Process: VSL tag).
+.TP
+.BI \-P \ reqbodytime
+Predefined client profile: graph the time for reading the request body (field 3 of SLT_Timestamp ReqBody: VSL tag).
+.TP
+.BI \-P \ size
+Predefined client profile: graph the size of responses (field 5 of SLT_ReqAcct  VSL tag).
+.TP
+.BI \-P \ Bereqtime
+Predefined backend profile: graph the time from beginning of backend processing until a backend request is sent completely (field 3 of SLT_Timestamp Bereq: VSL tag).
+.TP
+.BI \-P \ Beresptime
+Predefined backend profile: graph the time from beginning of backend processing until the response headers are being received completely (field 3 of SLT_Timestamp Beresp: VSL tag).
+.TP
+.BI \-P \ BerespBodytime
+Predefined backend profile: graph the time from beginning of backend processing until the response body has been received (field 3 of SLT_Timestamp BerespBody: VSL tag).
+.TP
+.BI \-P \ Besize
+Predefined backend profile: graph the backend response body size (field 5 of SLT_BereqAcct  VSL tag).
+.TP
+.BI \-P \ <[cb:]tag:[prefix]:field_num[:min:max]>
+Graph the given custom definition defined as: an optional (c)lient or (b)ackend filter (defaults to client), the tag we\(aqll look for, a prefix to look for (can be empty, but must be terminated by a colon) and the field number of the value we are interested in. min and max are the boundaries of the graph in powers of ten and default to \-6 and 3.
+.TP
+.BI \-Q \ <file>
+Specifies the file containing the VSL query to use. When multiple \-Q or \-q options are specified, all queries are considered as if the \(aqor\(aq operator was used to combine them.
+.TP
+.BI \-q \ <query>
+Specifies the VSL query to use. When multiple \-q or \-Q options are specified, all queries are considered as if the \(aqor\(aq operator was used to combine them.
+.TP
+.BI \-r \ <filename>
+Read log in binary file format from this file. The file can be created with \fBvarnishlog \-w filename\fP\&.
+.TP
+.BI \-t \ <seconds|off>
+Timeout before returning error on initial VSM connection. If set the VSM connection is retried every 0.5 seconds for this many seconds. If zero the connection is attempted only once and will fail immediately if unsuccessful. If set to "off", the connection will not fail, allowing the utility to start and wait indefinetely for the Varnish instance to appear.  Defaults to 5 seconds.
+.TP
+.BI \-T \ <seconds>
+Sets the transaction timeout in seconds. This defines the maximum number of seconds elapsed between a Begin tag and the End tag. If the timeout expires, a warning record is synthesized and the transaction is force completed. Defaults to 120 seconds.
+.TP
+.B \-V
+Print version information and exit.
+.TP
+.B \-\-optstring
+Print the optstring parameter to \fBgetopt(3)\fP to help writing wrapper scripts.
+.UNINDENT
+.SH SEE ALSO
+.INDENT 0.0
+.IP \(bu 2
+\fIvarnishd(1)\fP
+.IP \(bu 2
+\fIvarnishlog(1)\fP
+.IP \(bu 2
+\fIvarnishncsa(1)\fP
+.IP \(bu 2
+\fIvarnishstat(1)\fP
+.IP \(bu 2
+\fIvarnishtop(1)\fP
+.IP \(bu 2
+\fIvsl(7)\fP
+.UNINDENT
+.SH HISTORY
+.sp
+The varnishhist utility was developed by Poul\-Henning Kamp in cooperation with
+Verdens Gang AS and Varnish Software AS. This manual page was written by
+Dag\-Erling Smørgrav.
+.SH COPYRIGHT
+.sp
+This document is licensed under the same licence as Varnish
+itself. See LICENCE for details.
+.INDENT 0.0
+.IP \(bu 2
+Copyright (c) 2006 Verdens Gang AS
+.IP \(bu 2
+Copyright (c) 2006\-2015 Varnish Software AS
+.UNINDENT
+.\" Generated by docutils manpage writer.
+.

@@ -1,0 +1,202 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Separate VCL files &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Using inline C to extend Varnish" href="vcl-inline-c.html" />
+    <link rel="prev" title="Grace mode and keep" href="vcl-grace.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="vcl-inline-c.html" title="Using inline C to extend Varnish"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vcl-grace.html" title="Grace mode and keep"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Users Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="vcl.html" accesskey="U">VCL - Varnish Configuration Language</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="separate-vcl-files">
+<span id="users-guide-separate-vcl"></span><h1>Separate VCL files<a class="headerlink" href="#separate-vcl-files" title="Permalink to this headline">¶</a></h1>
+<p>Having multiple different vhosts in the same Varnish is a very
+typical use-case, and from Varnish 5.0 it is possible to have
+a separate VCL files for separate vhosts or any other distinct
+subset of requests.</p>
+<p>Assume that we want to handle <code class="docutils literal"><span class="pre">varnish.org</span></code> with one VCL file
+and <code class="docutils literal"><span class="pre">varnish-cache.org</span></code> with another VCL file.</p>
+<p>First load the two VCL files:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">vcl</span><span class="o">.</span><span class="n">load</span> <span class="n">vo_1</span> <span class="o">/</span><span class="n">somewhere</span><span class="o">/</span><span class="n">vo</span><span class="o">.</span><span class="n">vcl</span>
+<span class="n">vcl</span><span class="o">.</span><span class="n">load</span> <span class="n">vc_1</span> <span class="o">/</span><span class="n">somewhere</span><span class="o">/</span><span class="n">vc</span><span class="o">.</span><span class="n">vcl</span>
+</pre></div>
+</div>
+<p>These are 100% normal VCL files, as they would look if you ran
+only that single domain on your Varnish instance.</p>
+<p>Next we need to point VCL labels to them:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">vcl</span><span class="o">.</span><span class="n">label</span> <span class="n">l_vo</span> <span class="n">vo_1</span>
+<span class="n">vcl</span><span class="o">.</span><span class="n">label</span> <span class="n">l_vc</span> <span class="n">vc_1</span>
+</pre></div>
+</div>
+<p>Next we write the top-level VCL program, which branches out
+to the other two, depending on the Host: header in the
+request:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">std</span><span class="p">;</span>
+
+<span class="c1"># We have to have a backend, even if we do not use it</span>
+<span class="n">backend</span> <span class="n">default</span> <span class="p">{</span> <span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="n">sub</span> <span class="n">vcl_recv</span> <span class="p">{</span>
+    <span class="c1"># Normalize host header</span>
+    <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">std</span><span class="o">.</span><span class="n">tolower</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">host</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">host</span> <span class="o">~</span> <span class="s2">&quot;\.?varnish\.org$&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">vcl</span><span class="p">(</span><span class="n">l_vo</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">host</span> <span class="o">~</span> <span class="s2">&quot;\.?varnish-cache\.org$&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">vcl</span><span class="p">(</span><span class="n">l_vc</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">synth</span><span class="p">(</span><span class="mi">302</span><span class="p">,</span> <span class="s2">&quot;http://varnish-cache.org&quot;</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="n">sub</span> <span class="n">vcl_synth</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">301</span> <span class="o">||</span> <span class="n">resp</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">302</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">reason</span><span class="p">;</span>
+        <span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">reason</span> <span class="o">=</span> <span class="s2">&quot;Moved&quot;</span><span class="p">;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">deliver</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Finally, we load the top level VCL and make it the
+active VCL:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">vcl</span><span class="o">.</span><span class="n">load</span> <span class="n">top_1</span> <span class="o">/</span><span class="n">somewhere</span><span class="o">/</span><span class="n">top</span><span class="o">.</span><span class="n">vcl</span>
+<span class="n">vcl</span><span class="o">.</span><span class="n">use</span> <span class="n">top_1</span>
+</pre></div>
+</div>
+<p>If you want to update one of the separated VCLs, you load the new
+one and change the label to point to it:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">vcl</span><span class="o">.</span><span class="n">load</span> <span class="n">vo_2</span> <span class="o">/</span><span class="n">somewhere</span><span class="o">/</span><span class="n">vo</span><span class="o">.</span><span class="n">vcl</span>
+<span class="n">vcl</span><span class="o">.</span><span class="n">label</span> <span class="n">l_vo</span> <span class="n">vo_2</span>
+</pre></div>
+</div>
+<p>If you want to change the top level VCL, do as you always did:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">vcl</span><span class="o">.</span><span class="n">load</span> <span class="n">top_2</span> <span class="o">/</span><span class="n">somewhere</span><span class="o">/</span><span class="n">top</span><span class="o">.</span><span class="n">vcl</span>
+<span class="n">vcl</span><span class="o">.</span><span class="n">use</span> <span class="n">top_2</span>
+</pre></div>
+</div>
+<div class="section" id="details-details-details">
+<h2>Details, details, details:<a class="headerlink" href="#details-details-details" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>All requests <em>always</em> start in the active VCL - the one from <code class="docutils literal"><span class="pre">vcl.use</span></code></li>
+<li>Only VCL labels can be used in <code class="docutils literal"><span class="pre">return(vcl(name))</span></code>.  Without this
+restriction the top level VCL would have to be reloaded every time
+one of the separate VCLs were changed.</li>
+<li>You can only switch VCLs from the active VCL.  If you try it from one of
+the separate VCLs, you will get a 503</li>
+<li>You cannot remove VCL labels (with <code class="docutils literal"><span class="pre">vcl.discard</span></code>) if any VCL
+contains <code class="docutils literal"><span class="pre">return(vcl(name_of_that_label))</span></code></li>
+<li>You cannot remove VCLs which have a label attached to them.</li>
+<li>This code is tested in testcase c00077</li>
+<li>This is a very new feature, it may change</li>
+<li>We would very much like feedback how this works for you</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Separate VCL files</a><ul>
+<li><a class="reference internal" href="#details-details-details">Details, details, details:</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vcl-grace.html"
+                        title="previous chapter">Grace mode and keep</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vcl-inline-c.html"
+                        title="next chapter">Using inline C to extend Varnish</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/users-guide/vcl-separate.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="vcl-inline-c.html" title="Using inline C to extend Varnish"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vcl-grace.html" title="Grace mode and keep"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Users Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="vcl.html" >VCL - Varnish Configuration Language</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

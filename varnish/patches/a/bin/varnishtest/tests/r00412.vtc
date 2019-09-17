@@ -1,0 +1,33 @@
+varnishtest "Regression test for ticket 412"
+
+server s1 {
+	rxreq
+	expect req.url == "/"
+	txresp -status 303 -hdr "Location: /foo"
+	accept
+	rxreq
+	expect req.url == "/foo"
+	txresp -body "12345"
+} -start
+
+varnish v1 -vcl+backend {
+	sub vcl_backend_response {
+		if (beresp.status == 303) {
+			set beresp.ttl = 60 s;
+			set beresp.http.X-Magic-Redirect = "1";
+			return (deliver);
+		}
+	}
+	sub vcl_deliver {
+		if (resp.http.X-Magic-Redirect == "1") {
+			set req.url = resp.http.Location;
+			return (restart);
+		}
+	}
+} -start
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.status == 200
+} -run

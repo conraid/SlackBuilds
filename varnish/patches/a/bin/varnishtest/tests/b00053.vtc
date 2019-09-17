@@ -1,0 +1,68 @@
+varnishtest "Does anything get through Unix domain sockets at all ?"
+
+server s1 -listen "${tmpdir}/s1.sock" {
+	rxreq
+	txresp -body "012345\n"
+} -start
+
+varnish v1 -arg "-a ${tmpdir}/v1.sock" -vcl+backend {
+	sub vcl_backend_response {
+		set beresp.do_stream = false;
+	}
+} -start
+
+varnish v1 -cliok "param.set debug +workspace"
+varnish v1 -cliok "param.set debug +witness"
+
+varnish v1 -expect n_object == 0
+varnish v1 -expect sess_conn == 0
+varnish v1 -expect client_req == 0
+varnish v1 -expect cache_miss == 0
+
+client c1 -connect "${tmpdir}/v1.sock" {
+	txreq -url "/"
+	rxresp
+	expect resp.status == 200
+} -run
+
+varnish v1 -expect n_object == 1
+varnish v1 -expect sess_conn == 1
+varnish v1 -expect client_req == 1
+varnish v1 -expect cache_miss == 1
+varnish v1 -expect s_sess == 1
+varnish v1 -expect s_resp_bodybytes == 7
+varnish v1 -expect s_resp_hdrbytes == 178
+
+# varnishtest "vtc v_* macros when the listen address is UDS" (a00019)
+
+varnish v2 -arg "-a ${tmpdir}/v1.sock -b '${bad_backend}'" -start
+
+varnish v2 -syntax 4.0 -errvcl {Compiled VCL version (4.0) not supported.} {
+	backend default { .host = "${bad_ip}"; }
+}
+
+varnish v2 -syntax 4.0 -errvcl \
+	{Unix socket backends only supported in VCL4.1 and higher.} \
+	{backend default { .path = "${tmpdir}/v1.sock"; }}
+
+varnish v3 -vcl {
+	backend default { .host = "${bad_ip}"; }
+
+	sub vcl_recv {
+		return(synth(200));
+	}
+
+	sub vcl_synth {
+		set resp.http.addr = "${v1_addr}";
+		set resp.http.port = "${v1_port}";
+		set resp.http.sock = "${v1_sock}";
+	}
+} -start
+
+client c1 -connect ${v3_sock} {
+	txreq
+	rxresp
+	expect resp.http.addr == "${tmpdir}/v1.sock"
+	expect resp.http.port == "-"
+	expect resp.http.sock == "${tmpdir}/v1.sock -"
+} -run

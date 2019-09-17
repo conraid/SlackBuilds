@@ -1,0 +1,105 @@
+varnishtest "H2 Huge response headers"
+
+barrier b1 sock 2
+
+server s1 {
+	rxreq
+	expect req.proto == HTTP/1.1
+	txresp -hdr "Content-Type: text/plain" -hdrlen Foo 100 -bodylen 100
+
+	non_fatal
+	close
+	accept
+	rxreq
+	expect req.url == /3
+	expect req.proto == HTTP/1.1
+	txresp -hdr "Content-Type: text/plain" -hdrlen Foo 50 -bodylen 50
+
+	close
+	accept
+	rxreq
+	expect req.url == /5
+} -start
+
+varnish v1 -cliok "param.set feature +http2"
+varnish v1 -cliok "param.set debug +syncvsl"
+varnish v1 -cliok "param.set debug +h2_nocheck"
+
+varnish v1 -vcl+backend {
+	import vtc;
+	sub vcl_deliver {
+		if (req.url == "/1") {
+			vtc.barrier_sync("${b1_sock}");
+		}
+	}
+} -start
+
+client c1 {
+	stream 0 {
+		txsettings -framesize 64
+		rxsettings
+	} -run
+	stream 1 {
+		txreq \
+			-req POST \
+			-url /1 \
+			-hdr content-type text/plain \
+			-nostrend \
+			-nohdrend
+		txcont \
+			-hdr foo bar \
+			-nohdrend \
+			-nostrend
+		txcont \
+			-hdr expect 100-continue \
+			-hdr content-length 7 \
+			-nostrend
+
+		rxhdrs
+		expect resp.status == 100
+
+		txdata \
+			-data request
+
+		rxwinup
+		barrier b1 sync
+		rxresp
+		expect resp.status == 200
+		expect resp.http.content-Type == "text/plain"
+		expect resp.bodylen == 100
+	} -run
+} -run
+
+varnish v1 -vsl_catchup
+
+client c1 {
+	stream 3 {
+		txreq \
+			-req POST \
+			-url /3 \
+			-hdr content-type text/plain \
+			-nostrend
+		delay .2
+		txdata \
+			-nostrend \
+			-data request
+		delay .2
+		txrst -err 0x333
+	} -run
+	delay 2
+
+	stream 5 {
+		txreq \
+			-req POST \
+			-url /5 \
+			-hdr content-type text/plain \
+			-nostrend
+		delay .2
+		txdata \
+			-nostrend \
+			-data request
+		delay .2
+	} -run
+} -run
+
+varnish v1 -vsl_catchup

@@ -1,0 +1,256 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>varnishhist &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="varnishlog" href="varnishlog.html" />
+    <link rel="prev" title="varnishd" href="varnishd.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="varnishlog.html" title="varnishlog"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="varnishd.html" title="varnishd"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Varnish Reference Manual</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="varnishhist">
+<span id="varnishhist-1"></span><h1>varnishhist<a class="headerlink" href="#varnishhist" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="varnish-request-histogram">
+<h2>Varnish request histogram<a class="headerlink" href="#varnish-request-histogram" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Manual section:</th><td class="field-body">1</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="synopsis">
+<h3>SYNOPSIS<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h3>
+<p>varnishhist [-B &lt;factor&gt;] [-C] [-d] [-g &lt;request|vxid&gt;] [-h] [-L &lt;limit&gt;] [-n &lt;dir&gt;] [-p &lt;period&gt;] [-P responsetime] [-P reqbodytime] [-P size] [-P Bereqtime] [-P Beresptime] [-P BerespBodytime] [-P Besize] [-P &lt;[cb:]tag:[prefix]:field_num[:min:max]&gt;] [-Q &lt;file&gt;] [-q &lt;query&gt;] [-r &lt;filename&gt;] [-t &lt;seconds|off&gt;] [-T &lt;seconds&gt;] [-V]</p>
+</div>
+<div class="section" id="description">
+<h3>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h3>
+<p>The varnishhist utility reads varnishd(1) shared memory logs and
+presents a continuously updated histogram showing the distribution
+of the last N requests by their processing.  The value of N and the
+vertical scale are displayed in the top left corner.  The horizontal
+scale is logarithmic.  Hits are marked with a pipe character (&quot;|&quot;),
+and misses are marked with a hash character (&quot;#&quot;).</p>
+<p>The following options are available:</p>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-B <var>&lt;factor&gt;</var></span></kbd></td>
+<td>Factor to bend time by. Particularly useful when [-r]eading from a vsl file. =1 process in near real time, &lt;1 slow-motion, &gt;1 time-lapse (useless unless reading from a file). At runtime, &lt; halves and &gt; doubles.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-C</span></kbd></td>
+<td>Do all regular expression and string matching caseless.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-d</span></kbd></td>
+<td>Process log records at the head of the log and exit.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-g <var>&lt;request|vxid&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>The grouping of the log records. The default is to group by vxid.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-h</span></kbd></td>
+<td>Print program usage and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-L <var>&lt;limit&gt;</var></span></kbd></td>
+<td>Sets the upper limit of incomplete transactions kept before the oldest transaction is force completed. A warning record is synthesized when this happens. This setting keeps an upper bound on the memory usage of running queries. Defaults to 1000 transactions.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-n <var>&lt;dir&gt;</var></span></kbd></td>
+<td>Specify the varnishd working directory (also known as instance name) to get logs from. If -n is not specified, the host name is used.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-p <var>&lt;period&gt;</var></span></kbd></td>
+<td>Specified the number of seconds between screen refreshes. Default is 1 second, and can be changed at runtime by pressing the [0-9] keys (powers of 2 in seconds or + and - (double/halve the speed).</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-P <var>responsetime</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Predefined client profile: graph the total time from start of request processing (first byte received) until ready to deliver the client response (field 3 of SLT_Timestamp Process: VSL tag).</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-P <var>reqbodytime</var></span></kbd></td>
+<td>Predefined client profile: graph the time for reading the request body (field 3 of SLT_Timestamp ReqBody: VSL tag).</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-P <var>size</var></span></kbd></td>
+<td>Predefined client profile: graph the size of responses (field 5 of SLT_ReqAcct  VSL tag).</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-P <var>Bereqtime</var></span></kbd></td>
+<td>Predefined backend profile: graph the time from beginning of backend processing until a backend request is sent completely (field 3 of SLT_Timestamp Bereq: VSL tag).</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-P <var>Beresptime</var></span></kbd></td>
+<td>Predefined backend profile: graph the time from beginning of backend processing until the response headers are being received completely (field 3 of SLT_Timestamp Beresp: VSL tag).</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-P <var>BerespBodytime</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Predefined backend profile: graph the time from beginning of backend processing until the response body has been received (field 3 of SLT_Timestamp BerespBody: VSL tag).</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-P <var>Besize</var></span></kbd></td>
+<td>Predefined backend profile: graph the backend response body size (field 5 of SLT_BereqAcct  VSL tag).</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-P <var>&lt;[cb:]tag:[prefix]:field_num[:min:max]&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Graph the given custom definition defined as: an optional (c)lient or (b)ackend filter (defaults to client), the tag we'll look for, a prefix to look for (can be empty, but must be terminated by a colon) and the field number of the value we are interested in. min and max are the boundaries of the graph in powers of ten and default to -6 and 3.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-Q <var>&lt;file&gt;</var></span></kbd></td>
+<td>Specifies the file containing the VSL query to use. When multiple -Q or -q options are specified, all queries are considered as if the 'or' operator was used to combine them.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-q <var>&lt;query&gt;</var></span></kbd></td>
+<td>Specifies the VSL query to use. When multiple -q or -Q options are specified, all queries are considered as if the 'or' operator was used to combine them.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-r <var>&lt;filename&gt;</var></span></kbd></td>
+<td>Read log in binary file format from this file. The file can be created with <code class="docutils literal"><span class="pre">varnishlog</span> <span class="pre">-w</span> <span class="pre">filename</span></code>.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-t <var>&lt;seconds|off&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Timeout before returning error on initial VSM connection. If set the VSM connection is retried every 0.5 seconds for this many seconds. If zero the connection is attempted only once and will fail immediately if unsuccessful. If set to &quot;off&quot;, the connection will not fail, allowing the utility to start and wait indefinetely for the Varnish instance to appear.  Defaults to 5 seconds.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-T <var>&lt;seconds&gt;</var></span></kbd></td>
+<td>Sets the transaction timeout in seconds. This defines the maximum number of seconds elapsed between a Begin tag and the End tag. If the timeout expires, a warning record is synthesized and the transaction is force completed. Defaults to 120 seconds.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-V</span></kbd></td>
+<td>Print version information and exit.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--optstring</span></kbd></td>
+<td>Print the optstring parameter to <code class="docutils literal"><span class="pre">getopt(3)</span></code> to help writing wrapper scripts.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="see-also">
+<h3>SEE ALSO<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><a class="reference internal" href="varnishd.html#varnishd-1"><span class="std std-ref">varnishd</span></a></li>
+<li><a class="reference internal" href="varnishlog.html#varnishlog-1"><span class="std std-ref">varnishlog</span></a></li>
+<li><a class="reference internal" href="varnishncsa.html#varnishncsa-1"><span class="std std-ref">varnishncsa</span></a></li>
+<li><a class="reference internal" href="varnishstat.html#varnishstat-1"><span class="std std-ref">varnishstat</span></a></li>
+<li><a class="reference internal" href="varnishtop.html#varnishtop-1"><span class="std std-ref">varnishtop</span></a></li>
+<li><a class="reference internal" href="vsl.html#vsl-7"><span class="std std-ref">VSL</span></a></li>
+</ul>
+</div>
+<div class="section" id="history">
+<h3>HISTORY<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h3>
+<p>The varnishhist utility was developed by Poul-Henning Kamp in cooperation with
+Verdens Gang AS and Varnish Software AS. This manual page was written by
+Dag-Erling Smørgrav.</p>
+</div>
+<div class="section" id="copyright">
+<h3>COPYRIGHT<a class="headerlink" href="#copyright" title="Permalink to this headline">¶</a></h3>
+<p>This document is licensed under the same licence as Varnish
+itself. See LICENCE for details.</p>
+<ul class="simple">
+<li>Copyright (c) 2006 Verdens Gang AS</li>
+<li>Copyright (c) 2006-2015 Varnish Software AS</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">varnishhist</a><ul>
+<li><a class="reference internal" href="#varnish-request-histogram">Varnish request histogram</a><ul>
+<li><a class="reference internal" href="#synopsis">SYNOPSIS</a></li>
+<li><a class="reference internal" href="#description">DESCRIPTION</a></li>
+<li><a class="reference internal" href="#see-also">SEE ALSO</a></li>
+<li><a class="reference internal" href="#history">HISTORY</a></li>
+<li><a class="reference internal" href="#copyright">COPYRIGHT</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="varnishd.html"
+                        title="previous chapter">varnishd</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="varnishlog.html"
+                        title="next chapter">varnishlog</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/reference/varnishhist.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="varnishlog.html" title="varnishlog"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="varnishd.html" title="varnishd"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Reference Manual</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

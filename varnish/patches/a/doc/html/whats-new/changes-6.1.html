@@ -1,0 +1,132 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Changes in Varnish 6.1 &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Upgrading to Varnish 6.1" href="upgrading-6.1.html" />
+    <link rel="prev" title="Upgrading to Varnish 6.2" href="upgrading-6.2.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="upgrading-6.1.html" title="Upgrading to Varnish 6.1"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="upgrading-6.2.html" title="Upgrading to Varnish 6.2"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="changes-in-varnish-6-1">
+<span id="whatsnew-changes-6-1"></span><h1>Changes in Varnish 6.1<a class="headerlink" href="#changes-in-varnish-6-1" title="Permalink to this headline">¶</a></h1>
+<p>This release is a maintenance release, so while there are many actual
+changes, and of course many bugfixes, they should not have little to no
+impact on running Varnish installations.</p>
+<div class="section" id="nothing-to-see-here-really">
+<h2>Nothing to see here, really<a class="headerlink" href="#nothing-to-see-here-really" title="Permalink to this headline">¶</a></h2>
+<p>Since new users often forget to <cite>vcl.discard</cite> their old VCLs, we have
+added a warning when you have more than 100 VCLs loaded.  There are
+parameters to set the threshold and decide what happens when it is
+exceeded (ignore/warn/error).</p>
+<p>We have made <cite>req.http.Host</cite> mandatory and handle requests without it
+on the fast DoS avoidance path.</p>
+<p>For all the details and new stuff, see <a class="reference internal" href="upgrading-6.1.html#whatsnew-upgrading-6-1"><span class="std std-ref">Upgrading to Varnish 6.1</span></a></p>
+<p><em>eof</em></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Changes in Varnish 6.1</a><ul>
+<li><a class="reference internal" href="#nothing-to-see-here-really">Nothing to see here, really</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="upgrading-6.2.html"
+                        title="previous chapter">Upgrading to Varnish 6.2</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="upgrading-6.1.html"
+                        title="next chapter">Upgrading to Varnish 6.1</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/whats-new/changes-6.1.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="upgrading-6.1.html" title="Upgrading to Varnish 6.1"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="upgrading-6.2.html" title="Upgrading to Varnish 6.2"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

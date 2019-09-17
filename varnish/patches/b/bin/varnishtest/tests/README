@@ -1,0 +1,35 @@
+Test-scripts for varnishtest
+============================
+
+Naming scheme
+-------------
+
+	The intent is to be able to run all scripts in lexicographic
+	order and get a sensible failure mode.
+
+	This requires more basic tests to be earlier and more complex
+	tests to be later in the test sequence, we do this with the
+	prefix/id letter:
+
+		[id]%05d.vtc
+
+	id ~ ^a		--> varnishtest(1) tests
+	id ~ ^a02	--> HTTP2
+	id ~ ^b		--> Basic functionality tests
+	id ~ ^c		--> Complex functionality tests
+	id ~ ^d		--> Director VMOD tests
+	id ~ ^e		--> ESI tests
+	id ~ ^f		--> Security related tests
+	id ~ ^g		--> GZIP tests
+	id ~ ^h		--> HAproxy tests
+	id ~ ^j		--> JAIL tests
+	id ~ ^l		--> VSL tests
+	id ~ ^m		--> VMOD tests excluding director
+	id ~ ^o		--> prOxy protocol
+	id ~ ^p		--> Persistent tests
+	id ~ ^r		--> Regression tests, same number as ticket
+	id ~ ^s		--> Slow tests, expiry, grace etc.
+	id ~ ^t		--> Transport protocol tests
+	id ~ ^t02	--> HTTP2
+	id ~ ^u		--> Utilities and background processes
+	id ~ ^v		--> VCL tests: execute VRT functions

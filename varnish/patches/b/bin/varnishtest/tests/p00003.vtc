@@ -1,0 +1,57 @@
+varnishtest "Ban a persistent object"
+
+feature persistent_storage
+
+shell "rm -f ${tmpdir}/_.per"
+
+server s1 {
+	rxreq
+	txresp -hdr "Foo: foo"
+} -start
+
+varnish v1 \
+	-arg "-pfeature=+wait_silo" \
+	-arg "-sdeprecated_persistent,${tmpdir}/_.per,5m" \
+	-arg "-pban_lurker_sleep=0" \
+	-vcl+backend { } -start
+
+varnish v1 -cliok ban.list
+
+client c1 {
+	txreq -url "/"
+	rxresp
+	expect resp.status == 200
+	expect resp.http.X-Varnish == "1001"
+	expect resp.http.foo == "foo"
+} -run
+
+varnish v1 -cliok "ban req.url == /"
+varnish v1 -cliok ban.list
+varnish v1 -stop
+server s1 -wait
+
+server s1 {
+	rxreq
+	txresp -hdr "Foo: bar"
+} -start
+
+varnish v1 -vcl+backend {} -start
+
+varnish v1 -cliok ban.list
+
+# Count of 2 here, because the "magic" ban is also there"
+# varnish v1 -expect n_ban == 2
+
+
+client c1 {
+	txreq -url "/"
+	rxresp
+	expect resp.status == 200
+	expect resp.http.X-Varnish == "1001"
+	expect resp.http.foo == "bar"
+} -run
+
+
+varnish v1 -cliok ban.list
+
+varnish v1 -stop

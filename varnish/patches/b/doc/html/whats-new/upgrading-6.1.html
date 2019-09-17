@@ -1,0 +1,495 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Upgrading to Varnish 6.1 &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Changes in Varnish 6.0" href="changes-6.0.html" />
+    <link rel="prev" title="Changes in Varnish 6.1" href="changes-6.1.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="changes-6.0.html" title="Changes in Varnish 6.0"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="changes-6.1.html" title="Changes in Varnish 6.1"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="upgrading-to-varnish-6-1">
+<span id="whatsnew-upgrading-6-1"></span><h1>Upgrading to Varnish 6.1<a class="headerlink" href="#upgrading-to-varnish-6-1" title="Permalink to this headline">¶</a></h1>
+<p>A configuration for Varnish 6.0.x will run for version 6.1 without
+changes.  There has been a subtle change in the interpretation of the
+VCL variable <code class="docutils literal"><span class="pre">beresp.keep</span></code> under specific circumstances, as
+discussed below. Other than that, the changes in 6.1 are new features,
+described in the following.</p>
+<div class="section" id="varnishd-parameters">
+<h2>varnishd parameters<a class="headerlink" href="#varnishd-parameters" title="Permalink to this headline">¶</a></h2>
+<p>We have added the <a class="reference internal" href="../reference/varnishd.html#ref-param-max-vcl"><span class="std std-ref">max_vcl</span></a> parameter to set a
+threshold for the number of loaded VCL programs, since it is a common
+error to let previous VCL instances accumulate without discarding
+them. The remnants of undiscarded VCLs take the form of files in the
+working directory of the management process. Over time, too many of
+these may take up significant storage space, and administrative
+operations such as <code class="docutils literal"><span class="pre">vcl.list</span></code> may become noticeably slow, or even
+time out, when Varnish has to iterate over many files.</p>
+<p>The default threshold in <a class="reference internal" href="../reference/varnishd.html#ref-param-max-vcl"><span class="std std-ref">max_vcl</span></a> is 100, and VCL
+labels are not counted against the total. The
+<a class="reference internal" href="../reference/varnishd.html#ref-param-max-vcl-handling"><span class="std std-ref">max_vcl_handling</span></a> parameter controls what happens when
+you reach the limit. By default you just get a warning from the VCL
+compiler, but you can set it to refuse to load more VCLs, or to ignore
+the threshold.</p>
+<p>Added the <a class="reference internal" href="../reference/varnishd.html#ref-param-backend-local-error-holddown"><span class="std std-ref">backend_local_error_holddown</span></a> and
+<a class="reference internal" href="../reference/varnishd.html#ref-param-backend-remote-error-holddown"><span class="std std-ref">backend_remote_error_holddown</span></a> parameters. These define
+delays for new attempts to connect to backends when certain classes of
+errors have been encountered, for which immediate re-connect attempts
+are likely to be counter-productive. See the parameter documentation
+for details.</p>
+</div>
+<div class="section" id="changes-to-vcl">
+<h2>Changes to VCL<a class="headerlink" href="#changes-to-vcl" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="vcl-variables">
+<h3>VCL variables<a class="headerlink" href="#vcl-variables" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="req-ttl-req-grace-and-keep">
+<h4><code class="docutils literal"><span class="pre">req.ttl</span></code>, <code class="docutils literal"><span class="pre">req.grace</span></code> and keep<a class="headerlink" href="#req-ttl-req-grace-and-keep" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">req.grace</span></code> had been previously removed, but was now reintroduced,
+since there are use cases that cannot be solved without it. Similarly,
+<code class="docutils literal"><span class="pre">req.ttl</span></code> used to be deprecated and is now fully supported again.</p>
+<p><code class="docutils literal"><span class="pre">req.ttl</span></code> and <code class="docutils literal"><span class="pre">req.grace</span></code> limit the ttl and grace times that are
+permitted for the current request. If <code class="docutils literal"><span class="pre">req.ttl</span></code> is set, then cache
+objects are considered fresh (and may be cache hits) only if their
+remaining ttl is less than or equal to <code class="docutils literal"><span class="pre">req.ttl</span></code>. Likewise,
+<code class="docutils literal"><span class="pre">req.grace</span></code> sets an upper bound on the time an object has spent in
+grace to be considered eligible for grace mode (which is to deliver
+this object and fetch a fresh copy in the background).</p>
+<p>A common application is to set shorter TTLs when the backend is known
+to be healthy, so that responses are fresher when all is well. But if
+the backend is unhealthy, then use cached responses with longer TTLs
+to relieve load on the troubled backend:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_recv</span> <span class="p">{</span>
+      <span class="c1"># ...</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">std</span><span class="o">.</span><span class="n">healthy</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">backend_hint</span><span class="p">))</span> <span class="p">{</span>
+              <span class="c1"># Get responses no older than 70s for healthy backends</span>
+              <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">ttl</span> <span class="o">=</span> <span class="mi">60</span><span class="n">s</span><span class="p">;</span>
+              <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">grace</span> <span class="o">=</span> <span class="mi">10</span><span class="n">s</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="c1"># If the backend is unhealthy, then permit cached responses</span>
+      <span class="c1"># that are older than 70s.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The evaluation of the <code class="docutils literal"><span class="pre">beresp.keep</span></code> timer has changed a
+bit. <code class="docutils literal"><span class="pre">keep</span></code> sets a lifetime in the cache in addition to TTL for
+objects that can be validated by a 304 &quot;Not Modified&quot; response from
+the backend to a conditional request (with <code class="docutils literal"><span class="pre">If-None-Match</span></code> or
+<code class="docutils literal"><span class="pre">If-Modified-Since</span></code>). If an expired object is also out of grace
+time, then <code class="docutils literal"><span class="pre">vcl_hit</span></code> will no longer be called, so it is impossible
+to deliver the &quot;keep&quot; object in this case.</p>
+<p>Note that the headers <code class="docutils literal"><span class="pre">If-None-Match</span></code> and <code class="docutils literal"><span class="pre">If-Modified-Since</span></code>,
+together with the 304 behavior, are handled automatically by Varnish.
+If you, for some reason, need to explicitly disable this for a backend
+request, then you need do this by removing the headers in
+<code class="docutils literal"><span class="pre">vcl_backend_fetch</span></code>.</p>
+<p>The documentation in <a class="reference internal" href="../users-guide/vcl-grace.html#users-guide-handling-misbehaving-servers"><span class="std std-ref">Grace mode and keep</span></a>
+has been expanded to discuss these matters in greater depth, look
+there for more details.</p>
+</div>
+<div class="section" id="beresp-filters-and-support-for-backend-response-processing-with-vmods">
+<h4><code class="docutils literal"><span class="pre">beresp.filters</span></code> and support for backend response processing with VMODs<a class="headerlink" href="#beresp-filters-and-support-for-backend-response-processing-with-vmods" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="docutils literal"><span class="pre">beresp.filters</span></code> variable is readable and writable in
+<code class="docutils literal"><span class="pre">vcl_backend_response</span></code>. This is a space-separated list of modules
+that we call VFPs, for &quot;Varnish fetch processors&quot;, that may be applied
+to a backend response body as it is being fetched. In default Varnish,
+the list may include values such as <code class="docutils literal"><span class="pre">gzip</span></code>, <code class="docutils literal"><span class="pre">gunzip</span></code>, and <code class="docutils literal"><span class="pre">esi</span></code>,
+depending on how you have set the <code class="docutils literal"><span class="pre">beresp.do_*</span></code> variables.</p>
+<p>This addition makes it possible for VMODs to define VFPs to filter or
+manipulate backend response bodies, which can be added by changing the
+list in <code class="docutils literal"><span class="pre">beresp.filters</span></code>. VFPs are applied in the order given in
+<code class="docutils literal"><span class="pre">beresp.filters</span></code>, and you may have to ensure that a VFP is
+positioned correctly in the list, for example if it can only apply to
+uncompressed response bodies.</p>
+<p>This is a new capability, and at the time of release we only know of
+test VFPs implemented in VMODs. Over time we hope that an &quot;ecology&quot; of
+VFP code will develop that will enrich the features available to
+Varnish deployments.</p>
+</div>
+<div class="section" id="obj-hits">
+<h4><code class="docutils literal"><span class="pre">obj.hits</span></code><a class="headerlink" href="#obj-hits" title="Permalink to this headline">¶</a></h4>
+<p>Has been fixed to return the correct value in <code class="docutils literal"><span class="pre">vcl_hit</span></code> (it had been
+0 in <code class="docutils literal"><span class="pre">vcl_hit</span></code>).</p>
+</div>
+</div>
+<div class="section" id="other-changes-to-vcl">
+<h3>Other changes to VCL<a class="headerlink" href="#other-changes-to-vcl" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>The <code class="docutils literal"><span class="pre">Host</span></code> header in client requests is mandatory for HTTP/1.1, as
+proscribed by the HTTP standard. If it is missing, then
+<code class="docutils literal"><span class="pre">builtin.vcl</span></code> causes a synthetic 400 &quot;Bad request&quot; response to be
+returned.</li>
+<li>You can now provide a string argument to <code class="docutils literal"><span class="pre">return(fail(&quot;Foo!&quot;))</span></code>,
+which can be used in <code class="docutils literal"><span class="pre">vcl_init</span></code> to emit an error message if the
+VCL load fails due to the return.</li>
+<li>Additional <code class="docutils literal"><span class="pre">import</span></code> statements of an already imported vmod are now
+ignored.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="vmods">
+<h2>VMODs<a class="headerlink" href="#vmods" title="Permalink to this headline">¶</a></h2>
+<p>Added the <a class="reference internal" href="../reference/vmod_std.html#std-fnmatch"><span class="std std-ref">BOOL fnmatch(STRING pattern, STRING subject, BOOL pathname, BOOL noescape, BOOL period)</span></a> function to <a class="reference internal" href="../reference/vmod_std.html#vmod-std-3"><span class="std std-ref">VMOD std - Varnish Standard Module</span></a>, which
+you can use for shell-style wildcard matching. Wildcard patterns may
+be a good fit for matching URLs, to match against a pattern like
+<code class="docutils literal"><span class="pre">/foo/*/bar/*</span></code>. The patterns can be built at runtime, if you need to
+do that, since they don't need the pre-compile step at VCL load time
+that is required for regular expressions. And if you are simply more
+comfortable with the wildcard syntax than with regular expressions,
+you now have the option.</p>
+<p><a class="reference internal" href="../reference/vmod_unix.html#vmod-unix-3"><span class="std std-ref">VMOD unix - Utilities for Unix domain sockets</span></a> is now supported for SunOS and descendants. This
+entails changing the privilege set of the child process while the VMOD
+is loaded, see the documentation.</p>
+</div>
+<div class="section" id="other-changes">
+<h2>Other changes<a class="headerlink" href="#other-changes" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first"><code class="docutils literal"><span class="pre">varnishd(1)</span></code>:</p>
+<ul class="simple">
+<li>Some VCL compile-time error messages have been improved, for
+example when a symbol is not found or arguments to VMOD calls are
+missing.</li>
+<li>Varnish now won't rewrite the <code class="docutils literal"><span class="pre">Content-Length</span></code> header when
+responding to any HEAD request, making it possible to cache
+responses to HEAD requests independently from the GET responses
+(previously a HEAD request had to be a pass to avoid this
+rewriting).</li>
+<li>If you have set <code class="docutils literal"><span class="pre">.proxy_header=1</span></code> (to use the PROXYv1 protocol)
+for a backend addressed as a Unix domain socket (with a <code class="docutils literal"><span class="pre">.path</span></code>
+setting for the socket file), and have also defined a probe for
+the backend, then then the address family <code class="docutils literal"><span class="pre">UNKNOWN</span></code> is sent in
+the proxy header for the probe request. If you have set
+<code class="docutils literal"><span class="pre">.proxy_header=2</span></code> (for PROXYv2) for a UDS backend with a probe,
+then <code class="docutils literal"><span class="pre">PROXY</span> <span class="pre">LOCAL</span></code> is sent for the probe request.</li>
+</ul>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">varnishlog(1)</span></code> and <code class="docutils literal"><span class="pre">vsl(7)</span></code>:</p>
+<ul>
+<li><p class="first">The contents of <code class="docutils literal"><span class="pre">FetchError</span></code> log entries have been improved to
+give better human-readable diagnostics for certain classes of
+backend fetch failures.</p>
+<p>In particular, http connection (HTC) errors are now reported
+symbolically in addition to the previous numerical value.</p>
+</li>
+<li><p class="first">Log entries under the new <code class="docutils literal"><span class="pre">SessError</span></code> tag now give more
+diagnostic information about session accept failures (failure to
+accept a client connection). These must be viewed in raw grouping,
+since accept failures are not part of any request/response
+transaction.</p>
+</li>
+<li><p class="first">When a backend is unhealthy, <code class="docutils literal"><span class="pre">Backend_health</span></code> now reports some
+diagnostic information in addition to the HTTP response and timing
+information.</p>
+</li>
+<li><p class="first">The backend name logged for <code class="docutils literal"><span class="pre">Backend_health</span></code> is just the backend
+name without the VCL prefix (as appears otherwise for backend
+naming).</p>
+</li>
+<li><p class="first">Added the log entry tag <code class="docutils literal"><span class="pre">Filters</span></code>, which gives a list of the
+filters applied to a response body (see <code class="docutils literal"><span class="pre">beresp.filters</span></code>
+discussed above).</p>
+</li>
+</ul>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">varnishadm(1)</span></code> and <code class="docutils literal"><span class="pre">varnish-cli(7)</span></code></p>
+<ul>
+<li><p class="first">For a number of CLI commands, you can now use the <code class="docutils literal"><span class="pre">-j</span></code> argument
+to get a JSON response, which may help in automation. These include:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">ping</span> <span class="pre">-j</span></code></li>
+<li><code class="docutils literal"><span class="pre">backend.list</span> <span class="pre">-j</span></code></li>
+<li><code class="docutils literal"><span class="pre">help</span> <span class="pre">-j</span></code></li>
+</ul>
+<p>A JSON response in the CLI always includes a timestamp (epoch time
+in seconds with millisecond precision), indicating the time at
+which the reponse was generated.</p>
+</li>
+<li><p class="first">The <code class="docutils literal"><span class="pre">backend.list</span></code> command now lists both directors and
+backends, with their health status. The command now has a <code class="docutils literal"><span class="pre">-v</span></code>
+option for verbose output, in which detailed health states for
+each backend/director are displayed.</p>
+</li>
+</ul>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">varnishstat(1)</span></code> and <code class="docutils literal"><span class="pre">varnish-counters(7)</span></code>:</p>
+<ul class="simple">
+<li>We have added a number of counters to the <code class="docutils literal"><span class="pre">VBE.*</span></code> group to help
+better diagnose error conditions with backends:<ul>
+<li><code class="docutils literal"><span class="pre">VBE.*.unhealthy</span></code>: the number of fetches that were not
+attempted because the backend was unhealthy</li>
+<li><code class="docutils literal"><span class="pre">.busy</span></code>: number of fetches that were not attempted because the
+<code class="docutils literal"><span class="pre">.max_connections</span></code> limit was reached</li>
+<li><code class="docutils literal"><span class="pre">.fail</span></code>: number of failed attempts to open a connection to the
+backend. Detailed reasons for the failures are given in the
+<code class="docutils literal"><span class="pre">.fail_*</span></code> counters (shown at DIAG level), and in the log entry
+<code class="docutils literal"><span class="pre">FetchError</span></code>. <code class="docutils literal"><span class="pre">.fail</span></code> is the sum of the values in the
+<code class="docutils literal"><span class="pre">.fail_*</span></code> counters.</li>
+<li><code class="docutils literal"><span class="pre">.fail_eaccess</span></code>, <code class="docutils literal"><span class="pre">.fail_eaddrnotavail</span></code>,
+<code class="docutils literal"><span class="pre">.fail_econnrefused</span></code>, <code class="docutils literal"><span class="pre">.fail_enetunreach</span></code> and
+<code class="docutils literal"><span class="pre">.fail_etimedout</span></code>: these are the number of attempted
+connections to the backend that failed with the given value of
+<code class="docutils literal"><span class="pre">errno(3)</span></code>.</li>
+<li><code class="docutils literal"><span class="pre">.fail_other</span></code>: number of connections to the backend that
+failed for reasons other than those given by the other
+<code class="docutils literal"><span class="pre">.fail_*</span></code> counters. For such cases, details on the failure
+can be extracted from the varnish log as described above for
+<code class="docutils literal"><span class="pre">FetchError</span></code>.</li>
+<li><code class="docutils literal"><span class="pre">.helddown</span></code>: the number of connections not attempted because
+the backend was in the period set by one of the parameters
+<a class="reference internal" href="../reference/varnishd.html#ref-param-backend-local-error-holddown"><span class="std std-ref">backend_local_error_holddown</span></a> or
+<a class="reference internal" href="../reference/varnishd.html#ref-param-backend-remote-error-holddown"><span class="std std-ref">backend_remote_error_holddown</span></a></li>
+</ul>
+</li>
+<li>Similarly, we have added a series of counters for better diagnostics
+of session accept failures (failure to accept a connection from a
+client). As before, the <code class="docutils literal"><span class="pre">sess_fail</span></code> counter gives the total number
+of accept failures, and it is now augmented with the <code class="docutils literal"><span class="pre">sess_fail_*</span></code>
+counters. <code class="docutils literal"><span class="pre">sess_fail</span></code> is the sum of the values in <code class="docutils literal"><span class="pre">sess_fail_*</span></code>.<ul>
+<li><code class="docutils literal"><span class="pre">sess_fail_econnaborted</span></code>, <code class="docutils literal"><span class="pre">sess_fail_eintr</span></code>,
+<code class="docutils literal"><span class="pre">sess_fail_emfile</span></code>, <code class="docutils literal"><span class="pre">sess_fail_ebadf</span></code> and
+<code class="docutils literal"><span class="pre">sess_fail_enomem</span></code>: the number of accept failures with the
+indicated value of <code class="docutils literal"><span class="pre">errno(3)</span></code>. The <a class="reference internal" href="../reference/varnish-counters.html#varnish-counters-7"><span class="std std-ref">varnish-counters</span></a>
+man page, and the &quot;long descriptions&quot; shown by <code class="docutils literal"><span class="pre">varnishstat</span></code>,
+give possible reasons why each of these may happen, and what
+might be done to counter the problem.</li>
+<li><code class="docutils literal"><span class="pre">sess_fail_other</span></code>: number of accept failures for reasons
+other than those given by the other <code class="docutils literal"><span class="pre">sess_fail_*</span></code> counters.
+More details may appear in the <code class="docutils literal"><span class="pre">SessError</span></code> entry of the log
+(<a class="reference internal" href="../reference/varnish-counters.html#varnish-counters-7"><span class="std std-ref">varnish-counters</span></a> shows a <code class="docutils literal"><span class="pre">varnishlog</span></code> invocation
+that may help).</li>
+</ul>
+</li>
+<li>In curses mode, the information in the header lines (uptimes and
+cache hit rates) is always reported, even if you have defined a
+filter that leaves them out of the stats table.</li>
+<li>Ban statistics are now reported more accurately (they had been
+subject to inconsistencies due to race conditions).</li>
+</ul>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">varnishtest(1)</span></code> and <code class="docutils literal"><span class="pre">vtc(7)</span></code>:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">varnishtest</span></code> and the <code class="docutils literal"><span class="pre">vtc</span></code> test script language now support
+testing for haproxy as well as Varnish. The <code class="docutils literal"><span class="pre">haproxy</span></code> directive
+in a test can be used to define, configure, start and stop a
+haproxy instance, and you can also script messages to send on the
+haproxy CLI connection, and define expectations for the
+responses. See the <code class="docutils literal"><span class="pre">haproxy</span></code> section in <a class="reference internal" href="../reference/vtc.html#vtc-7"><span class="std std-ref">VTC</span></a> for
+details.</li>
+<li>Related to haproxy support, you can now define a <code class="docutils literal"><span class="pre">syslog</span></code>
+instance in test scripts. This defines a syslog server, and allows
+you to test expectations for syslog output from a haproxy
+instance.</li>
+<li>Added the <code class="docutils literal"><span class="pre">-keepalive</span></code> argument for client and server scripts to
+be used with the <code class="docutils literal"><span class="pre">-repeat</span></code> directive, which causes all test
+iterations to run on the same connection, rather than open a new
+connection each time. This makes the test run faster and use fewer
+ephemeral ports.</li>
+<li>Added the <code class="docutils literal"><span class="pre">-need-bytes</span></code> argument for the <code class="docutils literal"><span class="pre">process</span></code> command,
+see <a class="reference internal" href="../reference/vtc.html#vtc-7"><span class="std std-ref">VTC</span></a>.</li>
+</ul>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">varnishhist(1)</span></code>:</p>
+<ul class="simple">
+<li>The <code class="docutils literal"><span class="pre">-P</span> <span class="pre">min:max</span></code> command-line parameters are now optional,
+see <a class="reference internal" href="../reference/varnishhist.html#varnishhist-1"><span class="std std-ref">varnishhist</span></a>.</li>
+</ul>
+</li>
+<li><p class="first">For all of the utilities that access the Varnish log --
+<code class="docutils literal"><span class="pre">varnishlog(1)</span></code>, <code class="docutils literal"><span class="pre">varnishncsa(1)</span></code>, <code class="docutils literal"><span class="pre">varnishtop(1)</span></code> and
+<code class="docutils literal"><span class="pre">varnishhist(1)</span></code> -- it was already possible to set multiple <code class="docutils literal"><span class="pre">-I</span></code>
+and <code class="docutils literal"><span class="pre">-X</span></code> command-line arguments.  It is now properly documented
+that you can use multiple include and exclude filters that apply
+regular expressions to selected log records.</p>
+</li>
+<li><p class="first">Changes for developers:</p>
+<ul>
+<li><p class="first">As mentioned above, VMODs can now implement VFPs that can be added
+to backend response processing by changing <code class="docutils literal"><span class="pre">beresp.filters</span></code>.
+The interface for VFPs is defined in <code class="docutils literal"><span class="pre">cache_filters.h</span></code>, and the
+debug VMOD included in the distribution shows an example of a
+VFP for rot13.</p>
+</li>
+<li><p class="first">The Varnish API soname version (for libvarnishapi.so) has been
+bumped to 2.0.0.</p>
+</li>
+<li><p class="first">The VRT version has been bumped to 8.0. See <code class="docutils literal"><span class="pre">vrt.h</span></code> for details
+on the changes since 7.0.</p>
+</li>
+<li><p class="first">Space required by varnish for maintaining the <code class="docutils literal"><span class="pre">PRIV_TASK</span></code> and
+<code class="docutils literal"><span class="pre">PRIV_TOP</span></code> parameters is now taken from the appropriate
+workspace rather than from the heap as before. For a failing
+allocation, a VCL failure is triggered.</p>
+<p>The net effect of this change is that in cases of a workspace
+shortage, the almost unavoidable failure will happen earlier. The
+amount of workspace required is slightly increased and scales with
+the number of vmods per <code class="docutils literal"><span class="pre">PRIV_TASK</span></code> and <code class="docutils literal"><span class="pre">PRIV_TOP</span></code> parameter.</p>
+<p>The VCL compiler (VCC) guarantees that if a vmod function is
+called with a <code class="docutils literal"><span class="pre">PRIV_*</span></code> argument, that argument value is set.</p>
+<p>There is no change with respect to the API the <code class="docutils literal"><span class="pre">PRIV_*</span></code> vmod
+function arguments provide.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">VRT_priv_task()</span></code>, the function implementing the allocation of
+the <code class="docutils literal"><span class="pre">PRIV_TASK</span></code> and <code class="docutils literal"><span class="pre">PRIV_TOP</span></code> parameters as described above,
+is now more likely to return <code class="docutils literal"><span class="pre">NULL</span></code> for allocation failures for
+the same reason.</p>
+<p>Notice that explicit use of this function from within VMODs is
+considered experimental as this interface may change.</p>
+</li>
+<li><p class="first">We have improved support for the <code class="docutils literal"><span class="pre">STRANDS</span></code> data type, which you
+may find easier to use than the varargs-based <code class="docutils literal"><span class="pre">STRING_LIST</span></code>. See
+<code class="docutils literal"><span class="pre">vrt.h</span></code> for details.  <a class="reference internal" href="../reference/vmod_blob.html#vmod-blob-3"><span class="std std-ref">VMOD blob - Utilities for the VCL blob type, encoding and decoding</span></a> has been refactored to
+use <code class="docutils literal"><span class="pre">STRANDS</span></code>, so you can look there for an example.</p>
+</li>
+<li><p class="first">We have fixed a bug that had limited the precision available for
+the <code class="docutils literal"><span class="pre">INT</span></code> data type, so you now get the full 64 bits.</p>
+</li>
+<li><p class="first">Portions of what had previously been declared in
+<code class="docutils literal"><span class="pre">cache_director.h</span></code> have been moved into <code class="docutils literal"><span class="pre">vrt.h</span></code>, constituting
+the public API for directors. The remainder in
+<code class="docutils literal"><span class="pre">cache_director.h</span></code> is not public, and should not be used by a
+VMOD intended for VRT ABI compatibility.</p>
+</li>
+<li><p class="first">The director API in <code class="docutils literal"><span class="pre">vrt.h</span></code> differs from the previous
+interface. <a class="reference internal" href="../reference/directors.html#ref-writing-a-director"><span class="std std-ref">Writing a Director</span></a> has been updated
+accordingly. In short, the most important changes include:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">struct</span> <span class="pre">director_methods</span></code> is replaced by <code class="docutils literal"><span class="pre">struct</span> <span class="pre">vdi_methods</span></code></li>
+<li>signatures of various callbacks have changed</li>
+<li><code class="docutils literal"><span class="pre">VRT_AddDirector()</span></code> and <code class="docutils literal"><span class="pre">VRT_DelDirector()</span></code> are to be used
+for initialization and destruction.</li>
+<li><code class="docutils literal"><span class="pre">vdi_methods</span></code> callbacks are not to be called from vmods any more</li>
+<li><code class="docutils literal"><span class="pre">VRT_Healthy()</span></code> replaces calls to the <code class="docutils literal"><span class="pre">healthy</span></code> function</li>
+<li>The admin health is not to be manipulated by vmods any more</li>
+<li>director private state destruction is recommended to be
+implemented via a <code class="docutils literal"><span class="pre">destroy</span></code> callback.</li>
+</ul>
+</li>
+<li><p class="first">Python 3 is now preferred in builds, and will likely be required
+in future versions.</p>
+</li>
+<li><p class="first">We believe builds are now reproducible, and intend to keep them
+that way.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><em>eof</em></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Upgrading to Varnish 6.1</a><ul>
+<li><a class="reference internal" href="#varnishd-parameters">varnishd parameters</a></li>
+<li><a class="reference internal" href="#changes-to-vcl">Changes to VCL</a><ul>
+<li><a class="reference internal" href="#vcl-variables">VCL variables</a><ul>
+<li><a class="reference internal" href="#req-ttl-req-grace-and-keep"><code class="docutils literal"><span class="pre">req.ttl</span></code>, <code class="docutils literal"><span class="pre">req.grace</span></code> and keep</a></li>
+<li><a class="reference internal" href="#beresp-filters-and-support-for-backend-response-processing-with-vmods"><code class="docutils literal"><span class="pre">beresp.filters</span></code> and support for backend response processing with VMODs</a></li>
+<li><a class="reference internal" href="#obj-hits"><code class="docutils literal"><span class="pre">obj.hits</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-changes-to-vcl">Other changes to VCL</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#vmods">VMODs</a></li>
+<li><a class="reference internal" href="#other-changes">Other changes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="changes-6.1.html"
+                        title="previous chapter">Changes in Varnish 6.1</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="changes-6.0.html"
+                        title="next chapter">Changes in Varnish 6.0</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/whats-new/upgrading-6.1.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="changes-6.0.html" title="Changes in Varnish 6.0"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="changes-6.1.html" title="Changes in Varnish 6.1"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

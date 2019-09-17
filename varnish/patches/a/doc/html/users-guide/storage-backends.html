@@ -1,0 +1,281 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Storage backends &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Parameters" href="params.html" />
+    <link rel="prev" title="CLI - bossing Varnish around" href="run_cli.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="params.html" title="Parameters"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="run_cli.html" title="CLI - bossing Varnish around"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Users Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="running.html" accesskey="U">Starting and running Varnish</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="storage-backends">
+<span id="guide-storage"></span><h1>Storage backends<a class="headerlink" href="#storage-backends" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="intro">
+<h2>Intro<a class="headerlink" href="#intro" title="Permalink to this headline">¶</a></h2>
+<p>Varnish has pluggable storage backends. It can store data in various
+backends which can have different performance characteristics. The default
+configuration is to use the malloc backend with a limited size. For a
+serious Varnish deployment you probably would want to adjust the storage
+settings.</p>
+</div>
+<div class="section" id="default">
+<h2>default<a class="headerlink" href="#default" title="Permalink to this headline">¶</a></h2>
+<p>syntax: default[,size]</p>
+<p>The default storage backend is an alias to umem, where available, or
+malloc otherwise.</p>
+</div>
+<div class="section" id="malloc">
+<h2>malloc<a class="headerlink" href="#malloc" title="Permalink to this headline">¶</a></h2>
+<p>syntax: malloc[,size]</p>
+<p>Malloc is a memory based backend. Each object will be allocated from
+memory. If your system runs low on memory swap will be used.</p>
+<p>Be aware that the size limitation only limits the actual storage and that the
+approximately 1k of memory per object, used for various internal
+structures, is included in the actual storage as well.</p>
+<p>The size parameter specifies the maximum amount of memory <cite>varnishd</cite>
+will allocate.  The size is assumed to be in bytes, unless followed by
+one of the following suffixes:</p>
+<blockquote>
+<div><p>K, k    The size is expressed in kibibytes.</p>
+<p>M, m    The size is expressed in mebibytes.</p>
+<p>G, g    The size is expressed in gibibytes.</p>
+<p>T, t    The size is expressed in tebibytes.</p>
+</div></blockquote>
+<p>The default size is unlimited.</p>
+<p>malloc's performance is bound to memory speed so it is very fast. If
+the dataset is bigger than available memory performance will
+depend on the operating systems ability to page effectively.</p>
+</div>
+<div class="section" id="umem">
+<span id="guide-storage-umem"></span><h2>umem<a class="headerlink" href="#umem" title="Permalink to this headline">¶</a></h2>
+<p>syntax: umem[,size]</p>
+<p>Umem is a better alternative to the malloc backend where <a class="reference external" href="http://dtrace.org/blogs/ahl/2004/07/13/number-11-of-20-libumem/">libumem</a> is
+available. All other configuration aspects are considered equal to
+malloc.</p>
+<p><a class="reference external" href="http://dtrace.org/blogs/ahl/2004/07/13/number-11-of-20-libumem/">libumem</a> implements a slab allocator similar to the kernel memory
+allocator used in virtually all modern operating systems and is
+considered more efficient and scalable than classical
+implementations. In particular, <a class="reference external" href="http://dtrace.org/blogs/ahl/2004/07/13/number-11-of-20-libumem/">libumem</a> is included in the family
+of OpenSolaris descendent operating systems where jemalloc(3) is not
+commonly available.</p>
+<p>If <a class="reference external" href="http://dtrace.org/blogs/ahl/2004/07/13/number-11-of-20-libumem/">libumem</a> is not used otherwise, Varnish will only use it for
+storage allocations and keep the default libc allocator for all other
+Varnish memory allocation purposes.</p>
+<p>If <a class="reference external" href="http://dtrace.org/blogs/ahl/2004/07/13/number-11-of-20-libumem/">libumem</a> is already loaded when Varnish initializes, this message
+is output:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">notice</span><span class="p">:</span> <span class="n">libumem</span> <span class="n">was</span> <span class="n">already</span> <span class="n">found</span> <span class="n">to</span> <span class="n">be</span> <span class="n">loaded</span>
+        <span class="ow">and</span> <span class="n">will</span> <span class="n">likely</span> <span class="n">be</span> <span class="n">used</span> <span class="k">for</span> <span class="nb">all</span> <span class="n">allocations</span>
+</pre></div>
+</div>
+<p>to indicate that <a class="reference external" href="http://dtrace.org/blogs/ahl/2004/07/13/number-11-of-20-libumem/">libumem</a> will not only be used for storage. Likely
+reasons for this to be the case are:</p>
+<ul class="simple">
+<li>some library <code class="docutils literal"><span class="pre">varnishd</span></code> is linked against was linked against
+<a class="reference external" href="http://dtrace.org/blogs/ahl/2004/07/13/number-11-of-20-libumem/">libumem</a> (most likely <code class="docutils literal"><span class="pre">libpcre</span></code>, check with <code class="docutils literal"><span class="pre">ldd</span></code>)</li>
+<li><code class="docutils literal"><span class="pre">LD_PRELOAD_64=/usr/lib/amd64/libumem.so.1</span></code>,
+<code class="docutils literal"><span class="pre">LD_PRELOAD_32=/usr/lib/libumem.so.1</span></code> or
+<code class="docutils literal"><span class="pre">LD_PRELOAD=/usr/lib/libumem.so.1</span></code> is set</li>
+</ul>
+<p>Varnish will also output this message to recommend settings for using
+<a class="reference external" href="http://dtrace.org/blogs/ahl/2004/07/13/number-11-of-20-libumem/">libumem</a> for all allocations:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">it</span> <span class="ow">is</span> <span class="n">recommended</span> <span class="n">to</span> <span class="nb">set</span> <span class="n">UMEM_OPTIONS</span><span class="o">=</span><span class="n">perthread_cache</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">backend</span><span class="o">=</span><span class="n">mmap</span>
+<span class="n">before</span> <span class="n">starting</span> <span class="n">varnish</span>
+</pre></div>
+</div>
+<p>This recommendation should be followed to achieve an optimal
+<a class="reference external" href="http://dtrace.org/blogs/ahl/2004/07/13/number-11-of-20-libumem/">libumem</a> configuration for Varnish. Setting this environment
+variable before starting Varnish is required becuase <a class="reference external" href="http://dtrace.org/blogs/ahl/2004/07/13/number-11-of-20-libumem/">libumem</a> cannot
+be reconfigured once loaded.</p>
+</div>
+<div class="section" id="file">
+<h2>file<a class="headerlink" href="#file" title="Permalink to this headline">¶</a></h2>
+<p>syntax: file,path[,size[,granularity[,advice]]]</p>
+<p>The file backend stores objects in memory backed by an unlinked file on disk
+with <cite>mmap</cite>.</p>
+<p>The 'path' parameter specifies either the path to the backing file or
+the path to a directory in which <cite>varnishd</cite> will create the backing file.</p>
+<p>The size parameter specifies the size of the backing file. The size
+is assumed to be in bytes, unless followed by one of the following
+suffixes:</p>
+<blockquote>
+<div><p>K, k    The size is expressed in kibibytes.</p>
+<p>M, m    The size is expressed in mebibytes.</p>
+<p>G, g    The size is expressed in gibibytes.</p>
+<p>T, t    The size is expressed in tebibytes.</p>
+</div></blockquote>
+<p>If 'path' points to an existing file and no size is specified, the
+size of the existing file will be used. If 'path' does not point to an
+existing file it is an error to not specify the size.</p>
+<p>If the backing file already exists, it will be truncated or expanded
+to the specified size.</p>
+<p>Note that if <cite>varnishd</cite> has to create or expand the file, it will not
+pre-allocate the added space, leading to fragmentation, which may
+adversely impact performance on rotating hard drives.  Pre-creating
+the storage file using <cite>dd(1)</cite> will reduce fragmentation to a minimum.</p>
+<p>The 'granularity' parameter specifies the granularity of
+allocation. All allocations are rounded up to this size. The granularity is
+is assumed to be expressed in bytes, unless followed by one of the
+suffixes described for size.</p>
+<p>The default granularity is the VM page size. The size should be reduced if you
+have many small objects.</p>
+<p>File performance is typically limited to the write speed of the
+device, and depending on use, the seek time.</p>
+<p>The 'advice' parameter tells the kernel how <cite>varnishd</cite> expects to
+use this mapped region so that the kernel can choose the appropriate
+read-ahead and caching techniques.  Possible values are <code class="docutils literal"><span class="pre">normal</span></code>,
+<code class="docutils literal"><span class="pre">random</span></code> and <code class="docutils literal"><span class="pre">sequential</span></code>, corresponding to MADV_NORMAL, MADV_RANDOM
+and MADV_SEQUENTIAL madvise() advice argument, respectively.  Defaults to
+<code class="docutils literal"><span class="pre">random</span></code>.</p>
+<p>On Linux, large objects and rotational disk should benefit from
+&quot;sequential&quot;.</p>
+</div>
+<div class="section" id="persistent-experimental">
+<h2>persistent (experimental)<a class="headerlink" href="#persistent-experimental" title="Permalink to this headline">¶</a></h2>
+<p>syntax: persistent,path,size {experimental}</p>
+<p>Persistent storage. Varnish will store objects in a file in a manner
+that will secure the survival of <em>most</em> of the objects in the event of
+a planned or unplanned shutdown of Varnish.</p>
+<p>The 'path' parameter specifies the path to the backing file. If
+the file doesn't exist Varnish will create it.</p>
+<p>The 'size' parameter specifies the size of the backing file. The
+size is expressed in bytes, unless followed by one of the
+following suffixes:</p>
+<blockquote>
+<div><p>K, k    The size is expressed in kibibytes.</p>
+<p>M, m    The size is expressed in mebibytes.</p>
+<p>G, g    The size is expressed in gibibytes.</p>
+<p>T, t    The size is expressed in tebibytes.</p>
+</div></blockquote>
+<p>Varnish will split the file into logical <em>silos</em> and write to the
+silos in the manner of a circular buffer. Only one silo will be kept
+open at any given point in time. Full silos are <em>sealed</em>. When Varnish
+starts after a shutdown it will discard the content of any silo that
+isn't sealed.</p>
+<p>Note that taking persistent silos offline and at the same time using
+bans can cause problems. This is due to the fact that bans added while the silo was
+offline will not be applied to the silo when it reenters the cache. Consequently enabling
+previously banned objects to reappear.</p>
+</div>
+</div>
+<div class="section" id="transient-storage">
+<h1>Transient Storage<a class="headerlink" href="#transient-storage" title="Permalink to this headline">¶</a></h1>
+<p>If you name any of your storage backend &quot;Transient&quot; it will be used
+for transient (short lived) objects. This includes the temporary
+objects created when returning a synthetic object. By default Varnish
+would use an unlimited malloc backend for this.</p>
+<p>Varnish will consider an object short lived if the TTL is below the
+parameter 'shortlived'.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Storage backends</a><ul>
+<li><a class="reference internal" href="#intro">Intro</a></li>
+<li><a class="reference internal" href="#default">default</a></li>
+<li><a class="reference internal" href="#malloc">malloc</a></li>
+<li><a class="reference internal" href="#umem">umem</a></li>
+<li><a class="reference internal" href="#file">file</a></li>
+<li><a class="reference internal" href="#persistent-experimental">persistent (experimental)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#transient-storage">Transient Storage</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="run_cli.html"
+                        title="previous chapter">CLI - bossing Varnish around</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="params.html"
+                        title="next chapter">Parameters</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/users-guide/storage-backends.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="params.html" title="Parameters"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="run_cli.html" title="CLI - bossing Varnish around"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Users Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="running.html" >Starting and running Varnish</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+varnishtest "Check HTTP/1.0 EOF transmission"
+
+server s1 {
+	rxreq
+	send "HTTP/1.0 200 OK\n"
+	send "Connection: close\n"
+	send "\n"
+	send "Body line 1\n"
+	send "Body line 2\n"
+	send "Body line 3\n"
+} -start
+
+varnish v1 -vcl+backend {} -start
+
+client c1 {
+	txreq -url "/"
+	rxresp
+	expect resp.status == 200
+	expect resp.bodylen == 36
+} -run

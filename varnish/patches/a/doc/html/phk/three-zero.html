@@ -1,0 +1,157 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Thoughts on the eve of Varnish 3.0 &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Why no SSL ?" href="ssl.html" />
+    <link rel="prev" title="The Tools We Work With" href="thetoolsweworkwith.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="ssl.html" title="Why no SSL ?"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="thetoolsweworkwith.html" title="The Tools We Work With"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="thoughts-on-the-eve-of-varnish-3-0">
+<span id="phk-3-0"></span><h1>Thoughts on the eve of Varnish 3.0<a class="headerlink" href="#thoughts-on-the-eve-of-varnish-3-0" title="Permalink to this headline">¶</a></h1>
+<p>Five years ago, I was busy transforming my pile of random doddles
+on 5mm squared paper into software, according to &quot;git log&quot; working
+on the first stevedores.</p>
+<p>In two weeks I will be attending the Varnish 3.0 release party in Oslo.</p>
+<p>Sometimes I feel that development of Varnish takes for ever and
+ever, and that it must be like watching paint dry for the users,
+but 3 major releases in 5 years is actually not too shabby come to
+think of it.</p>
+<p>Varnish 3.0 &quot;only&quot; has two big new features, VMOD and GZIP, and a
+host of smaller changes, which you will notice if they are new
+features, and not notice if they are bug fixes.</p>
+<p>GZIP will probably be most important to the ESI users, and I wonder
+if all the time I spent fiddling bits in the middle of compressed data
+pays off, or if the concept of patchwork-quilting GZIP files was
+a bad idea from end to other.</p>
+<p>VMODs on the other hand, was an instant success, because they make
+it much easier for people to extend Varnish with new functionality,
+and I know of several VMODs in the pipeline which will make it
+possible to do all sorts of wonderful things from VCL.</p>
+<p>All in all, I feel happy about the 3.0 release, and I hope the users
+will too.</p>
+<p>We are not finished of course, ideas and patches for Varnish 4.0
+are already starting to pile up, and hopefully we can get that into
+a sensible shape 18 months from now, late 2012-ish.</p>
+<blockquote>
+<div>&quot;Life is what happens to you while you're busy making other plans&quot;</div></blockquote>
+<p>said John Lennon, a famous murder victim from New York.</p>
+<p>I feel a similar irony in the way Varnish happened to me:</p>
+<p>My homepage is written in raw HTML using the vi(1) editor, runs on
+a book-sized Soekris NET5501 computer, averages 50 hits a day with
+an Alexa rank just north of the 3.5 million mark.  A normal server
+with Varnish could deliver all traffic my webserver has ever
+delivered, in less than a second.</p>
+<p>But varnish-cache.org has Alexa rank around 30.000, &quot;varnish cache&quot;
+shows a nice trend on Google and #varnish confuses the heck out of
+teenage girls and wood workers on Twitter, so clearly I am doing
+something right.</p>
+<p>I still worry about the <a class="reference external" href="http://www.theshadowbox.net/forum/index.php?topic=18041.0">The Fraud Police</a> though,
+&quot;I have no idea what I'm doing, and I totally make shit up as I go
+along.&quot; is a disturbingly precise summary of how I feel about my
+work in Varnish.</p>
+<p>The Varnish 3.0 release is therefore dedicated to all the kind
+Varnish developers and users, who have tested, reported bugs,
+suggested ideas and generally put up with me and my bumbling ways
+for these past five years.</p>
+<p>Much appreciated,</p>
+<p>Poul-Henning, 2011-06-02</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="thetoolsweworkwith.html"
+                        title="previous chapter">The Tools We Work With</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ssl.html"
+                        title="next chapter">Why no SSL ?</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/phk/three-zero.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="ssl.html" title="Why no SSL ?"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="thetoolsweworkwith.html" title="The Tools We Work With"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

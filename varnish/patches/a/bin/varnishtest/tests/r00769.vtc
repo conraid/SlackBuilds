@@ -1,0 +1,43 @@
+varnishtest "Test that set status code is readable again for obj.status and beresp.status"
+
+server s1 {
+	rxreq
+	txresp
+} -start
+
+varnish v1 -vcl+backend {
+	sub vcl_recv {
+		if (req.url ~ "^/test1") {
+			return (synth(700));
+		}
+	}
+	sub vcl_backend_response {
+		set beresp.status = 404;
+		set beresp.http.X-status = beresp.status;
+		return (deliver);
+	}
+	sub vcl_synth {
+		if (resp.status == 700) {
+			set resp.status=404;
+			set resp.http.X-status = resp.status;
+			return (deliver);
+		}
+	}
+} -start
+
+client c1 {
+	txreq -url "/test1"
+	rxresp
+	expect resp.status == 404
+	expect resp.http.X-status == 404
+}
+
+client c2 {
+	txreq -url "/test2"
+	rxresp
+	expect resp.status == 404
+	expect resp.http.X-status == 404
+}
+
+client c1 -run
+client c2 -run

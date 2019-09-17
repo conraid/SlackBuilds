@@ -1,0 +1,72 @@
+varnishtest "synth in deliver"
+
+server s1 {
+	rxreq
+	txresp -status 200
+	rxreq
+	txresp -status 200
+	rxreq
+	txresp -status 200
+} -start
+
+varnish v1 -vcl+backend {
+	import std;
+
+	sub vcl_backend_response {
+		if (bereq.url == "/333") {
+			set beresp.status = 333;
+			set beresp.reason = "FOO";
+		}
+	}
+	sub vcl_deliver {
+		if (req.url == "/332") {
+			return (synth(332, "F" + "OO" + std.tolower("FOO")));
+		} else if (req.url == "/333") {
+			return (synth(resp.status + 1000,
+				resp.reason));
+		} else {
+			return (synth(334, "BAR"));
+		}
+	}
+
+	sub vcl_synth {
+		# internal response status >1000 will be taken modulo
+		# 1000 when sent
+		if (resp.status == 1333) {
+			set resp.http.connection = "close";
+		} else if (resp.status == 332) {
+			if (req.restarts == 0) {
+				return (restart);
+			} else {
+				set resp.http.restarts = req.restarts;
+				set resp.body = req.restarts;
+			}
+		}
+		return (deliver);
+	}
+} -start
+
+client c1 {
+	txreq -url /334
+	rxresp
+	expect resp.status == 334
+
+	# cache hit
+	txreq -url /334
+	rxresp
+	expect resp.status == 334
+
+	txreq -url /333
+	rxresp
+	expect resp.status == 333
+	expect_close
+} -run
+
+client c2 {
+	txreq -url /332
+	rxresp
+	expect resp.status == 332
+	expect resp.reason == "FOOfoo"
+	expect resp.http.restarts == 1
+	expect resp.bodylen == 1
+} -run

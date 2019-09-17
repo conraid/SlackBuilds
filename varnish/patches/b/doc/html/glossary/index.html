@@ -1,0 +1,178 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Varnish Glossary &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Notes from the Architect" href="../phk/notes.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../phk/notes.html" title="Notes from the Architect"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="varnish-glossary">
+<span id="glossary"></span><h1>Varnish Glossary<a class="headerlink" href="#varnish-glossary" title="Permalink to this headline">¶</a></h1>
+<dl class="glossary docutils">
+<dt id="term">..</dt>
+<dd>This file will be sorted automagically during formatting,
+so we keep the source in subject order to make sure we
+cover all bases.</dd>
+<dt id="term-backend">backend</dt>
+<dd>The HTTP server varnishd is caching for.  This can be
+any sort of device that handles HTTP requests, including, but
+not limited to: a webserver, a CMS, a load-balancer
+another varnishd, etc.</dd>
+<dt id="term-backend-response">backend response</dt>
+<dd>The response specifically served from a backend to
+varnishd. The backend response may be manipulated in
+vcl_backend_response.</dd>
+<dt id="term-body">body</dt>
+<dd>The bytes that make up the contents of the object, varnishd
+does not care if they are in HTML, XML, JPEG or even EBCDIC,
+to varnishd they are just bytes.</dd>
+<dt id="term-client">client</dt>
+<dd>The program which sends varnishd an HTTP request, typically
+a browser, but do not forget to think about spiders, robots
+script-kiddies and criminals.</dd>
+<dt id="term-header">header</dt>
+<dd>An HTTP protocol header, like &quot;Accept-Encoding:&quot;.</dd>
+<dt id="term-hit">hit</dt>
+<dd>An object Varnish delivers from cache.</dd>
+<dt id="term-master-process">master (process)</dt>
+<dd>One of the two processes in the varnishd program.
+The master process is a manager/nanny process which handles
+configuration, parameters, compilation of :term:VCL etc.
+but it does never get near the actual HTTP traffic.</dd>
+<dt id="term-miss">miss</dt>
+<dd>An object Varnish fetches from the backend before it is served
+to the client.  The object may or may not be put in the cache,
+that depends.</dd>
+<dt id="term-object">object</dt>
+<dd>The (possibly) cached version of a backend response. varnishd
+receives a response from the backend and creates an object,
+from which it may deliver cached responses to clients. If the
+object is created as a result of a request which is passed, it
+will not be stored for caching.</dd>
+<dt id="term-pass">pass</dt>
+<dd>An object Varnish does not try to cache, but simply fetches
+from the backend and hands to the client.</dd>
+<dt id="term-pipe">pipe</dt>
+<dd>Varnish just moves the bytes between client and backend, it
+does not try to understand what they mean.</dd>
+<dt id="term-request">request</dt>
+<dd>What the client sends to varnishd and varnishd sends to the backend.</dd>
+<dt id="term-response">response</dt>
+<dd>What the backend returns to varnishd and varnishd returns to
+the client.  When the response is stored in varnishd's cache,
+we call it an object.</dd>
+<dt id="term-varnishd-nb-with-d">varnishd (NB: with 'd')</dt>
+<dd>This is the actual Varnish cache program.  There is only
+one program, but when you run it, you will get <em>two</em>
+processes:  The &quot;master&quot; and the &quot;worker&quot; (or &quot;child&quot;).</dd>
+<dt id="term-varnishhist">varnishhist</dt>
+<dd>Eye-candy program showing response time histogram in 1980s
+ASCII-art style.</dd>
+<dt id="term-varnishlog">varnishlog</dt>
+<dd>Program which presents varnish transaction log in native format.</dd>
+<dt id="term-varnishncsa">varnishncsa</dt>
+<dd>Program which presents varnish transaction log in &quot;NCSA&quot; format.</dd>
+<dt id="term-varnishstat">varnishstat</dt>
+<dd>Program which presents varnish statistics counters.</dd>
+<dt id="term-varnishtest">varnishtest</dt>
+<dd>Program to test varnishd's behaviour with, simulates backend
+and client according to test-scripts.</dd>
+<dt id="term-varnishtop">varnishtop</dt>
+<dd>Program which gives real-time &quot;top-X&quot; list view of transaction log.</dd>
+<dt id="term-vcl">VCL</dt>
+<dd>Varnish Configuration Language, a small specialized language
+for instructing Varnish how to behave.</dd>
+<dt id="term-worker-process">worker (process)</dt>
+<dd>The worker process is started and configured by the master
+process.  This is the process that does all the work you actually
+want varnish to do.  If the worker dies, the master will try start
+it again, to keep your website alive.</dd>
+</dl>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../phk/notes.html"
+                        title="previous chapter">Notes from the Architect</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/glossary/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../phk/notes.html" title="Notes from the Architect"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+varnishtest "-junix bad subarg handling"
+
+feature root
+
+shell -err -expect "unknown sub-argument" "varnishd -junix,bla=foo -f ''"
+shell -err -expect "user not found" "varnishd -junix,user=/// -f ''"
+shell -err -expect "user not found" "varnishd -junix,workuser=/// -f ''"
+shell -err -expect "group not found" "varnishd -junix,ccgroup=/// -f ''"
+
+feature user_varnish
+
+shell -err -expect "have different login groups" "varnishd -junix,workuser=root -f ''"

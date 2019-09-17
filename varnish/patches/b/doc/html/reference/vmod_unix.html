@@ -1,0 +1,238 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>VMOD unix - Utilities for Unix domain sockets &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="VMOD proxy - Varnish Module to extract TLV attributes from PROXYv2" href="vmod_proxy.html" />
+    <link rel="prev" title="VMOD blob - Utilities for the VCL blob type, encoding and decoding" href="vmod_blob.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="vmod_proxy.html" title="VMOD proxy - Varnish Module to extract TLV attributes from PROXYv2"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vmod_blob.html" title="VMOD blob - Utilities for the VCL blob type, encoding and decoding"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Varnish Reference Manual</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="vmod-unix-utilities-for-unix-domain-sockets">
+<span id="vmod-unix-3"></span><h1>VMOD unix - Utilities for Unix domain sockets<a class="headerlink" href="#vmod-unix-utilities-for-unix-domain-sockets" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="synopsis">
+<h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
+<pre class="literal-block">
+import unix [as name] [from &quot;path&quot;]
+
+<a class="reference internal" href="#unix-user"><span class="std std-ref">STRING user()</span></a>
+
+<a class="reference internal" href="#unix-group"><span class="std std-ref">STRING group()</span></a>
+
+<a class="reference internal" href="#unix-uid"><span class="std std-ref">INT uid()</span></a>
+
+<a class="reference internal" href="#unix-gid"><span class="std std-ref">INT gid()</span></a>
+</pre>
+</div>
+<div class="section" id="description">
+<h2>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>This VMOD provides information about the credentials of the peer
+process (user and group of the process owner) that is connected to a
+Varnish listener via a Unix domain socket, if the platform supports
+it.</p>
+<p>Examples:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unix</span><span class="p">;</span>
+
+<span class="n">sub</span> <span class="n">vcl_recv</span> <span class="p">{</span>
+      <span class="c1"># Return &quot;403 Forbidden&quot; if the connected peer is</span>
+      <span class="c1"># not running as the user &quot;trusteduser&quot;.</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">unix</span><span class="o">.</span><span class="n">user</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;trusteduser&quot;</span><span class="p">)</span> <span class="p">{</span>
+              <span class="k">return</span><span class="p">(</span> <span class="n">synth</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span> <span class="p">);</span>
+      <span class="p">}</span>
+
+      <span class="c1"># Require the connected peer to run in the group</span>
+      <span class="c1"># &quot;trustedgroup&quot;.</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">unix</span><span class="o">.</span><span class="n">group</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;trustedgroup&quot;</span><span class="p">)</span> <span class="p">{</span>
+              <span class="k">return</span><span class="p">(</span> <span class="n">synth</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span> <span class="p">);</span>
+      <span class="p">}</span>
+
+      <span class="c1"># Require the connected peer to run under a specific numeric</span>
+      <span class="c1"># user id.</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">unix</span><span class="o">.</span><span class="n">uid</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">4711</span><span class="p">)</span> <span class="p">{</span>
+              <span class="k">return</span><span class="p">(</span> <span class="n">synth</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span> <span class="p">);</span>
+      <span class="p">}</span>
+
+      <span class="c1"># Require the connected peer to run under a numeric group id.</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">unix</span><span class="o">.</span><span class="n">gid</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">815</span><span class="p">)</span> <span class="p">{</span>
+              <span class="k">return</span><span class="p">(</span> <span class="n">synth</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span> <span class="p">);</span>
+      <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Obtaining the peer credentials is possible on a platform that supports
+one of the following:</p>
+<ul class="simple">
+<li><cite>getpeereid(3)</cite> (such as FreeBSD and other BSD-derived systems)</li>
+<li>the socket option <code class="docutils literal"><span class="pre">SO_PEERCRED</span></code> for <cite>getsockopt(2)</cite> (Linux)</li>
+<li><cite>getpeerucred(3C)</cite> (SunOS and descendants)</li>
+</ul>
+<p>On SunOS and friends, the <code class="docutils literal"><span class="pre">PRIV_PROC_INFO</span></code> privilege set is added to
+the Varnish child process while the VMOD is loaded, see
+<cite>setppriv(2)</cite>.</p>
+<p>On most platforms, the value returned is the effective user or group
+that was valid when the peer process initiated the connection.</p>
+<div class="section" id="string-user">
+<span id="unix-user"></span><h3>STRING user()<a class="headerlink" href="#string-user" title="Permalink to this headline">¶</a></h3>
+<p>Return the user name of the peer process owner.</p>
+</div>
+<div class="section" id="string-group">
+<span id="unix-group"></span><h3>STRING group()<a class="headerlink" href="#string-group" title="Permalink to this headline">¶</a></h3>
+<p>Return the group name of the peer process owner.</p>
+</div>
+<div class="section" id="int-uid">
+<span id="unix-uid"></span><h3>INT uid()<a class="headerlink" href="#int-uid" title="Permalink to this headline">¶</a></h3>
+<p>Return the numeric user id of the peer process owner.</p>
+</div>
+<div class="section" id="int-gid">
+<span id="unix-gid"></span><h3>INT gid()<a class="headerlink" href="#int-gid" title="Permalink to this headline">¶</a></h3>
+<p>Return the numeric group id of the peer process owner.</p>
+</div>
+</div>
+<div class="section" id="errors">
+<h2>ERRORS<a class="headerlink" href="#errors" title="Permalink to this headline">¶</a></h2>
+<p>All functions in this VMOD are subject to the following constraints:</p>
+<ul>
+<li><p class="first">None of them may be called in <code class="docutils literal"><span class="pre">vcl_init{}</span></code> or <code class="docutils literal"><span class="pre">vcl_fini{}</span></code>. If
+one of them is called in <code class="docutils literal"><span class="pre">vcl_init{}</span></code>, then the VCL program will
+fail to load, with an error message from the VMOD.</p>
+</li>
+<li><p class="first">If called on a platform that is not supported, then VCL failure is
+invoked. An error message is written to the log (with the
+<code class="docutils literal"><span class="pre">VCL_Error</span></code> tag), and for all VCL subroutines except for
+<code class="docutils literal"><span class="pre">vcl_synth{}</span></code>, control is directed immediately to <code class="docutils literal"><span class="pre">vcl_synth{}</span></code>,
+with the response status set to 503 and the reason string set to
+&quot;VCL failed&quot;.</p>
+<p>If the failure occurs during <code class="docutils literal"><span class="pre">vcl_synth{}</span></code>, then <code class="docutils literal"><span class="pre">vcl_synth{}</span></code>
+is aborted, and the the response line &quot;503 VCL failed&quot; is sent.</p>
+</li>
+<li><p class="first">If the current listener is not a Unix domain socket, or if the
+attempt to read credentials fails, then a <code class="docutils literal"><span class="pre">VCL_Error</span></code> message is
+written to the log. The STRING functions (<a class="reference internal" href="#unix-user">unix.user()</a> and
+<a class="reference internal" href="#unix-group">unix.group()</a>) return <code class="docutils literal"><span class="pre">NULL</span></code>, while the INT functions
+(<a class="reference internal" href="#unix-uid">unix.uid()</a> and <a class="reference internal" href="#unix-gid">unix.gid()</a>) return -1.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="see-also">
+<h2>SEE ALSO<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="varnishd.html#varnishd-1"><span class="std std-ref">varnishd</span></a></li>
+<li><a class="reference internal" href="vcl.html#vcl-7"><span class="std std-ref">VCL</span></a></li>
+<li><cite>getpeereid(3)</cite></li>
+<li><cite>getsockopt(2)</cite></li>
+<li><cite>getpeerucred(3C)</cite></li>
+<li><cite>setppriv(2)</cite></li>
+</ul>
+</div>
+<div class="section" id="copyright">
+<h2>COPYRIGHT<a class="headerlink" href="#copyright" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">This</span> <span class="n">document</span> <span class="ow">is</span> <span class="n">licensed</span> <span class="n">under</span> <span class="n">the</span> <span class="n">same</span> <span class="n">conditions</span> <span class="k">as</span> <span class="n">Varnish</span> <span class="n">itself</span><span class="o">.</span>
+<span class="n">See</span> <span class="n">LICENSE</span> <span class="k">for</span> <span class="n">details</span><span class="o">.</span>
+
+<span class="n">Authors</span><span class="p">:</span> <span class="n">Geoffrey</span> <span class="n">Simmons</span> <span class="o">&lt;</span><span class="n">geoffrey</span><span class="o">.</span><span class="n">simmons</span><span class="nd">@uplex</span><span class="o">.</span><span class="n">de</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">VMOD unix - Utilities for Unix domain sockets</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vmod_blob.html"
+                        title="previous chapter">VMOD blob - Utilities for the VCL blob type, encoding and decoding</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vmod_proxy.html"
+                        title="next chapter">VMOD proxy - Varnish Module to extract TLV attributes from PROXYv2</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/reference/vmod_unix.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="vmod_proxy.html" title="VMOD proxy - Varnish Module to extract TLV attributes from PROXYv2"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vmod_blob.html" title="VMOD blob - Utilities for the VCL blob type, encoding and decoding"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Reference Manual</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

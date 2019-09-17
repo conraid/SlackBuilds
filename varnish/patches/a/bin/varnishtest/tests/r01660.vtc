@@ -1,0 +1,23 @@
+varnishtest "#1660: range and synth"
+
+server s1 {
+	rxreq
+	txresp
+} -start
+
+varnish v1 -vcl+backend {
+	sub vcl_recv {
+		return (synth(200, "OK"));
+	}
+} -start
+
+client c1 {
+	txreq -hdr "Range: 0-1"
+	rxresp
+	expect resp.status == 416
+
+	txreq -hdr "Range: bytes=0-1"
+	rxresp
+	expect resp.status == 206
+	expect resp.http.content-length == 2
+} -run

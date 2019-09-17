@@ -1,0 +1,176 @@
+.\" Man page generated from reStructuredText.
+.
+.TH VARNISHTOP 1 "" "" ""
+.SH NAME
+varnishtop \- Varnish log entry ranking
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.SH SYNOPSIS
+.sp
+varnishtop [\-1] [\-b] [\-c] [\-C] [\-d] [\-f] [\-g <session|request|vxid|raw>] [\-h] [\-i <taglist>] [\-I <[taglist:]regex>] [\-L <limit>] [\-n <dir>] [\-p <period>] [\-Q <file>] [\-q <query>] [\-r <filename>] [\-t <seconds|off>] [\-T <seconds>] [\-x <taglist>] [\-X <[taglist:]regex>] [\-V]
+.SH DESCRIPTION
+.sp
+The varnishtop utility reads \fIvarnishd(1)\fP shared memory logs and
+presents a continuously updated list of the most commonly occurring
+log entries.  With suitable filtering using the \fB\-I\fP, \fB\-i\fP, \fB\-X\fP
+and \fB\-x\fP options, it can be used to display a ranking of requested
+documents, clients, user agents, or any other information which is
+recorded in the log.
+.sp
+The following options are available:
+.INDENT 0.0
+.TP
+.B \-1
+Instead of a continuously updated display, print the statistics once and exit. Implies \fB\-d\fP\&.
+.TP
+.B \-b
+Only display transactions and log records coming from backend communication.
+.TP
+.B \-c
+Only display transactions and log records coming from client communication.
+.TP
+.B \-C
+Do all regular expression and string matching caseless.
+.TP
+.B \-d
+Process log records at the head of the log.
+.TP
+.B \-f
+Sort and group only on the first field of each log entry. For log entries in the form \fBprefix: value\fP it is the prefix without the colon that is sorted and grouped. This is useful when displaying e.g. ReqStart entries, where the first field is the client IP address.
+.TP
+.BI \-g \ <session|request|vxid|raw>
+The grouping of the log records. The default is to group by vxid.
+.TP
+.B \-h
+Print program usage and exit
+.TP
+.BI \-i \ <taglist>
+Include log records of these tags in output. Taglist is a comma\-separated list of tag globs. Multiple \-i options may be given.
+.sp
+If a tag include option is the first of any tag selection options, all tags are first marked excluded.
+.TP
+.BI \-I \ <[taglist:]regex>
+Include by regex matching. Output only records matching taglist and regular expression. Applies to any tag if taglist is absent. Multiple \-I options may be given.
+.sp
+If a tag include option is the first of any tag selection options, all tags are first marked excluded.
+.TP
+.BI \-L \ <limit>
+Sets the upper limit of incomplete transactions kept before the oldest transaction is force completed. A warning record is synthesized when this happens. This setting keeps an upper bound on the memory usage of running queries. Defaults to 1000 transactions.
+.TP
+.BI \-n \ <dir>
+Specify the varnishd working directory (also known as instance name) to get logs from. If \-n is not specified, the host name is used.
+.TP
+.BI \-p \ <period>
+Specified the number of seconds to measure over, the default is 60 seconds. The first number in the list is the average number of requests seen over this time period. This option has no effect if \-1 option is also used.
+.TP
+.BI \-Q \ <file>
+Specifies the file containing the VSL query to use. When multiple \-Q or \-q options are specified, all queries are considered as if the \(aqor\(aq operator was used to combine them.
+.TP
+.BI \-q \ <query>
+Specifies the VSL query to use. When multiple \-q or \-Q options are specified, all queries are considered as if the \(aqor\(aq operator was used to combine them.
+.TP
+.BI \-r \ <filename>
+Read log in binary file format from this file. The file can be created with \fBvarnishlog \-w filename\fP\&.
+.TP
+.BI \-t \ <seconds|off>
+Timeout before returning error on initial VSM connection. If set the VSM connection is retried every 0.5 seconds for this many seconds. If zero the connection is attempted only once and will fail immediately if unsuccessful. If set to "off", the connection will not fail, allowing the utility to start and wait indefinetely for the Varnish instance to appear.  Defaults to 5 seconds.
+.TP
+.BI \-T \ <seconds>
+Sets the transaction timeout in seconds. This defines the maximum number of seconds elapsed between a Begin tag and the End tag. If the timeout expires, a warning record is synthesized and the transaction is force completed. Defaults to 120 seconds.
+.TP
+.BI \-x \ <taglist>
+Exclude log records of these tags in output. Taglist is a comma\-separated list of tag globs. Multiple \-x options may be given.
+.TP
+.BI \-X \ <[taglist:]regex>
+Exclude by regex matching. Do not output records matching taglist and regular expression. Applies to any tag if taglist is absent. Multiple \-X options may be given.
+.TP
+.B \-V
+Print version information and exit.
+.TP
+.B \-\-optstring
+Print the optstring parameter to \fBgetopt(3)\fP to help writing wrapper scripts.
+.UNINDENT
+.SH EXAMPLES
+.sp
+The following example displays a continuously updated list of the most
+frequently requested URLs:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+varnishtop \-i ReqURL
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The following example displays a continuously updated list of the most
+commonly used user agents:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+varnishtop \-C \-I ReqHeader:User\-Agent
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH SEE ALSO
+.INDENT 0.0
+.IP \(bu 2
+\fIvarnishd(1)\fP
+.IP \(bu 2
+\fIvarnishhist(1)\fP
+.IP \(bu 2
+\fIvarnishlog(1)\fP
+.IP \(bu 2
+\fIvarnishncsa(1)\fP
+.IP \(bu 2
+\fIvarnishstat(1)\fP
+.UNINDENT
+.SH HISTORY
+.sp
+The varnishtop utility was originally developed by Poul\-Henning Kamp
+in cooperation with Verdens Gang AS and Varnish Software AS, and later
+substantially rewritten by Dag\-Erling Smørgrav.  This manual page was
+written by Dag\-Erling Smørgrav, and later updated by Martin Blix
+Grydeland.
+.SH COPYRIGHT
+.sp
+This document is licensed under the same licence as Varnish
+itself. See LICENCE for details.
+.INDENT 0.0
+.IP \(bu 2
+Copyright (c) 2006 Verdens Gang AS
+.IP \(bu 2
+Copyright (c) 2006\-2015 Varnish Software AS
+.UNINDENT
+.\" Generated by docutils manpage writer.
+.

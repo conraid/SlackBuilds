@@ -1,0 +1,206 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Installing Varnish &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Installing on Debian/Ubuntu" href="install_debian.html" />
+    <link rel="prev" title="Prerequisites" href="prerequisites.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="install_debian.html" title="Installing on Debian/Ubuntu"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="prerequisites.html" title="Prerequisites"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Varnish Installation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="installing-varnish">
+<span id="install-doc"></span><h1>Installing Varnish<a class="headerlink" href="#installing-varnish" title="Permalink to this headline">¶</a></h1>
+<p>With open source software, you can choose to install binary packages or compile
+it yourself from source code. To install a package or compile from source is a
+matter of personal taste. If you don't know which method to choose, we
+recommend that you read this whole section and then choose the method you feel
+most comfortable with.</p>
+<p>Unfortunately, something as basic as installing a piece of software
+is highly operating system specific:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install_debian.html">Installing on Debian/Ubuntu</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install_debian.html#from-package">From package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install_debian.html#official-packages-of-6">Official packages of 6</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install_debian.html#official-packages-of-4-1">Official packages of 4.1</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="install_freebsd.html">Installing on FreeBSD</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install_freebsd.html#from-package">From package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install_freebsd.html#from-ports">From ports</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="install_openbsd.html">Installing on OpenBSD</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install_openbsd.html#from-package">From package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install_openbsd.html#from-ports">From ports</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="install_redhat.html">Installing on RedHat or CentOS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install_redhat.html#official-packages-of-6">Official packages of 6</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install_redhat.html#official-packages-of-4-1">Official packages of 4.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install_redhat.html#external-packaging">External packaging</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="cloud-images-of-varnish">
+<h1>Cloud images of Varnish<a class="headerlink" href="#cloud-images-of-varnish" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cloud_debian.html">Debian cloud images</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cloud_debian.html#amazon-web-services-aws-ec2">Amazon Web Services (AWS EC2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cloud_debian.html#microsoft-azure">Microsoft Azure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cloud_debian.html#google-cloud-platform-gcp">Google Cloud Platform (GCP)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cloud_debian.html#uplex-packages-with-vmods">UPLEX Packages with vmods</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cloud_redhat.html">RedHat Cloud images</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cloud_redhat.html#amazon-web-services-aws-ec2">Amazon Web Services (AWS EC2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cloud_redhat.html#microsoft-azure">Microsoft Azure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cloud_redhat.html#google-cloud-platform-gcp">Google Cloud Platform (GCP)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cloud_ubuntu.html">Ubuntu Cloud images</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cloud_ubuntu.html#amazon-web-services-aws-ec2">Amazon Web Services (AWS EC2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cloud_ubuntu.html#microsoft-azure">Microsoft Azure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cloud_ubuntu.html#google-cloud-platform-gcp">Google Cloud Platform (GCP)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="compiling-varnish-from-source">
+<h1>Compiling Varnish from source<a class="headerlink" href="#compiling-varnish-from-source" title="Permalink to this headline">¶</a></h1>
+<p>If there are no binary packages available for your system, or if you
+want to compile Varnish from source for other reasons:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install_source.html">Compiling Varnish from source</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install_source.html#getting-hold-of-the-source">Getting hold of the source</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install_source.html#build-dependencies-on-freebsd">Build dependencies on FreeBSD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install_source.html#build-dependencies-on-debian-ubuntu">Build dependencies on Debian / Ubuntu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install_source.html#build-dependencies-on-red-hat-centos">Build dependencies on Red Hat / CentOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install_source.html#build-dependencies-on-a-smartos-zone">Build dependencies on a SmartOS Zone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install_source.html#building-on-solaris-and-other-solaris-ish-oses">Building on Solaris and other Solaris-ish OSes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install_source.html#compiling-varnish">Compiling Varnish</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install_source.html#installing">Installing</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="other-pre-built-varnish-packages">
+<h1>Other pre-built Varnish packages<a class="headerlink" href="#other-pre-built-varnish-packages" title="Permalink to this headline">¶</a></h1>
+<p>Here is a list of the ones we know about:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://www.archlinux.org/packages/extra/x86_64/varnish/">ArchLinux package</a> and <a class="reference external" href="https://wiki.archlinux.org/index.php/Varnish">ArchLinux wiki</a></li>
+<li><a class="reference external" href="https://pkgs.alpinelinux.org/package/edge/main/x86_64/varnish">Alpine Linux</a></li>
+<li><a class="reference external" href="https://pkg.uplex.de/">UPLEX Packages</a> with various vmods for Debian, Ubuntu and RHEL/CentOS</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installing Varnish</a></li>
+<li><a class="reference internal" href="#cloud-images-of-varnish">Cloud images of Varnish</a></li>
+<li><a class="reference internal" href="#compiling-varnish-from-source">Compiling Varnish from source</a></li>
+<li><a class="reference internal" href="#other-pre-built-varnish-packages">Other pre-built Varnish packages</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="prerequisites.html"
+                        title="previous chapter">Prerequisites</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="install_debian.html"
+                        title="next chapter">Installing on Debian/Ubuntu</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/installation/install.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="install_debian.html" title="Installing on Debian/Ubuntu"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="prerequisites.html" title="Prerequisites"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Varnish Installation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

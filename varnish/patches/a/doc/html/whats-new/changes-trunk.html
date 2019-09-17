@@ -1,0 +1,255 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Changes in Varnish $NEXT_RELEASE &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Upgrading to Varnish $NEXT_RELEASE" href="upgrading-trunk.html" />
+    <link rel="prev" title="What&#39;s new / Upgrading" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="upgrading-trunk.html" title="Upgrading to Varnish $NEXT_RELEASE"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="What&#39;s new / Upgrading"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p><strong>Note: This is a working document for a future release, with running
+updates for changes in the development branch. For changes in the
+released versions of Varnish, see:</strong> <a class="reference internal" href="index.html#whats-new-index"><span class="std std-ref">What's new / Upgrading</span></a></p>
+<div class="section" id="changes-in-varnish-next-release">
+<span id="whatsnew-changes-current"></span><h1>Changes in Varnish <strong>$NEXT_RELEASE</strong><a class="headerlink" href="#changes-in-varnish-next-release" title="Permalink to this headline">¶</a></h1>
+<p>For information about updating your current Varnish deployment to the
+new version, see <a class="reference internal" href="upgrading-trunk.html#whatsnew-upgrading-current"><span class="std std-ref">Upgrading to Varnish $NEXT_RELEASE</span></a>.</p>
+<p>A more detailed and technical account of changes in Varnish, with
+links to issues that have been fixed and pull requests that have been
+merged, may be found in the <a class="reference external" href="https://github.com/varnishcache/varnish-cache/blob/master/doc/changes.rst">change log</a>.</p>
+<div class="section" id="varnishd">
+<h2>varnishd<a class="headerlink" href="#varnishd" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h3>
+<p><strong>XXX changes in -p parameters</strong></p>
+</div>
+<div class="section" id="other-changes-in-varnishd">
+<h3>Other changes in varnishd<a class="headerlink" href="#other-changes-in-varnishd" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="changes-to-vcl">
+<h2>Changes to VCL<a class="headerlink" href="#changes-to-vcl" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="vcl-variables">
+<h3>VCL variables<a class="headerlink" href="#vcl-variables" title="Permalink to this headline">¶</a></h3>
+<p><strong>XXX new, deprecated or removed variables, or changed semantics</strong></p>
+</div>
+<div class="section" id="other-changes-to-vcl">
+<h3>Other changes to VCL<a class="headerlink" href="#other-changes-to-vcl" title="Permalink to this headline">¶</a></h3>
+<p><strong>TODO: return (error);</strong></p>
+</div>
+</div>
+<div class="section" id="vmods">
+<h2>VMODs<a class="headerlink" href="#vmods" title="Permalink to this headline">¶</a></h2>
+<p><strong>XXX changes in the bundled VMODs</strong></p>
+</div>
+<div class="section" id="vsl-query-7">
+<h2>vsl-query(7)<a class="headerlink" href="#vsl-query-7" title="Permalink to this headline">¶</a></h2>
+<p>The syntax for VSL queries, mainly available via the <code class="docutils literal"><span class="pre">-q</span></code> option with
+<a class="reference internal" href="../reference/varnishlog.html#varnishlog-1"><span class="std std-ref">varnishlog</span></a> and similar tools, has slightly changed. Previously
+and end of line in a query would be treated as a simple token separator
+so in a script you could for example write this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">varnishlog</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;</span>
+    <span class="n">tag</span> <span class="n">operator</span> <span class="n">operand</span> <span class="ow">or</span>
+    <span class="n">tag</span> <span class="n">operator</span> <span class="n">operand</span> <span class="ow">or</span>
+    <span class="n">tag</span> <span class="n">operator</span> <span class="n">operand</span>
+<span class="s1">&#39; -g request ...</span>
+</pre></div>
+</div>
+<p>From now on, a query ends at the end of the line, but multiple queries
+can be specified in which case it acts as if the <code class="docutils literal"><span class="pre">or</span></code> operator was used
+to join all the queries.</p>
+<p>With this change in the syntax, the following query:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">varnishlog</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;</span>
+    <span class="n">query1</span>
+    <span class="n">query2</span>
+<span class="s1">&#39;</span>
+</pre></div>
+</div>
+<p>is equivalent to:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">varnishlog</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;(query1) or (query2)&#39;</span>
+</pre></div>
+</div>
+<p>In other words, if you are using a Varnish utility to process transactions
+for several independent reasons, you can decompose complex queries into
+simpler ones by breaking them into separate lines, and for the most complex
+queries possibly getting rid of parenthesis you would have needed in a
+single query.</p>
+<p>If your query is complex and long, but cannot appropriately be broken down
+into multiple queries, you can still break it down into multiple lines by
+using a backslash-newline sequence:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">tag</span> <span class="n">operator</span> <span class="n">operand</span> <span class="ow">and</span> \
+<span class="n">tag</span> <span class="n">operator</span> <span class="n">operand</span> <span class="ow">and</span> \
+<span class="n">tag</span> <span class="n">operator</span> <span class="n">operand</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="../reference/vsl-query.html#vsl-query-7"><span class="std std-ref">vsl-query</span></a> for more information about this change.</p>
+<p>With this new meaning for an end of line in a query it is now possible to
+add comments in a query. If you run into the situation where again you need
+to capture transactions for multiple reasons, you may document it directly
+in the query:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">varnishlog</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;</span>
+    <span class="c1"># catch varnish errors</span>
+    <span class="o">*</span><span class="n">Error</span>
+
+    <span class="c1"># catch client errors</span>
+    <span class="n">BerespStatus</span> <span class="o">&gt;=</span> <span class="mi">400</span> <span class="ow">and</span> <span class="n">BerespStatus</span> <span class="o">&lt;</span> <span class="mi">500</span>
+
+    <span class="c1"># catch backend errors</span>
+    <span class="n">BerespStatus</span> <span class="o">&gt;=</span> <span class="mi">500</span>
+<span class="s1">&#39; -g request</span>
+</pre></div>
+</div>
+<p>This way when you later revisit a complex query, comments may help you
+maintain an understanding of each individual query. This can become even
+more convenient when the query is stored in a file.</p>
+</div>
+<div class="section" id="varnishlog-1-varnishncsa-1-and-others">
+<h2>varnishlog(1), varnishncsa(1) and others<a class="headerlink" href="#varnishlog-1-varnishncsa-1-and-others" title="Permalink to this headline">¶</a></h2>
+<p>Our collection of log-processing tools gained the ability to specify
+multiple <code class="docutils literal"><span class="pre">-q</span></code> options. While previously only the last <code class="docutils literal"><span class="pre">-q</span></code> option
+would prevail you may now pass multiple individual queries and filtering
+will operate as if the <code class="docutils literal"><span class="pre">or</span></code> operator was used to join all the queries.</p>
+<p>A new <code class="docutils literal"><span class="pre">-Q</span></code> option allows you to read the query from a file instead. It
+can also be used multiple times and adds up to any <code class="docutils literal"><span class="pre">-q</span></code> option specified.</p>
+</div>
+<div class="section" id="varnishadm">
+<h2>varnishadm<a class="headerlink" href="#varnishadm" title="Permalink to this headline">¶</a></h2>
+<p><strong>XXX changes concerning varnishadm(1) and/or varnish-cli(7)</strong></p>
+</div>
+<div class="section" id="varnishstat">
+<h2>varnishstat<a class="headerlink" href="#varnishstat" title="Permalink to this headline">¶</a></h2>
+<p><strong>XXX changes concerning varnishstat(1) and/or varnish-counters(7)</strong></p>
+</div>
+<div class="section" id="varnishtest">
+<h2>varnishtest<a class="headerlink" href="#varnishtest" title="Permalink to this headline">¶</a></h2>
+<p><strong>XXX changes concerning varnishtest(1) and/or vtc(7)</strong></p>
+</div>
+<div class="section" id="changes-for-developers-and-vmod-authors">
+<h2>Changes for developers and VMOD authors<a class="headerlink" href="#changes-for-developers-and-vmod-authors" title="Permalink to this headline">¶</a></h2>
+<p><strong>XXX changes concerning VRT, the public APIs, source code organization,
+builds etc.</strong></p>
+<p><em>eof</em></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Changes in Varnish <strong>$NEXT_RELEASE</strong></a><ul>
+<li><a class="reference internal" href="#varnishd">varnishd</a><ul>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#other-changes-in-varnishd">Other changes in varnishd</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#changes-to-vcl">Changes to VCL</a><ul>
+<li><a class="reference internal" href="#vcl-variables">VCL variables</a></li>
+<li><a class="reference internal" href="#other-changes-to-vcl">Other changes to VCL</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#vmods">VMODs</a></li>
+<li><a class="reference internal" href="#vsl-query-7">vsl-query(7)</a></li>
+<li><a class="reference internal" href="#varnishlog-1-varnishncsa-1-and-others">varnishlog(1), varnishncsa(1) and others</a></li>
+<li><a class="reference internal" href="#varnishadm">varnishadm</a></li>
+<li><a class="reference internal" href="#varnishstat">varnishstat</a></li>
+<li><a class="reference internal" href="#varnishtest">varnishtest</a></li>
+<li><a class="reference internal" href="#changes-for-developers-and-vmod-authors">Changes for developers and VMOD authors</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">What's new / Upgrading</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="upgrading-trunk.html"
+                        title="next chapter">Upgrading to Varnish <strong>$NEXT_RELEASE</strong></a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/whats-new/changes-trunk.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="upgrading-trunk.html" title="Upgrading to Varnish $NEXT_RELEASE"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="What&#39;s new / Upgrading"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

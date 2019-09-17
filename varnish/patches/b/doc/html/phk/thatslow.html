@@ -1,0 +1,312 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Going fast slowly &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The first design of Varnish" href="firstdesign.html" />
+    <link rel="prev" title="Far, far away" href="farfaraway.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="firstdesign.html" title="The first design of Varnish"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="farfaraway.html" title="Far, far away"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="going-fast-slowly">
+<span id="phk-that-slow"></span><h1>Going fast slowly<a class="headerlink" href="#going-fast-slowly" title="Permalink to this headline">¶</a></h1>
+<p>If I count in my source tree, right here and now, Varnish has 100K lines
+of sourcecode:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">75619</span> <span class="n">lines</span> <span class="ow">in</span> <span class="o">.</span><span class="n">c</span> <span class="n">files</span>
+<span class="mi">18489</span> <span class="n">lines</span> <span class="ow">in</span> <span class="o">.</span><span class="n">h</span> <span class="n">files</span>
+ <span class="mi">2625</span> <span class="n">lines</span> <span class="ow">in</span> <span class="o">.</span><span class="n">py</span> <span class="n">files</span>
+  <span class="mi">670</span> <span class="n">lines</span> <span class="ow">in</span> <span class="o">.</span><span class="n">vcc</span> <span class="n">files</span>
+  <span class="mi">501</span> <span class="n">lines</span> <span class="ow">in</span> <span class="o">.</span><span class="n">vcl</span> <span class="n">files</span>
+</pre></div>
+</div>
+<p>A little over 20K lines of testcases:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">21777</span> <span class="n">lines</span> <span class="ow">in</span> <span class="o">.</span><span class="n">vtc</span> <span class="n">files</span>
+</pre></div>
+</div>
+<p>A little over 20K lines of documentation:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">22169</span> <span class="n">lines</span> <span class="ow">in</span> <span class="o">.</span><span class="n">rst</span> <span class="n">files</span>
+</pre></div>
+</div>
+<p>And probably about 5K lines of &quot;misc&quot;:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">1393</span> <span class="n">lines</span> <span class="ow">in</span> <span class="o">.</span><span class="n">am</span> <span class="n">files</span>
+ <span class="mi">712</span> <span class="n">lines</span> <span class="ow">in</span> <span class="o">.</span><span class="n">ac</span> <span class="n">files</span>
+ <span class="mi">613</span> <span class="n">lines</span> <span class="ow">in</span> <span class="o">.</span><span class="n">lnt</span> <span class="n">files</span>
+</pre></div>
+</div>
+<p>For the sake of simplicity, let us call it a round 150K total lines <a class="footnote-reference" href="#f1" id="id1">[1]</a>.</p>
+<p>Varnish has been in existence for 10 years, so that's 15K lines per year.</p>
+<p>200 workdays a year makes that 75 lines a day.</p>
+<p>7.5 hours of work per day gives 10 lines per hour.</p>
+<p>Even though I have written the vast majority of the source code,
+Varnish is far from a one-person project.</p>
+<p>I have no way to estimate the average number of full time persons
+over the last ten years, so lets pick the worst case and say that
+only two persons were full time.</p>
+<p>It follows that there is <em>no way</em> average output of those two persons
+exceeded 5 lines per hour, measured over the ten year history of
+the project.</p>
+<p>Does that number seem low or high to you ?</p>
+<div class="section" id="anyway-what-do-programmers-do-all-day">
+<h2>Anyway, What do programmers do all day?<a class="headerlink" href="#anyway-what-do-programmers-do-all-day" title="Permalink to this headline">¶</a></h2>
+<p>(<a class="reference external" href="http://xkcd.com/303/">Yeah, yeah, yeah, I know...</a>)</p>
+<p>Back before the dot-com disaster, people had actually spent considerable
+time and effort to find out what kind of productivity to expect from
+a programmer, after all, how could you ever estimate a project without
+knowing that crucial number?</p>
+<p>The results were all over the place, to put it mildly, but they were
+universally much lower than everybody expected.</p>
+<p>With his seminal The Mythical Man-Month, Frederick P. Brooks brought
+the ballpark estimate &quot;10 lines per programmer per day&quot; into common
+use, despite everything he wrote in the text surrounding that number
+arguing for the exact opposite.</p>
+<p>With the ultimate focus on quality and correctness, for instance
+the Apollo and Space Shuttle software, productivity drops to less
+than one line of code per day per employee.</p>
+<p>The estimated upper bound on Varnish productivity is almost an order
+of magnitude above Brooks ball-park estimate, and another easily
+ignorable magnitude away from the unrealistic goal of being the
+same quality as the software for the Space Shuttle.</p>
+<p>So we are inside Brooks ball-park, even if a bit on the high side <a class="footnote-reference" href="#f2" id="id2">[2]</a>,</p>
+</div>
+<div class="section" id="what-took-us-so-long">
+<h2>What took us so long ?<a class="headerlink" href="#what-took-us-so-long" title="Permalink to this headline">¶</a></h2>
+<p>The surprise over the 5LOC/h number is undoubtedly inversely
+proportional to the age of the reader.</p>
+<p>Back when I was a kid I could write 1000 lines in a single
+sleep-deprived session across midnight <a class="footnote-reference" href="#f3" id="id3">[3]</a>, but it didn't take
+that long before I discovered that I had to throw out most if it
+once I woke up again.</p>
+<p>I was 40 years old when I started Varnish and I had 22 years
+of professional experience, a <em>lot</em> of them staring at, and
+often fixing/improving/refactoring, other peoples source code.</p>
+<p>Over the years I came to appreciate Antoine de Saint-Exupéry's
+observation:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Perfection</span> <span class="ow">is</span> <span class="n">attained</span><span class="p">,</span> <span class="ow">not</span> <span class="n">when</span> <span class="n">there</span> <span class="ow">is</span> <span class="n">nothing</span> <span class="n">more</span>
+<span class="n">to</span> <span class="n">add</span><span class="p">,</span> <span class="n">but</span> <span class="n">when</span> <span class="n">there</span> <span class="ow">is</span> <span class="n">nothing</span> <span class="n">more</span> <span class="n">to</span> <span class="n">remove</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>And eventually I no longer think about code lines as an asset
+to be accumulated, but rather as an expenditure to be avoided.</p>
+<p>When I started Varnish, one of my main personal goals was to
+make it my highest quality program - ever <a class="footnote-reference" href="#f4" id="id4">[4]</a>.</p>
+<p>This is why Varnish is written in &quot;pidgin C&quot; style and lousy with
+asserts which don't do anything <a class="footnote-reference" href="#f5" id="id5">[5]</a>, except clarify programmer
+intent <a class="footnote-reference" href="#f6" id="id6">[6]</a>, and in case of mistakes, stop bad things before they
+get out of hand.</p>
+<p>And this is why there are other &quot;pointless overheads&quot; in the Varnish
+source code, from the panic/backtrace code over the &quot;miniobj&quot;
+type-safety to obscure hints to Gimpel Softwares FlexeLint product.</p>
+<p>Needless to say, it is also not by accident that the 20K lines of
+testcases exercise over 90% of the varnishd source code lines.</p>
+<p>And insisting on doing things right, rather than <em>&quot;we can fix it
+properly later&quot;</em> which is so widespread in FOSS source code <a class="footnote-reference" href="#f7" id="id7">[7]</a>,
+is not going to boost your line count either.</p>
+</div>
+<div class="section" id="but-did-it-work">
+<h2>But did it work ?<a class="headerlink" href="#but-did-it-work" title="Permalink to this headline">¶</a></h2>
+<p>A 10 year project aniversary is a good reason to stop and see
+if the expected roses are there to be smelled.</p>
+<p>We have lots of numbers, commits (10538), bugreports (1864), CVEs
+(2) <a class="footnote-reference" href="#f8" id="id8">[8]</a> or Coverity detections (a dozen?) but It is pretty nigh
+impossible to measure program quality, even though we tend to know
+it when we see it.</p>
+<p>There are also uncountable events which should be in the ledger,
+503s <a class="footnote-reference" href="#f9" id="id9">[9]</a>, crashes, hair-tearing, head-scrathing, coffee-drinking,
+manual- and source-code thumbing and frustrated cries of help on IRC.</p>
+<p>In the other cup there are equally intangible positives, pats on
+the shoulder, free beers, X-mas and birthday presents from my Amazon
+wish-list (Thanks!), and more snarky tweets about how great Varnish
+is than I can remember.</p>
+<p>All in all, the best I have been able to do, to convince myself that
+I have not <em>totally</em> missed my goal, is a kind of &quot;The curious case
+of the dog in the night-time&quot; observation:</p>
+<p>I have never yet had a person tell me Varnish made their life more
+miserable.</p>
+<p>I'll take that.</p>
+<p><em>phk</em></p>
+<p class="rubric">Footnotes</p>
+<table class="docutils footnote" frame="void" id="f1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>We can do a better and more precise estimate if we want.
+For instance we have not typed in the 30 line BSD-2 Blurp <em>all</em>
+314 times, and upwards of 30% of the rest are blank lines.
+However, there is no way we can reduce the number by an order
+of magnitude, in particular not because code that was written
+and subsequently removed is not part of the base data.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Which is to be expected really: We don't program on punched cards.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>And I did.  Migrating an oilcompany from IBM mainframes
+to 16-bit UNIX computers in 198x was an interesting challenge.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[4]</a></td><td>Having half the world adopt your hastily hacked up md5crypt
+with a glaringly obvious, but fortunately harmless, bug will do
+that to you.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[5]</a></td><td>Roughly 10% of the source code lines were asserts last I looked.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[6]</a></td><td>I prefer asserts over comments for this, since the compiler
+can also see them.  The good news is, the compiler can also see
+that they don't do anything so a lot fewer are present in the
+binary program.  Interestingly, a couple of them allows the compiler
+to optimize much harder.  No, I won't tell you which those are.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[7]</a></td><td>Only code where that is a bigger problem is phd-ware:  Software
+written as proof-of-concept and abandonned in haste when the diploma
+was in hand.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f8" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id8">[8]</a></td><td>Obviously, a high count of CVE's should be a real reason for
+concern, but there is no meaningful difference between having
+one, two or three CVE's over the course of ten years.
+The two CVEs against Varnish were both utterly bogus &quot;trophy-hunter&quot;
+CVEs in my opinion.  (But don't take my word for it, judge for
+yourself.)</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f9" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id9">[9]</a></td><td>There used to be a link back to the Varnish project on the
+default.vcl's 503 page, but we removed it after a large national
+institution in a non-english country showed it to a <em>lot</em> of people
+who clicked on the only link they could see on the page.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Going fast slowly</a><ul>
+<li><a class="reference internal" href="#anyway-what-do-programmers-do-all-day">Anyway, What do programmers do all day?</a></li>
+<li><a class="reference internal" href="#what-took-us-so-long">What took us so long ?</a></li>
+<li><a class="reference internal" href="#but-did-it-work">But did it work ?</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="farfaraway.html"
+                        title="previous chapter">Far, far away</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="firstdesign.html"
+                        title="next chapter">The first design of Varnish</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/phk/thatslow.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="firstdesign.html" title="The first design of Varnish"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="farfaraway.html" title="Far, far away"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,55 @@
+varnishtest "Regression test for ticket #306, random director ignoring good backend"
+
+server s1 {
+
+	rxreq
+	expect req.url == /foo
+	txresp -body "foo1"
+
+	rxreq
+	expect req.url == /bar
+	txresp -body "bar1"
+
+} -start
+
+server s2 {
+	rxreq
+	txresp -status 404
+} -start
+
+varnish v1 -vcl {
+
+	import directors;
+
+	backend s1 {
+		.host = "${s1_addr}"; .port = "${s1_port}";
+	}
+	backend s2 {
+		.host = "${s2_addr}"; .port = "${s2_port}";
+	}
+	sub vcl_init {
+		new foo = directors.random();
+		foo.add_backend(s1, 1);
+		foo.add_backend(s2, 1);
+	}
+
+	sub vcl_backend_fetch {
+		set bereq.backend = foo.backend();
+	}
+} -start
+
+varnish v1 -cliok "backend.set_health s2 sick"
+varnish v1 -cliok "backend.list"
+
+client c1 {
+	timeout 10
+
+	txreq -url "/foo"
+	rxresp
+	expect resp.status == 200
+
+	txreq -url "/bar"
+	rxresp
+	expect resp.status == 200
+
+} -run

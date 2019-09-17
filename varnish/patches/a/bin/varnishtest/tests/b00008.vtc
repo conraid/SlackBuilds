@@ -1,0 +1,49 @@
+varnishtest "Test CLI commands and parameter functions"
+
+varnish v1 -arg "-b ${bad_ip}:9080"
+
+varnish v1 -cliok "help"
+
+varnish v1 -cliok "-help"
+
+varnish v1 -cliok "help -a"
+
+varnish v1 -cliok "help -d"
+
+varnish v1 -cliok "help vcl.load"
+
+varnish v1 -clierr 101 "help ban"
+
+varnish v1 -clierr 101 "FOO?"
+
+varnish v1 -clierr 100 "\x22"
+
+varnish v1 -clierr 105 "help  1 2 3"
+
+varnish v1 -cliok "param.show"
+
+varnish v1 -start
+
+varnish v1 -cliok "help"
+
+varnish v1 -clijson "help -j"
+
+varnish v1 -cliok "backend.list"
+
+varnish v1 -clijson "backend.list -j"
+
+varnish v1 -cliok "ping"
+
+varnish v1 -clijson "ping -j"
+
+varnish v1 -clierr 106 "param.set waiter HASH(0x8839c4c)"
+
+varnish v1 -cliexpect 60 "param.show first_byte_timeout"
+varnish v1 -cliok "param.set first_byte_timeout 120"
+varnish v1 -cliexpect 120 "param.show first_byte_timeout"
+varnish v1 -cliok "param.reset first_byte_timeout"
+varnish v1 -cliexpect 60 "param.show first_byte_timeout"
+
+varnish v1 -cliok "param.set cli_limit 128"
+
+varnish v1 -clierr 201 "param.show"

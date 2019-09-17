@@ -1,0 +1,955 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Upgrading to Varnish 6.0 &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Changes in Varnish 5.2" href="changes-5.2.html" />
+    <link rel="prev" title="Changes in Varnish 6.0" href="changes-6.0.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="changes-5.2.html" title="Changes in Varnish 5.2"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="changes-6.0.html" title="Changes in Varnish 6.0"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="upgrading-to-varnish-6-0">
+<span id="whatsnew-upgrading-6-0"></span><h1>Upgrading to Varnish 6.0<a class="headerlink" href="#upgrading-to-varnish-6-0" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="unix-domain-sockets-as-listen-addresses">
+<span id="upd-6-0-uds-acceptor"></span><h2>Unix domain sockets as listen addresses<a class="headerlink" href="#unix-domain-sockets-as-listen-addresses" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">varnishd</span> <span class="pre">-a</span></code> command-line argument now has this form, where the
+<code class="docutils literal"><span class="pre">address</span></code> may be a Unix domain socket, identified as such when it
+begins with <code class="docutils literal"><span class="pre">/</span></code> (see varnishd <a class="reference internal" href="../reference/varnishd.html#ref-varnishd-options"><span class="std std-ref">OPTIONS</span></a>):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">a</span> <span class="p">[</span><span class="n">name</span><span class="o">=</span><span class="p">][</span><span class="n">address</span><span class="p">][:</span><span class="n">port</span><span class="p">][,</span><span class="n">PROTO</span><span class="p">][,</span><span class="n">user</span><span class="o">=&lt;</span><span class="n">user</span><span class="o">&gt;</span><span class="p">][,</span><span class="n">group</span><span class="o">=&lt;</span><span class="n">group</span><span class="o">&gt;</span><span class="p">][,</span><span class="n">mode</span><span class="o">=&lt;</span><span class="n">mode</span><span class="o">&gt;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">varnishd</span> <span class="o">-</span><span class="n">a</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">listen</span><span class="o">.</span><span class="n">sock</span><span class="p">,</span><span class="n">PROXY</span><span class="p">,</span><span class="n">user</span><span class="o">=</span><span class="n">vcache</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="n">varnish</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="mi">660</span>
+</pre></div>
+</div>
+<p>That means that an absolute path must always be specified for the
+socket file.  The socket file is created when Varnish starts, and any
+file that may exist at that path is unlinked first. You can use the
+optional <code class="docutils literal"><span class="pre">user</span></code>, <code class="docutils literal"><span class="pre">group</span></code> and <code class="docutils literal"><span class="pre">mode</span></code> sub-arguments to set
+permissions of the new socket file; use names for <code class="docutils literal"><span class="pre">user</span></code> and
+<code class="docutils literal"><span class="pre">group</span></code> (not numeric IDs), and a 3-digit octal number for
+<code class="docutils literal"><span class="pre">mode</span></code>. This is done by the management process, so creating the
+socket file and setting permissions are done with the privileges of
+the management process owner.</p>
+<p>There are some platform-specific restrictions on the use of UDSen to
+which you will have to conform. Here are some things we know of, but
+this list is by no means authoritative or exhaustive; always consult
+your platform documentation (usually in <code class="docutils literal"><span class="pre">man</span> <span class="pre">unix</span></code>):</p>
+<ul class="simple">
+<li>There is a maximum permitted length of the path for a socket file,
+considerably shorter than the maximum for the file system; usually a
+bit over 100 bytes.</li>
+<li>On FreeBSD and other BSD-derived systems, the permissions of the
+socket file do not restrict which processes can connect to the
+socket.</li>
+<li>On Linux, a process connecting to the socket must have write
+permissions on the socket file.</li>
+</ul>
+<p>On any system, a process connecting to the socket must be able to
+access the socket file. So you can reliably restrict access by
+restricting permissions on the directory containing the socket (but
+that must be done outside of the Varnish configuration).</p>
+<p>When UDS listeners are in use, VCL &gt;= 4.1 will be required for all VCL
+programs loaded by Varnish. If you attempt to load a VCL source with
+<code class="docutils literal"><span class="pre">vcl</span> <span class="pre">4.0;</span></code>, the load will fail with a message that the version is
+not supported.</p>
+<p>If you continue using only IP addresses in your <code class="docutils literal"><span class="pre">-a</span></code> arguments, you
+won't have to change them, and you can continue using VCL 4.0.</p>
+</div>
+<div class="section" id="unix-domain-sockets-as-backend-addresses">
+<span id="upd-6-0-uds-backend"></span><h2>Unix domain sockets as backend addresses<a class="headerlink" href="#unix-domain-sockets-as-backend-addresses" title="Permalink to this headline">¶</a></h2>
+<p>A backend declaration may now have the <code class="docutils literal"><span class="pre">.path</span></code> field to specify a
+Unix domain socket to which Varnish connects:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">backend</span> <span class="n">my_uds_backend</span> <span class="p">{</span>
+      <span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;/path/to/backend.sock&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>One of the fields <code class="docutils literal"><span class="pre">.host</span></code> or <code class="docutils literal"><span class="pre">.path</span></code> must be specified for a
+backend (but not both).</p>
+<p>The value of <code class="docutils literal"><span class="pre">.path</span></code> must be an absolute path (beginning with
+<code class="docutils literal"><span class="pre">/</span></code>), and the file at that path must exist and be accessible to
+Varnish at VCL load time; and it must be a socket.</p>
+<p>The platform-specific restrictions on UDSen mentioned above apply of
+course to backends as well; but in this case your deployment of the
+peer component listening at the socket file must fulfill those
+conditions, otherwise Varnish may not be able to connect to the
+backend.</p>
+<p>The path of a socket file may also be specified in the
+<code class="docutils literal"><span class="pre">varnishd</span> <span class="pre">-b</span></code> command-line option (see varnishd
+<a class="reference internal" href="../reference/varnishd.html#ref-varnishd-options"><span class="std std-ref">OPTIONS</span></a>):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ varnishd -b /path/to/backend.sock
+</pre></div>
+</div>
+<p>The value of <code class="docutils literal"><span class="pre">-b</span></code> must fulfill the same conditions as the <code class="docutils literal"><span class="pre">.path</span></code>
+field in a backend declaration.</p>
+<p>Backends with the <code class="docutils literal"><span class="pre">.path</span></code> specification require VCL 4.1, as do paths
+with the <code class="docutils literal"><span class="pre">-b</span></code> argument. If you don't use UDS backends, you can
+continue using VCL 4.0.</p>
+</div>
+<div class="section" id="varnishd-parameters">
+<h2>varnishd parameters<a class="headerlink" href="#varnishd-parameters" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">cli_buffer</span></code> parameter, which was deprecated as of Varnish 5.2,
+is now retired.</p>
+<p><a class="reference internal" href="../reference/varnishd.html#ref-param-max-restarts"><span class="std std-ref">max_restarts</span></a> now works more correctly -- it is the
+number of <code class="docutils literal"><span class="pre">return(restart)</span></code> calls permitted per request. (It had
+been one less than the number of permitted restarts.)</p>
+<p>The parameters <a class="reference internal" href="../reference/varnishd.html#ref-param-tcp-keepalive-intvl"><span class="std std-ref">tcp_keepalive_intvl</span></a>,
+<a class="reference internal" href="../reference/varnishd.html#ref-param-tcp-keepalive-probes"><span class="std std-ref">tcp_keepalive_probes</span></a> and
+<a class="reference internal" href="../reference/varnishd.html#ref-param-tcp-keepalive-time"><span class="std std-ref">tcp_keepalive_time</span></a> are silently ignored for listen
+addresses that are Unix domain sockets. The parameters
+<a class="reference internal" href="../reference/varnishd.html#ref-param-accept-filter"><span class="std std-ref">accept_filter</span></a> and <a class="reference internal" href="../reference/varnishd.html#ref-param-tcp-fastopen"><span class="std std-ref">tcp_fastopen</span></a>
+(which your platform may or may not support in the first place) almost
+certainly have no effect on a UDS. It is not an error to use any of
+these parameters with a UDS; you may get error messages in the log for
+<code class="docutils literal"><span class="pre">accept_filter</span></code> or <code class="docutils literal"><span class="pre">tcp_fastopen</span></code> (with the VSL tag <code class="docutils literal"><span class="pre">Error</span></code> in
+raw grouping), but they are harmless.</p>
+<p><a class="reference internal" href="../reference/varnishd.html#ref-param-workspace-thread"><span class="std std-ref">workspace_thread</span></a> is now used for IO buffers during
+the delivery of the client response. This space had previously been
+taken from <a class="reference internal" href="../reference/varnishd.html#ref-param-workspace-client"><span class="std std-ref">workspace_client</span></a>. If you need to reduce
+memory footprint, consider reducing <code class="docutils literal"><span class="pre">workspace_client</span></code> by the amount
+in <code class="docutils literal"><span class="pre">workspace_thread</span></code>.</p>
+<p>Added <cite>ref_param_esi_iovs</cite>. tl;dr: Don't touch it, unless advised
+to do so by someone familiar with the innards of Varnish.</p>
+</div>
+<div class="section" id="changes-to-vcl">
+<h2>Changes to VCL<a class="headerlink" href="#changes-to-vcl" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="vcl-4-0-and-4-1">
+<h3>VCL 4.0 and 4.1<a class="headerlink" href="#vcl-4-0-and-4-1" title="Permalink to this headline">¶</a></h3>
+<p>The first line of code in a VCL program may now be either <code class="docutils literal"><span class="pre">vcl</span> <span class="pre">4.0;</span></code>
+or <code class="docutils literal"><span class="pre">vcl</span> <span class="pre">4.1;</span></code>, establishing the version of the language for that
+instance of VCL. Varnish 6.0 supports both versions.</p>
+<p>The VCL version mainly affects which variables may be used in your VCL
+program, or in some cases, whether the variable is writable or
+read-only. Only VCL 4.1 is permitted when Unix domain sockets are in
+use.</p>
+<p>For details, see <a class="reference internal" href="../reference/vcl.html#vcl-variables"><span class="std std-ref">VCL Variables</span></a>, and the notes in the present
+document.</p>
+</div>
+<div class="section" id="vcl-variables">
+<h3>VCL variables<a class="headerlink" href="#vcl-variables" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="local-socket-and-local-endpoint">
+<h4><code class="docutils literal"><span class="pre">local.socket</span></code> and <code class="docutils literal"><span class="pre">local.endpoint</span></code><a class="headerlink" href="#local-socket-and-local-endpoint" title="Permalink to this headline">¶</a></h4>
+<p>These read-only variables are available as of VCL 4.1, and provide
+information about the listener address over which the current client
+request was received.</p>
+<p><code class="docutils literal"><span class="pre">local.socket</span></code> is the name provided in the <code class="docutils literal"><span class="pre">-a</span></code> command-line
+argument for the current listener, which defaults to <code class="docutils literal"><span class="pre">a0</span></code>, <code class="docutils literal"><span class="pre">a1</span></code>
+and so on (see varnishd <a class="reference internal" href="../reference/varnishd.html#ref-varnishd-options"><span class="std std-ref">OPTIONS</span></a>).</p>
+<p><code class="docutils literal"><span class="pre">local.endpoint</span></code> is the value of the <code class="docutils literal"><span class="pre">address[:port]</span></code> or <code class="docutils literal"><span class="pre">path</span></code>
+field provided as the <code class="docutils literal"><span class="pre">-a</span></code> value for the current listener, exactly
+as given on the command line. For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span># When varnishd is invoked with these -a arguments ...
+$ varnishd -a foo=12.34.56.78:4711 -a bar=/path/to/listen.sock
+
+# ... then in VCL, for requests received over the first listener:
+local.socket == &quot;foo&quot;
+local.endpoint == &quot;12.34.56.78:4711&quot;
+
+# ... and for requests received over the second listener:
+local.socket == &quot;bar&quot;
+local.endpoint == &quot;/path/to/listen.sock&quot;
+
+# With this invocation ...
+$ varnishd -a :80 -a 87.65.43.21
+
+# ... then for requests received over the first listener:
+local.socket == &quot;a0&quot;
+local.endpoint == &quot;:80&quot;
+
+# ... and for the second listener
+local.socket == &quot;a1&quot;
+local.endpoint == &quot;87.65.43.21&quot;
+</pre></div>
+</div>
+<p>So if you have more than one listener and need to tell them apart in
+VCL, for example a listener for &quot;regular&quot; client traffic and another
+one for &quot;admin&quot; requests that you must restrict to internal systems,
+these two variables can help you do so.</p>
+<p><code class="docutils literal"><span class="pre">local.socket</span></code> and <code class="docutils literal"><span class="pre">local.endpoint</span></code> are available on both the
+client and backend sides. But the values on the backend side are not
+necessarily the same as they were on the side of the client request
+that initiated the backend request. This is because of the separation
+of client and backend threads -- a backend thread may be re-used that
+was initiated by a client request over another listener, and
+<code class="docutils literal"><span class="pre">local.socket</span></code> and <code class="docutils literal"><span class="pre">local.endpoint</span></code> on that thread retain the
+values for the original listener.</p>
+<p>So if, in your backend VCL code, you need to be sure about the
+listener that was used on the client side of the same transaction,
+assign <code class="docutils literal"><span class="pre">local.socket</span></code> and/or <code class="docutils literal"><span class="pre">local.endpoint</span></code> to a client request
+header, and retrieve the value from a backend request header:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_miss</span> <span class="p">{</span>
+      <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">X</span><span class="o">-</span><span class="n">Listener</span> <span class="o">=</span> <span class="n">local</span><span class="o">.</span><span class="n">socket</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">sub</span> <span class="n">vcl_backend_fetch</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">bereq</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">X</span><span class="o">-</span><span class="n">Listener</span> <span class="o">==</span> <span class="s2">&quot;a0&quot;</span><span class="p">)</span> <span class="p">{</span>
+              <span class="c1"># ...</span>
+      <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sess-xid">
+<h4><code class="docutils literal"><span class="pre">sess.xid</span></code><a class="headerlink" href="#sess-xid" title="Permalink to this headline">¶</a></h4>
+<p>This is the unique ID assigned by Varnish to the current session,
+which stands for the &quot;conversation&quot; with a single client connection
+that comprises one or more request/response transactions. It is the
+same XID shown in the log for session transactions (with
+<code class="docutils literal"><span class="pre">-g</span> <span class="pre">session</span></code> grouping). <code class="docutils literal"><span class="pre">sess.xid</span></code> is read-only and is available
+as of VCL 4.1.</p>
+</div>
+<div class="section" id="variable-changes-in-vcl-4-0-and-4-1">
+<h4>Variable changes in VCL 4.0 and 4.1<a class="headerlink" href="#variable-changes-in-vcl-4-0-and-4-1" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="docutils literal"><span class="pre">*.proto</span></code> variables (<code class="docutils literal"><span class="pre">req.proto</span></code>, <code class="docutils literal"><span class="pre">resp.proto</span></code>,
+<code class="docutils literal"><span class="pre">bereq.proto</span></code> and <code class="docutils literal"><span class="pre">beresp.proto</span></code>) are read-only as of VCL 4.1, but
+are still writable in VCL 4.0.</p>
+<p><code class="docutils literal"><span class="pre">req.esi</span></code> is available in VCL 4.0, but no longer in 4.1. In its
+place, <code class="docutils literal"><span class="pre">resp.do_esi</span></code> has been introduced in VCL 4.1. Set
+<code class="docutils literal"><span class="pre">resp.do_esi</span></code> to false in <code class="docutils literal"><span class="pre">vcl_deliver</span></code> if you want to selectively
+disable ESI processing for a client response (even though
+<code class="docutils literal"><span class="pre">beresp.do_esi</span></code> was true during fetch).</p>
+<p><code class="docutils literal"><span class="pre">beresp.backend.ip</span></code> and <code class="docutils literal"><span class="pre">beresp.storage_hint</span></code> are discontinued as
+of VCL 4.1, but are still available in 4.0. Note that
+<code class="docutils literal"><span class="pre">beresp.storage_hint</span></code> has been deprecated since Varnish 5.1; you
+should use <code class="docutils literal"><span class="pre">beresp.storage</span></code> instead.</p>
+</div>
+<div class="section" id="client-side-variable-access">
+<h4>Client-side variable access<a class="headerlink" href="#client-side-variable-access" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">req.storage</span></code>, <code class="docutils literal"><span class="pre">req.hash_ignore_busy</span></code> and <code class="docutils literal"><span class="pre">req.hash_always_miss</span></code>
+are now accessible from all of the client side subroutines (previously
+only in <code class="docutils literal"><span class="pre">vcl_recv{}</span></code>).</p>
+</div>
+</div>
+<div class="section" id="unix-domain-sockets-and-vcl">
+<h3>Unix domain sockets and VCL<a class="headerlink" href="#unix-domain-sockets-and-vcl" title="Permalink to this headline">¶</a></h3>
+<p>We have made an effort to adapt the support of Unix domain sockets in
+VCL so that you may not have to change anything in your VCL deployment
+at all, other than changing the version to 4.1.</p>
+<p>The short story is that where VCL requires an IP value, the value is
+<code class="docutils literal"><span class="pre">0.0.0.0:0</span></code> for a connection that was addressed as a UDS -- the &quot;any
+IPv4&quot; address with port 0. So your use of IP-valued elements in VCL
+will continue to work and may not have to change, but there are some
+consequences that you should consider, covered in the following.</p>
+<p>As we shall see, for a variety of reasons you get the best results if
+the component forwarding to Varnish via UDS uses the PROXY protocol,
+which sets <code class="docutils literal"><span class="pre">client.ip</span></code> and <code class="docutils literal"><span class="pre">server.ip</span></code> to the addresses sent in
+the PROXY header.</p>
+<p>If you don't use UDSen, then nothing about VCL changes with respect to
+network addressing. UDS support requires version 4.1, so if you are
+keeping your VCL level at 4.0 (and hence are staying with IP
+addresses), then none of the following is of concern.</p>
+<div class="section" id="client-ip-server-ip-local-ip-and-remote-ip">
+<h4><code class="docutils literal"><span class="pre">client.ip</span></code>, <code class="docutils literal"><span class="pre">server.ip</span></code>, <code class="docutils literal"><span class="pre">local.ip</span></code> and <code class="docutils literal"><span class="pre">remote.ip</span></code><a class="headerlink" href="#client-ip-server-ip-local-ip-and-remote-ip" title="Permalink to this headline">¶</a></h4>
+<p>These variables have the value <code class="docutils literal"><span class="pre">0.0.0.0</span></code> for a connection that was
+addressed as a UDS. If you are using the PROXY protocol, then
+<code class="docutils literal"><span class="pre">client.ip</span></code> and <code class="docutils literal"><span class="pre">server.ip</span></code> have the &quot;real&quot; IP address values sent
+via PROXY, but <code class="docutils literal"><span class="pre">local.ip</span></code> and <code class="docutils literal"><span class="pre">remote.ip</span></code> are always <code class="docutils literal"><span class="pre">0.0.0.0</span></code>
+for a UDS listener.</p>
+<p>If you have more than one UDS listener (more than one <code class="docutils literal"><span class="pre">-a</span></code>
+command-line argument specifying a socket path), then you may not be
+able to use the <code class="docutils literal"><span class="pre">*.ip</span></code> variables to tell them apart, especially
+since <code class="docutils literal"><span class="pre">local.ip</span></code> will be <code class="docutils literal"><span class="pre">0.0.0.0</span></code> for all of them. If you need to
+distinguish such addresses in VCL, you can use <code class="docutils literal"><span class="pre">local.socket</span></code>, which
+is the name given for the <code class="docutils literal"><span class="pre">-a</span></code> argument (<code class="docutils literal"><span class="pre">a0</span></code>, <code class="docutils literal"><span class="pre">a1</span></code> etc. by
+default), or <code class="docutils literal"><span class="pre">local.endpoint</span></code>, which in the case of UDS is the path
+given in the <code class="docutils literal"><span class="pre">-a</span></code> argument. You can, for example, use string
+operations such as regex matching on <code class="docutils literal"><span class="pre">local.endpoint</span></code> to determine
+properties of the path address:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span># admin requests allowed only on the listener whose path ends in
+# &quot;admin.sock&quot;
+if (req.url ~ &quot;^/admin&quot;) {
+      if (local.endpoint !~ &quot;admin.sock$&quot;) {
+              # wrong listener, respond with &quot;403 Forbidden&quot;
+              return( synth(403) );
+      }
+      else {
+              # process the admin request ...
+      }
+}
+
+# superadmin requests only allowed on the &quot;superadmin.sock&quot; listener
+if (req.url ~ &quot;^/superadmin&quot;) {
+      if (local.endpoint !~ &quot;superadmin.sock$&quot;) {
+              return( synth(403) );
+      }
+      else {
+              # superadmin request ...
+      }
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="acls">
+<h4>ACLs<a class="headerlink" href="#acls" title="Permalink to this headline">¶</a></h4>
+<p>As before, ACLs can only specify ranges of IP addresses, and matches
+against ACLs can only be run against IP-valued elements.</p>
+<p>This means that if a <code class="docutils literal"><span class="pre">*.ip</span></code> variable whose value is <code class="docutils literal"><span class="pre">0.0.0.0</span></code> due
+to the use of UDS is matched against an ACL, the match can only
+succeed if the ACL includes <code class="docutils literal"><span class="pre">0.0.0.0</span></code>. If you currently have a
+security requirement that depends on IP addresses <em>not</em> matching an
+ACL unless they belong to a specified range, then that will continue
+to work with a UDS listener (since you almost certainly have not
+included <code class="docutils literal"><span class="pre">0.0.0.0</span></code> in that range).</p>
+<p>Recall again that <code class="docutils literal"><span class="pre">client.ip</span></code> and <code class="docutils literal"><span class="pre">server.ip</span></code> are set by the PROXY
+protocol. So if you have a UDS listener configured to use PROXY and
+are using an ACL to match against one of those two variables, the
+matches will continue working against the &quot;real&quot; IPs sent via PROXY.</p>
+<p>You can of course define an ACL to match in the UDS case, by including
+<code class="docutils literal"><span class="pre">0.0.0.0</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># matches local.ip and remote.ip when the listener is UDS</span>
+<span class="n">acl</span> <span class="n">uds</span> <span class="p">{</span>
+      <span class="s2">&quot;0.0.0.0&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>But such an ACL cannot distinguish different UDS listeners, if you
+have more than one. For that, you can achieve a similar effect by
+inspecting <code class="docutils literal"><span class="pre">local.socket</span></code> and/or <code class="docutils literal"><span class="pre">local.endpoint</span></code>, as discussed
+above.</p>
+</div>
+<div class="section" id="client-identity-and-the-hash-and-shard-directors">
+<h4><code class="docutils literal"><span class="pre">client.identity</span></code> and the hash and shard directors<a class="headerlink" href="#client-identity-and-the-hash-and-shard-directors" title="Permalink to this headline">¶</a></h4>
+<p>As before, <code class="docutils literal"><span class="pre">client.identity</span></code> defaults to <code class="docutils literal"><span class="pre">client.ip</span></code>; that is, if
+its value has not been explicitly set in VCL, then it returns the same
+value as <code class="docutils literal"><span class="pre">client.ip</span></code> when it is read.</p>
+<p>A common use of <code class="docutils literal"><span class="pre">client.identity</span></code> is to configure the hash and shard
+directors (see <a class="reference internal" href="../reference/vmod_directors.html#vmod-directors-3"><span class="std std-ref">VMOD directors - Varnish Directors Module</span></a>). This is a way to achieve
+&quot;client-sticky&quot; distribution of requests to backends -- requests from
+the same clients are always sent to the same backends.</p>
+<p>Such a configuration will almost certainly not do what you want if:</p>
+<ul class="simple">
+<li>The listener is set to a UDS address.</li>
+<li>PROXY is not used to set <code class="docutils literal"><span class="pre">client.ip</span></code>.</li>
+<li><code class="docutils literal"><span class="pre">client.identity</span></code> is not set to a distinct value before it is
+used to configure the director.</li>
+</ul>
+<p>Since <code class="docutils literal"><span class="pre">client.identity</span></code> defaults to <code class="docutils literal"><span class="pre">client.ip</span></code>, which is always
+<code class="docutils literal"><span class="pre">0.0.0.0</span></code> under these conditions, the result will be that the
+director sends all requests to just one backend, and no requests to
+any other backend.</p>
+<p>To avoid that result, change one of the conditions listed above -- use
+PROXY to set distinct values for <code class="docutils literal"><span class="pre">client.ip</span></code>, or set
+<code class="docutils literal"><span class="pre">client.identity</span></code> to distinct values before it is used.</p>
+</div>
+<div class="section" id="server-ip-and-default-hashing-for-the-cache">
+<h4><code class="docutils literal"><span class="pre">server.ip</span></code> and default hashing for the cache<a class="headerlink" href="#server-ip-and-default-hashing-for-the-cache" title="Permalink to this headline">¶</a></h4>
+<p>The default algorithm for computing a hash value for the cache (the
+implementation of <code class="docutils literal"><span class="pre">vcl_hash</span></code> in <code class="docutils literal"><span class="pre">builtin.vcl</span></code>) mixes <code class="docutils literal"><span class="pre">req.url</span></code>
+and the Host header (<code class="docutils literal"><span class="pre">req.http.Host</span></code>) into the hash data. If there
+is no Host header, then <code class="docutils literal"><span class="pre">server.ip</span></code> is used instead. Considering the
+Host header or <code class="docutils literal"><span class="pre">server.ip</span></code> is a way of achieving a kind of &quot;virtual
+hosting&quot; -- if your site receives requests with different Host headers
+or at distinct server addresses, then requests for the same URL will
+not hit the same cached response, if the requests are different in
+those other respects.</p>
+<p>If you have UDS listeners and are not using PROXY to set distinct
+values of <code class="docutils literal"><span class="pre">server.ip</span></code>, then requests without a Host header will have
+the same value of <code class="docutils literal"><span class="pre">server.ip</span> <span class="pre">==</span> <span class="pre">0.0.0.0</span></code> mixed into the hash. In
+that case, requests with the same URL will result in the same hash
+value, and hit the same cached responses.</p>
+<p>That doesn't matter, of course, if you don't need the &quot;virtual
+hosting&quot; effect -- you only have one listener, you never receive
+different host headers, or you never receive the same URL for what
+should lead to distinct responses.</p>
+<p>But if you need to avoid that result, then you can make one or more
+of these changes:</p>
+<ul class="simple">
+<li>Use the PROXY protocol to set distinct <code class="docutils literal"><span class="pre">server.ip</span></code> values.</li>
+<li>Write your own implementation of <code class="docutils literal"><span class="pre">vcl_hash</span></code>, for example to
+mix <code class="docutils literal"><span class="pre">local.socket</span></code> or <code class="docutils literal"><span class="pre">local.endpoint</span></code> into the hash.</li>
+<li>Set <code class="docutils literal"><span class="pre">req.http.Host</span></code> to a distinct value if it is absent before
+<code class="docutils literal"><span class="pre">vcl_hash</span></code> is entered.</li>
+</ul>
+</div>
+<div class="section" id="x-forwarded-for">
+<h4>X-Forwarded-For<a class="headerlink" href="#x-forwarded-for" title="Permalink to this headline">¶</a></h4>
+<p>Varnish automatically appends the value of <code class="docutils literal"><span class="pre">client.ip</span></code> to the
+<code class="docutils literal"><span class="pre">X-Forwarded-For</span></code> request header that is passed on to backends, or
+it creates the header with that value if it is not already present in
+the client request.</p>
+<p>If the client request is received over a UDS listener and the PROXY
+protocol is not used, then <code class="docutils literal"><span class="pre">0.0.0.0</span></code> will be added to
+<code class="docutils literal"><span class="pre">X-Forwarded-For</span></code>.  If you prefer, you can change that in VCL:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_backend_fetch</span> <span class="p">{</span>
+      <span class="c1"># Assuming that server.identity has been set to an IP</span>
+      <span class="c1"># address with the -i command-line argument.</span>
+      <span class="nb">set</span> <span class="n">bereq</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">X</span><span class="o">-</span><span class="n">Forwarded</span><span class="o">-</span><span class="n">For</span>
+          <span class="o">=</span> <span class="n">regsub</span><span class="p">(</span><span class="n">bereq</span><span class="o">.</span><span class="n">http</span><span class="o">-</span><span class="n">X</span><span class="o">-</span><span class="n">Forwarded</span><span class="o">-</span><span class="n">For</span><span class="p">,</span> <span class="s2">&quot;0.0.0.0$&quot;</span><span class="p">,</span> <span class="n">server</span><span class="o">.</span><span class="n">identity</span><span class="p">);</span>
+      <span class="c1"># ...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Again, this is probably not a concern if <code class="docutils literal"><span class="pre">client.ip</span></code> is set via the
+PROXY protocol.</p>
+</div>
+<div class="section" id="uds-backends-and-the-host-header">
+<h4>UDS backends and the Host header<a class="headerlink" href="#uds-backends-and-the-host-header" title="Permalink to this headline">¶</a></h4>
+<p>By default, Varnish forwards the Host header from a client request to
+the backend. If there is no Host header in the client request, and the
+<code class="docutils literal"><span class="pre">.host_header</span></code> field was set in the backend declaration, then that
+value is used for the backend Host header. For backends declared with
+the <code class="docutils literal"><span class="pre">.host</span></code> field (with a domain name or IP address), then if there
+is neither a client Host header nor a <code class="docutils literal"><span class="pre">.host_header</span></code> declaration,
+the value of <code class="docutils literal"><span class="pre">.host</span></code> is set as the Host header of the backend
+request.</p>
+<p>If the backend was declared with <code class="docutils literal"><span class="pre">.path</span></code> for a socket path, then the
+backend Host header is set to <code class="docutils literal"><span class="pre">0.0.0.0</span></code> under those conditions.</p>
+<p>To re-state that:</p>
+<ul class="simple">
+<li>If the backend was declared with <code class="docutils literal"><span class="pre">.path</span></code> to connect to a Unix
+domain socket, ...</li>
+<li>and <code class="docutils literal"><span class="pre">.host_header</span></code> was not set in the backend declaration, ...</li>
+<li>and there is no Host header in the client request, ...</li>
+<li>then the Host header in the backend request is set to <code class="docutils literal"><span class="pre">0.0.0.0</span></code>.</li>
+</ul>
+<p>If you want to avoid that, set a <code class="docutils literal"><span class="pre">.host_header</span></code> value for the
+backend, or set a value for the Host header in VCL.</p>
+</div>
+<div class="section" id="vmod-std">
+<h4>VMOD std<a class="headerlink" href="#vmod-std" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference internal" href="../reference/vmod_std.html#std-port"><span class="std std-ref">INT port(IP ip)</span></a> always returns 0 when applied to a
+<code class="docutils literal"><span class="pre">*.ip</span></code> variable whose value is set to <code class="docutils literal"><span class="pre">0.0.0.0</span></code> because the
+listener is UDS.  <a class="reference internal" href="../reference/vmod_std.html#std-set-ip-tos"><span class="std std-ref">VOID set_ip_tos(INT tos)</span></a> is
+silently ignored when the listener is UDS.</p>
+</div>
+<div class="section" id="the-shard-director">
+<h4>The <code class="docutils literal"><span class="pre">shard</span></code> director<a class="headerlink" href="#the-shard-director" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="docutils literal"><span class="pre">alg</span></code> argument of the shard director's <code class="docutils literal"><span class="pre">.reconfigure()</span></code> and
+<code class="docutils literal"><span class="pre">.key()</span></code> methods has been removed. The choice of hash algorithms was
+experimental, and we have settled on SHA256 as providing the best
+dispersal.</p>
+<p>If you have been using other choices of <code class="docutils literal"><span class="pre">alg</span></code> for
+<code class="docutils literal"><span class="pre">.reconfigure()</span></code>, then after upgrading and removing <code class="docutils literal"><span class="pre">alg</span></code>, the
+sharding of requests to backends will change once and only once.</p>
+<p>If you have been using other values of <code class="docutils literal"><span class="pre">alg</span></code> for <code class="docutils literal"><span class="pre">.key()</span></code> and need
+to preserve the previous behavior, see the
+<a class="reference external" href="https://github.com/varnishcache/varnish-cache/blob/master/doc/changes.rst">change log</a>
+for advice on how to do so.</p>
+<p>With the <code class="docutils literal"><span class="pre">resolve=LAZY</span></code> argument of the <code class="docutils literal"><span class="pre">.backend()</span></code> method, the
+shard director will now defer the selection of a backend to when a
+backend connection is actually made, which is how all other bundled
+directors work as well.</p>
+<p>In <code class="docutils literal"><span class="pre">vcl_init</span></code>, <code class="docutils literal"><span class="pre">resolve=LAZY</span></code> is default and enables layering the
+shard director below other directors -- you can now use something like
+<code class="docutils literal"><span class="pre">mydirector.add_backend(myshard.backend())</span></code> to set the shard
+director as a backend for another director.</p>
+<p>Use of <code class="docutils literal"><span class="pre">resolve=LAZY</span></code> on the client side is limited to using the
+default or associated parameters.</p>
+<p>The shard director now provides a <code class="docutils literal"><span class="pre">shard_param</span></code> object that serves
+as a store for a set of parameters for the director's <code class="docutils literal"><span class="pre">.backend()</span></code>
+method. This makes it possible to re-use a set of parameter values
+without having to restate them in every <code class="docutils literal"><span class="pre">.backend()</span></code> call. The
+<code class="docutils literal"><span class="pre">.backend()</span></code> method has an argument <code class="docutils literal"><span class="pre">param</span></code> whose value, if it is
+used, must be returned from the <code class="docutils literal"><span class="pre">shard_param.use()</span></code> method.</p>
+<p>Because of these changes, support for positional arguments of the
+shard director <code class="docutils literal"><span class="pre">.backend()</span></code> method had to be removed. In other
+words, all parameters to the shard director <code class="docutils literal"><span class="pre">.backend()</span></code> method now
+need to be named.</p>
+<p>See <a class="reference internal" href="../reference/vmod_directors.html#vmod-directors-3"><span class="std std-ref">VMOD directors - Varnish Directors Module</span></a> for details.</p>
+</div>
+</div>
+<div class="section" id="restarts">
+<h3>Restarts<a class="headerlink" href="#restarts" title="Permalink to this headline">¶</a></h3>
+<p>Restarts now leave all of the properties of the client request
+unchanged (all of the <code class="docutils literal"><span class="pre">req.*</span></code> variables, including the headers),
+except for <code class="docutils literal"><span class="pre">req.restarts</span></code> and <code class="docutils literal"><span class="pre">req.xid</span></code>, which change by design.</p>
+<p>If you need to reset the client request headers to their original
+state (before changes in VCL), call
+<a class="reference internal" href="../reference/vmod_std.html#std-rollback"><span class="std std-ref">VOID rollback(HTTP h)</span></a>.</p>
+<p><code class="docutils literal"><span class="pre">return(restart)</span></code> can now be called from <code class="docutils literal"><span class="pre">vcl_recv{}</span></code>.</p>
+</div>
+<div class="section" id="new-vmods">
+<h3>New VMODs<a class="headerlink" href="#new-vmods" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="vmod-unix">
+<h4>VMOD unix<a class="headerlink" href="#vmod-unix" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference internal" href="../reference/vmod_unix.html#vmod-unix-3"><span class="std std-ref">VMOD unix - Utilities for Unix domain sockets</span></a> provides functions to determine the credentials of
+the peer process (user and group of the process owner) that connected
+to Varnish over a listener at a Unix domain socket. You can use this,
+for example, to impose tighter restrictions on who can access certain
+resources:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unix</span><span class="p">;</span>
+
+<span class="n">sub</span> <span class="n">vcl_recv</span> <span class="p">{</span>
+      <span class="c1"># Return &quot;403 Forbidden&quot; if the connected peer is</span>
+      <span class="c1"># not running as the user &quot;trusteduser&quot;.</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">unix</span><span class="o">.</span><span class="n">user</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;trusteduser&quot;</span><span class="p">)</span> <span class="p">{</span>
+              <span class="k">return</span><span class="p">(</span> <span class="n">synth</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span> <span class="p">);</span>
+      <span class="p">}</span>
+</pre></div>
+</div>
+<p>This is not available on every platform. As always, check the
+documentation and test the code before you attempt something like this
+in production.</p>
+</div>
+<div class="section" id="vmod-proxy">
+<h4>VMOD proxy<a class="headerlink" href="#vmod-proxy" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference internal" href="../reference/vmod_proxy.html#vmod-proxy-3"><span class="std std-ref">VMOD proxy - Varnish Module to extract TLV attributes from PROXYv2</span></a> provides functions to extract TLV attributes that
+may be optionally sent over a PROXYv2 connection to a Varnish listener.
+Most of these are properties of the peer component's TLS connection:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">proxy</span><span class="p">;</span>
+
+<span class="c1"># Get the authority attribute -- corresponds to the SNI of a TLS</span>
+<span class="c1"># connection.</span>
+<span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Authority</span> <span class="o">=</span> <span class="n">proxy</span><span class="o">.</span><span class="n">authority</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Not all implementations send TLV attributes, and those that do don't
+necessarily support all of them; test your code to see what works in
+your configuration.</p>
+<p>See the
+<a class="reference external" href="https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt">PROXY v2 specification</a> for more information about TLV attributes.</p>
+</div>
+</div>
+</div>
+<div class="section" id="packaging-changes">
+<h2>Packaging changes<a class="headerlink" href="#packaging-changes" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="supported-platforms">
+<h3>Supported platforms<a class="headerlink" href="#supported-platforms" title="Permalink to this headline">¶</a></h3>
+<p>Official Varnish packages went through major changes for this release,
+and target Debian 9, Ubuntu 16.04 LTS and (Red Hat) Enterprise
+Linux 7. Ubuntu 14.04 LTS will likely reach its end of life before
+Varnish 6 and the venerable Enterprise Linux 6 is getting too old and
+forced time-consuming workarounds so for these reasons we dropped
+community support for those platforms.</p>
+</div>
+<div class="section" id="services">
+<h3>Services<a class="headerlink" href="#services" title="Permalink to this headline">¶</a></h3>
+<p>As a result we ended up with systemd-only platforms for
+the official packages. The old services are still available as we
+archived them in the <code class="docutils literal"><span class="pre">pkg-varnish-cache</span></code> source tree. This was the
+occasion to remove differences between Red Hat and Debian derivatives
+since there's no more reasons to have them diverge: we initially
+inherited packaging support from downstream package maintainers, and
+they deserve many thanks for that.</p>
+<p>The biggest change that resulted in unifying our systemd setup across
+all official packages is that the <code class="docutils literal"><span class="pre">varnish.params</span></code> file available on
+Red Hat derivatives is gone. We noticed that using an environment file
+to hide the fact that <code class="docutils literal"><span class="pre">varnishd</span></code> is configured via command line
+arguments misled some people into thinking that what was proposed in
+the file was your only set of configuration options. For example, you
+can specify multiple listen addresses using multiple <code class="docutils literal"><span class="pre">-a</span></code> options
+but you only get variables for one address and a catch-all variable
+<code class="docutils literal"><span class="pre">DAEMON_OPTS</span></code> for anything not fitting in the template. In addition
+using an environment file pollutes the process's environment.</p>
+<p>Another big difference between Red Hat and Debian derivatives was the
+way we handled VCL reloads via the service manager. We introduced a
+new <code class="docutils literal"><span class="pre">varnishreload</span></code> script that operates on top of <code class="docutils literal"><span class="pre">varnishadm</span></code>
+to perform hot reloads of one VCL configuration or label at a time.
+All you need is enough privileges to contact <code class="docutils literal"><span class="pre">varnishd</span></code>'s command
+line interface, which should not be a problem for package managers.</p>
+<p>Once the <code class="docutils literal"><span class="pre">varnish</span></code> package is installed, you can learn more:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">varnishreload</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+</div>
+<p>Again, many thanks to downstream maintainers and some early adopters
+for their help in testing the new script.</p>
+<p>To stay on the topic of the command line interface, packages no longer
+create a secret file for the CLI, and services omit <code class="docutils literal"><span class="pre">-S</span></code> and <code class="docutils literal"><span class="pre">-T</span></code>
+options on the <code class="docutils literal"><span class="pre">varnishd</span></code> command. This means that out of the box,
+you can only connect to the CLI locally with enough privileges to read
+a secret generated randomly. This means less noise in our packages,
+and you need to change the service configuration to enable remote
+access to the CLI. With previous packages, you also needed to change
+your configuration because the CLI would only listen to the loopback
+interface anyway.</p>
+<p>To change how <code class="docutils literal"><span class="pre">varnishd</span></code> is started, please refer to the systemd
+documentation.</p>
+</div>
+<div class="section" id="virtual-provides">
+<h3>Virtual provides<a class="headerlink" href="#virtual-provides" title="Permalink to this headline">¶</a></h3>
+<p>Last but not least in the packaging space, we took a first step towards
+improving dependency management between official <code class="docutils literal"><span class="pre">varnish</span></code> packages
+and VMODs built on top of them. RPMs and Deb packages now provide the
+strict and VRT ABIs from <code class="docutils literal"><span class="pre">varnishd</span></code> and the goal is to ultimately
+prevent a package installation or upgrade that would prevent a VMOD
+from being loaded.</p>
+<p>For Deb packages:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Provides</span><span class="p">:</span>
+ <span class="n">varnishd</span><span class="o">-</span><span class="n">abi</span><span class="o">-</span><span class="n">SHA1</span><span class="p">,</span>
+ <span class="n">varnishd</span><span class="o">-</span><span class="n">vrt</span> <span class="p">(</span><span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And for RPMs:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Provides</span><span class="p">:</span> <span class="n">varnishd</span><span class="p">(</span><span class="n">abi</span><span class="p">)(</span><span class="n">x86</span><span class="o">-</span><span class="mi">64</span><span class="p">)</span> <span class="o">=</span> <span class="n">SHA1</span>
+<span class="n">Provides</span><span class="p">:</span> <span class="n">varnishd</span><span class="p">(</span><span class="n">vrt</span><span class="p">)(</span><span class="n">x86</span><span class="o">-</span><span class="mi">64</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">y</span>
+</pre></div>
+</div>
+<p>For VMOD authors or downstream distributors, this means that depending
+on the <code class="docutils literal"><span class="pre">$ABI</span></code> stanza in the VMOD descriptor, they can either tie their
+backend manually to the git hash Varnish was built from or to the VRT
+version used at the time.</p>
+<p>For example, a VMOD RPM built against Varnish 6.0.0 could have:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>Requires: varnishd(vrt)%{?_isa} &gt;= 7.0
+Requires: varnishd(vrt)%{?_isa} &lt; 8
+</pre></div>
+</div>
+<p>Future plans include the ability to automate this for out-of-tree VMODs
+and remove manual steps. To learn more about the history behind this
+change, it was formalized via the Varnish Improvement Process:</p>
+<p><a class="reference external" href="https://github.com/varnishcache/varnish-cache/wiki/VIP20%3A-Varnish-ABI-and-packaging">https://github.com/varnishcache/varnish-cache/wiki/VIP20%3A-Varnish-ABI-and-packaging</a></p>
+<p>Another thing available only to RPM packages as of 6.0.0 is virtual
+provides for VMODs.</p>
+<p>Instead of showing shared objects that aren't even in the dynamic
+linker's default path:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Provides</span><span class="p">:</span> <span class="n">libvmod_std</span><span class="o">.</span><span class="n">so</span><span class="p">(</span><span class="mi">64</span><span class="n">bit</span><span class="p">)</span>
+<span class="n">Provides</span><span class="p">:</span> <span class="n">libvmod_directors</span><span class="o">.</span><span class="n">so</span><span class="p">(</span><span class="mi">64</span><span class="n">bit</span><span class="p">)</span>
+<span class="p">[</span><span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>You get virtual VMOD provides with a version:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Provides</span><span class="p">:</span> <span class="n">vmod</span><span class="p">(</span><span class="n">std</span><span class="p">)(</span><span class="n">x86</span><span class="o">-</span><span class="mi">64</span><span class="p">)</span> <span class="o">=</span> <span class="mf">6.0</span><span class="o">.</span><span class="mi">0</span><span class="o">-</span><span class="mi">1</span>
+<span class="n">Provides</span><span class="p">:</span> <span class="n">vmod</span><span class="p">(</span><span class="n">directors</span><span class="p">)(</span><span class="n">x86</span><span class="o">-</span><span class="mi">64</span><span class="p">)</span> <span class="o">=</span> <span class="mf">6.0</span><span class="o">.</span><span class="mi">0</span><span class="o">-</span><span class="mi">1</span>
+<span class="p">[</span><span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>With the same mechanism it becomes possible to require a VMOD directly
+and let it bring along its dependencies, like <code class="docutils literal"><span class="pre">varnish</span></code>. As this is
+currently not automated for out-of-tree VMODs, consider this a preview
+of what you will be able to do once VIP 20 is completed.</p>
+</div>
+</div>
+<div class="section" id="other-changes">
+<h2>Other changes<a class="headerlink" href="#other-changes" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first"><code class="docutils literal"><span class="pre">varnishd(1)</span></code>:</p>
+<ul class="simple">
+<li>The <code class="docutils literal"><span class="pre">umem</span></code> storage allocator, which was removed as of Varnish
+5.1, has been restored and is now the default on a system where
+<code class="docutils literal"><span class="pre">libumem</span></code> is available (SunOS and descendants).</li>
+</ul>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">varnishlog(1)</span></code>:</p>
+<ul>
+<li><p class="first">Added a third field to the <code class="docutils literal"><span class="pre">ReqStart</span></code> log record that contains the
+name of the listener address over which the request was received, see
+<a class="reference internal" href="../reference/vsl.html#vsl-7"><span class="std std-ref">VSL</span></a>.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">0.0.0.0</span></code> and port <code class="docutils literal"><span class="pre">0</span></code> appear in the logs where an IP and port
+otherwise appear, when the connection in question was addressed as
+a Unix domain socket. This affects <code class="docutils literal"><span class="pre">ReqStart</span></code>, <code class="docutils literal"><span class="pre">SessOpen</span></code>,
+<code class="docutils literal"><span class="pre">BackendStart</span></code> and <code class="docutils literal"><span class="pre">BackendOpen</span></code>.</p>
+<p>If you have more than one UDS listener, they can be distinguished
+with the &quot;listener name&quot; field -- the third field for both
+<code class="docutils literal"><span class="pre">ReqStart</span></code> and <code class="docutils literal"><span class="pre">SessOpen</span></code>.</p>
+<p>If you have more than one UDS backend, they can be distinguished
+with the backend name field -- the second field in
+<code class="docutils literal"><span class="pre">BackendOpen</span></code>.</p>
+</li>
+<li><p class="first">The byte counters logged with <code class="docutils literal"><span class="pre">ReqAcct</span></code> now report the numbers
+returned from the operating system telling us how many bytes were
+actually sent in a request and response, rather than what Varnish
+thought it was going to send. This gives a more accurate account
+when there are errors, for example when a client hung up early
+without receiving the entire response. The figures also include
+any overhead in a request or response body, for example due to
+chunked encoding.</p>
+</li>
+<li><p class="first">Debugging logs for the PROXY protocol are turned off by default.
+They can be turned on with the <code class="docutils literal"><span class="pre">protocol</span></code> flag of the varnishd
+<a class="reference internal" href="../reference/varnishd.html#ref-param-debug"><span class="std std-ref">debug</span></a> parameter (<code class="docutils literal"><span class="pre">-p</span> <span class="pre">debug=+protocol</span></code>).</p>
+</li>
+</ul>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">varnishstat(1)</span></code></p>
+<ul class="simple">
+<li>Added the counter <code class="docutils literal"><span class="pre">cache_hit_grace</span></code> -- how often objects in the
+cache were hit when their TTL had expired, but they were still
+in grace.</li>
+</ul>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">varnishncsa(1)</span></code></p>
+<ul>
+<li><p class="first">The <code class="docutils literal"><span class="pre">%h</span></code> formatter (remote host) gets its value from
+<code class="docutils literal"><span class="pre">ReqStart</span></code> for client requests and <code class="docutils literal"><span class="pre">BackendStart</span></code> for backend
+requests.  The value will be <code class="docutils literal"><span class="pre">0.0.0.0</span></code> for client requests when
+the listener is UDS, and for backend requests when the backend is
+UDS.</p>
+</li>
+<li><p class="first">The <code class="docutils literal"><span class="pre">%r</span></code> formatter (first line of the request) is reconstructed
+in part from the Host request header. For UDS backends, Host may
+be <code class="docutils literal"><span class="pre">0.0.0.0</span></code> for the reasons explained above (no client Host
+header and no <code class="docutils literal"><span class="pre">.host_header</span></code> setting for the backend), so that
+may appear in the output for <code class="docutils literal"><span class="pre">%r</span></code>. You can avoid that with the
+measures discussed above.</p>
+</li>
+<li><p class="first">If you have more than one UDS listener and/or more than one UDS
+backend, and you want to tell them apart in the <code class="docutils literal"><span class="pre">varnishncsa</span></code>
+output (rather than just see <code class="docutils literal"><span class="pre">0.0.0.0</span></code>), use the <code class="docutils literal"><span class="pre">%{VSL}x</span></code>
+formatter to capture the listener name and the backend name.</p>
+<p>For the listener name, use <code class="docutils literal"><span class="pre">%{VSL:ReqStart[3]}x</span></code> for client logs
+(the third field of <code class="docutils literal"><span class="pre">ReqStart</span></code> logs).</p>
+<p>For the backend name, use <code class="docutils literal"><span class="pre">%{VSL:BackendOpen[2]}x</span></code> for backend
+logs.</p>
+</li>
+<li><p class="first">varnishncsa does not accept output format strings (from the <code class="docutils literal"><span class="pre">-F</span></code>
+command-line argument or a configuration file) if they specify
+tags for log entries whose payloads may contain control or binary
+characters.</p>
+</li>
+</ul>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">varnishtest(1)</span></code> and <code class="docutils literal"><span class="pre">vtc(7)</span></code>:</p>
+<ul>
+<li><p class="first">The <code class="docutils literal"><span class="pre">client</span> <span class="pre">-connect</span></code> and <code class="docutils literal"><span class="pre">server</span> <span class="pre">-listen</span></code> commands in vtc
+scripts now allow Unix domain sockets as addresses, recognized
+when the argument begins with a <code class="docutils literal"><span class="pre">/</span></code>.</p>
+<p>A client attempts the connection immediately, so the socket file
+must exist at the given path when the client is started, and the
+client must be able to access it.</p>
+<p>The <code class="docutils literal"><span class="pre">server</span> <span class="pre">-listen</span></code> command must be able to create the socket
+file when it executes <code class="docutils literal"><span class="pre">bind(2)</span></code>. To make it easier for other
+processes to connect to the socket, the server's umask is
+temporarily set to 0 before the listen is attempted, to minimize
+issues with permissions. No further attempt is made to set the
+socket's permissions.</p>
+<p>To test a Varnish instance listening at a UDS, just use the
+<code class="docutils literal"><span class="pre">varnish</span> <span class="pre">-arg</span></code> command with the appropriate settings for the
+<code class="docutils literal"><span class="pre">-a</span></code> command line argument, see <a class="reference internal" href="../reference/varnishd.html#varnishd-1"><span class="std std-ref">varnishd</span></a>.</p>
+<p>The <code class="docutils literal"><span class="pre">varnish</span> <span class="pre">-vcl+backend</span></code> command now works to include backend
+definitions for server objects that are listening at UDS. Backend
+declarations are implicitly included for such servers with the
+appropriate <code class="docutils literal"><span class="pre">.path</span></code> setting.</p>
+<p>A convenient location for socket files to be used in a test is the
+temporary directory created by <code class="docutils literal"><span class="pre">varnishtest</span></code> for each test,
+whose path is held in the macro <code class="docutils literal"><span class="pre">${tmpdir}</span></code>. So this is a common
+idiom for tests that involve UDSen:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">server</span> <span class="n">s1</span> <span class="o">-</span><span class="n">listen</span> <span class="s2">&quot;$</span><span class="si">{tmpdir}</span><span class="s2">/s1.sock&quot;</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span> <span class="o">-</span><span class="n">start</span>
+
+<span class="n">varnish</span> <span class="n">v1</span> <span class="o">-</span><span class="n">arg</span> <span class="s2">&quot;-a $</span><span class="si">{tmpdir}</span><span class="s2">/v1.sock&quot;</span> <span class="o">-</span><span class="n">vcl</span><span class="o">+</span><span class="n">backend</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span> <span class="o">-</span><span class="n">start</span>
+
+<span class="n">client</span> <span class="n">c1</span> <span class="o">-</span><span class="n">connect</span> <span class="s2">&quot;$</span><span class="si">{tmpdir}</span><span class="s2">/v1.sock&quot;</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span> <span class="o">-</span><span class="n">run</span>
+</pre></div>
+</div>
+<p>When a Varnish instance in a vtc test is listening at a UDS, then
+its <code class="docutils literal"><span class="pre">vN_*</span></code> macros are set like this:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">v1_addr</span></code>: <code class="docutils literal"><span class="pre">/path/to/socket</span></code></li>
+<li><code class="docutils literal"><span class="pre">v1_port</span></code>: <code class="docutils literal"><span class="pre">-</span></code> (hyphen)</li>
+<li><code class="docutils literal"><span class="pre">v1_sock</span></code>: <code class="docutils literal"><span class="pre">/path/to/socket</span> <span class="pre">-</span></code></li>
+</ul>
+<p>When a server <code class="docutils literal"><span class="pre">s1</span></code> is listening at a UDS:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">s1_addr</span></code>: <code class="docutils literal"><span class="pre">0.0.0.0</span></code></li>
+<li><code class="docutils literal"><span class="pre">s1_port</span></code>: <code class="docutils literal"><span class="pre">0</span></code></li>
+<li><code class="docutils literal"><span class="pre">s1_sock</span></code>: <code class="docutils literal"><span class="pre">/path/to/socket</span></code></li>
+</ul>
+<p>The vtc variables <code class="docutils literal"><span class="pre">remote.ip</span></code> and <code class="docutils literal"><span class="pre">remote.port</span></code>, which can be
+used in <code class="docutils literal"><span class="pre">expect</span></code> expressions for both server and client scripts,
+are set to <code class="docutils literal"><span class="pre">0.0.0.0</span></code> and <code class="docutils literal"><span class="pre">0</span></code>, respectively, when the peer
+address is a UDS.</p>
+<p>We have added the variable <code class="docutils literal"><span class="pre">remote.path</span></code> as a counterpart to the
+other two. Its value is the path when the peer address is a UDS,
+and NULL otherwise (matching <code class="docutils literal"><span class="pre">&lt;undef&gt;</span></code> in the latter case).</p>
+</li>
+</ul>
+</li>
+<li><p class="first">Changes for developers:</p>
+<ul>
+<li><p class="first">The VRT API version has been bumped to 7.0, and comprises a variety
+of new additions and changes. See <code class="docutils literal"><span class="pre">vrt.h</span></code> and the
+<a class="reference external" href="https://github.com/varnishcache/varnish-cache/blob/master/doc/changes.rst">change log</a>
+for details.</p>
+</li>
+<li><p class="first">There are new rules about including API headers -- some may only
+be included once, others must included in a specific order. Only
+<code class="docutils literal"><span class="pre">cache.h</span></code> <em>or</em> <code class="docutils literal"><span class="pre">vrt.h</span></code> may be included (<code class="docutils literal"><span class="pre">cache.h</span></code> includes
+<code class="docutils literal"><span class="pre">vrt.h</span></code>). See the <code class="docutils literal"><span class="pre">#error</span></code> directives in the headers.</p>
+</li>
+<li><p class="first">VMOD authors can use the <code class="docutils literal"><span class="pre">VRT_VSC_*()</span></code> series of functions and
+the new <code class="docutils literal"><span class="pre">vsctool</span></code> to create statistics for a VMOD that will be
+displayed by varnishstat.  Varnish uses the same technique to
+create its counters, so you can look to the core code to see how
+it's done.</p>
+</li>
+<li><p class="first">The <code class="docutils literal"><span class="pre">VCL_INT</span></code> and <code class="docutils literal"><span class="pre">VCL_BYTES</span></code> types are now defined to be
+strictly 64 bit (rather than leave it to whatever your platform
+defines as <code class="docutils literal"><span class="pre">long</span></code>). But you may not get that full precision,
+for reasons discussed in the
+<a class="reference external" href="https://github.com/varnishcache/varnish-cache/blob/master/doc/changes.rst">change log</a>.</p>
+</li>
+<li><p class="first">As part of VRT version 7.0, the <code class="docutils literal"><span class="pre">path</span></code> field has been added to
+to <code class="docutils literal"><span class="pre">struct</span> <span class="pre">vrt_backend</span></code>, which a VMOD can use with
+<code class="docutils literal"><span class="pre">VRT_new_backend()</span></code> to create a dynamic backend with a UDS
+address (see <code class="docutils literal"><span class="pre">vrt.h</span></code>).</p>
+<p>If <code class="docutils literal"><span class="pre">path</span></code> is non-NULL, then both of the IPv4 and IPv6 addresses
+must be NULL. If <code class="docutils literal"><span class="pre">path</span></code> is NULL, then (as before) one or both of
+the IP addresses must be non-NULL. The <code class="docutils literal"><span class="pre">dyn_uds</span></code> object in VMOD
+debug (available in the source tree) illustrates how this can be
+done.</p>
+</li>
+<li><p class="first">VMOD vcc sources may now include a directive <code class="docutils literal"><span class="pre">$Prefix</span></code>, whose
+value is the string prepended to the names of C objects and
+functions in the generated C interface (in <code class="docutils literal"><span class="pre">vcc_if.h</span></code>). So you
+may choose another prefix besides <code class="docutils literal"><span class="pre">vmod_</span></code>, if so desired.</p>
+</li>
+<li><p class="first">vcc sources may also include a directive <code class="docutils literal"><span class="pre">$Synopsis</span></code> whose value
+may be <code class="docutils literal"><span class="pre">auto</span></code> or <code class="docutils literal"><span class="pre">manual</span></code>, default <code class="docutils literal"><span class="pre">auto</span></code>.</p>
+<p>When <code class="docutils literal"><span class="pre">$Synopsis</span></code> is <code class="docutils literal"><span class="pre">auto</span></code>, the vmodtool generates a more
+comprehensive <code class="docutils literal"><span class="pre">SYNOPSIS</span></code> section in the documentation than in
+previous versions -- an overview of the objects, methods and
+functions in your VMOD, with their type signatures.</p>
+<p>When <code class="docutils literal"><span class="pre">$Synopsis</span></code> is <code class="docutils literal"><span class="pre">manual</span></code>, the <code class="docutils literal"><span class="pre">SYNOPSIS</span></code> is left out of
+the generated docs altogether; so you can write the <code class="docutils literal"><span class="pre">SYNOPSIS</span></code>
+section yourself, if you prefer.</p>
+</li>
+<li><p class="first">Support for a new declaration of optional arguments in vcc files
+has been added: <code class="docutils literal"><span class="pre">[</span> <span class="pre">argname</span> <span class="pre">]</span></code> can be used to mark <em>argname</em> as
+optional.</p>
+<p>If this declaration is used for any argument, _all_ user arguments
+and <code class="docutils literal"><span class="pre">PRIV_*</span></code> pointers (no object pointers) to the respective
+function/method will be passed in a <code class="docutils literal"><span class="pre">struct</span></code> <em>funcname</em><code class="docutils literal"><span class="pre">_arg</span></code> specific to this function which contains the arguments by
+their name (or the name <code class="docutils literal"><span class="pre">arg</span></code><em>n</em> for unnamed arguments, <em>n</em>
+being the argument position starting with 1) plus <code class="docutils literal"><span class="pre">valid_</span></code><em>argname</em> members for optional arguments which are being set to
+non-zero iff the respective <em>argname</em> was provided.</p>
+<p>Argument presence is determined at VCC time, so it is not possible
+to pass an unset argument from another function call.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><em>eof</em></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Upgrading to Varnish 6.0</a><ul>
+<li><a class="reference internal" href="#unix-domain-sockets-as-listen-addresses">Unix domain sockets as listen addresses</a></li>
+<li><a class="reference internal" href="#unix-domain-sockets-as-backend-addresses">Unix domain sockets as backend addresses</a></li>
+<li><a class="reference internal" href="#varnishd-parameters">varnishd parameters</a></li>
+<li><a class="reference internal" href="#changes-to-vcl">Changes to VCL</a><ul>
+<li><a class="reference internal" href="#vcl-4-0-and-4-1">VCL 4.0 and 4.1</a></li>
+<li><a class="reference internal" href="#vcl-variables">VCL variables</a><ul>
+<li><a class="reference internal" href="#local-socket-and-local-endpoint"><code class="docutils literal"><span class="pre">local.socket</span></code> and <code class="docutils literal"><span class="pre">local.endpoint</span></code></a></li>
+<li><a class="reference internal" href="#sess-xid"><code class="docutils literal"><span class="pre">sess.xid</span></code></a></li>
+<li><a class="reference internal" href="#variable-changes-in-vcl-4-0-and-4-1">Variable changes in VCL 4.0 and 4.1</a></li>
+<li><a class="reference internal" href="#client-side-variable-access">Client-side variable access</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#unix-domain-sockets-and-vcl">Unix domain sockets and VCL</a><ul>
+<li><a class="reference internal" href="#client-ip-server-ip-local-ip-and-remote-ip"><code class="docutils literal"><span class="pre">client.ip</span></code>, <code class="docutils literal"><span class="pre">server.ip</span></code>, <code class="docutils literal"><span class="pre">local.ip</span></code> and <code class="docutils literal"><span class="pre">remote.ip</span></code></a></li>
+<li><a class="reference internal" href="#acls">ACLs</a></li>
+<li><a class="reference internal" href="#client-identity-and-the-hash-and-shard-directors"><code class="docutils literal"><span class="pre">client.identity</span></code> and the hash and shard directors</a></li>
+<li><a class="reference internal" href="#server-ip-and-default-hashing-for-the-cache"><code class="docutils literal"><span class="pre">server.ip</span></code> and default hashing for the cache</a></li>
+<li><a class="reference internal" href="#x-forwarded-for">X-Forwarded-For</a></li>
+<li><a class="reference internal" href="#uds-backends-and-the-host-header">UDS backends and the Host header</a></li>
+<li><a class="reference internal" href="#vmod-std">VMOD std</a></li>
+<li><a class="reference internal" href="#the-shard-director">The <code class="docutils literal"><span class="pre">shard</span></code> director</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#restarts">Restarts</a></li>
+<li><a class="reference internal" href="#new-vmods">New VMODs</a><ul>
+<li><a class="reference internal" href="#vmod-unix">VMOD unix</a></li>
+<li><a class="reference internal" href="#vmod-proxy">VMOD proxy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#packaging-changes">Packaging changes</a><ul>
+<li><a class="reference internal" href="#supported-platforms">Supported platforms</a></li>
+<li><a class="reference internal" href="#services">Services</a></li>
+<li><a class="reference internal" href="#virtual-provides">Virtual provides</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-changes">Other changes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="changes-6.0.html"
+                        title="previous chapter">Changes in Varnish 6.0</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="changes-5.2.html"
+                        title="next chapter">Changes in Varnish 5.2</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/whats-new/upgrading-6.0.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="changes-5.2.html" title="Changes in Varnish 5.2"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="changes-6.0.html" title="Changes in Varnish 6.0"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

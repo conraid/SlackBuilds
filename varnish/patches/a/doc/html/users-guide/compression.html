@@ -1,0 +1,212 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Compression &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Content composition with Edge Side Includes" href="esi.html" />
+    <link rel="prev" title="Purging and banning" href="purging.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="esi.html" title="Content composition with Edge Side Includes"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="purging.html" title="Purging and banning"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Users Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="performance.html" accesskey="U">Varnish and Website Performance</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="compression">
+<span id="users-guide-compression"></span><h1>Compression<a class="headerlink" href="#compression" title="Permalink to this headline">¶</a></h1>
+<p>In Varnish 3.0 we introduced native support for compression, using gzip
+encoding. <em>Before</em> 3.0, Varnish would never compress objects.</p>
+<p>In Varnish 4.0 compression defaults to &quot;on&quot;, meaning that it tries to
+be smart and do the sensible thing.</p>
+<p>If you don't want Varnish tampering with the encoding you can disable
+compression all together by setting the parameter <cite>http_gzip_support</cite> to
+false. Please see man <a class="reference internal" href="../reference/varnishd.html#varnishd-1"><span class="std std-ref">varnishd</span></a> for details.</p>
+<div class="section" id="default-behaviour">
+<h2>Default behaviour<a class="headerlink" href="#default-behaviour" title="Permalink to this headline">¶</a></h2>
+<p>The default behaviour is active when the <cite>http_gzip_support</cite> parameter
+is set to &quot;on&quot; and neither <cite>beresp.do_gzip</cite> nor <cite>beresp.do_gunzip</cite> are
+used in VCL.</p>
+<p>Unless returning from <cite>vcl_recv</cite> with <cite>pipe</cite> or <cite>pass</cite>, Varnish
+modifies <cite>req.http.Accept-Encoding</cite>: if the client supports gzip
+<cite>req.http.Accept-Encoding</cite> is set to &quot;gzip&quot;, otherwise the header is
+removed.</p>
+<p>Unless the request is a <cite>pass</cite>, Varnish sets <cite>bereq.http.Accept-Encoding</cite>
+to &quot;gzip&quot; before <cite>vcl_backend_fetch</cite> runs, so the header can be changed
+in VCL.</p>
+<p>If the server responds with gzip'ed content it will be stored in memory
+in its compressed form and <cite>Accept-Encoding</cite> will be added to the
+<cite>Vary</cite> header.</p>
+<p>To clients supporting gzip, compressed content is delivered unmodified.</p>
+<p>For clients not supporting gzip, compressed content gets decompressed
+on the fly while delivering it. The <cite>Content-Encoding</cite> response header
+gets removed and any <cite>Etag</cite> gets weakened (by prepending &quot;W/&quot;).</p>
+<p>For Vary Lookups, <cite>Accept-Encoding</cite> is ignored.</p>
+</div>
+<div class="section" id="compressing-content-if-backends-don-t">
+<h2>Compressing content if backends don't<a class="headerlink" href="#compressing-content-if-backends-don-t" title="Permalink to this headline">¶</a></h2>
+<p>You can tell Varnish to compress content before storing it in cache in
+<cite>vcl_backend_response</cite> by setting <cite>beresp.do_gzip</cite> to &quot;true&quot;, like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_backend_response</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">beresp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">content</span><span class="o">-</span><span class="nb">type</span> <span class="o">~</span> <span class="s2">&quot;text&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">set</span> <span class="n">beresp</span><span class="o">.</span><span class="n">do_gzip</span> <span class="o">=</span> <span class="n">true</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>With <cite>beresp.do_gzip</cite> set to &quot;true&quot;, Varnish will make the following
+changes to the headers of the resulting object before inserting it in
+the cache:</p>
+<ul class="simple">
+<li>set <cite>obj.http.Content-Encoding</cite> to &quot;gzip&quot;</li>
+<li>add &quot;Accept-Encoding&quot; to <cite>obj.http.Vary</cite>, unless already present</li>
+<li>weaken any <cite>Etag</cite> (by prepending &quot;W/&quot;)</li>
+</ul>
+<p>Generally, Varnish doesn't use much CPU so it might make more sense to
+have Varnish spend CPU cycles compressing content than doing it in your
+web- or application servers, which are more likely to be CPU-bound.</p>
+<p>Please make sure that you don't try to compress content that is
+uncompressable, like JPG, GIF and MP3 files. You'll only waste CPU cycles.</p>
+</div>
+<div class="section" id="uncompressing-content-before-entering-the-cache">
+<h2>Uncompressing content before entering the cache<a class="headerlink" href="#uncompressing-content-before-entering-the-cache" title="Permalink to this headline">¶</a></h2>
+<p>You can also uncompress content before storing it in cache by setting
+<cite>beresp.do_gunzip</cite> to &quot;true&quot;. One use case for this feature is to work
+around badly configured backends uselessly compressing already compressed
+content like JPG images (but fixing the misbehaving backend is always
+the better option).</p>
+<p>With <cite>beresp.do_gunzip</cite> set to &quot;true&quot;, Varnish will make the following
+changes to the headers of the resulting object before inserting it in
+the cache:</p>
+<ul class="simple">
+<li>remove <cite>obj.http.Content-Encoding</cite></li>
+<li>weaken any <cite>Etag</cite> (by prepending &quot;W/&quot;)</li>
+</ul>
+</div>
+<div class="section" id="gzip-and-esi">
+<h2>GZIP and ESI<a class="headerlink" href="#gzip-and-esi" title="Permalink to this headline">¶</a></h2>
+<p>If you are using Edge Side Includes (ESI) you'll be happy to note that
+ESI and GZIP work together really well. Varnish will magically decompress
+the content to do the ESI-processing, then recompress it for efficient
+storage and delivery.</p>
+</div>
+<div class="section" id="turning-off-gzip-support">
+<h2>Turning off gzip support<a class="headerlink" href="#turning-off-gzip-support" title="Permalink to this headline">¶</a></h2>
+<p>When the <cite>http_gzip_support</cite> parameter is set to &quot;off&quot;, Varnish does
+not do any of the header alterations documented above, handles <cite>Vary:
+Accept-Encoding</cite> like it would for any other <cite>Vary</cite> value and ignores
+<cite>beresp.do_gzip</cite> and <cite>beresp.do_gunzip</cite>.</p>
+</div>
+<div class="section" id="a-random-outburst">
+<h2>A random outburst<a class="headerlink" href="#a-random-outburst" title="Permalink to this headline">¶</a></h2>
+<p>Poul-Henning Kamp has written <a class="reference internal" href="../phk/gzip.html#phk-gzip"><span class="std std-ref">How GZIP, and GZIP+ESI works in Varnish</span></a> which talks a bit more
+about how the implementation works.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Compression</a><ul>
+<li><a class="reference internal" href="#default-behaviour">Default behaviour</a></li>
+<li><a class="reference internal" href="#compressing-content-if-backends-don-t">Compressing content if backends don't</a></li>
+<li><a class="reference internal" href="#uncompressing-content-before-entering-the-cache">Uncompressing content before entering the cache</a></li>
+<li><a class="reference internal" href="#gzip-and-esi">GZIP and ESI</a></li>
+<li><a class="reference internal" href="#turning-off-gzip-support">Turning off gzip support</a></li>
+<li><a class="reference internal" href="#a-random-outburst">A random outburst</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="purging.html"
+                        title="previous chapter">Purging and banning</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="esi.html"
+                        title="next chapter">Content composition with Edge Side Includes</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/users-guide/compression.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="esi.html" title="Content composition with Edge Side Includes"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="purging.html" title="Purging and banning"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Users Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="performance.html" >Varnish and Website Performance</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

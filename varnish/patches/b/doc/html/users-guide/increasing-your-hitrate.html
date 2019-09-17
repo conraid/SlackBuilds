@@ -1,0 +1,753 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Achieving a high hitrate &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Purging and banning" href="purging.html" />
+    <link rel="prev" title="Varnish and Website Performance" href="performance.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="purging.html" title="Purging and banning"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="performance.html" title="Varnish and Website Performance"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Users Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="performance.html" accesskey="U">Varnish and Website Performance</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="achieving-a-high-hitrate">
+<span id="users-guide-increasing-your-hitrate"></span><h1>Achieving a high hitrate<a class="headerlink" href="#achieving-a-high-hitrate" title="Permalink to this headline">¶</a></h1>
+<p>Now that Varnish is up and running you can access your web application
+through Varnish. Unless your application is specifically written to
+work behind a web accelerator you'll probably need to do some
+changes to either the configuration or the application in order to
+get a high hitrate in Varnish.</p>
+<p>Varnish will not cache your data unless it's absolutely sure it is
+safe to do so. So, for you to understand how Varnish decides if and
+how to cache a page, we'll guide you through a couple of tools that
+you should find useful to understand what is happening in your
+Varnish setup.</p>
+<p>Note that you need a tool to see the HTTP headers that fly between
+Varnish and the backend. On the Varnish server, the easiest way to do
+this is to use <a class="reference internal" href="../reference/varnishlog.html#varnishlog-1"><span class="std std-ref">varnishlog</span></a> and <a class="reference internal" href="../reference/varnishtop.html#varnishtop-1"><span class="std std-ref">varnishtop</span></a> but
+sometimes a client-side tool makes sense. Here are the ones we
+commonly use.</p>
+<div class="section" id="tool-varnishtop">
+<h2>Tool: varnishtop<a class="headerlink" href="#tool-varnishtop" title="Permalink to this headline">¶</a></h2>
+<p>You can use varnishtop to identify what URLs are hitting the backend
+the most. <code class="docutils literal"><span class="pre">varnishtop</span> <span class="pre">-i</span> <span class="pre">BereqURL</span></code> is an essential command, showing
+you the top requests Varnish is sending to the backend. You can see some
+other examples of <a class="reference internal" href="../reference/varnishtop.html#varnishtop-1"><span class="std std-ref">varnishtop</span></a> usage in <a class="reference internal" href="operation-statistics.html#users-guide-statistics"><span class="std std-ref">Statistics</span></a>.</p>
+</div>
+<div class="section" id="tool-varnishlog">
+<h2>Tool: varnishlog<a class="headerlink" href="#tool-varnishlog" title="Permalink to this headline">¶</a></h2>
+<p>When you have identified an URL which is frequently sent to the
+backend you can use <a class="reference internal" href="../reference/varnishlog.html#varnishlog-1"><span class="std std-ref">varnishlog</span></a> to have a look at the
+request.  <code class="docutils literal"><span class="pre">varnishlog</span> <span class="pre">-q</span> <span class="pre">'ReqURL</span> <span class="pre">~</span> <span class="pre">&quot;^/foo/bar&quot;'</span></code> will show you the
+requests coming from the client matching <cite>/foo/bar</cite>.</p>
+<p>For more information on how <a class="reference internal" href="../reference/varnishlog.html#varnishlog-1"><span class="std std-ref">varnishlog</span></a> works please see
+<a class="reference internal" href="operation-logging.html#users-guide-logging"><span class="std std-ref">Logging in Varnish</span></a> or then man page.</p>
+</div>
+<div class="section" id="tool-lwp-request">
+<h2>Tool: lwp-request<a class="headerlink" href="#tool-lwp-request" title="Permalink to this headline">¶</a></h2>
+<p><cite>lwp-request</cite> is tool that is a part of The World-Wide Web library
+for Perl. It's a couple of really basic programs that can execute
+an HTTP request and show you the result. We mostly use the two
+programs, <code class="docutils literal"><span class="pre">GET</span></code> and <code class="docutils literal"><span class="pre">HEAD</span></code>.</p>
+<p>vg.no was the first site to use Varnish and the people running Varnish
+there are quite clueful. So it's interesting to look at their HTTP
+Headers. Let's send a GET request for their home page:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ GET -H &#39;Host: www.vg.no&#39; -Used http://vg.no/
+GET http://vg.no/
+Host: www.vg.no
+User-Agent: lwp-request/5.834 libwww-perl/5.834
+
+200 OK
+Cache-Control: must-revalidate
+Refresh: 600
+Title: VG Nett - Forsiden - VG Nett
+X-Age: 463
+X-Cache: HIT
+X-Rick-Would-Never: Let you down
+X-VG-Jobb: http://www.finn.no/finn/job/fulltime/result?keyword=vg+multimedia Merk:HeaderNinja
+X-VG-Korken: http://www.youtube.com/watch?v=Fcj8CnD5188
+X-VG-WebCache: joanie
+X-VG-WebServer: leon
+</pre></div>
+</div>
+<p>OK. Lets look at what <code class="docutils literal"><span class="pre">GET</span></code> does. <code class="docutils literal"><span class="pre">GET</span></code> usually sends off HTTP 0.9
+requests, which lack the 'Host' header. So we add a 'Host' header with the
+'-H' option. '-U' print request headers, '-s' prints response status, '-e'
+prints response headers and '-d' discards the actual content. We don't
+really care about the content, only the headers.</p>
+<p>As you can see, VG adds quite a bit of information in their
+headers. Some of the headers, like the 'X-Rick-Would-Never' are specific
+to vg.no and their somewhat odd sense of humour. Others, like the
+'X-VG-Webcache' are for debugging purposes.</p>
+<p>So, to check whether a site sets cookies for a specific URL, just do:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">-</span><span class="n">Used</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">/</span> <span class="o">|</span><span class="n">grep</span> <span class="o">^</span><span class="n">Set</span><span class="o">-</span><span class="n">Cookie</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tool-live-http-headers">
+<h2>Tool: Live HTTP Headers<a class="headerlink" href="#tool-live-http-headers" title="Permalink to this headline">¶</a></h2>
+<p>There is also a plugin for Firefox called <cite>Live HTTP Headers</cite>. This
+plugin can show you what headers are being sent and received.
+<cite>Live HTTP Headers</cite> can be found at
+<a class="reference external" href="https://addons.mozilla.org/en-US/firefox/addon/3829/">https://addons.mozilla.org/en-US/firefox/addon/3829/</a> or by googling
+&quot;Live HTTP Headers&quot;.</p>
+</div>
+</div>
+<div class="section" id="the-role-of-http-headers">
+<h1>The role of HTTP Headers<a class="headerlink" href="#the-role-of-http-headers" title="Permalink to this headline">¶</a></h1>
+<p>Along with each HTTP request and response comes a bunch of headers
+carrying metadata. Varnish will look at these headers to determine if
+it is appropriate to cache the contents and how long Varnish can keep
+the content cached.</p>
+<p>Please note that when Varnish considers these headers Varnish actually
+considers itself <em>part of</em> the actual webserver. The rationale being
+that both are under your control.</p>
+<p>The term <em>surrogate origin cache</em> is not really well defined by the
+IETF or RFC 2616 so the various ways Varnish works might differ from
+your expectations.</p>
+<p>Let's take a look at the important headers you should be aware of:</p>
+<div class="section" id="cookies">
+<span id="users-guide-cookies"></span><h2>Cookies<a class="headerlink" href="#cookies" title="Permalink to this headline">¶</a></h2>
+<p>Varnish will, in the default configuration, not cache an object coming
+from the backend with a 'Set-Cookie' header present. Also, if the client
+sends a Cookie header, Varnish will bypass the cache and go directly to
+the backend.</p>
+<p>This can be overly conservative. A lot of sites use Google Analytics
+(GA) to analyze their traffic. GA sets a cookie to track you. This
+cookie is used by the client side javascript and is therefore of no
+interest to the server.</p>
+<div class="section" id="cookies-from-the-client">
+<h3>Cookies from the client<a class="headerlink" href="#cookies-from-the-client" title="Permalink to this headline">¶</a></h3>
+<p>For a lot of web applications it makes sense to completely disregard the
+cookies unless you are accessing a special part of the web site. This
+VCL snippet in <cite>vcl_recv</cite> will disregard cookies unless you are
+accessing <cite>/admin/</cite>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>if (!(req.url ~ &quot;^/admin/&quot;)) {
+    unset req.http.Cookie;
+}
+</pre></div>
+</div>
+<p>Quite simple. If, however, you need to do something more complicated,
+like removing one out of several cookies, things get
+difficult. Unfortunately Varnish doesn't have good tools for
+manipulating the Cookies. We have to use regular expressions to do the
+work. If you are familiar with regular expressions you'll understand
+whats going on. If you aren't we recommend that you either pick up a book on
+the subject, read through the <em>pcrepattern</em> man page, or read through
+one of many online guides.</p>
+<p>Lets use the Varnish Software (VS) web as an example here. Very
+simplified the setup VS uses can be described as a Drupal-based
+backend with a Varnish cache in front. VS uses some cookies for
+Google Analytics tracking and similar tools. The cookies are all
+set and used by Javascript. Varnish and Drupal doesn't need to see
+those cookies and since Varnish will cease caching of pages when
+the client sends cookies Varnish will discard these unnecessary
+cookies in VCL.</p>
+<p>In the following VCL we discard all cookies that start with an
+underscore:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Remove has_js and Google Analytics __* cookies.</span>
+<span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span> <span class="o">=</span> <span class="n">regsuball</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span><span class="p">,</span> <span class="s2">&quot;(^|;\s*)(_[_a-z]+|has_js)=[^;]*&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">);</span>
+<span class="c1"># Remove a &quot;;&quot; prefix, if present.</span>
+<span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span> <span class="o">=</span> <span class="n">regsub</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span><span class="p">,</span> <span class="s2">&quot;^;\s*&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Lets look at an example where we remove everything except the
+cookies named &quot;COOKIE1&quot; and &quot;COOKIE2&quot; and you can marvel at the &quot;beauty&quot; of it:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_recv</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span> <span class="o">+</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span><span class="p">;</span>
+        <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span> <span class="o">=</span> <span class="n">regsuball</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span><span class="p">,</span> <span class="s2">&quot;; +&quot;</span><span class="p">,</span> <span class="s2">&quot;;&quot;</span><span class="p">);</span>
+        <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span> <span class="o">=</span> <span class="n">regsuball</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span><span class="p">,</span> <span class="s2">&quot;;(COOKIE1|COOKIE2)=&quot;</span><span class="p">,</span> <span class="s2">&quot;; </span><span class="se">\1</span><span class="s2">=&quot;</span><span class="p">);</span>
+        <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span> <span class="o">=</span> <span class="n">regsuball</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span><span class="p">,</span> <span class="s2">&quot;;[^ ][^;]*&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">);</span>
+        <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span> <span class="o">=</span> <span class="n">regsuball</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span><span class="p">,</span> <span class="s2">&quot;^[; ]+|[; ]+$&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">unset</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>A somewhat simpler example that can accomplish almost the same functionality can be
+found below. Instead of filtering out &quot;other&quot; cookies it instead picks out
+&quot;the one&quot; cookie that is needed, copies it to another header and then
+copies it back to the request, deleting the original cookie header.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_recv</span> <span class="p">{</span>
+    <span class="c1"># save the original cookie header so we can mangle it</span>
+    <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">X</span><span class="o">-</span><span class="n">Varnish</span><span class="o">-</span><span class="n">PHP_SID</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span><span class="p">;</span>
+    <span class="c1"># using a capturing sub pattern, extract the continuous string of</span>
+    <span class="c1"># alphanumerics that immediately follows &quot;PHPSESSID=&quot;</span>
+    <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">X</span><span class="o">-</span><span class="n">Varnish</span><span class="o">-</span><span class="n">PHP_SID</span> <span class="o">=</span>
+       <span class="n">regsuball</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">X</span><span class="o">-</span><span class="n">Varnish</span><span class="o">-</span><span class="n">PHP_SID</span><span class="p">,</span> <span class="s2">&quot;;? ?PHPSESSID=([a-zA-Z0-9]+)( |;| ;).*&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="se">\1</span><span class="s2">&quot;</span><span class="p">);</span>
+    <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Cookie</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">X</span><span class="o">-</span><span class="n">Varnish</span><span class="o">-</span><span class="n">PHP_SID</span><span class="p">;</span>
+    <span class="n">unset</span> <span class="n">req</span><span class="o">.</span><span class="n">X</span><span class="o">-</span><span class="n">Varnish</span><span class="o">-</span><span class="n">PHP_SID</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>There are other scary examples of what can be done in VCL in the
+Varnish Cache Wiki.</p>
+</div>
+<div class="section" id="cookies-coming-from-the-backend">
+<h3>Cookies coming from the backend<a class="headerlink" href="#cookies-coming-from-the-backend" title="Permalink to this headline">¶</a></h3>
+<p>If your backend server sets a cookie using the 'Set-Cookie' header
+Varnish will not cache the page when using the default configuration.
+A <cite>hit-for-miss</cite> object (see <a class="reference internal" href="vcl-actions.html#user-guide-vcl-actions"><span class="std std-ref">actions</span></a>) is
+created.  So, if the backend server acts silly and sets unwanted
+cookies just unset the 'Set-Cookie' header and all should be fine.</p>
+</div>
+</div>
+<div class="section" id="cache-control">
+<h2>Cache-Control<a class="headerlink" href="#cache-control" title="Permalink to this headline">¶</a></h2>
+<p>The 'Cache-Control' header instructs caches how to handle the content. Varnish
+cares about the <em>max-age</em> parameter and uses it to calculate the TTL
+for an object.</p>
+<p>So make sure you issue a 'Cache-Control' header with a max-age
+header. You can have a look at what Varnish Software's Drupal server
+issues:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ GET -Used http://www.varnish-software.com/|grep ^Cache-Control
+Cache-Control: public, max-age=600
+</pre></div>
+</div>
+</div>
+<div class="section" id="age">
+<h2>Age<a class="headerlink" href="#age" title="Permalink to this headline">¶</a></h2>
+<p>Varnish adds an 'Age' header to indicate how long the object has been
+kept inside Varnish. You can grep out 'Age' from <a class="reference internal" href="../reference/varnishlog.html#varnishlog-1"><span class="std std-ref">varnishlog</span></a>
+with <code class="docutils literal"><span class="pre">varnishlog</span> <span class="pre">-I</span> <span class="pre">RespHeader:^Age</span></code>.</p>
+</div>
+<div class="section" id="pragma">
+<h2>Pragma<a class="headerlink" href="#pragma" title="Permalink to this headline">¶</a></h2>
+<p>An HTTP 1.0 server might send the header <code class="docutils literal"><span class="pre">Pragma:</span> <span class="pre">nocache</span></code>. Varnish ignores this
+header. You could easily add support for this header in VCL.</p>
+<p>In <cite>vcl_backend_response</cite>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">beresp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Pragma</span> <span class="o">~</span> <span class="s2">&quot;nocache&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">set</span> <span class="n">beresp</span><span class="o">.</span><span class="n">uncacheable</span> <span class="o">=</span> <span class="n">true</span><span class="p">;</span>
+    <span class="nb">set</span> <span class="n">beresp</span><span class="o">.</span><span class="n">ttl</span> <span class="o">=</span> <span class="mi">120</span><span class="n">s</span><span class="p">;</span> <span class="c1"># how long not to cache this url.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="authorization">
+<h2>Authorization<a class="headerlink" href="#authorization" title="Permalink to this headline">¶</a></h2>
+<p>If Varnish sees an 'Authorization' header it will pass the request. If
+this is not what you want you can unset the header.</p>
+</div>
+<div class="section" id="overriding-the-time-to-live-ttl">
+<h2>Overriding the time-to-live (TTL)<a class="headerlink" href="#overriding-the-time-to-live-ttl" title="Permalink to this headline">¶</a></h2>
+<p>Sometimes your backend will misbehave. It might, depending on your
+setup, be easier to override the TTL in Varnish then to fix your
+somewhat cumbersome backend.</p>
+<p>You need VCL to identify the objects you want and then you set the
+'beresp.ttl' to whatever you want:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_backend_response</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">bereq</span><span class="o">.</span><span class="n">url</span> <span class="o">~</span> <span class="s2">&quot;^/legacy_broken_cms/&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">set</span> <span class="n">beresp</span><span class="o">.</span><span class="n">ttl</span> <span class="o">=</span> <span class="mi">5</span><span class="n">d</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This example will set the TTL to 5 days for the old legacy stuff on
+your site.</p>
+</div>
+<div class="section" id="forcing-caching-for-certain-requests-and-certain-responses">
+<h2>Forcing caching for certain requests and certain responses<a class="headerlink" href="#forcing-caching-for-certain-requests-and-certain-responses" title="Permalink to this headline">¶</a></h2>
+<p>Since you still might have this cumbersome backend that isn't very friendly
+to work with you might want to override more stuff in Varnish. We
+recommend that you rely as much as you can on the default caching
+rules. It is perfectly easy to force Varnish to lookup an object in
+the cache but it isn't really recommended.</p>
+</div>
+<div class="section" id="normalizing-your-namespace">
+<h2>Normalizing your namespace<a class="headerlink" href="#normalizing-your-namespace" title="Permalink to this headline">¶</a></h2>
+<p>Some sites are accessed via lots of hostnames.
+<a class="reference external" href="http://www.varnish-software.com/">http://www.varnish-software.com/</a>, <a class="reference external" href="http://varnish-software.com/">http://varnish-software.com/</a> and
+<a class="reference external" href="http://varnishsoftware.com/">http://varnishsoftware.com/</a> all point at the same site. Since Varnish
+doesn't know they are the same, Varnish will cache different versions of
+every page for every hostname. You can mitigate this in your web server
+configuration by setting up redirects or by using the following VCL:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">host</span> <span class="o">~</span> <span class="s2">&quot;(?i)^(www.)?varnish-?software.com&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="s2">&quot;varnish-software.com&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="http-vary">
+<span id="users-guide-vary"></span><h1>HTTP Vary<a class="headerlink" href="#http-vary" title="Permalink to this headline">¶</a></h1>
+<p><em>HTTP Vary is not a trivial concept. It is by far the most misunderstood
+HTTP header.</em></p>
+<p>A lot of the response headers tell the client something about the
+HTTP object being delivered. Clients can request different variants
+of a HTTP object, based on their preference. Their preferences might
+cover stuff like encoding or language. When a client prefers UK
+English this is indicated through <code class="docutils literal"><span class="pre">Accept-Language:</span> <span class="pre">en-uk</span></code>. Caches
+need to keep these different variants apart and this is done through
+the HTTP response header 'Vary'.</p>
+<p>When a backend server issues a <code class="docutils literal"><span class="pre">Vary:</span> <span class="pre">Accept-Language</span></code> it tells
+Varnish that its needs to cache a separate version for every different
+Accept-Language that is coming from the clients.</p>
+<p>If two clients say they accept the languages &quot;en-us, en-uk&quot; and
+&quot;da, de&quot; respectively, Varnish will cache and serve two different
+versions of the page if the backend indicated that Varnish needs
+to vary on the 'Accept-Language' header.</p>
+<p>Please note that the headers that 'Vary' refer to need to match
+<em>exactly</em> for there to be a match. So Varnish will keep two copies
+of a page if one of them was created for &quot;en-us, en-uk&quot; and the
+other for &quot;en-us,en-uk&quot;. Just the lack of a whitespace will force
+Varnish to cache another version.</p>
+<p>To achieve a high hitrate whilst using Vary is there therefore
+crucial to normalize the headers the backends varies on. Remember,
+just a difference in casing can force different cache entries.</p>
+<p>The following VCL code will normalize the 'Accept-Language' header to
+either &quot;en&quot;, &quot;de&quot; or &quot;fr&quot;, in this order of precedence:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span> <span class="o">~</span> <span class="s2">&quot;en&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">;</span>
+    <span class="p">}</span> <span class="n">elsif</span> <span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span> <span class="o">~</span> <span class="s2">&quot;de&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span> <span class="o">=</span> <span class="s2">&quot;de&quot;</span><span class="p">;</span>
+    <span class="p">}</span> <span class="n">elsif</span> <span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span> <span class="o">~</span> <span class="s2">&quot;fr&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span> <span class="o">=</span> <span class="s2">&quot;fr&quot;</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1"># unknown language. Remove the accept-language header and</span>
+        <span class="c1"># use the backend default.</span>
+        <span class="n">unset</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="vary-parse-errors">
+<h2>Vary parse errors<a class="headerlink" href="#vary-parse-errors" title="Permalink to this headline">¶</a></h2>
+<p>Varnish will return a &quot;503 internal server error&quot; page when it fails
+to parse the 'Vary' header, or if any of the client headers listed
+in the Vary header exceeds the limit of 65k characters. An 'SLT_Error'
+log entry is added in these cases.</p>
+</div>
+<div class="section" id="pitfall-vary-user-agent">
+<h2>Pitfall - Vary: User-Agent<a class="headerlink" href="#pitfall-vary-user-agent" title="Permalink to this headline">¶</a></h2>
+<p>Some applications or application servers send <code class="docutils literal"><span class="pre">Vary:</span> <span class="pre">User-Agent</span></code>
+along with their content. This instructs Varnish to cache a separate
+copy for every variation of 'User-Agent' there is and there are
+plenty. Even a single patchlevel of the same browser will generate
+at least 10 different 'User-Agent' headers based just on what
+operating system they are running.</p>
+<p>So if you <em>really</em> need to vary based on 'User-Agent' be sure to
+normalize the header or your hit rate will suffer badly. Use the
+above code as a template.</p>
+</div>
+</div>
+<div class="section" id="cache-misses">
+<h1>Cache misses<a class="headerlink" href="#cache-misses" title="Permalink to this headline">¶</a></h1>
+<p>When Varnish does not find an object for a request in the cache, then
+by default it performs a fetch from the backend on the hypothesis that
+the response might be cached. This has two important consequences:</p>
+<ul class="simple">
+<li>Concurrent backend requests for the same object are <em>coalesced</em> --
+only one fetch is executed at a time, and the other pending fetches
+wait for the result (unless you have brought about one of the states
+described below in <a class="reference internal" href="#users-guide-uncacheable"><span class="std std-ref">Uncacheable content</span></a>). This is to
+prevent your backend from being hit by a &quot;thundering herd&quot; when the
+cached response has expired, or if it was never cached in the first
+place. If it turns out that the response to the first fetch is
+cached, then that cache object can be delivered immediately to other
+pending requests.</li>
+<li>The backend request for the cache miss cannot be conditional if
+Varnish does not have an object in the cache to validate; that is,
+it cannot contain the headers <code class="docutils literal"><span class="pre">If-Modified-Since</span></code> or
+<code class="docutils literal"><span class="pre">If-None-Match</span></code>, which might cause the backend to return status
+&quot;304 Not Modified&quot; with no response body. Otherwise, there might not
+be a response to cache. If those headers were present in the client
+request, they are removed from the backend request.</li>
+</ul>
+<p>By setting a grace time for cached objects (default 10 seconds), you
+allow Varnish to serve stale content while waiting for coalesced fetches,
+which are run asynchronously while the stale response is sent to the
+client. For details see <a class="reference internal" href="vcl-grace.html#users-guide-handling-misbehaving-servers"><span class="std std-ref">Grace mode and keep</span></a>.</p>
+<p>Although the headers for a conditional request are removed from the
+backend fetch on a cache miss, Varnish may nevertheless respond to the
+client request with &quot;304 Not Modified&quot; if the resulting response
+allows it. At delivery time, if the client request had an
+<code class="docutils literal"><span class="pre">If-None-Match</span></code> header that matches the <code class="docutils literal"><span class="pre">ETag</span></code> header in the
+response, or if the time in an <code class="docutils literal"><span class="pre">If-Modified-Since</span></code> request header is
+equal to or later than the time in the <code class="docutils literal"><span class="pre">Last-Modified</span></code> response
+header, Varnish will send the 304 response to the client. This happens
+for both hits and misses.</p>
+<p>Varnish can send conditional requests to the backend if it has an
+object in the cache against which the validation can be performed. You
+can ensure that an object is retained for this purpose by setting
+<code class="docutils literal"><span class="pre">beresp.keep</span></code> in <code class="docutils literal"><span class="pre">vcl_backend_response</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_backend_response</span> <span class="p">{</span>
+  <span class="c1"># Keep the response in cache for 4 hours if the response has</span>
+  <span class="c1"># validating headers.</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">beresp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">ETag</span> <span class="o">||</span> <span class="n">beresp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Last</span><span class="o">-</span><span class="n">Modified</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">set</span> <span class="n">beresp</span><span class="o">.</span><span class="n">keep</span> <span class="o">=</span> <span class="mi">4</span><span class="n">h</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>A stale object is not removed from the cache for the duration of
+<code class="docutils literal"><span class="pre">beresp.keep</span></code> after its TTL and grace time have expired. This will
+increase the storage requirements for your cache, but if you have the
+space, it might be worth it to keep stale objects that can be
+validated for a fairly long time. If the backend can send a 304
+response long after the TTL has expired, you save bandwith on the
+fetch and reduce pressure on the storage; if not, then it's no
+different from any other cache miss.</p>
+<p>If, however, you would prefer that backend fetches are not
+conditional, just remove the If-* headers in <code class="docutils literal"><span class="pre">vcl_backend_fetch</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_backend_fetch</span> <span class="p">{</span>
+  <span class="c1"># To prevent conditional backend fetches.</span>
+  <span class="n">unset</span> <span class="n">bereq</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">If</span><span class="o">-</span><span class="kc">None</span><span class="o">-</span><span class="n">Match</span><span class="p">;</span>
+  <span class="n">unset</span> <span class="n">bereq</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">If</span><span class="o">-</span><span class="n">Modified</span><span class="o">-</span><span class="n">Since</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>That should only be necessary if the conditional fetches are
+problematic for the backend, for example if evaluating whether the
+response is unchanged is too costly for the backend app, or if the
+responses are just buggy. From the perspective of Varnish, 304
+responses are clearly preferable; fetches with the empty response body
+save bandwidth, and storage does not have to be allocated in the
+cache, since the existing cache object is re-used.</p>
+<p>To summarize, you can improve performance even in the case of cache
+misses by:</p>
+<ul class="simple">
+<li>ensuring that cached objects have a grace time during which a stale
+object can be served to the client while fetches are performed in
+the background, and</li>
+<li>setting a keep time for cached objects that can be validated with
+a 304 response after they have gone stale.</li>
+</ul>
+</div>
+<div class="section" id="uncacheable-content">
+<span id="users-guide-uncacheable"></span><h1>Uncacheable content<a class="headerlink" href="#uncacheable-content" title="Permalink to this headline">¶</a></h1>
+<p>Some responses cannot be cached, for various reasons. The content may
+be personalized, depending on the content of the <code class="docutils literal"><span class="pre">Cookie</span></code> header, or
+it might just be the sort of thing that is generated anew on each
+request.  The cache can't help with that, but nevertheless there are
+some decisions you can make that will help Varnish deal with
+uncacheable responses in a way that is best for your requirements.</p>
+<p>The issues to consider are:</p>
+<ul class="simple">
+<li>preventing request coalescing</li>
+<li>whether (and how soon) the response for the same object may become
+cacheable again</li>
+<li>whether you want to pass along <code class="docutils literal"><span class="pre">If-Modified-Since</span></code> and
+<code class="docutils literal"><span class="pre">If-None-Match</span></code> headers from the client request to the backend, to
+allow the backend to respond with status 304</li>
+</ul>
+<div class="section" id="passing-client-requests">
+<h2>Passing client requests<a class="headerlink" href="#passing-client-requests" title="Permalink to this headline">¶</a></h2>
+<p>Depending on how your site works, you may be able to recognize a
+client request for a response that cannot be cached, for example if
+the URL matches certain patterns, or due to the contents of a request
+header.  In that case, you can set the fetch to <em>pass</em> with
+<code class="docutils literal"><span class="pre">return(pass)</span></code> from <code class="docutils literal"><span class="pre">vcl_recv</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_recv</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">url</span> <span class="o">~</span> <span class="s2">&quot;^/this/is/personal/&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span><span class="p">(</span><span class="k">pass</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>For passes there is no request coalescing. Since pass indicates that
+the response will not be cacheable, there is no point in waiting for a
+response that might be cached, and all pending fetches for the object
+are concurrent. Otherwise, fetches waiting for an object that turns
+out to be uncacheable after all may be serialized -- pending fetches
+would wait for the first one, and when the result is not entered into
+the cache, the next fetch begins while all of the others wait, and so
+on.</p>
+<p>When a request is passed, this can be recognized in the
+<code class="docutils literal"><span class="pre">vcl_backend_*</span></code> subroutines by the fact that <code class="docutils literal"><span class="pre">bereq.uncacheable</span></code>
+and <code class="docutils literal"><span class="pre">beresp.uncachable</span></code> are both true. The backend response will not
+be cached, even if it fulfills conditions that otherwise would allow
+it, for example if <code class="docutils literal"><span class="pre">Cache-Control</span></code> sets a positive TTL.</p>
+<p>Pass is the default (that is, <code class="docutils literal"><span class="pre">builtin.vcl</span></code> calls <code class="docutils literal"><span class="pre">return(pass)</span></code> in
+<code class="docutils literal"><span class="pre">vcl_recv</span></code>) if the client request meets these conditions:</p>
+<ul class="simple">
+<li>the request method is a standard HTTP/1.1 method, but not <code class="docutils literal"><span class="pre">GET</span></code> or
+<code class="docutils literal"><span class="pre">HEAD</span></code></li>
+<li>there is either a <code class="docutils literal"><span class="pre">Cookie</span></code> or an <code class="docutils literal"><span class="pre">Authorization</span></code> header, indicating
+that the response may be personalized</li>
+</ul>
+<p>If you want to override the default, say if you are certain that the
+response may be cacheable despite the presence of a Cookie, make sure
+that a <code class="docutils literal"><span class="pre">return</span></code> gets called at the end of any path that may be taken
+through your own <code class="docutils literal"><span class="pre">vcl_recv</span></code>. But if you do that, no part of the
+built-in <code class="docutils literal"><span class="pre">vcl_recv</span></code> gets executed; so take a close look at
+<code class="docutils literal"><span class="pre">vcl_recv</span></code> in <code class="docutils literal"><span class="pre">builtin.vcl</span></code>, and duplicate any part of it that you
+require in your own <code class="docutils literal"><span class="pre">vcl_recv</span></code>.</p>
+<p>As with cache hits and misses, Varnish decides to send a 304 response
+to the client after a pass if the client request headers and the
+response headers allow it. This might mean that Varnish will send a
+304 response to the client even after the backend saw the same request
+headers (<code class="docutils literal"><span class="pre">If-Modified-Since</span></code> and/or <code class="docutils literal"><span class="pre">If-None-Match</span></code>), but decided
+not to respond with status 304, while nevertheless setting the
+response headers <code class="docutils literal"><span class="pre">ETag</span></code> and/or <code class="docutils literal"><span class="pre">Last-Modified</span></code> so that 304 would
+appear to be warranted. If you would prefer that Varnish doesn't do
+that, then remove the If-* client request headers in <code class="docutils literal"><span class="pre">vcl_pass</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_pass</span> <span class="p">{</span>
+  <span class="c1"># To prevent 304 client responses after a pass.</span>
+  <span class="n">unset</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">If</span><span class="o">-</span><span class="kc">None</span><span class="o">-</span><span class="n">Match</span><span class="p">;</span>
+  <span class="n">unset</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">If</span><span class="o">-</span><span class="n">Modified</span><span class="o">-</span><span class="n">Since</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="hit-for-miss">
+<h2>hit-for-miss<a class="headerlink" href="#hit-for-miss" title="Permalink to this headline">¶</a></h2>
+<p>You may not be able to recognize all requests for uncacheable content
+in <code class="docutils literal"><span class="pre">vcl_recv</span></code>. You might want to allow backends to determine their
+own cacheability by setting the <code class="docutils literal"><span class="pre">Cache-Control</span></code> header, but that
+cannot be seen until Varnish receives the backend response, so
+<code class="docutils literal"><span class="pre">vcl_recv</span></code> can't know about it.</p>
+<p>By default, if a request is not passed and the backend response turns
+out to be uncacheable, the cache object is set to &quot;hit-for-miss&quot;, by
+setting <code class="docutils literal"><span class="pre">beresp.uncacheable</span></code> to <code class="docutils literal"><span class="pre">true</span></code> in
+<code class="docutils literal"><span class="pre">vcl_backend_response</span></code>.  A minimal object is saved in the cache, so
+that the &quot;hit-for-miss&quot; state can be recognized on subsequent
+lookups. (The cache is used to remember that the object is
+uncacheable, for a limited time.)  In that case, no request coalescing
+is performed, so that fetches can run concurrently. Otherwise, fetches
+for hit-for-miss are just like cache misses, meaning that:</p>
+<ul class="simple">
+<li>the response may become cacheable on a later request, for example
+if it sets a positive TTL with <code class="docutils literal"><span class="pre">Cache-Control</span></code>, and</li>
+<li>fetches cannot be conditional, so <code class="docutils literal"><span class="pre">If-Modified-Since</span></code> and
+<code class="docutils literal"><span class="pre">If-None-Match</span></code> headers are removed from the backend request.</li>
+</ul>
+<p>When <code class="docutils literal"><span class="pre">beresp.uncacheable</span></code> is set to <code class="docutils literal"><span class="pre">true</span></code>, then <code class="docutils literal"><span class="pre">beresp.ttl</span></code>
+determines how long the hit-for-miss state may last at most. The
+hit-for-miss state ends after this period of time elapses, or if a
+cacheable response is returned by the backend before it elapses (the
+elapse of <code class="docutils literal"><span class="pre">beresp.ttl</span></code> just means that the minimal cache object
+expires, like any other cache object expiration). If a cacheable
+response is returned, then that object replaces the hit-for-miss
+object, and subsequent requests for it will be cache hits. If no
+cacheable response is returned before <code class="docutils literal"><span class="pre">beresp.ttl</span></code> elapses, then the
+next request for that object will be an ordinary miss, and hence will
+be subject to request coalescing.</p>
+<p>When Varnish sees that it has hit a hit-for-miss object on a new
+request, it executes <code class="docutils literal"><span class="pre">vcl_miss</span></code>, so any custom VCL you have written
+for cache misses will apply in the hit-for-miss case as well.</p>
+<p><code class="docutils literal"><span class="pre">builtin.vcl</span></code> sets <code class="docutils literal"><span class="pre">beresp.uncacheable</span></code> to <code class="docutils literal"><span class="pre">true</span></code>, invoking the
+hit-for-miss state, under a number of conditions that indicate that
+the response cannot be cached, for example if the TTL was computed to
+be 0 or if there is a <code class="docutils literal"><span class="pre">Set-Cookie</span></code> header. <code class="docutils literal"><span class="pre">beresp.ttl</span></code> is set to
+two minutes by <code class="docutils literal"><span class="pre">builtin.vcl</span></code> in this case, so that is how long
+hit-for-miss lasts by default.</p>
+<p>You can set <code class="docutils literal"><span class="pre">beresp.uncacheable</span></code> yourself if you need hit-for-miss
+on other conditions:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_backend_response</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">beresp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">X</span><span class="o">-</span><span class="n">This</span><span class="o">-</span><span class="n">Is</span> <span class="o">==</span> <span class="s2">&quot;personal&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">set</span> <span class="n">beresp</span><span class="o">.</span><span class="n">uncacheable</span> <span class="o">=</span> <span class="n">true</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Note that once <code class="docutils literal"><span class="pre">beresp.uncacheable</span></code> has been set to <code class="docutils literal"><span class="pre">true</span></code> it
+cannot be set back to <code class="docutils literal"><span class="pre">false</span></code>; attempts to do so in VCL are ignored.</p>
+<p>Although the backend fetches are never conditional for hit-for-miss,
+Varnish may decide (as in all other cases) to send a 304 response to
+the client if the client request headers and response headers <code class="docutils literal"><span class="pre">ETag</span></code>
+or <code class="docutils literal"><span class="pre">Last-Modified</span></code> allow it. If you want to prevent that, remove
+the If-* client request headers in <code class="docutils literal"><span class="pre">vcl_miss</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_miss</span> <span class="p">{</span>
+  <span class="c1"># To prevent 304 client responses on hit-for-miss.</span>
+  <span class="n">unset</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">If</span><span class="o">-</span><span class="kc">None</span><span class="o">-</span><span class="n">Match</span><span class="p">;</span>
+  <span class="n">unset</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">If</span><span class="o">-</span><span class="n">Modified</span><span class="o">-</span><span class="n">Since</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="hit-for-pass">
+<h2>hit-for-pass<a class="headerlink" href="#hit-for-pass" title="Permalink to this headline">¶</a></h2>
+<p>A consequence of hit-for-miss is that backend fetches cannot be
+conditional, since hit-for-miss allows subsequent responses to be
+cacheable. This may be problematic for responses that are very large
+and not cacheable, but may be validated with a 304 response. For
+example, you may want clients to validate an object via the backend
+every time, only sending the response when it has been changed.</p>
+<p>For a situation like this, you can set an object to &quot;hit-for-pass&quot; with
+<code class="docutils literal"><span class="pre">return(pass(DURATION))</span></code> from <code class="docutils literal"><span class="pre">vcl_backend_response</span></code>, where the
+DURATION determines how long the hit-for-pass state lasts:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_backend_response</span> <span class="p">{</span>
+  <span class="c1"># Set hit-for-pass for two minutes if TTL is 0 and response headers</span>
+  <span class="c1"># allow for validation.</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">beresp</span><span class="o">.</span><span class="n">ttl</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="n">s</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">beresp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">ETag</span> <span class="o">||</span> <span class="n">beresp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Last</span><span class="o">-</span><span class="n">Modified</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">return</span><span class="p">(</span><span class="k">pass</span><span class="p">(</span><span class="mi">120</span><span class="n">s</span><span class="p">));</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>As with hit-for-miss, a minimal object is entered into the cache so
+that the hit-for-pass state is recognized on subsequent requests. The
+request is then processed as a pass, just as if <code class="docutils literal"><span class="pre">vcl_recv</span></code> had
+returned pass.  This means that there is no request coalescing, and
+that <code class="docutils literal"><span class="pre">If-Modified-Since</span></code> and <code class="docutils literal"><span class="pre">If-None-Match</span></code> headers in the client
+request are passed along to the backend, so that the backend response
+may be 304.</p>
+<p>Varnish executes <code class="docutils literal"><span class="pre">vcl_pass</span></code> when it hits a hit-for-pass object. So
+again, you can arrange for your own handling of both pass and
+hit-for-pass with the same code in VCL.</p>
+<p>If you want to prevent Varnish from sending conditional requests to
+the backend, then remove the If-* headers from the backend request in
+<code class="docutils literal"><span class="pre">vcl_backend_fetch</span></code>, as shown above for cache misses. And if you
+want to prevent Varnish from deciding at delivery time to send a 304
+response to the client based on the client request and response
+headers, then remove the headers from the client request in
+<code class="docutils literal"><span class="pre">vcl_pass</span></code>, as shown above for pass.</p>
+<p>The hit-for-pass state ends when the &quot;hit-for-pass TTL&quot; given in the
+<code class="docutils literal"><span class="pre">return</span></code> statement elapses. As with passes, the response to a
+hit-for-pass fetch is never cached, even if it would otherwise fulfill
+conditions for cacheability.  So unlike hit-for-miss, it is not
+possible to end the hit-for-pass state ahead of time with a cacheable
+response. After the &quot;hit-for-pass TTL&quot; elapses, the next request for
+that object is handled as an ordinary miss.</p>
+<p>It is possible to end the hit-for-pass state of a cache object by
+setting <code class="docutils literal"><span class="pre">req.hash_always_miss</span></code> to <code class="docutils literal"><span class="pre">true</span></code> in <code class="docutils literal"><span class="pre">vcl_recv</span></code> for a
+request that will hit the object (you'll have to write VCL that brings
+that about). The request in which that happens is forced to be a cache
+miss, and the state of the object afterwards depends on the
+disposition of the backend response -- it may become a cache hit,
+hit-for-miss, or may be set to hit-for-pass again.</p>
+<p>hit-for-miss is the default treatment of uncacheable content. No part
+of <code class="docutils literal"><span class="pre">builtin.vcl</span></code> invokes hit-for-pass, so if you need it, you have to
+add the necessary <code class="docutils literal"><span class="pre">return</span></code> statement to your own VCL.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Achieving a high hitrate</a><ul>
+<li><a class="reference internal" href="#tool-varnishtop">Tool: varnishtop</a></li>
+<li><a class="reference internal" href="#tool-varnishlog">Tool: varnishlog</a></li>
+<li><a class="reference internal" href="#tool-lwp-request">Tool: lwp-request</a></li>
+<li><a class="reference internal" href="#tool-live-http-headers">Tool: Live HTTP Headers</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-role-of-http-headers">The role of HTTP Headers</a><ul>
+<li><a class="reference internal" href="#cookies">Cookies</a><ul>
+<li><a class="reference internal" href="#cookies-from-the-client">Cookies from the client</a></li>
+<li><a class="reference internal" href="#cookies-coming-from-the-backend">Cookies coming from the backend</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cache-control">Cache-Control</a></li>
+<li><a class="reference internal" href="#age">Age</a></li>
+<li><a class="reference internal" href="#pragma">Pragma</a></li>
+<li><a class="reference internal" href="#authorization">Authorization</a></li>
+<li><a class="reference internal" href="#overriding-the-time-to-live-ttl">Overriding the time-to-live (TTL)</a></li>
+<li><a class="reference internal" href="#forcing-caching-for-certain-requests-and-certain-responses">Forcing caching for certain requests and certain responses</a></li>
+<li><a class="reference internal" href="#normalizing-your-namespace">Normalizing your namespace</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#http-vary">HTTP Vary</a><ul>
+<li><a class="reference internal" href="#vary-parse-errors">Vary parse errors</a></li>
+<li><a class="reference internal" href="#pitfall-vary-user-agent">Pitfall - Vary: User-Agent</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cache-misses">Cache misses</a></li>
+<li><a class="reference internal" href="#uncacheable-content">Uncacheable content</a><ul>
+<li><a class="reference internal" href="#passing-client-requests">Passing client requests</a></li>
+<li><a class="reference internal" href="#hit-for-miss">hit-for-miss</a></li>
+<li><a class="reference internal" href="#hit-for-pass">hit-for-pass</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="performance.html"
+                        title="previous chapter">Varnish and Website Performance</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="purging.html"
+                        title="next chapter">Purging and banning</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/users-guide/increasing-your-hitrate.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="purging.html" title="Purging and banning"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="performance.html" title="Varnish and Website Performance"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Users Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="performance.html" >Varnish and Website Performance</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

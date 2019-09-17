@@ -1,0 +1,102 @@
+varnishtest "Test fallback director"
+
+server s1 {
+	rxreq
+	txresp -hdr "Foo: 1"
+} -start
+
+server s2 {
+	rxreq
+	txresp -hdr "Foo: 2"
+} -start
+
+server s3 {
+	rxreq
+	txresp -hdr "Foo: 3"
+} -start
+
+varnish v1 -vcl+backend {
+	import std;
+	import directors;
+
+	sub vcl_init {
+		new fb1 = directors.fallback();
+		fb1.add_backend(s1);
+		fb1.add_backend(s2);
+		fb1.add_backend(s3);
+	}
+
+	sub vcl_recv {
+		if (req.method == "DELETE") {
+			fb1.remove_backend(s2);
+			return(synth(204));
+		}
+		return (pass);
+	}
+
+	sub vcl_deliver {
+		set resp.http.health = std.healthy(fb1.backend());
+	}
+
+	sub vcl_backend_fetch {
+		set bereq.backend = fb1.backend();
+	}
+} -start
+
+varnish v1 -cliok "param.set debug +vclrel"
+
+varnish v1 -cliok "backend.set_health s1 sick"
+varnish v1 -cliok "backend.set_health s2 sick"
+
+client c1 {
+	# s1 & s2 are both sick, expect response from s3
+	txreq
+	rxresp
+	expect resp.http.foo == "3"
+} -run
+
+varnish v1 -vsl_catchup
+
+varnish v1 -cliok "backend.set_health s2 healthy"
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.http.foo == "2"
+} -run
+
+varnish v1 -vsl_catchup
+
+varnish v1 -cliok "backend.set_health s1 healthy"
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.http.foo == "1"
+} -run
+
+varnish v1 -vsl_catchup
+
+varnish v1 -cliok "backend.set_health s1 sick"
+server s3 -start
+
+client c1 {
+	txreq -req "DELETE"
+	rxresp
+	expect resp.status == 204
+	txreq
+	rxresp
+	expect resp.http.foo == "3"
+} -run
+
+varnish v1 -vsl_catchup
+
+varnish v1 -vcl+backend {
+	sub vcl_recv {
+		set req.backend_hint = s1;
+		set req.backend_hint = s2;
+		set req.backend_hint = s3;
+	}
+}
+varnish v1 -cliok "vcl.discard vcl1"
+varnish v1 -cliok "vcl.list"

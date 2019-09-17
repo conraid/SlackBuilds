@@ -1,0 +1,30 @@
+varnishtest "Check that synth response in vcl_backend_response works"
+
+server s1 {
+	rxreq
+	txresp -body "012345\n"
+} -start
+
+varnish v1 -vcl+backend {
+	sub vcl_backend_response {
+	    set beresp.http.Foo = "bar";
+	    set beresp.status = 523;
+	    set beresp.reason = "not ok";
+	    set beresp.uncacheable = true;
+	    set beresp.ttl = 0s;
+	    return (deliver);
+	}
+} -start
+
+varnish v1 -cliok "param.set default_grace 0"
+varnish v1 -cliok "param.set default_keep 0"
+
+client c1 {
+	txreq -url "/"
+	rxresp
+	expect resp.status == 523
+} -run
+
+delay 4
+
+varnish v1 -expect n_object == 0

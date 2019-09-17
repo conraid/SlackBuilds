@@ -1,0 +1,272 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Grace mode and keep &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Separate VCL files" href="vcl-separate.html" />
+    <link rel="prev" title="Hashing" href="vcl-hashing.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="vcl-separate.html" title="Separate VCL files"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vcl-hashing.html" title="Hashing"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Users Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="vcl.html" accesskey="U">VCL - Varnish Configuration Language</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="grace-mode-and-keep">
+<span id="users-guide-handling-misbehaving-servers"></span><h1>Grace mode and keep<a class="headerlink" href="#grace-mode-and-keep" title="Permalink to this headline">¶</a></h1>
+<p>Sometimes you want Varnish to serve content that is somewhat stale
+instead of waiting for a fresh object from the backend. For example,
+if you run a news site, serving a main page that is a few seconds old
+is not a problem if this gives your site faster load times.</p>
+<p>In Varnish this is achieved by using <cite>grace mode</cite>. A related idea
+is <cite>keep</cite>, which is also explained here.</p>
+<div class="section" id="grace-mode">
+<h2>Grace mode<a class="headerlink" href="#grace-mode" title="Permalink to this headline">¶</a></h2>
+<p>When several clients are requesting the same page Varnish will send
+one request to the backend and place the others on hold while fetching
+one copy from the backend. In some products this is called request
+coalescing and Varnish does this automatically.</p>
+<p>If you are serving thousands of hits per second the queue of waiting
+requests can get huge. There are two potential problems - one is a
+thundering herd problem - suddenly releasing a thousand threads to
+serve content might send the load sky high. Secondly - nobody likes to
+wait.</p>
+<p>Setting an object's <cite>grace</cite> to a positive value tells Varnish that it
+should serve the object to clients for some time after the TTL has
+expired, while Varnish fetches a new version of the object. The default
+value is controlled by the runtime parameter <code class="docutils literal"><span class="pre">default_grace</span></code>.</p>
+</div>
+<div class="section" id="keep">
+<h2>Keep<a class="headerlink" href="#keep" title="Permalink to this headline">¶</a></h2>
+<p>Setting an object's <cite>keep</cite> tells Varnish that it should keep an object
+in the cache for some additional time. The reasons to set <cite>keep</cite> is to
+use the object to construct a conditional GET backend request (with
+If-Modified-Since: and/or Ìf-None-Match: headers), allowing the
+backend to reply with a 304 Not Modified response, which may be more
+efficient on the backend and saves re-transmitting the unchanged body.</p>
+<p>The values are additive, so if grace is 10 seconds and keep is 1 minute,
+then objects will survive in cache for 70 seconds after the TTL has
+expired.</p>
+</div>
+<div class="section" id="setting-grace-and-keep">
+<h2>Setting grace and keep<a class="headerlink" href="#setting-grace-and-keep" title="Permalink to this headline">¶</a></h2>
+<p>We can use VCL to make Varnish keep all objects for 10 minutes beyond
+their TTL with a grace period of 2 minutes:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_backend_response</span> <span class="p">{</span>
+     <span class="nb">set</span> <span class="n">beresp</span><span class="o">.</span><span class="n">grace</span> <span class="o">=</span> <span class="mi">2</span><span class="n">m</span><span class="p">;</span>
+     <span class="nb">set</span> <span class="n">beresp</span><span class="o">.</span><span class="n">keep</span> <span class="o">=</span> <span class="mi">8</span><span class="n">m</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-effect-of-grace-and-keep">
+<h2>The effect of grace and keep<a class="headerlink" href="#the-effect-of-grace-and-keep" title="Permalink to this headline">¶</a></h2>
+<p>For most users setting the default grace and/or a suitable grace for
+each object is enough. The default VCL will do the right thing and
+behave as described above. However, if you want to customize how
+Varnish behaves, then you should know some of the details on how this
+works.</p>
+<p>When <code class="docutils literal"><span class="pre">sub</span> <span class="pre">vcl_recv</span></code> ends with <code class="docutils literal"><span class="pre">return</span> <span class="pre">(lookup)</span></code> (which is the
+default behavior), Varnish will look for a matching object in its
+cache. Then, if it only found an object whose TTL has run out, Varnish
+will consider the following:</p>
+<ul class="simple">
+<li>Is there already an ongoing backend request for the object?</li>
+<li>Is the object within the <cite>grace period</cite>?</li>
+</ul>
+<p>Then, Varnish reacts using the following rules:</p>
+<ul class="simple">
+<li>If the <cite>grace period</cite> has run out and there is no ongoing backend
+request, then <code class="docutils literal"><span class="pre">sub</span> <span class="pre">vcl_miss</span></code> is called immediately, and the object
+will be used as a 304 candidate.</li>
+<li>If the <cite>grace period</cite> has run out and there is an ongoing backend
+request, then the request will wait until the backend request
+finishes.</li>
+<li>If there is no backend request for the object, one is scheduled.</li>
+<li>Assuming the object will be delivered, <code class="docutils literal"><span class="pre">sub</span> <span class="pre">vcl_hit</span></code> is called
+immediately.</li>
+</ul>
+<p>Note that the backend fetch happens asynchronously, and the moment the
+new object is in it will replace the one we've already got.</p>
+<p>If you do not define your own <code class="docutils literal"><span class="pre">sub</span> <span class="pre">vcl_hit</span></code>, then the default one is
+used. It looks like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_hit</span> <span class="p">{</span>
+     <span class="k">if</span> <span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">ttl</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+          <span class="o">//</span> <span class="n">A</span> <span class="n">pure</span> <span class="n">unadulterated</span> <span class="n">hit</span><span class="p">,</span> <span class="n">deliver</span> <span class="n">it</span>
+          <span class="k">return</span> <span class="p">(</span><span class="n">deliver</span><span class="p">);</span>
+     <span class="p">}</span>
+     <span class="k">if</span> <span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">ttl</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">grace</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+          <span class="o">//</span> <span class="n">Object</span> <span class="ow">is</span> <span class="ow">in</span> <span class="n">grace</span><span class="p">,</span> <span class="n">deliver</span> <span class="n">it</span>
+          <span class="o">//</span> <span class="n">Automatically</span> <span class="n">triggers</span> <span class="n">a</span> <span class="n">background</span> <span class="n">fetch</span>
+          <span class="k">return</span> <span class="p">(</span><span class="n">deliver</span><span class="p">);</span>
+     <span class="p">}</span>
+     <span class="o">//</span> <span class="n">fetch</span> <span class="o">&amp;</span> <span class="n">deliver</span> <span class="n">once</span> <span class="n">we</span> <span class="n">get</span> <span class="n">the</span> <span class="n">result</span>
+     <span class="k">return</span> <span class="p">(</span><span class="n">miss</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The effect of the built-in VCL is in fact equivalent to the following:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_hit</span> <span class="p">{</span>
+     <span class="k">return</span> <span class="p">(</span><span class="n">deliver</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This is because <code class="docutils literal"><span class="pre">obj.ttl</span> <span class="pre">+</span> <span class="pre">obj.grace</span> <span class="pre">&gt;</span> <span class="pre">0s</span></code> always will evaluate to
+true. However, the the VCL is as it is to show users how to
+differentiate between a pure hit and a <cite>grace</cite> hit. With the next
+major version of Varnish, the default VCL is planned to change to the
+latter, shorter version.</p>
+</div>
+<div class="section" id="misbehaving-servers">
+<h2>Misbehaving servers<a class="headerlink" href="#misbehaving-servers" title="Permalink to this headline">¶</a></h2>
+<p>A key feature of Varnish is its ability to shield you from misbehaving
+web- and application servers.</p>
+<p>If you have enabled <a class="reference internal" href="vcl-backends.html#users-guide-advanced-backend-servers-health"><span class="std std-ref">Health checks</span></a>
+you can check if the backend is sick and modify the behavior when it
+comes to grace. This can done in the following way:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_backend_response</span> <span class="p">{</span>
+     <span class="nb">set</span> <span class="n">beresp</span><span class="o">.</span><span class="n">grace</span> <span class="o">=</span> <span class="mi">24</span><span class="n">h</span><span class="p">;</span>
+     <span class="o">//</span> <span class="n">no</span> <span class="n">keep</span> <span class="o">-</span> <span class="n">the</span> <span class="n">grace</span> <span class="n">should</span> <span class="n">be</span> <span class="n">enough</span> <span class="k">for</span> <span class="mi">304</span> <span class="n">candidates</span>
+<span class="p">}</span>
+
+<span class="n">sub</span> <span class="n">vcl_recv</span> <span class="p">{</span>
+     <span class="k">if</span> <span class="p">(</span><span class="n">std</span><span class="o">.</span><span class="n">healthy</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">backend_hint</span><span class="p">))</span> <span class="p">{</span>
+          <span class="o">//</span> <span class="n">change</span> <span class="n">the</span> <span class="n">behavior</span> <span class="k">for</span> <span class="n">healthy</span> <span class="n">backends</span><span class="p">:</span> <span class="n">Cap</span> <span class="n">grace</span> <span class="n">to</span> <span class="mi">10</span><span class="n">s</span>
+          <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">grace</span> <span class="o">=</span> <span class="mi">10</span><span class="n">s</span><span class="p">;</span>
+     <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In the example above, the special variable <code class="docutils literal"><span class="pre">req.grace</span></code> is set.  The
+effect is that, when the backend is healthy, objects with grace above
+10 seconds will have an <cite>effective</cite> grace of 10 seconds.  When the
+backend is sick, the default VCL kicks in, and the long grace is used.</p>
+<p>Additionally, you might want to stop cache insertion when a backend fetch
+returns an <code class="docutils literal"><span class="pre">5xx</span></code> error:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_backend_response</span> <span class="p">{</span>
+     <span class="k">if</span> <span class="p">(</span><span class="n">beresp</span><span class="o">.</span><span class="n">status</span> <span class="o">&gt;=</span> <span class="mi">500</span> <span class="o">&amp;&amp;</span> <span class="n">bereq</span><span class="o">.</span><span class="n">is_bgfetch</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="p">(</span><span class="n">abandon</span><span class="p">);</span>
+     <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<p>Grace mode allows Varnish to deliver slightly stale content to clients
+while getting a fresh version from the backend. The result is faster
+load times at lower cost.</p>
+<p>It is possible to limit the grace during lookup by setting
+<code class="docutils literal"><span class="pre">req.grace</span></code> and then change the behavior when it comes to
+grace. Often this is done to change the <cite>effective</cite> grace depending on
+the health of the backend.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Grace mode and keep</a><ul>
+<li><a class="reference internal" href="#grace-mode">Grace mode</a></li>
+<li><a class="reference internal" href="#keep">Keep</a></li>
+<li><a class="reference internal" href="#setting-grace-and-keep">Setting grace and keep</a></li>
+<li><a class="reference internal" href="#the-effect-of-grace-and-keep">The effect of grace and keep</a></li>
+<li><a class="reference internal" href="#misbehaving-servers">Misbehaving servers</a></li>
+<li><a class="reference internal" href="#summary">Summary</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vcl-hashing.html"
+                        title="previous chapter">Hashing</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vcl-separate.html"
+                        title="next chapter">Separate VCL files</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/users-guide/vcl-grace.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="vcl-separate.html" title="Separate VCL files"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vcl-hashing.html" title="Hashing"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Users Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="vcl.html" >VCL - Varnish Configuration Language</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

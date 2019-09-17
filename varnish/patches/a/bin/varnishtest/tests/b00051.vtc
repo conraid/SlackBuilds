@@ -1,0 +1,24 @@
+varnishtest "Test req.hash and bereq.hash"
+
+server s1 {
+	rxreq
+	txresp
+} -start
+
+varnish v1 -vcl+backend {
+	import blob;
+
+	sub vcl_backend_response {
+		set beresp.http.bereq_hash = blob.encode(HEX, blob=bereq.hash);
+	}
+	sub vcl_deliver {
+		set resp.http.req_hash = blob.encode(HEX, blob=req.hash);
+	}
+} -start
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.http.req_hash ~ "[[:xdigit:]]{64}"
+	expect resp.http.req_hash == resp.http.bereq_hash
+} -run

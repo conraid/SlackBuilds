@@ -1,0 +1,219 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Changes in Varnish 6.0 &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Upgrading to Varnish 6.0" href="upgrading-6.0.html" />
+    <link rel="prev" title="Upgrading to Varnish 6.1" href="upgrading-6.1.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="upgrading-6.0.html" title="Upgrading to Varnish 6.0"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="upgrading-6.1.html" title="Upgrading to Varnish 6.1"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="changes-in-varnish-6-0">
+<span id="whatsnew-changes-6-0"></span><h1>Changes in Varnish 6.0<a class="headerlink" href="#changes-in-varnish-6-0" title="Permalink to this headline">¶</a></h1>
+<p>Usually when we do dot-zero releases in Varnish, it means that
+users are in for a bit of work to upgrade to the new version,
+but 6.0 is actually not that scary, because most of the changes
+are either under the hood or entirely new features.</p>
+<p>The biggest user-visible change is probably that we, or to be totally
+honest here: Geoff Simmons (UPLEX), have added support for Unix Domain
+Sockets, both <a class="reference internal" href="upgrading-6.0.html#upd-6-0-uds-acceptor"><span class="std std-ref">for clients</span></a> and for
+<a class="reference internal" href="upgrading-6.0.html#upd-6-0-uds-backend"><span class="std std-ref">backend servers</span></a>.</p>
+<p>Because UNIX Domain Sockets have nothing like IP numbers, we were
+forced to define a new level of the VCL language <code class="docutils literal"><span class="pre">vcl</span> <span class="pre">4.1</span></code> to
+cope with UDS.</p>
+<p>Both <code class="docutils literal"><span class="pre">vcl</span> <span class="pre">4.0</span></code> and <code class="docutils literal"><span class="pre">vcl</span> <span class="pre">4.1</span></code> are supported, and it is the primary
+source-file which controls which it will be, and you can <code class="docutils literal"><span class="pre">include</span></code>
+lower versions, but not higher versions than that.</p>
+<p>Some old variables are not available in 4.1 and some new variables
+are not available in 4.0.  Please see <a class="reference internal" href="../reference/vcl.html#vcl-variables"><span class="std std-ref">VCL Variables</span></a> for
+specifics.</p>
+<p>There are a few other changes to the <code class="docutils literal"><span class="pre">vcl</span> <span class="pre">4.0</span></code>, most notably that
+we now consider upper- and lower-case the same for symbols.</p>
+<p>The HTTP/2 code has received a lot of attention from Dag Haavi
+Finstad (Varnish Software) and it holds up in production on several
+large sites now.</p>
+<p>There are new and improved VMODs:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../reference/vmod_directors.html#vmod-directors-3"><span class="std std-ref">VMOD directors - Varnish Directors Module</span></a> -- Much work on the <code class="docutils literal"><span class="pre">shard</span></code> director</li>
+<li><a class="reference internal" href="../reference/vmod_proxy.html#vmod-proxy-3"><span class="std std-ref">VMOD proxy - Varnish Module to extract TLV attributes from PROXYv2</span></a> -- Proxy protocol information</li>
+<li><a class="reference internal" href="../reference/vmod_unix.html#vmod-unix-3"><span class="std std-ref">VMOD unix - Utilities for Unix domain sockets</span></a> -- Unix Domain Socket information</li>
+<li><a class="reference internal" href="../reference/vmod_vtc.html#vmod-vtc-3"><span class="std std-ref">VMOD vtc - Utility module for varnishtest</span></a> -- Utility functions for writing <a class="reference internal" href="../reference/varnishtest.html#varnishtest-1"><span class="std std-ref">varnishtest</span></a> cases.</li>
+</ul>
+<p>The <code class="docutils literal"><span class="pre">umem</span></code> stevedore has been brought back on Solaris
+and it is the default storage method there now.</p>
+<p>More error situations now get vcl <code class="docutils literal"><span class="pre">failure</span></code> handling,
+this should make life simpler for everybody we hope.</p>
+<p>And it goes without saying that we have fixed a lot of bugs too.</p>
+<div class="section" id="under-the-hood-mostly-for-developers">
+<h2>Under the hood (mostly for developers)<a class="headerlink" href="#under-the-hood-mostly-for-developers" title="Permalink to this headline">¶</a></h2>
+<p>The big thing is that the <code class="docutils literal"><span class="pre">$Abi</span> <span class="pre">[vrt|strict]</span></code> should now
+have settled.  We have removed all the stuff from <code class="docutils literal"><span class="pre">&lt;cache.h&gt;</span></code>
+which is not available under <code class="docutils literal"><span class="pre">$Abi</span> <span class="pre">vrt</span></code>, and this hopefully
+means that VMODS will work without recompilation on several
+subsequent varnish versions.  (There are some stuff related
+to packaging which takes advantage of this, but it didn't
+get into this release.)</p>
+<p>VMODS can define their own stats counters now, and they work
+just like builtin counters, because there is no difference.</p>
+<p>The counters are described in a <code class="docutils literal"><span class="pre">.vsc</span></code> file which is
+processed with a new python script which does a lot of
+magic etc.  There is a tiny example in <code class="docutils literal"><span class="pre">vmod_debug</span></code> in
+the source tree.  If you're using autotools, a new
+<code class="docutils literal"><span class="pre">VARNISH_COUNTERS</span></code> macro helps you set everything up,
+and is documented in <code class="docutils literal"><span class="pre">varnish.m4</span></code>.</p>
+<p>This took a major retooling of the stats counters in general, and
+the VSM, VSC and VSL apis have all subtly or not so subtly changed
+as a result.</p>
+<p>VMOD functions can take optional arguments, these are different
+from defaulted arguments in that a separate flag tells if they
+were specified or not in the call.  For reasons of everybodys
+sanity, all the arguments gets wrapped in a function-specific
+structure when this is used.</p>
+<p>The <code class="docutils literal"><span class="pre">vmodtool.py</span></code> script has learned other new tricks, and
+as a result also produces nicer <code class="docutils literal"><span class="pre">.rst</span></code> output.</p>
+<p>VCL types <code class="docutils literal"><span class="pre">INT</span></code> and <code class="docutils literal"><span class="pre">BYTES</span></code> are now 64bits on all platforms.</p>
+<p>VCL ENUM have gotten a new implementation, so the pointers
+are now constant and can be compared as such, rather than
+with <code class="docutils literal"><span class="pre">strcmp(3)</span></code>.</p>
+<p>We have a new type of <code class="docutils literal"><span class="pre">binary</span></code> VSL records which are hexdumped
+by default, but on the API side, rather than in <code class="docutils literal"><span class="pre">varnishd</span></code>.
+This saves both VSL bandwidth and processing power, as they are
+usually only used for deep debugging and mostly turned off.</p>
+<p>The <code class="docutils literal"><span class="pre">VCC</span></code> compilers has received a lot of work in two areas:</p>
+<p>The symbol table has been totally revamped to make it ready for
+variant symbols, presently symbols which are different in
+<code class="docutils literal"><span class="pre">vcl</span> <span class="pre">4.0</span></code> and <code class="docutils literal"><span class="pre">vcl</span> <span class="pre">4.1</span></code>.</p>
+<p>The &quot;prototype&quot; information in the VMOD shared library has been
+changed to JSON, (look in your vcc_if.c file if you don't believe
+me), and this can express more detailed information, presently
+the optional arguments.</p>
+</div>
+<div class="section" id="the-stuff-only-we-care-about">
+<h2>The stuff only we care about<a class="headerlink" href="#the-stuff-only-we-care-about" title="Permalink to this headline">¶</a></h2>
+<p>Varnishtest's <code class="docutils literal"><span class="pre">process</span></code> has grown <code class="docutils literal"><span class="pre">pty(4)</span></code> support, so that
+we can test curses-based programs like our own utilities.</p>
+<p>This has (finally!) pushed our code coverage, across all the
+source code in the project up to 90%.</p>
+<p>We have also decided to make our python scripts PEP8 compliant, and
+<code class="docutils literal"><span class="pre">vmodtool.py</span></code> is already be there.</p>
+<p>The VCL variables are now defined in the <code class="docutils literal"><span class="pre">.rst</span></code> file, rather
+than the other way around, this makes the documentation better
+at the cost of minor python-script complexity.</p>
+<p>We now produce weekly snapshots from <code class="docutils literal"><span class="pre">-trunk</span></code>, this makes it
+easier for people to test all the new stuff.</p>
+<p>We have not quite gotten the half-yearly release-procedure under
+control.</p>
+<p>I'm writing this the evening before the release, trying to squeeze
+out of my brain what I should have written here long time ago,
+and we have had far more commits this last week than is reasonable.</p>
+<p>But we <em>have</em> gotten better at it.</p>
+<p>Really!</p>
+<p><em>eof</em></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Changes in Varnish 6.0</a><ul>
+<li><a class="reference internal" href="#under-the-hood-mostly-for-developers">Under the hood (mostly for developers)</a></li>
+<li><a class="reference internal" href="#the-stuff-only-we-care-about">The stuff only we care about</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="upgrading-6.1.html"
+                        title="previous chapter">Upgrading to Varnish 6.1</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="upgrading-6.0.html"
+                        title="next chapter">Upgrading to Varnish 6.0</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/whats-new/changes-6.0.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="upgrading-6.0.html" title="Upgrading to Varnish 6.0"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="upgrading-6.1.html" title="Upgrading to Varnish 6.1"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

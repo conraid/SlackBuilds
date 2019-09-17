@@ -1,0 +1,43 @@
+varnishtest "Slim down hit-for-miss / hit-for-miss objects"
+
+# see also #2768
+
+server s1 {
+	rxreq
+	expect req.url == "/hfm"
+	txresp -hdr "HFM: True" -bodylen 65530
+	rxreq
+	expect req.url == "/hfp"
+	txresp -hdr "HFP: True" -bodylen 65550
+} -start
+
+varnish v1 -arg "-s Transient=default" -vcl+backend {
+	sub vcl_backend_response {
+		if (bereq.url == "/hfm") {
+			set beresp.uncacheable = true;
+		} else if (bereq.url == "/hfp") {
+			return (pass(1m));
+		}
+	}
+} -start
+
+logexpect l1 -v v1 -g raw {
+	expect * *	Storage		"Transient"
+	expect * *	Storage		"Transient"
+} -start
+
+client c1 {
+	txreq -url "/hfm"
+	rxresp
+	expect resp.status == 200
+	expect resp.http.hfm == True
+	txreq -url "/hfp"
+	rxresp
+	expect resp.status == 200
+	expect resp.http.hfp == True
+} -run
+
+logexpect l1 -wait
+
+varnish v1 -expect SM?.Transient.c_bytes > 131072
+varnish v1 -expect SM?.Transient.g_bytes < 2000

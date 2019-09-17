@@ -1,0 +1,91 @@
+varnishtest "Test request byte counters with ESI"
+
+server s1 {
+	rxreq
+	expect req.url == "/"
+	txresp -body {<esi:include src="/1"/>ghi}
+
+	rxreq
+	expect req.url == "/1"
+	txresp -body {<esi:include src="/2"/>abc<esi:include src="/2"/>def}
+
+	rxreq
+	expect req.url == "/2"
+	txresp -body {123}
+} -start
+
+varnish v1 -vcl+backend {
+	sub vcl_backend_response {
+		if (bereq.url != "/2") {
+			set beresp.do_esi = true;
+		}
+	}
+	sub vcl_deliver {
+		unset resp.http.date;
+		unset resp.http.age;
+		unset resp.http.via;
+		unset resp.http.x-varnish;
+	}
+} -start
+
+# Request (1001):
+# GET / HTTP/1.1\r\n			16 bytes
+# Host: foo\r\n				11 bytes
+# \r\n					 2 bytes
+# Total:				29 bytes
+
+# Reponse:
+# HTTP/1.1 200 OK\r\n			17 bytes
+# Accept-Ranges: bytes\r\n		22 bytes
+# Transfer-Encoding: chunked\r\n	28 bytes
+# Connection: keep-alive\r\n		24 bytes
+# \r\n					 2 bytes
+# Total:				93 bytes
+
+# Response body:
+# Chunk len				 5 bytes
+# 123					 3 bytes
+# Chunk end				 2 bytes
+# Chunk len				 5 bytes
+# abc					 3 bytes
+# Chunk end				 2 bytes
+# Chunk len				 5 bytes
+# 123					 3 bytes
+# Chunk end				 2 bytes
+# Chunk len				 5 bytes
+# def					 3 bytes
+# Chunk end				 2 bytes
+# Chunk len				 5 bytes
+# ghi					 3 bytes
+# Chunk end				 2 bytes
+# Chunked end				 5 bytes
+# Total:				55 bytes
+
+logexpect l1 -v v1 -g request {
+	expect 0 1001	Begin	"^req .* rxreq"
+	expect * =	ReqAcct		"^29 0 29 93 55 148$"
+	expect 0 =	End
+	expect * 1003	Begin		"^req .* esi"
+	expect * =	ReqAcct		"^0 0 0 0 12 12$"
+	expect 0 =	End
+	expect * 1005	Begin		"^req .* esi"
+	expect * =	ReqAcct		"^0 0 0 0 3 3$"
+	expect 0 =	End
+	expect * 1007	Begin		"^req .* esi"
+	expect * =	ReqAcct		"^0 0 0 0 3 3$"
+	expect 0 =	End
+} -start
+
+client c1 {
+	txreq -url "/" -hdr "Host: foo"
+	rxresp
+	expect resp.status == 200
+	expect resp.body == "123abc123defghi"
+} -run
+
+logexpect l1 -wait
+
+varnish v1 -expect s_req_hdrbytes == 29
+varnish v1 -expect s_req_bodybytes == 0
+varnish v1 -expect s_resp_hdrbytes == 93
+varnish v1 -expect s_resp_bodybytes == 55

@@ -1,0 +1,26 @@
+varnishtest "Ticket #894"
+
+server s1 {
+	rxreq
+	txresp -body {<XXX><esi:include src="a" src="b"/><YYY>}
+} -start
+
+varnish v1 -vcl+backend {
+	sub vcl_backend_response {
+		set beresp.do_esi = true;
+	}
+} -start
+
+logexpect l1 -v v1 -g raw {
+	expect * * Fetch_Body
+	expect 0 = ESI_xmlerror {^ERR after 5 ESI 1.0 <esi:include> has multiple src= attributes$}
+	expect 0 = BackendReuse
+} -start
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.bodylen == 10
+} -run
+
+logexpect l1 -wait

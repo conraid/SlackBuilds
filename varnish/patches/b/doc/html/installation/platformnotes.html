@@ -1,0 +1,171 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Platform specific notes &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The Varnish Tutorial" href="../tutorial/index.html" />
+    <link rel="prev" title="Reporting bugs" href="bugs.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../tutorial/index.html" title="The Varnish Tutorial"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="bugs.html" title="Reporting bugs"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Varnish Installation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="platform-specific-notes">
+<h1>Platform specific notes<a class="headerlink" href="#platform-specific-notes" title="Permalink to this headline">¶</a></h1>
+<p>On some platforms it is necessary to adjust the operating system before running
+Varnish on it. The systems and steps known to us are described in this section.</p>
+<div class="section" id="transparent-hugepages-on-redhat-enterprise-linux-6">
+<h2>Transparent hugepages on Redhat Enterprise Linux 6<a class="headerlink" href="#transparent-hugepages-on-redhat-enterprise-linux-6" title="Permalink to this headline">¶</a></h2>
+<p>On RHEL6 Transparent Hugepage kernel support is enabled by default.
+This is known to cause sporadic crashes of Varnish.</p>
+<p>It is recommended to disable transparent hugepages on affected
+systems. This can be done with
+<code class="docutils literal"><span class="pre">echo</span> <span class="pre">never</span> <span class="pre">&gt;</span> <span class="pre">/sys/kernel/mm/redhat_transparent_hugepage/enabled</span></code>
+(runtime) or by adding &quot;transparent_hugepage=never&quot; to the kernel boot
+line in the &quot;/etc/grub.conf&quot; file (persistent).</p>
+<p>On Debian/Ubuntu systems running 3.2 kernels the default value is &quot;madvise&quot; and
+does not need to be changed.</p>
+</div>
+<div class="section" id="openvz">
+<h2>OpenVZ<a class="headerlink" href="#openvz" title="Permalink to this headline">¶</a></h2>
+<p>It is possible, but not recommended for high performance, to run
+Varnish on virtualised hardware. Reduced disk and network -performance
+will reduce the performance a bit so make sure your system has good IO
+performance.</p>
+<p>If you are running on 64bit OpenVZ (or Parallels VPS), you must reduce
+the maximum stack size before starting Varnish.</p>
+<p>The default allocates too much memory per thread, which will make Varnish fail
+as soon as the number of threads (traffic) increases.</p>
+<p>Reduce the maximum stack size by adding <code class="docutils literal"><span class="pre">ulimit</span> <span class="pre">-s</span> <span class="pre">256</span></code> before starting
+Varnish in the init script.</p>
+</div>
+<div class="section" id="tcp-keep-alive-configuration">
+<h2>TCP keep-alive configuration<a class="headerlink" href="#tcp-keep-alive-configuration" title="Permalink to this headline">¶</a></h2>
+<p>On some Solaris, FreeBSD and OS X systems, Varnish is not able to set the TCP
+keep-alive values per socket, and therefore the <em>tcp_keepalive_</em> Varnish runtime
+parameters are not available. On these platforms it can be beneficial to tune
+the system wide values for these in order to more reliably detect remote close
+for sessions spending long time on waitinglists. This will help free up
+resources faster.</p>
+<p>Systems that does not support TCP keep-alive values per socket include:</p>
+<ul class="simple">
+<li>Solaris releases prior to version 11</li>
+<li>FreeBSD releases prior to version 9.1</li>
+<li>OS X releases prior to Mountain Lion</li>
+</ul>
+<p>On platforms with the necessary socket options the defaults are set
+to:</p>
+<ul class="simple">
+<li><cite>tcp_keepalive_time</cite> = 600 seconds</li>
+<li><cite>tcp_keepalive_probes</cite> = 5</li>
+<li><cite>tcp_keepalive_intvl</cite> = 5 seconds</li>
+</ul>
+<p>Note that Varnish will only apply these run-time parameters so long as
+they are less than the system default value.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Platform specific notes</a><ul>
+<li><a class="reference internal" href="#transparent-hugepages-on-redhat-enterprise-linux-6">Transparent hugepages on Redhat Enterprise Linux 6</a></li>
+<li><a class="reference internal" href="#openvz">OpenVZ</a></li>
+<li><a class="reference internal" href="#tcp-keep-alive-configuration">TCP keep-alive configuration</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="bugs.html"
+                        title="previous chapter">Reporting bugs</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../tutorial/index.html"
+                        title="next chapter">The Varnish Tutorial</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/installation/platformnotes.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../tutorial/index.html" title="The Varnish Tutorial"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="bugs.html" title="Reporting bugs"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Varnish Installation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

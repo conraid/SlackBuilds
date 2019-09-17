@@ -1,0 +1,340 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Changes in Varnish 6.2 &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Upgrading to Varnish 6.2" href="upgrading-6.2.html" />
+    <link rel="prev" title="Upgrading to Varnish $NEXT_RELEASE" href="upgrading-trunk.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="upgrading-6.2.html" title="Upgrading to Varnish 6.2"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="upgrading-trunk.html" title="Upgrading to Varnish $NEXT_RELEASE"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="changes-in-varnish-6-2">
+<span id="whatsnew-changes-2019-03"></span><h1>Changes in Varnish 6.2<a class="headerlink" href="#changes-in-varnish-6-2" title="Permalink to this headline">¶</a></h1>
+<p>For information about updating your current Varnish deployment to the
+new version, see <a class="reference internal" href="upgrading-6.2.html#whatsnew-upgrading-2019-03"><span class="std std-ref">Upgrading to Varnish 6.2</span></a>.</p>
+<p>A more detailed and technical account of changes in Varnish, with
+links to issues that have been fixed and pull requests that have been
+merged, may be found in the <a class="reference external" href="https://github.com/varnishcache/varnish-cache/blob/master/doc/changes.rst">change log</a>.</p>
+<div class="section" id="varnishd">
+<h2>varnishd<a class="headerlink" href="#varnishd" title="Permalink to this headline">¶</a></h2>
+<p>Cache lookups have undergone a number of optimizations, among them
+reduction in lock contention, and to shorten and simplify the critical
+section of lookup code. We expect that this will improve performance
+and scalability.</p>
+<p>We have added a &quot;watchdog&quot; for thread pools that will panic the worker
+process, causing it to restart, if scheduling tasks onto worker
+threads appears to be deadlocking. The length of time until the panic
+is set by the <a class="reference internal" href="../reference/varnishd.html#ref-param-thread-pool-watchdog"><span class="std std-ref">thread_pool_watchdog</span></a> parameter. If this
+happens, it probably means that thread pools are too small, and you
+should consider increasing the parameters
+<a class="reference internal" href="../reference/varnishd.html#ref-param-thread-pool-min"><span class="std std-ref">thread_pool_min</span></a>, <a class="reference internal" href="../reference/varnishd.html#ref-param-thread-pool-max"><span class="std std-ref">thread_pool_max</span></a>
+and/or <a class="reference internal" href="../reference/varnishd.html#ref-param-thread-pools"><span class="std std-ref">thread_pools</span></a>.</p>
+<div class="section" id="parameters">
+<span id="whatsnew-changes-params-2019-03"></span><h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h3>
+<p>The default value of <a class="reference internal" href="../reference/varnishd.html#ref-param-thread-pool-stack"><span class="std std-ref">thread_pool_stack</span></a> has been
+increased from 48k to 56k on 64-bit platforms and to 52k on 32-bit
+platforms.</p>
+<p>Recently we had occasional reports of stack overflow, apparently
+related to changes in external libraries that are not under control of
+the Varnish project (such as glibc). This may also have been related
+to stack overflow issues on some platforms when recent versions of
+<a class="reference external" href="http://jemalloc.net/">jemalloc</a>, the recommended memory allocator for Varnish, have been
+used together with <a class="reference external" href="https://www.pcre.org/">pcre</a> with JIT compilation enabled. Compiler
+hardening flags may also increase stack usage and on some systems such
+stack protector flags may be enabled by default. With the addition of
+new mitigations to new compiler releases, stack consumption may also
+increase on that front.</p>
+<p>Tests have shown that Varnish runs stably with the new default stack
+size on a number of platforms, under conditions that previously may
+have led to stack overflow -- such as ESI includes up to the default
+limit of <a class="reference internal" href="../reference/varnishd.html#ref-param-max-esi-depth"><span class="std std-ref">max_esi_depth</span></a>, relatively deep VCL
+subroutine call depth, and recent jemalloc together with pcre-jit.</p>
+<p>Different sites have different requirements regarding the stack size.
+For example, if your site uses a high depth of ESI includes, you are
+probably already using an increased value of
+<a class="reference internal" href="../reference/varnishd.html#ref-param-thread-pool-stack"><span class="std std-ref">thread_pool_stack</span></a>.  If you don't have such
+requirements, and you want to reduce memory footprint, you can
+consider lowering <a class="reference internal" href="../reference/varnishd.html#ref-param-thread-pool-stack"><span class="std std-ref">thread_pool_stack</span></a>, but make sure to
+test the result.</p>
+<p>Some parameters that have been long deprecated are now retired. See
+<a class="reference internal" href="upgrading-6.2.html#whatsnew-upgrading-params-2019-03"><span class="std std-ref">Runtime parameters</span></a> in
+<a class="reference internal" href="upgrading-6.2.html#whatsnew-upgrading-2019-03"><span class="std std-ref">Upgrading to Varnish 6.2</span></a>.</p>
+<p>Added <a class="reference internal" href="../reference/varnishd.html#ref-param-thread-pool-watchdog"><span class="std std-ref">thread_pool_watchdog</span></a>, see above.</p>
+<p>The <a class="reference internal" href="../reference/varnishd.html#ref-param-debug"><span class="std std-ref">debug</span></a> parameter now has a flag <code class="docutils literal"><span class="pre">vcl_keep</span></code>. When
+the flag is turned on, C sources and shared object libraries that were
+generated from VCL sources are retained in the Varnish working
+directory (see the notes about <code class="docutils literal"><span class="pre">varnishtest</span></code> below).</p>
+<p>For 32-bit platforms, we have increased the default
+<a class="reference internal" href="../reference/varnishd.html#ref-param-workspace-backend"><span class="std std-ref">workspace_backend</span></a> from 16k to 20k accommodate larger
+response headers which have become common.</p>
+</div>
+<div class="section" id="other-changes-in-varnishd">
+<h3>Other changes in varnishd<a class="headerlink" href="#other-changes-in-varnishd" title="Permalink to this headline">¶</a></h3>
+<p>The VCL syntax version is now displayed in a panic message, as 41 for
+VCL 4.1 and 40 for VCL 4.0.</p>
+</div>
+</div>
+<div class="section" id="changes-to-vcl">
+<h2>Changes to VCL<a class="headerlink" href="#changes-to-vcl" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="vcl-variables">
+<h3>VCL variables<a class="headerlink" href="#vcl-variables" title="Permalink to this headline">¶</a></h3>
+<p>Added <code class="docutils literal"><span class="pre">req.is_hitmiss</span></code> and <code class="docutils literal"><span class="pre">req.is_hitpass</span></code>, see <a class="reference internal" href="../reference/vcl.html#vcl-7"><span class="std std-ref">VCL</span></a>.</p>
+</div>
+<div class="section" id="other-changes-to-vcl">
+<h3>Other changes to VCL<a class="headerlink" href="#other-changes-to-vcl" title="Permalink to this headline">¶</a></h3>
+<p>Runtime restrictions concerning the accessibility of Unix domain
+sockets have been relaxed, see <a class="reference internal" href="upgrading-6.2.html#whatsnew-upgrading-vcl-2019-03"><span class="std std-ref">VCL</span></a>
+in <a class="reference internal" href="upgrading-6.2.html#whatsnew-upgrading-2019-03"><span class="std std-ref">Upgrading to Varnish 6.2</span></a>.</p>
+<p><code class="docutils literal"><span class="pre">return(miss)</span></code> from <code class="docutils literal"><span class="pre">vcl_hit{}</span></code> did never work as intended for the
+common case (it actually turned into a pass), so we now removed it and
+changed the <code class="docutils literal"><span class="pre">builtin.vcl</span></code>. See
+<a class="reference internal" href="upgrading-6.2.html#whatsnew-upgrading-vcl-2019-03"><span class="std std-ref">VCL</span></a>.</p>
+</div>
+</div>
+<div class="section" id="vmods">
+<h2>VMODs<a class="headerlink" href="#vmods" title="Permalink to this headline">¶</a></h2>
+<p>The type-conversion functions in <a class="reference internal" href="../reference/vmod_std.html#vmod-std-3"><span class="std std-ref">VMOD std - Varnish Standard Module</span></a> have been reworked
+to make them more flexible and easier to use. The <code class="docutils literal"><span class="pre">std.</span></code><em>x2y</em>
+conversion functions are now deprecated. See
+<a class="reference internal" href="upgrading-6.2.html#whatsnew-upgrading-std-conversion-2019-03"><span class="std std-ref">Type conversion functions in VMOD std</span></a>.</p>
+<p>The function <a class="reference internal" href="../reference/vmod_directors.html#directors-lookup"><span class="std std-ref">BACKEND lookup(STRING)</span></a> has been added to
+<a class="reference internal" href="../reference/vmod_directors.html#vmod-directors-3"><span class="std std-ref">VMOD directors - Varnish Directors Module</span></a>, only for use in <code class="docutils literal"><span class="pre">vcl_init</span></code> or
+<code class="docutils literal"><span class="pre">vcl_fini</span></code>.</p>
+</div>
+<div class="section" id="varnishlog-1-varnishncsa-1-and-vsl-7">
+<h2>varnishlog(1), varnishncsa(1) and vsl(7)<a class="headerlink" href="#varnishlog-1-varnishncsa-1-and-vsl-7" title="Permalink to this headline">¶</a></h2>
+<p>The performance of bundled log readers, including <code class="docutils literal"><span class="pre">varnishlog</span></code> and
+<code class="docutils literal"><span class="pre">varnishncsa</span></code> (and any tool using the internal VUT interface for
+Varnish utilities) has been improved. They continue reading log
+contents in bulk as long as more contents are known to be available,
+not stopping as frequently (and unnecessarily) to check the status of
+the shared memory mapping.</p>
+<p><code class="docutils literal"><span class="pre">varnishlog</span></code> and <code class="docutils literal"><span class="pre">varnishncsa</span></code> now have the <code class="docutils literal"><span class="pre">-R</span></code> command-line
+option for rate-limiting, to limit the number of log transactions read
+per unit time.  This can make it less likely for log reads to fall
+behind and fail with overrun errors under heavy loads. See
+<a class="reference internal" href="../reference/varnishlog.html#varnishlog-1"><span class="std std-ref">varnishlog</span></a> and <a class="reference internal" href="../reference/varnishncsa.html#varnishncsa-1"><span class="std std-ref">varnishncsa</span></a> for details.</p>
+<p>Timing information is now uniformly reported in the log with
+microsecond precision.  This affects the tags <code class="docutils literal"><span class="pre">ExpKill</span></code> and
+<code class="docutils literal"><span class="pre">ExpRearm</span></code> (previously with nanosecond precision).</p>
+</div>
+<div class="section" id="varnishadm-1-and-varnish-cli-7">
+<h2>varnishadm(1) and varnish-cli(7)<a class="headerlink" href="#varnishadm-1-and-varnish-cli-7" title="Permalink to this headline">¶</a></h2>
+<p>The output formats of the <code class="docutils literal"><span class="pre">vcl.list</span></code> and <code class="docutils literal"><span class="pre">backend.list</span></code> commands
+have changed, see <a class="reference internal" href="upgrading-6.2.html#whatsnew-upgrading-backend-list-2019-03"><span class="std std-ref">Listing backends</span></a> and
+<a class="reference internal" href="upgrading-6.2.html#whatsnew-upgrading-vcl-list-2019-03"><span class="std std-ref">Listing VCLs</span></a> in
+<a class="reference internal" href="upgrading-6.2.html#whatsnew-upgrading-2019-03"><span class="std std-ref">Upgrading to Varnish 6.2</span></a>, as well as <a class="reference internal" href="../reference/varnish-cli.html#varnish-cli-7"><span class="std std-ref">varnish-cli</span></a>
+for details.</p>
+<div class="section" id="json-output">
+<span id="whatsnew-changes-cli-json"></span><h3>JSON output<a class="headerlink" href="#json-output" title="Permalink to this headline">¶</a></h3>
+<p>JSON responses, requested with the <code class="docutils literal"><span class="pre">-j</span></code> option, are now possible for
+the following commands (see <a class="reference internal" href="../reference/varnish-cli.html#varnish-cli-7"><span class="std std-ref">varnish-cli</span></a>):</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">status</span> <span class="pre">-j</span></code></li>
+<li><code class="docutils literal"><span class="pre">vcl.list</span> <span class="pre">-j</span></code></li>
+<li><code class="docutils literal"><span class="pre">param.show</span> <span class="pre">-j</span></code></li>
+<li><code class="docutils literal"><span class="pre">ban.list</span> <span class="pre">-j</span></code></li>
+<li><code class="docutils literal"><span class="pre">storage.list</span> <span class="pre">-j</span></code></li>
+<li><code class="docutils literal"><span class="pre">panic.show</span> <span class="pre">-j</span></code></li>
+</ul>
+<p>The <code class="docutils literal"><span class="pre">-j</span></code> option was already available for <code class="docutils literal"><span class="pre">backend.list</span></code>, <code class="docutils literal"><span class="pre">ping</span></code>
+and <code class="docutils literal"><span class="pre">help</span></code> in previous versions.</p>
+<p>For automated parsing of CLI responses (<a class="reference internal" href="../reference/varnishadm.html#varnishadm-1"><span class="std std-ref">varnishadm</span></a> output),
+we recommend the use of JSON format.</p>
+</div>
+<div class="section" id="param-reset-param">
+<h3><code class="docutils literal"><span class="pre">param.reset</span> <span class="pre">&lt;param&gt;</span></code><a class="headerlink" href="#param-reset-param" title="Permalink to this headline">¶</a></h3>
+<p>Added the command <code class="docutils literal"><span class="pre">param.reset</span></code> to reset a parameter's value to its
+default, see <a class="reference internal" href="../reference/varnish-cli.html#varnish-cli-7"><span class="std std-ref">varnish-cli</span></a>.</p>
+</div>
+<div class="section" id="banning-by-expiration-parameters">
+<h3>Banning by expiration parameters<a class="headerlink" href="#banning-by-expiration-parameters" title="Permalink to this headline">¶</a></h3>
+<p>Bans may now be defined with respect to <code class="docutils literal"><span class="pre">obj.ttl</span></code>, <code class="docutils literal"><span class="pre">obj.age</span></code>,
+<code class="docutils literal"><span class="pre">obj.grace</span></code> and <code class="docutils literal"><span class="pre">obj.keep</span></code>, referring to the expiration and age
+properties of the cached object. A ban expression may also be defined
+with one of the comparison operators <code class="docutils literal"><span class="pre">&lt;</span></code>, <code class="docutils literal"><span class="pre">&lt;=</span></code>, <code class="docutils literal"><span class="pre">&gt;</span></code> and <code class="docutils literal"><span class="pre">&gt;=</span></code>;
+these may only be used with one of the new duration variables for
+bans. Duration constants (such as <code class="docutils literal"><span class="pre">5m</span></code> for five minutes of <code class="docutils literal"><span class="pre">3h</span></code>
+for three hours) may be used in the <code class="docutils literal"><span class="pre">&lt;arg&gt;</span></code> position against which
+these objects are compared in a ban expression.</p>
+<p><code class="docutils literal"><span class="pre">obj.ttl</span></code> and <code class="docutils literal"><span class="pre">obj.age</span></code> are evaluated with respect to the time at
+which the ban was defined, while <code class="docutils literal"><span class="pre">obj.grace</span></code> and <code class="docutils literal"><span class="pre">obj.keep</span></code> are
+evaluated as the grace or keep time assigned to the object. So to issue
+a ban for objects whose TTL expires more than 5 hours from now and
+whose keep parameter is greater than 3 hours, use this expression:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">obj</span><span class="o">.</span><span class="n">ttl</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="n">h</span> <span class="o">&amp;&amp;</span> <span class="n">obj</span><span class="o">.</span><span class="n">keep</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="n">h</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="../reference/vcl.html#vcl-7"><span class="std std-ref">VCL</span></a> and <a class="reference internal" href="../users-guide/purging.html#users-guide-purging"><span class="std std-ref">Purging and banning</span></a> for details.</p>
+</div>
+</div>
+<div class="section" id="varnishstat-1-and-varnish-counters-7">
+<h2>varnishstat(1) and varnish-counters(7)<a class="headerlink" href="#varnishstat-1-and-varnish-counters-7" title="Permalink to this headline">¶</a></h2>
+<p>Added the <code class="docutils literal"><span class="pre">ws_*_overflow</span></code> and <code class="docutils literal"><span class="pre">client_resp_500</span></code> counters to better
+diagnose workspace overflow issues, see <a class="reference internal" href="../reference/varnish-counters.html#varnish-counters-7"><span class="std std-ref">varnish-counters</span></a>.</p>
+<p>In curses mode, <a class="reference internal" href="../reference/varnishstat.html#varnishstat-1"><span class="std std-ref">varnishstat</span></a> now allows use of the <code class="docutils literal"><span class="pre">+</span></code> and
+<code class="docutils literal"><span class="pre">-</span></code> keys to increase or decrease the refresh rate of the curses
+window.</p>
+</div>
+<div class="section" id="varnishtest">
+<h2>varnishtest<a class="headerlink" href="#varnishtest" title="Permalink to this headline">¶</a></h2>
+<p>When <a class="reference internal" href="../reference/varnishtest.html#varnishtest-1"><span class="std std-ref">varnishtest</span></a> is invoked with either of the <code class="docutils literal"><span class="pre">-L</span></code> or
+<code class="docutils literal"><span class="pre">-l</span></code> options to retain the temporary directory after tests, the
+<code class="docutils literal"><span class="pre">vcl_keep</span></code> flag for the <a class="reference internal" href="../reference/varnishd.html#ref-param-debug"><span class="std std-ref">debug</span></a> parameter is switched
+on (see <a class="reference internal" href="#parameters">Parameters</a> above). This means that C sources and shared
+objects generated from VCL can also be inspected after a test. By
+default, the temporary directory is deleted after each test.</p>
+<p>Since around the time of the last release, we have begun the project
+<a class="reference external" href="https://github.com/vtest/VTest">VTest</a>, which is adapted from <a class="reference internal" href="../reference/varnishtest.html#varnishtest-1"><span class="std std-ref">varnishtest</span></a>, but is made
+available as a stand-alone program useful for testing various HTTP
+clients, servers and proxies (not just Varnish). But for the time
+being, we still use <a class="reference internal" href="../reference/varnishtest.html#varnishtest-1"><span class="std std-ref">varnishtest</span></a> for our own testing.</p>
+</div>
+<div class="section" id="changes-for-developers-and-vmod-authors">
+<h2>Changes for developers and VMOD authors<a class="headerlink" href="#changes-for-developers-and-vmod-authors" title="Permalink to this headline">¶</a></h2>
+<p>Python tools that generate code now require Python 3.</p>
+<div class="section" id="directors">
+<span id="whatsnew-changes-director-api-2019-03"></span><h3>Directors<a class="headerlink" href="#directors" title="Permalink to this headline">¶</a></h3>
+<p>The director API has been changed slightly: The most relevant design
+change is that the <code class="docutils literal"><span class="pre">healthy</span></code> callback now is the only means to
+determine a director's health state dynamically, the <code class="docutils literal"><span class="pre">sick</span></code> member
+of <code class="docutils literal"><span class="pre">struct</span> <span class="pre">director</span></code> has been removed. Consequently,
+<code class="docutils literal"><span class="pre">VRT_SetHealth()</span></code> has been removed and <code class="docutils literal"><span class="pre">VRT_SetChanged()</span></code> added to
+update the last health state change time.</p>
+<p>Presence of the <code class="docutils literal"><span class="pre">healthy</span></code> callback now also signifies if the
+director is considered to have a <em>probe</em> with respect to the CLI.</p>
+<p>The signature of the <code class="docutils literal"><span class="pre">list</span></code> callback has been changed to reflect the
+retirement of the undocumented <code class="docutils literal"><span class="pre">backend.list</span> <span class="pre">-v</span></code> parameter and to
+add a <code class="docutils literal"><span class="pre">VRT_CTX</span></code>.</p>
+<p><em>eof</em></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Changes in Varnish 6.2</a><ul>
+<li><a class="reference internal" href="#varnishd">varnishd</a><ul>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#other-changes-in-varnishd">Other changes in varnishd</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#changes-to-vcl">Changes to VCL</a><ul>
+<li><a class="reference internal" href="#vcl-variables">VCL variables</a></li>
+<li><a class="reference internal" href="#other-changes-to-vcl">Other changes to VCL</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#vmods">VMODs</a></li>
+<li><a class="reference internal" href="#varnishlog-1-varnishncsa-1-and-vsl-7">varnishlog(1), varnishncsa(1) and vsl(7)</a></li>
+<li><a class="reference internal" href="#varnishadm-1-and-varnish-cli-7">varnishadm(1) and varnish-cli(7)</a><ul>
+<li><a class="reference internal" href="#json-output">JSON output</a></li>
+<li><a class="reference internal" href="#param-reset-param"><code class="docutils literal"><span class="pre">param.reset</span> <span class="pre">&lt;param&gt;</span></code></a></li>
+<li><a class="reference internal" href="#banning-by-expiration-parameters">Banning by expiration parameters</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#varnishstat-1-and-varnish-counters-7">varnishstat(1) and varnish-counters(7)</a></li>
+<li><a class="reference internal" href="#varnishtest">varnishtest</a></li>
+<li><a class="reference internal" href="#changes-for-developers-and-vmod-authors">Changes for developers and VMOD authors</a><ul>
+<li><a class="reference internal" href="#directors">Directors</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="upgrading-trunk.html"
+                        title="previous chapter">Upgrading to Varnish <strong>$NEXT_RELEASE</strong></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="upgrading-6.2.html"
+                        title="next chapter">Upgrading to Varnish 6.2</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/whats-new/changes-6.2.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="upgrading-6.2.html" title="Upgrading to Varnish 6.2"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="upgrading-trunk.html" title="Upgrading to Varnish $NEXT_RELEASE"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

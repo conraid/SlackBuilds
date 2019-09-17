@@ -1,0 +1,406 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Upgrading to Varnish 5.1 &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Varnish 5.0 Release Note" href="relnote-5.0.html" />
+    <link rel="prev" title="Changes in Varnish 5.1" href="changes-5.1.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="relnote-5.0.html" title="Varnish 5.0 Release Note"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="changes-5.1.html" title="Changes in Varnish 5.1"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="upgrading-to-varnish-5-1">
+<span id="whatsnew-upgrading-5-1"></span><h1>Upgrading to Varnish 5.1<a class="headerlink" href="#upgrading-to-varnish-5-1" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="varnishd-command-line-options">
+<h2>varnishd command-line options<a class="headerlink" href="#varnishd-command-line-options" title="Permalink to this headline">¶</a></h2>
+<p>If you have to change anything at all for version 5.1, then most
+likely the command-line options for <cite>varnishd</cite> in your start scripts,
+because we have tightened restrictions on which options may be used
+together. This has served mainly to clarify the use of options for
+testing purposes, for example using <code class="docutils literal"><span class="pre">varnishd</span> <span class="pre">-C</span></code> to check a VCL
+source for syntactic correctness. We have also added some new options.</p>
+<p>The details are given in <a class="reference internal" href="../reference/varnishd.html#varnishd-1"><span class="std std-ref">varnishd</span></a>, but here's a summary:</p>
+<ul class="simple">
+<li>Added <code class="docutils literal"><span class="pre">-I</span> <span class="pre">clifile</span></code> to run CLI commands at startup, before the
+worker process starts. See <a class="reference internal" href="changes-5.1.html#whatsnew-clifile"><span class="std std-ref">Startup CLI command file</span></a>.</li>
+<li>More than one <code class="docutils literal"><span class="pre">-f</span></code> option is now permitted, to pre-load VCL
+instances at startup. The last of these becomes the &quot;boot&quot; instance
+that is is active at startup.</li>
+<li>Either <code class="docutils literal"><span class="pre">-b</span></code> or one or more <code class="docutils literal"><span class="pre">-f</span></code> options must be specified, but
+not both, and they cannot both be left out, unless <code class="docutils literal"><span class="pre">-d</span></code> is used to
+start <cite>varnishd</cite> in debugging mode. If the empty string is specified
+as the sole <code class="docutils literal"><span class="pre">-f</span></code> option, then <cite>varnishd</cite> starts without starting
+the worker process, and the management process will accept CLI
+commands.</li>
+<li>Added <code class="docutils literal"><span class="pre">-?</span></code> to print the usage message, which is only printed for
+this option.</li>
+<li>Added the <code class="docutils literal"><span class="pre">-x</span></code> option to print certain kinds of documentation and
+exit. When <code class="docutils literal"><span class="pre">-x</span></code> is used, it must be the only option.</li>
+<li>Only one of <code class="docutils literal"><span class="pre">-F</span></code> or <code class="docutils literal"><span class="pre">-d</span></code> may be used, and neither of these can
+be used with <code class="docutils literal"><span class="pre">-C</span></code>.</li>
+<li>Added the <code class="docutils literal"><span class="pre">workuser</span></code> parameter to the <code class="docutils literal"><span class="pre">-j</span></code> option.</li>
+</ul>
+</div>
+<div class="section" id="varnishd-parameters">
+<h2>varnishd parameters<a class="headerlink" href="#varnishd-parameters" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>The size of the shared memory log is now limited to 4G-1b
+(4294967295 bytes).  This places upper bounds on the <code class="docutils literal"><span class="pre">-l</span></code>
+command-line option and on the <code class="docutils literal"><span class="pre">vsl_space</span></code> and <code class="docutils literal"><span class="pre">vsm_space</span></code>
+parameters.</li>
+<li>Added <code class="docutils literal"><span class="pre">clock_step</span></code>, <code class="docutils literal"><span class="pre">thread_pool_reserve</span></code> and <code class="docutils literal"><span class="pre">ban_cutoff</span></code> (see
+<a class="reference internal" href="../reference/varnishd.html#ref-param-clock-step"><span class="std std-ref">clock_step</span></a>, <a class="reference internal" href="../reference/varnishd.html#ref-param-thread-pool-reserve"><span class="std std-ref">thread_pool_reserve</span></a>,
+<a class="reference internal" href="../reference/varnishd.html#ref-param-ban-cutoff"><span class="std std-ref">ban_cutoff</span></a>).</li>
+<li><code class="docutils literal"><span class="pre">thread_pool_stack</span></code> is no longer considered experimental, and is
+more extensively documented, see <a class="reference internal" href="../reference/varnishd.html#ref-param-thread-pool-stack"><span class="std std-ref">thread_pool_stack</span></a>.</li>
+<li><code class="docutils literal"><span class="pre">thread_queue_limit</span></code> only applies to queued client requests, see
+<a class="reference internal" href="../reference/varnishd.html#ref-param-thread-queue-limit"><span class="std std-ref">thread_queue_limit</span></a>.</li>
+<li><code class="docutils literal"><span class="pre">vcl_dir</span></code> and <code class="docutils literal"><span class="pre">vmod_dir</span></code> are deprecated and will be removed from
+a future release, use <code class="docutils literal"><span class="pre">vcl_path</span></code> and <code class="docutils literal"><span class="pre">vmod_path</span></code> instead (see
+<a class="reference internal" href="../reference/varnishd.html#ref-param-vcl-path"><span class="std std-ref">vcl_path</span></a>, <a class="reference internal" href="../reference/varnishd.html#ref-param-vmod-path"><span class="std std-ref">vmod_path</span></a>).</li>
+<li>All parameters are defined on every platform, including those that
+that are not functional on every platform. Most of these involve
+features of the TCP stack, such as <code class="docutils literal"><span class="pre">tcp_keepalive_intvl</span></code>,
+<code class="docutils literal"><span class="pre">tcp_keepalive_probes</span></code>, <code class="docutils literal"><span class="pre">accept_filter</span></code> and <code class="docutils literal"><span class="pre">tcp_fastopen</span></code>.
+The unavailability of a parameter is documented in the output of the
+<code class="docutils literal"><span class="pre">param.show</span></code> command. Setting such a parameter is not an error,
+but has no effect.</li>
+</ul>
+</div>
+<div class="section" id="changes-to-vcl">
+<h2>Changes to VCL<a class="headerlink" href="#changes-to-vcl" title="Permalink to this headline">¶</a></h2>
+<p>VCL written for Varnish 5.0 will very likely work without changes in
+version 5.1. We have added some new elements and capabilities to the
+language (which you might like to start using), clarified some
+matters, and deprecated some little-used language elements.</p>
+<div class="section" id="type-conversions">
+<h3>Type conversions<a class="headerlink" href="#type-conversions" title="Permalink to this headline">¶</a></h3>
+<p>We have put some thought to the interpretation of the <code class="docutils literal"><span class="pre">+</span></code> and <code class="docutils literal"><span class="pre">-</span></code>
+operators for various combinations of operands with differing data
+types, many of which count as corner cases (what does it mean, for
+example, to subtract a string from an IP address?). Recall that <code class="docutils literal"><span class="pre">+</span></code>
+denotes addition for numeric operands, and string concatenation for
+string operands; operands may be converted to strings and
+concatenated, if a string is expected and there is no sensible numeric
+interpretation.</p>
+<p>The semantics have not changed in nearly all cases, but the error
+messages for illegal combinations of operands have improved. Most
+importantly, we have taken the time to review these cases, so this
+will be the way VCL works going forward.</p>
+<p>To summarize:</p>
+<ul class="simple">
+<li>If both operands of <code class="docutils literal"><span class="pre">+</span></code> or <code class="docutils literal"><span class="pre">-</span></code> are one of BYTES, DURATION, INT
+or REAL, then the result has the same data type, with the obvious
+numeric interpretation. If such an expression is evaluated in a
+context that expects a STRING (for example for assignment to a
+header), then the arithmetic is done first, and the result it
+converted to a STRING.</li>
+<li>INTs and REALs can be added or subtracted to yield a REAL.</li>
+<li>A DURATION can be added to or subtracted from a TIME to yield a
+TIME.</li>
+<li>No other combinations of operand types are legal with <code class="docutils literal"><span class="pre">-</span></code>.</li>
+<li>When a <code class="docutils literal"><span class="pre">+</span></code> expression is evaluated in a STRING context, then for
+all other combinations of operand data types, the operands are
+converted to STRINGs and concatenated.</li>
+<li>If a STRING is not expected for the <code class="docutils literal"><span class="pre">+</span></code> expression, then no other
+combination of data types is legal.</li>
+</ul>
+<p>Other notes on data types:</p>
+<ul>
+<li><p class="first">When <code class="docutils literal"><span class="pre">bereq.backend</span></code> is set to a director, then it returns an
+actual backend on subsequent reads if the director resolves to a
+backend immediately, or the director otherwise. If <code class="docutils literal"><span class="pre">bereq.backend</span></code>
+was set to a director, then <code class="docutils literal"><span class="pre">beresp.backend</span></code> references the backend
+to which it was set for the fetch.  When either of these is used in
+string context, it returns the name of the director or of the
+resolved backend.</p>
+</li>
+<li><p class="first">Comparisons between symbols of type BACKEND now work properly:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">bereq</span><span class="o">.</span><span class="n">backend</span> <span class="o">==</span> <span class="n">foo</span><span class="o">.</span><span class="n">backend</span><span class="p">())</span> <span class="p">{</span>
+    <span class="c1"># do something specific to the foo backends</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">DURATION types may be used in boolean contexts, and are evaluated as
+false when the duration is less than or equal to zero, true
+otherwise.</p>
+</li>
+<li><p class="first">INT, DURATION and REAL values can now be negative.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="response-codes">
+<h3>Response codes<a class="headerlink" href="#response-codes" title="Permalink to this headline">¶</a></h3>
+<p>Response codes 1000 or greater may now be set in VCL internally.
+<code class="docutils literal"><span class="pre">resp.status</span></code> is delivered modulo 1000 in client responses.</p>
+</div>
+<div class="section" id="ip-address-comparison">
+<h3>IP address comparison<a class="headerlink" href="#ip-address-comparison" title="Permalink to this headline">¶</a></h3>
+<p>IP addresses can now be compared for equality:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">ip</span> <span class="o">==</span> <span class="n">remote</span><span class="o">.</span><span class="n">ip</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">call</span> <span class="n">do_if_equal</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The objects are equal if they designate equal socket addresses, not
+including the port number. IPv6 addresses are always unequal to IPv4
+addresses (the comparison cannot consider v4-mapped IPv6 addresses).</p>
+</div>
+<div class="section" id="the-stevedore-type-and-storage-objects">
+<h3>The STEVEDORE type and storage objects<a class="headerlink" href="#the-stevedore-type-and-storage-objects" title="Permalink to this headline">¶</a></h3>
+<p>The data type STEVEDORE for storage backends is now available in VCL
+and for VMODs. Storage objects with names of the form
+<code class="docutils literal"><span class="pre">storage.SNAME</span></code> will exist in a VCL instance, where <code class="docutils literal"><span class="pre">SNAME</span></code> is the
+name of a storage backend provided with the <code class="docutils literal"><span class="pre">varnishd</span></code> command-line
+option <code class="docutils literal"><span class="pre">-s</span></code>. If no <code class="docutils literal"><span class="pre">-s</span></code> option is given, then <code class="docutils literal"><span class="pre">storage.s0</span></code>
+denotes the default storage.  The object <code class="docutils literal"><span class="pre">storage.Transient</span></code> always
+exists, designating transient storage. See <a class="reference internal" href="../users-guide/storage-backends.html#guide-storage"><span class="std std-ref">Storage backends</span></a>, and
+the notes about <code class="docutils literal"><span class="pre">beresp.storage</span></code> and <code class="docutils literal"><span class="pre">req.storage</span></code> below.</p>
+</div>
+<div class="section" id="all-vcl-subroutines-except-vcl-fini">
+<h3>All VCL subroutines (except <code class="docutils literal"><span class="pre">vcl_fini</span></code>)<a class="headerlink" href="#all-vcl-subroutines-except-vcl-fini" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Added <code class="docutils literal"><span class="pre">return(fail)</span></code> to immediately terminate VCL processing. In
+all cases but <code class="docutils literal"><span class="pre">vcl_synth</span></code>, control is directed to <code class="docutils literal"><span class="pre">vcl_synth</span></code>
+with <code class="docutils literal"><span class="pre">resp.status</span></code> and <code class="docutils literal"><span class="pre">resp.reason</span></code> set to 503 and &quot;VCL
+failed&quot;, respectively. <code class="docutils literal"><span class="pre">vcl_synth</span></code> is aborted on <code class="docutils literal"><span class="pre">return(fail)</span></code>.
+<code class="docutils literal"><span class="pre">vcl_fini</span></code> is executed when a VCL instance in unloaded (enters the
+COLD state) and has no failure condition.</li>
+<li>VCL failure is invoked on any attempt to set one of the fields in the
+the first line of a request or response to the empty string, such
+as <code class="docutils literal"><span class="pre">req.url</span></code>, <code class="docutils literal"><span class="pre">req.proto</span></code>, <code class="docutils literal"><span class="pre">resp.reason</span></code> and so forth.</li>
+</ul>
+</div>
+<div class="section" id="client-side-vcl-subroutines">
+<h3>Client-side VCL subroutines<a class="headerlink" href="#client-side-vcl-subroutines" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">req.ttl</span></code> is deprecated, see <a class="reference internal" href="../reference/vcl.html#vcl-7"><span class="std std-ref">VCL</span></a>.</li>
+</ul>
+</div>
+<div class="section" id="vcl-recv">
+<h3>vcl_recv<a class="headerlink" href="#vcl-recv" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Added <code class="docutils literal"><span class="pre">req.storage</span></code>, which tells Varnish which storage backend to
+use if you choose to save the request body (see
+<a class="reference internal" href="../reference/vmod_std.html#std-cache-req-body"><span class="std std-ref">BOOL cache_req_body(BYTES size)</span></a>).</li>
+<li><code class="docutils literal"><span class="pre">return(vcl(LABEL))</span></code> may not be called after a restart. It can
+only be called from the active VCL instance.</li>
+</ul>
+</div>
+<div class="section" id="vcl-backend-response">
+<h3>vcl_backend_response<a class="headerlink" href="#vcl-backend-response" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Added <code class="docutils literal"><span class="pre">return(pass(DURATION))</span></code> to set an object to hit-for-pass,
+see <a class="reference internal" href="changes-5.1.html#whatsnew-changes-5-1-hitpass"><span class="std std-ref">Hit-For-Pass has returned</span></a>.</li>
+<li>The object <code class="docutils literal"><span class="pre">beresp.storage</span></code> of type STEVEDORE should now be used
+to set a storage backend; <code class="docutils literal"><span class="pre">beresp.storage_hint</span></code> is deprecated and
+will be removed in a future release. Setting <code class="docutils literal"><span class="pre">beresp.storage_hint</span></code>
+to a valid storage will set <code class="docutils literal"><span class="pre">beresp.storage</span></code> as well. If the
+storage is invalid, <code class="docutils literal"><span class="pre">beresp.storage</span></code> is left untouched.</li>
+</ul>
+<p>For the case where multiple storage backends have been defined with
+the <code class="docutils literal"><span class="pre">-s</span></code> command-line option for varnishd, but none is explicitly
+set in <code class="docutils literal"><span class="pre">vcl_backend_response</span></code>, storage selection and the use of the
+nuke limit has been reworked (see
+<a class="reference internal" href="../reference/varnishd.html#ref-param-nuke-limit"><span class="std std-ref">nuke_limit</span></a>). Previously, a storage backend was tried
+first with a nuke limit of 0, and retried on failure with the limit
+configured as the <code class="docutils literal"><span class="pre">-p</span></code> parameter <code class="docutils literal"><span class="pre">nuke_limit</span></code>. When no storage was
+specified, Varnish went through every one in round-robin order with a
+nuke limit of 0 before retrying.</p>
+<p>Now <code class="docutils literal"><span class="pre">beresp.storage</span></code> is initialized with a storage backend before
+<code class="docutils literal"><span class="pre">vcl_backend_response</span></code> executes, and the storage set in
+<code class="docutils literal"><span class="pre">beresp.storage</span></code> after its execution will be used. The configured
+nuke limit is used in all cases.</p>
+</div>
+<div class="section" id="vmod-std">
+<h3>vmod_std<a class="headerlink" href="#vmod-std" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Added <a class="reference internal" href="../reference/vmod_std.html#std-getenv"><span class="std std-ref">STRING getenv(STRING name)</span></a>.</li>
+<li>Added <a class="reference internal" href="../reference/vmod_std.html#std-late-100-continue"><span class="std std-ref">VOID late_100_continue(BOOL late)</span></a>.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="other-changes">
+<h2>Other changes<a class="headerlink" href="#other-changes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>The storage backend type umem, long in disuse, has been retired.</li>
+<li><code class="docutils literal"><span class="pre">varnishstat(1)</span></code>:<ul>
+<li>Added the <code class="docutils literal"><span class="pre">cache_hitmiss</span></code> stat to count hits on hit-for-miss
+objects.</li>
+<li>The <code class="docutils literal"><span class="pre">cache_hitpass</span></code> stat now only counts hits on hit-for-pass
+objects.</li>
+<li><code class="docutils literal"><span class="pre">fetch_failed</span></code> is incremented for any kind of fetch failure --
+when there is a failure after <code class="docutils literal"><span class="pre">return(deliver)</span></code> from
+<code class="docutils literal"><span class="pre">vcl_backend_response</span></code>, or when control is diverted to
+<code class="docutils literal"><span class="pre">vcl_backend_error</span></code>.</li>
+<li>Added the <code class="docutils literal"><span class="pre">n_test_gunzip</span></code> stat, which is incremented when
+Varnish verifies a compressed response from a backend -- this
+operation was previously counted together with <code class="docutils literal"><span class="pre">n_gunzip</span></code>.</li>
+<li>Added the <code class="docutils literal"><span class="pre">bans_lurker_obj_killed_cutoff</span></code> stat to count the
+number of objects killed by the ban lurker to keep the number of
+bans below <code class="docutils literal"><span class="pre">ban_cutoff</span></code>.</li>
+</ul>
+</li>
+<li><code class="docutils literal"><span class="pre">varnishlog(1)</span></code>:<ul>
+<li>Hits on hit-for-miss and hit-for-pass objects are logged with
+the <code class="docutils literal"><span class="pre">HitMiss</span></code> and <code class="docutils literal"><span class="pre">HitPass</span></code> tags, respectively. In each case,
+the log payload is the VXID of the previous transaction in which
+the object was saved in the cache (as with <code class="docutils literal"><span class="pre">Hit</span></code>).</li>
+<li>An entry with the <code class="docutils literal"><span class="pre">TTL</span></code> tag and the prefix <code class="docutils literal"><span class="pre">HFP</span></code> is logged to
+record the duration set for hit-for-pass objects.</li>
+<li>Added <code class="docutils literal"><span class="pre">vxid</span></code> as a lefthand side token for VSL queries, allowing
+for queries that search for transaction IDs in the log. See
+<a class="reference internal" href="../reference/vsl-query.html#vsl-query-7"><span class="std std-ref">vsl-query</span></a>.</li>
+</ul>
+</li>
+<li><code class="docutils literal"><span class="pre">varnishncsa(1)</span></code>:<ul>
+<li>Clarified the meaning of the <code class="docutils literal"><span class="pre">%r</span></code> formatter, see NOTES in
+<a class="reference internal" href="../reference/varnishncsa.html#varnishncsa-1"><span class="std std-ref">varnishncsa</span></a>.</li>
+<li>Clarified the meaning of the <code class="docutils literal"><span class="pre">%{X}i</span></code> and <code class="docutils literal"><span class="pre">%{X}o</span></code> formatters
+when the header X appears more than once (the last occurrence is
+is used).</li>
+</ul>
+</li>
+<li><code class="docutils literal"><span class="pre">varnishtest(1)</span></code>:<ul>
+<li>Added the <code class="docutils literal"><span class="pre">setenv</span></code> and <code class="docutils literal"><span class="pre">write_body</span></code> commands, see <a class="reference internal" href="../reference/vtc.html#vtc-7"><span class="std std-ref">VTC</span></a>.</li>
+<li><code class="docutils literal"><span class="pre">-reason</span></code> replaces <code class="docutils literal"><span class="pre">-msg</span></code> to set the reason string for a
+response (default &quot;OK&quot;).</li>
+<li>Added <code class="docutils literal"><span class="pre">-cliexpect</span></code> to match expected CLI responses to regular
+expressions.</li>
+<li>Added the <code class="docutils literal"><span class="pre">-match</span></code> operator for the <code class="docutils literal"><span class="pre">shell</span></code> command.</li>
+<li>Added the <code class="docutils literal"><span class="pre">-hdrlen</span></code> operator to generate a header with a
+given name and length.</li>
+<li>The <code class="docutils literal"><span class="pre">err_shell</span></code> command is deprecated, use <code class="docutils literal"><span class="pre">shell</span> <span class="pre">-err</span>
+<span class="pre">-expect</span></code> instead.</li>
+<li>The <code class="docutils literal"><span class="pre">${bad_backend}</span></code> macro can now be used for a backend that
+is always down, which does not require a port definition (as does
+<code class="docutils literal"><span class="pre">${bad_ip}</span></code> in a backend definition).</li>
+<li><code class="docutils literal"><span class="pre">varnishtest</span></code> can be stopped with the <code class="docutils literal"><span class="pre">TERM</span></code>, <code class="docutils literal"><span class="pre">INT</span></code> of <code class="docutils literal"><span class="pre">KILL</span></code>
+signals, but not with <code class="docutils literal"><span class="pre">HUP</span></code>. These signals kill the process group,
+so that processes started by running tests are stopped.</li>
+</ul>
+</li>
+<li>Added the <code class="docutils literal"><span class="pre">vtest.sh</span></code> tool to automate test builds, see
+<a class="reference internal" href="changes-5.1.html#whatsnew-changes-5-1-vtest"><span class="std std-ref">Project tool improvements</span></a>.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Upgrading to Varnish 5.1</a><ul>
+<li><a class="reference internal" href="#varnishd-command-line-options">varnishd command-line options</a></li>
+<li><a class="reference internal" href="#varnishd-parameters">varnishd parameters</a></li>
+<li><a class="reference internal" href="#changes-to-vcl">Changes to VCL</a><ul>
+<li><a class="reference internal" href="#type-conversions">Type conversions</a></li>
+<li><a class="reference internal" href="#response-codes">Response codes</a></li>
+<li><a class="reference internal" href="#ip-address-comparison">IP address comparison</a></li>
+<li><a class="reference internal" href="#the-stevedore-type-and-storage-objects">The STEVEDORE type and storage objects</a></li>
+<li><a class="reference internal" href="#all-vcl-subroutines-except-vcl-fini">All VCL subroutines (except <code class="docutils literal"><span class="pre">vcl_fini</span></code>)</a></li>
+<li><a class="reference internal" href="#client-side-vcl-subroutines">Client-side VCL subroutines</a></li>
+<li><a class="reference internal" href="#vcl-recv">vcl_recv</a></li>
+<li><a class="reference internal" href="#vcl-backend-response">vcl_backend_response</a></li>
+<li><a class="reference internal" href="#vmod-std">vmod_std</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-changes">Other changes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="changes-5.1.html"
+                        title="previous chapter">Changes in Varnish 5.1</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="relnote-5.0.html"
+                        title="next chapter">Varnish 5.0 Release Note</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/whats-new/upgrading-5.1.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="relnote-5.0.html" title="Varnish 5.0 Release Note"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="changes-5.1.html" title="Changes in Varnish 5.1"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

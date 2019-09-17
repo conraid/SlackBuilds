@@ -1,0 +1,233 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Varnish Does Not Hash &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The Tools We Work With" href="thetoolsweworkwith.html" />
+    <link rel="prev" title="Why HTTP/2.0 does not seem interesting" href="http20.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="thetoolsweworkwith.html" title="The Tools We Work With"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="http20.html" title="Why HTTP/2.0 does not seem interesting"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="varnish-does-not-hash">
+<span id="phk-varnish-does-not-hash"></span><h1>Varnish Does Not Hash<a class="headerlink" href="#varnish-does-not-hash" title="Permalink to this headline">¶</a></h1>
+<p>A spate of security advisories related to hash-collisions have made
+a lot of people stare at Varnish and wonder if it is affected.</p>
+<p>The answer is no, but the explanation is probably not what most of
+you expected:</p>
+<p>Varnish does not hash, at least not by default, and
+even if it does, it's still as immune to the attacks as can be.</p>
+<p>To understand what is going on, I have to introduce a concept from
+Shannon's information theory: &quot;entropy.&quot;</p>
+<p>Entropy is hard to explain, and according to legend, that is exactly
+why Shannon recycled that term from thermodynamics.</p>
+<p>In this context, we can get away with thinking about entropy as how
+much our &quot;keys&quot; differ:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>Low entropy (1 bit):
+        /foo/bar/barf/some/cms/content/article?article=2
+        /foo/bar/barf/some/cms/content/article?article=3
+
+High entropy (65 bits):
+        /i?ee30d0770eb460634e9d5dcfb562a2c5.html
+        /i?bca3633d52607f38a107cb5297fd66e5.html
+</pre></div>
+</div>
+<p>Hashing consists of calculating a hash-index from the key and
+storing the objects in an array indexed by that key.</p>
+<p>Typically, but not always, the key is a string and the index is a
+(smallish) integer, and the job of the hash-function is to squeeze
+the key into the integer, without losing any of the entropy.</p>
+<p>Needless to say, the more entropy you have to begin with, the more
+of it you can afford to lose, and lose some you almost invariably
+will.</p>
+<p>There are two families of hash-functions, the fast ones, and the good
+ones, and the security advisories are about the fast ones.</p>
+<p>The good ones are slower, but probably not so much slower that you
+care, and therefore, if you want to fix your web-app:</p>
+<dl class="docutils">
+<dt>Change::</dt>
+<dd>foo=somedict[$somekey]</dd>
+<dt>To::</dt>
+<dd>foo=somedict[md5($somekey)]</dd>
+</dl>
+<p>and forget about the advisories.</p>
+<p>Yes, that's right: Cryptographic hash algorithms are the good ones,
+they are built to not throw any entropy away, and they are built to
+have very hard to predict collisions, which is exactly the problem
+with the fast hash-functions in the advisories.</p>
+<div class="section" id="what-varnish-does">
+<h2>What Varnish Does<a class="headerlink" href="#what-varnish-does" title="Permalink to this headline">¶</a></h2>
+<p>The way to avoid having hash-collisions is to not use a hash:  Use a
+tree instead. There every object has its own place and there are no
+collisions.</p>
+<p>Varnish does that, but with a twist.</p>
+<p>The &quot;keys&quot; in Varnish can be very long; by default they consist of:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_hash</span> <span class="p">{</span>
+    <span class="n">hash_data</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">url</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">host</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">hash_data</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">host</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">hash_data</span><span class="p">(</span><span class="n">server</span><span class="o">.</span><span class="n">ip</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nb">hash</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>But some users will add cookies, user identification and many other
+bits and pieces of string in there, and in the end the keys can be
+kilobytes in length, and quite often, as in the first example above,
+the first difference may not come until pretty far into the keys.</p>
+<p>Trees generally need to have a copy of the key around to be able
+to tell if they have a match, and more importantly to compare
+tree-leaves in order to &quot;re-balance&quot; the tree and other such arcanae
+of data structures.</p>
+<p>This would add another per-object memory load to Varnish, and it
+would feel particularly silly to store 48 identical characters for
+each object in the far too common case seen above.</p>
+<p>But furthermore, we want the tree to be very fast to do lookups in,
+preferably it should be lockless for lookups, and that means that
+we cannot (realistically) use any of the &quot;smart&quot; trees which
+automatically balance themselves, etc.</p>
+<p>You (generally) don't need a &quot;smart&quot; tree if your keys look
+like random data in the order they arrive, but we can pretty
+much expect the opposite as article number 4, 5, 6 etc are added
+to the CMS in the first example.</p>
+<p>But we can make the keys look random, and make them small and fixed
+size at the same time, and the perfect functions designed for just
+that task are the &quot;good&quot; hash-functions, the cryptographic ones.</p>
+<p>So what Varnish does is &quot;key-compression&quot;:  All the strings fed to
+hash_data() are pushed through a cryptographic hash algorithm called
+SHA256, which, as the name says, always spits out 256 bits (= 32
+bytes), no matter how many bits you feed it.</p>
+<p>This does not eliminate the key-storage requirement, but now all
+the keys are 32 bytes and can be put directly into the data structure:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">struct</span> <span class="n">objhead</span> <span class="p">{</span>
+        <span class="p">[</span><span class="o">...</span><span class="p">]</span>
+        <span class="n">unsigned</span> <span class="n">char</span>           <span class="n">digest</span><span class="p">[</span><span class="n">DIGEST_LEN</span><span class="p">];</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>In the example above, the output of SHA256 for the 1 bit difference
+in entropy becomes:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>/foo/bar/barf/some/cms/content/article?article=2
+-&gt; 14f0553caa5c796650ec82256e3f111ae2f20020a4b9029f135a01610932054e
+/foo/bar/barf/some/cms/content/article?article=3
+-&gt; 4d45b9544077921575c3c5a2a14c779bff6c4830d1fbafe4bd7e03e5dd93ca05
+</pre></div>
+</div>
+<p>That should be random enough.</p>
+<p>But the key-compression does introduce a risk of collisions, since
+not even SHA256 can guarantee different outputs for all possible
+inputs:  Try pushing all the possible 33-byte files through SHA256
+and sooner or later you will get collisions.</p>
+<p>The risk of collision is very small however, and I can all but
+promise you, that you will be fully offset in fame and money for
+any inconvenience a collision might cause, because you will
+be the first person to find a SHA256 collision.</p>
+<p>Poul-Henning, 2012-01-03</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Varnish Does Not Hash</a><ul>
+<li><a class="reference internal" href="#what-varnish-does">What Varnish Does</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="http20.html"
+                        title="previous chapter">Why HTTP/2.0 does not seem interesting</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="thetoolsweworkwith.html"
+                        title="next chapter">The Tools We Work With</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/phk/varnish_does_not_hash.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="thetoolsweworkwith.html" title="The Tools We Work With"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="http20.html" title="Why HTTP/2.0 does not seem interesting"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

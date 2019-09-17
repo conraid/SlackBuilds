@@ -1,0 +1,315 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Raking in the dough on Free and Open Source Software &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Wanton destruction for the greater good" href="wanton_destruction.html" />
+    <link rel="prev" title="A persistent message" href="persistent.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="wanton_destruction.html" title="Wanton destruction for the greater good"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="persistent.html" title="A persistent message"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="raking-in-the-dough-on-free-and-open-source-software">
+<span id="phk-dough"></span><h1>Raking in the dough on Free and Open Source Software<a class="headerlink" href="#raking-in-the-dough-on-free-and-open-source-software" title="Permalink to this headline">¶</a></h1>
+<p>I'm writing this on the third day after the &quot;Heartbleed&quot; bug in OpenSSL
+devasted internet security, and while I have been very critical of the
+OpenSSL source code since I first saw it, I have nothing but admiration
+for the OpenSSL crew and their effort.</p>
+<p>In particular considering what they're paid for it.</p>
+<p>Inspired by an article in <a class="reference external" href="http://online.wsj.com/news/articles/SB10001424052702303873604579491350251315132">Wall Street Journal</a> which tangentially
+touches on the lack of funding for OpenSSL development, I have
+decided to write up my own experiences with funding Open Source
+Software development in some detail.</p>
+<p>I've been in the software industry for 30 years now, and I have
+made a living more or less directly from Open Source Software
+for the most recent 15 years.</p>
+<p>Sometimes the money came from helping a customer use Open Source
+Software, some times I wrote the Open Source Software for their
+needs and sometimes, as with the <a class="reference external" href="http://phk.freebsd.dk/VML">Varnish Moral License</a> I get
+paid to develop and maintain Open Source Software for the greater
+common good.</p>
+<div class="section" id="freebsd-community-funding">
+<h2>FreeBSD community funding<a class="headerlink" href="#freebsd-community-funding" title="Permalink to this headline">¶</a></h2>
+<p>My first crowd-funding of Free and Open Source Software, was in
+2004, where I <a class="reference external" href="https://people.freebsd.org/~phk/funding.html">solicited the FreeBSD community</a> for money, so that
+I could devote three to six months of my time to the FreeBSD disk-I/O
+subsystem.</p>
+<p>At that time I had spent 10 years as one of the central and key
+FreeBSD developers, so there were no question about my ability
+or suitability for the task at hand.</p>
+<p>But in 2004 crowd-funding was not yet &quot;in&quot;, and I had to figure
+out how to do it myself.</p>
+<p>My parents brought me up to think that finances is a private matter
+but I concluded that the only way you could ask strangers to throw
+money at you, would be to run an open book, where they could see
+what happened to them, so I did open books.</p>
+<p>My next dilemma was about my rate, again I had always perceived my
+rate to be a private matter between me and my customers.</p>
+<p>My rate is about half of what most people expect -- because I wont
+work for most people: I only work on things I really <em>care</em> about.</p>
+<p>One of my worries therefore were that publishing my rate would
+undercut friends and colleagues in the FreeBSD project who made a
+living consulting.</p>
+<p>But again, there were no way around it, so I published my rate but
+made every attempt to distinguish it from a consulting rate, and
+I never heard any complaints.</p>
+<p>And so, having agonized over the exact text and sounded it off on a
+couple of close friends in the FreeBSD project, I threw the proposal
+out there -- and wondered what would happen next.</p>
+<p>I had a perfectly safe fall-back plan, you have to when you have
+two kids and a mortgage to feed, but I really had no idea what would
+happen.</p>
+<p>Worst case, I'd cause the mother of all <a class="reference external" href="http://bikeshed.org/">bikesheds</a> get thrown out
+of the FreeBSD project, and be denounced for my &quot;ideological impurity&quot;
+with respect to Free and Open Source Software.</p>
+<p>Best case, I expected to get maybe one or two months funded.</p>
+<p>The FreeBSD community responded overwhelmingly, my company has never
+sent as many invoices as it did in 2004, and my accountant nearly
+blew a fuse.</p>
+<p>And suddenly I found myself in a situation I had never even considered
+how to handle:  How to stop people from sending me money.</p>
+<p>I had simply set up a PayPal account, (more on that in a bit), and
+at least at that time, there were no way to prevent people from
+dropping money into it, no matter how much you wanted to stop them.</p>
+<p>In the end I managed to yell loud enough and only got overfunded
+a few percent, and I believe that my attempt to deflect the surplus
+to the FreeBSD Foundation gave them a little boost that year.</p>
+<p>So about PayPal:  The first thing they did was to shut my account,
+and demand all kinds of papers to be faxed to them, including a
+copy of my passport, despite the fact that Danish law was quite
+clear on that being illegal.  Then, as now, their dispute resolution
+process was less than user-friendly, and in the end it took an
+appeal to a high-ranking officer in PayPal and quite a bit of time
+to actually get the money people had donated.</p>
+<p>I swore to myself that next time, if there ever came a next time,
+PayPal would not be involved.  Besides, I found their fees quite
+excessive.</p>
+<p>In total I made EUR27K, and it kept my kids fed and my bank
+happy for the six months I worked on it.</p>
+<p>And work I did.</p>
+<p>I've never had a harsher boss than those six months, and it surprised
+me how much it stressed me, because I felt like I was working on a
+stage, with the entire FreeBSD project in audience, wondering if I
+were going to deliver the goods or not.</p>
+<p>As a result, the 187 donors certainly got their moneys worth,
+most of that half year I worked 80 hour weeks, which made me
+decide not to continue, despite many donors indicating that they
+were perfectly willing to fund several more months.</p>
+</div>
+<div class="section" id="varnish-community-funding">
+<h2>Varnish community funding<a class="headerlink" href="#varnish-community-funding" title="Permalink to this headline">¶</a></h2>
+<p>Five years later, having developed Varnish 1.0 for Norways &quot;Verdens
+Gang&quot; newspaper, I decided to give community funding a go again.</p>
+<p>Wiser from experience, I structured the <a class="reference external" href="http://phk.freebsd.dk/VML">Varnish Moral License</a>
+to tackle the issues which had caused me grief the first time
+around:</p>
+<p>Contact first, then send money, not the other way around, and also
+a focus on fewer larger sponsors, rather than people sending me
+EUR10 or USD15 or even, in one case, the EUR1 which happened to
+linger in his PayPal Account.</p>
+<p>I ran even more open books this time, on the VML webpages you can
+see how many hours and a one-line description of what I did in them,
+for every single day I've been working under the VML since 2010.</p>
+<p>I also decided to be honest with myself and my donors, one hour
+of work was one hour of work -- nobody would benefit from me
+dying from stress.</p>
+<p>In practice it doesn't quite work like that, there are plenty of
+thinking in the shower, emails and IRC answers at all hours of the
+day and a lot of &quot;just checking a detail&quot; that happens off the
+clock, because I like my job, and nothing could stop me anyway.</p>
+<p>In each of 2010, 2011 and 2013 I worked around 950 hours work on
+Varnish, funded by the community.</p>
+<p>In 2012 I only worked 589 hours, because I was building a prototype
+computer cluster to do adaptive optics real-time calculations for
+the ESO <a class="reference external" href="http://www.eso.org/public/teles-instr/e-elt/">Extremely Large Telescope</a> (&quot;ELT&quot;) -- There was no way I
+could say no to that contract :-)</p>
+<p>In 2014 I actually have hours available do even more Varnish work,
+and I have done so in the ramp up to the 4.0.0 release, but despite
+my not so subtle hints, the current outlook is still only for 800
+hours to be funded, but I'm crossing my fingers that more sponsors
+will appear now that V4 is released.  (Nudge, nudge, wink, wink,
+he said knowingly! :-)</p>
+</div>
+<div class="section" id="why-free-and-open-source-costs-money">
+<h2>Why Free and Open Source costs money<a class="headerlink" href="#why-free-and-open-source-costs-money" title="Permalink to this headline">¶</a></h2>
+<p>Varnish is about 90.000 lines of code, the VML brings in about
+EUR90K a year, and that means that Varnish has me working and
+caring about issues big and small.</p>
+<p>Not that I am satisfied with our level of effort, we should have
+much better documentation, our wish-list of features is far too
+long and we take too long to close tickets.</p>
+<p>But I'm not going to complain, because the Heartbleed vulnerability
+revealed that even though OpenSSL is about three to five times
+larger in terms of code, the OpenSSL Foundation Inc. took in only
+about EUR700K last year.</p>
+<p>And most of that EUR700K was for consulting and certification, not
+for &quot;free-range&quot; development and maintenance of the OpenSSL source
+code base so badly needs.</p>
+<p>I really hope that the Heartbleed vulnerability helps bring home
+the message to other communities, that Free and Open Source Software
+does not materialize out of empty space, it is written by people.</p>
+<p>People who love what we do, which is why I'm sitting here,
+way past midnight on a Friday evening, writing this pamphlet.</p>
+<p>But software <em>is</em> written by people, real people with kids, cars,
+mortgages, leaky roofs, sick pets, infirm parents and all other
+kinds of perfectly normal worries of an adult human being.</p>
+<p>The best way to improve the quality of Free and Open Source Software,
+is to make it possible for these people to spend time on it.</p>
+<p>They need time to review submissions carefully, time to write and
+run test-cases, time to respond and fix to bug-reports, time to
+code and most of all, time to think about the code.</p>
+<p>But it would not even be close to morally defensible to ask these
+people to forego time to play with their kids, so that they instead
+develop and maintain the software that drives other peoples companies.</p>
+<p>The right way to go -- the moral way to go -- and by far the most
+productive way to go, is to pay the developers so they can make
+the software they love their living.</p>
+</div>
+<div class="section" id="how-to-fund-free-and-open-source-software">
+<h2>How to fund Free and Open Source Software<a class="headerlink" href="#how-to-fund-free-and-open-source-software" title="Permalink to this headline">¶</a></h2>
+<p>One way is to hire them, with the understanding that they spend
+some company time on the software.</p>
+<p>Experience has shown that these people almost invariably have highly
+desirable brains which employers love to throw at all sorts of
+interesting problems, which tends to erode the &quot;donated&quot; company
+time.</p>
+<p>But a lot of Free and Open Source Software has been, and still is
+developed and  maintained this way, with or without written
+agreements or even knowledge of this being the case.</p>
+<p>Another way is for software projects to set up foundations to
+collect money and hire developers.  This is a relatively complex
+thing to do, and it will only be available for larger projects.</p>
+<p>The Apache Foundation &quot;adopts&quot; smaller projects inside their field
+of interest, and I believe that works OK, but I'm not sure if it
+can easily be transplanted to different topics.</p>
+<p>The final way is to simply throw money a the developers, the
+way the FreeBSD and Varnish communities have done with me.</p>
+<p>It is a far more flexible solution with respect to level of
+engagement, national boundaries etc. etc, but in many ways it
+demands more from both sides of the deal, in particular
+with respect to paperwork, taxes and so on.</p>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">¶</a></h2>
+<p>I am obviously biased, I derive a large fraction of my relatively
+modest income from community funding, for which I am the Varnish
+community deeply grateful.</p>
+<p>But biased as I may be, I believe that the Varnish community and I
+has shown that a tiny investment goes a long way in Free and Open
+Source Software.</p>
+<p>I hope to see that mutual benefit spread to other communities and
+projects, not just to OpenSSL and not just because they found a
+really bad bug the other day, but to any community around any piece
+of software which does serious work for serious companies.</p>
+<p>Thanks in advance,</p>
+<p>Poul-Henning, 2014-04-11</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Raking in the dough on Free and Open Source Software</a><ul>
+<li><a class="reference internal" href="#freebsd-community-funding">FreeBSD community funding</a></li>
+<li><a class="reference internal" href="#varnish-community-funding">Varnish community funding</a></li>
+<li><a class="reference internal" href="#why-free-and-open-source-costs-money">Why Free and Open Source costs money</a></li>
+<li><a class="reference internal" href="#how-to-fund-free-and-open-source-software">How to fund Free and Open Source Software</a></li>
+<li><a class="reference internal" href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="persistent.html"
+                        title="previous chapter">A persistent message</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="wanton_destruction.html"
+                        title="next chapter">Wanton destruction for the greater good</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/phk/dough.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="wanton_destruction.html" title="Wanton destruction for the greater good"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="persistent.html" title="A persistent message"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,196 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Picking platforms &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Security barriers in Varnish" href="barriers.html" />
+    <link rel="prev" title="What do you mean by &#39;backend&#39; ?" href="backends.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="barriers.html" title="Security barriers in Varnish"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="backends.html" title="What do you mean by &#39;backend&#39; ?"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="picking-platforms">
+<span id="phk-platforms"></span><h1>Picking platforms<a class="headerlink" href="#picking-platforms" title="Permalink to this headline">¶</a></h1>
+<p>Whenever you write Open Source Software, you have to make a choice of
+what platforms you are going to support.</p>
+<p>Generally you want to make your program as portable as possible and
+cover as many platforms, distros and weird computers as possible.</p>
+<p>But making your program run on everything is hard work very hard work.</p>
+<p>For instance, did you know that:</p>
+<blockquote>
+<div>sizeof(void*) != sizeof(void * const)</div></blockquote>
+<p>is legal in a ISO-C compliant environment ?</p>
+<p>Varnish <a class="reference external" href="http://hellarvik.com/node/66">runs on a Nokia N900</a>
+but I am not going to go out of my way to make sure that is always
+the case.</p>
+<p>To make sense for Varnish, a platform has to be able to deliver,
+both in terms of performance, but also in terms of the APIs we
+use to get that performance.</p>
+<p>In the FreeBSD project where I grew up, we ended up instituting
+platform-tiers, in an effort to document which platforms we
+cared about and which we did love quite as much.</p>
+<p>If we did the same for Varnish, the result would look something like:</p>
+<div class="section" id="a-platforms-we-care-about">
+<h2>A - Platforms we care about<a class="headerlink" href="#a-platforms-we-care-about" title="Permalink to this headline">¶</a></h2>
+<p>We care about these platforms because our users use them and
+because they deliver a lot of bang for the buck with Varnish.</p>
+<p>These platforms are in our &quot;tinderbox&quot; tests, we use them ourselves
+and they pass all regression tests all the time.
+Platform specific bug reports gets acted on.</p>
+<p><em>FreeBSD</em></p>
+<p><em>Linux</em></p>
+<p>Obviously you can forget about running Varnish on your
+<a class="reference external" href="https://en.wikipedia.org/wiki/Linksys_WRT54G_series">WRT54G</a>
+but if you have a real computer, you can expect Varnish to work
+&quot;ok or better&quot; on any distro that has a package available.</p>
+</div>
+<div class="section" id="b-platforms-we-try-not-to-break">
+<h2>B - Platforms we try not to break<a class="headerlink" href="#b-platforms-we-try-not-to-break" title="Permalink to this headline">¶</a></h2>
+<p>We try not to break these platforms, because they basically work,
+possibly with some footnotes or minor limitations, and they have
+an active userbase.</p>
+<p>We may or may not test on these platforms on a regular basis,
+or we may rely on contributors to alert us to problems.
+Platform specific bug reports without patches will likely live a quiet life.</p>
+<p><em>Mac OS/X</em></p>
+<p><em>Solaris-decendants</em> (Oracle Solaris, OmniOS, Joyent SmartOS)</p>
+<p>Mac OS/X is regarded as a developer platform, not as a production
+platform.</p>
+<p>Solaris-decendants are regarded as a production platform.</p>
+<p>NetBSD, AIX and HP-UX are conceivably candidates for this level, but
+so far I have not heard much, if any, user interest.</p>
+</div>
+<div class="section" id="c-platforms-we-tolerate">
+<h2>C - Platforms we tolerate<a class="headerlink" href="#c-platforms-we-tolerate" title="Permalink to this headline">¶</a></h2>
+<p>We tolerate any other platform, as long as the burden of doing
+so is proportional to the benefit to the Varnish community.</p>
+<p>Do not file bug reports specific to these platforms without attaching
+a patch that solves the problem, we will just close it.</p>
+<p>For now, anything else goes here, certainly the N900 and the WRT54G.</p>
+<p>I'm afraid I have to put OpenBSD here for now, it is seriously
+behind on socket APIs and working around those issues is just not
+worth the effort.</p>
+<p>If people send us a small non-intrusive patches that makes Varnish
+run on these platforms, we'll take it.</p>
+<p>If they send us patches that reorganizes everything, hurts code
+readability, quality or just generally do not satisfy our taste,
+they get told that thanks, but no thanks.</p>
+</div>
+<div class="section" id="is-that-it-abandon-all-hope-etc">
+<h2>Is that it ?  Abandon all hope etc. ?<a class="headerlink" href="#is-that-it-abandon-all-hope-etc" title="Permalink to this headline">¶</a></h2>
+<p>These tiers are not static, if for some reason Varnish suddenly
+becomes a mandatory accessory to some technically sensible platform,
+(zOS anyone ?) that platform will get upgraded.  If the pessimists
+are right about Oracles intentions, Solaris may get demoted.</p>
+<p>Until next time,</p>
+<p>Poul-Henning, 2010-08-03
+Edited Nils, 2014-03-18 with Poul-Hennings consent</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Picking platforms</a><ul>
+<li><a class="reference internal" href="#a-platforms-we-care-about">A - Platforms we care about</a></li>
+<li><a class="reference internal" href="#b-platforms-we-try-not-to-break">B - Platforms we try not to break</a></li>
+<li><a class="reference internal" href="#c-platforms-we-tolerate">C - Platforms we tolerate</a></li>
+<li><a class="reference internal" href="#is-that-it-abandon-all-hope-etc">Is that it ?  Abandon all hope etc. ?</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="backends.html"
+                        title="previous chapter">What do you mean by 'backend' ?</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="barriers.html"
+                        title="next chapter">Security barriers in Varnish</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/phk/platforms.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="barriers.html" title="Security barriers in Varnish"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="backends.html" title="What do you mean by &#39;backend&#39; ?"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

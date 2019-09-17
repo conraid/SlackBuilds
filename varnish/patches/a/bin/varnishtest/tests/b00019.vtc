@@ -1,0 +1,66 @@
+varnishtest "Check that max_restarts outside vcl_recv works and that we don't fall over"
+
+server s1 {
+	rxreq
+	txresp -body "012345\n"
+	accept
+	rxreq
+	txresp -body "012345\n"
+	accept
+	rxreq
+	txresp -body "012345\n"
+	accept
+	rxreq
+	txresp -body "012345\n"
+	accept
+	rxreq
+	txresp -body "012345\n"
+	accept
+	rxreq
+	txresp -body "012345\n"
+} -start
+
+varnish v1 -vcl+backend {
+	sub vcl_hit {
+	       return (restart);
+	}
+
+	sub vcl_synth {
+		# when we end up here, we have _exceeded_ the number
+		# allowed restarts
+		if (req.restarts == 3) {
+			set resp.status = 200;
+			set resp.reason = "restart=3";
+		} elsif (req.restarts > 3) {
+			set resp.status = 501;
+			set resp.reason = "restart>3";
+		} elsif (req.restarts < 3) {
+			set resp.status = 500;
+			set resp.reason = "restart<3";
+		}
+	}
+} -start
+
+varnish v1 -cliok "param.set max_restarts 2"
+
+client c1 {
+	txreq -url "/"
+	rxresp
+	expect resp.status == 200
+} -run
+
+varnish v1 -cliok "param.set max_restarts 3"
+
+client c1 {
+	txreq -url "/"
+	rxresp
+	expect resp.status == 501
+} -run
+
+varnish v1 -cliok "param.set max_restarts 1"
+
+client c1 {
+	txreq -url "/"
+	rxresp
+	expect resp.status == 500
+} -run

@@ -1,0 +1,76 @@
+varnishtest "Check grace with sick backends"
+
+barrier b1 cond 2
+barrier b2 cond 2
+
+server s1 {
+	rxreq
+	expect req.url == "/"
+	txresp -proto HTTP/1.0 -hdr "nbr: 1" -body "hi"
+
+	accept
+
+	rxreq
+	expect req.url == "/"
+	txresp -proto HTTP/1.0 -hdr "nbr: 2" -body "hi"
+
+	barrier b1 sync
+	accept
+
+	rxreq
+	expect req.url == "/"
+	txresp -proto HTTP/1.0 -hdr "nbr: 3" -hdr "foo: bar" -body "hi"
+
+	accept
+	rxreq
+	expect req.url == "/"
+	txresp -proto HTTP/1.0 -status 400 -hdr "nbr: 4" -body "hi"
+	accept
+
+	accept
+	rxreq
+	expect req.url == "/"
+	txresp -proto HTTP/1.0 -status 400 -hdr "nbr: 5" -body "hi"
+	accept
+
+	barrier b2 sync
+
+} -start
+
+varnish v1 -vcl {
+	backend b {
+		.host = "${s1_addr}";
+		.port = "${s1_port}";
+		.probe = {
+			.url = "/";
+			.timeout = 30ms;
+			.interval = 1s;
+			.window = 2;
+			.threshold = 1;
+			.initial = 0;
+			}
+		}
+	sub vcl_backend_response {
+		set beresp.ttl = 1s;
+		set beresp.grace = 1m;
+	}
+} -start
+
+barrier b1 sync
+
+client c1 {
+	txreq -url "/"
+	rxresp
+	expect resp.http.foo == "bar"
+	expect resp.status == 200
+} -run
+
+barrier b2 sync
+
+client c2 {
+	txreq -url "/"
+	rxresp
+	expect resp.http.foo == "bar"
+	expect resp.status == 200
+	expect resp.http.x-varnish == "1004 1002"
+} -run

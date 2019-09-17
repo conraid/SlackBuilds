@@ -1,0 +1,53 @@
+varnishtest "Check the precedence for timeouts"
+
+feature SO_RCVTIMEO_WORKS
+
+server s1 {
+	rxreq
+	expect req.url == "from_backend"
+	delay 1
+	txresp
+} -start
+server s2 {
+	rxreq
+	expect req.url == "from_vcl"
+	delay 1.5
+	txresp
+} -start
+
+varnish v1 -vcl {
+	backend b1 {
+		.host = "${s1_addr}";
+		.port = "${s1_port}";
+		.first_byte_timeout = 2s;
+	}
+	backend b2 {
+		.host = "${s2_addr}";
+		.port = "${s2_port}";
+		.first_byte_timeout = 1s;
+	}
+
+	sub vcl_recv {
+		if (req.url  == "from_backend") {
+			return(pass);
+		}
+	}
+	sub vcl_backend_fetch {
+		set bereq.first_byte_timeout = 2s;
+		if (bereq.url  == "from_backend") {
+			set bereq.backend = b1;
+		} else {
+			set bereq.backend = b2;
+		}
+	}
+} -start
+varnish v1 -cliok "param.set first_byte_timeout 0.5"
+
+client c1 {
+	txreq -url "from_backend"
+	rxresp
+	expect resp.status == 200
+	txreq -url "from_vcl"
+	rxresp
+	expect resp.status == 200
+} -run

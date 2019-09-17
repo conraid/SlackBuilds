@@ -1,0 +1,66 @@
+varnishtest "Test simple ACL"
+
+server s1 {
+	rxreq
+	expect req.url == "/"
+	txresp -body "1111\n"
+	rxreq
+	expect req.url == "foo"
+	txresp -body "2222\n"
+} -start
+
+varnish v1 -arg "-p vsl_mask=+VCL_trace"
+
+varnish v1 -errvcl {Name acl1 must have type 'acl'.} {
+	sub vcl_recv {
+		if (client.ip ~ acl1) {
+			set req.url = "/";
+		}
+	}
+
+	backend acl1 {
+		.host = "127.0.0.1";
+	}
+}
+
+varnish v1 -vcl+backend {
+	sub vcl_recv {
+		if (client.ip ~ acl1) {
+			set req.url = "/";
+		}
+	}
+
+	acl acl1 {
+		"${localhost}";
+	}
+
+	sub vcl_deliver {
+		set resp.http.acl = acl1;
+	}
+} -start
+
+client c1 {
+	txreq -url "foo"
+	rxresp
+	expect resp.status == 200
+	expect resp.http.acl == acl1
+} -run
+
+varnish v1 -vcl+backend {
+	acl acl1 {
+		! "localhost";
+		"0.0.0.0" / 0;
+		"::" / 0;
+	}
+
+	sub vcl_recv {
+		if (client.ip ~ acl1) {
+			set req.url = "/";
+		}
+	}
+	sub vcl_deliver {
+		set resp.http.acl = acl1;
+	}
+}
+
+client c1 -run

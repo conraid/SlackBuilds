@@ -1,0 +1,20 @@
+varnishtest "director fails to pick backend"
+
+server s1 {
+	rxreq
+	txresp
+} -start
+
+varnish v1 -vcl+backend {
+	import vtc;
+
+	sub vcl_recv {
+		set req.backend_hint = vtc.no_backend();
+	}
+} -start
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.status == 503
+} -run

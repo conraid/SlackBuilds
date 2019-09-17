@@ -1,0 +1,45 @@
+varnishtest "noidx"
+
+server s1 {
+	rxreq
+	expect req.url == "/foo"
+	txresp -hdr "Connection: close"
+	send {
+<H>
+FOO{
+<esi:include src="/bar"/>
+}FOO
+<!-- blablablabablablablablablablablablabla >
+blablablablab -->
+The end.
+}
+
+} -start
+
+server s2 {
+	rxreq
+	expect req.url == "/bar"
+	txresp -body "bar"
+} -start
+
+varnish v1 -vcl+backend {
+	sub vcl_backend_fetch {
+		if (bereq.url == "/foo") {
+			set bereq.backend = s1;
+		} else {
+			set bereq.backend = s2;
+		}
+	}
+
+	sub vcl_backend_response {
+		set beresp.do_esi = true;
+	}
+} -start
+
+varnish v1 -cliok "param.set debug +syncvsl"
+varnish v1 -cliok "debug.fragfetch 32"
+
+client c1 {
+	txreq -url /foo
+	rxresp
+} -run

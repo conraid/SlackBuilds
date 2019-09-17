@@ -1,0 +1,85 @@
+varnishtest "Ban list sync across silos"
+
+feature persistent_storage
+
+shell "rm -f ${tmpdir}/_.per[12]"
+
+# Silo 1 & 2
+# Prime each with an object with X-Foo: foo
+server s1 {
+	rxreq
+	expect req.url == "/silo1"
+	txresp -hdr "X-Foo: foo"
+
+	rxreq
+	expect req.url == "/silo2"
+	txresp -hdr "X-Foo: foo"
+} -start
+varnish v1 \
+	-arg "-pfeature=+wait_silo" \
+	-arg "-pban_lurker_sleep=0" \
+	-arg "-sper1=deprecated_persistent,${tmpdir}/_.per1,5m" \
+	-arg "-sper2=deprecated_persistent,${tmpdir}/_.per2,5m" \
+	-syntax 4.0 \
+	-vcl+backend {
+		sub vcl_backend_response {
+			set beresp.storage = storage.per1;
+			if (bereq.url ~ "silo2") {
+				set beresp.storage = storage.per2;
+			}
+		}
+	} -start
+client c1 {
+	txreq -url "/silo1"
+	rxresp
+	expect resp.status == 200
+	expect resp.http.x-foo == "foo"
+
+	txreq -url "/silo2"
+	rxresp
+	expect resp.status == 200
+	expect resp.http.x-foo == "foo"
+} -run
+varnish v1 -stop
+server s1 -wait
+
+# Only silo 1
+# Ban on obj.http.x-foo == foo
+varnish v2 \
+	-arg "-pfeature=+wait_silo" \
+	-arg "-pban_lurker_sleep=0" \
+	-arg "-sdeprecated_persistent,${tmpdir}/_.per1,5m" \
+	-vcl+backend { } -start
+varnish v2 -cliok "ban obj.http.x-foo == foo"
+varnish v2 -cliok "ban.list"
+varnish v2 -stop
+
+# Silo 1 & 2
+# Bans should be transferred
+varnish v3 \
+	-arg "-pfeature=+wait_silo" \
+	-arg "-pban_lurker_sleep=0" \
+	-arg "-sdeprecated_persistent,${tmpdir}/_.per1,5m" \
+	-arg "-sdeprecated_persistent,${tmpdir}/_.per2,5m" \
+	-vcl+backend { } -start
+varnish v3 -cliok "ban.list"
+varnish v3 -stop
+
+# Only silo 2
+# Check that /silo2 is banned
+server s1 {
+	rxreq
+	expect req.url == "/silo2"
+	txresp -hdr "X-Foo: bar"
+} -start
+varnish v4 \
+	-arg "-pfeature=+wait_silo" \
+	-arg "-pban_lurker_sleep=0" \
+	-arg "-sdeprecated_persistent,${tmpdir}/_.per2,5m" \
+	-vcl+backend { } -start
+client c1 -connect ${v4_sock} {
+	txreq -url "/silo2"
+	rxresp
+	expect resp.status == 200
+	expect resp.http.x-foo == "bar"
+} -run

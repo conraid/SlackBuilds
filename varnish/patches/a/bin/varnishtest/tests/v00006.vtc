@@ -1,0 +1,100 @@
+varnishtest "VCL: Test backend retirement"
+#
+# This case is quite sensitive to ordering of the worker threads because
+# it has so little actual traffic.  In a real world setting, this should
+# not be an issue.
+#
+
+# First do one request to get a work-thread that holds a VCL reference
+
+server s1 {
+	rxreq
+	expect req.url == "/bar"
+	txresp
+} -start
+
+# Only one pool, to avoid getting more than one work thread
+varnish v1 \
+	-arg "-p thread_pools=1" \
+	-arg "-p thread_pool_timeout=10" \
+	-vcl+backend { } -start
+
+# Give the varnishd a chance to start and create workers, delaying for
+# >thread_pool_timeout to allow for any over-bred workers to be kissed
+# to death.
+# NB: This is important for to avoid mis-ordering of the workers.
+
+delay 11
+
+varnish v1 -expect MAIN.threads == 10
+
+client c1 {
+	txreq -url "/bar"
+	rxresp
+	expect resp.status == 200
+} -run
+
+server s1 -wait
+
+varnish v1 -expect n_backend == 1
+varnish v1 -expect n_vcl_avail == 1
+varnish v1 -expect n_vcl_discard == 0
+
+# Set up a new VCL and backend
+
+server s2 {
+	rxreq
+	expect req.url == "/foo"
+	txresp
+} -start
+
+varnish v1 -vcl {
+	backend b2 {
+		.host = "${s2_addr}";
+		.port = "${s2_port}";
+	}
+}
+
+varnish v1 -vsl_catchup
+
+varnish v1 -expect n_backend == 2
+varnish v1 -expect n_vcl_avail == 2
+varnish v1 -expect n_vcl_discard == 0
+
+varnish v1 -cli "vcl.list"
+
+# Discard the first VCL
+
+varnish v1 -cli "vcl.discard vcl1"
+
+varnish v1 -vsl_catchup
+
+# Give expiry thread a chance to let go
+delay 2
+
+varnish v1 -vsl_catchup
+
+# It may not go away as long as the workthread holds a VCL reference
+varnish v1 -expect n_backend >= 1
+varnish v1 -expect n_vcl_avail >= 1
+varnish v1 -expect n_vcl_discard >= 0
+
+# Do another request through the new VCL to the new backend
+client c1 {
+	txreq -url "/foo"
+	rxresp
+	expect resp.status == 200
+} -run
+
+varnish v1 -vsl_catchup
+
+server s2 -wait
+
+# The workthread should have released its VCL reference now
+# but we need to tickle the CLI to notice
+
+varnish v1 -cli "vcl.list"
+
+varnish v1 -expect n_backend == 1
+varnish v1 -expect n_vcl_avail == 1
+varnish v1 -expect n_vcl_discard == 0

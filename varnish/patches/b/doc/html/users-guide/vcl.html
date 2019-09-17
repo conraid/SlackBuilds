@@ -1,0 +1,148 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>VCL - Varnish Configuration Language &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="VCL Syntax" href="vcl-syntax.html" />
+    <link rel="prev" title="Sizing your cache" href="sizing-your-cache.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="vcl-syntax.html" title="VCL Syntax"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sizing-your-cache.html" title="Sizing your cache"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Varnish Users Guide</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="vcl-varnish-configuration-language">
+<span id="users-vcl"></span><h1>VCL - Varnish Configuration Language<a class="headerlink" href="#vcl-varnish-configuration-language" title="Permalink to this headline">¶</a></h1>
+<p>This section covers how to tell Varnish how to handle
+your HTTP traffic, using the Varnish Configuration Language (VCL).</p>
+<p>Varnish has a great configuration system. Most other systems use
+configuration directives, where you basically turn on and off lots of
+switches. We have instead chosen to use a domain specific language called VCL for this.</p>
+<p>Every inbound request flows through Varnish and you can influence how
+the request is being handled by altering the VCL code. You can direct
+certain requests to particular backends, you can alter the requests and
+the responses or have Varnish take various actions depending on
+arbitrary properties of the request or the response. This makes
+Varnish an extremely powerful HTTP processor, not just for caching.</p>
+<p>Varnish translates VCL into binary code which is then executed when
+requests arrive. The performance impact of VCL is negligible.</p>
+<p>The VCL files are organized into subroutines. The different subroutines
+are executed at different times. One is executed when we get the
+request, another when files are fetched from the backend server.</p>
+<p>If you don't call an action in your subroutine and it reaches the end
+Varnish will execute some built-in VCL code. You will see this VCL
+code commented out in the file <cite>builtin.vcl</cite> that ships with Varnish Cache.</p>
+<div class="toctree-wrapper compound" id="users-guide-vcl-fetch-actions">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vcl-syntax.html">VCL Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vcl-built-in-subs.html">Built in subroutines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vcl-variables.html">Request and response VCL objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vcl-actions.html">actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vcl-backends.html">Backend servers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vcl-backends.html#multiple-backends">Multiple backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vcl-backends.html#backends-and-virtual-hosts-in-varnish">Backends and virtual hosts in Varnish</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vcl-backends.html#directors">Directors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vcl-backends.html#health-checks">Health checks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vcl-hashing.html">Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vcl-grace.html">Grace mode and keep</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vcl-separate.html">Separate VCL files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vcl-inline-c.html">Using inline C to extend Varnish</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vcl-examples.html">VCL Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devicedetection.html">Device detection</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="sizing-your-cache.html"
+                        title="previous chapter">Sizing your cache</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vcl-syntax.html"
+                        title="next chapter">VCL Syntax</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/users-guide/vcl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="vcl-syntax.html" title="VCL Syntax"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="sizing-your-cache.html" title="Sizing your cache"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Users Guide</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,215 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>VCL Syntax &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Built in subroutines" href="vcl-built-in-subs.html" />
+    <link rel="prev" title="VCL - Varnish Configuration Language" href="vcl.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="vcl-built-in-subs.html" title="Built in subroutines"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vcl.html" title="VCL - Varnish Configuration Language"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Users Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="vcl.html" accesskey="U">VCL - Varnish Configuration Language</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="vcl-syntax">
+<h1>VCL Syntax<a class="headerlink" href="#vcl-syntax" title="Permalink to this headline">¶</a></h1>
+<p>VCL has inherited a lot from C and it reads much like simple C or Perl.</p>
+<p>Blocks are delimited by curly brackets, statements end with semicolons,
+and comments may be written as in C, C++ or Perl according to your own
+preferences.</p>
+<p>Note that VCL doesn't contain any loops or jump statements.</p>
+<p>This section provides an outline of the more important parts of the
+syntax. For a full documentation of VCL syntax please see
+<a class="reference internal" href="../reference/vcl.html#vcl-7"><span class="std std-ref">VCL</span></a> in the reference.</p>
+<div class="section" id="strings">
+<h2>Strings<a class="headerlink" href="#strings" title="Permalink to this headline">¶</a></h2>
+<p>Basic strings are enclosed in &quot; ... &quot;, and may not contain newlines.</p>
+<p>Backslash is not special, so for instance in <cite>regsub()</cite> you do not need
+to do the &quot;count-the-backslashes&quot; polka:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">regsub</span><span class="p">(</span><span class="s2">&quot;barf&quot;</span><span class="p">,</span> <span class="s2">&quot;(b)(a)(r)(f)&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\4\3\2</span><span class="s2">p&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;frap&quot;</span>
+</pre></div>
+</div>
+<p>Long strings are enclosed in {&quot; ... &quot;}. They may contain any character
+including &quot;, newline and other control characters except for the NUL
+(0x00) character. If you really want NUL characters in a string there
+is a VMOD that makes it possible to create such strings.</p>
+</div>
+<div class="section" id="access-control-lists-acls">
+<span id="vcl-syntax-acl"></span><h2>Access control lists (ACLs)<a class="headerlink" href="#access-control-lists-acls" title="Permalink to this headline">¶</a></h2>
+<p>An ACL declaration creates and initializes a named access control list
+which can later be used to match client addresses:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>acl local {
+  &quot;localhost&quot;;         // myself
+  &quot;192.0.2.0&quot;/24;      // and everyone on the local network
+  ! &quot;192.0.2.23&quot;;      // except for the dialin router
+}
+</pre></div>
+</div>
+<p>If an ACL entry specifies a host name which Varnish is unable to
+resolve, it will match any address it is compared to. Consequently,
+if it is preceded by a negation mark, it will reject any address it is
+compared to, which may not be what you intended. If the entry is
+enclosed in parentheses, however, it will simply be ignored.</p>
+<p>To match an IP address against an ACL, simply use the match operator:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">ip</span> <span class="o">~</span> <span class="n">local</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">pipe</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="operators">
+<h2>Operators<a class="headerlink" href="#operators" title="Permalink to this headline">¶</a></h2>
+<p>The following operators are available in VCL. See the examples further
+down for, uhm, examples.</p>
+<dl class="docutils">
+<dt>=</dt>
+<dd>Assignment operator.</dd>
+</dl>
+<dl class="docutils">
+<dt>==</dt>
+<dd>Comparison.</dd>
+</dl>
+<dl class="docutils">
+<dt>~</dt>
+<dd>Match. Can either be used with regular expressions or ACLs.</dd>
+</dl>
+<dl class="docutils">
+<dt>!</dt>
+<dd>Negation.</dd>
+</dl>
+<dl class="docutils">
+<dt>&amp;&amp;</dt>
+<dd>Logical <em>and</em></dd>
+</dl>
+<dl class="docutils">
+<dt>||</dt>
+<dd>Logical <em>or</em></dd>
+</dl>
+</div>
+<div class="section" id="subroutines">
+<h2>Subroutines<a class="headerlink" href="#subroutines" title="Permalink to this headline">¶</a></h2>
+<p>A subroutine is used to group code for legibility or reusability:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">pipe_if_local</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">ip</span> <span class="o">~</span> <span class="n">local</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">pipe</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Subroutines in VCL do not take arguments, nor do they return values.</p>
+<p>To call a subroutine, use the call keyword followed by the subroutine's name:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">call</span> <span class="n">pipe_if_local</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Varnish has quite a few built in subroutines that are called for each
+transaction as it flows through Varnish. These builtin subroutines are all
+named <cite>vcl_*</cite>. Your own subroutines cannot start their name with <cite>vcl_</cite>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">VCL Syntax</a><ul>
+<li><a class="reference internal" href="#strings">Strings</a></li>
+<li><a class="reference internal" href="#access-control-lists-acls">Access control lists (ACLs)</a></li>
+<li><a class="reference internal" href="#operators">Operators</a></li>
+<li><a class="reference internal" href="#subroutines">Subroutines</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vcl.html"
+                        title="previous chapter">VCL - Varnish Configuration Language</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vcl-built-in-subs.html"
+                        title="next chapter">Built in subroutines</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/users-guide/vcl-syntax.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="vcl-built-in-subs.html" title="Built in subroutines"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vcl.html" title="VCL - Varnish Configuration Language"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Users Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="vcl.html" >VCL - Varnish Configuration Language</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,67 @@
+varnishtest "Test requests other than GET are cacheable"
+
+barrier b1 cond 2
+
+server s1 {
+	rxreq
+	expect req.method == "POST"
+	expect req.body == "foo"
+	txresp -body bar
+	rxreq
+	expect req.method == "POST"
+	expect req.body == "foo"
+	txresp -body baz
+	barrier b1 sync
+} -start
+
+varnish v1 -vcl+backend {
+	sub vcl_recv {
+		# We ignore the actual body for this test.
+		set req.http.method = req.method;
+		set req.http.hit = "No";
+		return (hash);
+	}
+	sub vcl_hit {
+		set req.http.hit = "Yes";
+	}
+	sub vcl_deliver {
+		set resp.http.hit = req.http.hit;
+	}
+	sub vcl_backend_fetch {
+		set bereq.method = bereq.http.method;
+	}
+	sub vcl_backend_response {
+		set beresp.ttl = 0.5s;
+	}
+} -start
+
+client c1 {
+	txreq -req "POST" -body "foo"
+	rxresp
+	expect resp.body == "bar"
+	expect resp.http.hit == "No"
+
+	txreq -req "POST" -body "foo"
+	rxresp
+	expect resp.body == "bar"
+	expect resp.http.hit == "Yes"
+
+	# Wait until between ttl&grace
+	delay 1.0
+
+	# Trigger bg fetch
+	txreq -req "POST" -body "foo"
+	rxresp
+	expect resp.body == "bar"
+	expect resp.http.hit == "Yes"
+
+	barrier b1 sync
+
+	delay 0.1
+
+	# Get new object, from cache
+	txreq -req "POST" -body "foo"
+	rxresp
+	expect resp.body == "baz"
+	expect resp.http.hit == "Yes"
+} -run

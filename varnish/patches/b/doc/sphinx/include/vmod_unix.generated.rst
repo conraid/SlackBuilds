@@ -1,0 +1,157 @@
+..
+.. NB:  This file is machine generated, DO NOT EDIT!
+..
+.. Edit vmod.vcc and run make instead
+..
+
+
+:tocdepth: 1
+
+
+.. _vmod_unix(3):
+
+=============================================
+VMOD unix - Utilities for Unix domain sockets
+=============================================
+
+SYNOPSIS
+========
+
+.. parsed-literal::
+
+  import unix [as name] [from "path"]
+  
+  :ref:`unix.user()`
+   
+  :ref:`unix.group()`
+   
+  :ref:`unix.uid()`
+   
+  :ref:`unix.gid()`
+   
+DESCRIPTION
+===========
+
+This VMOD provides information about the credentials of the peer
+process (user and group of the process owner) that is connected to a
+Varnish listener via a Unix domain socket, if the platform supports
+it.
+
+Examples::
+
+  import unix;
+
+  sub vcl_recv {
+	# Return "403 Forbidden" if the connected peer is
+	# not running as the user "trusteduser".
+	if (unix.user() != "trusteduser") {
+		return( synth(403) );
+	}
+
+	# Require the connected peer to run in the group
+	# "trustedgroup".
+	if (unix.group() != "trustedgroup") {
+		return( synth(403) );
+	}
+
+	# Require the connected peer to run under a specific numeric
+	# user id.
+	if (unix.uid() != 4711) {
+		return( synth(403) );
+	}
+
+	# Require the connected peer to run under a numeric group id.
+	if (unix.gid() != 815) {
+		return( synth(403) );
+	}
+  }
+
+Obtaining the peer credentials is possible on a platform that supports
+one of the following:
+
+* `getpeereid(3)` (such as FreeBSD and other BSD-derived systems)
+
+* the socket option ``SO_PEERCRED`` for `getsockopt(2)` (Linux)
+
+* `getpeerucred(3C)` (SunOS and descendants)
+
+On SunOS and friends, the ``PRIV_PROC_INFO`` privilege set is added to
+the Varnish child process while the VMOD is loaded, see
+`setppriv(2)`.
+
+On most platforms, the value returned is the effective user or group
+that was valid when the peer process initiated the connection.
+
+.. _unix.user():
+
+STRING user()
+-------------
+
+Return the user name of the peer process owner.
+
+.. _unix.group():
+
+STRING group()
+--------------
+
+Return the group name of the peer process owner.
+
+.. _unix.uid():
+
+INT uid()
+---------
+
+Return the numeric user id of the peer process owner.
+
+.. _unix.gid():
+
+INT gid()
+---------
+
+Return the numeric group id of the peer process owner.
+
+ERRORS
+======
+
+All functions in this VMOD are subject to the following constraints:
+
+* None of them may be called in ``vcl_init{}`` or ``vcl_fini{}``. If
+  one of them is called in ``vcl_init{}``, then the VCL program will
+  fail to load, with an error message from the VMOD.
+
+* If called on a platform that is not supported, then VCL failure is
+  invoked. An error message is written to the log (with the
+  ``VCL_Error`` tag), and for all VCL subroutines except for
+  ``vcl_synth{}``, control is directed immediately to ``vcl_synth{}``,
+  with the response status set to 503 and the reason string set to
+  "VCL failed".
+
+  If the failure occurs during ``vcl_synth{}``, then ``vcl_synth{}``
+  is aborted, and the the response line "503 VCL failed" is sent.
+
+* If the current listener is not a Unix domain socket, or if the
+  attempt to read credentials fails, then a ``VCL_Error`` message is
+  written to the log. The STRING functions (`unix.user()`_ and
+  `unix.group()`_) return ``NULL``, while the INT functions
+  (`unix.uid()`_ and `unix.gid()`_) return -1.
+
+SEE ALSO
+========
+
+* :ref:`varnishd(1)`
+* :ref:`vcl(7)`
+* `getpeereid(3)`
+* `getsockopt(2)`
+* `getpeerucred(3C)`
+* `setppriv(2)`
+
+COPYRIGHT
+=========
+
+::
+
+  This document is licensed under the same conditions as Varnish itself.
+  See LICENSE for details.
+ 
+  Authors: Geoffrey Simmons <geoffrey.simmons@uplex.de>
+ 

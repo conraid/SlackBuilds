@@ -1,0 +1,344 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>varnishtest &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="varnishtop" href="varnishtop.html" />
+    <link rel="prev" title="varnishstat" href="varnishstat.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="varnishtop.html" title="varnishtop"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="varnishstat.html" title="varnishstat"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Varnish Reference Manual</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="varnishtest">
+<span id="varnishtest-1"></span><h1>varnishtest<a class="headerlink" href="#varnishtest" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="test-program-for-varnish">
+<h2>Test program for Varnish<a class="headerlink" href="#test-program-for-varnish" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Manual section:</th><td class="field-body">1</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="synopsis">
+<h3>SYNOPSIS<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h3>
+<p>varnishtest [-hikLlqvW] [-b size] [-D name=val] [-j jobs] [-n iter] [-t duration] file [file ...]</p>
+</div>
+<div class="section" id="description">
+<h3>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h3>
+<p>The varnishtest program is a script driven program used to test the
+Varnish Cache.</p>
+<p>The varnishtest program, when started and given one or more script
+files, can create a number of threads representing backends, some
+threads representing clients, and a varnishd process. This is then used to
+simulate a transaction to provoke a specific behavior.</p>
+<p>The following options are available:</p>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-b <var>size</var></span></kbd></td>
+<td>Set internal buffer size (default: 1M)</td></tr>
+</tbody>
+</table>
+<p>-D name=val      Define macro for use in scripts</p>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span></kbd></td>
+<td>Show help</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-i</span></kbd></td>
+<td>Set PATH and vmod_path to find varnish binaries in build tree</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-j <var>jobs</var></span></kbd></td>
+<td>Run this many tests in parallel</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-k</span></kbd></td>
+<td>Continue on test failure</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-L</span></kbd></td>
+<td>Always leave temporary vtc.*</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-l</span></kbd></td>
+<td>Leave temporary vtc.* if test fails</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-n <var>iterations</var></span></kbd></td>
+<td>Run tests this many times</td></tr>
+</tbody>
+</table>
+<p>-p name=val      Pass parameters to all varnishd command lines</p>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-q</span></kbd></td>
+<td>Quiet mode: report only failures</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-t <var>duration</var></span></kbd></td>
+<td>Time tests out after this long (default: 60s)</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span></kbd></td>
+<td>Verbose mode: always report test log</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-W</span></kbd></td>
+<td>Enable the witness facility for locking</td></tr>
+</tbody>
+</table>
+<p>file             File to use as a script</p>
+<p>If <cite>TMPDIR</cite> is set in the environment, varnishtest creates temporary
+<cite>vtc.*</cite> directories for each test in <cite>$TMPDIR</cite>, otherwise in <cite>/tmp</cite>.</p>
+</div>
+<div class="section" id="scripts">
+<h3>SCRIPTS<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h3>
+<p>The vtc syntax is documented at length in <a class="reference internal" href="vtc.html#vtc-7"><span class="std std-ref">VTC</span></a>. Should you want more
+examples than the one below, you can have a look at the Varnish source code
+repository, under <cite>bin/varnishtest/tests/</cite>, where all the regression tests for
+Varnish are kept.</p>
+<p>An example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">varnishtest</span> <span class="s2">&quot;#1029&quot;</span>
+
+<span class="n">server</span> <span class="n">s1</span> <span class="p">{</span>
+        <span class="n">rxreq</span>
+        <span class="n">expect</span> <span class="n">req</span><span class="o">.</span><span class="n">url</span> <span class="o">==</span> <span class="s2">&quot;/bar&quot;</span>
+        <span class="n">txresp</span> <span class="o">-</span><span class="n">gzipbody</span> <span class="p">{[</span><span class="n">bar</span><span class="p">]}</span>
+
+        <span class="n">rxreq</span>
+        <span class="n">expect</span> <span class="n">req</span><span class="o">.</span><span class="n">url</span> <span class="o">==</span> <span class="s2">&quot;/foo&quot;</span>
+        <span class="n">txresp</span> <span class="o">-</span><span class="n">body</span> <span class="p">{</span><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">FOO</span><span class="o">&lt;</span><span class="n">esi</span><span class="p">:</span><span class="n">include</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;/bar&quot;</span><span class="o">/&gt;</span><span class="n">BARF</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span><span class="p">}</span>
+
+<span class="p">}</span> <span class="o">-</span><span class="n">start</span>
+
+<span class="n">varnish</span> <span class="n">v1</span> <span class="o">-</span><span class="n">vcl</span><span class="o">+</span><span class="n">backend</span> <span class="p">{</span>
+        <span class="n">sub</span> <span class="n">vcl_backend_response</span> <span class="p">{</span>
+                <span class="nb">set</span> <span class="n">beresp</span><span class="o">.</span><span class="n">do_esi</span> <span class="o">=</span> <span class="n">true</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">bereq</span><span class="o">.</span><span class="n">url</span> <span class="o">==</span> <span class="s2">&quot;/foo&quot;</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nb">set</span> <span class="n">beresp</span><span class="o">.</span><span class="n">ttl</span> <span class="o">=</span> <span class="mi">0</span><span class="n">s</span><span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nb">set</span> <span class="n">beresp</span><span class="o">.</span><span class="n">ttl</span> <span class="o">=</span> <span class="mi">10</span><span class="n">m</span><span class="p">;</span>
+                <span class="p">}</span>
+        <span class="p">}</span>
+<span class="p">}</span> <span class="o">-</span><span class="n">start</span>
+
+<span class="n">client</span> <span class="n">c1</span> <span class="p">{</span>
+        <span class="n">txreq</span> <span class="o">-</span><span class="n">url</span> <span class="s2">&quot;/bar&quot;</span> <span class="o">-</span><span class="n">hdr</span> <span class="s2">&quot;Accept-Encoding: gzip&quot;</span>
+        <span class="n">rxresp</span>
+        <span class="n">gunzip</span>
+        <span class="n">expect</span> <span class="n">resp</span><span class="o">.</span><span class="n">bodylen</span> <span class="o">==</span> <span class="mi">5</span>
+
+        <span class="n">txreq</span> <span class="o">-</span><span class="n">url</span> <span class="s2">&quot;/foo&quot;</span> <span class="o">-</span><span class="n">hdr</span> <span class="s2">&quot;Accept-Encoding: gzip&quot;</span>
+        <span class="n">rxresp</span>
+        <span class="n">expect</span> <span class="n">resp</span><span class="o">.</span><span class="n">bodylen</span> <span class="o">==</span> <span class="mi">21</span>
+<span class="p">}</span> <span class="o">-</span><span class="n">run</span>
+</pre></div>
+</div>
+<p>When run, the above script will simulate a server (s1) that expects
+two different requests. It will start a Varnish server (v1) and add the
+backend definition to the VCL specified (-vcl+backend). Finally it starts
+the c1-client, which is a single client sending two requests.</p>
+</div>
+<div class="section" id="testing-a-build-tree">
+<h3>TESTING A BUILD TREE<a class="headerlink" href="#testing-a-build-tree" title="Permalink to this headline">¶</a></h3>
+<p>Whether you are building a VMOD or trying to use one that you freshly
+built, you can tell <code class="docutils literal"><span class="pre">varnishtest</span></code> to pass a <em>vmod_path</em> to <code class="docutils literal"><span class="pre">varnishd</span></code>
+instances started using the <code class="docutils literal"><span class="pre">varnish</span> <span class="pre">-start</span></code> command in your test case:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">varnishtest</span> <span class="o">-</span><span class="n">p</span> <span class="n">vmod_path</span><span class="o">=...</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/*.</span><span class="n">vtc</span>
+</pre></div>
+</div>
+<p>This way you can use the same test cases on both installed and built
+VMODs:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">server</span> <span class="n">s1</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span> <span class="o">-</span><span class="n">start</span>
+
+<span class="n">varnish</span> <span class="n">v1</span> <span class="o">-</span><span class="n">vcl</span><span class="o">+</span><span class="n">backend</span> <span class="p">{</span>
+    <span class="kn">import</span> <span class="nn">wossname</span><span class="p">;</span>
+
+    <span class="o">...</span>
+<span class="p">}</span> <span class="o">-</span><span class="n">start</span>
+
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>You are not limited to the <em>vmod_path</em> and can pass any parameter,
+allowing you to run a build matrix without changing the test suite. You
+can achieve the same with macros, but then they need to be defined on
+each run.</p>
+<p>You can see the actual <code class="docutils literal"><span class="pre">varnishd</span></code> command lines in test outputs,
+they look roughly like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">exec</span> <span class="n">varnishd</span> <span class="p">[</span><span class="n">varnishtest</span> <span class="o">-</span><span class="n">p</span> <span class="n">params</span><span class="p">]</span> <span class="p">[</span><span class="n">testing</span> <span class="n">params</span><span class="p">]</span> <span class="p">[</span><span class="n">vtc</span> <span class="o">-</span><span class="n">arg</span> <span class="n">params</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Parameters you define with <code class="docutils literal"><span class="pre">varnishtest</span> <span class="pre">-p</span></code> may be overriden by
+parameters needed by <code class="docutils literal"><span class="pre">varnishtest</span></code> to run properly, and they may in
+turn be overriden by parameters set in test scripts.</p>
+<p>There's also a special mode in which <code class="docutils literal"><span class="pre">varnishtest</span></code> builds itself a
+PATH and a <em>vmod_path</em> in order to find Varnish binaries (programs and
+VMODs) in the build tree surrounding the <code class="docutils literal"><span class="pre">varnishtest</span></code> binary. This
+is meant for testing of Varnish under development and will disregard
+your <em>vmod_path</em> if you set one.</p>
+<p>If you need to test your VMOD against a Varnish build tree, you must
+install it first, in a temp directory for instance. With information
+provided by the installation's <em>pkg-config(1)</em> you can build a proper
+PATH in order to access Varnish programs, and a <em>vmod_path</em> to access
+both your VMOD and the built-in VMODs:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">PKG_CONFIG_PATH</span><span class="o">=/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">install</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">pkgconfig</span>
+
+<span class="n">BINDIR</span><span class="o">=</span><span class="s2">&quot;$(pkg-config --variable=bindir varnishapi)&quot;</span>
+<span class="n">SBINDIR</span><span class="o">=</span><span class="s2">&quot;$(pkg-config --variable=sbindir varnishapi)&quot;</span>
+<span class="n">PATH</span><span class="o">=</span><span class="s2">&quot;SBINDIR:BINDIR:$PATH&quot;</span>
+
+<span class="n">VMODDIR</span><span class="o">=</span><span class="s2">&quot;$(pkg-config --variable=vmoddir varnishapi)&quot;</span>
+<span class="n">VMOD_PATH</span><span class="o">=</span><span class="s2">&quot;/path/to/your/vmod/build/dir:$VMODDIR&quot;</span>
+
+<span class="n">varnishtest</span> <span class="o">-</span><span class="n">p</span> <span class="n">vmod_path</span><span class="o">=</span><span class="s2">&quot;$VMOD_PATH&quot;</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="see-also">
+<h3>SEE ALSO<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>varnishtest source code repository with tests</li>
+<li><a class="reference internal" href="varnishhist.html#varnishhist-1"><span class="std std-ref">varnishhist</span></a></li>
+<li><a class="reference internal" href="varnishlog.html#varnishlog-1"><span class="std std-ref">varnishlog</span></a></li>
+<li><a class="reference internal" href="varnishncsa.html#varnishncsa-1"><span class="std std-ref">varnishncsa</span></a></li>
+<li><a class="reference internal" href="varnishstat.html#varnishstat-1"><span class="std std-ref">varnishstat</span></a></li>
+<li><a class="reference internal" href="varnishtop.html#varnishtop-1"><span class="std std-ref">varnishtop</span></a></li>
+<li><a class="reference internal" href="vcl.html#vcl-7"><span class="std std-ref">VCL</span></a></li>
+<li><a class="reference internal" href="vtc.html#vtc-7"><span class="std std-ref">VTC</span></a></li>
+<li><a class="reference internal" href="vmod_vtc.html#vmod-vtc-3"><span class="std std-ref">VMOD vtc - Utility module for varnishtest</span></a></li>
+</ul>
+</div>
+<div class="section" id="history">
+<h3>HISTORY<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h3>
+<p>The varnishtest program was developed by Poul-Henning Kamp
+&lt;<a class="reference external" href="mailto:phk&#37;&#52;&#48;phk&#46;freebsd&#46;dk">phk<span>&#64;</span>phk<span>&#46;</span>freebsd<span>&#46;</span>dk</a>&gt; in cooperation with Varnish Software AS.  This manual
+page was originally written by Stig Sandbeck Mathisen &lt;<a class="reference external" href="mailto:ssm&#37;&#52;&#48;linpro&#46;no">ssm<span>&#64;</span>linpro<span>&#46;</span>no</a>&gt;
+and updated by Kristian Lyngstøl &lt;<a class="reference external" href="mailto:kristian&#37;&#52;&#48;varnish-cache&#46;org">kristian<span>&#64;</span>varnish-cache<span>&#46;</span>org</a>&gt;.</p>
+</div>
+<div class="section" id="copyright">
+<h3>COPYRIGHT<a class="headerlink" href="#copyright" title="Permalink to this headline">¶</a></h3>
+<p>This document is licensed under the same licence as Varnish
+itself. See LICENCE for details.</p>
+<ul class="simple">
+<li>Copyright (c) 2007-2016 Varnish Software AS</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">varnishtest</a><ul>
+<li><a class="reference internal" href="#test-program-for-varnish">Test program for Varnish</a><ul>
+<li><a class="reference internal" href="#synopsis">SYNOPSIS</a></li>
+<li><a class="reference internal" href="#description">DESCRIPTION</a></li>
+<li><a class="reference internal" href="#scripts">SCRIPTS</a></li>
+<li><a class="reference internal" href="#testing-a-build-tree">TESTING A BUILD TREE</a></li>
+<li><a class="reference internal" href="#see-also">SEE ALSO</a></li>
+<li><a class="reference internal" href="#history">HISTORY</a></li>
+<li><a class="reference internal" href="#copyright">COPYRIGHT</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="varnishstat.html"
+                        title="previous chapter">varnishstat</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="varnishtop.html"
+                        title="next chapter">varnishtop</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/reference/varnishtest.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="varnishtop.html" title="varnishtop"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="varnishstat.html" title="varnishstat"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Reference Manual</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

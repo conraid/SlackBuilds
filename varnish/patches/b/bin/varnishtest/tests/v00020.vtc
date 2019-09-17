@@ -1,0 +1,353 @@
+varnishtest "VCL compiler coverage test: vcc_parse.c & vcc_expr.c"
+
+varnish v1 -cliok "param.set vcc_allow_inline_c true" -vcl {
+	backend b { .host = "127.0.0.1"; }
+	C{
+	#include <stdio.h>
+	}C
+}
+
+varnish v1 -errvcl {Found: '0' at} { 0; }
+
+# The next test issues a quite confusing error message:
+#   Expected an action, 'if', '{' or '}'\n
+#   ('Default' Line 42 Pos 1)\n
+#   sub vcl_recv {\n
+#   ###-----------\n
+#   \n
+# It's actually complaining about the first token in
+# the default.vcl which is appended after the proffered
+# VCLs tokenstream.
+# XXX: A better error message would be desirable
+
+varnish v1 -errvcl {Symbol cannot be used here} " sub vcl_recv { { } { "
+
+varnish v1 -errvcl {Comparison of different types: INT '!=' STRING} {
+	sub vcl_recv {
+		if (!req.restarts != req.url) {
+			set req.http.foo = "foo";
+		}
+
+	}
+}
+
+varnish v1 -errvcl {Symbol 'vcl_recv' type (sub) can not be used in expression.} {
+	sub vcl_recv {
+		set req.http.foo = vcl_recv;
+	}
+}
+
+varnish v1 -errvcl {Operator * not possible on type STRING.} {
+	sub vcl_recv {
+		set req.http.foo = "bla" * "foo";
+	}
+}
+
+varnish v1 -errvcl {DURATION + INT not possible.} {
+	sub vcl_backend_response {
+		set req.ttl = req.ttl + beresp.status;
+	}
+}
+
+varnish v1 -errvcl {BOOL + BOOL not possible.} {
+	sub vcl_backend_response {
+		if (beresp.do_gzip + beresp.do_gunzip) {
+		}
+	}
+}
+
+varnish v1 -vcl {
+	backend b { .host = "127.0.0.1"; }
+	sub vcl_recv {
+		set req.http.foo = "foo" + "bar";
+		set req.http.foo = "foo" + 1;
+		set req.http.foo = "foo" + 1.5;
+		set req.http.foo = "foo" + now;
+
+		set req.http.foo = now + 1s;
+		set req.http.foo = now - 1s;
+
+		set req.http.foo = now - now;
+		set req.http.foo = 1 + 1s;
+
+		set req.http.foo = 1 + 1;
+		set req.http.foo = 1 - 1;
+		set req.http.foo = 1 + -1;
+		set req.http.foo = 1 - -1;
+		set req.http.foo = 3 * 2;
+		set req.http.foo = 3 / 2;
+		set req.http.foo = 3 * -2;
+		set req.http.foo = 3 / -2;
+
+		set req.http.foo = 3.6 + 1.4;
+		set req.http.foo = 3.6 - 1.4;
+		set req.http.foo = 3.6 + -1.4;
+		set req.http.foo = 3.6 - -1.4;
+		set req.http.foo = 3.6 * 1.4;
+		set req.http.foo = 3.6 / 1.4;
+		set req.http.foo = 3.6 * -1.4;
+		set req.http.foo = 3.6 / -1.4;
+
+		set req.http.foo = 1.0 + 1;
+		set req.http.foo = 1.0 - 1;
+		set req.http.foo = 1.0 + -1;
+		set req.http.foo = 1.0 - -1;
+		set req.http.foo = 3.0 * 2;
+		set req.http.foo = 3.0 / 2;
+		set req.http.foo = 3.0 * -2;
+		set req.http.foo = 3.0 / -2;
+
+		set req.http.foo = req.http.foo + "bar" ~ "bar";
+		set req.http.foo = req.http.foo + "bar" !~ "bar";
+
+		set req.http.foo = "foo" + req.ttl;
+
+		set req.http.foo = client.ip + ", " + server.ip;
+
+		set req.ttl = -1s;
+		set req.ttl = 1s;
+		set req.ttl *= 1.5;
+		set req.ttl = 1.5 s * 2.5;
+		set req.ttl = 1.5 s / 2.5;
+		set req.ttl = 1.5h + 1.5s;
+		set req.ttl = 1.5h - 1.5s;
+
+		if (req.ttl) { }
+		if (!req.ttl) { }
+		if (req.ttl > 1d) { }
+		if (req.ttl < 1d) { }
+
+		if (1) { }
+		if (2 == 3) { }
+		if (2 < 3) { }
+		if (2 > 3) { }
+
+		if (req.backend_hint == b) { }
+		if (req.backend_hint != b) { }
+
+		if (req.url) { }
+		if (!req.url) { }
+		if (req.url == "foo") { }
+		if (req.url != "foo") { }
+		if (req.url ~ "foo") { }
+		if (req.url !~ "foo") { }
+
+		if (1) { }
+		elsif (2) { }
+		elseif (3) { }
+		else if (4) { }
+		else { }
+
+		# regression test for #2729
+		if (req.grace < 0s || req.grace < 1s && req.grace < 2s) {
+			return (pass);
+		}
+	}
+}
+
+# XXX: not the most clear error message
+varnish v1 -errvcl {STRING - STRING not possible.} {
+	sub vcl_recv {
+		set req.http.foo = "foo" - "bar";
+	}
+}
+
+varnish v1 -errvcl {TIME + STRING not possible.} {
+	sub vcl_recv {
+		set req.ttl = now + "foo";
+	}
+}
+
+varnish v1 -errvcl {TIME + TIME not possible.} {
+	sub vcl_recv {
+		set req.ttl = now + now;
+	}
+}
+
+varnish v1 -errvcl {INT + STRING not possible.} {
+	sub vcl_backend_response {
+		set beresp.status = 1 + "foo";
+	}
+}
+
+varnish v1 -errvcl {INT + TIME not possible.} {
+	sub vcl_backend_response {
+		set beresp.status = 1 + now;
+	}
+}
+
+varnish v1 -errvcl {DURATION + INT not possible.} {
+	sub vcl_recv {
+		set req.ttl = 1s + 1;
+	}
+}
+
+varnish v1 -errvcl {DURATION + TIME not possible.} {
+	sub vcl_recv {
+		set req.ttl = 1s + now;
+	}
+}
+
+varnish v1 -errvcl {DURATION + STRING not possible.} {
+	sub vcl_recv {
+		set req.ttl = 1s + "foo";
+	}
+}
+
+varnish v1 -errvcl {IP + IP not possible.} {
+	sub vcl_recv {
+		set req.ttl = client.ip + server.ip;
+	}
+}
+
+varnish v1 -errvcl {Name of function, 'foo.bar', contains illegal character '.'} {
+	sub foo.bar {
+	}
+	sub vcl_recv {
+		call foo.bar;
+	}
+}
+
+varnish v1 -errvcl {The names 'vcl_*' are reserved for subroutines.} {
+	sub vcl_bar {
+	}
+	sub vcl_recv {
+		call vcl_bar;
+	}
+}
+
+varnish v1 -errvcl {Function returns VOID} {
+	import vtc;
+	sub vcl_recv {
+		set req.http.foo = vtc.sleep(1m);
+	}
+}
+
+varnish v1 -errvcl {Not available in method 'vcl_recv'.} {
+	import blob;
+	backend b { .host = "127.0.0.1"; }
+	sub vcl_recv {
+		blob.encode(HEX, LOWER, req.hash);
+	}
+}
+
+varnish v1 -errvcl {Not available in method 'vcl_hash'.} {
+	import blob;
+	backend b { .host = "127.0.0.1"; }
+	sub vcl_hash {
+		blob.encode(HEX, LOWER, req.hash);
+	}
+}
+
+varnish v1 -errvcl {Not available in method 'vcl_recv'.} {
+	backend b { .host = "127.0.0.1"; }
+	sub vcl_recv {
+		set req.http.foo = 100 + beresp.status;
+	}
+}
+
+varnish v1 -errvcl {Name of ACL, 'foo.bar', contains illegal character '.'} {
+	acl foo.bar {
+	}
+	sub vcl_recv {
+		if (client.ip ~ foo.bar) {
+		}
+	}
+}
+
+varnish v1 -errvcl {Expected 'from path ...'} {
+	import std to;
+}
+
+varnish v1 -errvcl {INT * BLOB not possible.} {
+	import blob;
+	sub vcl_deliver {
+		set resp.status = 100 * blob.decode(HEX, encoded="a");
+	}
+}
+
+# XXX: should spot nonexistent storage
+varnish v1 -errvcl {Symbol not found: 'storage.foo'} {
+	sub vcl_backend_response {
+		set beresp.storage = storage.foo;
+	}
+}
+
+varnish v1 -errvcl {Comparison of different types: BACKEND '==' STRING} {
+	sub vcl_backend_response {
+		set beresp.http.bereq_backend = bereq.backend;
+		if (bereq.backend == beresp.http.bereq_backend) {
+			set beresp.http.bereq_backend_cmp = "ok";
+		}
+	}
+}
+
+varnish v1 -errvcl {'!' must be followed by BOOL, found REAL.} {
+	import std;
+	sub vcl_recv { if (!std.random(0,1)) { } }
+}
+
+varnish v1 -errvcl {'&&' must be followed by BOOL, found REAL.} {
+	import std;
+	sub vcl_recv { if (0 && std.random(0,1)) { } }
+}
+
+varnish v1 -errvcl {'||' must be followed by BOOL, found REAL.} {
+	import std;
+	sub vcl_recv { if (0 || std.random(0,1)) { } }
+}
+
+varnish v1 -errvcl {'&&' must be preceeded by BOOL, found REAL.} {
+	import std;
+	sub vcl_recv { if (std.random(0,1) && 0) { } }
+}
+
+varnish v1 -errvcl {'||' must be preceeded by BOOL, found REAL.} {
+	import std;
+	sub vcl_recv { if (std.random(0,1) || 0) { } }
+}
+
+varnish v1 -errvcl {Symbol 'acl' has wrong type (reserved):} {
+	import std;
+	sub vcl_recv { call acl; }
+}
+
+server s1 {
+	rxreq
+	txresp -hdr "bar: X"
+} -start
+
+varnish v1 -vcl+backend {
+	// Ticket 2727
+	sub vcl_recv {
+		if ((2 - 1) > 0) {
+			# nothing
+		}
+	}
+}
+
+varnish v1 -vcl+backend {
+	import debug;
+	sub vcl_deliver {
+		// Ticket 2745
+		debug.sethdr(resp.http.rst, req.restarts);
+		set resp.http.foo =
+		    (resp.http.foo + resp.http.bar) == ("X" + resp.http.foo);
+		// Ticket 2809
+		set resp.http.bar = true == false;
+	}
+	sub vcl_deliver {
+		set resp.http.p = (0 + 9223372036854775807);
+		set resp.http.n = (0 - 9223372036854775807);
+	}
+} -start
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.http.rst == "0"
+	expect resp.http.foo == "true"
+	expect resp.http.bar == "false"
+	expect resp.http.p == 9223372036854775807
+	expect resp.http.n == -9223372036854775807
+} -run

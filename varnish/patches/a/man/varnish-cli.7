@@ -1,0 +1,803 @@
+.\" Man page generated from reStructuredText.
+.
+.TH VARNISH-CLI 7 "" "" ""
+.SH NAME
+varnish-cli \- Varnish Command Line Interface
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.SH DESCRIPTION
+.sp
+Varnish has a command line interface (CLI) which can control and change
+most of the operational parameters and the configuration of Varnish,
+without interrupting the running service.
+.sp
+The CLI can be used for the following tasks:
+.INDENT 0.0
+.TP
+.B configuration
+You can upload, change and delete VCL files from the CLI.
+.TP
+.B parameters
+You can inspect and change the various parameters Varnish has
+available through the CLI. The individual parameters are
+documented in the varnishd(1) man page.
+.TP
+.B bans
+Bans are filters that are applied to keep Varnish from serving
+stale content. When you issue a ban Varnish will not serve any
+\fIbanned\fP object from cache, but rather re\-fetch it from its
+backend servers.
+.TP
+.B process management
+You can stop and start the cache (child) process though the
+CLI. You can also retrieve the latest stack trace if the child
+process has crashed.
+.UNINDENT
+.sp
+If you invoke varnishd(1) with \-T, \-M or \-d the CLI will be
+available. In debug mode (\-d) the CLI will be in the foreground, with
+\-T you can connect to it with varnishadm or telnet and with \-M
+varnishd will connect back to a listening service \fIpushing\fP the CLI to
+that service. Please see \fIvarnishd(1)\fP for details.
+.SS Syntax
+.sp
+The Varnish CLI is similar to another command line interface, the Bourne
+Shell. Commands are usually terminated with a newline, and they may take
+arguments. The command and its arguments are \fItokenized\fP before parsing,
+and as such arguments containing spaces must be enclosed in double quotes.
+.sp
+It means that command parsing of
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+help banner
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+is equivalent to
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+"help" banner
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+because the double quotes only indicate the boundaries of the \fBhelp\fP
+token.
+.sp
+Within double quotes you can escape characters with \e (backslash). The \en,
+\er, and \et get translated to newlines, carriage returns, an tabs.  Double
+quotes and backslashes themselves can be escaped with \e" and \e\e
+respectively.
+.sp
+To enter characters in octals use the \ennn syntax. Hexadecimals can
+be entered with the \exnn syntax.
+.sp
+Commands may not end with a newline when a shell\-style \fIhere document\fP
+(here\-document or heredoc) is used. The format of a here document is:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+<< word
+     here document
+word
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+\fIword\fP can be any continuous string chosen to make sure it doesn\(aqt appear
+naturally in the following \fIhere document\fP\&. Traditionally EOF or END is
+used.
+.SS Quoting pitfalls
+.sp
+Integrating with the Varnish CLI can be sometimes surprising when quoting
+is involved. For instance in Bourne Shell the delimiter used with here
+documents may or may not be separated by spaces from the \fB<<\fP token:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+cat <<EOF
+hello
+world
+EOF
+hello
+world
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+With the Varnish CLI, the \fB<<\fP and \fBEOF\fP tokens must be separated by
+at least one blank:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+vcl.inline boot <<EOF
+106 258
+Message from VCC\-compiler:
+VCL version declaration missing
+Update your VCL to Version 4 syntax, and add
+        vcl 4.0;
+on the first line of the VCL files.
+(\(aq<vcl.inline>\(aq Line 1 Pos 1)
+<<EOF
+##\-\-\-
+
+Running VCC\-compiler failed, exited with 2
+VCL compilation failed
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+With the missing space, the here document can be added and the actual VCL
+can be loaded:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+vcl.inline test << EOF
+vcl 4.0;
+
+backend be {
+        .host = "localhost";
+}
+EOF
+200 14
+VCL compiled.
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+When using a front\-end to the Varnish\-CLI like \fBvarnishadm\fP, one must
+take into account the double expansion happening.  First in the shell
+launching the \fBvarnishadm\fP command and then in the Varnish CLI itself.
+When a command\(aqs parameter require spaces, you need to ensure that the
+Varnish CLI will see the double quotes:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+varnishadm param.set cc_command \(aq"my alternate cc command"\(aq
+
+Change will take effect when VCL script is reloaded
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Otherwise if you don\(aqt quote the quotes, you may get a seemingly unrelated
+error message:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+varnishadm param.set cc_command "my alternate cc command"
+Unknown request.
+Type \(aqhelp\(aq for more info.
+Too many parameters
+
+Command failed with error code 105
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+If you are quoting with a here document, you must wrap it inside a shell
+multi\-line argument:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+varnishadm vcl.inline test \(aq<< EOF
+vcl 4.0;
+
+backend be {
+        .host = "localhost";
+}
+EOF\(aq
+VCL compiled.
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Other pitfalls include variable expansion of the shell invoking \fBvarnishadm\fP
+but this is not directly related to the Varnish CLI. If you get the quoting
+right you should be fine even with complex commands.
+.SS JSON
+.sp
+A number of commands with informational responses support a \fB\-j\fP parameter
+for JSON output, as specified below. The top\-level structure of the JSON
+response is an array with these first three elements:
+.INDENT 0.0
+.IP \(bu 2
+A version number for the JSON format (integer)
+.IP \(bu 2
+An array of strings that comprise the CLI command just received
+.IP \(bu 2
+The time at which the response was generated, as a Unix epoch time
+in seconds with millisecond precision (floating point)
+.UNINDENT
+.sp
+The remaining elements of the array form the data that are specific to
+the CLI command, and their structure and content depend on the
+command.
+.sp
+For example, the response to \fBstatus \-j\fP just contains a string in
+the top\-level array indicating the state of the child process
+(\fB"running"\fP, \fB"stopped"\fP and so forth):
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+[ 2, ["status", "\-j"], 1538031732.632, "running"
+]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The JSON responses to other commands may have longer lists of
+elements, which may have simple data types or form structured objects.
+.sp
+JSON output is only returned if command execution was successful. The
+output for an error response is always the same as it would have been
+for the command without the \fB\-j\fP parameter.
+.SS Commands
+.SS auth <response>
+.INDENT 0.0
+.INDENT 3.5
+Authenticate.
+.UNINDENT
+.UNINDENT
+.SS backend.list [\-j] [\-p] [<backend_pattern>]
+.INDENT 0.0
+.INDENT 3.5
+List backends.
+.sp
+\fB\-p\fP also shows probe status.
+.sp
+\fB\-j\fP specifies JSON output.
+.sp
+Unless \fB\-j\fP is specified for JSON output,  the output format is five columns of dynamic width,  separated by white space with the fields:
+.INDENT 0.0
+.IP \(bu 2
+Backend name
+.IP \(bu 2
+Admin: How health state is determined:
+.INDENT 2.0
+.IP \(bu 2
+\fBhealthy\fP: Set \fBhealthy\fP through \fBbackend.set_health\fP\&.
+.IP \(bu 2
+\fBsick\fP: Set \fBsick\fP through \fBbackend.set_health\fP\&.
+.IP \(bu 2
+\fBprobe\fP: Health state determined by a probe or some other
+dynamic mechanism.
+.IP \(bu 2
+\fBdeleted\fP: Backend has been deleted, but not yet cleaned
+up.
+.UNINDENT
+.sp
+Admin has precedence over Health
+.IP \(bu 2
+Probe \fBX/Y\fP: \fIX\fP out of \fIY\fP checks have succeeded
+.sp
+\fIX\fP and \fIY\fP are backend specific and may represent probe checks,
+other backends or any other metric.
+.sp
+If there is no probe or the director does not provide details on
+probe check results, \fB0/0\fP is output.
+.IP \(bu 2
+Health: Probe health state
+.INDENT 2.0
+.IP \(bu 2
+\fBhealthy\fP
+.IP \(bu 2
+\fBsick\fP
+.UNINDENT
+.sp
+If there is no probe, \fBhealthy\fP is output.
+.IP \(bu 2
+Last change: Timestamp when the health state last changed.
+.UNINDENT
+.sp
+The health state reported here is generic. A backend\(aqs health may also depend on the context it is being used in (e.g. the object\(aqs hash), so the actual health state as visible from VCL (e.g. using \fBstd.healthy()\fP) may differ.
+.sp
+For \fB\-j\fP, the object members should be self explanatory,
+matching the fields described above. \fBprobe_message\fP has the
+format \fB[X, Y, "state"]\fP as described above for Probe. JSON
+Probe details (\fB\-j \-p\fP arguments) are director specific.
+.UNINDENT
+.UNINDENT
+.SS backend.set_health <backend_pattern> [auto|healthy|sick]
+.INDENT 0.0
+.INDENT 3.5
+Set health status on the backends.
+.UNINDENT
+.UNINDENT
+.SS ban <field> <operator> <arg> [&& <field> <oper> <arg> ...]
+.INDENT 0.0
+.INDENT 3.5
+Mark obsolete all objects where all the conditions match.
+.sp
+See \fIvcl(7)_ban\fP for details
+.UNINDENT
+.UNINDENT
+.SS ban.list [\-j]
+.INDENT 0.0
+.INDENT 3.5
+List the active bans.
+.sp
+Unless \fB\-j\fP is specified for JSON output,  the output format is:
+.INDENT 0.0
+.IP \(bu 2
+Time the ban was issued.
+.IP \(bu 2
+Objects referencing this ban.
+.IP \(bu 2
+\fBC\fP if ban is completed = no further testing against it.
+.IP \(bu 2
+if \fBlurker\fP debugging is enabled:
+.INDENT 2.0
+.IP \(bu 2
+\fBR\fP for req.* tests
+.IP \(bu 2
+\fBO\fP for obj.* tests
+.IP \(bu 2
+Pointer to ban object
+.UNINDENT
+.IP \(bu 2
+Ban specification
+.UNINDENT
+.sp
+Durations of ban specifications get normalized, for example "7d" gets changed into "1w".
+.UNINDENT
+.UNINDENT
+.SS banner
+.INDENT 0.0
+.INDENT 3.5
+Print welcome banner.
+.UNINDENT
+.UNINDENT
+.SS help [\-j] [<command>]
+.INDENT 0.0
+.INDENT 3.5
+Show command/protocol help.
+.sp
+\fB\-j\fP specifies JSON output.
+.UNINDENT
+.UNINDENT
+.SS panic.clear [\-z]
+.INDENT 0.0
+.INDENT 3.5
+Clear the last panic, if any, \-z will clear related varnishstat counter(s)
+.UNINDENT
+.UNINDENT
+.SS panic.show [\-j]
+.INDENT 0.0
+.INDENT 3.5
+Return the last panic, if any.
+.sp
+\fB\-j\fP specifies JSON output \-\- the panic message is returned as an unstructured JSON string.
+.UNINDENT
+.UNINDENT
+.SS param.reset <param>
+.INDENT 0.0
+.INDENT 3.5
+Reset parameter to default value.
+.UNINDENT
+.UNINDENT
+.SS param.set <param> <value>
+.INDENT 0.0
+.INDENT 3.5
+Set parameter value.
+.UNINDENT
+.UNINDENT
+.SS param.show [\-l|\-j] [<param>|changed]
+.INDENT 0.0
+.INDENT 3.5
+Show parameters and their values.
+.sp
+The long form with \fB\-l\fP shows additional information, including documentation and minimum, maximum and default values, if defined for the parameter. JSON output is specified with \fB\-j\fP, in which the information for the long form is included; only one of \fB\-l\fP or \fB\-j\fP is permitted. If a parameter is specified with \fB<param>\fP, show only that parameter. If \fBchanged\fP is specified, show only those parameters whose values differ from their defaults.
+.UNINDENT
+.UNINDENT
+.SS ping [\-j] [<timestamp>]
+.INDENT 0.0
+.INDENT 3.5
+Keep connection alive.
+.sp
+The response is formatted as JSON if \fB\-j\fP is specified.
+.UNINDENT
+.UNINDENT
+.SS quit
+.INDENT 0.0
+.INDENT 3.5
+Close connection.
+.UNINDENT
+.UNINDENT
+.SS start
+.INDENT 0.0
+.INDENT 3.5
+Start the Varnish cache process.
+.UNINDENT
+.UNINDENT
+.SS status [\-j]
+.INDENT 0.0
+.INDENT 3.5
+Check status of Varnish cache process.
+.sp
+\fB\-j\fP specifies JSON output.
+.UNINDENT
+.UNINDENT
+.SS stop
+.INDENT 0.0
+.INDENT 3.5
+Stop the Varnish cache process.
+.UNINDENT
+.UNINDENT
+.SS storage.list [\-j]
+.INDENT 0.0
+.INDENT 3.5
+List storage devices.
+.sp
+\fB\-j\fP specifies JSON output.
+.UNINDENT
+.UNINDENT
+.SS vcl.discard <configname|label>
+.INDENT 0.0
+.INDENT 3.5
+Unload the named configuration (when possible).
+.UNINDENT
+.UNINDENT
+.SS vcl.inline <configname> <quoted_VCLstring> [auto|cold|warm]
+.INDENT 0.0
+.INDENT 3.5
+Compile and load the VCL data under the name provided.
+.sp
+Multi\-line VCL can be input using the here document \fIref_syntax\fP\&.
+.UNINDENT
+.UNINDENT
+.SS vcl.label <label> <configname>
+.INDENT 0.0
+.INDENT 3.5
+Apply label to configuration.
+.UNINDENT
+.UNINDENT
+.sp
+A VCL label is like a UNIX symbolic link, a name without substance, which points to another VCL.
+.sp
+Labels are mandatory whenever one VCL references another.
+.SS vcl.list [\-j]
+.INDENT 0.0
+.INDENT 3.5
+List all loaded configuration.
+.sp
+Unless \fB\-j\fP is specified for JSON output,  the output format is five or seven columns of dynamic width,  separated by white space with the fields:
+.INDENT 0.0
+.IP \(bu 2
+status: active, available or discarded
+.IP \(bu 2
+state: label, cold, warm, or auto
+.IP \(bu 2
+temperature: init, cold, warm, busy or cooling
+.IP \(bu 2
+busy: number of references to this vcl (integer)
+.IP \(bu 2
+name: the name given to this vcl or label
+.IP \(bu 2
+[ \fB<\-\fP | \fB\->\fP ] and label info last two fields)
+.INDENT 2.0
+.IP \(bu 2
+\fB\->\fP <vcl> : label "points to" the named <vcl>
+.IP \(bu 2
+\fB<\-\fP (<n> label[s]): the vcl has <n> label(s)
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS vcl.load <configname> <filename> [auto|cold|warm]
+.INDENT 0.0
+.INDENT 3.5
+Compile and load the VCL file under the name provided.
+.UNINDENT
+.UNINDENT
+.SS vcl.show [\-v] <configname>
+.INDENT 0.0
+.INDENT 3.5
+Display the source code for the specified configuration.
+.UNINDENT
+.UNINDENT
+.SS vcl.state <configname> [auto|cold|warm]
+.INDENT 0.0
+.INDENT 3.5
+Force the state of the named configuration.
+.UNINDENT
+.UNINDENT
+.SS vcl.symtab
+.INDENT 0.0
+.INDENT 3.5
+Dump the VCL symbol\-tables.
+.UNINDENT
+.UNINDENT
+.SS vcl.use <configname|label>
+.INDENT 0.0
+.INDENT 3.5
+Switch to the named configuration immediately.
+.UNINDENT
+.UNINDENT
+.SS Backend Pattern
+.sp
+A backend pattern can be a backend name or a combination of a VCL name
+and backend name in "VCL.backend" format.  If the VCL name is omitted,
+the active VCL is assumed.  Partial matching on the backend and VCL
+names is supported using shell\-style wilcards, e.g. asterisk (*).
+.sp
+Examples:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+backend.list def*
+backend.list b*.def*
+backend.set_health default sick
+backend.set_health def* healthy
+backend.set_health * auto
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS Ban Expressions
+.sp
+A ban expression consists of one or more conditions.  A condition
+consists of a field, an operator, and an argument.  Conditions can be
+ANDed together with "&&".
+.sp
+A field can be any of the variables from VCL, for instance req.url,
+req.http.host or obj.http.set\-cookie.
+.sp
+Operators are "==" for direct comparison, "~" for a regular
+expression match, and ">" or "<" for size comparisons.  Prepending
+an operator with "!" negates the expression.
+.sp
+The argument could be a quoted string, a regexp, or an integer.
+Integers can have "KB", "MB", "GB" or "TB" appended for size related
+fields.
+.SS VCL Temperature
+.sp
+A VCL program goes through several states related to the different
+commands: it can be loaded, used, and later discarded. You can load
+several VCL programs and switch at any time from one to another. There
+is only one active VCL, but the previous active VCL will be maintained
+active until all its transactions are over.
+.sp
+Over time, if you often refresh your VCL and keep the previous
+versions around, resource consumption will increase, you can\(aqt escape
+that. However, most of the time you want only one to pay the price only
+for the active VCL and keep older VCLs in case you\(aqd need to rollback
+to a previous version.
+.sp
+The VCL temperature allows you to minimize the footprint of inactive
+VCLs. Once a VCL becomes cold, Varnish will release all the resources
+that can be be later reacquired. You can manually set the temperature
+of a VCL or let varnish
+automatically handle it.
+.SS Scripting
+.sp
+If you are going to write a script that talks CLI to varnishd, the
+include/cli.h contains the relevant magic numbers.
+.sp
+One particular magic number to know, is that the line with the status
+code and length field always is exactly 13 characters long, including
+the NL character.
+.sp
+The varnishapi library contains functions to implement the basics of
+the CLI protocol, see the \fIvcli.h\fP include file.
+.SS Authentication with \-S
+.sp
+If the \-S secret\-file is given as argument to varnishd, all network
+CLI connections must authenticate, by proving they know the contents
+of that file.
+.sp
+The file is read at the time the auth command is issued and the
+contents is not cached in varnishd, so it is possible to update the
+file on the fly.
+.sp
+Use the unix file permissions to control access to the file.
+.sp
+An authenticated session looks like this:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+critter phk> telnet localhost 1234
+Trying ::1...
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is \(aq^]\(aq.
+107 59
+ixslvvxrgkjptxmcgnnsdxsvdmvfympg
+
+Authentication required.
+
+auth 455ce847f0073c7ab3b1465f74507b75d3dc064c1e7de3b71e00de9092fdc89a
+200 279
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-
+Varnish Cache CLI 1.0
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-
+Linux,4.4.0\-1\-amd64,x86_64,\-jnone,\-smalloc,\-smalloc,\-hcritbit
+varnish\-trunk revision dc360a4
+
+Type \(aqhelp\(aq for command list.
+Type \(aqquit\(aq to close CLI session.
+Type \(aqstart\(aq to launch worker process.
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The CLI status of 107 indicates that authentication is necessary. The
+first 32 characters of the response text is the challenge
+"ixsl...mpg". The challenge is randomly generated for each CLI
+connection, and changes each time a 107 is emitted.
+.sp
+The most recently emitted challenge must be used for calculating the
+authenticator "455c...c89a".
+.sp
+The authenticator is calculated by applying the SHA256 function to the
+following byte sequence:
+.INDENT 0.0
+.IP \(bu 2
+Challenge string
+.IP \(bu 2
+Newline (0x0a) character.
+.IP \(bu 2
+Contents of the secret file
+.IP \(bu 2
+Challenge string
+.IP \(bu 2
+Newline (0x0a) character.
+.UNINDENT
+.sp
+and dumping the resulting digest in lower\-case hex.
+.sp
+In the above example, the secret file contained foon and thus:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+critter phk> cat > _
+ixslvvxrgkjptxmcgnnsdxsvdmvfympg
+foo
+ixslvvxrgkjptxmcgnnsdxsvdmvfympg
+^D
+critter phk> hexdump \-C _
+00000000  69 78 73 6c 76 76 78 72  67 6b 6a 70 74 78 6d 63  |ixslvvxrgkjptxmc|
+00000010  67 6e 6e 73 64 78 73 76  64 6d 76 66 79 6d 70 67  |gnnsdxsvdmvfympg|
+00000020  0a 66 6f 6f 0a 69 78 73  6c 76 76 78 72 67 6b 6a  |.foo.ixslvvxrgkj|
+00000030  70 74 78 6d 63 67 6e 6e  73 64 78 73 76 64 6d 76  |ptxmcgnnsdxsvdmv|
+00000040  66 79 6d 70 67 0a                                 |fympg.|
+00000046
+critter phk> sha256 _
+SHA256 (_) = 455ce847f0073c7ab3b1465f74507b75d3dc064c1e7de3b71e00de9092fdc89a
+critter phk> openssl dgst \-sha256 < _
+455ce847f0073c7ab3b1465f74507b75d3dc064c1e7de3b71e00de9092fdc89a
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The sourcefile lib/libvarnish/cli_auth.c contains a useful function
+which calculates the response, given an open filedescriptor to the
+secret file, and the challenge string.
+.SH EXAMPLES
+.sp
+Load a multi\-line VCL using shell\-style \fIhere document\fP:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+vcl.inline example << EOF
+vcl 4.0;
+
+backend www {
+    .host = "127.0.0.1";
+    .port = "8080";
+}
+EOF
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Ban all requests where req.url exactly matches the string /news:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+ban req.url == "/news"
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Ban all documents where the serving host is "example.com" or
+"www.example.com", and where the Set\-Cookie header received from the
+backend contains "USERID=1663":
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+ban req.http.host ~ "^(?i)(www\e\e.)?example\e\e.com$" && obj.http.set\-cookie ~ "USERID=1663"
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH AUTHORS
+.sp
+This manual page was originally written by Per Buer and later modified
+by Federico G. Schwindt, Dridi Boukelmoune, Lasse Karstensen and
+Poul\-Henning Kamp.
+.SH SEE ALSO
+.INDENT 0.0
+.IP \(bu 2
+\fIvarnishadm(1)\fP
+.IP \(bu 2
+\fIvarnishd(1)\fP
+.IP \(bu 2
+\fIvcl(7)\fP
+.UNINDENT
+.\" Generated by docutils manpage writer.
+.

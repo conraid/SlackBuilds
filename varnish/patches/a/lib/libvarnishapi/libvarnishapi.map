@@ -1,0 +1,176 @@
+/*-
+ * Copyright (c) 2011-2017 Varnish Software AS
+ * All rights reserved.
+ *
+ * Author: Tollef Fog Heen <tfheen@varnish-software.com>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL AUTHOR OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
+
+LIBVARNISHAPI_2.0 {
+    global:
+	# vas.c
+		VAS_Fail;
+		VAS_Fail_Func;
+
+	# vcli.c
+		VCLI_AuthResponse;
+		VCLI_ReadResult;
+		VCLI_WriteResult;
+
+	# vcs.c
+		VCS_Message;
+
+	# vsb.c
+		VSB_bcat;
+		VSB_cat;
+		VSB_clear;
+		VSB_data;
+		VSB_delete;
+		VSB_destroy;
+		VSB_error;
+		VSB_finish;
+		VSB_indent;
+		VSB_len;
+		VSB_new;
+		VSB_printf;
+		VSB_putc;
+		VSB_quote;
+		VSB_quote_pfx;
+		VSB_vprintf;
+
+	# vsc.c
+		VSC_Arg;
+		VSC_ChangeLevel;
+		VSC_Destroy;
+		VSC_Iter;
+		VSC_New;
+		VSC_State;
+
+	# vsl*.c
+		VSLQ_Delete;
+		VSLQ_Dispatch;
+		VSLQ_Flush;
+		VSLQ_Name2Grouping;
+		VSLQ_New;
+		VSLQ_SetCursor;
+		VSLQ_grouping;
+		VSL_Arg;
+		VSL_Check;
+		VSL_CursorFile;
+		VSL_CursorVSM;
+		VSL_Delete;
+		VSL_DeleteCursor;
+		VSL_Error;
+		VSL_Glob2Tags;
+		VSL_List2Tags;
+		VSL_Match;
+		VSL_Name2Tag;
+		VSL_New;
+		VSL_Next;
+		VSL_Print;
+		VSL_PrintAll;
+		VSL_PrintTerse;
+		VSL_PrintTransactions;
+		VSL_ResetCursor;
+		VSL_ResetError;
+		VSL_Write;
+		VSL_WriteAll;
+		VSL_WriteOpen;
+		VSL_WriteTransactions;
+		VSL_tagflags;
+		VSL_tags;
+
+	# vsm.c
+		VSM_Arg;
+		VSM_Attach;
+		VSM_Destroy;
+		VSM_Dup;
+		VSM_Error;
+		VSM_Get;
+		VSM_Map;
+		VSM_New;
+		VSM_ResetError;
+		VSM_Status;
+		VSM_StillValid;
+		VSM_Unmap;
+		VSM__iter0;
+		VSM__itern;
+		VSM_invalid;
+		VSM_valid;
+
+	# vtim.c
+		VTIM_format;
+		VTIM_mono;
+		VTIM_parse;
+		VTIM_real;
+		VTIM_sleep;
+		VTIM_timespec;
+		VTIM_timeval;
+
+	# vut.c
+		VUT_Arg;
+		VUT_Error;
+		VUT_Fini;
+		VUT_Init;
+		VUT_Main;
+		VUT_Setup;
+		VUT_Signal;
+		VUT_Signaled;
+
+    local:
+	*;
+};
+
+LIBVARNISHAPI_2.1 {
+    global:
+	# vut.c
+	VUT_Usage;
+    local:
+	*;
+};
+
+LIBVARNISHAPI_2.2 {
+    global:
+	# vsig.c
+	VSIG_int;
+	VSIG_Got_int;
+	VSIG_Arm_int;
+	VSIG_hup;
+	VSIG_Got_hup;
+	VSIG_Arm_hup;
+	VSIG_term;
+	VSIG_Got_term;
+	VSIG_Arm_term;
+	VSIG_usr1;
+	VSIG_Got_usr1;
+	VSIG_Arm_usr1;
+    local:
+	*;
+};
+
+LIBVARNISHAPI_2.3 {	/* 2019-09-15 release */
+    global:
+	VCS_String;
+    local:
+	*;
+};

@@ -1,0 +1,44 @@
+varnishtest "Test a hit-for-miss does not issue an IMS request"
+
+server s1 {
+	rxreq
+	txresp \
+	    -hdr {Etag: "foo"} \
+	    -body "foo"
+	rxreq
+	expect req.http.if-none-match == <undef>
+	txresp \
+	    -hdr {Etag: "bar"} \
+	    -body "bar"
+} -start
+
+varnish v1 -vcl+backend {
+	sub vcl_backend_response {
+		if (beresp.status == 200) {
+			set beresp.ttl = 1s;
+			set beresp.uncacheable = true;
+			return (deliver);
+		}
+	}
+} -start
+
+# Tests logging hit-for-miss on an expired object
+logexpect l1 -v v1 -g vxid {
+	expect * 1003	HitMiss "^1002 -"
+} -start
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.status == 200
+	expect resp.body == "foo"
+
+	delay 1.5
+
+	txreq
+	rxresp
+	expect resp.status == 200
+	expect resp.body == "bar"
+} -run
+
+logexpect l1 -wait

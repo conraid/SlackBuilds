@@ -1,0 +1,163 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Installing on RedHat or CentOS &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Debian cloud images" href="cloud_debian.html" />
+    <link rel="prev" title="Installing on OpenBSD" href="install_openbsd.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cloud_debian.html" title="Debian cloud images"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="install_openbsd.html" title="Installing on OpenBSD"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Varnish Installation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="install.html" accesskey="U">Installing Varnish</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="installing-on-redhat-or-centos">
+<span id="install-redhat"></span><h1>Installing on RedHat or CentOS<a class="headerlink" href="#installing-on-redhat-or-centos" title="Permalink to this headline">¶</a></h1>
+<p>Varnish is included in the <a class="reference external" href="https://fedoraproject.org/wiki/EPEL">EPEL</a> repository, however due to
+incompatible syntax changes in newer versions of Varnish, only older
+versions are available.</p>
+<p>We therefore recommend that you install the latest version directly from our repository, as described above.</p>
+<p>Varnish Cache is packaged in RPMs for easy installation and upgrade on Red Hat
+systems. The Varnish Cache project maintains official packages for the current
+Enterprise Linux versions. Varnish Cache 4.1 and 5.x are supported on EL6 and EL7.</p>
+<p>We try to keep the latest version available as prebuilt RPMs (el5 and el6)
+on <a class="reference external" href="https://packagecloud.io/varnishcache/">packagecloud.io/varnishcache</a>.</p>
+<div class="section" id="official-packages-of-6">
+<h2>Official packages of 6<a class="headerlink" href="#official-packages-of-6" title="Permalink to this headline">¶</a></h2>
+<p>Starting from Varnish Cache 5.0, we've simplified our packaging down to two:
+the main package and a development package.</p>
+<p>The official Varnish Cache repository is now hosted at Packagecloud.io.
+Note that while Packagecloud.io provides Bash Script installs, we recommend
+using the manual installation procedures.</p>
+<p>Instructions for installing the official repository which contains the newest
+Varnish Cache 6 release are available at:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://packagecloud.io/varnishcache/varnish60lts/install#manual-rpm">https://packagecloud.io/varnishcache/varnish60lts/install#manual-rpm</a></li>
+</ul>
+<p>With the release of 6.0.2, users have to switch to switch repositories to get
+the latest version.
+Read more about this on <a class="reference external" href="/releases/rel6.0.2">Release 6.0.2</a>.</p>
+</div>
+<div class="section" id="official-packages-of-4-1">
+<h2>Official packages of 4.1<a class="headerlink" href="#official-packages-of-4-1" title="Permalink to this headline">¶</a></h2>
+<p>To use Varnish Cache 4.1 packages from the official varnish-cache.org repos,
+follow the instructions available at:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://packagecloud.io/varnishcache/varnish41/install#manual-rpm">https://packagecloud.io/varnishcache/varnish41/install#manual-rpm</a></li>
+</ul>
+</div>
+<div class="section" id="external-packaging">
+<h2>External packaging<a class="headerlink" href="#external-packaging" title="Permalink to this headline">¶</a></h2>
+<p>Varnish Cache is also distributed in third party package repositories.</p>
+<ul class="simple">
+<li><a class="reference external" href="https://fedoraproject.org/wiki/EPEL">Fedora EPEL</a> does community packaging of Varnish Cache.</li>
+<li>RedHat has packaged versions of Varnish Cache available since Software Collections 2.1. Announcement on &lt;<a class="reference external" href="http://developers.redhat.com/blog/2015/11/17/software-collections-2-1-generally-available/">http://developers.redhat.com/blog/2015/11/17/software-collections-2-1-generally-available/</a>&gt;.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installing on RedHat or CentOS</a><ul>
+<li><a class="reference internal" href="#official-packages-of-6">Official packages of 6</a></li>
+<li><a class="reference internal" href="#official-packages-of-4-1">Official packages of 4.1</a></li>
+<li><a class="reference internal" href="#external-packaging">External packaging</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="install_openbsd.html"
+                        title="previous chapter">Installing on OpenBSD</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cloud_debian.html"
+                        title="next chapter">Debian cloud images</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/installation/install_redhat.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cloud_debian.html" title="Debian cloud images"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="install_openbsd.html" title="Installing on OpenBSD"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Varnish Installation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="install.html" >Installing Varnish</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

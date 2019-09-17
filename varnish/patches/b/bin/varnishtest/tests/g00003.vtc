@@ -1,0 +1,118 @@
+varnishtest "test gunzip on fetch"
+
+server s1 {
+	rxreq
+	expect req.url == "/foo"
+	expect req.http.accept-encoding == "gzip"
+	txresp -gziplen 41
+
+	rxreq
+	expect req.url == "/bar"
+	expect req.http.accept-encoding == "gzip"
+	txresp -bodylen 42
+
+	rxreq
+	expect req.url == "/foobar"
+	expect req.http.accept-encoding == "gzip"
+	txresp -bodylen 43
+
+	rxreq
+	expect req.url == "/nogzip"
+	expect req.http.accept-encoding == "gzip"
+	txresp -hdr "Vary: Accept-Encoding" \
+	       -gzipbody "keep gzip real"
+
+	rxreq
+	expect req.url == "/nogzip"
+	expect req.http.accept-encoding == <undef>
+	txresp -hdr "Vary: Accept-Encoding" \
+	       -body "keep plain real"
+
+	rxreq
+	expect req.url == "/filters"
+	expect req.http.accept-encoding == <undef>
+	txresp -bodylen 78
+
+} -start
+
+varnish v1 -cliok "param.set http_gzip_support true" -vcl+backend {
+
+	sub vcl_backend_response {
+		set beresp.do_gunzip = true;
+		if (bereq.url == "/foobar") {
+			set beresp.do_gzip = true;
+		}
+		if (bereq.url == "/filters") {
+			set beresp.filters = "gzip gunzip gzip gunzip gzip";
+		}
+	}
+	sub vcl_deliver {
+		set resp.http.filters = resp.filters;
+	}
+} -start
+
+client c1 {
+	txreq -url /foo -hdr "Accept-Encoding: gzip"
+	rxresp
+	expect resp.http.content-encoding == <undef>
+	expect resp.bodylen == 41
+} -run
+
+varnish v1 -vsl_catchup
+
+client c1 {
+	txreq -url /bar -hdr "Accept-Encoding: gzip"
+	rxresp
+	expect resp.http.content-encoding == <undef>
+	expect resp.bodylen == 42
+} -run
+
+varnish v1 -vsl_catchup
+
+client c1 {
+	txreq -url /foobar -hdr "Accept-Encoding: gzip"
+	rxresp
+	expect resp.http.content-encoding == "gzip"
+	gunzip
+	expect resp.bodylen == 43
+} -run
+
+varnish v1 -vsl_catchup
+
+client c1 {
+	txreq -url /foobar
+	rxresp
+	expect resp.http.content-encoding == <undef>
+	expect resp.bodylen == 43
+} -run
+
+varnish v1 -vsl_catchup
+
+varnish v1 -expect n_gzip == 1
+varnish v1 -expect n_gunzip == 2
+varnish v1 -expect n_test_gunzip == 0
+
+varnish v1 -cliok "param.set http_gzip_support false"
+
+client c1 {
+	txreq -url /nogzip -hdr "Accept-Encoding: gzip"
+	rxresp
+	expect resp.http.content-encoding == "gzip"
+	gunzip
+	expect resp.body == "keep gzip real"
+
+	txreq -url /nogzip
+	rxresp
+	expect resp.http.content-encoding == <undef>
+	expect resp.body == "keep plain real"
+} -run
+
+varnish v1 -vsl_catchup
+
+client c1 {
+	txreq -url /filters
+	rxresp
+	expect resp.http.content-encoding == "gzip"
+	gunzip
+	expect resp.bodylen == 78
+} -run

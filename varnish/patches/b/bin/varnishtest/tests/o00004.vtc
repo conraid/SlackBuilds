@@ -1,0 +1,51 @@
+varnishtest "Sending proxy headers via health probes"
+
+# Double-proxy scheme stolen from o00002.vtc
+
+# Get ${v2_addr} defined so s1 can use it
+varnish v2 -arg "-b '${bad_backend}'" -start
+
+server s1 {
+	rxreq
+	expect req.http.x-forwarded-for == ${v2_addr}
+	txresp
+} -start
+
+varnish v1 -proto PROXY -vcl+backend {
+	sub vcl_recv {
+		if (client.ip != remote.ip || server.ip != local.ip) {
+			return (synth(400));
+		}
+	}
+} -start
+
+varnish v2 -vcl {
+	import std;
+
+	probe default {
+		.window = 1;
+		.threshold = 1;
+		.interval =0.5s;
+	}
+	backend bp1 {
+		.host = "${v1_addr}";
+		.port = "${v1_port}";
+		.proxy_header = 1;
+	}
+	backend bp2 {
+		.host = "${v1_addr}";
+		.port = "${v1_port}";
+		.proxy_header = 2;
+	}
+
+	sub vcl_init {
+		# dummy backend ref
+		if (bp2) { }
+	}
+}
+
+server s1 -wait
+
+delay 1
+varnish v2 -cliexpect "vcl1.bp1[ ]+probe[ ]+1/1[ ]+healthy" backend.list
+varnish v2 -cliexpect "vcl1.bp2[ ]+probe[ ]+1/1[ ]+healthy" backend.list

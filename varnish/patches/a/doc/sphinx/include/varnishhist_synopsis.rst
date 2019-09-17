@@ -1,0 +1,1 @@
+.. |synopsis| replace::  [-B <factor>] [-C] [-d] [-g <request|vxid>] [-h] [-L <limit>] [-n <dir>] [-p <period>] [-P responsetime] [-P reqbodytime] [-P size] [-P Bereqtime] [-P Beresptime] [-P BerespBodytime] [-P Besize] [-P <[cb:]tag:[prefix]:field_num[:min:max]>] [-Q <file>] [-q <query>] [-r <filename>] [-t <seconds|off>] [-T <seconds>] [-V]

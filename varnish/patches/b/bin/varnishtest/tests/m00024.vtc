@@ -1,0 +1,35 @@
+varnishtest "Test vtc.barrier_sync"
+
+barrier b1 sock 2
+barrier b2 sock 2
+
+server s1 {
+	rxreq
+	txresp
+} -start
+
+varnish v1 -vcl+backend {
+	import vtc;
+
+	sub vcl_recv {
+		vtc.barrier_sync("${b1_sock}");
+	}
+
+	sub vcl_backend_response {
+		vtc.barrier_sync("${b2_sock}");
+	}
+} -start
+
+varnish v1 -cliok "param.set debug +syncvsl"
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.status == 200
+} -start
+
+barrier b1 sync
+delay 0.5
+barrier b2 sync
+
+client c1 -wait

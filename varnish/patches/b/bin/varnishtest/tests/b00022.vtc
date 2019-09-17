@@ -1,0 +1,42 @@
+varnishtest "Check the between_bytes_timeout behaves from backend definition"
+
+feature SO_RCVTIMEO_WORKS
+
+server s1 {
+	rxreq
+	send "HTTP/1.0 200 OK\r\nConnection: close\r\n\r\n"
+	delay 1.5
+	send "Baba\n"
+} -start
+
+varnish v1 -vcl {
+	backend b1 {
+		.host = "${s1_addr}";
+		.port = "${s1_port}";
+		.between_bytes_timeout = 1s;
+	}
+	sub vcl_backend_response {
+		set beresp.do_stream = false;
+	}
+} -start
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.status == 503
+} -run
+
+server s1 {
+	rxreq
+	send "HTTP/1.0 200 OK\r\nConnection: close\r\n\r\n"
+	delay 0.5
+	send "Baba\n"
+	delay 0.5
+	send "Baba\n"
+} -start
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.status == 200
+} -run

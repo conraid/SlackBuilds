@@ -1,0 +1,456 @@
+varnishtest "Test VCL failures"
+
+server s1 {
+	rxreq
+	expect req.url == /hit
+	txresp
+} -start
+
+varnish v1 -vcl+backend {
+	import debug;
+	sub vcl_recv {
+		if (req.restarts == 0) {
+			debug.fail();
+			set req.http.not = "Should not happen";
+		}
+	}
+	sub vcl_synth {
+		if (req.restarts == 0 && req.http.foo == "restart") {
+			return (restart);
+		}
+	}
+} -start
+
+#######################################################################
+# Fail in vcl_recv
+
+logexpect l1 -v v1 -g raw {
+	expect * 1001	VCL_call	"RECV"
+	expect 0 1001	VCL_Error	"Forced failure"
+	expect 0 1001	VCL_return	"fail"
+} -start
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.status == 503
+	expect resp.reason == "VCL failed"
+} -run
+
+varnish v1 -expect vcl_fail == 1
+varnish v1 -expect sc_vcl_failure == 1
+
+logexpect l1 -wait
+
+#######################################################################
+# Fail in vcl_recv, vcl_synth restarts successfully
+
+logexpect l1 -v v1 -g raw {
+	expect * 1003	VCL_call	"RECV"
+	expect 0 1003	VCL_Error	"Forced failure"
+	expect 0 1003	VCL_return	"fail"
+	expect * 1003	VCL_call	"SYNTH"
+	expect 0 1003	VCL_return	"restart"
+} -start
+
+client c1 {
+	txreq -url /hit -hdr "foo: restart"
+	rxresp
+	expect resp.status == 200
+	expect resp.reason == "OK"
+} -run
+
+varnish v1 -expect vcl_fail == 2
+# NB: This is correct, req->doclose = SC_VCL_FAILURE latches
+varnish v1 -expect sc_vcl_failure == 2
+
+logexpect l1 -wait
+
+#######################################################################
+# Fail in vcl_synth
+
+varnish v1 -vcl+backend {
+	import debug;
+	sub vcl_recv {
+		if (req.http.foo == "synth") {
+			return(synth(748));
+		}
+	}
+	sub vcl_synth {
+		if (resp.status == 748) {
+			debug.fail();
+			set req.http.not = "Should not happen";
+		}
+	}
+}
+
+logexpect l1 -v v1 -g raw {
+	expect * 1007	VCL_call	"SYNTH"
+	expect * 1007	VCL_Error	"Forced failure"
+	expect 0 1007	VCL_return	"fail"
+} -start
+
+client c1 {
+	txreq -hdr "foo: synth"
+	expect_close
+} -run
+
+varnish v1 -expect vcl_fail == 3
+varnish v1 -expect sc_vcl_failure == 3
+
+logexpect l1 -wait
+
+#######################################################################
+# Fail in vcl_hash
+
+varnish v1 -vcl+backend {
+	import debug;
+	sub vcl_hash {
+		if (req.http.foo == "hash") {
+			debug.fail();
+			set req.http.not = "Should not happen";
+		}
+	}
+}
+
+logexpect l1 -v v1 -g raw {
+	expect * 1009	VCL_call	"HASH"
+	expect 0 1009	VCL_Error	"Forced failure"
+	expect 0 1009	VCL_return	"fail"
+} -start
+
+client c1 {
+	txreq -hdr "foo: hash"
+	rxresp
+	expect resp.status == 503
+	expect resp.reason == "VCL failed"
+} -run
+
+varnish v1 -expect vcl_fail == 4
+varnish v1 -expect sc_vcl_failure == 4
+
+logexpect l1 -wait
+
+#######################################################################
+# Fail in vcl_pipe
+
+varnish v1 -vcl+backend {
+	import debug;
+	sub vcl_recv {
+		if (req.http.foo == "pipe") { return(pipe); }
+	}
+	sub vcl_pipe {
+		if (req.http.foo == "pipe") {
+			debug.fail();
+			set req.http.not = "Should not happen";
+		}
+	}
+}
+
+
+logexpect l1 -v v1 -g raw {
+	expect * 1012	VCL_call	"PIPE"
+	expect 0 1012	VCL_Error	"Forced failure"
+	expect 0 1012	VCL_return	"fail"
+} -start
+
+client c1 {
+	txreq -hdr "foo: pipe"
+	rxresp
+	expect resp.status == 503
+	expect resp.reason == "VCL failed"
+} -run
+
+varnish v1 -expect vcl_fail == 5
+varnish v1 -expect sc_vcl_failure == 5
+
+logexpect l1 -wait
+
+#######################################################################
+# Fail in vcl_pass, no handling in vcl_synth
+
+varnish v1 -vcl+backend {
+	import debug;
+	sub vcl_recv {
+		if (req.http.foo == "pass") { return(pass); }
+	}
+	sub vcl_pass {
+		if (req.http.foo == "pass") {
+			debug.fail();
+			set req.http.not = "Should not happen";
+		}
+	}
+}
+
+logexpect l1 -v v1 -g raw {
+	expect * 1014	VCL_call	"PASS"
+	expect 0 1014	VCL_Error	"Forced failure"
+	expect 0 1014	VCL_return	"fail"
+} -start
+
+client c1 {
+	txreq -hdr "foo: pass"
+	rxresp
+	expect resp.status == 503
+	expect resp.reason == "VCL failed"
+} -run
+
+varnish v1 -expect vcl_fail == 6
+varnish v1 -expect sc_vcl_failure == 6
+
+logexpect l1 -wait
+
+#######################################################################
+# Fail in vcl_purge
+
+varnish v1 -vcl+backend {
+	import debug;
+	sub vcl_recv {
+		if (req.http.foo == "purge") { return(purge); }
+	}
+	sub vcl_purge {
+		if (req.http.foo == "purge") {
+			debug.fail();
+			set req.http.not = "Should not happen";
+		}
+	}
+}
+
+logexpect l1 -v v1 -g raw {
+	expect * 1016	VCL_call	"PURGE"
+	expect 0 1016	VCL_Error	"Forced failure"
+	expect 0 1016	VCL_return	"fail"
+} -start
+
+client c1 {
+	txreq -hdr "foo: purge"
+	rxresp
+	expect resp.status == 503
+	expect resp.reason == "VCL failed"
+} -run
+
+varnish v1 -expect vcl_fail == 7
+varnish v1 -expect sc_vcl_failure == 7
+
+logexpect l1 -wait
+
+#######################################################################
+# Fail in vcl_miss
+
+varnish v1 -vcl+backend {
+	import debug;
+	sub vcl_miss {
+		if (req.http.foo == "miss") {
+			debug.fail();
+			set req.http.not = "Should not happen";
+		}
+	}
+}
+
+logexpect l1 -v v1 -g raw {
+	expect * 1018	VCL_call	"MISS"
+	expect 0 1018	VCL_Error	"Forced failure"
+	expect 0 1018	VCL_return	"fail"
+} -start
+
+client c1 {
+	txreq -url /miss -hdr "foo: miss"
+	rxresp
+	expect resp.status == 503
+	expect resp.reason == "VCL failed"
+} -run
+
+varnish v1 -expect vcl_fail == 8
+varnish v1 -expect sc_vcl_failure == 8
+
+logexpect l1 -wait
+
+#######################################################################
+# Fail in vcl_hit
+
+varnish v1 -vcl+backend {
+	import debug;
+	sub vcl_hit {
+		if (req.http.foo == "hit") {
+			debug.fail();
+			set req.http.not = "Should not happen";
+		}
+	}
+}
+
+logexpect l1 -v v1 -g raw {
+	expect * 1020	VCL_call	"HIT"
+	expect 0 1020	VCL_Error	"Forced failure"
+	expect 0 1020	VCL_return	"fail"
+} -start
+
+client c1 {
+	txreq -url /hit -hdr "foo: hit"
+	rxresp
+	expect resp.status == 503
+	expect resp.reason == "VCL failed"
+} -run
+
+varnish v1 -expect vcl_fail == 9
+varnish v1 -expect sc_vcl_failure == 9
+
+logexpect l1 -wait
+
+#######################################################################
+# Fail in vcl_deliver
+
+varnish v1 -vcl+backend {
+	import debug;
+	sub vcl_deliver {
+		if (req.http.foo == "deliver") {
+			debug.fail();
+			set req.http.not = "Should not happen";
+		}
+	}
+}
+
+logexpect l1 -v v1 -g raw {
+	expect * 1022	VCL_call	"DELIVER"
+	expect 0 1022	VCL_Error	"Forced failure"
+	expect 0 1022	VCL_return	"fail"
+} -start
+
+client c1 {
+	txreq -url /hit -hdr "foo: deliver"
+	rxresp
+	expect resp.status == 503
+	expect resp.reason == "VCL failed"
+} -run
+
+varnish v1 -expect vcl_fail == 10
+varnish v1 -expect sc_vcl_failure == 10
+
+logexpect l1 -wait
+
+#######################################################################
+# Fail in vcl_backend_fetch
+
+varnish v1 -vcl+backend {
+	import debug;
+	sub vcl_backend_fetch {
+		debug.fail();
+		set bereq.http.not = "Should not happen";
+	}
+}
+
+logexpect l1 -v v1 -g raw {
+	expect * 1025	VCL_call	"BACKEND_FETCH"
+	expect 0 1025	VCL_Error	"Forced failure"
+	expect 0 1025	VCL_return	"fail"
+} -start
+
+client c1 {
+	txreq -url /backend_fetch
+	rxresp
+	expect resp.status == 503
+	expect resp.reason == "Service Unavailable"
+} -run
+
+varnish v1 -expect vcl_fail == 11
+varnish v1 -expect sc_vcl_failure == 10
+
+logexpect l1 -wait
+
+#######################################################################
+# Fail in vcl_backend_error
+
+server s1 {
+	rxreq
+	expect req.url == /backend_error
+} -start
+
+varnish v1 -vcl+backend {
+	import debug;
+	sub vcl_backend_error {
+		debug.fail();
+		set bereq.http.not = "Should not happen";
+	}
+}
+
+logexpect l1 -v v1 -g raw {
+	expect * 1028	VCL_call	"BACKEND_ERROR"
+	expect 0 1028	VCL_Error	"Forced failure"
+	expect 0 1028	VCL_return	"fail"
+} -start
+
+client c1 {
+	txreq -url /backend_error
+	rxresp
+	expect resp.status == 503
+	expect resp.reason == "Service Unavailable"
+} -run
+
+varnish v1 -expect vcl_fail == 12
+varnish v1 -expect sc_vcl_failure == 10
+
+logexpect l1 -wait
+
+#######################################################################
+# Fail in vcl_backend_response
+
+server s1 {
+	rxreq
+	expect req.url == /backend_response
+	txresp
+} -start
+
+varnish v1 -vcl+backend {
+	import debug;
+	sub vcl_backend_response {
+		debug.fail();
+		set bereq.http.not = "Should not happen";
+	}
+}
+
+logexpect l1 -v v1 -g raw {
+	expect * 1031	VCL_call	"BACKEND_RESPONSE"
+	expect 0 1031	VCL_Error	"Forced failure"
+	expect 0 1031	VCL_return	"fail"
+} -start
+
+client c1 {
+	txreq -url /backend_response
+	rxresp
+	expect resp.status == 503
+	expect resp.reason == "Service Unavailable"
+} -run
+
+varnish v1 -expect vcl_fail == 13
+varnish v1 -expect sc_vcl_failure == 10
+
+logexpect l1 -wait
+
+#######################################################################
+# Fail in vmod call used in an if test
+
+varnish v1 -vcl+backend {
+	import debug;
+	sub vcl_recv {
+		if (debug.fail2()) {
+			return (hash);
+		}
+	}
+}
+
+logexpect l1 -v v1 -g raw {
+	expect * 1033	VCL_call	"RECV"
+	expect 0 1033	VCL_Error	"Forced failure"
+	expect 0 1033	VCL_return	"fail"
+} -start
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.status == 503
+	expect resp.reason == "VCL failed"
+} -run
+
+varnish v1 -expect vcl_fail == 14
+varnish v1 -expect sc_vcl_failure == 11
+
+logexpect l1 -wait

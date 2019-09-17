@@ -1,0 +1,282 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Upgrading to Varnish 6.2 &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Changes in Varnish 6.1" href="changes-6.1.html" />
+    <link rel="prev" title="Changes in Varnish 6.2" href="changes-6.2.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="changes-6.1.html" title="Changes in Varnish 6.1"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="changes-6.2.html" title="Changes in Varnish 6.2"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="upgrading-to-varnish-6-2">
+<span id="whatsnew-upgrading-2019-03"></span><h1>Upgrading to Varnish 6.2<a class="headerlink" href="#upgrading-to-varnish-6-2" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="vcl">
+<span id="whatsnew-upgrading-vcl-2019-03"></span><h2>VCL<a class="headerlink" href="#vcl" title="Permalink to this headline">¶</a></h2>
+<p>VCL programs for Varnish 6.1 can be expected to run without changes in
+the new version.</p>
+<p>A VCL load will now issue a warning, but does not fail as previously,
+if a backend declaration uses the <code class="docutils literal"><span class="pre">.path</span></code> field to specify a Unix
+domain socket, but the socket file does not exist or is not accessible
+at VCL load time. This makes it possible to start the peer component
+listening at the socket, or set its permissions, after Varnish starts
+or the VCL is loaded. Backend fetches fail if the socket is not
+accessible by the time the fetch is attempted.</p>
+<p><code class="docutils literal"><span class="pre">return(miss)</span></code> from <code class="docutils literal"><span class="pre">vcl_hit{}</span></code> is now removed. An option for
+implementing similar functionality is:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">return</span> <span class="pre">(restart)</span></code> from <code class="docutils literal"><span class="pre">vcl_hit{}</span></code></li>
+<li>in <code class="docutils literal"><span class="pre">vcl_recv{}</span></code> for the restart (when <code class="docutils literal"><span class="pre">req.restarts</span></code> has
+increased), <code class="docutils literal"><span class="pre">set</span> <span class="pre">req.hash_always_miss</span> <span class="pre">=</span> <span class="pre">true;</span></code>.</li>
+</ul>
+</div>
+<div class="section" id="runtime-parameters">
+<span id="whatsnew-upgrading-params-2019-03"></span><h2>Runtime parameters<a class="headerlink" href="#runtime-parameters" title="Permalink to this headline">¶</a></h2>
+<p>Some varnishd <code class="docutils literal"><span class="pre">-p</span></code> parameters that have been deprecated for some
+time have been removed. If you haven't changed them yet, you have to
+now.  These are:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">shm_reclen</span></code> -- use <a class="reference internal" href="../reference/varnishd.html#ref-param-vsl-reclen"><span class="std std-ref">vsl_reclen</span></a> instead</li>
+<li><code class="docutils literal"><span class="pre">vcl_dir</span></code> -- use <a class="reference internal" href="../reference/varnishd.html#ref-param-vcl-path"><span class="std std-ref">vcl_path</span></a> instead</li>
+<li><code class="docutils literal"><span class="pre">vmod_dir</span></code> -- use <a class="reference internal" href="../reference/varnishd.html#ref-param-vmod-path"><span class="std std-ref">vmod_path</span></a> instead</li>
+</ul>
+<p>The default value of <a class="reference internal" href="../reference/varnishd.html#ref-param-thread-pool-stack"><span class="std std-ref">thread_pool_stack</span></a> has been
+increased from 48k to 56k on 64-bit platforms and to 52k on 32-bit
+platforms. See the discussion under
+<a class="reference internal" href="changes-6.2.html#whatsnew-changes-params-2019-03"><span class="std std-ref">Parameters</span></a> in
+<a class="reference internal" href="changes-6.2.html#whatsnew-changes-2019-03"><span class="std std-ref">Changes in Varnish 6.2</span></a> for details.</p>
+</div>
+<div class="section" id="type-conversion-functions-in-vmod-std">
+<span id="whatsnew-upgrading-std-conversion-2019-03"></span><h2>Type conversion functions in VMOD std<a class="headerlink" href="#type-conversion-functions-in-vmod-std" title="Permalink to this headline">¶</a></h2>
+<p>The existing type-conversion functions in <a class="reference internal" href="../reference/vmod_std.html#vmod-std-3"><span class="std std-ref">VMOD std - Varnish Standard Module</span></a> have been
+reworked to make them more flexible and easier to use. These functions
+now also accept suitable numeral or quantitative arguments.</p>
+<ul class="simple">
+<li><a class="reference internal" href="../reference/vmod_std.html#std-duration"><span class="std std-ref">DURATION duration([STRING s], [DURATION fallback], [REAL real], [INT integer])</span></a></li>
+<li><a class="reference internal" href="../reference/vmod_std.html#std-bytes"><span class="std std-ref">BYTES bytes([STRING s], [BYTES fallback], [REAL real], [INT integer])</span></a></li>
+<li><a class="reference internal" href="../reference/vmod_std.html#std-integer"><span class="std std-ref">INT integer([STRING s], [INT fallback], [BOOL bool], [BYTES bytes], [DURATION duration], [REAL real], [TIME time])</span></a></li>
+<li><a class="reference internal" href="../reference/vmod_std.html#std-real"><span class="std std-ref">REAL real([STRING s], [REAL fallback], [INT integer], [BOOL bool], [BYTES bytes], [DURATION duration], [TIME time])</span></a></li>
+<li><a class="reference internal" href="../reference/vmod_std.html#std-time"><span class="std std-ref">TIME time([STRING s], [TIME fallback], [REAL real], [INT integer])</span></a></li>
+</ul>
+<p>These type-conversion functions should be fully backwards compatible,
+but the following differences should be noted:</p>
+<ul class="simple">
+<li>The <em>fallback</em> is not required any more. A conversion failure in the
+absence of a <em>fallback</em> argument will now trigger a VCL failure.</li>
+<li>A VCL failure will also be triggered if no or more than one argument
+(plus optional <em>fallback</em>) is given.</li>
+<li>Conversion functions now only ever truncate if necessary (instead of
+rounding).</li>
+<li><a class="reference internal" href="../reference/vmod_std.html#std-round"><span class="std std-ref">REAL round(REAL r)</span></a> has been added for explicit rounding.</li>
+</ul>
+<p>The following functions are deprecated and should be replaced by the
+new conversion functions:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../reference/vmod_std.html#std-real2integer"><span class="std std-ref">INT real2integer(REAL r, INT fallback)</span></a></li>
+<li><a class="reference internal" href="../reference/vmod_std.html#std-real2time"><span class="std std-ref">TIME real2time(REAL r, TIME fallback)</span></a></li>
+<li><a class="reference internal" href="../reference/vmod_std.html#std-time2integer"><span class="std std-ref">INT time2integer(TIME t, INT fallback)</span></a></li>
+<li><a class="reference internal" href="../reference/vmod_std.html#std-time2real"><span class="std std-ref">REAL time2real(TIME t, REAL fallback)</span></a></li>
+</ul>
+<p>They will be removed in a future version of Varnish.</p>
+</div>
+<div class="section" id="varnishadm-and-the-cli">
+<h2>varnishadm and the CLI<a class="headerlink" href="#varnishadm-and-the-cli" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">-j</span></code> option for JSON output has been added to a number of
+commands, see <a class="reference internal" href="changes-6.2.html#whatsnew-changes-cli-json"><span class="std std-ref">JSON output</span></a> in
+<a class="reference internal" href="changes-6.2.html#whatsnew-changes-2019-03"><span class="std std-ref">Changes in Varnish 6.2</span></a> and <a class="reference internal" href="../reference/varnish-cli.html#varnish-cli-7"><span class="std std-ref">varnish-cli</span></a>. We
+recommend the use of JSON format for automated parsing of CLI
+responses (<a class="reference internal" href="../reference/varnishadm.html#varnishadm-1"><span class="std std-ref">varnishadm</span></a> output).</p>
+<div class="section" id="listing-backends">
+<span id="whatsnew-upgrading-backend-list-2019-03"></span><h3>Listing backends<a class="headerlink" href="#listing-backends" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">backend.list</span></code> has grown an additional column, the output has
+changed and fields are now of dynamic width:</p>
+<ul>
+<li><p class="first">The <code class="docutils literal"><span class="pre">Admin</span></code> column now accurately states <code class="docutils literal"><span class="pre">probe</span></code> only if a
+backend has some means of dynamically determining health state.</p>
+</li>
+<li><p class="first">The <code class="docutils literal"><span class="pre">Probe</span></code> column has been changed to display <code class="docutils literal"><span class="pre">X/Y</span></code>, where:</p>
+<ul class="simple">
+<li>Integer <code class="docutils literal"><span class="pre">X</span></code> is the number of good probes in the most recent
+window; or if the backend in question is a director, the number of
+healthy backends accessed via the director or any other
+director-specific metric.</li>
+<li>Integer <code class="docutils literal"><span class="pre">Y</span></code> is the window in which the threshold for overall
+health of the backend is defined (from the <code class="docutils literal"><span class="pre">.window</span></code> field of a
+probe, see <a class="reference internal" href="../reference/vcl.html#vcl-7"><span class="std std-ref">VCL</span></a>); or in the case of a director, the total
+number of backends accessed via the director or any other
+director-specific metric.</li>
+</ul>
+<p>If there is no probe or the director does not provide details,
+<code class="docutils literal"><span class="pre">0/0</span></code> is output.</p>
+</li>
+<li><p class="first">The <code class="docutils literal"><span class="pre">Health</span></code> column has been added to contain the dynamic (probe)
+health state and the format has been unified to just <code class="docutils literal"><span class="pre">healthy</span></code> or
+<code class="docutils literal"><span class="pre">sick</span></code>.</p>
+<p>If there is no probe, <code class="docutils literal"><span class="pre">Health</span></code> is always given as
+<code class="docutils literal"><span class="pre">healthy</span></code>. Notice that the administrative health as shown in the
+<code class="docutils literal"><span class="pre">Admin</span></code> column has precedence.</p>
+</li>
+</ul>
+<p>In the <code class="docutils literal"><span class="pre">probe_message</span></code> field of <code class="docutils literal"><span class="pre">backend.list</span> <span class="pre">-j</span></code> output, the
+<code class="docutils literal"><span class="pre">Probe</span></code> and <code class="docutils literal"><span class="pre">Health</span></code> columns appear as the array <code class="docutils literal"><span class="pre">[X,</span> <span class="pre">Y,</span>
+<span class="pre">health]</span></code>.</p>
+<p>See <a class="reference internal" href="../reference/varnish-cli.html#varnish-cli-7"><span class="std std-ref">varnish-cli</span></a> for details.</p>
+</div>
+<div class="section" id="listing-vcls">
+<span id="whatsnew-upgrading-vcl-list-2019-03"></span><h3>Listing VCLs<a class="headerlink" href="#listing-vcls" title="Permalink to this headline">¶</a></h3>
+<p>The non-JSON output of <code class="docutils literal"><span class="pre">vcl.list</span></code> has been changed:</p>
+<ul class="simple">
+<li>The <code class="docutils literal"><span class="pre">state</span></code> and <code class="docutils literal"><span class="pre">temperature</span></code> fields appear in separate columns
+(previously combined in one column).</li>
+<li>The optional column showing the relationships between labels and VCL
+configurations (when labels are in use) has been separated into two
+columns.</li>
+</ul>
+<p>See <a class="reference internal" href="../reference/varnish-cli.html#varnish-cli-7"><span class="std std-ref">varnish-cli</span></a> for details. In the JSON output for
+<code class="docutils literal"><span class="pre">vcl.list</span> <span class="pre">-j</span></code>, this information appears in separate fields.</p>
+<p>The width of columns in <code class="docutils literal"><span class="pre">backend.list</span></code> and <code class="docutils literal"><span class="pre">vcl.list</span></code> output
+(non-JSON) is now dynamic, to fit the width of the terminal window.</p>
+</div>
+</div>
+<div class="section" id="for-developers-and-authors-of-vmods-and-api-clients">
+<h2>For developers and authors of VMODs and API clients<a class="headerlink" href="#for-developers-and-authors-of-vmods-and-api-clients" title="Permalink to this headline">¶</a></h2>
+<p>Python 3.4 or later is now required to build Varnish, or use scripts
+installed along with Varnish, such as <code class="docutils literal"><span class="pre">vmodtool.py</span></code> to build VMODs
+or other Varnish artifacts. Python 2 is no longer supported, and this
+support will likely be dropped in a future 6.0 LTS release too.</p>
+<p>The VRT API has been bumped to version 9.0. Changes include:</p>
+<ul class="simple">
+<li>Functions in the API have been added, and others removed.</li>
+<li>The <code class="docutils literal"><span class="pre">VCL_BLOB</span></code> type is now implemented as <code class="docutils literal"><span class="pre">struct</span> <span class="pre">vrt_blob</span></code>.</li>
+<li>The <code class="docutils literal"><span class="pre">req_bodybytes</span></code> field of <code class="docutils literal"><span class="pre">struct</span> <span class="pre">req</span></code> has been removed, and
+should now be accessed as an object core attribute.</li>
+</ul>
+<p>See <code class="docutils literal"><span class="pre">vrt.h</span></code>, the <a class="reference external" href="https://github.com/varnishcache/varnish-cache/blob/master/doc/changes.rst">change log</a> and
+<a class="reference internal" href="changes-6.2.html#whatsnew-changes-director-api-2019-03"><span class="std std-ref">Directors</span></a> in
+<a class="reference internal" href="changes-6.2.html#whatsnew-changes-2019-03"><span class="std std-ref">Changes in Varnish 6.2</span></a> for details.</p>
+<p>The vmodtool has been changed significantly to avoid name clashes in
+the C identifiers declared in <code class="docutils literal"><span class="pre">vcc_if.h</span></code>. This may necessitate
+changing names in your VMOD code. To facilitate renaming, <code class="docutils literal"><span class="pre">vcc_if.h</span></code>
+defines macros for prepending the vmod prefix, and for naming enums
+and argument structs. For details, see the <a class="reference external" href="https://github.com/varnishcache/varnish-cache/blob/master/doc/changes.rst">change log</a>, and examine
+the contents of <code class="docutils literal"><span class="pre">vcc_if.h</span></code> after generation.</p>
+<p>Going forward, we will adhere to the principle that data returned by
+VMOD methods and functions are immutable. This is now enforced in some
+places by use of the <code class="docutils literal"><span class="pre">const</span></code> modifier. A VMOD is free to do as it
+sees fit within its own implementation, but if you attempt to change
+something returned by another VMOD, the results are undefined.</p>
+<p><em>eof</em></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Upgrading to Varnish 6.2</a><ul>
+<li><a class="reference internal" href="#vcl">VCL</a></li>
+<li><a class="reference internal" href="#runtime-parameters">Runtime parameters</a></li>
+<li><a class="reference internal" href="#type-conversion-functions-in-vmod-std">Type conversion functions in VMOD std</a></li>
+<li><a class="reference internal" href="#varnishadm-and-the-cli">varnishadm and the CLI</a><ul>
+<li><a class="reference internal" href="#listing-backends">Listing backends</a></li>
+<li><a class="reference internal" href="#listing-vcls">Listing VCLs</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#for-developers-and-authors-of-vmods-and-api-clients">For developers and authors of VMODs and API clients</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="changes-6.2.html"
+                        title="previous chapter">Changes in Varnish 6.2</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="changes-6.1.html"
+                        title="next chapter">Changes in Varnish 6.1</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/whats-new/upgrading-6.2.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="changes-6.1.html" title="Changes in Varnish 6.1"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="changes-6.2.html" title="Changes in Varnish 6.2"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

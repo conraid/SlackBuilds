@@ -1,0 +1,58 @@
+varnishtest "Check that reloaded bans with completed flag are really completed on restart"
+
+feature persistent_storage
+
+shell "rm -f ${tmpdir}/_.per[12]"
+
+server s1 {
+	rxreq
+	txresp -hdr "x-foo: foo"
+
+	accept
+	rxreq
+	txresp -hdr "x-foo: bar"
+} -start
+
+varnish v1 \
+	-arg "-pfeature=+wait_silo" \
+	-arg "-pban_lurker_sleep=0" \
+	-arg "-sper1=deprecated_persistent,${tmpdir}/_.per1,5m" \
+	-arg "-sper2=deprecated_persistent,${tmpdir}/_.per2,5m" \
+	-vcl+backend {
+	}
+varnish v1 -start
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.http.x-foo == "foo"
+} -run
+
+varnish v1 -cliok "ban req.url == /test"
+varnish v1 -cliok "ban req.url == /test"
+varnish v1 -cliok "ban.list"
+
+# Expect ban_magic plus the 2 we added
+varnish v1 -expect bans == 3
+
+# Expect 1 of the 2 added to be marked dup
+varnish v1 -expect bans_dups == 1
+
+# Expect ban_magic plus our 1 dup to be marked completed
+varnish v1 -expect bans_completed == 2
+
+# Restart
+varnish v1 -stop
+varnish v1 -start
+varnish v1 -cliok "ban.list"
+
+# Check that our object is still there
+client c1 {
+	txreq
+	rxresp
+	expect resp.http.x-foo == "foo"
+} -run
+
+# Expect our duplicate
+varnish v1 -expect bans_dups == 1
+varnish v1 -expect bans_completed == 1

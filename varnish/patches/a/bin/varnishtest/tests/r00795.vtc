@@ -1,0 +1,41 @@
+varnishtest "Content-Length in pass'ed 304 does not trigger body fetch"
+
+# XXX: Description doesn't make sense relative to actual goings on...
+
+server s1 {
+	rxreq
+	txresp -hdr "Last-Modified: ${date}" -body "FOO"
+	rxreq
+	expect req.url == "/bar"
+	txresp -body "FOOBAR"
+
+} -start
+
+
+varnish v1 -vcl+backend { } -start
+
+# First load the objects into cache
+client c1 {
+	txreq
+	rxresp
+	expect resp.status == 200
+	expect resp.bodylen == 3
+
+	txreq -url "/bar"
+	rxresp
+	expect resp.status == 200
+	expect resp.bodylen == 6
+} -run
+
+# Wait, so we know ${date} to be higher
+delay 1
+
+client c1 {
+	txreq -hdr "If-Modified-Since: ${date}"
+	rxresp -no_obj
+	expect resp.status == 304
+
+	txreq -url "/bar" -hdr "If-Modified-Since: ${date}"
+	rxresp -no_obj
+	expect resp.status == 304
+} -run

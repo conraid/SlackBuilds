@@ -1,0 +1,25 @@
+varnishtest "Test that we can't recurse restarts forever"
+
+varnish v1 -vcl {
+	backend bad {
+		.host = "${bad_backend}";
+	}
+
+	sub vcl_backend_fetch {
+	    set bereq.backend = bad;
+	}
+	sub vcl_backend_error {
+	    return (abandon);
+	}
+	sub vcl_synth {
+	    set resp.http.restarts = req.restarts;
+	    return (restart);
+	}
+ } -start
+
+client c1 {
+	txreq -url "/"
+	rxresp
+	expect resp.status == 503
+	expect resp.http.restarts == 5
+} -run

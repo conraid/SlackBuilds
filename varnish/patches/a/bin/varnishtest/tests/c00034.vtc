@@ -1,0 +1,193 @@
+varnishtest "Range headers"
+
+server s1 {
+	rxreq
+	txresp -bodylen 100
+} -start
+
+varnish v1 -vcl+backend {
+	sub vcl_backend_response {
+		set beresp.do_stream = false;
+	}
+} -start
+
+varnish v1 -cliok "param.set http_range_support off"
+
+client c1 {
+	txreq -hdr "Range: bytes=0-9"
+	rxresp
+	expect resp.status == 200
+	expect resp.bodylen == 100
+} -run
+
+varnish v1 -expect s_resp_bodybytes == 100
+
+varnish v1 -vsl_catchup
+
+varnish v1 -cliok "param.set http_range_support on"
+
+client c1 {
+	# Invalid range requests
+
+	txreq -hdr "Range: bytes =0-9"
+	rxresp
+	expect resp.status == 416
+	expect resp.bodylen == 0
+	expect resp.http.content-length == "0"
+	expect resp.http.transfer-encoding == "<undef>"
+	expect resp.http.content-range == "bytes */100"
+
+	txreq -hdr "Range: bytes=0- 9"
+	rxresp
+	expect resp.status == 416
+	expect resp.bodylen == 0
+
+	txreq -hdr "Range: bytes =-9"
+	rxresp
+	expect resp.status == 416
+	expect resp.bodylen == 0
+
+	txreq -hdr "Range: bytes =0-a"
+	rxresp
+	expect resp.status == 416
+	expect resp.bodylen == 0
+
+	txreq -hdr "Range: bytes=-"
+	rxresp
+	expect resp.status == 416
+	expect resp.bodylen == 0
+
+	txreq -hdr "Range: bytes=5-2"
+	rxresp
+	expect resp.status == 416
+	expect resp.bodylen == 0
+
+	txreq -hdr "Range: bytes=-0"
+	rxresp
+	expect resp.status == 416
+	expect resp.bodylen == 0
+
+	txreq -hdr "Range: bytes=100-"
+	rxresp
+	expect resp.status == 416
+	expect resp.bodylen == 0
+} -run
+
+varnish v1 -expect s_resp_bodybytes == 100
+
+varnish v1 -vsl_catchup
+
+client c1 {
+	# Valid range requests
+
+	txreq -hdr "Range: bytes=0-49"
+	rxresp
+	expect resp.status == 206
+	expect resp.bodylen == 50
+	expect resp.http.content-range == "bytes 0-49/100"
+
+	txreq -hdr "Range: bytes=50-99"
+	rxresp
+	expect resp.status == 206
+	expect resp.bodylen == 50
+	expect resp.http.content-range == "bytes 50-99/100"
+
+	txreq -hdr "Range: bytes=-50"
+	rxresp
+	expect resp.status == 206
+	expect resp.bodylen == 50
+	expect resp.http.content-range == "bytes 50-99/100"
+
+	txreq -hdr "Range: bytes=50-"
+	rxresp
+	expect resp.status == 206
+	expect resp.bodylen == 50
+	expect resp.http.content-range == "bytes 50-99/100"
+
+	txreq -hdr "Range: bytes=0-0"
+	rxresp
+	expect resp.status == 206
+	expect resp.bodylen == 1
+	expect resp.http.content-range == "bytes 0-0/100"
+
+	txreq -hdr "Range: bytes=-2000"
+	rxresp
+	expect resp.status == 206
+	expect resp.bodylen == 100
+	expect resp.http.content-range == "bytes 0-99/100"
+
+	txreq -hdr "Range: bytes=0-"
+	rxresp
+	expect resp.status == 206
+	expect resp.bodylen == 100
+	expect resp.http.content-range == "bytes 0-99/100"
+} -run
+
+varnish v1 -expect s_resp_bodybytes == 501
+
+varnish v1 -vsl_catchup
+
+# Test Range streaming with streaming objects with C-L
+
+server s1 {
+	rxreq
+	txresp -nolen -hdr "Content-Length: 100"
+	send "0123456789"
+	send "0123456789"
+	send "0123456789"
+	send "0123456789"
+	send "0123456789"
+	send "0123456789"
+	send "0123456789"
+	send "0123456789"
+	send "0123456789"
+	delay 2
+	send "0123456789"
+
+	rxreq
+	txresp -nolen -hdr "Content-Length: 100"
+	send "0123456789"
+	send "0123456789"
+	send "0123456789"
+	send "0123456789"
+	send "0123456789"
+	send "0123456789"
+	send "0123456789"
+	send "0123456789"
+	send "0123456789"
+	delay 2
+	send "0123456789"
+} -start
+
+varnish v1 -vcl+backend {
+	sub vcl_backend_response {
+		if (bereq.url == "/2") {
+			set beresp.do_gzip = true;
+		}
+	}
+}
+
+client c1 {
+	# Open ended range to force C-L usage
+	txreq -url /1 \
+		-hdr "Range: bytes=20-" \
+		-hdr "Connection: close"
+	rxresphdrs
+	expect resp.status == 206
+	expect resp.http.Content-Range == "bytes 20-99/100"
+	recv 80
+	expect_close
+} -run
+
+varnish v1 -vsl_catchup
+
+client c1 {
+	# Closed C-L because we cannot use C-L
+	txreq -url /2 \
+		-hdr "Range: bytes=2-5" \
+		-hdr "Accept-encoding: gzip"
+	rxresp
+	expect resp.status == 200
+	gunzip
+	expect resp.bodylen == 100
+} -run

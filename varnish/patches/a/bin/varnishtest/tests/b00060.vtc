@@ -1,0 +1,28 @@
+varnishtest "VSL tags affected by the use of UDS addresses"
+
+server s1 -listen "${tmpdir}/s1.sock" {
+	rxreq
+	txresp
+} -start
+
+varnish v1 -arg "-a foo=${tmpdir}/v1.sock" -vcl+backend {} -start
+
+client c1 -connect "${tmpdir}/v1.sock" {
+	txreq
+	rxresp
+} -run
+
+logexpect l1 -v v1 -d 1 -g session {
+	expect 0 1000	Begin
+	expect 0 =	SessOpen	"^0.0.0.0 0 foo 0.0.0.0 0"
+} -run
+
+logexpect l2 -v v1 -d 1 -g vxid {
+	expect * *	Begin		^req
+	expect * =	ReqStart	"^0.0.0.0 0 foo$"
+} -run
+
+logexpect l3 -v v1 -d 1 -g vxid {
+	expect * *	Begin		^bereq
+	expect * =	BackendOpen	"0.0.0.0 0 0.0.0.0 0$"
+} -run

@@ -1,0 +1,1613 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>VCL &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Varnish Processing States" href="states.html" />
+    <link rel="prev" title="The Varnish Reference Manual" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="states.html" title="Varnish Processing States"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="The Varnish Reference Manual"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Varnish Reference Manual</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="vcl">
+<span id="vcl-7"></span><h1>VCL<a class="headerlink" href="#vcl" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="varnish-configuration-language">
+<h2>Varnish Configuration Language<a class="headerlink" href="#varnish-configuration-language" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Manual section:</th><td class="field-body">7</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="description">
+<h3>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h3>
+<p>The VCL language is a small domain-specific language designed to be
+used to describe request handling and document caching policies for
+Varnish Cache.</p>
+<p>When a new configuration is loaded, the varnishd management process
+translates the VCL code to C and compiles it to a shared object which
+is then loaded into the server process.</p>
+<p>This document focuses on the syntax of the VCL language. For a full
+description of syntax and semantics, with ample examples, please see
+the online documentation at <a class="reference external" href="https://www.varnish-cache.org/docs/">https://www.varnish-cache.org/docs/</a> .</p>
+<p>Starting with Varnish 4.0, each VCL file must start by declaring its
+version with <code class="docutils literal"><span class="pre">vcl</span></code> <em>&lt;major&gt;.&lt;minor&gt;</em><code class="docutils literal"><span class="pre">;</span></code> marker at the top of
+the file.  See more about this under Versioning below.</p>
+<div class="section" id="operators">
+<h4>Operators<a class="headerlink" href="#operators" title="Permalink to this headline">¶</a></h4>
+<p>The following operators are available in VCL:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">=</span></code></dt>
+<dd>Assignment operator.</dd>
+<dt><code class="docutils literal"><span class="pre">==</span></code></dt>
+<dd>Comparison.</dd>
+<dt><code class="docutils literal"><span class="pre">~</span></code></dt>
+<dd>Match. Can either be used with regular expressions or ACLs.</dd>
+<dt><code class="docutils literal"><span class="pre">!</span></code></dt>
+<dd>Negation.</dd>
+<dt><code class="docutils literal"><span class="pre">&amp;&amp;</span></code></dt>
+<dd>Logical and.</dd>
+<dt><code class="docutils literal"><span class="pre">||</span></code></dt>
+<dd>Logical or.</dd>
+</dl>
+</div></blockquote>
+</div>
+<div class="section" id="conditionals">
+<h4>Conditionals<a class="headerlink" href="#conditionals" title="Permalink to this headline">¶</a></h4>
+<p>VCL has <code class="docutils literal"><span class="pre">if</span></code> and <code class="docutils literal"><span class="pre">else</span></code> statements. Nested logic can be
+implemented with the <code class="docutils literal"><span class="pre">elseif</span></code> statement (<code class="docutils literal"><span class="pre">elsif</span></code>/<code class="docutils literal"><span class="pre">elif</span></code>/<code class="docutils literal"><span class="pre">else</span> <span class="pre">if</span></code> are equivalent).</p>
+<p>Note that there are no loops or iterators of any kind in VCL.</p>
+</div>
+<div class="section" id="strings-booleans-time-duration-integers-and-real-numbers">
+<h4>Strings, booleans, time, duration, integers and real numbers<a class="headerlink" href="#strings-booleans-time-duration-integers-and-real-numbers" title="Permalink to this headline">¶</a></h4>
+<p>These are the data types in Varnish. You can <code class="docutils literal"><span class="pre">set</span></code> or <code class="docutils literal"><span class="pre">unset</span></code> these.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span><span class="p">;</span>
+<span class="n">unset</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Range</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="section" id="strings">
+<h5>Strings<a class="headerlink" href="#strings" title="Permalink to this headline">¶</a></h5>
+<p>Basic strings are enclosed in double quotes <code class="docutils literal"><span class="pre">&quot;</span></code><em>...</em><code class="docutils literal"><span class="pre">&quot;</span></code>, and
+may not contain newlines. Long strings are enclosed in
+<code class="docutils literal"><span class="pre">{&quot;</span></code><em>...</em><code class="docutils literal"><span class="pre">&quot;}</span></code>. They may contain any character including single
+double quotes <code class="docutils literal"><span class="pre">&quot;</span></code>, newline and other control characters except for the
+<em>NUL</em> (0x00) character.</p>
+</div>
+<div class="section" id="booleans">
+<h5>Booleans<a class="headerlink" href="#booleans" title="Permalink to this headline">¶</a></h5>
+<p>Booleans can be either <code class="docutils literal"><span class="pre">true</span></code> or <code class="docutils literal"><span class="pre">false</span></code>.  In addition, in a boolean
+context some data types will evaluate to <code class="docutils literal"><span class="pre">true</span></code> or <code class="docutils literal"><span class="pre">false</span></code> depending on
+their value.</p>
+<p>String types will evaluate to <code class="docutils literal"><span class="pre">false</span></code> if they are unset.  This allows
+checks of the type <code class="docutils literal"><span class="pre">if</span> <span class="pre">(req.http.opthdr)</span> <span class="pre">{}</span></code> to test if a header
+exists, even if it is empty, whereas <code class="docutils literal"><span class="pre">if</span> <span class="pre">(req.http.opthdr</span> <span class="pre">==</span> <span class="pre">&quot;&quot;)</span> <span class="pre">{}</span></code>
+does not distinguish if the header does not exist or if it is empty.</p>
+<p>Backend types
+will evaluate to <code class="docutils literal"><span class="pre">false</span></code> if they don't have a backend assigned; integer
+types will evaluate to <code class="docutils literal"><span class="pre">false</span></code> if their value is zero; duration types
+will evaluate to <code class="docutils literal"><span class="pre">false</span></code> if their value is equal or less than zero.</p>
+</div>
+<div class="section" id="time">
+<h5>Time<a class="headerlink" href="#time" title="Permalink to this headline">¶</a></h5>
+<p>VCL has time. A duration can be added to a time to make another time.
+In string context they return a formatted string in RFC1123 format,
+e.g. <code class="docutils literal"><span class="pre">Sun,</span> <span class="pre">06</span> <span class="pre">Nov</span> <span class="pre">1994</span> <span class="pre">08:49:37</span> <span class="pre">GMT</span></code>.</p>
+<p>The keyword <code class="docutils literal"><span class="pre">now</span></code> returns a notion of the current time, which is
+kept consistent during vcl subroutine invocations, so during the
+execution of a vcl subroutine callback (<code class="docutils literal"><span class="pre">vcl_*</span> <span class="pre">{}</span></code>), including all
+user-defined subroutines being called, <code class="docutils literal"><span class="pre">now</span></code> always returns the
+same value.</p>
+</div>
+<div class="section" id="durations">
+<h5>Durations<a class="headerlink" href="#durations" title="Permalink to this headline">¶</a></h5>
+<p>Durations are defined by a number followed by a unit. The number can
+include a fractional part, e.g. <code class="docutils literal"><span class="pre">1.5s</span></code>. The supported units are:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">ms</span></code></dt>
+<dd>milliseconds</dd>
+<dt><code class="docutils literal"><span class="pre">s</span></code></dt>
+<dd>seconds</dd>
+<dt><code class="docutils literal"><span class="pre">m</span></code></dt>
+<dd>minutes</dd>
+<dt><code class="docutils literal"><span class="pre">h</span></code></dt>
+<dd>hours</dd>
+<dt><code class="docutils literal"><span class="pre">d</span></code></dt>
+<dd>days</dd>
+<dt><code class="docutils literal"><span class="pre">w</span></code></dt>
+<dd>weeks</dd>
+<dt><code class="docutils literal"><span class="pre">y</span></code></dt>
+<dd>years</dd>
+</dl>
+</div></blockquote>
+<p>In string context they return a string with their value rounded to
+3 decimal places and excluding the unit, e.g.  <code class="docutils literal"><span class="pre">1.500</span></code>.</p>
+</div>
+<div class="section" id="integers">
+<h5>Integers<a class="headerlink" href="#integers" title="Permalink to this headline">¶</a></h5>
+<p>Certain fields are integers, used as expected. In string context they
+return a string, e.g. <code class="docutils literal"><span class="pre">1234</span></code>.</p>
+</div>
+<div class="section" id="real-numbers">
+<h5>Real numbers<a class="headerlink" href="#real-numbers" title="Permalink to this headline">¶</a></h5>
+<p>VCL understands real numbers. In string context they return a string
+with their value rounded to 3 decimal places, e.g. <code class="docutils literal"><span class="pre">3.142</span></code>.</p>
+</div>
+</div>
+<div class="section" id="regular-expressions">
+<h4>Regular Expressions<a class="headerlink" href="#regular-expressions" title="Permalink to this headline">¶</a></h4>
+<p>Varnish uses Perl-compatible regular expressions (PCRE). For a
+complete description please see the pcre(3) man page.</p>
+<p>To send flags to the PCRE engine, such as to do case insensitive matching, add
+the flag within parens following a question mark, like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span># If host is NOT example dot com..
+if (req.http.host !~ &quot;(?i)example\.com$&quot;) {
+    ...
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="include-statement">
+<h4>Include statement<a class="headerlink" href="#include-statement" title="Permalink to this headline">¶</a></h4>
+<p>To include a VCL file in another file use the include keyword:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">include</span> <span class="s2">&quot;foo.vcl&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="import-statement">
+<h4>Import statement<a class="headerlink" href="#import-statement" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="docutils literal"><span class="pre">import</span></code> statement is used to load Varnish Modules (VMODs.)</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">std</span><span class="p">;</span>
+<span class="n">sub</span> <span class="n">vcl_recv</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="comments">
+<h4>Comments<a class="headerlink" href="#comments" title="Permalink to this headline">¶</a></h4>
+<p>Single lines of VCL can be commented out using <code class="docutils literal"><span class="pre">//</span></code> or
+<code class="docutils literal"><span class="pre">#</span></code>. Multi-line blocks can be commented out with
+<code class="docutils literal"><span class="pre">/*</span></code><em>block</em><code class="docutils literal"><span class="pre">*/</span></code>.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_recv</span> <span class="p">{</span>
+    <span class="o">//</span> <span class="n">Single</span> <span class="n">line</span> <span class="n">of</span> <span class="n">out</span><span class="o">-</span><span class="n">commented</span> <span class="n">VCL</span><span class="o">.</span>
+    <span class="c1"># Another way of commenting out a single line.</span>
+    <span class="o">/*</span>
+        <span class="n">Multi</span><span class="o">-</span><span class="n">line</span> <span class="n">block</span> <span class="n">of</span> <span class="n">commented</span><span class="o">-</span><span class="n">out</span> <span class="n">VCL</span><span class="o">.</span>
+    <span class="o">*/</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="backend-definition">
+<span id="id1"></span><h4>Backend definition<a class="headerlink" href="#backend-definition" title="Permalink to this headline">¶</a></h4>
+<p>A backend declaration creates and initialises a named backend object. A
+declaration start with the keyword <code class="docutils literal"><span class="pre">backend</span></code> followed by the name of the
+backend. The actual declaration is in curly brackets, in a key/value fashion.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">backend</span> <span class="n">name</span> <span class="p">{</span>
+    <span class="o">.</span><span class="n">attribute</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>One of the attributes <code class="docutils literal"><span class="pre">.host</span></code> or <code class="docutils literal"><span class="pre">.path</span></code> is mandatory (but not
+both). The attributes will inherit their defaults from the global
+parameters. The following attributes are available:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">.host</span></code></dt>
+<dd>The host to be used. IP address or a hostname that resolves to a
+single IP address. This attribute is mandatory, unless <code class="docutils literal"><span class="pre">.path</span></code>
+is declared.</dd>
+</dl>
+<p><code class="docutils literal"><span class="pre">.path</span></code>     (<code class="docutils literal"><span class="pre">VCL</span> <span class="pre">&gt;=</span> <span class="pre">4.1</span></code>)</p>
+<blockquote>
+<div>The absolute path of a Unix domain socket at which a backend is
+listening. If the file at that path does not exist or is not
+accessible to Varnish at VCL load time, then the VCL compiler
+issues a warning, but does not fail. This makes it possible to
+start the UDS-listening peer, or set the socket file's
+permissions, after starting Varnish or loading VCL with a UDS
+backend.  But the socket file must exist and have necessary
+permissions before the first connection is attempted, otherwise
+fetches will fail. If the file does exist and is accessible, then
+it must be a socket; otherwise the VCL load fails. One of
+<code class="docutils literal"><span class="pre">.path</span></code> or <code class="docutils literal"><span class="pre">.host</span></code> must be declared (but not both). <code class="docutils literal"><span class="pre">.path</span></code>
+may only be used in VCL since version 4.1.</div></blockquote>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">.port</span></code></dt>
+<dd>The port on the backend that Varnish should connect to. Ignored if
+a Unix domain socket is declared in <code class="docutils literal"><span class="pre">.path</span></code>.</dd>
+<dt><code class="docutils literal"><span class="pre">.host_header</span></code></dt>
+<dd>A host header to add to probes and regular backend requests if they have no
+such header.</dd>
+<dt><code class="docutils literal"><span class="pre">.connect_timeout</span></code></dt>
+<dd><p class="first">Timeout for connections.</p>
+<p class="last">Default: <code class="docutils literal"><span class="pre">connect_timeout</span></code> parameter, see <a class="reference internal" href="varnishd.html#varnishd-1"><span class="std std-ref">varnishd</span></a></p>
+</dd>
+<dt><code class="docutils literal"><span class="pre">.first_byte_timeout</span></code></dt>
+<dd><p class="first">Timeout for first byte.</p>
+<p class="last">Default: <code class="docutils literal"><span class="pre">first_byte_timeout</span></code> parameter, see <a class="reference internal" href="varnishd.html#varnishd-1"><span class="std std-ref">varnishd</span></a></p>
+</dd>
+<dt><code class="docutils literal"><span class="pre">.between_bytes_timeout</span></code></dt>
+<dd><p class="first">Timeout between bytes.</p>
+<p class="last">Default: <code class="docutils literal"><span class="pre">between_bytes_timeout</span></code> parameter, see <a class="reference internal" href="varnishd.html#varnishd-1"><span class="std std-ref">varnishd</span></a></p>
+</dd>
+<dt><code class="docutils literal"><span class="pre">.probe</span></code></dt>
+<dd>Attach a probe to the backend. See <a class="reference internal" href="#probes">Probes</a></dd>
+<dt><code class="docutils literal"><span class="pre">.proxy_header</span></code></dt>
+<dd><p class="first">The PROXY protocol version Varnish should use when connecting to
+this backend. Allowed values are <code class="docutils literal"><span class="pre">1</span></code> and <code class="docutils literal"><span class="pre">2</span></code>.</p>
+<p><em>Notice</em> this setting will lead to backend connections being used
+for a single request only (subject to future improvements). Thus,
+extra care should be taken to avoid running into failing backend
+connections with EADDRNOTAVAIL due to no local ports being
+available. Possible options are:</p>
+<ul class="last simple">
+<li>Use additional backend connections to extra IP addresses or TCP
+ports</li>
+<li>Increase the number of available ports (Linux sysctl
+<code class="docutils literal"><span class="pre">net.ipv4.ip_local_port_range</span></code>)</li>
+<li>Reuse backend connection ports early (Linux sysctl
+<code class="docutils literal"><span class="pre">net.ipv4.tcp_tw_reuse</span></code>)</li>
+</ul>
+</dd>
+<dt><code class="docutils literal"><span class="pre">.max_connections</span></code></dt>
+<dd>Maximum number of open connections towards this backend. If
+Varnish reaches the maximum Varnish it will start failing
+connections.</dd>
+</dl>
+</div></blockquote>
+<p>Backends can be used with <em>directors</em>. Please see the
+<a class="reference internal" href="vmod_directors.html#vmod-directors-3"><span class="std std-ref">VMOD directors - Varnish Directors Module</span></a> man page for more information.</p>
+</div>
+<div class="section" id="probes">
+<span id="reference-vcl-probes"></span><h4>Probes<a class="headerlink" href="#probes" title="Permalink to this headline">¶</a></h4>
+<p>Probes will query the backend for status on a regular basis and mark
+the backend as down it they fail. A probe is defined as this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">probe</span> <span class="n">name</span> <span class="p">{</span>
+    <span class="o">.</span><span class="n">attribute</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The probe named <code class="docutils literal"><span class="pre">default</span></code> is special and will be used for all backends
+which do not explicitly reference a probe.</p>
+<p>There are no mandatory options. These are the options you can set:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">.url</span></code></dt>
+<dd>The URL to query. Defaults to <code class="docutils literal"><span class="pre">/</span></code>.
+Mutually exclusive with <code class="docutils literal"><span class="pre">.request</span></code></dd>
+<dt><code class="docutils literal"><span class="pre">.request</span></code></dt>
+<dd><p class="first">Specify a full HTTP request using multiple strings. <code class="docutils literal"><span class="pre">.request</span></code> will
+have <code class="docutils literal"><span class="pre">\r\n</span></code> automatically inserted after every string.
+Mutually exclusive with <code class="docutils literal"><span class="pre">.url</span></code>.</p>
+<p class="last"><em>Note</em> that probes require the backend to complete sending the
+response and close the connection within the specified timeout, so
+<code class="docutils literal"><span class="pre">.request</span></code> will, for <code class="docutils literal"><span class="pre">HTTP/1.1</span></code>, most likely need to contain a
+<code class="docutils literal"><span class="pre">&quot;Connection:</span> <span class="pre">close&quot;</span></code> string.</p>
+</dd>
+<dt><code class="docutils literal"><span class="pre">.expected_response</span></code></dt>
+<dd>The expected HTTP response code. Defaults to <code class="docutils literal"><span class="pre">200</span></code>.</dd>
+<dt><code class="docutils literal"><span class="pre">.timeout</span></code></dt>
+<dd>The timeout for the probe. Default is <code class="docutils literal"><span class="pre">2s</span></code>.</dd>
+<dt><code class="docutils literal"><span class="pre">.interval</span></code></dt>
+<dd>How often the probe is run. Default is <code class="docutils literal"><span class="pre">5s</span></code>.</dd>
+<dt><code class="docutils literal"><span class="pre">.initial</span></code></dt>
+<dd>How many of the polls in <code class="docutils literal"><span class="pre">.window</span></code> are considered good when Varnish
+starts. Defaults to the value of <code class="docutils literal"><span class="pre">.threshold</span></code> - 1. In this case, the
+backend starts as sick and requires one single poll to be
+considered healthy.</dd>
+<dt><code class="docutils literal"><span class="pre">.window</span></code></dt>
+<dd>How many of the latest polls we examine to determine backend health.
+Defaults to <code class="docutils literal"><span class="pre">8</span></code>.</dd>
+<dt><code class="docutils literal"><span class="pre">.threshold</span></code></dt>
+<dd>How many of the polls in <code class="docutils literal"><span class="pre">.window</span></code> must have succeeded to
+consider the backend to be healthy.
+Defaults to <code class="docutils literal"><span class="pre">3</span></code>.</dd>
+</dl>
+</div></blockquote>
+</div>
+<div class="section" id="access-control-list-acl">
+<h4>Access Control List (ACL)<a class="headerlink" href="#access-control-list-acl" title="Permalink to this headline">¶</a></h4>
+<p>An Access Control List (ACL) declaration creates and initialises a named access
+control list which can later be used to match client addresses:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>acl localnetwork {
+    &quot;localhost&quot;;    # myself
+    &quot;192.0.2.0&quot;/24; # and everyone on the local network
+    ! &quot;192.0.2.23&quot;; # except for the dial-in router
+}
+</pre></div>
+</div>
+<p>If an ACL entry specifies a host name which Varnish is unable to
+resolve, it will match any address it is compared to. Consequently,
+if it is preceded by a negation mark, it will reject any address it is
+compared to, which may not be what you intended. If the entry is
+enclosed in parentheses, however, it will simply be ignored.</p>
+<p>To match an IP address against an ACL, simply use the match operator:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">ip</span> <span class="o">~</span> <span class="n">localnetwork</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">pipe</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="vcl-objects">
+<h4>VCL objects<a class="headerlink" href="#vcl-objects" title="Permalink to this headline">¶</a></h4>
+<p>A VCL object can be instantiated with the <code class="docutils literal"><span class="pre">new</span></code> keyword:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_init</span> <span class="p">{</span>
+    <span class="n">new</span> <span class="n">b</span> <span class="o">=</span> <span class="n">directors</span><span class="o">.</span><span class="n">round_robin</span><span class="p">()</span>
+    <span class="n">b</span><span class="o">.</span><span class="n">add_backend</span><span class="p">(</span><span class="n">node1</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This is only available in <code class="docutils literal"><span class="pre">vcl_init</span></code>.</p>
+</div>
+<div class="section" id="subroutines">
+<h4>Subroutines<a class="headerlink" href="#subroutines" title="Permalink to this headline">¶</a></h4>
+<p>A subroutine is used to group code for legibility or reusability:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">pipe_if_local</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">ip</span> <span class="o">~</span> <span class="n">localnetwork</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">pipe</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Subroutines in VCL do not take arguments, nor do they return
+values. The built in subroutines all have names beginning with <code class="docutils literal"><span class="pre">vcl_</span></code>,
+which is reserved.</p>
+<p>To call a subroutine, use the <code class="docutils literal"><span class="pre">call</span></code> keyword followed by the
+subroutine's name:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_recv</span> <span class="p">{</span>
+    <span class="n">call</span> <span class="n">pipe_if_local</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="return-statements">
+<h5>Return statements<a class="headerlink" href="#return-statements" title="Permalink to this headline">¶</a></h5>
+<p>The ongoing <code class="docutils literal"><span class="pre">vcl_*</span></code> subroutine execution ends when a
+<code class="docutils literal"><span class="pre">return(</span></code><em>&lt;action&gt;</em><code class="docutils literal"><span class="pre">)</span></code> statement is made.</p>
+<p>The <em>&lt;action&gt;</em> specifies how execution should proceed. The context
+defines which actions are available.</p>
+</div>
+<div class="section" id="multiple-subroutines">
+<h5>Multiple subroutines<a class="headerlink" href="#multiple-subroutines" title="Permalink to this headline">¶</a></h5>
+<p>If multiple subroutines with the name of one of the built-in ones are defined,
+they are concatenated in the order in which they appear in the source.</p>
+<p>The built-in VCL distributed with Varnish will be implicitly concatenated
+when the VCL is compiled.</p>
+</div>
+</div>
+<div class="section" id="vcl-variables">
+<span id="id2"></span><h4>VCL Variables<a class="headerlink" href="#vcl-variables" title="Permalink to this headline">¶</a></h4>
+<p>Variables provide read, write and delete access to almost all aspects
+of the work at hand.</p>
+<p>Reading a variable is done simply by using its name in VCL:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">ip</span> <span class="o">~</span> <span class="n">bad_guys</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">synth</span><span class="p">(</span><span class="mi">400</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Writing a variable, where this is possible, is done with a <cite>set</cite>
+statement:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">never</span> <span class="o">=</span> <span class="s2">&quot;Let You Down&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Similarly, deleting a variable, for the few variables where this is
+possible, is done with a <cite>unset</cite> statement:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">unset</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">cookie</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Which operations are possible on each variable is described below,
+often with the shorthand &quot;backend&quot; which covers the <cite>vcl_backend_*</cite>
+methods and &quot;client&quot; which covers the rest, except <cite>vcl_init</cite> and
+<cite>vcl_fini</cite>.</p>
+<p>When setting a variable, the right hand side of the equal sign
+must have the variables type, you cannot assign a STRING to
+a variable of type NUMBER, even if the string is <cite>&quot;42&quot;</cite>.
+(Explicit conversion functions can be found in
+<a class="reference internal" href="vmod_std.html#vmod-std-3"><span class="std std-ref">VMOD std - Varnish Standard Module</span></a>).</p>
+<div class="section" id="local-server-remote-and-client">
+<h5>local, server, remote and client<a class="headerlink" href="#local-server-remote-and-client" title="Permalink to this headline">¶</a></h5>
+<p>These variables describe the network connection between the
+client and varnishd.</p>
+<p>Without PROXY protocol:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>     <span class="n">client</span>    <span class="n">server</span>
+     <span class="n">remote</span>    <span class="n">local</span>
+       <span class="n">v</span>          <span class="n">v</span>
+<span class="n">CLIENT</span> <span class="o">------------</span> <span class="n">VARNISHD</span>
+</pre></div>
+</div>
+<p>With PROXY protocol:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>     <span class="n">client</span>    <span class="n">server</span>   <span class="n">remote</span>     <span class="n">local</span>
+       <span class="n">v</span>          <span class="n">v</span>       <span class="n">v</span>          <span class="n">v</span>
+<span class="n">CLIENT</span> <span class="o">------------</span> <span class="n">PROXY</span> <span class="o">------------</span> <span class="n">VARNISHD</span>
+</pre></div>
+</div>
+<p>local.ip</p>
+<blockquote>
+<div><p>Type: IP</p>
+<p>Readable from: client, backend</p>
+<p>The IP address (and port number) of the local end of the
+TCP connection, for instance <cite>192.168.1.1:81</cite></p>
+<p>If the connection is a UNIX domain socket, the value
+will be <cite>0.0.0.0:0</cite></p>
+</div></blockquote>
+<p>local.endpoint  <code class="docutils literal"><span class="pre">VCL</span> <span class="pre">&gt;=</span> <span class="pre">4.1</span></code></p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: client, backend</p>
+<p>The address of the '-a' socket the session was accepted on.</p>
+<p>If the argument was <cite>-a foo=:81</cite> this would be &quot;:81&quot;</p>
+</div></blockquote>
+<p>local.socket    <code class="docutils literal"><span class="pre">VCL</span> <span class="pre">&gt;=</span> <span class="pre">4.1</span></code></p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: client, backend</p>
+<p>The name of the '-a' socket the session was accepted on.</p>
+<p>If the argument was <cite>-a foo=:81</cite> this would be &quot;foo&quot;.</p>
+<p>Note that all '-a' gets a default name on the form <cite>a%d</cite>
+if no name is provided.</p>
+</div></blockquote>
+<p>remote.ip</p>
+<blockquote>
+<div><p>Type: IP</p>
+<p>Readable from: client, backend</p>
+<p>The IP address of the other end of the TCP connection.
+This can either be the clients IP, or the outgoing IP
+of a proxy server.</p>
+<p>If the connection is a UNIX domain socket, the value
+will be <cite>0.0.0.0:0</cite></p>
+</div></blockquote>
+<p>client.ip</p>
+<blockquote>
+<div><p>Type: IP</p>
+<p>Readable from: client, backend</p>
+<p>The client's IP address, either the same as <cite>local.ip</cite>
+or what the PROXY protocol told us.</p>
+</div></blockquote>
+<p>client.identity</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: client</p>
+<p>Writable from: client</p>
+<p>Identification of the client, used to load balance
+in the client director.  Defaults to <cite>client.ip</cite></p>
+<p>This variable can be overwritten with more precise
+information, for instance extracted from a <cite>Cookie:</cite>
+header.</p>
+</div></blockquote>
+<p>server.ip</p>
+<blockquote>
+<div><p>Type: IP</p>
+<p>Readable from: client, backend</p>
+<p>The IP address of the socket on which the client
+connection was received, either the same as <cite>server.ip</cite>
+or what the PROXY protocol told us.</p>
+</div></blockquote>
+<p>server.hostname</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: all</p>
+<p>The host name of the server, as returned by the
+<cite>gethostname(3)</cite> system function.</p>
+</div></blockquote>
+<p>server.identity</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: all</p>
+<p>The identity of the server, as set by the <cite>-i</cite> parameter.</p>
+<p>If an <cite>-i</cite> parameter is not passed to varnishd, the return
+value from <cite>gethostname(3)</cite> system function will be used.</p>
+</div></blockquote>
+</div>
+<div class="section" id="req-and-req-top">
+<h5>req and req_top<a class="headerlink" href="#req-and-req-top" title="Permalink to this headline">¶</a></h5>
+<p>These variables describe the present request, and when ESI:include
+requests are being processed, req_top points to the request received
+from the client.</p>
+<p>req</p>
+<blockquote>
+<div><p>Type: HTTP</p>
+<p>Readable from: client</p>
+<p>The entire request HTTP data structure.
+Mostly useful for passing to VMODs.</p>
+</div></blockquote>
+<p>req.method</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: client</p>
+<p>Writable from: client</p>
+<p>The request method (e.g. &quot;GET&quot;, &quot;HEAD&quot;, ...)</p>
+</div></blockquote>
+<p>req.hash</p>
+<blockquote>
+<div><p>Type: BLOB</p>
+<p>Readable from: vcl_hit, vcl_miss, vcl_pass, vcl_purge, vcl_deliver</p>
+<p>The hash key of this request.
+Mostly useful for passing to VMODs, but can also be useful
+for debugging hit/miss status.</p>
+</div></blockquote>
+<p>req.url</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: client</p>
+<p>Writable from: client</p>
+<p>The requested URL, for instance &quot;/robots.txt&quot;.</p>
+</div></blockquote>
+<p>req.proto       <code class="docutils literal"><span class="pre">VCL</span> <span class="pre">&lt;=</span> <span class="pre">4.0</span></code></p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: client</p>
+<p>Writable from: client</p>
+<p>The HTTP protocol version used by the client, usually &quot;HTTP/1.1&quot;
+or &quot;HTTP/2.0&quot;.</p>
+</div></blockquote>
+<p>req.proto       <code class="docutils literal"><span class="pre">VCL</span> <span class="pre">&gt;=</span> <span class="pre">4.1</span></code></p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: client</p>
+<p>The HTTP protocol version used by the client, usually &quot;HTTP/1.1&quot;
+or &quot;HTTP/2.0&quot;.</p>
+</div></blockquote>
+<p>req.http.*</p>
+<blockquote>
+<div><p>Type: HEADER</p>
+<p>Readable from: client</p>
+<p>Writable from: client</p>
+<p>Unsetable from: client</p>
+<p>The headers of request, things like <cite>req.http.date</cite>.</p>
+<p>The RFCs allow multiple headers with the same name, and both
+<cite>set</cite> and <cite>unset</cite> will remove <em>all</em> headers with the name given.</p>
+</div></blockquote>
+<p>req.restarts</p>
+<blockquote>
+<div><p>Type: INT</p>
+<p>Readable from: client</p>
+<p>A count of how many times this request has been restarted.</p>
+</div></blockquote>
+<p>req.storage</p>
+<blockquote>
+<div><p>Type: STEVEDORE</p>
+<p>Readable from: client</p>
+<p>Writable from: client</p>
+<p>The storage backend to use to save this request body.</p>
+</div></blockquote>
+<p>req.esi_level</p>
+<blockquote>
+<div><p>Type: INT</p>
+<p>Readable from: client</p>
+<p>A count of how many levels of ESI requests we're currently at.</p>
+</div></blockquote>
+<p>req.ttl</p>
+<blockquote>
+<div><p>Type: DURATION</p>
+<p>Readable from: client</p>
+<p>Writable from: client</p>
+<p>Upper limit on the object age for cache lookups to return hit.</p>
+</div></blockquote>
+<p>req.grace</p>
+<blockquote>
+<div><p>Type: DURATION</p>
+<p>Readable from: client</p>
+<p>Writable from: client</p>
+<p>Upper limit on the object grace.</p>
+<p>During lookup the minimum of req.grace and the object's stored
+grace value will be used as the object's grace.</p>
+</div></blockquote>
+<p>req.xid</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: client</p>
+<p>Unique ID of this request.</p>
+</div></blockquote>
+<p>req.esi <code class="docutils literal"><span class="pre">VCL</span> <span class="pre">&lt;=</span> <span class="pre">4.0</span></code></p>
+<blockquote>
+<div><p>Type: BOOL</p>
+<p>Readable from: client</p>
+<p>Writable from: client</p>
+<p>Set to <cite>false</cite> to disable ESI processing
+regardless of any value in beresp.do_esi. Defaults
+to <cite>true</cite>. This variable is replaced by <cite>resp.do_esi</cite>
+in VCL 4.1.</p>
+</div></blockquote>
+<p>req.can_gzip</p>
+<blockquote>
+<div><p>Type: BOOL</p>
+<p>Readable from: client</p>
+<p>True if the client provided <cite>gzip</cite> or <cite>x-gzip</cite> in the
+<cite>Accept-Encoding</cite> header.</p>
+</div></blockquote>
+<p>req.backend_hint</p>
+<blockquote>
+<div><p>Type: BACKEND</p>
+<p>Readable from: client</p>
+<p>Writable from: client</p>
+<p>Set bereq.backend to this if we attempt to fetch.
+When set to a director, reading this variable returns
+an actual backend if the director has resolved immediately,
+or the director otherwise.
+When used in string context, returns the name of the director
+or backend, respectively.</p>
+</div></blockquote>
+<p>req.hash_ignore_busy</p>
+<blockquote>
+<div><p>Type: BOOL</p>
+<p>Readable from: client</p>
+<p>Writable from: client</p>
+<p>Default: <cite>false</cite></p>
+<p>Ignore any busy object during cache lookup.</p>
+<p>You only want to do this when you have two server looking
+up content sideways from each other to avoid deadlocks.</p>
+</div></blockquote>
+<p>req.hash_always_miss</p>
+<blockquote>
+<div><p>Type: BOOL</p>
+<p>Readable from: client</p>
+<p>Writable from: client</p>
+<p>Default: <cite>false</cite></p>
+<p>Force a cache miss for this request, even if perfectly
+good matching objects are in the cache.</p>
+<p>This is useful to force-update the cache without invalidating
+existing entries in case the fetch fails.</p>
+</div></blockquote>
+<p>req.is_hitmiss</p>
+<blockquote>
+<div><p>Type: BOOL</p>
+<p>Readable from: client</p>
+<p>If this request resulted in a hitmiss</p>
+</div></blockquote>
+<p>req.is_hitpass</p>
+<blockquote>
+<div><p>Type: BOOL</p>
+<p>Readable from: client</p>
+<p>If this request resulted in a hitpass</p>
+</div></blockquote>
+<p>req_top.method</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: client</p>
+<p>The request method of the top-level request in a tree
+of ESI requests. (e.g. &quot;GET&quot;, &quot;HEAD&quot;).
+Identical to req.method in non-ESI requests.</p>
+</div></blockquote>
+<p>req_top.url</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: client</p>
+<p>The requested URL of the top-level request in a tree
+of ESI requests.
+Identical to req.url in non-ESI requests.</p>
+</div></blockquote>
+<p>req_top.http.*</p>
+<blockquote>
+<div><p>Type: HEADER</p>
+<p>Readable from: client</p>
+<p>HTTP headers of the top-level request in a tree of ESI requests.
+Identical to req.http. in non-ESI requests.</p>
+</div></blockquote>
+<p>req_top.proto</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: client</p>
+<p>HTTP protocol version of the top-level request in a tree of
+ESI requests.
+Identical to req.proto in non-ESI requests.</p>
+</div></blockquote>
+</div>
+<div class="section" id="bereq">
+<h5>bereq<a class="headerlink" href="#bereq" title="Permalink to this headline">¶</a></h5>
+<p>This is the request we send to the backend, it is built from the
+clients <cite>req.*</cite> fields by filtering out &quot;per-hop&quot; fields which
+should not be passed along (<cite>Connection:</cite>, <cite>Range:</cite> and similar).</p>
+<p>Slightly more fields are allowed through for <cite>pass</cite> fetches
+than for <cite>miss</cite> fetches, for instance <cite>Range</cite>.</p>
+<p>bereq</p>
+<blockquote>
+<div><p>Type: HTTP</p>
+<p>Readable from: backend</p>
+<p>The entire backend request HTTP data structure.
+Mostly useful as argument to VMODs.</p>
+</div></blockquote>
+<p>bereq.xid</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: backend</p>
+<p>Unique ID of this request.</p>
+</div></blockquote>
+<p>bereq.retries</p>
+<blockquote>
+<div><p>Type: INT</p>
+<p>Readable from: backend</p>
+<p>A count of how many times this request has been retried.</p>
+</div></blockquote>
+<p>bereq.backend</p>
+<blockquote>
+<div><p>Type: BACKEND</p>
+<p>Readable from: vcl_pipe, backend</p>
+<p>Writable from: vcl_pipe, backend</p>
+<p>This is the backend or director we attempt to fetch from.
+When set to a director, reading this variable returns
+an actual backend if the director has resolved immediately,
+or the director otherwise.
+When used in string context, returns the name of the director
+or backend, respectively.</p>
+</div></blockquote>
+<p>bereq.body</p>
+<blockquote>
+<div><p>Type: BODY</p>
+<p>Unsetable from: vcl_backend_fetch</p>
+<p>The request body.</p>
+<p>Unset will also remove <cite>bereq.http.Content-Length</cite>.</p>
+</div></blockquote>
+<p>bereq.hash</p>
+<blockquote>
+<div><p>Type: BLOB</p>
+<p>Readable from: vcl_pipe, backend</p>
+<p>The hash key of this request, a copy of <cite>req.hash</cite>.</p>
+</div></blockquote>
+<p>bereq.method</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: vcl_pipe, backend</p>
+<p>Writable from: vcl_pipe, backend</p>
+<p>The request type (e.g. &quot;GET&quot;, &quot;HEAD&quot;).</p>
+<p>Regular (non-pipe, non-pass) fetches are always &quot;GET&quot;</p>
+</div></blockquote>
+<p>bereq.url</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: vcl_pipe, backend</p>
+<p>Writable from: vcl_pipe, backend</p>
+<p>The requested URL, copied from <cite>req.url</cite></p>
+</div></blockquote>
+<p>bereq.proto     <code class="docutils literal"><span class="pre">VCL</span> <span class="pre">&lt;=</span> <span class="pre">4.0</span></code></p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: vcl_pipe, backend</p>
+<p>Writable from: vcl_pipe, backend</p>
+<p>The HTTP protocol version, &quot;HTTP/1.1&quot; unless a pass or pipe
+request has &quot;HTTP/1.0&quot; in <cite>req.proto</cite></p>
+</div></blockquote>
+<p>bereq.proto     <code class="docutils literal"><span class="pre">VCL</span> <span class="pre">&gt;=</span> <span class="pre">4.1</span></code></p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: vcl_pipe, backend</p>
+<p>The HTTP protocol version, &quot;HTTP/1.1&quot; unless a pass or pipe
+request has &quot;HTTP/1.0&quot; in <cite>req.proto</cite></p>
+</div></blockquote>
+<p>bereq.http.*</p>
+<blockquote>
+<div><p>Type: HEADER</p>
+<p>Readable from: vcl_pipe, backend</p>
+<p>Writable from: vcl_pipe, backend</p>
+<p>Unsetable from: vcl_pipe, backend</p>
+<p>The headers to be sent to the backend.</p>
+</div></blockquote>
+<p>bereq.uncacheable</p>
+<blockquote>
+<div><p>Type: BOOL</p>
+<p>Readable from: backend</p>
+<p>Indicates whether this request is uncacheable due to a
+<cite>pass</cite> in the client side or a hit on an hit-for-pass object.</p>
+</div></blockquote>
+<p>bereq.connect_timeout</p>
+<blockquote>
+<div><p>Type: DURATION</p>
+<p>Readable from: vcl_pipe, backend</p>
+<p>Writable from: vcl_pipe, backend</p>
+<p>Default: <code class="docutils literal"><span class="pre">.connect_timeout</span></code> attribute from the
+<a class="reference internal" href="#backend-definition"><span class="std std-ref">Backend definition</span></a>, which defaults to the
+<code class="docutils literal"><span class="pre">connect_timeout</span></code> parameter, see <a class="reference internal" href="varnishd.html#varnishd-1"><span class="std std-ref">varnishd</span></a></p>
+<p>The time in seconds to wait for a backend connection to be
+established.</p>
+</div></blockquote>
+<p>bereq.first_byte_timeout</p>
+<blockquote>
+<div><p>Type: DURATION</p>
+<p>Readable from: backend</p>
+<p>Writable from: backend</p>
+<p>Default: <code class="docutils literal"><span class="pre">.first_byte_timeout</span></code> attribute from the
+<a class="reference internal" href="#backend-definition"><span class="std std-ref">Backend definition</span></a>, which defaults to the
+<code class="docutils literal"><span class="pre">first_byte_timeout</span></code> parameter, see <a class="reference internal" href="varnishd.html#varnishd-1"><span class="std std-ref">varnishd</span></a></p>
+<p>The time in seconds to wait getting the first byte back
+from the backend.  Not available in pipe mode.</p>
+</div></blockquote>
+<p>bereq.between_bytes_timeout</p>
+<blockquote>
+<div><p>Type: DURATION</p>
+<p>Readable from: backend</p>
+<p>Writable from: backend</p>
+<p>Default: <code class="docutils literal"><span class="pre">.between_bytes_timeout</span></code> attribute from the
+<a class="reference internal" href="#backend-definition"><span class="std std-ref">Backend definition</span></a>, which defaults to the
+<code class="docutils literal"><span class="pre">between_bytes_timeout</span></code> parameter, see <a class="reference internal" href="varnishd.html#varnishd-1"><span class="std std-ref">varnishd</span></a></p>
+<p>The time in seconds to wait between each received byte from the
+backend.  Not available in pipe mode.</p>
+</div></blockquote>
+<p>bereq.is_bgfetch</p>
+<blockquote>
+<div><p>Type: BOOL</p>
+<p>Readable from: backend</p>
+<p>True for fetches where the client got a hit on an object in
+grace, and this fetch was kicked of in the background to get
+a fresh copy.</p>
+</div></blockquote>
+</div>
+<div class="section" id="beresp">
+<h5>beresp<a class="headerlink" href="#beresp" title="Permalink to this headline">¶</a></h5>
+<p>The response received from the backend, one cache misses, the
+store object is built from <cite>beresp</cite>.</p>
+<p>beresp</p>
+<blockquote>
+<div><p>Type: HTTP</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>The entire backend response HTTP data structure, useful as
+argument to VMOD functions.</p>
+</div></blockquote>
+<p>beresp.body</p>
+<blockquote>
+<div><p>Type: BODY</p>
+<p>Writable from: vcl_backend_error</p>
+<p>For producing a synthetic body.</p>
+</div></blockquote>
+<p>beresp.proto    <code class="docutils literal"><span class="pre">VCL</span> <span class="pre">&lt;=</span> <span class="pre">4.0</span></code></p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>Writable from: vcl_backend_response, vcl_backend_error</p>
+<p>The HTTP protocol version the backend replied with.</p>
+</div></blockquote>
+<p>beresp.proto    <code class="docutils literal"><span class="pre">VCL</span> <span class="pre">&gt;=</span> <span class="pre">4.1</span></code></p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>The HTTP protocol version the backend replied with.</p>
+</div></blockquote>
+<p>beresp.status</p>
+<blockquote>
+<div><p>Type: INT</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>Writable from: vcl_backend_response, vcl_backend_error</p>
+<p>The HTTP status code returned by the server.</p>
+<p>Status codes on the form XXYZZ can be set where
+XXYZZ is less than 65536 and Y is [1...9].
+Only YZZ will be sent back to clients.</p>
+<p>XX can be therefore be used to pass information
+around inside VCL, for instance <cite>return(synth(22404))</cite>
+from <cite>vcl_recv{}</cite> to <cite>vcl_synth{}</cite></p>
+</div></blockquote>
+<p>beresp.reason</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>Writable from: vcl_backend_response, vcl_backend_error</p>
+<p>The HTTP status message returned by the server.</p>
+</div></blockquote>
+<p>beresp.http.*</p>
+<blockquote>
+<div><p>Type: HEADER</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>Writable from: vcl_backend_response, vcl_backend_error</p>
+<p>Unsetable from: vcl_backend_response, vcl_backend_error</p>
+<p>The HTTP headers returned from the server.</p>
+</div></blockquote>
+<p>beresp.do_esi</p>
+<blockquote>
+<div><p>Type: BOOL</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>Writable from: vcl_backend_response, vcl_backend_error</p>
+<p>Default: false</p>
+<p>Set it to true to parse the object for ESI directives.
+Will only be honored if req.esi is true.</p>
+</div></blockquote>
+<p>beresp.do_stream</p>
+<blockquote>
+<div><p>Type: BOOL</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>Writable from: vcl_backend_response, vcl_backend_error</p>
+<p>Default: true</p>
+<p>Deliver the object to the client while fetching the whole
+object into varnish.</p>
+<p>For uncacheable objects, storage for parts of the body which
+have been sent to the client may get freed early, depending
+on the storage engine used.</p>
+<p>This variable has no effect if do_esi is true or when the
+response body is empty.</p>
+</div></blockquote>
+<p>beresp.do_gzip</p>
+<blockquote>
+<div><p>Type: BOOL</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>Writable from: vcl_backend_response, vcl_backend_error</p>
+<p>Default: false</p>
+<p>Set to <cite>true</cite> to gzip the object while storing it.</p>
+<p>If <cite>http_gzip_support</cite> is disabled, setting this variable
+has no effect.</p>
+</div></blockquote>
+<p>beresp.do_gunzip</p>
+<blockquote>
+<div><p>Type: BOOL</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>Writable from: vcl_backend_response, vcl_backend_error</p>
+<p>Default: false</p>
+<p>Set to <cite>true</cite> to gunzip the object while storing it in the
+cache.</p>
+<p>If <cite>http_gzip_support</cite> is disabled, setting this variable
+has no effect.</p>
+</div></blockquote>
+<p>beresp.was_304</p>
+<blockquote>
+<div><p>Type: BOOL</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>When <cite>true</cite> this indicates that we got a 304 response
+to our conditional fetch from the backend and turned
+that into <cite>beresp.status = 200</cite></p>
+</div></blockquote>
+<p>beresp.uncacheable</p>
+<blockquote>
+<div><p>Type: BOOL</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>Writable from: vcl_backend_response, vcl_backend_error</p>
+<p>Inherited from bereq.uncacheable, see there.</p>
+<p>Setting this variable makes the object uncacheable.</p>
+<p>This may may produce a hit-for-miss object in the cache.</p>
+<p>Clearing the variable has no effect and will log the warning
+&quot;Ignoring attempt to reset beresp.uncacheable&quot;.</p>
+</div></blockquote>
+<p>beresp.ttl</p>
+<blockquote>
+<div><p>Type: DURATION</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>Writable from: vcl_backend_response, vcl_backend_error</p>
+<p>The object's remaining time to live, in seconds.</p>
+</div></blockquote>
+<p>beresp.age</p>
+<blockquote>
+<div><p>Type: DURATION</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>The age of the object.</p>
+</div></blockquote>
+<p>beresp.grace</p>
+<blockquote>
+<div><p>Type: DURATION</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>Writable from: vcl_backend_response, vcl_backend_error</p>
+<p>Set to a period to enable grace.</p>
+</div></blockquote>
+<p>beresp.keep</p>
+<blockquote>
+<div><p>Type: DURATION</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>Writable from: vcl_backend_response, vcl_backend_error</p>
+<p>Set to a period to enable conditional backend requests.</p>
+<p>The keep time is cache lifetime in addition to the ttl.</p>
+<p>Objects with ttl expired but with keep time left may be used
+to issue conditional (If-Modified-Since / If-None-Match)
+requests to the backend to refresh them.</p>
+</div></blockquote>
+<p>beresp.backend</p>
+<blockquote>
+<div><p>Type: BACKEND</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>This is the backend we fetched from.  If bereq.backend
+was set to a director, this will be the backend selected
+by the director.
+When used in string context, returns its name.</p>
+</div></blockquote>
+<p>beresp.backend.name</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>Name of the backend this response was fetched from.
+Same as beresp.backend.</p>
+</div></blockquote>
+<p>beresp.backend.ip       <code class="docutils literal"><span class="pre">VCL</span> <span class="pre">&lt;=</span> <span class="pre">4.0</span></code></p>
+<blockquote>
+<div><p>Type: IP</p>
+<p>Readable from: vcl_backend_response</p>
+<p>IP of the backend this response was fetched from.</p>
+</div></blockquote>
+<p>beresp.storage</p>
+<blockquote>
+<div><p>Type: STEVEDORE</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>Writable from: vcl_backend_response, vcl_backend_error</p>
+<p>The storage backend to use to save this object.</p>
+</div></blockquote>
+<p>beresp.storage_hint     <code class="docutils literal"><span class="pre">VCL</span> <span class="pre">&lt;=</span> <span class="pre">4.0</span></code></p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: vcl_backend_response, vcl_backend_error</p>
+<p>Writable from: vcl_backend_response, vcl_backend_error</p>
+<p>Deprecated since varnish 5.1 and discontinued since VCL
+4.1 (varnish 6.0). Use beresp.storage instead.</p>
+<p>Hint to Varnish that you want to save this object to a
+particular storage backend.</p>
+</div></blockquote>
+<p>beresp.filters</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: vcl_backend_response</p>
+<p>Writable from: vcl_backend_response</p>
+<p>List of Varnish Fetch Processor (VFP) filters the beresp.body
+will be pulled through. The order left to right signifies
+processing from backend to cache, iow the leftmost filter is
+run first on the body as received from the backend after
+decoding of any transfer encodings.</p>
+<p>VFP Filters change the body before going into the cache and/or
+being handed to the client side, where it may get processed
+again by resp.filters.</p>
+<p>The following VFP filters exist in varnish-cache:</p>
+<ul>
+<li><p class="first"><code class="docutils literal"><span class="pre">gzip</span></code>: compress a body using gzip</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">testgunzip</span></code>: Test if a body is valid gzip and refuse it
+otherwise</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">gunzip</span></code>: Uncompress gzip content</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">esi</span></code>: ESI-process plain text content</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">esi_gzip</span></code>: Save gzipped snippets for efficient
+ESI-processing</p>
+<p>This filter enables stitching together ESI from individually
+gzipped fragments, saving processing power for
+re-compression on the client side at the expense of some
+compression efficiency.</p>
+</li>
+</ul>
+<p>Additional VFP filters are available from VMODs.</p>
+<p>By default, beresp.filters is constructed as follows:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">gunzip</span></code> gets added for gzipped content if
+<code class="docutils literal"><span class="pre">beresp.do_gunzip</span></code> or <code class="docutils literal"><span class="pre">beresp.do_esi</span></code> are true.</li>
+<li><code class="docutils literal"><span class="pre">esi_gzip</span></code> gets added if <code class="docutils literal"><span class="pre">beresp.do_esi</span></code> is true
+together with <code class="docutils literal"><span class="pre">beresp.do_gzip</span></code> or content is already
+compressed.</li>
+<li><code class="docutils literal"><span class="pre">esi</span></code> gets added if <code class="docutils literal"><span class="pre">beresp.do_esi</span></code> is true</li>
+<li><code class="docutils literal"><span class="pre">gzip</span></code> gets added for uncompressed content if
+<code class="docutils literal"><span class="pre">beresp.do_gzip</span></code> is true</li>
+<li><code class="docutils literal"><span class="pre">testgunzip</span></code> gets added for compressed content if
+<code class="docutils literal"><span class="pre">beresp.do_gunzip</span></code> is false.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="obj">
+<h5>obj<a class="headerlink" href="#obj" title="Permalink to this headline">¶</a></h5>
+<p>This is the object we found in cache.  It cannot be modified.</p>
+<p>obj.proto</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: vcl_hit</p>
+<p>The HTTP protocol version stored in the object.</p>
+</div></blockquote>
+<p>obj.status</p>
+<blockquote>
+<div><p>Type: INT</p>
+<p>Readable from: vcl_hit</p>
+<p>The HTTP status code stored in the object.</p>
+</div></blockquote>
+<p>obj.reason</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: vcl_hit</p>
+<p>The HTTP reason phrase stored in the object.</p>
+</div></blockquote>
+<p>obj.hits</p>
+<blockquote>
+<div><p>Type: INT</p>
+<p>Readable from: vcl_hit, vcl_deliver</p>
+<p>The count of cache-hits on this object.</p>
+<p>In <cite>vcl_deliver</cite> a value of 0 indicates a cache miss.</p>
+</div></blockquote>
+<p>obj.http.*</p>
+<blockquote>
+<div><p>Type: HEADER</p>
+<p>Readable from: vcl_hit</p>
+<p>The HTTP headers stored in the object.</p>
+</div></blockquote>
+<p>obj.ttl</p>
+<blockquote>
+<div><p>Type: DURATION</p>
+<p>Readable from: vcl_hit, vcl_deliver</p>
+<p>The object's remaining time to live, in seconds.</p>
+</div></blockquote>
+<p>obj.age</p>
+<blockquote>
+<div><p>Type: DURATION</p>
+<p>Readable from: vcl_hit, vcl_deliver</p>
+<p>The age of the object.</p>
+</div></blockquote>
+<p>obj.grace</p>
+<blockquote>
+<div><p>Type: DURATION</p>
+<p>Readable from: vcl_hit, vcl_deliver</p>
+<p>The object's grace period in seconds.</p>
+</div></blockquote>
+<p>obj.keep</p>
+<blockquote>
+<div><p>Type: DURATION</p>
+<p>Readable from: vcl_hit, vcl_deliver</p>
+<p>The object's keep period in seconds.</p>
+</div></blockquote>
+<p>obj.uncacheable</p>
+<blockquote>
+<div><p>Type: BOOL</p>
+<p>Readable from: vcl_deliver</p>
+<p>Whether the object is uncacheable (pass, hit-for-pass or
+hit-for-miss).</p>
+</div></blockquote>
+<p>obj.storage</p>
+<blockquote>
+<div><p>Type: STEVEDORE</p>
+<p>Readable from: vcl_hit, vcl_deliver</p>
+<p>The storage backend where this object is stored.</p>
+</div></blockquote>
+</div>
+<div class="section" id="resp">
+<h5>resp<a class="headerlink" href="#resp" title="Permalink to this headline">¶</a></h5>
+<p>This is the response we send to the client, it is built from either
+<cite>beresp</cite> (pass/miss), <cite>obj</cite> (hits) or created from whole cloth (synth).</p>
+<p>With the exception of <cite>resp.body</cite> all <cite>resp.*</cite> variables available
+in both <cite>vcl_deliver{}</cite> and <cite>vcl_synth{}</cite> as a matter of symmetry.</p>
+<p>resp</p>
+<blockquote>
+<div><p>Type: HTTP</p>
+<p>Readable from: vcl_deliver, vcl_synth</p>
+<p>The entire response HTTP data structure, useful as argument
+to VMODs.</p>
+</div></blockquote>
+<p>resp.body</p>
+<blockquote>
+<div><p>Type: BODY</p>
+<p>Writable from: vcl_synth</p>
+<p>To produce a synthetic response body, for instance for errors.</p>
+</div></blockquote>
+<p>resp.proto      <code class="docutils literal"><span class="pre">VCL</span> <span class="pre">&lt;=</span> <span class="pre">4.0</span></code></p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: vcl_deliver, vcl_synth</p>
+<p>Writable from: vcl_deliver, vcl_synth</p>
+<p>The HTTP protocol version to use for the response.</p>
+</div></blockquote>
+<p>resp.proto      <code class="docutils literal"><span class="pre">VCL</span> <span class="pre">&gt;=</span> <span class="pre">4.1</span></code></p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: vcl_deliver, vcl_synth</p>
+<p>Writable from: vcl_deliver, vcl_synth</p>
+<p>The HTTP protocol version to use for the response.</p>
+</div></blockquote>
+<p>resp.status</p>
+<blockquote>
+<div><p>Type: INT</p>
+<p>Readable from: vcl_deliver, vcl_synth</p>
+<p>Writable from: vcl_deliver, vcl_synth</p>
+<p>The HTTP status code that will be returned.</p>
+<p>Assigning a HTTP standardized code to resp.status will also
+set resp.reason to the corresponding status message.</p>
+<p>resp.status 200 will get changed into 304 by core code after
+a return(deliver) from vcl_deliver for conditional requests
+to cached content if validation succeeds.</p>
+</div></blockquote>
+<p>resp.reason</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: vcl_deliver, vcl_synth</p>
+<p>Writable from: vcl_deliver, vcl_synth</p>
+<p>The HTTP status message that will be returned.</p>
+</div></blockquote>
+<p>resp.http.*</p>
+<blockquote>
+<div><p>Type: HEADER</p>
+<p>Readable from: vcl_deliver, vcl_synth</p>
+<p>Writable from: vcl_deliver, vcl_synth</p>
+<p>Unsetable from: vcl_deliver, vcl_synth</p>
+<p>The HTTP headers that will be returned.</p>
+</div></blockquote>
+<p>resp.do_esi     <code class="docutils literal"><span class="pre">VCL</span> <span class="pre">&gt;=</span> <span class="pre">4.1</span></code></p>
+<blockquote>
+<div><p>Type: BOOL</p>
+<p>Readable from: vcl_deliver, vcl_synth</p>
+<p>Writable from: vcl_deliver, vcl_synth</p>
+<p>Default: Set if ESI parsing has happened.</p>
+<p>This can be used to selectively disable ESI processing,
+even though ESI parsing happened during fetch.
+This is useful when Varnish caches peer with each other.</p>
+</div></blockquote>
+<p>resp.is_streaming</p>
+<blockquote>
+<div><p>Type: BOOL</p>
+<p>Readable from: vcl_deliver, vcl_synth</p>
+<p>Returns true when the response will be streamed
+while being fetched from the backend.</p>
+</div></blockquote>
+<p>resp.filters</p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: vcl_deliver, vcl_synth</p>
+<p>Writable from: vcl_deliver, vcl_synth</p>
+<p>List of VDP filters the resp.body will be pushed through.</p>
+</div></blockquote>
+</div>
+<div class="section" id="special-variables">
+<h5>Special variables<a class="headerlink" href="#special-variables" title="Permalink to this headline">¶</a></h5>
+<p>now</p>
+<blockquote>
+<div><p>Type: TIME</p>
+<p>Readable from: all</p>
+<p>The current time, in seconds since the UNIX epoch.</p>
+<p>When converted to STRING in expressions it returns
+a formatted timestamp like <cite>Tue, 20 Feb 2018 09:30:31 GMT</cite></p>
+</div></blockquote>
+</div>
+<div class="section" id="sess">
+<h5>sess<a class="headerlink" href="#sess" title="Permalink to this headline">¶</a></h5>
+<p>A session corresponds to the &quot;conversation&quot; that Varnish has with a
+single client connection, over which one or more request/response
+transactions may take place. It may comprise the traffic over an
+HTTP/1 keep-alive connection, or the multiplexed traffic over an
+HTTP/2 connection.</p>
+<p>sess.xid        <code class="docutils literal"><span class="pre">VCL</span> <span class="pre">&gt;=</span> <span class="pre">4.1</span></code></p>
+<blockquote>
+<div><p>Type: STRING</p>
+<p>Readable from: client, backend</p>
+<p>Unique ID of this session.</p>
+</div></blockquote>
+<p>sess.timeout_idle</p>
+<blockquote>
+<div><p>Type: DURATION</p>
+<p>Readable from: client</p>
+<p>Writable from: client</p>
+<p>Idle timeout for this session, defaults to the
+<code class="docutils literal"><span class="pre">timeout_idle</span></code> parameter, see <a class="reference internal" href="varnishd.html#varnishd-1"><span class="std std-ref">varnishd</span></a></p>
+</div></blockquote>
+</div>
+<div class="section" id="storage">
+<h5>storage<a class="headerlink" href="#storage" title="Permalink to this headline">¶</a></h5>
+<p>storage.&lt;name&gt;.free_space</p>
+<blockquote>
+<div><p>Type: BYTES</p>
+<p>Readable from: client, backend</p>
+<p>Free space available in the named stevedore. Only available for
+the malloc stevedore.</p>
+</div></blockquote>
+<p>storage.&lt;name&gt;.used_space</p>
+<blockquote>
+<div><p>Type: BYTES</p>
+<p>Readable from: client, backend</p>
+<p>Used space in the named stevedore. Only available for the malloc
+stevedore.</p>
+</div></blockquote>
+<p>storage.&lt;name&gt;.happy</p>
+<blockquote>
+<div><p>Type: BOOL</p>
+<p>Readable from: client, backend</p>
+<p>Health status for the named stevedore. Not available in any of the
+current stevedores.</p>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="functions">
+<h4>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h4>
+<p>The following built-in functions are available:</p>
+<div class="section" id="ban-string">
+<span id="vcl-7-ban"></span><h5>ban(STRING)<a class="headerlink" href="#ban-string" title="Permalink to this headline">¶</a></h5>
+<blockquote>
+<div><p>Invalidates all objects in cache that match the given expression with the
+ban mechanism.</p>
+<p>The format of <em>STRING</em> is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">field</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">operator</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">arg</span><span class="o">&gt;</span> <span class="p">[</span><span class="o">&amp;&amp;</span> <span class="o">&lt;</span><span class="n">field</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">oper</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">arg</span><span class="o">&gt;</span> <span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+<ul>
+<li><p class="first"><em>&lt;field&gt;</em>:</p>
+<ul>
+<li><p class="first">string fields:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">req.url</span></code>: The request url</li>
+<li><code class="docutils literal"><span class="pre">req.http.*</span></code>: Any request header</li>
+<li><code class="docutils literal"><span class="pre">obj.status</span></code>: The cache object status</li>
+<li><code class="docutils literal"><span class="pre">obj.http.*</span></code>: Any cache object header</li>
+</ul>
+<p><code class="docutils literal"><span class="pre">obj.status</span></code> is treated as a string despite the fact that it
+is actually an integer.</p>
+</li>
+<li><p class="first">duration fields:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">obj.ttl</span></code>: Remaining ttl at the time the ban is issued</li>
+<li><code class="docutils literal"><span class="pre">obj.age</span></code>: Object age at the time the ban is issued</li>
+<li><code class="docutils literal"><span class="pre">obj.grace</span></code>: The grace time of the object</li>
+<li><code class="docutils literal"><span class="pre">obj.keep</span></code>: The keep time of the object</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p class="first"><em>&lt;operator&gt;</em>:</p>
+<ul>
+<li><p class="first">for all fields:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">==</span></code>: <em>&lt;field&gt;</em> and <em>&lt;arg&gt;</em> are equal</li>
+<li><code class="docutils literal"><span class="pre">!=</span></code>: <em>&lt;field&gt;</em> and <em>&lt;arg&gt;</em> are unequal</li>
+</ul>
+<p>strings are compared case sensitively</p>
+</li>
+<li><p class="first">for string fields:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">~</span></code>: <em>&lt;field&gt;</em> matches the regular expression <em>&lt;arg&gt;</em></li>
+<li><code class="docutils literal"><span class="pre">!~</span></code>:<em>&lt;field&gt;</em> does not match the regular expression <em>&lt;arg&gt;</em></li>
+</ul>
+</li>
+<li><p class="first">for duration fields:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">&gt;</span></code>: <em>&lt;field&gt;</em> is greater than <em>&lt;arg&gt;</em></li>
+<li><code class="docutils literal"><span class="pre">&gt;=</span></code>: <em>&lt;field&gt;</em> is greater than or equal to <em>&lt;arg&gt;</em></li>
+<li><code class="docutils literal"><span class="pre">&lt;</span></code>: <em>&lt;field&gt;</em> is less than <em>&lt;arg&gt;</em></li>
+<li><code class="docutils literal"><span class="pre">&lt;=</span></code>: <em>&lt;field&gt;</em> is less than or equal to <em>&lt;arg&gt;</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p class="first"><em>&lt;arg&gt;</em>:</p>
+<ul>
+<li><p class="first">for string fields:</p>
+<p>Either a literal string or a regular expression. Note that
+<em>&lt;arg&gt;</em> does not use any of the string delimiters like <code class="docutils literal"><span class="pre">&quot;</span></code> or
+<code class="docutils literal"><span class="pre">{&quot;</span></code><em>...</em><code class="docutils literal"><span class="pre">&quot;}</span></code> used elsewhere in varnish. To match
+against strings containing whitespace, regular expressions
+containing <code class="docutils literal"><span class="pre">\s</span></code> can be used.</p>
+</li>
+<li><p class="first">for duration fields:</p>
+<p>A VCL duration like <code class="docutils literal"><span class="pre">10s</span></code>, <code class="docutils literal"><span class="pre">5m</span></code> or <code class="docutils literal"><span class="pre">1h</span></code>, see <a class="reference internal" href="#durations">Durations</a></p>
+</li>
+</ul>
+</li>
+</ul>
+<p>Expressions can be chained using the <em>and</em> operator <code class="docutils literal"><span class="pre">&amp;&amp;</span></code>. For <em>or</em>
+semantics, use several bans.</p>
+<p>The unset <em>&lt;field&gt;</em> is not equal to any string, such that, for a
+non-existing header, the operators <code class="docutils literal"><span class="pre">==</span></code> and <code class="docutils literal"><span class="pre">~</span></code> always evaluate
+as false, while the operators <code class="docutils literal"><span class="pre">!=</span></code> and <code class="docutils literal"><span class="pre">!~</span></code> always evaluate as
+true, respectively, for any value of <em>&lt;arg&gt;</em>.</p>
+</div></blockquote>
+</div>
+<div class="section" id="hash-data-input">
+<h5>hash_data(input)<a class="headerlink" href="#hash-data-input" title="Permalink to this headline">¶</a></h5>
+<blockquote>
+<div>Adds an input to the hash input. In the built-in VCL <code class="docutils literal"><span class="pre">hash_data()</span></code>
+is called on the host and URL of the request. Available in <code class="docutils literal"><span class="pre">vcl_hash</span></code>.</div></blockquote>
+</div>
+<div class="section" id="synthetic-string">
+<h5>synthetic(STRING)<a class="headerlink" href="#synthetic-string" title="Permalink to this headline">¶</a></h5>
+<blockquote>
+<div><p>Prepare a synthetic response body containing the <em>STRING</em>. Available
+in <code class="docutils literal"><span class="pre">vcl_synth</span></code> and <code class="docutils literal"><span class="pre">vcl_backend_error</span></code>.</p>
+<p>Identical to <code class="docutils literal"><span class="pre">set</span> <span class="pre">resp.body</span></code> /  <code class="docutils literal"><span class="pre">set</span> <span class="pre">beresp.body</span></code>.</p>
+</div></blockquote>
+</div>
+<div class="section" id="regsub-str-regex-sub">
+<h5>regsub(str, regex, sub)<a class="headerlink" href="#regsub-str-regex-sub" title="Permalink to this headline">¶</a></h5>
+<blockquote>
+<div>Returns a copy of <em>str</em> with the first occurrence of the regular
+expression <em>regex</em> replaced with <em>sub</em>. Within <em>sub</em>, <code class="docutils literal"><span class="pre">\0</span></code> (which
+can also be spelled <code class="docutils literal"><span class="pre">\&amp;</span></code>) is replaced with the entire matched
+string, and <code class="docutils literal"><span class="pre">\</span></code><em>n</em> is replaced with the contents of subgroup <em>n</em>
+in the matched string.</div></blockquote>
+</div>
+<div class="section" id="regsuball-str-regex-sub">
+<h5>regsuball(str, regex, sub)<a class="headerlink" href="#regsuball-str-regex-sub" title="Permalink to this headline">¶</a></h5>
+<blockquote>
+<div>As <code class="docutils literal"><span class="pre">regsub()</span></code>, but this replaces all occurrences.</div></blockquote>
+<p>For converting or casting VCL values between data types use the functions
+available in the std VMOD.</p>
+</div>
+</div>
+</div>
+<div class="section" id="versioning">
+<h3>Versioning<a class="headerlink" href="#versioning" title="Permalink to this headline">¶</a></h3>
+<p>Multiple versions of the VCL syntax can coexist within certain
+constraints.</p>
+<p>The VCL syntax version at the start of VCL file specified with <code class="docutils literal"><span class="pre">-f</span></code>
+sets the hard limit that cannot be exceeded anywhere, and it selects
+the appropriate version of the builtin VCL.</p>
+<p>That means that you can never include <code class="docutils literal"><span class="pre">vcl</span> <span class="pre">9.1;</span></code> from <code class="docutils literal"><span class="pre">vcl</span> <span class="pre">8.7;</span></code>,
+but the opposite <em>may</em> be possible, to the extent the compiler
+supports it.</p>
+<p>Files pulled in via <code class="docutils literal"><span class="pre">include</span></code> do not need to have a
+<code class="docutils literal"><span class="pre">vcl</span></code> <em>X.Y</em><code class="docutils literal"><span class="pre">;</span></code> but it may be a good idea to do it anyway, to
+not have surprises in the future.  The syntax version set in an
+included file only applies to that file and any files it includes -
+unless these set their own VCL syntax version.</p>
+<p>The version of Varnish this file belongs to supports syntax 4.0 only.</p>
+</div>
+<div class="section" id="examples">
+<h3>EXAMPLES<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h3>
+<p>For examples, please see the online documentation.</p>
+</div>
+<div class="section" id="see-also">
+<h3>SEE ALSO<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><a class="reference internal" href="varnishd.html#varnishd-1"><span class="std std-ref">varnishd</span></a></li>
+<li><a class="reference internal" href="vmod_directors.html#vmod-directors-3"><span class="std std-ref">VMOD directors - Varnish Directors Module</span></a></li>
+<li><a class="reference internal" href="vmod_std.html#vmod-std-3"><span class="std std-ref">VMOD std - Varnish Standard Module</span></a></li>
+</ul>
+</div>
+<div class="section" id="history">
+<h3>HISTORY<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h3>
+<p>VCL was developed by Poul-Henning Kamp in cooperation with Verdens
+Gang AS, Redpill Linpro and Varnish Software.  This manual page is
+written by Per Buer, Poul-Henning Kamp, Martin Blix Grydeland,
+Kristian Lyngstøl, Lasse Karstensen and possibly others.</p>
+</div>
+<div class="section" id="copyright">
+<h3>COPYRIGHT<a class="headerlink" href="#copyright" title="Permalink to this headline">¶</a></h3>
+<p>This document is licensed under the same license as Varnish
+itself. See LICENSE for details.</p>
+<ul class="simple">
+<li>Copyright (c) 2006 Verdens Gang AS</li>
+<li>Copyright (c) 2006-2015 Varnish Software AS</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">VCL</a><ul>
+<li><a class="reference internal" href="#varnish-configuration-language">Varnish Configuration Language</a><ul>
+<li><a class="reference internal" href="#description">DESCRIPTION</a><ul>
+<li><a class="reference internal" href="#operators">Operators</a></li>
+<li><a class="reference internal" href="#conditionals">Conditionals</a></li>
+<li><a class="reference internal" href="#strings-booleans-time-duration-integers-and-real-numbers">Strings, booleans, time, duration, integers and real numbers</a><ul>
+<li><a class="reference internal" href="#strings">Strings</a></li>
+<li><a class="reference internal" href="#booleans">Booleans</a></li>
+<li><a class="reference internal" href="#time">Time</a></li>
+<li><a class="reference internal" href="#durations">Durations</a></li>
+<li><a class="reference internal" href="#integers">Integers</a></li>
+<li><a class="reference internal" href="#real-numbers">Real numbers</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#regular-expressions">Regular Expressions</a></li>
+<li><a class="reference internal" href="#include-statement">Include statement</a></li>
+<li><a class="reference internal" href="#import-statement">Import statement</a></li>
+<li><a class="reference internal" href="#comments">Comments</a></li>
+<li><a class="reference internal" href="#backend-definition">Backend definition</a></li>
+<li><a class="reference internal" href="#probes">Probes</a></li>
+<li><a class="reference internal" href="#access-control-list-acl">Access Control List (ACL)</a></li>
+<li><a class="reference internal" href="#vcl-objects">VCL objects</a></li>
+<li><a class="reference internal" href="#subroutines">Subroutines</a><ul>
+<li><a class="reference internal" href="#return-statements">Return statements</a></li>
+<li><a class="reference internal" href="#multiple-subroutines">Multiple subroutines</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#vcl-variables">VCL Variables</a><ul>
+<li><a class="reference internal" href="#local-server-remote-and-client">local, server, remote and client</a></li>
+<li><a class="reference internal" href="#req-and-req-top">req and req_top</a></li>
+<li><a class="reference internal" href="#bereq">bereq</a></li>
+<li><a class="reference internal" href="#beresp">beresp</a></li>
+<li><a class="reference internal" href="#obj">obj</a></li>
+<li><a class="reference internal" href="#resp">resp</a></li>
+<li><a class="reference internal" href="#special-variables">Special variables</a></li>
+<li><a class="reference internal" href="#sess">sess</a></li>
+<li><a class="reference internal" href="#storage">storage</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#ban-string">ban(STRING)</a></li>
+<li><a class="reference internal" href="#hash-data-input">hash_data(input)</a></li>
+<li><a class="reference internal" href="#synthetic-string">synthetic(STRING)</a></li>
+<li><a class="reference internal" href="#regsub-str-regex-sub">regsub(str, regex, sub)</a></li>
+<li><a class="reference internal" href="#regsuball-str-regex-sub">regsuball(str, regex, sub)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#versioning">Versioning</a></li>
+<li><a class="reference internal" href="#examples">EXAMPLES</a></li>
+<li><a class="reference internal" href="#see-also">SEE ALSO</a></li>
+<li><a class="reference internal" href="#history">HISTORY</a></li>
+<li><a class="reference internal" href="#copyright">COPYRIGHT</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">The Varnish Reference Manual</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="states.html"
+                        title="next chapter">Varnish Processing States</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/reference/vcl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="states.html" title="Varnish Processing States"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="The Varnish Reference Manual"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Reference Manual</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

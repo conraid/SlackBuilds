@@ -1,0 +1,29 @@
+varnishtest "error object allocation with persistent"
+
+feature persistent_storage
+
+server s1 {
+	rxreq
+	txresp
+} -start
+
+shell "rm -f ${tmpdir}/_.per"
+
+varnish v1 \
+	-arg "-pfeature=+wait_silo" \
+	-arg "-sdeprecated_persistent,${tmpdir}/_.per,5m" \
+	-vcl+backend {
+
+	sub vcl_backend_response {
+		set beresp.uncacheable = false;
+		set beresp.ttl = 0s;
+		set beresp.status = 751;
+		return (deliver);
+	}
+} -start
+
+client c1 {
+	txreq -url "/"
+	rxresp
+	expect resp.status == 751
+} -run

@@ -1,0 +1,85 @@
+varnishtest "request resp and hdr length limits"
+
+server s1 {
+	rxreq
+	expect req.url == "/1"
+	txresp \
+		-hdr "1...5: ..0....5....0....5....0....5....0" \
+		-bodylen 1
+	rxreq
+	expect req.url == "/2"
+	txresp \
+		-hdr "1...5: ..0....5....0....5....0....5....0." \
+		-bodylen 2
+	accept
+	rxreq
+	expect req.url == "/3"
+	txresp \
+		-hdr "1...5: ..0....5....0\n ..5....0....5....0" \
+		-bodylen 3
+	rxreq
+	expect req.url == "/4"
+	txresp \
+		-hdr "1...5: ..0....5....0\n ..5....0....5....0." \
+		-bodylen 4
+
+	accept
+	rxreq
+	expect req.url == "/5"
+	# Each line is 32 bytes. Total: 32 * 8 == 256
+	send "HTTP/1.1 200 OK....0....5....0\r\n"
+	send "Content-Length:              4\r\n"
+	send "1...5: ..0....5....0....5....0\r\n"
+	send "1...5: ..0....5....0....5....0\r\n"
+	send "1...5: ..0....5....0....5....0\r\n"
+	send "1...5: ..0....5....0....5....0\r\n"
+	send "1...5: ..0....5....0....5....0\r\n"
+	send "1...5: ..0....5....0....5...\r\n\r\n"
+	send "asdf"
+
+	rxreq
+	expect req.url == "/6"
+	# Each line is 32 except last, which is 33. Total: 32 * 7 + 33 == 257
+	send "HTTP/1.1 200 OK....0....5....0\r\n"
+	send "Content-Length:              4\r\n"
+	send "1...5: ..0....5....0....5....0\r\n"
+	send "1...5: ..0....5....0....5....0\r\n"
+	send "1...5: ..0....5....0....5....0\r\n"
+	send "1...5: ..0....5....0....5....0\r\n"
+	send "1...5: ..0....5....0....5....0\r\n"
+	send "1...5: ..0....5....0....5....\r\n\r\n"
+	send "asdf"
+} -start
+
+varnish v1 \
+	-vcl+backend {
+	} -start
+
+varnish v1 -cliok "param.set http_resp_size 256"
+varnish v1 -cliok "param.set http_resp_hdr_len 40"
+
+client c1 {
+	txreq -url "/1"
+	rxresp
+	expect resp.status == 200
+	txreq -url "/2"
+	rxresp
+	expect resp.status == 503
+} -run
+client c1 {
+	txreq -url "/3"
+	rxresp
+	expect resp.status == 200
+	txreq -url "/4"
+	rxresp
+	expect resp.status == 503
+} -run
+client c1 {
+	txreq -url "/5"
+	rxresp
+	expect resp.status == 200
+
+	txreq -url "/6"
+	rxresp
+	expect resp.status == 503
+} -run

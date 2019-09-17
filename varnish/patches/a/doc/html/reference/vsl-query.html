@@ -1,0 +1,453 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>vsl-query &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="VTC" href="vtc.html" />
+    <link rel="prev" title="VSL" href="vsl.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="vtc.html" title="VTC"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vsl.html" title="VSL"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Varnish Reference Manual</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="vsl-query">
+<span id="vsl-query-7"></span><h1>vsl-query<a class="headerlink" href="#vsl-query" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="varnish-vsl-query-expressions">
+<h2>Varnish VSL Query Expressions<a class="headerlink" href="#varnish-vsl-query-expressions" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Manual section:</th><td class="field-body">7</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="overview">
+<h3>OVERVIEW<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h3>
+<p>The Varnish VSL Query Expressions extracts transactions from the
+Varnish shared memory log, and perform queries on the transactions
+before reporting matches.</p>
+<p>A transaction is a set of log lines that belongs together, e.g. a
+client request or a backend request. The API monitors the log, and
+collects all log records that make up a transaction before reporting
+on that transaction. Transactions can also be grouped, meaning backend
+transactions are reported together with the client transaction that
+initiated it.</p>
+<p>A query is run on a group of transactions. A query expression is true
+if there is a log record within the group that satisfies the
+condition. It is false only if none of the log records satisfies the
+condition. Query expressions can be combined using boolean functions.
+In addition to log records, it is possible to query transaction ids
+(vxid) in query.</p>
+</div>
+<div class="section" id="grouping">
+<h3>GROUPING<a class="headerlink" href="#grouping" title="Permalink to this headline">¶</a></h3>
+<p>When grouping transactions, there is a hierarchy structure showing
+which transaction initiated what. The level increases by one on an
+'initiated by' relation, so for example a backend transaction will
+have one higher level than the client transaction that initiated it on
+a cache miss. Request restart transactions don't get their level
+increased to make it predictable.</p>
+<p>Levels start counting at 1, except when using raw where it will always
+be 0.</p>
+<p>The grouping modes are:</p>
+<ul>
+<li><p class="first"><code class="docutils literal"><span class="pre">session</span></code></p>
+<p>All transactions initiated by a client connection are reported
+together. Client connections are open ended when using HTTP
+keep-alives, so it is undefined when the session will be
+reported. If the transaction timeout period is exceeded an
+incomplete session will be reported. Non-transactional data (vxid
+== 0) is not reported.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">request</span></code></p>
+<p>Transactions are grouped by request, where the set will include the
+request itself as well as any backend requests or ESI-subrequests.
+Session data and non-transactional data (vxid == 0) is not
+reported.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">vxid</span></code></p>
+<p>Transactions are not grouped, so each vxid is reported in its
+entirety. Sessions, requests, ESI-requests and backend requests are
+all reported individually. Non-transactional data is not reported
+(vxid == 0). This is the default.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">raw</span></code></p>
+<p>Every log record will make up a transaction of its own. All data,
+including non-transactional data will be reported.</p>
+</li>
+</ul>
+<div class="section" id="transaction-hierarchy">
+<h4>Transaction Hierarchy<a class="headerlink" href="#transaction-hierarchy" title="Permalink to this headline">¶</a></h4>
+<p>Example transaction hierarchy using request grouping mode</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Lvl</span> <span class="mi">1</span><span class="p">:</span> <span class="n">Client</span> <span class="n">request</span> <span class="p">(</span><span class="n">cache</span> <span class="n">miss</span><span class="p">)</span>
+  <span class="n">Lvl</span> <span class="mi">2</span><span class="p">:</span> <span class="n">Backend</span> <span class="n">request</span>
+  <span class="n">Lvl</span> <span class="mi">2</span><span class="p">:</span> <span class="n">ESI</span> <span class="n">subrequest</span> <span class="p">(</span><span class="n">cache</span> <span class="n">miss</span><span class="p">)</span>
+    <span class="n">Lvl</span> <span class="mi">3</span><span class="p">:</span> <span class="n">Backend</span> <span class="n">request</span>
+    <span class="n">Lvl</span> <span class="mi">3</span><span class="p">:</span> <span class="n">Backend</span> <span class="n">request</span> <span class="p">(</span><span class="n">VCL</span> <span class="n">restart</span><span class="p">)</span>
+    <span class="n">Lvl</span> <span class="mi">3</span><span class="p">:</span> <span class="n">ESI</span> <span class="n">subrequest</span> <span class="p">(</span><span class="n">cache</span> <span class="n">miss</span><span class="p">)</span>
+      <span class="n">Lvl</span> <span class="mi">4</span><span class="p">:</span> <span class="n">Backend</span> <span class="n">request</span>
+  <span class="n">Lvl</span> <span class="mi">2</span><span class="p">:</span> <span class="n">ESI</span> <span class="n">subrequest</span> <span class="p">(</span><span class="n">cache</span> <span class="n">hit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="memory-usage">
+<h3>MEMORY USAGE<a class="headerlink" href="#memory-usage" title="Permalink to this headline">¶</a></h3>
+<p>The API will use pointers to shared memory log data as long as
+possible to keep memory usage at a minimum. But as the shared memory
+log is a ring buffer, data will get overwritten eventually, so the API
+creates local copies of referenced log data when varnishd comes close
+to overwriting still unreported content.</p>
+<p>This process avoids loss of log data in many scenarios, but it is not
+failsafe: Overruns where varnishd &quot;overtakes&quot; the log reader process
+in the ring buffer can still happen when API clients cannot keep up
+reading and/or copying, for instance due to output blocking.</p>
+<p>Though being unrelated to grouping in principle, copying of log data
+is particularly relevant for session grouping together with long
+lasting client connections - for this grouping, the logging API client
+process is likely to consume relevant amounts of memory. As the vxid
+grouping also logs (potentially long lasting) sessions, it is also
+likely to require memory for copies of log entries, but far less than
+session grouping.</p>
+</div>
+<div class="section" id="query-language">
+<h3>QUERY LANGUAGE<a class="headerlink" href="#query-language" title="Permalink to this headline">¶</a></h3>
+<p>A query expression consists of record selection criteria, and
+optionally an operator and a value to match against the selected
+records.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">record</span> <span class="n">selection</span> <span class="n">criteria</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">operator</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">operand</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Additionally, a query expression can occur on the transaction
+itself rather than log records belonging to the transaction.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">vxid</span> <span class="o">&lt;</span><span class="n">numerical</span> <span class="n">operator</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">integer</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>A <code class="docutils literal"><span class="pre">vxid</span></code> query allows you to directly target a specific transacion,
+whose id can be obtained from an <code class="docutils literal"><span class="pre">X-Varnish</span></code> HTTP header, the
+default &quot;guru meditation&quot; error page, or <code class="docutils literal"><span class="pre">Begin</span></code> and <code class="docutils literal"><span class="pre">Link</span></code> log
+records.</p>
+<p>A query must fit on a single line, but it is possible to pass multiple
+queries at once, one query per line. Empty lines are ignored, and the
+list of queries is treated as if the 'or' operator was used to combine
+them.</p>
+<p>For example this list of queries:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># catch varnish errors</span>
+<span class="o">*</span><span class="n">Error</span>
+
+<span class="c1"># catch backend errors</span>
+<span class="n">BerespStatus</span> <span class="o">&gt;=</span> <span class="mi">500</span>
+</pre></div>
+</div>
+<p>is identical to this query:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="o">*</span><span class="n">Error</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">BerespStatus</span> <span class="o">&gt;=</span> <span class="mi">500</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Comments can be used and will be ignored, they start with the <code class="docutils literal"><span class="pre">'#'</span></code>
+character, which may be more useful when the query is read from a file.</p>
+<p>For very long queries that couldn't easily be split into multiple queries
+it is possible to break them into multiple lines with a backslash preceding
+an end of line.</p>
+<p>For example this query:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">BerespStatus</span> <span class="o">&gt;=</span> <span class="mi">500</span>
+</pre></div>
+</div>
+<p>is identical to this query:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">BerespStatus</span> \
+<span class="o">&gt;=</span> \
+<span class="mi">500</span>
+</pre></div>
+</div>
+<p>A backslash-newline sequence doesn't continue a comment on the next line
+and isn't allowed in a quoted string.</p>
+<div class="section" id="record-selection-criteria">
+<h4>Record selection criteria<a class="headerlink" href="#record-selection-criteria" title="Permalink to this headline">¶</a></h4>
+<p>The record selection criteria determines what kind records from the
+transaction group the expression applies to. Syntax:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="n">level</span><span class="p">}</span><span class="n">taglist</span><span class="p">:</span><span class="n">record</span><span class="o">-</span><span class="n">prefix</span><span class="p">[</span><span class="n">field</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Taglist is mandatory, the other components are optional.</p>
+<p>The level limits the expression to a transaction at that level. If
+left unspecified, the expression is applied to transactions at all
+levels. Level is a positive integer or zero. If level is followed by a
+'+' character, it expresses greater than or equal. If level is
+followed by a '-', it expresses less than or equal.</p>
+<p>The taglist is a comma-separated list of VSL record tags that this
+expression should be checked against. Each list element can be a tag
+name or a tag glob. Globs allow a '*' either in the beginning of
+the name or at the end, and will select all tags that match either the
+prefix or subscript. A single '*' will select all tags.</p>
+<p>The record prefix will further limit the matches to those records that
+has this prefix as their first part of the record content followed by a
+colon. The part of the log record matched against will then be limited
+to what follows the prefix and colon. This is useful when matching
+against specific HTTP headers. The record prefix matching is done case
+insensitive.</p>
+<p>The field will, if present, treat the log record as a white space
+separated list of fields, and only the nth part of the record will be
+matched against. Fields start counting at 1.</p>
+<p>An expression using only a record selection criteria will be true if
+there is any record in the transaction group that is selected by the
+criteria.</p>
+</div>
+<div class="section" id="operators">
+<h4>Operators<a class="headerlink" href="#operators" title="Permalink to this headline">¶</a></h4>
+<p>The following matching operators are available:</p>
+<ul>
+<li><p class="first">== != &lt; &lt;= &gt; &gt;=</p>
+<p>Numerical comparison. The record contents will be converted to
+either an integer or a float before comparison, depending on the
+type of the operand.</p>
+</li>
+<li><p class="first">eq ne</p>
+<p>String comparison. 'eq' tests string equality, 'ne' tests for not
+equality.</p>
+</li>
+<li><p class="first">~ !~</p>
+<p>Regular expression matching. '~' is a positive match, '!~' is a
+non-match.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="operand">
+<h4>Operand<a class="headerlink" href="#operand" title="Permalink to this headline">¶</a></h4>
+<p>The operand is the value the selected records will be matched
+against.</p>
+<p>An operand can be quoted or unquoted. Quotes can be either single or
+double quotes, and for quoted operands a backslash can be used to
+escape the quotes.</p>
+<p>Unquoted operands can only consist of the following characters:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">-</span><span class="n">z</span> <span class="n">A</span><span class="o">-</span><span class="n">Z</span> <span class="mi">0</span><span class="o">-</span><span class="mi">9</span> <span class="o">+</span> <span class="o">-</span> <span class="n">_</span> <span class="o">.</span> <span class="o">*</span>
+</pre></div>
+</div>
+<p>The following types of operands are available:</p>
+<ul>
+<li><p class="first">Integer</p>
+<p>A number without any fractional part, valid for the numerical
+comparison operators. The integer type is used when the operand does
+not contain any period (.) characters.</p>
+</li>
+<li><p class="first">Float</p>
+<p>A number with a fractional part, valid for the numerical comparison
+operators. The float type is used when the operand does contain a
+period (.) character.</p>
+</li>
+<li><p class="first">String</p>
+<p>A sequence of characters, valid for the string equality operators.</p>
+</li>
+<li><p class="first">Regular expression</p>
+<p>A PCRE regular expression. Valid for the regular expression
+operators.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="boolean-functions">
+<h4>Boolean functions<a class="headerlink" href="#boolean-functions" title="Permalink to this headline">¶</a></h4>
+<p>Query expressions can be linked together using boolean functions. The
+following are available, in decreasing precedence:</p>
+<ul>
+<li><p class="first">not &lt;expr&gt;</p>
+<p>Inverts the result of &lt;expr&gt;</p>
+</li>
+<li><p class="first">&lt;expr1&gt; and &lt;expr2&gt;</p>
+<p>True only if both expr1 and expr2 are true</p>
+</li>
+<li><p class="first">&lt;expr1&gt; or &lt;expr2&gt;</p>
+<p>True if either of expr1 or expr2 is true</p>
+</li>
+</ul>
+<p>Expressions can be grouped using parenthesis.</p>
+</div>
+</div>
+<div class="section" id="query-expression-examples">
+<h3>QUERY EXPRESSION EXAMPLES<a class="headerlink" href="#query-expression-examples" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">Transaction group contains a request URL that equals to &quot;/foo&quot;</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ReqURL</span> <span class="n">eq</span> <span class="s2">&quot;/foo&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Transaction group contains a request cookie header</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ReqHeader</span><span class="p">:</span><span class="n">cookie</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Transaction group doesn't contain a request cookie header</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="ow">not</span> <span class="n">ReqHeader</span><span class="p">:</span><span class="n">cookie</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Client request where internal handling took more than 800ms.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Timestamp</span><span class="p">:</span><span class="n">Process</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.8</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Transaction group contains a request user-agent header that contains
+&quot;iPod&quot; and the request delivery time exceeds 1 second</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ReqHeader</span><span class="p">:</span><span class="n">user</span><span class="o">-</span><span class="n">agent</span> <span class="o">~</span> <span class="s2">&quot;iPod&quot;</span> <span class="ow">and</span> <span class="n">Timestamp</span><span class="p">:</span><span class="n">Resp</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">1.</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Transaction group contains a backend response status larger than or
+equal to 500</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">BerespStatus</span> <span class="o">&gt;=</span> <span class="mi">500</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Transaction group contains a request response status of 304, but
+where the request did not contain an if-modified-since header</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">RespStatus</span> <span class="o">==</span> <span class="mi">304</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ReqHeader</span><span class="p">:</span><span class="k">if</span><span class="o">-</span><span class="n">modified</span><span class="o">-</span><span class="n">since</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Transactions that have had backend failures or long delivery time on
+their ESI subrequests. (Assumes request grouping mode).</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">BerespStatus</span> <span class="o">&gt;=</span> <span class="mi">500</span> <span class="ow">or</span> <span class="p">{</span><span class="mi">2</span><span class="o">+</span><span class="p">}</span><span class="n">Timestamp</span><span class="p">:</span><span class="n">Process</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">1.</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Log non-transactional errors. (Assumes raw grouping mode).</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">vxid</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">Error</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="history">
+<h3>HISTORY<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h3>
+<p>This document was written by Martin Blix Grydeland.</p>
+</div>
+<div class="section" id="copyright">
+<h3>COPYRIGHT<a class="headerlink" href="#copyright" title="Permalink to this headline">¶</a></h3>
+<p>This document is licensed under the same licence as Varnish
+itself. See LICENCE for details.</p>
+<ul class="simple">
+<li>Copyright (c) 2006 Verdens Gang AS</li>
+<li>Copyright (c) 2006-2015 Varnish Software AS</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">vsl-query</a><ul>
+<li><a class="reference internal" href="#varnish-vsl-query-expressions">Varnish VSL Query Expressions</a><ul>
+<li><a class="reference internal" href="#overview">OVERVIEW</a></li>
+<li><a class="reference internal" href="#grouping">GROUPING</a><ul>
+<li><a class="reference internal" href="#transaction-hierarchy">Transaction Hierarchy</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#memory-usage">MEMORY USAGE</a></li>
+<li><a class="reference internal" href="#query-language">QUERY LANGUAGE</a><ul>
+<li><a class="reference internal" href="#record-selection-criteria">Record selection criteria</a></li>
+<li><a class="reference internal" href="#operators">Operators</a></li>
+<li><a class="reference internal" href="#operand">Operand</a></li>
+<li><a class="reference internal" href="#boolean-functions">Boolean functions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#query-expression-examples">QUERY EXPRESSION EXAMPLES</a></li>
+<li><a class="reference internal" href="#history">HISTORY</a></li>
+<li><a class="reference internal" href="#copyright">COPYRIGHT</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vsl.html"
+                        title="previous chapter">VSL</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vtc.html"
+                        title="next chapter">VTC</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/reference/vsl-query.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="vtc.html" title="VTC"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vsl.html" title="VSL"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Reference Manual</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

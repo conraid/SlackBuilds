@@ -1,0 +1,79 @@
+varnishtest "Push corners in new ESI parser"
+
+server s1 {
+	rxreq
+	txresp -nolen -hdr "Transfer-encoding: chunked"
+	chunked {<1></esi:comment foo><1>}
+	chunked {<2><esi:comment / ><esi:comment doo><2>}
+	chunked {<3><esi:remove foo="bar"></esi:remove><3>}
+	chunked {<4><esi:include src="foo"><esi:incl><4>}
+	chunked {<H1><esi:remove>}
+	chunkedlen 256
+	chunked {</esi:remove></H1>}
+
+	chunked {<H2><esi:remove>}
+	chunkedlen 65536
+	chunked {</esi:remove></H2>}
+
+	chunked {<esi:comment/>}
+	chunkedlen 256
+	chunked {<esi:comment/>}
+	chunkedlen 65536
+	chunked {<esi:comment/>}
+
+	chunked {<!--e}
+	delay .4
+	chunked {nd:comment>}
+
+	chunkedlen 0
+} -start
+
+# The included object gets served from a different backend.
+# This is to avoid a race between when a backend connection
+# gets put up for reuse because of background fetches in
+# Varnish 4
+server s2 {
+	rxreq
+	expect req.url == "bar/foo"
+	txresp -body {<INCL>}
+} -start
+
+varnish v1 -vcl+backend {
+	sub vcl_backend_fetch {
+		if (bereq.url != "bar") {
+			set bereq.backend = s2;
+		}
+	}
+
+	sub vcl_backend_response {
+		if (bereq.url == "bar") {
+			set beresp.do_esi = true;
+		}
+	}
+} -start
+
+varnish v1 -cliok "param.set debug +esi_chop"
+varnish v1 -cliok "param.set debug +syncvsl"
+
+logexpect l1 -v v1 -g vxid {
+	expect * * Fetch_Body
+	expect 0 = ESI_xmlerror {^ERR after 3 ESI 1.0 </esi:comment> illegal end-tag$}
+	expect 0 = ESI_xmlerror {^ERR after 27 XML 1.0 '>' does not follow '/' in tag$}
+	expect 0 = ESI_xmlerror {^ERR after 43 ESI 1.0 <esi:comment> needs final '/'$}
+	expect 0 = ESI_xmlerror {^WARN after 107 ESI 1.0 <esi:include> lacks final '/'$}
+	expect 0 = ESI_xmlerror {^ERR after 130 ESI 1.0 <esi:bogus> element$}
+	expect 0 = ESI_xmlerror {^ERR after 131837 VEP ended inside a tag$}
+	expect 0 = BackendReuse
+} -start
+
+client c1 {
+	txreq  -url bar
+	rxresp
+	expect resp.status == 200
+	expect resp.bodylen == 65856
+} -run
+
+logexpect l1 -wait
+
+varnish v1 -expect esi_errors == 5
+varnish v1 -expect esi_warnings == 1

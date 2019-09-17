@@ -1,0 +1,15 @@
+varnishtest "Test vcl_backend_error is called if vcl_backend_fetch fails"
+
+varnish v1 -vcl {
+	backend default { .host = "${bad_backend}"; }
+
+	sub vcl_backend_error {
+		set beresp.status = 299;
+	}
+} -start
+
+client c1 {
+	txreq -url "/"
+	rxresp
+	expect resp.status == 299
+} -run

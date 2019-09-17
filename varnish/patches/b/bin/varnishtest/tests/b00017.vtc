@@ -1,0 +1,26 @@
+varnishtest "Check that we do not close one error"
+
+varnish v1 -vcl {
+	backend foo {
+		.host = "${bad_backend}";
+	}
+	sub vcl_recv {
+		return (synth(888));
+	}
+
+	sub vcl_synth {
+		set resp.body = "Custom vcl_synth's body";
+		return (deliver);
+	}
+} -start
+
+client c1 {
+	txreq -url "/"
+	rxresp
+	expect resp.status == 888
+	expect resp.http.connection != close
+	expect resp.bodylen == 23
+	expect resp.body == "Custom vcl_synth's body"
+} -run
+
+varnish v1 -expect s_synth == 1

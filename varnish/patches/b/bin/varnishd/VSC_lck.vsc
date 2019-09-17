@@ -1,0 +1,56 @@
+..
+	This is *NOT* a RST file but the syntax has been chosen so
+	that it may become an RST file at some later date.
+
+.. varnish_vsc_begin::	lck
+	:oneliner:	Lock Counters
+	:order:		70
+
+	Counters which track the activity in the different classes
+	of mutex-locks.
+
+	The counts may be slightly wrong if there are more than one
+	lock instantiated in each class (ie: .creat > 1)
+
+.. varnish_vsc:: creat
+	:type:	counter
+	:level:	debug
+	:oneliner:	Created locks
+
+
+.. varnish_vsc:: destroy
+	:type:	counter
+	:level:	debug
+	:oneliner:	Destroyed locks
+
+
+.. varnish_vsc:: locks
+	:type:	counter
+	:level:	debug
+	:oneliner:	Lock Operations
+
+
+.. varnish_vsc:: dbg_busy
+	:type:	counter
+	:level:	debug
+	:oneliner:	Contended lock operations
+
+	If the ``lck`` debug bit is set: Lock operations which
+	returned EBUSY on the first locking attempt.
+
+	If the ``lck`` debug bit is unset, this counter will never be
+	incremented even if lock operations are contended.
+
+.. varnish_vsc:: dbg_try_fail
+	:type:	counter
+	:level:	debug
+	:oneliner:	Contended trylock operations
+
+	If the ``lck`` debug bit is set: Trylock operations which
+	returned EBUSY.
+
+	If the ``lck`` debug bit is unset, this counter will never be
+	incremented even if lock operations are contended.
+
+.. varnish_vsc_end::	lck
+

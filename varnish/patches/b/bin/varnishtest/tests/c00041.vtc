@@ -1,0 +1,112 @@
+varnishtest "test purging from vcl"
+
+server s1 {
+	rxreq
+	expect req.url == "/1"
+	expect req.http.foo == "foo1"
+	txresp -hdr "Vary: foo" -bodylen 1
+
+	rxreq
+	expect req.url == "/1"
+	expect req.http.foo == "foo2"
+	txresp -hdr "Vary: foo" -bodylen 2
+
+	rxreq
+	expect req.url == "/1"
+	expect req.http.foo == "foo2"
+	txresp -hdr "Vary: foo" -bodylen 12
+
+	rxreq
+	expect req.url == "/1"
+	expect req.http.foo == "foo1"
+	txresp -hdr "Vary: foo" -bodylen 11
+
+	rxreq
+	expect req.url == "/1"
+	expect req.http.foo == "foo3"
+	txresp -hdr "Vary: foo" -bodylen 23
+
+	rxreq
+	expect req.url == "/1"
+	expect req.http.foo == "foo1"
+	txresp -hdr "Vary: foo" -bodylen 21
+
+	rxreq
+	expect req.url == "/1"
+	expect req.http.foo == "foo2"
+	txresp -hdr "Vary: foo" -bodylen 22
+
+} -start
+
+varnish v1 -vcl+backend {
+	sub vcl_recv { if (req.http.purge == "yes") { return(purge); } }
+	sub vcl_purge {
+		if (req.http.restart == "yes") {
+			unset req.http.purge;
+			unset req.http.restart;
+			return(restart);
+		}
+	}
+} -start
+
+client c1 {
+	txreq -url "/1" -hdr "foo: foo1"
+	rxresp
+	expect resp.status == 200
+	expect resp.http.x-varnish == 1001
+	expect resp.bodylen == 1
+	delay .1
+
+	txreq -url "/1" -hdr "Foo: foo2"
+	rxresp
+	expect resp.status == 200
+	expect resp.http.x-varnish == 1003
+	expect resp.bodylen == 2
+	delay .1
+
+	txreq -url "/1" -hdr "foo: foo1"
+	rxresp
+	expect resp.status == 200
+	expect resp.http.x-varnish == "1005 1002"
+	expect resp.bodylen == 1
+	delay .1
+
+	txreq -url "/1" -hdr "Foo: foo2"
+	rxresp
+	expect resp.status == 200
+	expect resp.http.x-varnish == "1006 1004"
+	expect resp.bodylen == 2
+	delay .1
+
+	# Purge on hit
+	txreq -url "/1" -hdr "Foo: foo2" -hdr "purge: yes" -hdr "restart: yes"
+	rxresp
+	expect resp.status == 200
+	expect resp.bodylen == 12
+	delay .1
+
+	txreq -url "/1" -hdr "foo: foo1"
+	rxresp
+	expect resp.status == 200
+	expect resp.bodylen == 11
+	delay .1
+
+	# Purge on miss
+	txreq -url "/1" -hdr "Foo: foo3" -hdr "purge: yes" -hdr "restart: yes"
+	rxresp
+	expect resp.status == 200
+	expect resp.bodylen == 23
+	delay .1
+
+	txreq -url "/1" -hdr "foo: foo1"
+	rxresp
+	expect resp.status == 200
+	expect resp.bodylen == 21
+	delay .1
+
+	txreq -url "/1" -hdr "Foo: foo2"
+	rxresp
+	expect resp.status == 200
+	expect resp.bodylen == 22
+	delay .1
+} -run

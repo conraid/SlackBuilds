@@ -1,0 +1,32 @@
+varnishtest "test backend transmission corner cases"
+
+server s1 {
+	rxreq
+	txresp
+	rxreq
+	txresp -proto HTTP/1.0 -hdr "Connection: keep-alive"
+	rxreq
+	send "HTTP/1.1 200 OK\n"
+	send "Transfer-encoding: foobar\n"
+	send "\n"
+} -start
+
+varnish v1 -vcl+backend {
+	sub vcl_backend_response {
+		set beresp.do_stream = false;
+	}
+} -start
+
+client c1 {
+	txreq -url /foo
+	rxresp
+	expect resp.status == 200
+	expect resp.bodylen == 0
+	txreq -url /bar
+	rxresp
+	expect resp.status == 200
+	expect resp.bodylen == 0
+	txreq -url /barf
+	rxresp
+	expect resp.status == 503
+} -run

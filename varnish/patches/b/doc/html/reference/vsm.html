@@ -1,0 +1,192 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>VSM: Shared Memory Logging and Statistics &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="VMOD - Varnish Modules" href="vmod.html" />
+    <link rel="prev" title="varnishtop" href="varnishtop.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="vmod.html" title="VMOD - Varnish Modules"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="varnishtop.html" title="varnishtop"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Varnish Reference Manual</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="vsm-shared-memory-logging-and-statistics">
+<h1>VSM: Shared Memory Logging and Statistics<a class="headerlink" href="#vsm-shared-memory-logging-and-statistics" title="Permalink to this headline">¶</a></h1>
+<p>Varnish uses shared memory to export parameters, logging and
+statistics, because it is faster and much more efficient than
+regular files.</p>
+<p>&quot;Varnish Shared Memory&quot; or VSM, is the overall mechanism maintaining
+sets of shared memory files, each consisting a chunk of memory
+identified by a two-part name (class, ident).</p>
+<p>The Class indicates what type of data is stored in the chunk,
+for instance &quot;Arg&quot; for command line arguments useful for
+establishing an CLI connection to the varnishd, &quot;Stat&quot; for
+statistics counters (VSC) and &quot;Log&quot; for log records (VSL).</p>
+<p>The ident name part is mostly used with stats counters, where they
+identify dynamic counters, such as:</p>
+<blockquote>
+<div>SMA.Transient.c_bytes</div></blockquote>
+<div class="section" id="shared-memory-trickery">
+<h2>Shared memory trickery<a class="headerlink" href="#shared-memory-trickery" title="Permalink to this headline">¶</a></h2>
+<p>Shared memory is faster than regular files, but it is also slightly
+tricky in ways a regular logfile is not.</p>
+<p>When you open a file in &quot;append&quot; mode, the operating system guarantees
+that whatever you write will not overwrite existing data in the file.
+The neat result of this is that multiple processes or threads writing
+to the same file does not even need to know about each other, it all
+works just as you would expect.</p>
+<p>With a shared memory log, we get no such help from the kernel, the
+writers need to make sure they do not stomp on each other, and they
+need to make it possible and safe for the readers to access the
+data.</p>
+<p>The &quot;CS101&quot; way to deal with that, is to introduce locks, and much
+time is spent examining the relative merits of the many kinds of
+locks available.</p>
+<p>Inside the varnishd (worker) process, we use mutexes to guarantee
+consistency, both with respect to allocations, log entries and stats
+counters.</p>
+<p>We do not want a varnishncsa trying to push data through a stalled
+ssh connection to stall the delivery of content, so readers like
+that are purely read-only, they do not get to affect the varnishd
+process and that means no locks for them.</p>
+<p>Instead we use &quot;stable storage&quot; concepts, to make sure the view
+seen by the readers is consistent at all times.</p>
+<p>As long as you only add stuff, that is trivial, but taking away
+stuff, such as when a backend is taken out of the configuration,
+we need to give the readers a chance to discover this, a &quot;cooling
+off&quot; period.</p>
+</div>
+<div class="section" id="the-varnish-way">
+<h2>The Varnish way:<a class="headerlink" href="#the-varnish-way" title="Permalink to this headline">¶</a></h2>
+<p>When varnishd starts, it opens locked shared memory files, advising to
+use different -n arguments if an attempt is made to run multiple
+varnishd instances with the same name.</p>
+<p>Child processes each use their own shared memory files, since a worker
+process restart marks a clean break in operation anyway.</p>
+<p>To the extent possible, old shared memory files are marked as
+abandoned by setting the alloc_seq field to zero, which should be
+monitored by all readers of the VSM.</p>
+<p>Processes subscribing to VSM files for a long time, should notice
+if the VSM file goes &quot;silent&quot; and check that the file has not been
+renamed due to a child restart.</p>
+<p>Chunks inside the shared memory file form a linked list, and whenever
+that list changes, the alloc_seq field changes.</p>
+<p>The linked list and other metadata in the VSM file, works with
+offsets relative to the start address of where the VSM file is
+memory mapped, so it need not be mapped at any particular address.</p>
+<p>When new chunks are allocated, for instance when a new backend is
+added, they are appended to the list, no matter where they are
+located in the VSM file.</p>
+<p>When a chunk is freed, it will be taken out of the linked list of
+allocations, its length will be set to zero and alloc_seq will be
+changed to indicate a change of layout.  For the next 60 seconds
+the chunk will not be touched or reused, giving other subscribers
+a chance to discover the deallocation.</p>
+<p>The include file &lt;vapi/vsm.h&gt; provides the supported API for accessing
+VSM files.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">VSM: Shared Memory Logging and Statistics</a><ul>
+<li><a class="reference internal" href="#shared-memory-trickery">Shared memory trickery</a></li>
+<li><a class="reference internal" href="#the-varnish-way">The Varnish way:</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="varnishtop.html"
+                        title="previous chapter">varnishtop</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vmod.html"
+                        title="next chapter">VMOD - Varnish Modules</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/reference/vsm.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="vmod.html" title="VMOD - Varnish Modules"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="varnishtop.html" title="varnishtop"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Reference Manual</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

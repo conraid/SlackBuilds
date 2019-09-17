@@ -1,0 +1,24 @@
+varnishtest "ESI include is 204"
+
+server s1 {
+	rxreq
+	txresp -gzipbody {<A><esi:include src="/b"/></A>}
+	rxreq
+	expect req.url == /b
+	txresp -status 204 -nolen \
+	    -hdr "Content-encoding: gzip"
+} -start
+
+varnish v1 -vcl+backend {
+	sub vcl_backend_response {
+		set beresp.do_esi = true;
+	}
+} -start
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.body == "<A></A>"
+} -run
+
+varnish v1 -expect esi_errors == 0

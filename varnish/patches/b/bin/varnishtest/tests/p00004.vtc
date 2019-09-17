@@ -1,0 +1,67 @@
+varnishtest "Check object references"
+
+feature persistent_storage
+
+shell "rm -f ${tmpdir}/_.per"
+
+server s1 {
+	rxreq
+	txresp -hdr "Foo: foo"
+	rxreq
+	txresp -hdr "Bar: bar"
+} -start
+
+varnish v1 \
+	-arg "-pfeature=+wait_silo" \
+	-arg "-sdeprecated_persistent,${tmpdir}/_.per,5m" \
+	-arg "-pban_lurker_sleep=0" \
+	-vcl+backend { } -start
+
+client c1 {
+	txreq -url "/foo"
+	rxresp
+	expect resp.status == 200
+	expect resp.http.X-Varnish == "1001"
+	expect resp.http.foo == "foo"
+} -run
+
+varnish v1 -expect n_object == 1
+
+client c1 {
+	txreq -url "/bar"
+	rxresp
+	expect resp.status == 200
+	expect resp.http.X-Varnish == "1004"
+	expect resp.http.bar == "bar"
+} -run
+
+varnish v1 -expect n_object == 2
+
+varnish v1 -stop
+varnish v1 -start
+varnish v1 -cliok "debug.xid 1999"
+
+varnish v1 -expect n_vampireobject == 2
+varnish v1 -expect n_object == 0
+
+client c1 {
+	txreq -url "/foo"
+	rxresp
+	expect resp.status == 200
+	expect resp.http.X-Varnish == "2001 1002"
+	expect resp.http.foo == "foo"
+} -run
+
+varnish v1 -expect n_vampireobject == 1
+varnish v1 -expect n_object == 1
+
+client c1 {
+	txreq -url "/bar"
+	rxresp
+	expect resp.status == 200
+	expect resp.http.X-Varnish == "2003 1005"
+	expect resp.http.bar == "bar"
+} -run
+
+varnish v1 -expect n_object == 2
+varnish v1 -expect n_vampireobject == 0

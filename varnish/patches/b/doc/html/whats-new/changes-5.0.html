@@ -1,0 +1,330 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Changes in Varnish 5.0 &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Upgrading to Varnish 5.0" href="upgrading-5.0.html" />
+    <link rel="prev" title="Varnish 5.0 Release Note" href="relnote-5.0.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="upgrading-5.0.html" title="Upgrading to Varnish 5.0"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="relnote-5.0.html" title="Varnish 5.0 Release Note"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="changes-in-varnish-5-0">
+<span id="whatsnew-changes-5-0"></span><h1>Changes in Varnish 5.0<a class="headerlink" href="#changes-in-varnish-5-0" title="Permalink to this headline">¶</a></h1>
+<p>Varnish 5.0 changes some (mostly) internal APIs and adds some major new
+features over Varnish 4.1.</p>
+<div class="section" id="separate-vcl-files-and-vcl-labels">
+<h2>Separate VCL files and VCL labels<a class="headerlink" href="#separate-vcl-files-and-vcl-labels" title="Permalink to this headline">¶</a></h2>
+<p>Varnish 5.0 supports jumping from the active VCL's <code class="docutils literal"><span class="pre">vcl_recv{}</span></code> to
+another VCL via a VCL label.</p>
+<p>The major use of this will probably be to have a separate VCL for
+each domain/vhost, in order to untangle complex VCL files, but
+it is not limited to this criteria, it would also be possible to
+send all POSTs, all JPEG images or all traffic from a certain
+IP range to a separate VCL file.</p>
+<p>VCL labels can also be used to give symbolic names to loaded VCL
+configurations, so that operations personnel only need to know
+about &quot;normal&quot;, &quot;weekend&quot; and &quot;emergency&quot;, and web developers
+can update these as usual, without having to tell ops what the
+new weekend VCL is called.</p>
+</div>
+<div class="section" id="very-experimental-http-2-support">
+<h2>Very Experimental HTTP/2 support<a class="headerlink" href="#very-experimental-http-2-support" title="Permalink to this headline">¶</a></h2>
+<p>We are in the process of adding HTTP/2 support to Varnish, but
+the code is very green still - life happened.</p>
+<p>But you can actually get a bit of traffic though it already, and
+we hope to have it production ready for the next major release
+(2017-03-15).</p>
+<p>Varnish supports HTTP/1 -&gt; 2 upgrade.  For political reasons,
+no browsers support that, but tools like curl does.</p>
+<p>For encrypted HTTP/2 traffic, put a SSL proxy in front of Varnish.</p>
+<p>HTTP/2 support is disabled by default, to enable, set the <code class="docutils literal"><span class="pre">http2</span></code>
+feature bit.</p>
+</div>
+<div class="section" id="the-shard-director">
+<h2>The Shard Director<a class="headerlink" href="#the-shard-director" title="Permalink to this headline">¶</a></h2>
+<p>We have added to the directors VMOD an overhauled version of a
+director which was available as an out-of-tree VMOD under the name
+VSLP for a couple of years: It's basically a better hash director,
+which uses consistent hashing to provide improved stability of backend
+node selection when the configuration and/or health state of backends
+changes. There are several options to provide the shard key. The
+rampup feature allows to take just-gone-healthy backends in production
+smoothly, while the prewarm feature allows to prepare backends for
+traffic which they would see if the primary backend for a certain key
+went down.</p>
+<p>It can be reconfigured dynamically (outside <code class="docutils literal"><span class="pre">vcl_init{}</span></code>), but
+different to our other directors, configuration is transactional: Any
+series of backend changes must be concluded by a reconfigure call for
+activation.</p>
+</div>
+<div class="section" id="hit-for-pass-is-now-actually-hit-for-miss">
+<h2>Hit-For-Pass is now actually Hit-For-Miss<a class="headerlink" href="#hit-for-pass-is-now-actually-hit-for-miss" title="Permalink to this headline">¶</a></h2>
+<p>Almost since the beginning of time (2008), varnish has hit-for-pass:
+It is basically a negative caching feature, putting into the cache
+objects as markers saying &quot;when you hit this, your request should be a
+pass&quot;. The purpose is to selectively avoid the request coalescing
+(waitinglist) feature, which is useful for cacheable content, but not
+for uncacheable objects. If we did not have hit-for-pass, without
+additional configuration in vcl_recv, requests to uncacheable content
+would be sent to the backend serialized (one after the other).</p>
+<p>As useful as this feature is, it has caused a lot of headaches to
+varnish administrators along the lines of &quot;why the <em>beep</em> doesn't
+Varnish cache this&quot;: A hit-for-pass object stayed in cache for however
+long its ttl dictated and prevented caching whenever it got hit (&quot;for
+that url&quot; in most cases). In particular, as a pass object can not be
+turned into something cacheable retrospectively
+(<code class="docutils literal"><span class="pre">beresp.uncacheable</span></code> can be changed from <code class="docutils literal"><span class="pre">false</span></code> to <code class="docutils literal"><span class="pre">true</span></code>, but
+not the other way around), even responses which would have been
+cacheable were not cached. So, when a hit-for-pass object got into
+cache unintentionally, it had to be removed explicitly (using a ban or
+purge).</p>
+<p>We've changed this now:</p>
+<p>A hit-for-pass object (we still call it like this in the docs, logging
+and statistics) will now cause a cache-miss for all subsequent
+requests, so if any backend response qualifies for caching, it will
+get cached and subsequent requests will be hits.</p>
+<p>In short: We've changed from &quot;the uncacheable case wins&quot; to &quot;the
+cacheable case wins&quot; or from hit-for-pass to hit-for-miss.</p>
+<p>The primary consequence which we are aware of at the time of this
+release is caused be the fact that, to create cacheable objects, we
+need to make backend requests unconditional (that is, remove the
+<code class="docutils literal"><span class="pre">If-Modified-Since</span></code> and <code class="docutils literal"><span class="pre">If-None-Match</span> <span class="pre">headers</span></code>): For conditional
+client requests on hit-for-pass objects, Varnish will now issue an
+unconditional backend fetch and, for 200 responses, send a 304 or 200
+response to the client as appropriate.</p>
+<p>As of the time of this release we cannot say if this will remain the
+final word on this topic, but we hope that it will mean an improvement
+for most users of Varnish.</p>
+</div>
+<div class="section" id="ban-lurker-improvements">
+<h2>Ban Lurker Improvements<a class="headerlink" href="#ban-lurker-improvements" title="Permalink to this headline">¶</a></h2>
+<p>We have made the ban lurker even more efficient by example of some
+real live situations with tens of thousands of bans using inefficient
+regular expressions.</p>
+<p>The new parameter <code class="docutils literal"><span class="pre">ban_lurker_holdoff</span></code> tells the ban lurker for how
+long it should get out of the way when it could potentially slow down
+lookups due to lock contention. Previously this was the same as
+<code class="docutils literal"><span class="pre">ban_lurker_sleep</span></code>.</p>
+</div>
+<div class="section" id="request-body-sent-always-cacheable-post">
+<span id="whatsnew-changes-5-0-reqbody"></span><h2>Request Body sent always / &quot;cacheable POST&quot;<a class="headerlink" href="#request-body-sent-always-cacheable-post" title="Permalink to this headline">¶</a></h2>
+<p>Previously, we would only send a request body for passed requests (and
+for pipe mode, but this is special anyway and should be avoided).</p>
+<p>Not so any more, but the default behaviour has not changed:</p>
+<p>Whenever a request has a body, it will get sent to the backend for a
+cache miss (and pass, as before). This can be prevented by an
+<code class="docutils literal"><span class="pre">unset</span> <span class="pre">bereq.body</span></code> and the <code class="docutils literal"><span class="pre">builtin.vcl</span></code> removes the body for GET
+requests because it is questionable if GET with a body is valid anyway
+(but some applications use it).</p>
+<p>So the often-requested ability to cache POST/PATCH/... is now available,
+but not out-of-the-box:</p>
+<ul class="simple">
+<li>The <code class="docutils literal"><span class="pre">builtin.vcl</span></code> still contains a <code class="docutils literal"><span class="pre">return(pass)</span></code> for anything
+but a GET or HEAD because other HTTP methods, by definition, may cause
+state changes / side effects on backends. The application at hand
+should be understood well before caching of non-GET/non-HEAD is
+considered.</li>
+<li>For misses, core code still calls the equivalent of <code class="docutils literal"><span class="pre">set</span>
+<span class="pre">bereq.method</span> <span class="pre">=</span> <span class="pre">&quot;GET&quot;</span></code> before calling <code class="docutils literal"><span class="pre">vcl_backend_fetch</span></code>, so to
+make a backend request with the original request method, it needs to
+be saved in <code class="docutils literal"><span class="pre">vcl_recv</span></code> and restored in <code class="docutils literal"><span class="pre">vcl_backend_fetch</span></code>.</li>
+<li>Care should be taken to choose an appropriate cache key and/or Vary
+criteria. Adding the request body to the cache key is not possible
+with core varnish, but through a VMOD
+<a class="reference external" href="https://github.com/aondio/libvmod-bodyaccess">https://github.com/aondio/libvmod-bodyaccess</a></li>
+</ul>
+<p>To summarize: You should know what you are doing when caching anything
+but a GET or HEAD and without creating an appropriate cache key doing
+so is almost guaranteed to be wrong.</p>
+</div>
+<div class="section" id="esi-and-backend-request-coalescing-waitinglist-improvement">
+<h2>ESI and Backend Request Coalescing (&quot;waitinglist&quot;) Improvement<a class="headerlink" href="#esi-and-backend-request-coalescing-waitinglist-improvement" title="Permalink to this headline">¶</a></h2>
+<p>Previously, ESI subrequests depending on objects being fetched from
+the backed used polling, which typically added some ~5ms of processing
+time to such subrequests and could lead to starvation effects in
+extreme corner cases.</p>
+<p>The waitinglist logic for ESI subrequests now uses condition variables
+to trigger immediate continuation of ESI processing when an object
+being waited for becomes available.</p>
+</div>
+<div class="section" id="backend-proxy-protocol-requests">
+<h2>Backend PROXY protocol requests<a class="headerlink" href="#backend-proxy-protocol-requests" title="Permalink to this headline">¶</a></h2>
+<p>Are now supported through the <code class="docutils literal"><span class="pre">.proxy_header</span></code> attribute of the
+backend definition.</p>
+</div>
+<div class="section" id="default-vcl-search-path">
+<h2>Default VCL search path<a class="headerlink" href="#default-vcl-search-path" title="Permalink to this headline">¶</a></h2>
+<p>For default builds, vcl files are now also being looked for under
+<code class="docutils literal"><span class="pre">/usr/share/varnish/vcl</span></code> if not found in <code class="docutils literal"><span class="pre">/etc/varnish</span></code>.</p>
+<p>For custom builds, the actual search path is
+<code class="docutils literal"><span class="pre">${varnishconfdir}:${datarootdir}/varnish/vcl</span></code></p>
+</div>
+<div class="section" id="devicedetect-vcl">
+<h2>devicedetect.vcl<a class="headerlink" href="#devicedetect-vcl" title="Permalink to this headline">¶</a></h2>
+<p>The basic device detection vcl is now bundled with varnish.</p>
+</div>
+<div class="section" id="varnishtest">
+<h2>varnishtest<a class="headerlink" href="#varnishtest" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">resp.msg</span></code> renamed to <code class="docutils literal"><span class="pre">resp.reason</span></code> for consistency with vcl</li>
+<li>HTTP2 testing capabilities added</li>
+<li>default search path for executables and vmods added</li>
+<li><code class="docutils literal"><span class="pre">sema</span></code> mechanism replaced by <code class="docutils literal"><span class="pre">barrier</span></code></li>
+<li>support for PROXY requests</li>
+</ul>
+</div>
+<div class="section" id="misc">
+<h2>misc<a class="headerlink" href="#misc" title="Permalink to this headline">¶</a></h2>
+<p>Brief notes on other changes</p>
+<ul class="simple">
+<li>Added separate thread for object expiry</li>
+<li>The ESI parser is now more tolerant to some syntactic corner cases</li>
+<li>Reduced needless rushing of requests on the waitinglist</li>
+<li><code class="docutils literal"><span class="pre">varnishhist</span></code> can now process backend requests and offers a timebend
+function to control the processing speed</li>
+<li><code class="docutils literal"><span class="pre">std.integer()</span></code> can now also parse real numbers and truncates them</li>
+<li><code class="docutils literal"><span class="pre">std.log()</span></code> now also works correctly during <code class="docutils literal"><span class="pre">vcl_init{}</span></code></li>
+<li>further improved stability when handling workspace overflows</li>
+<li>numerous vcl compiler improvements</li>
+</ul>
+</div>
+<div class="section" id="news-for-vmod-authors">
+<h2>News for VMOD authors<a class="headerlink" href="#news-for-vmod-authors" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>It is now mandatory to have a description in the <code class="docutils literal"><span class="pre">$Module</span></code> line of
+a <code class="docutils literal"><span class="pre">vcc</span></code> file.</li>
+<li>vcl cli events (in particular, <code class="docutils literal"><span class="pre">vcl_init{}</span></code> /<code class="docutils literal"><span class="pre">vcl_fini{}</span></code>) now
+have a workspace and <code class="docutils literal"><span class="pre">PRIV_TASK</span></code> available for VMODs.</li>
+<li><code class="docutils literal"><span class="pre">PRIV_*</span></code> now also work for object methods with unchanged scope.
+In particular, they are per VMOD and <cite>not</cite> per object - e.g. the
+same <code class="docutils literal"><span class="pre">PRIV_TASK</span></code> gets passed to object methods as to functions
+during a VCL task.</li>
+<li>varnish now provides a random number api, see vrnd.h</li>
+<li>vbm (variable size bitmaps) improved</li>
+<li><code class="docutils literal"><span class="pre">vmodtool.py</span></code> for translating vcc files has been largely
+rewritten, there may still exist regressions which remained unnoticed</li>
+<li><code class="docutils literal"><span class="pre">vmodtool.py</span></code> now requires at least Python 2.6</li>
+<li>New autoconf macros are available, they should greatly simplify build
+systems of out-of-tree VMODs.  They are implemented and documented in
+<code class="docutils literal"><span class="pre">varnish.m4</span></code>, and the previous macros now live in <code class="docutils literal"><span class="pre">varnish-legacy.m4</span></code>
+so existing VMODs should still build fine.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Changes in Varnish 5.0</a><ul>
+<li><a class="reference internal" href="#separate-vcl-files-and-vcl-labels">Separate VCL files and VCL labels</a></li>
+<li><a class="reference internal" href="#very-experimental-http-2-support">Very Experimental HTTP/2 support</a></li>
+<li><a class="reference internal" href="#the-shard-director">The Shard Director</a></li>
+<li><a class="reference internal" href="#hit-for-pass-is-now-actually-hit-for-miss">Hit-For-Pass is now actually Hit-For-Miss</a></li>
+<li><a class="reference internal" href="#ban-lurker-improvements">Ban Lurker Improvements</a></li>
+<li><a class="reference internal" href="#request-body-sent-always-cacheable-post">Request Body sent always / &quot;cacheable POST&quot;</a></li>
+<li><a class="reference internal" href="#esi-and-backend-request-coalescing-waitinglist-improvement">ESI and Backend Request Coalescing (&quot;waitinglist&quot;) Improvement</a></li>
+<li><a class="reference internal" href="#backend-proxy-protocol-requests">Backend PROXY protocol requests</a></li>
+<li><a class="reference internal" href="#default-vcl-search-path">Default VCL search path</a></li>
+<li><a class="reference internal" href="#devicedetect-vcl">devicedetect.vcl</a></li>
+<li><a class="reference internal" href="#varnishtest">varnishtest</a></li>
+<li><a class="reference internal" href="#misc">misc</a></li>
+<li><a class="reference internal" href="#news-for-vmod-authors">News for VMOD authors</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="relnote-5.0.html"
+                        title="previous chapter">Varnish 5.0 Release Note</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="upgrading-5.0.html"
+                        title="next chapter">Upgrading to Varnish 5.0</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/whats-new/changes-5.0.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="upgrading-5.0.html" title="Upgrading to Varnish 5.0"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="relnote-5.0.html" title="Varnish 5.0 Release Note"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

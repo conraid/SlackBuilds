@@ -1,0 +1,74 @@
+varnishtest "Check timeout_linger"
+
+# XXX this test exploits the fact that the struct waited is
+# left near the free pointer of the session ws when a session
+# made a tour over the waiter
+#
+# Would we want VSL Info about waiter involvement?
+#
+
+varnish v1 -arg "-p timeout_linger=1"	\
+	   -arg "-a 127.0.0.1:0"	\
+	   -arg "-a ${tmpdir}/v1.sock"	\
+	   -vcl {
+	import std;
+	import vtc;
+	import blob;
+
+	backend dummy { .host = "${bad_ip}"; }
+
+	sub vcl_recv {
+		std.log(blob.encode(encoding=HEX,
+		    blob=vtc.workspace_dump(session, f)));
+	}
+	sub vcl_backend_error {
+		set beresp.status = 200;
+		set beresp.ttl = 1h;
+	}
+} -start
+
+logexpect l1 -v v1 -g session -q "SessOpen ~ a0" {
+	expect * * VCL_call {^RECV}
+	expect 0 = VCL_Log  "^0{128}$"
+	expect * * VCL_call {^RECV}
+	expect 0 = VCL_Log  "^0{128}$"
+	expect * * VCL_call {^RECV}
+	expect 0 = VCL_Log  "[1-9a-f]"
+} -start
+
+logexpect l2 -v v1 -g session -q "SessOpen ~ a1" {
+	expect * * VCL_call {^RECV}
+	expect 0 = VCL_Log  "^0{128}$"
+	expect * * VCL_call {^RECV}
+	expect 0 = VCL_Log  "^0{128}$"
+	expect * * VCL_call {^RECV}
+	expect 0 = VCL_Log  "[1-9a-f]"
+} -start
+
+client c1 {
+	txreq
+	rxresp
+	delay 0.2
+	txreq
+	rxresp
+	delay 1.2
+	txreq
+	rxresp
+} -start
+
+client c1u -connect "${tmpdir}/v1.sock" {
+	txreq
+	rxresp
+	delay 0.2
+	txreq
+	rxresp
+	delay 1.2
+	txreq
+	rxresp
+} -start
+
+client c1 -wait
+client c1u -wait
+
+logexpect l1 -wait
+logexpect l2 -wait

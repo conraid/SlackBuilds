@@ -1,0 +1,322 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>VMOD vtc - Utility module for varnishtest &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Writing a Director" href="directors.html" />
+    <link rel="prev" title="VMOD proxy - Varnish Module to extract TLV attributes from PROXYv2" href="vmod_proxy.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="directors.html" title="Writing a Director"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vmod_proxy.html" title="VMOD proxy - Varnish Module to extract TLV attributes from PROXYv2"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Varnish Reference Manual</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="vmod-vtc-utility-module-for-varnishtest">
+<span id="vmod-vtc-3"></span><h1>VMOD vtc - Utility module for varnishtest<a class="headerlink" href="#vmod-vtc-utility-module-for-varnishtest" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="synopsis">
+<h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
+<pre class="literal-block">
+import vtc [as name] [from &quot;path&quot;]
+
+<a class="reference internal" href="#vtc-barrier-sync"><span class="std std-ref">VOID barrier_sync(STRING addr, DURATION timeout=0)</span></a>
+
+<a class="reference internal" href="#vtc-no-backend"><span class="std std-ref">BACKEND no_backend()</span></a>
+
+<a class="reference internal" href="#vtc-no-stevedore"><span class="std std-ref">STEVEDORE no_stevedore()</span></a>
+
+<a class="reference internal" href="#vtc-no-ip"><span class="std std-ref">IP no_ip()</span></a>
+
+<a class="reference internal" href="#vtc-panic"><span class="std std-ref">VOID panic(STRING)</span></a>
+
+<a class="reference internal" href="#vtc-sleep"><span class="std std-ref">VOID sleep(DURATION)</span></a>
+
+<a class="reference internal" href="#vtc-workspace-alloc"><span class="std std-ref">VOID workspace_alloc(ENUM, INT size)</span></a>
+
+<a class="reference internal" href="#vtc-workspace-free"><span class="std std-ref">INT workspace_free(ENUM {client, backend, session, thread})</span></a>
+
+<a class="reference internal" href="#vtc-workspace-snapshot"><span class="std std-ref">VOID workspace_snapshot(ENUM)</span></a>
+
+<a class="reference internal" href="#vtc-workspace-reset"><span class="std std-ref">VOID workspace_reset(ENUM)</span></a>
+
+<a class="reference internal" href="#vtc-workspace-overflowed"><span class="std std-ref">BOOL workspace_overflowed(ENUM)</span></a>
+
+<a class="reference internal" href="#vtc-workspace-overflow"><span class="std std-ref">VOID workspace_overflow(ENUM)</span></a>
+
+<a class="reference internal" href="#vtc-workspace-dump"><span class="std std-ref">BLOB workspace_dump(ENUM, ENUM, BYTES off, BYTES len)</span></a>
+
+<a class="reference internal" href="#vtc-typesize"><span class="std std-ref">INT typesize(STRING)</span></a>
+</pre>
+</div>
+<div class="section" id="description">
+<h2>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>The goal for this VMOD is to provide VCL users and VMOD authors means to
+test corner cases or reach certain conditions with varnishtest.</p>
+<div class="section" id="void-barrier-sync-string-addr-duration-timeout-0">
+<span id="vtc-barrier-sync"></span><h3>VOID barrier_sync(STRING addr, DURATION timeout=0)<a class="headerlink" href="#void-barrier-sync-string-addr-duration-timeout-0" title="Permalink to this headline">¶</a></h3>
+<p>When writing test cases, the most common pattern is to start a mock server
+instance, a Varnish instance, and spin up a mock client. Those entities run
+asynchronously, and others exist like background processes (<code class="docutils literal"><span class="pre">process</span></code>) or
+log readers (<code class="docutils literal"><span class="pre">logexpect</span></code>). While you can synchronize with individual
+entities and wait for their completion, you must use a barrier if you need
+to synchronize two or more entities, or wait until a certain point instead
+of completion.</p>
+<p>Not only is it possible to synchronize between test entities, with the
+<code class="docutils literal"><span class="pre">barrier_sync</span></code> function you can even synchronize VCL code:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_recv</span> <span class="p">{</span>
+    <span class="c1"># wait for some barrier b1 to complete</span>
+    <span class="n">vtc</span><span class="o">.</span><span class="n">barrier_sync</span><span class="p">(</span><span class="s2">&quot;$</span><span class="si">{b1_sock}</span><span class="s2">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>If the function fails to synchronize with the barrier for some reason, or if
+it reaches the optional timeout, it fails the VCL transaction.</p>
+</div>
+</div>
+<div class="section" id="miscellaneous">
+<h2>MISCELLANEOUS<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="backend-no-backend">
+<span id="vtc-no-backend"></span><h3>BACKEND no_backend()<a class="headerlink" href="#backend-no-backend" title="Permalink to this headline">¶</a></h3>
+<p>Fails at backend selection.</p>
+</div>
+<div class="section" id="stevedore-no-stevedore">
+<span id="vtc-no-stevedore"></span><h3>STEVEDORE no_stevedore()<a class="headerlink" href="#stevedore-no-stevedore" title="Permalink to this headline">¶</a></h3>
+<p>Fails at storage selection.</p>
+</div>
+<div class="section" id="ip-no-ip">
+<span id="vtc-no-ip"></span><h3>IP no_ip()<a class="headerlink" href="#ip-no-ip" title="Permalink to this headline">¶</a></h3>
+<p>Returns a null IP address, not even a bogo_ip.</p>
+</div>
+<div class="section" id="void-panic-string">
+<span id="vtc-panic"></span><h3>VOID panic(STRING)<a class="headerlink" href="#void-panic-string" title="Permalink to this headline">¶</a></h3>
+<p>It can be useful to crash the child process in order to test the robustness
+of a VMOD.</p>
+</div>
+<div class="section" id="void-sleep-duration">
+<span id="vtc-sleep"></span><h3>VOID sleep(DURATION)<a class="headerlink" href="#void-sleep-duration" title="Permalink to this headline">¶</a></h3>
+<p>Block the current worker thread.</p>
+</div>
+</div>
+<div class="section" id="workspaces">
+<h2>WORKSPACES<a class="headerlink" href="#workspaces" title="Permalink to this headline">¶</a></h2>
+<p>It can be useful to put a workspace in a given state when testing corner
+cases like resource exhaustion for a transaction, especially for VMOD
+development. All functions available allow to pick which workspace you
+need to tamper with, available values are <code class="docutils literal"><span class="pre">client</span></code>, <code class="docutils literal"><span class="pre">backend</span></code>, <code class="docutils literal"><span class="pre">session</span></code>
+and <code class="docutils literal"><span class="pre">thread</span></code>.</p>
+<div class="section" id="void-workspace-alloc-enum-int-size">
+<span id="vtc-workspace-alloc"></span><h3>VOID workspace_alloc(ENUM, INT size)<a class="headerlink" href="#void-workspace-alloc-enum-int-size" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">VOID</span> <span class="n">workspace_alloc</span><span class="p">(</span>
+   <span class="n">ENUM</span> <span class="p">{</span><span class="n">client</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">thread</span><span class="p">},</span>
+   <span class="n">INT</span> <span class="n">size</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Allocate and zero out memory from a workspace. A negative size will allocate
+as much as needed to leave that many bytes free. The actual allocation size
+may be higher to comply with memory alignment requirements of the CPU
+architecture. A failed allocation fails the transaction.</p>
+</div>
+<div class="section" id="int-workspace-free-enum-client-backend-session-thread">
+<span id="vtc-workspace-free"></span><h3>INT workspace_free(ENUM {client, backend, session, thread})<a class="headerlink" href="#int-workspace-free-enum-client-backend-session-thread" title="Permalink to this headline">¶</a></h3>
+<p>Find how much unallocated space there is left in a workspace.</p>
+</div>
+<div class="section" id="void-workspace-snapshot-enum">
+<span id="vtc-workspace-snapshot"></span><h3>VOID workspace_snapshot(ENUM)<a class="headerlink" href="#void-workspace-snapshot-enum" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">VOID</span> <span class="n">workspace_snapshot</span><span class="p">(</span><span class="n">ENUM</span> <span class="p">{</span><span class="n">client</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">thread</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>Snapshot a workspace. Only one snapshot may be active at a time and
+each VCL can save only one snapshot, so concurrent tasks requiring
+snapshots are not supported.</p>
+</div>
+<div class="section" id="void-workspace-reset-enum">
+<span id="vtc-workspace-reset"></span><h3>VOID workspace_reset(ENUM)<a class="headerlink" href="#void-workspace-reset-enum" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">VOID</span> <span class="n">workspace_reset</span><span class="p">(</span><span class="n">ENUM</span> <span class="p">{</span><span class="n">client</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">thread</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>Reset to the previous snapshot of a workspace, it must be the same workspace
+too.</p>
+</div>
+<div class="section" id="bool-workspace-overflowed-enum">
+<span id="vtc-workspace-overflowed"></span><h3>BOOL workspace_overflowed(ENUM)<a class="headerlink" href="#bool-workspace-overflowed-enum" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">BOOL</span> <span class="n">workspace_overflowed</span><span class="p">(</span><span class="n">ENUM</span> <span class="p">{</span><span class="n">client</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">thread</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>Find whether the workspace overflow mark is set or not.</p>
+</div>
+<div class="section" id="void-workspace-overflow-enum">
+<span id="vtc-workspace-overflow"></span><h3>VOID workspace_overflow(ENUM)<a class="headerlink" href="#void-workspace-overflow-enum" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">VOID</span> <span class="n">workspace_overflow</span><span class="p">(</span><span class="n">ENUM</span> <span class="p">{</span><span class="n">client</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">thread</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>Mark a workspace as overflowed.</p>
+</div>
+<div class="section" id="blob-workspace-dump-enum-enum-bytes-off-bytes-len">
+<span id="vtc-workspace-dump"></span><h3>BLOB workspace_dump(ENUM, ENUM, BYTES off, BYTES len)<a class="headerlink" href="#blob-workspace-dump-enum-enum-bytes-off-bytes-len" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">BLOB</span> <span class="n">workspace_dump</span><span class="p">(</span>
+   <span class="n">ENUM</span> <span class="p">{</span><span class="n">client</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">thread</span><span class="p">},</span>
+   <span class="n">ENUM</span> <span class="p">{</span><span class="n">s</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">r</span><span class="p">},</span>
+   <span class="n">BYTES</span> <span class="n">off</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+   <span class="n">BYTES</span> <span class="nb">len</span><span class="o">=</span><span class="mi">64</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Return data from a workspace's <code class="docutils literal"><span class="pre">s</span></code>, <code class="docutils literal"><span class="pre">f</span></code>, or <code class="docutils literal"><span class="pre">r</span></code> pointer as a
+blob. Data is copied onto the primary workspace to avoid it being
+subsequently overwritten.</p>
+<p>The maximum <em>len</em> is 1KB.</p>
+</div>
+<div class="section" id="int-typesize-string">
+<span id="vtc-typesize"></span><h3>INT typesize(STRING)<a class="headerlink" href="#int-typesize-string" title="Permalink to this headline">¶</a></h3>
+<p>Returns the size in bytes of a collection of C-datatypes:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">'p'</span></code>: pointer</li>
+<li><code class="docutils literal"><span class="pre">'i'</span></code>: <code class="docutils literal"><span class="pre">int</span></code></li>
+<li><code class="docutils literal"><span class="pre">'d'</span></code>: <code class="docutils literal"><span class="pre">double</span></code></li>
+<li><code class="docutils literal"><span class="pre">'f'</span></code>: <code class="docutils literal"><span class="pre">float</span></code></li>
+<li><code class="docutils literal"><span class="pre">'l'</span></code>: <code class="docutils literal"><span class="pre">long</span></code></li>
+<li><code class="docutils literal"><span class="pre">'s'</span></code>: <code class="docutils literal"><span class="pre">short</span></code></li>
+<li><code class="docutils literal"><span class="pre">'z'</span></code>: <code class="docutils literal"><span class="pre">size_t</span></code></li>
+<li><code class="docutils literal"><span class="pre">'o'</span></code>: <code class="docutils literal"><span class="pre">off_t</span></code></li>
+<li><code class="docutils literal"><span class="pre">'j'</span></code>: <code class="docutils literal"><span class="pre">intmax_t</span></code></li>
+</ul>
+<p>This can be useful for VMOD authors in conjunction with workspace operations.</p>
+</div>
+</div>
+<div class="section" id="see-also">
+<h2>SEE ALSO<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="vtc.html#vtc-7"><span class="std std-ref">VTC</span></a></li>
+<li><a class="reference internal" href="vcl.html#vcl-7"><span class="std std-ref">VCL</span></a></li>
+</ul>
+</div>
+<div class="section" id="copyright">
+<h2>COPYRIGHT<a class="headerlink" href="#copyright" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span>Copyright (c) 2017 Varnish Software AS
+All rights reserved.
+
+Author: Dridi Boukelmoune &lt;dridi.boukelmoune@gmail.com&gt;
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&#39;&#39; AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED.  IN NO EVENT SHALL AUTHOR OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">VMOD vtc - Utility module for varnishtest</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vmod_proxy.html"
+                        title="previous chapter">VMOD proxy - Varnish Module to extract TLV attributes from PROXYv2</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="directors.html"
+                        title="next chapter">Writing a Director</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/reference/vmod_vtc.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="directors.html" title="Writing a Director"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vmod_proxy.html" title="VMOD proxy - Varnish Module to extract TLV attributes from PROXYv2"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Reference Manual</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

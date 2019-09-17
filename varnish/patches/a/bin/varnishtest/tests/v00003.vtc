@@ -1,0 +1,100 @@
+varnishtest "vcl.state coverage tests"
+
+server s1 -repeat 20 {
+	rxreq
+	txresp
+	delay .2
+} -start
+
+# The debug vmod logs temperature vcl events
+varnish v1 -arg "-p vcl_cooldown=1" -vcl {
+	import debug;
+	backend default {
+		.host = "${s1_addr}";
+		.port = "${s1_port}";
+		.probe = { .interval = 1s; }
+	}
+} -start
+
+# We only have one vcl yet
+varnish v1 -expect VBE.vcl1.default.happy >= 0
+varnish v1 -expect !VBE.vcl2.default.happy
+varnish v1 -cliok "backend.list -p *.*"
+
+varnish v1 -vcl {
+	backend default {
+		.host = "${s1_addr}";
+		.port = "${s1_port}";
+		.probe = { .interval = 1s; }
+	}
+}
+
+# Now we have two vcls (and run on the latest loaded)
+delay .4
+varnish v1 -expect VBE.vcl1.default.happy >= 0
+varnish v1 -expect VBE.vcl2.default.happy >= 0
+
+# We are about to freeze vcl, then implicitly thaw it via use.
+# check that we see the events
+
+logexpect l1 -v v1 -g raw {
+	expect * 0 Debug "vcl1: VCL_EVENT_COLD"
+	expect * 0 Debug "vcl1: VCL_EVENT_WARM"
+} -start
+
+# Freeze vcl1
+varnish v1 -cliok "vcl.state vcl1 cold"
+varnish v1 -cliexpect "available *cold *cold *[0-9]+ *vcl1\\s+active *auto *warm *[0-9]+ *vcl2" "vcl.list"
+delay .4
+varnish v1 -expect !VBE.vcl1.default.happy
+
+# Manual temperature control needs to be explicit before use
+varnish v1 -clierr 300 "vcl.use vcl1"
+
+varnish v1 -cliok "vcl.state vcl1 warm"
+varnish v1 -cliok "vcl.use vcl1"
+varnish v1 -cliexpect "active *warm *warm *[0-9]+ *vcl1\\s+available *auto *warm *[0-9]+ *vcl2" "vcl.list"
+delay .4
+varnish v1 -expect VBE.vcl1.default.happy >= 0
+varnish v1 -expect VBE.vcl2.default.happy >= 0
+
+logexpect l1 -wait
+
+# and the unused one should go cold
+delay 4
+varnish v1 -cliexpect "active *warm *warm *[0-9]+ *vcl1\\s+available *auto *cold *[0-9]+ *vcl2" "vcl.list"
+varnish v1 -expect !VBE.vcl2.default.happy
+
+# use the other
+varnish v1 -cliok "vcl.use vcl2"
+varnish v1 -cliexpect "available *warm *warm *[0-9]+ *vcl1\\s+active *auto *warm *[0-9]+ *vcl2" "vcl.list"
+
+# the non-auto vcl will stay warm even after the cooldown period
+delay 4
+varnish v1 -cliexpect "available *warm *warm *[0-9]+ *vcl1\\s+active *auto *warm *[0-9]+ *vcl2" "vcl.list"
+varnish v1 -expect VBE.vcl1.default.happy >= 0
+varnish v1 -expect VBE.vcl2.default.happy >= 0
+
+# You can't freeze the active VCL
+varnish v1 -clierr 300 "vcl.state vcl2 cold"
+
+# the non-auto vcl will apply the cooldown again once changed back to auto
+varnish v1 -cliok "vcl.state vcl1 auto"
+varnish v1 -cliexpect "available *auto *warm *[0-9]+ *vcl1\\s+active *auto *warm *[0-9]+ *vcl2" "vcl.list"
+delay .4
+varnish v1 -expect VBE.vcl1.default.happy >= 0
+delay 4
+varnish v1 -cliexpect "available *auto *cold *[0-9]+ *vcl1\\s+active *auto *warm *[0-9]+ *vcl2" "vcl.list"
+varnish v1 -expect !VBE.vcl1.default.happy
+
+# A VMOD's warm-up can fail
+varnish v1 -cliok "param.set max_esi_depth 42"
+varnish v1 -clierr 300 "vcl.state vcl1 warm"
+
+varnish v1 -cliexpect "available *auto *cold *[0-9]+ *vcl1\\s+active *auto *warm *[0-9]+ *vcl2" "vcl.list"
+
+# A warm-up failure can also fail a child start
+varnish v1 -cliok stop
+varnish v1 -cliok "vcl.state vcl1 warm"
+varnish v1 -cliok "vcl.list"
+varnish v1 -clierr 300 start

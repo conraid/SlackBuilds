@@ -1,0 +1,157 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>IPv6 Suckage &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="What do you mean by &#39;backend&#39; ?" href="backends.html" />
+    <link rel="prev" title="VCL Expressions" href="vcl_expr.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="backends.html" title="What do you mean by &#39;backend&#39; ?"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vcl_expr.html" title="VCL Expressions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="ipv6-suckage">
+<span id="phk-ipv6suckage"></span><h1>IPv6 Suckage<a class="headerlink" href="#ipv6-suckage" title="Permalink to this headline">¶</a></h1>
+<p>In my drawer full of cassette tapes, is a 6 tape collection published
+by Carl Malamuds &quot;Internet Talk Radio&quot;, the first and by far the
+geekiest radio station on the internet.</p>
+<p>The tapes are from 1994 and the topic is &quot;IPng&quot;, the IPv4 replacement
+that eventually became IPv6.  To say that I am a bit jaded about
+IPv6 by now, is accusing the pope of being religious.</p>
+<p>IPv4 addresses in numeric form, are written as 192.168.0.1 and to
+not confuse IPv6 with IPv4, it was decided in RFC1884 that IPv6
+would use colons and groups of 16 bits, and because 128 bits are a
+lot of bits, the secret '::' trick was introduced, to supress all
+the zero bits that we may not ever need anyway: 1080::8:800:200C:417A</p>
+<p>Colon was chosen because it was already used in MAC/ethernet addresses
+and did no damage there and it is not a troublesome metacharacter
+in shells.  No worries.</p>
+<p>Most protocols have a Well Known Service number, TELNET is 23, SSH
+is 22 and HTTP is 80 so usually people will only have to care about
+the IP number.</p>
+<p>Except when they don't, for instance when they run more than one
+webserver on the same machine.</p>
+<p>No worries, says the power that controls what URLs look like, we
+will just stick the port number after the IP# with a colon:</p>
+<blockquote>
+<div><a class="reference external" href="http://192.168.0.1:8080/">http://192.168.0.1:8080/</a>...</div></blockquote>
+<p>That obviously does not work with IPv6, so RFC3986 comes around and
+says &quot;darn, we didn't think of that&quot; and puts the IPV6 address in
+[...] giving us:</p>
+<blockquote>
+<div><a class="reference external" href="http://[1080::8:800:200C:417A]:8080/">http://[1080::8:800:200C:417A]:8080/</a></div></blockquote>
+<p>Remember that &quot;harmless in shells&quot; detail ?  Yeah, sorry about that.</p>
+<p>Now, there are also a RFC sanctioned API for translating a socket
+address into an ascii string, getnameinfo(), and if you tell it that
+you want a numeric return, you get a numeric return, and you don't
+even need to know if it is a IPv4 or IPv6 address in the first place.</p>
+<p>But it returns the IP# in one buffer and the port number in another,
+so if you want to format the sockaddr in the by RFC5952 recommended
+way (the same as RFC3986), you need to inspect the version field
+in the sockaddr to see if you should do</p>
+<blockquote>
+<div>&quot;%s:%s&quot;, host, port</div></blockquote>
+<p>or</p>
+<blockquote>
+<div>&quot;[%s]:%s&quot;, host, port</div></blockquote>
+<p>Careless standardization costs code, have I mentioned this before ?</p>
+<p>Varnish reports socket addresses as two fields: IP space PORT,
+now you know why.</p>
+<p>Until next time,</p>
+<p>Poul-Henning, 2010-08-24</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vcl_expr.html"
+                        title="previous chapter">VCL Expressions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="backends.html"
+                        title="next chapter">What do you mean by 'backend' ?</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/phk/ipv6suckage.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="backends.html" title="What do you mean by &#39;backend&#39; ?"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vcl_expr.html" title="VCL Expressions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,82 @@
+varnishtest "Test restarts"
+
+server s1 {
+	rxreq
+	expect req.url == "/foo"
+	txresp -status 404
+} -start
+
+server s2 {
+	rxreq
+	expect req.url == "/foo"
+	txresp -body "foobar"
+} -start
+
+varnish v1 -syntax 4.0 -arg "-smysteve=malloc,1m" -vcl+backend {
+	sub vcl_recv {
+		if (req.restarts == 0) {
+			set req.url = "/foo";
+			set req.method = "POST";
+			set req.proto = "HTTP/1.2";
+			set req.http.preserveme = "1";
+			set req.storage = storage.mysteve;
+			set req.ttl = 42m;
+			set req.esi = false;
+			set req.backend_hint = s2;
+			set req.hash_ignore_busy = true;
+			set req.hash_always_miss = true;
+		}
+		set req.http.restarts = req.restarts;
+	}
+	sub vcl_backend_fetch {
+		if (bereq.http.restarts == "0") {
+			set bereq.backend = s1;
+		} else {
+			set bereq.backend = s2;
+		}
+	}
+
+	sub vcl_backend_response {
+		if (beresp.status != 200) {
+			set beresp.uncacheable = true;
+			set beresp.ttl = 0s;
+			return (deliver);
+		}
+	}
+	sub vcl_deliver {
+		if (resp.status != 200) {
+			return (restart);
+		}
+		set resp.http.method = req.method;
+		set resp.http.url = req.url;
+		set resp.http.proto = req.proto;
+		set resp.http.preserveme = req.http.preserveme;
+		set resp.http.restarts = req.restarts;
+		set resp.http.storage = req.storage;
+		set resp.http.ttl = req.ttl;
+		set resp.http.esi = req.esi;
+		set resp.http.backend_hint = req.backend_hint;
+		set resp.http.hash-ignore-busy = req.hash_ignore_busy;
+		set resp.http.hash-always-miss = req.hash_always_miss;
+	}
+} -start
+
+client c1 {
+	txreq -url "/"
+	rxresp
+	expect resp.status == 200
+	expect resp.bodylen == 6
+	expect resp.http.method == POST
+	expect resp.http.url == /foo
+	expect resp.http.proto == HTTP/1.2
+	expect resp.http.preserveme == 1
+	expect resp.http.restarts == 1
+	expect resp.http.storage == storage.mysteve
+	expect resp.http.ttl == 2520.000
+	expect resp.http.esi == false
+	expect resp.http.backend_hint == s2
+	expect resp.http.hash-ignore-busy == true
+	expect resp.http.hash-always-miss == true
+}
+
+client c1 -run

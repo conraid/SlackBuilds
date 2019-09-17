@@ -1,0 +1,103 @@
+varnishtest "Exercise h/2 sender flow control code"
+
+barrier b1 sock 3 -cyclic
+
+server s1 -repeat 2 {
+	rxreq
+	txresp -bodylen 66300
+} -start
+
+varnish v1 -vcl+backend {
+	import vtc;
+
+	sub vcl_deliver {
+		vtc.barrier_sync("${b1_sock}");
+	}
+} -start
+
+varnish v1 -cliok "param.set debug +syncvsl"
+varnish v1 -cliok "param.set feature +http2"
+
+client c1 {
+	stream 0 {
+		barrier b1 sync
+		delay .5
+		txwinup -size 256
+		delay .5
+		txwinup -size 256
+		delay .5
+		txwinup -size 256
+	} -start
+
+	stream 1 {
+		txreq
+		barrier b1 sync
+		delay .5
+		txwinup -size 256
+		delay .5
+		txwinup -size 256
+		delay .5
+		txwinup -size 256
+		rxresp
+		expect resp.status == 200
+		expect resp.bodylen == 66300
+	} -run
+
+	stream 0 -wait
+} -run
+
+client c1 {
+	stream 0 {
+		barrier b1 sync
+	} -start
+
+	stream 1 {
+		txreq
+		txdata -data "fail"
+		rxrst
+		expect rst.err == STREAM_CLOSED
+		barrier b1 sync
+	} -run
+
+	stream 0 -wait
+} -run
+
+client c1 {
+	stream 0 {
+		barrier b1 sync
+		barrier b1 sync
+		delay .5
+		txwinup -size 256
+		delay .5
+		txwinup -size 256
+		delay .5
+		txwinup -size 256
+
+	} -start
+
+	stream 1 {
+		txreq -req "POST" -nostrend
+		txdata -data "ok"
+		rxwinup
+		txdata -data "fail"
+		rxrst
+		expect rst.err == STREAM_CLOSED
+		barrier b1 sync
+	} -run
+
+	stream 3 {
+		txreq
+		barrier b1 sync
+		delay .5
+		txwinup -size 256
+		delay .5
+		txwinup -size 256
+		delay .5
+		txwinup -size 256
+		rxresp
+		expect resp.status == 200
+		expect resp.bodylen == 66300
+	} -run
+
+	stream 0 -wait
+} -run

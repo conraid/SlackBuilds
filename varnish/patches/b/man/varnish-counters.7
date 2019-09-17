@@ -1,0 +1,1932 @@
+.\" Man page generated from reStructuredText.
+.
+.TH VARNISH-COUNTERS 7 "" "" ""
+.SH NAME
+varnish-counters \- Varnish counter field definitions
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.\" This is *NOT* a RST file but the syntax has been chosen so
+.\" that it may become an RST file at some later date.
+.
+.\" varnish_vsc_begin:: main
+.
+.SH MAIN – MAIN COUNTERS
+.sp
+\fBsumms\fP – \fIcounter\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+stat summ operations
+.sp
+Number of times per\-thread statistics were summed into the
+global counters.
+.UNINDENT
+.UNINDENT
+.sp
+\fBuptime\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Child process uptime
+.sp
+How long the child process has been running.
+.UNINDENT
+.UNINDENT
+.sp
+\fBsess_conn\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Sessions accepted
+.sp
+Count of sessions successfully accepted
+.UNINDENT
+.UNINDENT
+.sp
+\fBsess_drop\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Sessions dropped
+.sp
+Count of sessions silently dropped due to lack of worker thread.
+.UNINDENT
+.UNINDENT
+.sp
+\fBsess_fail\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Session accept failures
+.sp
+Count of failures to accept TCP connection.
+.sp
+This counter is the sum of the sess_fail_* counters, which
+give more detailed information.
+.UNINDENT
+.UNINDENT
+.sp
+\fBsess_fail_econnaborted\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Session accept failures: connection aborted
+.sp
+Detailed reason for sess_fail: Connection aborted by the
+client, usually harmless.
+.UNINDENT
+.UNINDENT
+.sp
+\fBsess_fail_eintr\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Session accept failures: interrupted system call
+.sp
+Detailed reason for sess_fail: The accept() call was
+interrupted, usually harmless
+.UNINDENT
+.UNINDENT
+.sp
+\fBsess_fail_emfile\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Session accept failures: too many open files
+.sp
+Detailed reason for sess_fail: No file descriptor was
+available. Consider raising RLIMIT_NOFILE (see ulimit \-n).
+.UNINDENT
+.UNINDENT
+.sp
+\fBsess_fail_ebadf\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Session accept failures: bad file descriptor
+.sp
+Detailed reason for sess_fail: The listen socket file
+descriptor was invalid. Should never happen.
+.UNINDENT
+.UNINDENT
+.sp
+\fBsess_fail_enomem\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Session accept failures: not enough memory
+.sp
+Detailed reason for sess_fail: Most likely insufficient
+socket buffer memory. Should never happen
+.UNINDENT
+.UNINDENT
+.sp
+\fBsess_fail_other\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Session accept failures: other
+.sp
+Detailed reason for sess_fail: neither of the above, see
+SessError log (varnishlog \-g raw \-i SessError).
+.UNINDENT
+.UNINDENT
+.sp
+\fBclient_req_400\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Client requests received, subject to 400 errors
+.sp
+400 means we couldn\(aqt make sense of the request, it was malformed
+in some drastic way.
+.UNINDENT
+.UNINDENT
+.sp
+\fBclient_req_417\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Client requests received, subject to 417 errors
+.sp
+417 means that something went wrong with an Expect: header.
+.UNINDENT
+.UNINDENT
+.sp
+\fBclient_req\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Good client requests received
+.sp
+The count of parseable client requests seen.
+.UNINDENT
+.UNINDENT
+.sp
+\fBcache_hit\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Cache hits
+.sp
+Count of cache hits.  A cache hit indicates that an object has been
+delivered to a client without fetching it from a backend server.
+.UNINDENT
+.UNINDENT
+.sp
+\fBcache_hit_grace\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Cache grace hits
+.sp
+Count of cache hits with grace. A cache hit with grace is a cache
+hit where the object is expired. Note that such hits are also
+included in the cache_hit counter.
+.UNINDENT
+.UNINDENT
+.sp
+\fBcache_hitpass\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Cache hits for pass.
+.sp
+Count of hits for pass. A cache hit for pass indicates that Varnish
+is going to pass the request to the backend and this decision has
+been cached in it self. This counts how many times the cached
+decision is being used.
+.UNINDENT
+.UNINDENT
+.sp
+\fBcache_hitmiss\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Cache hits for miss.
+.sp
+Count of hits for miss. A cache hit for miss indicates that Varnish
+is going to proceed as for a cache miss without request coalescing,
+and this decision has been cached. This counts how many times the
+cached decision is being used.
+.UNINDENT
+.UNINDENT
+.sp
+\fBcache_miss\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Cache misses
+.sp
+Count of misses. A cache miss indicates the object was fetched from
+the backend before delivering it to the client.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbackend_conn\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Backend conn. success
+.sp
+How many backend connections have successfully been established.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbackend_unhealthy\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Backend conn. not attempted
+.UNINDENT
+.UNINDENT
+.sp
+\fBbackend_busy\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Backend conn. too many
+.UNINDENT
+.UNINDENT
+.sp
+\fBbackend_fail\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Backend conn. failures
+.UNINDENT
+.UNINDENT
+.sp
+\fBbackend_reuse\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Backend conn. reuses
+.sp
+Count of backend connection reuses. This counter is increased
+whenever we reuse a recycled connection.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbackend_recycle\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Backend conn. recycles
+.sp
+Count of backend connection recycles. This counter is increased
+whenever we have a keep\-alive connection that is put back into the
+pool of connections. It has not yet been used, but it might be,
+unless the backend closes it.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbackend_retry\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Backend conn. retry
+.UNINDENT
+.UNINDENT
+.sp
+\fBfetch_head\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Fetch no body (HEAD)
+.sp
+beresp with no body because the request is HEAD.
+.UNINDENT
+.UNINDENT
+.sp
+\fBfetch_length\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Fetch with Length
+.sp
+beresp.body with Content\-Length.
+.UNINDENT
+.UNINDENT
+.sp
+\fBfetch_chunked\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Fetch chunked
+.sp
+beresp.body with Chunked.
+.UNINDENT
+.UNINDENT
+.sp
+\fBfetch_eof\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Fetch EOF
+.sp
+beresp.body with EOF.
+.UNINDENT
+.UNINDENT
+.sp
+\fBfetch_bad\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Fetch bad T\-E
+.sp
+beresp.body length/fetch could not be determined.
+.UNINDENT
+.UNINDENT
+.sp
+\fBfetch_none\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Fetch no body
+.sp
+beresp.body empty
+.UNINDENT
+.UNINDENT
+.sp
+\fBfetch_1xx\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Fetch no body (1xx)
+.sp
+beresp with no body because of 1XX response.
+.UNINDENT
+.UNINDENT
+.sp
+\fBfetch_204\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Fetch no body (204)
+.sp
+beresp with no body because of 204 response.
+.UNINDENT
+.UNINDENT
+.sp
+\fBfetch_304\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Fetch no body (304)
+.sp
+beresp with no body because of 304 response.
+.UNINDENT
+.UNINDENT
+.sp
+\fBfetch_failed\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Fetch failed (all causes)
+.sp
+beresp fetch failed.
+.UNINDENT
+.UNINDENT
+.sp
+\fBfetch_no_thread\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Fetch failed (no thread)
+.sp
+beresp fetch failed, no thread available.
+.UNINDENT
+.UNINDENT
+.sp
+\fBpools\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Number of thread pools
+.sp
+Number of thread pools. See also parameter thread_pools. NB: Presently
+pools cannot be removed once created.
+.UNINDENT
+.UNINDENT
+.sp
+\fBthreads\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Total number of threads
+.sp
+Number of threads in all pools. See also parameters thread_pools,
+thread_pool_min and thread_pool_max.
+.UNINDENT
+.UNINDENT
+.sp
+\fBthreads_limited\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Threads hit max
+.sp
+Number of times more threads were needed, but limit was reached in
+a thread pool. See also parameter thread_pool_max.
+.UNINDENT
+.UNINDENT
+.sp
+\fBthreads_created\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Threads created
+.sp
+Total number of threads created in all pools.
+.UNINDENT
+.UNINDENT
+.sp
+\fBthreads_destroyed\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Threads destroyed
+.sp
+Total number of threads destroyed in all pools.
+.UNINDENT
+.UNINDENT
+.sp
+\fBthreads_failed\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Thread creation failed
+.sp
+Number of times creating a thread failed. See VSL::Debug for
+diagnostics. See also parameter thread_fail_delay.
+.UNINDENT
+.UNINDENT
+.sp
+\fBthread_queue_len\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Length of session queue
+.sp
+Length of session queue waiting for threads. NB: Only updates once
+per second. See also parameter thread_queue_limit.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbusy_sleep\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Number of requests sent to sleep on busy objhdr
+.sp
+Number of requests sent to sleep without a worker thread because
+they found a busy object.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbusy_wakeup\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Number of requests woken after sleep on busy objhdr
+.sp
+Number of requests taken off the busy object sleep list and rescheduled.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbusy_killed\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Number of requests killed after sleep on busy objhdr
+.sp
+Number of requests killed from the busy object sleep list due to
+lack of resources.
+.UNINDENT
+.UNINDENT
+.sp
+\fBsess_queued\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Sessions queued for thread
+.sp
+Number of times session was queued waiting for a thread. See also
+parameter thread_queue_limit.
+.UNINDENT
+.UNINDENT
+.sp
+\fBsess_dropped\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Sessions dropped for thread
+.sp
+Number of times an HTTP/1 session was dropped because the queue was
+too long already. See also parameter thread_queue_limit.
+.UNINDENT
+.UNINDENT
+.sp
+\fBreq_dropped\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Requests dropped
+.sp
+Number of times an HTTP/2 stream was refused because the queue was
+too long already. See also parameter thread_queue_limit.
+.UNINDENT
+.UNINDENT
+.sp
+\fBn_object\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+object structs made
+.sp
+Approximate number of HTTP objects (headers + body, if present) in
+the cache.
+.UNINDENT
+.UNINDENT
+.sp
+\fBn_vampireobject\fP – \fIgauge\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+unresurrected objects
+.sp
+Number of unresurrected objects
+.UNINDENT
+.UNINDENT
+.sp
+\fBn_objectcore\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+objectcore structs made
+.sp
+Approximate number of object metadata elements in the cache. Each
+object needs an objectcore, extra objectcores are for hit\-for\-miss,
+hit\-for\-pass and busy objects.
+.UNINDENT
+.UNINDENT
+.sp
+\fBn_objecthead\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+objecthead structs made
+.sp
+Approximate number of different hash entries in the cache.
+.UNINDENT
+.UNINDENT
+.sp
+\fBn_backend\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Number of backends
+.sp
+Number of backends known to us.
+.UNINDENT
+.UNINDENT
+.sp
+\fBn_expired\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Number of expired objects
+.sp
+Number of objects that expired from cache because of old age.
+.UNINDENT
+.UNINDENT
+.sp
+\fBn_lru_nuked\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Number of LRU nuked objects
+.sp
+How many objects have been forcefully evicted from storage to make
+room for a new object.
+.UNINDENT
+.UNINDENT
+.sp
+\fBn_lru_moved\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Number of LRU moved objects
+.sp
+Number of move operations done on the LRU list.
+.UNINDENT
+.UNINDENT
+.sp
+\fBn_lru_limited\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Reached nuke_limit
+.sp
+Number of times more storage space were needed, but limit was reached in
+a nuke_limit. See also parameter nuke_limit.
+.UNINDENT
+.UNINDENT
+.sp
+\fBlosthdr\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+HTTP header overflows
+.UNINDENT
+.UNINDENT
+.sp
+\fBs_sess\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Total sessions seen
+.UNINDENT
+.UNINDENT
+.sp
+\fBn_pipe\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Number of ongoing pipe sessions
+.UNINDENT
+.UNINDENT
+.sp
+\fBpipe_limited\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Pipes hit pipe_sess_max
+.sp
+Number of times more pipes were needed, but the limit was reached. See
+also parameter pipe_sess_max.
+.UNINDENT
+.UNINDENT
+.sp
+\fBs_pipe\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Total pipe sessions seen
+.UNINDENT
+.UNINDENT
+.sp
+\fBs_pass\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Total pass\-ed requests seen
+.UNINDENT
+.UNINDENT
+.sp
+\fBs_fetch\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Total backend fetches initiated
+.UNINDENT
+.UNINDENT
+.sp
+\fBs_synth\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Total synthetic responses made
+.UNINDENT
+.UNINDENT
+.sp
+\fBs_req_hdrbytes\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Request header bytes
+.sp
+Total request header bytes received
+.UNINDENT
+.UNINDENT
+.sp
+\fBs_req_bodybytes\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Request body bytes
+.sp
+Total request body bytes received
+.UNINDENT
+.UNINDENT
+.sp
+\fBs_resp_hdrbytes\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Response header bytes
+.sp
+Total response header bytes transmitted
+.UNINDENT
+.UNINDENT
+.sp
+\fBs_resp_bodybytes\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Response body bytes
+.sp
+Total response body bytes transmitted
+.UNINDENT
+.UNINDENT
+.sp
+\fBs_pipe_hdrbytes\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Pipe request header bytes
+.sp
+Total request bytes received for piped sessions
+.UNINDENT
+.UNINDENT
+.sp
+\fBs_pipe_in\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Piped bytes from client
+.sp
+Total number of bytes forwarded from clients in pipe sessions
+.UNINDENT
+.UNINDENT
+.sp
+\fBs_pipe_out\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Piped bytes to client
+.sp
+Total number of bytes forwarded to clients in pipe sessions
+.UNINDENT
+.UNINDENT
+.sp
+\fBsess_closed\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Session Closed
+.UNINDENT
+.UNINDENT
+.sp
+\fBsess_closed_err\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Session Closed with error
+.sp
+Total number of sessions closed with errors. See sc_* diag counters
+for detailed breakdown
+.UNINDENT
+.UNINDENT
+.sp
+\fBsess_readahead\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Session Read Ahead
+.UNINDENT
+.UNINDENT
+.sp
+\fBsess_herd\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Session herd
+.sp
+Number of times the timeout_linger triggered
+.UNINDENT
+.UNINDENT
+.sp
+\fBsc_rem_close\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Session OK  REM_CLOSE
+.sp
+Number of session closes with REM_CLOSE (Client Closed)
+.UNINDENT
+.UNINDENT
+.sp
+\fBsc_req_close\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Session OK  REQ_CLOSE
+.sp
+Number of session closes with REQ_CLOSE (Client requested close)
+.UNINDENT
+.UNINDENT
+.sp
+\fBsc_req_http10\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Session Err REQ_HTTP10
+.sp
+Number of session closes with Error REQ_HTTP10 (Proto < HTTP/1.1)
+.UNINDENT
+.UNINDENT
+.sp
+\fBsc_rx_bad\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Session Err RX_BAD
+.sp
+Number of session closes with Error RX_BAD (Received bad req/resp)
+.UNINDENT
+.UNINDENT
+.sp
+\fBsc_rx_body\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Session Err RX_BODY
+.sp
+Number of session closes with Error RX_BODY (Failure receiving req.body)
+.UNINDENT
+.UNINDENT
+.sp
+\fBsc_rx_junk\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Session Err RX_JUNK
+.sp
+Number of session closes with Error RX_JUNK (Received junk data)
+.UNINDENT
+.UNINDENT
+.sp
+\fBsc_rx_overflow\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Session Err RX_OVERFLOW
+.sp
+Number of session closes with Error RX_OVERFLOW (Received buffer overflow)
+.UNINDENT
+.UNINDENT
+.sp
+\fBsc_rx_timeout\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Session Err RX_TIMEOUT
+.sp
+Number of session closes with Error RX_TIMEOUT (Receive timeout)
+.UNINDENT
+.UNINDENT
+.sp
+\fBsc_tx_pipe\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Session OK  TX_PIPE
+.sp
+Number of session closes with TX_PIPE (Piped transaction)
+.UNINDENT
+.UNINDENT
+.sp
+\fBsc_tx_error\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Session Err TX_ERROR
+.sp
+Number of session closes with Error TX_ERROR (Error transaction)
+.UNINDENT
+.UNINDENT
+.sp
+\fBsc_tx_eof\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Session OK  TX_EOF
+.sp
+Number of session closes with TX_EOF (EOF transmission)
+.UNINDENT
+.UNINDENT
+.sp
+\fBsc_resp_close\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Session OK  RESP_CLOSE
+.sp
+Number of session closes with RESP_CLOSE (Backend/VCL requested close)
+.UNINDENT
+.UNINDENT
+.sp
+\fBsc_overload\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Session Err OVERLOAD
+.sp
+Number of session closes with Error OVERLOAD (Out of some resource)
+.UNINDENT
+.UNINDENT
+.sp
+\fBsc_pipe_overflow\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Session Err PIPE_OVERFLOW
+.sp
+Number of session closes with Error PIPE_OVERFLOW (Session pipe overflow)
+.UNINDENT
+.UNINDENT
+.sp
+\fBsc_range_short\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Session Err RANGE_SHORT
+.sp
+Number of session closes with Error RANGE_SHORT (Insufficient data for range)
+.UNINDENT
+.UNINDENT
+.sp
+\fBsc_req_http20\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Session Err REQ_HTTP20
+.sp
+Number of session closes with Error REQ_HTTP20 (HTTP2 not accepted)
+.UNINDENT
+.UNINDENT
+.sp
+\fBsc_vcl_failure\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Session Err VCL_FAILURE
+.sp
+Number of session closes with Error VCL_FAILURE (VCL failure)
+.UNINDENT
+.UNINDENT
+.sp
+\fBclient_resp_500\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Delivery failed due to insufficient workspace.
+.sp
+Number of times we failed a response due to running out of
+workspace memory during delivery.
+.UNINDENT
+.UNINDENT
+.sp
+\fBws_backend_overflow\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+workspace_backend overflows
+.sp
+Number of times we ran out of space in workspace_backend.
+.UNINDENT
+.UNINDENT
+.sp
+\fBws_client_overflow\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+workspace_client overflows
+.sp
+Number of times we ran out of space in workspace_client.
+.UNINDENT
+.UNINDENT
+.sp
+\fBws_thread_overflow\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+workspace_thread overflows
+.sp
+Number of times we ran out of space in workspace_thread.
+.UNINDENT
+.UNINDENT
+.sp
+\fBws_session_overflow\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+workspace_session overflows
+.sp
+Number of times we ran out of space in workspace_session.
+.UNINDENT
+.UNINDENT
+.sp
+\fBshm_records\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+SHM records
+.UNINDENT
+.UNINDENT
+.sp
+\fBshm_writes\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+SHM writes
+.UNINDENT
+.UNINDENT
+.sp
+\fBshm_flushes\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+SHM flushes due to overflow
+.UNINDENT
+.UNINDENT
+.sp
+\fBshm_cont\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+SHM MTX contention
+.UNINDENT
+.UNINDENT
+.sp
+\fBshm_cycles\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+SHM cycles through buffer
+.UNINDENT
+.UNINDENT
+.sp
+\fBbackend_req\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Backend requests made
+.UNINDENT
+.UNINDENT
+.sp
+\fBn_vcl\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Number of loaded VCLs in total
+.UNINDENT
+.UNINDENT
+.sp
+\fBn_vcl_avail\fP – \fIgauge\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Number of VCLs available
+.UNINDENT
+.UNINDENT
+.sp
+\fBn_vcl_discard\fP – \fIgauge\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Number of discarded VCLs
+.UNINDENT
+.UNINDENT
+.sp
+\fBvcl_fail\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+VCL failures
+.sp
+Count of failures which prevented VCL from completing.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbans\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Count of bans
+.sp
+Number of all bans in system, including bans superseded by newer
+bans and bans already checked by the ban\-lurker.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbans_completed\fP – \fIgauge\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Number of bans marked \(aqcompleted\(aq
+.sp
+Number of bans which are no longer active, either because they got
+checked by the ban\-lurker or superseded by newer identical bans.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbans_obj\fP – \fIgauge\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Number of bans using obj.*
+.sp
+Number of bans which use obj.* variables.  These bans can possibly
+be washed by the ban\-lurker.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbans_req\fP – \fIgauge\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Number of bans using req.*
+.sp
+Number of bans which use req.* variables.  These bans can not be
+washed by the ban\-lurker.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbans_added\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Bans added
+.sp
+Counter of bans added to ban list.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbans_deleted\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Bans deleted
+.sp
+Counter of bans deleted from ban list.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbans_tested\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Bans tested against objects (lookup)
+.sp
+Count of how many bans and objects have been tested against each
+other during hash lookup.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbans_obj_killed\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Objects killed by bans (lookup)
+.sp
+Number of objects killed by bans during object lookup.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbans_lurker_tested\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Bans tested against objects (lurker)
+.sp
+Count of how many bans and objects have been tested against each
+other by the ban\-lurker.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbans_tests_tested\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Ban tests tested against objects (lookup)
+.sp
+Count of how many tests and objects have been tested against each
+other during lookup. \(aqban req.url == foo && req.http.host == bar\(aq
+counts as one in \(aqbans_tested\(aq and as two in \(aqbans_tests_tested\(aq
+.UNINDENT
+.UNINDENT
+.sp
+\fBbans_lurker_tests_tested\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Ban tests tested against objects (lurker)
+.sp
+Count of how many tests and objects have been tested against each
+other by the ban\-lurker. \(aqban req.url == foo && req.http.host ==
+bar\(aq counts as one in \(aqbans_tested\(aq and as two in \(aqbans_tests_tested\(aq
+.UNINDENT
+.UNINDENT
+.sp
+\fBbans_lurker_obj_killed\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Objects killed by bans (lurker)
+.sp
+Number of objects killed by the ban\-lurker.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbans_lurker_obj_killed_cutoff\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Objects killed by bans for cutoff (lurker)
+.sp
+Number of objects killed by the ban\-lurker to keep the number of
+bans below ban_cutoff.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbans_dups\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Bans superseded by other bans
+.sp
+Count of bans replaced by later identical bans.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbans_lurker_contention\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Lurker gave way for lookup
+.sp
+Number of times the ban\-lurker had to wait for lookups.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbans_persisted_bytes\fP – \fIgauge\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Bytes used by the persisted ban lists
+.sp
+Number of bytes used by the persisted ban lists.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbans_persisted_fragmentation\fP – \fIgauge\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Extra bytes in persisted ban lists due to fragmentation
+.sp
+Number of extra bytes accumulated through dropped and completed
+bans in the persistent ban lists.
+.UNINDENT
+.UNINDENT
+.sp
+\fBn_purges\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Number of purge operations executed
+.UNINDENT
+.UNINDENT
+.sp
+\fBn_obj_purged\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Number of purged objects
+.UNINDENT
+.UNINDENT
+.sp
+\fBexp_mailed\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Number of objects mailed to expiry thread
+.sp
+Number of objects mailed to expiry thread for handling.
+.UNINDENT
+.UNINDENT
+.sp
+\fBexp_received\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Number of objects received by expiry thread
+.sp
+Number of objects received by expiry thread for handling.
+.UNINDENT
+.UNINDENT
+.sp
+\fBhcb_nolock\fP – \fIcounter\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+HCB Lookups without lock
+.UNINDENT
+.UNINDENT
+.sp
+\fBhcb_lock\fP – \fIcounter\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+HCB Lookups with lock
+.UNINDENT
+.UNINDENT
+.sp
+\fBhcb_insert\fP – \fIcounter\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+HCB Inserts
+.UNINDENT
+.UNINDENT
+.sp
+\fBesi_errors\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+ESI parse errors (unlock)
+.UNINDENT
+.UNINDENT
+.sp
+\fBesi_warnings\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+ESI parse warnings (unlock)
+.UNINDENT
+.UNINDENT
+.sp
+\fBvmods\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Loaded VMODs
+.UNINDENT
+.UNINDENT
+.sp
+\fBn_gzip\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Gzip operations
+.UNINDENT
+.UNINDENT
+.sp
+\fBn_gunzip\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Gunzip operations
+.UNINDENT
+.UNINDENT
+.sp
+\fBn_test_gunzip\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Test gunzip operations
+.sp
+Those operations occur when Varnish receives a compressed object
+from a backend. They are done to verify the gzip stream while it\(aqs
+inserted in storage.
+.UNINDENT
+.UNINDENT
+.\" varnish_vsc_end:: main
+.
+.\" This is *NOT* a RST file but the syntax has been chosen so
+.\" that it may become an RST file at some later date.
+.
+.\" varnish_vsc_begin:: mgt
+.
+.SH MGT – MANAGEMENT PROCESS COUNTERS
+.sp
+\fBuptime\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Management process uptime
+.sp
+Uptime in seconds of the management process
+.UNINDENT
+.UNINDENT
+.sp
+\fBchild_start\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Child process started
+.sp
+Number of times the child process has been started
+.UNINDENT
+.UNINDENT
+.sp
+\fBchild_exit\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Child process normal exit
+.sp
+Number of times the child process has been cleanly stopped
+.UNINDENT
+.UNINDENT
+.sp
+\fBchild_stop\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Child process unexpected exit
+.sp
+Number of times the child process has exited with an
+unexpected return code
+.UNINDENT
+.UNINDENT
+.sp
+\fBchild_died\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Child process died (signal)
+.sp
+Number of times the child process has died due to signals
+.UNINDENT
+.UNINDENT
+.sp
+\fBchild_dump\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Child process core dumped
+.sp
+Number of times the child process has produced core dumps
+.UNINDENT
+.UNINDENT
+.sp
+\fBchild_panic\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Child process panic
+.sp
+Number of times the management process has caught a child panic
+.UNINDENT
+.UNINDENT
+.\" varnish_vsc_end:: mgt
+.
+.\" This is *NOT* a RST file but the syntax has been chosen so
+.\" that it may become an RST file at some later date.
+.
+.\" varnish_vsc_begin:: mempool
+.
+.SH MEMPOOL – MEMORY POOL COUNTERS
+.sp
+\fBlive\fP – \fIgauge\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+In use
+.UNINDENT
+.UNINDENT
+.sp
+\fBpool\fP – \fIgauge\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+In Pool
+.UNINDENT
+.UNINDENT
+.sp
+\fBsz_wanted\fP – \fIgauge\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+Size requested
+.UNINDENT
+.UNINDENT
+.sp
+\fBsz_actual\fP – \fIgauge\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+Size allocated
+.UNINDENT
+.UNINDENT
+.sp
+\fBallocs\fP – \fIcounter\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+Allocations
+.UNINDENT
+.UNINDENT
+.sp
+\fBfrees\fP – \fIcounter\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+Frees
+.UNINDENT
+.UNINDENT
+.sp
+\fBrecycle\fP – \fIcounter\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+Recycled from pool
+.UNINDENT
+.UNINDENT
+.sp
+\fBtimeout\fP – \fIcounter\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+Timed out from pool
+.UNINDENT
+.UNINDENT
+.sp
+\fBtoosmall\fP – \fIcounter\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+Too small to recycle
+.UNINDENT
+.UNINDENT
+.sp
+\fBsurplus\fP – \fIcounter\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+Too many for pool
+.UNINDENT
+.UNINDENT
+.sp
+\fBrandry\fP – \fIcounter\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+Pool ran dry
+.UNINDENT
+.UNINDENT
+.\" varnish_vsc_end:: mempool
+.
+.\" This is *NOT* a RST file but the syntax has been chosen so
+.\" that it may become an RST file at some later date.
+.
+.\" varnish_vsc_begin:: sma
+.
+.SH SMA – MALLOC STEVEDORE COUNTERS
+.sp
+\fBc_req\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Allocator requests
+.sp
+Number of times the storage has been asked to provide a storage segment.
+.UNINDENT
+.UNINDENT
+.sp
+\fBc_fail\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Allocator failures
+.sp
+Number of times the storage has failed to provide a storage segment.
+.UNINDENT
+.UNINDENT
+.sp
+\fBc_bytes\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Bytes allocated
+.sp
+Number of total bytes allocated by this storage.
+.UNINDENT
+.UNINDENT
+.sp
+\fBc_freed\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Bytes freed
+.sp
+Number of total bytes returned to this storage.
+.UNINDENT
+.UNINDENT
+.sp
+\fBg_alloc\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Allocations outstanding
+.sp
+Number of storage allocations outstanding.
+.UNINDENT
+.UNINDENT
+.sp
+\fBg_bytes\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Bytes outstanding
+.sp
+Number of bytes allocated from the storage.
+.UNINDENT
+.UNINDENT
+.sp
+\fBg_space\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Bytes available
+.sp
+Number of bytes left in the storage.
+.UNINDENT
+.UNINDENT
+.\" varnish_vsc_end:: sma
+.
+.\" This is *NOT* a RST file but the syntax has been chosen so
+.\" that it may become an RST file at some later date.
+.
+.\" varnish_vsc_begin:: smu
+.
+.SH SMU – UMEM STEVEDORE COUNTERS
+.sp
+\fBc_req\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Allocator requests
+.sp
+Number of times the storage has been asked to provide a storage segment.
+.UNINDENT
+.UNINDENT
+.sp
+\fBc_fail\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Allocator failures
+.sp
+Number of times the storage has failed to provide a storage segment.
+.UNINDENT
+.UNINDENT
+.sp
+\fBc_bytes\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Bytes allocated
+.sp
+Number of total bytes allocated by this storage.
+.UNINDENT
+.UNINDENT
+.sp
+\fBc_freed\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Bytes freed
+.sp
+Number of total bytes returned to this storage.
+.UNINDENT
+.UNINDENT
+.sp
+\fBg_alloc\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Allocations outstanding
+.sp
+Number of storage allocations outstanding.
+.UNINDENT
+.UNINDENT
+.sp
+\fBg_bytes\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Bytes outstanding
+.sp
+Number of bytes allocated from the storage.
+.UNINDENT
+.UNINDENT
+.sp
+\fBg_space\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Bytes available
+.sp
+Number of bytes left in the storage.
+.UNINDENT
+.UNINDENT
+.\" varnish_vsc_end:: smu
+.
+.\" This is *NOT* a RST file but the syntax has been chosen so
+.\" that it may become an RST file at some later date.
+.
+.\" varnish_vsc_begin:: smf
+.
+.SH SMF – FILE STEVEDORE COUNTERS
+.sp
+\fBc_req\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Allocator requests
+.sp
+Number of times the storage has been asked to provide a storage segment.
+.UNINDENT
+.UNINDENT
+.sp
+\fBc_fail\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Allocator failures
+.sp
+Number of times the storage has failed to provide a storage segment.
+.UNINDENT
+.UNINDENT
+.sp
+\fBc_bytes\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Bytes allocated
+.sp
+Number of total bytes allocated by this storage.
+.UNINDENT
+.UNINDENT
+.sp
+\fBc_freed\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Bytes freed
+.sp
+Number of total bytes returned to this storage.
+.UNINDENT
+.UNINDENT
+.sp
+\fBg_alloc\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Allocations outstanding
+.sp
+Number of storage allocations outstanding.
+.UNINDENT
+.UNINDENT
+.sp
+\fBg_bytes\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Bytes outstanding
+.sp
+Number of bytes allocated from the storage.
+.UNINDENT
+.UNINDENT
+.sp
+\fBg_space\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Bytes available
+.sp
+Number of bytes left in the storage.
+.UNINDENT
+.UNINDENT
+.sp
+\fBg_smf\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+N struct smf
+.UNINDENT
+.UNINDENT
+.sp
+\fBg_smf_frag\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+N small free smf
+.UNINDENT
+.UNINDENT
+.sp
+\fBg_smf_large\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+N large free smf
+.UNINDENT
+.UNINDENT
+.\" varnish_vsc_end:: smf
+.
+.\" This is *NOT* a RST file but the syntax has been chosen so
+.\" that it may become an RST file at some later date.
+.
+.\" varnish_vsc_begin:: vbe
+.
+.SH VBE – BACKEND COUNTERS
+.sp
+\fBhappy\fP – \fIbitmap\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Happy health probes
+.UNINDENT
+.UNINDENT
+.sp
+\fBbereq_hdrbytes\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Request header bytes
+.sp
+Total backend request header bytes sent
+.UNINDENT
+.UNINDENT
+.sp
+\fBbereq_bodybytes\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Request body bytes
+.sp
+Total backend request body bytes sent
+.UNINDENT
+.UNINDENT
+.sp
+\fBberesp_hdrbytes\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Response header bytes
+.sp
+Total backend response header bytes received
+.UNINDENT
+.UNINDENT
+.sp
+\fBberesp_bodybytes\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Response body bytes
+.sp
+Total backend response body bytes received
+.UNINDENT
+.UNINDENT
+.sp
+\fBpipe_hdrbytes\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Pipe request header bytes
+.sp
+Total request bytes sent for piped sessions
+.UNINDENT
+.UNINDENT
+.sp
+\fBpipe_out\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Piped bytes to backend
+.sp
+Total number of bytes forwarded to backend in pipe sessions
+.UNINDENT
+.UNINDENT
+.sp
+\fBpipe_in\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Piped bytes from backend
+.sp
+Total number of bytes forwarded from backend in pipe sessions
+.UNINDENT
+.UNINDENT
+.sp
+\fBconn\fP – \fIgauge\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Concurrent connections to backend
+.UNINDENT
+.UNINDENT
+.sp
+\fBreq\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Backend requests sent
+.UNINDENT
+.UNINDENT
+.sp
+\fBunhealthy\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Fetches not attempted due to backend being unhealthy
+.UNINDENT
+.UNINDENT
+.sp
+\fBbusy\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Fetches not attempted due to backend being busy
+.sp
+Number of times the max_connections limit was reached
+.UNINDENT
+.UNINDENT
+.\" === Anything below is actually per VCP entry, but collected per
+.\" === backend for simplicity
+.
+.sp
+\fBfail\fP – \fIcounter\fP \- info
+.INDENT 0.0
+.INDENT 3.5
+Connections failed
+.sp
+Counter of failed opens. Detailed reasons are given in the
+fail_* counters (DIAG level) and in the log under the FetchError tag.
+.sp
+This counter is the sum of all detailed fail_* counters.
+.sp
+All fail_* counters may be slightly inaccurate for efficiency.
+.UNINDENT
+.UNINDENT
+.sp
+\fBfail_eacces\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Connections failed with EACCES or EPERM
+.UNINDENT
+.UNINDENT
+.sp
+\fBfail_eaddrnotavail\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Connections failed with EADDRNOTAVAIL
+.UNINDENT
+.UNINDENT
+.sp
+\fBfail_econnrefused\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Connections failed with ECONNREFUSED
+.UNINDENT
+.UNINDENT
+.sp
+\fBfail_enetunreach\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Connections failed with ENETUNREACH
+.UNINDENT
+.UNINDENT
+.sp
+\fBfail_etimedout\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Connections failed ETIMEDOUT
+.UNINDENT
+.UNINDENT
+.sp
+\fBfail_other\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Connections failed for other reason
+.UNINDENT
+.UNINDENT
+.sp
+\fBhelddown\fP – \fIcounter\fP \- diag
+.INDENT 0.0
+.INDENT 3.5
+Connection opens not attempted
+.sp
+Connections not attempted during the backend_local_error_holddown
+or backend_remote_error_holddown interval after a fundamental
+connection issue.
+.UNINDENT
+.UNINDENT
+.\" varnish_vsc_end:: vbe
+.
+.\" This is *NOT* a RST file but the syntax has been chosen so
+.\" that it may become an RST file at some later date.
+.
+.\" varnish_vsc_begin:: lck
+.
+.SH LCK – LOCK COUNTERS
+.INDENT 0.0
+.INDENT 3.5
+Counters which track the activity in the different classes
+of mutex\-locks.
+.sp
+The counts may be slightly wrong if there are more than one
+lock instantiated in each class (ie: .creat > 1)
+.UNINDENT
+.UNINDENT
+.sp
+\fBcreat\fP – \fIcounter\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+Created locks
+.UNINDENT
+.UNINDENT
+.sp
+\fBdestroy\fP – \fIcounter\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+Destroyed locks
+.UNINDENT
+.UNINDENT
+.sp
+\fBlocks\fP – \fIcounter\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+Lock Operations
+.UNINDENT
+.UNINDENT
+.sp
+\fBdbg_busy\fP – \fIcounter\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+Contended lock operations
+.sp
+If the \fBlck\fP debug bit is set: Lock operations which
+returned EBUSY on the first locking attempt.
+.sp
+If the \fBlck\fP debug bit is unset, this counter will never be
+incremented even if lock operations are contended.
+.UNINDENT
+.UNINDENT
+.sp
+\fBdbg_try_fail\fP – \fIcounter\fP \- debug
+.INDENT 0.0
+.INDENT 3.5
+Contended trylock operations
+.sp
+If the \fBlck\fP debug bit is set: Trylock operations which
+returned EBUSY.
+.sp
+If the \fBlck\fP debug bit is unset, this counter will never be
+incremented even if lock operations are contended.
+.UNINDENT
+.UNINDENT
+.\" varnish_vsc_end:: lck
+.
+.SH AUTHORS
+.sp
+This man page was written by Lasse Karstensen, using content from vsc2rst
+written by Tollef Fog Heen.
+.\" Generated by docutils manpage writer.
+.

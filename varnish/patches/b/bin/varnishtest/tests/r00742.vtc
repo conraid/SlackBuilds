@@ -1,0 +1,24 @@
+varnishtest "% escapes in VCL source and vcl.show"
+
+server s1 {
+	rxreq
+	txresp
+} -start
+
+varnish v1 -cliok "param.set vcc_allow_inline_c true" -vcl+backend {
+	C{
+	#include <stdio.h>
+	}C
+	sub vcl_recv {
+		C{
+		printf("%s %s %s", "foo", "bar", "barf");
+		}C
+	}
+} -start
+
+client c1 {
+	txreq
+	rxresp
+} -run
+
+varnish v1 -cliok "vcl.show vcl1"

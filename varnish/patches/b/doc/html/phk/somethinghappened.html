@@ -1,0 +1,197 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Something (funny) happened on the way to 5.1.0^H1^H2 &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Trial&amp;Error - Prototyping - Continous Integration" href="trialerror.html" />
+    <link rel="prev" title="Yah! A security issue - finally!" href="VSV00001.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="trialerror.html" title="Trial&amp;Error - Prototyping - Continous Integration"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="VSV00001.html" title="Yah! A security issue - finally!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="something-funny-happened-on-the-way-to-5-1-0-h1-h2">
+<span id="phk-somethinghappened"></span><h1>Something (funny) happened on the way to 5.1.0^H1^H2<a class="headerlink" href="#something-funny-happened-on-the-way-to-5-1-0-h1-h2" title="Permalink to this headline">¶</a></h1>
+<p>Some time back we, or to be perfectly honest, I, decided that in
+the future we would do two varnish releases per year, march 15th
+and september 15th and damn the torpedoes.</p>
+<p>The 5.1.X release was the first real test of this and it went a
+little less smooth than I would have preferred, and it is pretty
+much all my own fault.</p>
+<p>As you may have heard, we're in the process of <a class="reference external" href="https://ing.dk/blog/murvaerk-196778">building a new house</a> and that obviously takes a
+lot of time on my part, most recently we have put up our &quot;old&quot; house
+for sale etc. etc.</p>
+<p>So I was distracted, and suddenly it was march 15th but come hell
+or high water:  We cut the release.</p>
+<p>... and almost immediately found that it had a total show-stopper
+bug which would cause the worker process to restart too often.</p>
+<p>Ok, fix that and roll 5.1.1</p>
+<p>... and find another two, not quite as severe but still unacceptable
+problems.</p>
+<p>Deep breath, fix those, and a lot of HTTP/2 stuff reported by
+simon &amp; xcir, who kindly subject that part of the code to some
+live traffic ...  and roll 5.1.2.</p>
+<p>This one will stick I hope.   Next release will be September 15th.</p>
+<p>... unless something truly horrible lurks in 5.1.2.</p>
+<div class="section" id="success-failure-or-meh-strike-out-the-not-applicable">
+<h2>Success, Failure or Meh? (strike out the not applicable)<a class="headerlink" href="#success-failure-or-meh-strike-out-the-not-applicable" title="Permalink to this headline">¶</a></h2>
+<p>Seen from a release engineering point of view we live a very
+sheltered life in the Varnish Project.</p>
+<p>Our code base is small, 120 thousand lines of code and we
+wrote almost all of it ourselves, which means that we
+control the quality standard throughout.</p>
+<p>Thanks to our focus on code-quality, we have never had to
+rush out a bug/security-fix in the full glare of the combined
+scorn of Nanog, Hackernews, Reddit and Metasploit <a class="footnote-reference" href="#f2" id="id1">[2]</a>.</p>
+<p>We also don't link against any huge &quot;middleware&quot; libraries, I think
+the biggest ones are Ncurses and PCRE <a class="footnote-reference" href="#f1" id="id2">[1]</a>, both of which are
+quite stable, and we don't depend on any obscure single-compiler
+languages either.</p>
+<p>So while rushing out point releases with short notice is pretty
+routine for many other projects, it was a new experience for us,
+and it reminded us of a couple of things we had sort of forgotten <a class="footnote-reference" href="#f3" id="id3">[3]</a>.</p>
+<p>I am absolutely certain that if we had not had our &quot;release
+by calendar&quot; policy in place, I would probably not have been
+willing to sign of on a release until after all the
+house-building-moving-finding-where-I-put-the-computer madness
+is over late in summer, and then I would probably still insist
+on delaying it for a month just to catch my bearings.</p>
+<p>That would have held some
+<a class="reference external" href="/docs/5.1/whats-new/changes-5.1.html">pretty significant new code</a>
+from our users for another half year, for no particular reason.</p>
+<p>So yeah, it was pretty embarrasing to have to amend our 5.1 release
+twice in two weeks, but it did prove that the &quot;release by calendar&quot;
+strategy is right for our project:  It forced us to get our s**t
+toggether so users can benefit from the work we do in a timely
+fashion.</p>
+<p>And thanks to the heroic testing efforts of Simon and Xcir, you may
+even be able to use the HTTP/2 support in 5.1.2 as a result.</p>
+<p>Next time, by which I mean &quot;September 15th 2017&quot;, we'll try to do better.</p>
+<p>Poul-Henning, 2017-04-11</p>
+<p class="rubric">Footnotes</p>
+<table class="docutils footnote" frame="void" id="f1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>Ncurses is just shy of 120 thousand lines of code and
+PCRE is 96 thousand lines but that is getting of lightly,
+compared to linking against any kind of GUI.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[2]</a></td><td>The bugs which caused 5.1.1 and 5.1.2 &quot;merely&quot; resulted
+in bad stability, they were not security issues.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>Always release from a branch, in case you need to release again.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Something (funny) happened on the way to 5.1.0^H1^H2</a><ul>
+<li><a class="reference internal" href="#success-failure-or-meh-strike-out-the-not-applicable">Success, Failure or Meh? (strike out the not applicable)</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="VSV00001.html"
+                        title="previous chapter">Yah!  A security issue - finally!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="trialerror.html"
+                        title="next chapter">Trial&amp;Error - Prototyping - Continous Integration</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/phk/somethinghappened.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="trialerror.html" title="Trial&amp;Error - Prototyping - Continous Integration"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="VSV00001.html" title="Yah! A security issue - finally!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

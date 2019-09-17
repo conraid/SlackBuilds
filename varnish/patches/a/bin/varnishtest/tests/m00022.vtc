@@ -1,0 +1,54 @@
+varnishtest "Test vmod failure in vcl_init{}"
+
+server s1 {
+	rxreq
+	txresp
+} -start
+
+varnish v1 -vcl+backend { } -start
+
+logexpect l1 -v v1 -g raw {
+	expect * 0	VCL_Log         "Should happen first"
+	expect 0 0	VCL_Log         "Should happen second"
+
+} -start
+
+varnish v1 -errvcl "Forced failure" {
+
+	import debug;
+	import std;
+
+	backend default {
+		.host = "${s1_addr}";
+	}
+
+	sub vcl_init {
+		std.log("Should happen first");
+		debug.fail();
+		std.log("Should not happen");
+	}
+	sub vcl_fini {
+		std.log("Should happen second");
+	}
+}
+
+logexpect l1 -wait
+
+shell -match "^$" {varnishlog -n ${v1_name} -d -g raw -I "Should not happen"}
+
+varnish v1 -cliok "param.set nuke_limit 42"
+
+varnish v1 -errvcl "nuke_limit is not the answer." {
+
+	import debug;
+
+	backend default {
+		.host = "${s1_addr}";
+	}
+}
+
+client c1 {
+	txreq
+	rxresp
+	expect resp.status == 200
+} -run

@@ -1,0 +1,231 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Varnish 5.0 Release Note &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Changes in Varnish 5.0" href="changes-5.0.html" />
+    <link rel="prev" title="Upgrading to Varnish 5.1" href="upgrading-5.1.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="changes-5.0.html" title="Changes in Varnish 5.0"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="upgrading-5.1.html" title="Upgrading to Varnish 5.1"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="varnish-5-0-release-note">
+<span id="whatsnew-relnote-5-0"></span><h1>Varnish 5.0 Release Note<a class="headerlink" href="#varnish-5-0-release-note" title="Permalink to this headline">¶</a></h1>
+<p>This is the first Varnish release after the Varnish Project moved out
+of Varnish Software's basement, so to speak, and it shows.</p>
+<p>But it is also our 10 year anniversary release, <a class="reference external" href="https://sourceforge.net/p/varnish/news/2006/09/varnish-10-released/">Varnish 1.0 was
+released</a> on September 20th 2006.</p>
+<p>That also means that we have been doing this for 10 years
+without any bad security holes.</p>
+<p>So yeah... 5.0 is not entirely what we had hoped it would be, but we
+are as proud as one can possibly be anyway.</p>
+<p>To keep this release note short(er), we have put the purely technical
+stuff in two separate documents:</p>
+<ul class="simple">
+<li><a class="reference internal" href="changes-5.0.html#whatsnew-changes-5-0"><span class="std std-ref">Changes in Varnish 5.0</span></a></li>
+<li><a class="reference internal" href="upgrading-5.0.html#whatsnew-upgrading-5-0"><span class="std std-ref">Upgrading to Varnish 5.0</span></a></li>
+</ul>
+<div class="section" id="how-to-get-varnish-5-0">
+<h2>How to get Varnish 5.0<a class="headerlink" href="#how-to-get-varnish-5-0" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://varnish-cache.org/_downloads/varnish-5.0.0.tgz">Source download</a></p>
+<p>Packages for mainstream operating systems should appear in as
+soon as they trickle through the machinery.</p>
+</div>
+<div class="section" id="reasons-to-upgrade-to-varnish-5-0">
+<h2>Reasons to upgrade to Varnish 5.0<a class="headerlink" href="#reasons-to-upgrade-to-varnish-5-0" title="Permalink to this headline">¶</a></h2>
+<p>The separate VCL/VCL labels feature can probably help you untangle
+your VCL code if it has become too complex.  Upgrading from 4.1
+to get that feature should be a no-brainer.</p>
+<p>The HTTP/2 code is not mature enough for production, and if you
+want to start to play with H2, you should not upgrade to 5.0,
+but rather track -trunk from github and help us find all the bugs
+before the next release.</p>
+<p>The Shard director is new in the tree, but it has a lot of live
+hours out of tree.  Upgrading from 4.1 to 5.0 to get that should
+also be a no-brainer.</p>
+<p>We have also fixed at lot of minor bugs, and improved many details
+here and there, See <a class="reference internal" href="upgrading-5.0.html#whatsnew-upgrading-5-0"><span class="std std-ref">Upgrading to Varnish 5.0</span></a> for more of this.</p>
+</div>
+<div class="section" id="reasons-not-to-upgrade-to-varnish-5-0">
+<h2>Reasons not to upgrade to Varnish 5.0<a class="headerlink" href="#reasons-not-to-upgrade-to-varnish-5-0" title="Permalink to this headline">¶</a></h2>
+<p>None that we know of at this time.</p>
+<p>Only in very special cases should you need to modify your VCL.</p>
+</div>
+<div class="section" id="next-release">
+<h2>Next release<a class="headerlink" href="#next-release" title="Permalink to this headline">¶</a></h2>
+<p>Next release is scheduled for March 15th 2017, and will most
+likely be Varnish 5.1.</p>
+</div>
+<div class="section" id="the-obligatory-thank-you-speech">
+<h2>The obligatory thank-you speech<a class="headerlink" href="#the-obligatory-thank-you-speech" title="Permalink to this headline">¶</a></h2>
+<p>This release of Varnish Cache is brought to you by the generous
+support and donations of money and manpower from four companies:</p>
+<ul class="simple">
+<li>Fastly</li>
+<li>Varnish Software</li>
+<li>UPLEX</li>
+<li>The company which prefers to simply be known as &quot;ADJS&quot;</li>
+</ul>
+<p>Without them, this release, and for that matter all the previous
+ones, would not have happened.</p>
+<p>Even though they are all employees of those very
+same companies, these developers merit personal praise:</p>
+<ul class="simple">
+<li>Martin - HTTP/2 HPACK header compression code, stevedore API, VSL</li>
+<li>Nils &amp; Geoff - Shard backend director, ban-lurker improvements</li>
+<li>Guillame - HTTP/2 support for varnishtest</li>
+<li>Dridi - Backend temperatures etc.</li>
+<li>Federico - Too many fixes and ideas to count</li>
+<li>Lasse - Our tireless release-manager</li>
+<li>Devon - Performance insights and critical review.</li>
+<li>The rest of the V-S crew - Too many things to list.</li>
+</ul>
+</div>
+<div class="section" id="we-need-more-money">
+<h2>We need more money<a class="headerlink" href="#we-need-more-money" title="Permalink to this headline">¶</a></h2>
+<p>Until now Varnish Software has done a lot of work for the Varnish
+Cache project, but for totally valid reasons, they are scaling that
+back and the project either needs to pick up the slack or drop some
+of those activities.</p>
+<p>It is important that people understand that Free and Open Source
+Software isn't the same as gratis software:  Somebody has to pay
+the developers mortgages and student loans.</p>
+<p>A very large part of the Varnish development is funded through the
+<a class="reference external" href="http://phk.freebsd.dk/VML">Varnish Moral License</a>, which enables Poul-Henning Kamp to have
+Varnish as his primary job, but right now he is underfunded to the
+tune of EUR 2000-3000 per month.</p>
+<p>Please consider if your company makes enough money using Varnish
+Cache, to spare some money, or employee-hours for its future
+maintenance and development.</p>
+</div>
+<div class="section" id="we-also-need-more-manpower">
+<h2>We also need more manpower<a class="headerlink" href="#we-also-need-more-manpower" title="Permalink to this headline">¶</a></h2>
+<p>First and foremost, we could really use a Postmaster to look after
+our mailman mailing lists, including the increasingly arcane art
+of anti-spam techniques and invocations.</p>
+<p>We also need to work more on our documentation, it is in bad need
+of one or more writers which can actually write text rather than
+code.</p>
+<p>We could also use more qualified content for our new project homepage,
+so a webmaster is on our shopping list as well.</p>
+<p>Finally, we can always use C-developers, we have more ideas than
+we have coders, and since we have very high standards for quality
+things take time to write.</p>
+<p>The best way to get involved is to just jump in and do stuff that
+needs done.</p>
+<p>Here is the <a class="reference external" href="https://github.com/varnishcache/varnish-cache">Varnish Cache github page</a>.</p>
+<p>And here is the <a class="reference external" href="https://github.com/varnishcache/varnish-cache">Varnish Projects homepage on github</a>.</p>
+<p>Welcome on board!</p>
+<p><em>phk</em></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Varnish 5.0 Release Note</a><ul>
+<li><a class="reference internal" href="#how-to-get-varnish-5-0">How to get Varnish 5.0</a></li>
+<li><a class="reference internal" href="#reasons-to-upgrade-to-varnish-5-0">Reasons to upgrade to Varnish 5.0</a></li>
+<li><a class="reference internal" href="#reasons-not-to-upgrade-to-varnish-5-0">Reasons not to upgrade to Varnish 5.0</a></li>
+<li><a class="reference internal" href="#next-release">Next release</a></li>
+<li><a class="reference internal" href="#the-obligatory-thank-you-speech">The obligatory thank-you speech</a></li>
+<li><a class="reference internal" href="#we-need-more-money">We need more money</a></li>
+<li><a class="reference internal" href="#we-also-need-more-manpower">We also need more manpower</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="upgrading-5.1.html"
+                        title="previous chapter">Upgrading to Varnish 5.1</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="changes-5.0.html"
+                        title="next chapter">Changes in Varnish 5.0</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/whats-new/relnote-5.0.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="changes-5.0.html" title="Changes in Varnish 5.0"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="upgrading-5.1.html" title="Upgrading to Varnish 5.1"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

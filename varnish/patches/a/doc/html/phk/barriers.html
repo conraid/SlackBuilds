@@ -1,0 +1,219 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Security barriers in Varnish &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="What were they thinking ?" href="thoughts.html" />
+    <link rel="prev" title="Picking platforms" href="platforms.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="thoughts.html" title="What were they thinking ?"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="platforms.html" title="Picking platforms"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="security-barriers-in-varnish">
+<span id="phk-barriers"></span><h1>Security barriers in Varnish<a class="headerlink" href="#security-barriers-in-varnish" title="Permalink to this headline">¶</a></h1>
+<p>Security is a very important design driver in Varnish, more likely than not,
+if you find yourself thinking &quot;Why did he do _that_ ? the answer has to
+do with security.</p>
+<p>The Varnish security model is based on some very crude but easy to understand
+barriers between the various components:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>              <span class="o">.--&gt;-</span> <span class="n">provides</span> <span class="o">-&gt;---------------------------------------.</span>
+              <span class="o">|</span>                                          <span class="o">|</span>            <span class="o">|</span>
+     <span class="p">(</span><span class="n">ADMIN</span><span class="p">)</span><span class="o">--+--&gt;-</span> <span class="n">runs</span> <span class="o">-----&gt;---.</span>                      <span class="o">|</span>            <span class="o">|</span>
+              <span class="o">|</span>                   <span class="o">|</span>                      <span class="o">|</span>            <span class="o">|</span>
+              <span class="o">|--&gt;-</span> <span class="n">cli_req</span> <span class="o">--&gt;---|</span>                      <span class="n">v</span>            <span class="n">v</span>
+              <span class="s1">&#39;--&lt;- cli_resp -&lt;---|                     VCL        MODULE</span>
+                                  <span class="o">|</span>                      <span class="o">|</span>            <span class="o">|</span>
+     <span class="p">(</span><span class="n">OPER</span><span class="p">)</span>                       <span class="o">|</span>                      <span class="o">|</span><span class="n">reads</span>       <span class="o">|</span>
+       <span class="o">|</span>                          <span class="o">|</span>                      <span class="o">|</span>            <span class="o">|</span>
+       <span class="o">|</span><span class="n">runs</span>                      <span class="o">|</span>                      <span class="o">|</span>            <span class="o">|</span>
+       <span class="o">|</span>      <span class="o">.-&lt;-</span> <span class="n">create</span> <span class="o">-&lt;-.</span>    <span class="o">|</span>    <span class="o">.-&gt;-</span> <span class="n">fork</span> <span class="o">-&gt;-.</span>    <span class="n">v</span>            <span class="o">|</span>
+       <span class="n">v</span>      <span class="o">|-&gt;-</span> <span class="n">check</span> <span class="o">--&gt;-|--</span> <span class="n">MGT</span> <span class="o">--|</span>            <span class="o">|--</span> <span class="n">VCC</span> <span class="o">&lt;-</span> <span class="n">loads</span> <span class="o">-|</span>
+      <span class="n">VSM</span>     <span class="o">|-&lt;-</span> <span class="n">write</span> <span class="o">--&lt;-</span><span class="s1">&#39;    |    &#39;</span><span class="o">-&lt;-</span> <span class="n">wait</span> <span class="o">-&lt;-</span><span class="s1">&#39;    |            |</span>
+     <span class="n">TOOLS</span>    <span class="o">|</span>                   <span class="o">|</span>                      <span class="o">|</span>            <span class="o">|</span>
+       <span class="o">^</span>      <span class="o">|</span>     <span class="o">.-------------</span><span class="s1">&#39;                      |            |</span>
+       <span class="o">|</span>      <span class="o">|</span>     <span class="o">|</span>                                    <span class="o">|</span><span class="n">writes</span>      <span class="o">|</span>
+       <span class="o">|</span><span class="n">reads</span> <span class="o">|</span>     <span class="o">|-&gt;-</span> <span class="n">fork</span> <span class="o">-----&gt;-.</span>                   <span class="o">|</span>            <span class="o">|</span>
+       <span class="o">|</span>      <span class="o">|</span>     <span class="o">|-&gt;-</span> <span class="n">cli_req</span> <span class="o">--&gt;-|</span>                   <span class="o">|</span>            <span class="o">|</span>
+      <span class="n">VSM</span> <span class="o">----</span><span class="s1">&#39;     |-&lt;- cli_resp -&lt;-|                   v            |</span>
+       <span class="o">|</span>            <span class="s1">&#39;-&lt;- wait -----&lt;-|                VCL.SO          |</span>
+       <span class="o">|</span>                             <span class="o">|</span>                   <span class="o">|</span>            <span class="o">|</span>
+       <span class="o">|</span>                             <span class="o">|</span>                   <span class="o">|</span>            <span class="o">|</span>
+       <span class="o">|----&gt;-----</span> <span class="n">inherit</span> <span class="o">---&gt;------|--&lt;--</span> <span class="n">loads</span> <span class="o">-------</span><span class="s1">&#39;            |</span>
+       <span class="o">|----&gt;-----</span>  <span class="n">reads</span> <span class="o">----&gt;------|</span>                                <span class="o">|</span>
+       <span class="s1">&#39;----&lt;----- writes ----&lt;------|--&lt;-- loads --------------------&#39;</span>
+                                     <span class="o">|</span>
+                                     <span class="o">|</span>
+                                     <span class="o">|</span>
+         <span class="o">.---&gt;--</span> <span class="n">http_req</span> <span class="o">---&gt;--.</span>    <span class="o">|</span>    <span class="o">.--&gt;--</span> <span class="n">http_req</span> <span class="o">---&gt;--.</span>
+<span class="p">(</span><span class="n">ANON</span><span class="p">)</span> <span class="o">--|</span>                      <span class="o">|--</span> <span class="n">CLD</span> <span class="o">--|</span>                     <span class="o">|--</span> <span class="p">(</span><span class="n">BACKEND</span><span class="p">)</span>
+         <span class="s1">&#39;---&lt;-- http_resp --&lt;--&#39;</span>         <span class="s1">&#39;--&lt;-- http_resp --&lt;--&#39;</span>
+</pre></div>
+</div>
+<p>(ASCII-ART rules!)</p>
+<div class="section" id="the-really-important-barrier">
+<h2>The really Important Barrier<a class="headerlink" href="#the-really-important-barrier" title="Permalink to this headline">¶</a></h2>
+<p>The central actor in Varnish is the Manager process, &quot;MGT&quot;, which is the
+process the administrator &quot;(ADMIN)&quot; starts to get web-cache service.</p>
+<p>Having been there myself, I do not subscribe to the &quot;I feel cool and important
+when I get woken up at 3AM to restart a dead process&quot; school of thought, in
+fact, I think that is a clear sign of mindless stupidity:  If we cannot
+get a computer to restart a dead process, why do we even have them ?</p>
+<p>The task of the Manager process is therefore not cache web content,
+but to make sure there always is a process which does that, the
+Child &quot;CLD&quot; process.</p>
+<p>That is the major barrier in Varnish:  All management happens in
+one process all actual movement of traffic happens in another, and
+the Manager process does not trust the Child process at all.</p>
+<p>The Child process is in a the totally unprotected domain:  Any
+computer on the InterNet &quot;(ANON)&quot; can connect to the Child process
+and ask for some web-object.</p>
+<p>If John D. Criminal manages to exploit a security hole in Varnish, it is
+the Child process he subverts.  If he carries out a DoS attack, it is
+the Child process he tries to fell.</p>
+<p>Therefore the Manager starts the Child with as low priviledge as practically
+possible, and we close all filedescriptors it should not have access to and
+so on.</p>
+<p>There are only three channels of communication back to the Manager
+process: An exit code, a CLI response or writing stuff into the
+shared memory file &quot;VSM&quot; used for statistics and logging, all of
+these are well defended by the Manager process.</p>
+</div>
+<div class="section" id="the-admin-oper-barrier">
+<h2>The Admin/Oper Barrier<a class="headerlink" href="#the-admin-oper-barrier" title="Permalink to this headline">¶</a></h2>
+<p>If you look at the top left corner of the diagram, you will see that Varnish
+operates with separate Administrator &quot;(ADMIN)&quot; and Operator &quot;(OPER)&quot; roles.</p>
+<p>The Administrator does things, changes stuff etc.  The Operator keeps an
+eye on things to make sure they are as they should be.</p>
+<p>These days Operators are often scripts and data collection tools, and
+there is no reason to assume they are bugfree, so Varnish does not
+trust the Operator role, that is a pure one-way relationship.</p>
+<p>(Trick:  If the Child process us run under user &quot;nobody&quot;, you can
+allow marginally trusted operations personel access to the &quot;nobody&quot;
+account (for instance using .ssh/authorized_keys2), and they will
+be able to kill the Child process, prompting the Manager process to
+restart it again with the same parameters and settings.)</p>
+<p>The Administrator has the final say, and of course, the administrator
+can decide under which circumstances that authority will be shared.</p>
+<p>Needless to say, if the system on which Varnish runs is not properly
+secured, the Administrator's monopoly of control will be compromised.</p>
+</div>
+<div class="section" id="all-the-other-barriers">
+<h2>All the other barriers<a class="headerlink" href="#all-the-other-barriers" title="Permalink to this headline">¶</a></h2>
+<p>There are more barriers, you can spot them by following the arrows in
+the diagram, but they are more sort of &quot;technical&quot; than &quot;political&quot; and
+generally try to guard against programming flaws as much as security
+compromise.</p>
+<p>For instance the VCC compiler runs in a separate child process, to make
+sure that a memory leak or other flaw in the compiler does not accumulate
+trouble for the Manager process.</p>
+<p>Hope this explanation helps understand why Varnish is not just a single
+process like all other server programs.</p>
+<p>Poul-Henning, 2010-06-28</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Security barriers in Varnish</a><ul>
+<li><a class="reference internal" href="#the-really-important-barrier">The really Important Barrier</a></li>
+<li><a class="reference internal" href="#the-admin-oper-barrier">The Admin/Oper Barrier</a></li>
+<li><a class="reference internal" href="#all-the-other-barriers">All the other barriers</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="platforms.html"
+                        title="previous chapter">Picking platforms</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="thoughts.html"
+                        title="next chapter">What were they thinking ?</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/phk/barriers.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="thoughts.html" title="What were they thinking ?"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="platforms.html" title="Picking platforms"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Poul-Hennings random outbursts</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

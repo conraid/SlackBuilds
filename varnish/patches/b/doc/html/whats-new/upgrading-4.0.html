@@ -1,0 +1,373 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Upgrading to Varnish 4.0 &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The Varnish Developers Guide" href="../dev-guide/index.html" />
+    <link rel="prev" title="Upgrading to Varnish 4.1" href="upgrading-4.1.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../dev-guide/index.html" title="The Varnish Developers Guide"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="upgrading-4.1.html" title="Upgrading to Varnish 4.1"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="upgrading-to-varnish-4-0">
+<span id="whatsnew-upgrading-4-0"></span><h1>Upgrading to Varnish 4.0<a class="headerlink" href="#upgrading-to-varnish-4-0" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="changes-to-vcl">
+<h2>Changes to VCL<a class="headerlink" href="#changes-to-vcl" title="Permalink to this headline">¶</a></h2>
+<p>The backend fetch parts of VCL have changed in Varnish 4. We've tried to
+compile a list of changes needed to upgrade here.</p>
+<div class="section" id="version-statement">
+<h3>Version statement<a class="headerlink" href="#version-statement" title="Permalink to this headline">¶</a></h3>
+<p>To make sure that people have upgraded their VCL to the current
+version, Varnish now requires the first line of VCL to indicate the
+VCL version number:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">vcl</span> <span class="mf">4.0</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="req-request-is-now-req-method">
+<h3>req.request is now req.method<a class="headerlink" href="#req-request-is-now-req-method" title="Permalink to this headline">¶</a></h3>
+<p>To align better with RFC naming, <cite>req.request</cite> has been renamed to
+<cite>req.method</cite>.</p>
+</div>
+<div class="section" id="vcl-fetch-is-now-vcl-backend-response">
+<h3>vcl_fetch is now vcl_backend_response<a class="headerlink" href="#vcl-fetch-is-now-vcl-backend-response" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="directors-have-been-moved-to-the-vmod-directors">
+<h3>Directors have been moved to the vmod_directors<a class="headerlink" href="#directors-have-been-moved-to-the-vmod-directors" title="Permalink to this headline">¶</a></h3>
+<p>To make directors (backend selection logic) easier to extend, the
+directors are now defined in loadable VMODs.</p>
+<p>Setting a backend for future fetches in <cite>vcl_recv</cite> is now done as follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_init</span> <span class="p">{</span>
+    <span class="n">new</span> <span class="n">cluster1</span> <span class="o">=</span> <span class="n">directors</span><span class="o">.</span><span class="n">round_robin</span><span class="p">();</span>
+    <span class="n">cluster1</span><span class="o">.</span><span class="n">add_backend</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">);</span>
+    <span class="n">cluster1</span><span class="o">.</span><span class="n">add_backend</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">sub</span> <span class="n">vcl_recv</span> <span class="p">{</span>
+    <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">backend_hint</span> <span class="o">=</span> <span class="n">cluster1</span><span class="o">.</span><span class="n">backend</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Note the extra <cite>.backend()</cite> needed after the director name.</p>
+</div>
+<div class="section" id="use-the-hash-director-as-a-client-director">
+<h3>Use the hash director as a client director<a class="headerlink" href="#use-the-hash-director-as-a-client-director" title="Permalink to this headline">¶</a></h3>
+<p>Since the client director was already a special case of the hash director, it
+has been removed, and you should use the hash director directly:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_init</span> <span class="p">{</span>
+    <span class="n">new</span> <span class="n">h</span> <span class="o">=</span> <span class="n">directors</span><span class="o">.</span><span class="n">hash</span><span class="p">();</span>
+    <span class="n">h</span><span class="o">.</span><span class="n">add_backend</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="n">h</span><span class="o">.</span><span class="n">add_backend</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">sub</span> <span class="n">vcl_recv</span> <span class="p">{</span>
+    <span class="nb">set</span> <span class="n">req</span><span class="o">.</span><span class="n">backend_hint</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">backend</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">identity</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="vcl-error-is-now-vcl-backend-error">
+<h3>vcl_error is now vcl_backend_error<a class="headerlink" href="#vcl-error-is-now-vcl-backend-error" title="Permalink to this headline">¶</a></h3>
+<p>To make a distinction between internally generated errors and
+VCL synthetic responses, <cite>vcl_backend_error</cite> will be called when
+varnish encounters an error when trying to fetch an object.</p>
+</div>
+<div class="section" id="error-is-now-synth">
+<h3>error() is now synth()<a class="headerlink" href="#error-is-now-synth" title="Permalink to this headline">¶</a></h3>
+<p>And you must explicitly return it:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">return</span> <span class="p">(</span><span class="n">synth</span><span class="p">(</span><span class="mi">999</span><span class="p">,</span> <span class="s2">&quot;Response&quot;</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="synthetic-responses-in-vcl-synth">
+<h3>Synthetic responses in vcl_synth<a class="headerlink" href="#synthetic-responses-in-vcl-synth" title="Permalink to this headline">¶</a></h3>
+<p>Setting headers on synthetic response bodies made in vcl_synth are now done on
+resp.http instead of obj.http.</p>
+<p>The synthetic keyword is now a function:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">799</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="mi">200</span><span class="p">;</span>
+    <span class="nb">set</span> <span class="n">resp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span> <span class="o">=</span> <span class="s2">&quot;text/plain; charset=utf-8&quot;</span><span class="p">;</span>
+    <span class="n">synthetic</span><span class="p">(</span><span class="s2">&quot;You are &quot;</span> <span class="o">+</span> <span class="n">client</span><span class="o">.</span><span class="n">ip</span><span class="p">);</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">deliver</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="obj-in-vcl-error-replaced-by-beresp-in-vcl-backend-error">
+<h3>obj in vcl_error replaced by beresp in vcl_backend_error<a class="headerlink" href="#obj-in-vcl-error-replaced-by-beresp-in-vcl-backend-error" title="Permalink to this headline">¶</a></h3>
+<p>To better represent a the context in which it is called, you
+should now use <cite>beresp.*</cite> vcl_backend_error, where you used to
+use <cite>obj.*</cite> in <cite>vcl_error</cite>.</p>
+</div>
+<div class="section" id="hit-for-pass-objects-are-created-using-beresp-uncacheable">
+<h3>hit_for_pass objects are created using beresp.uncacheable<a class="headerlink" href="#hit-for-pass-objects-are-created-using-beresp-uncacheable" title="Permalink to this headline">¶</a></h3>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="n">vcl_backend_response</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">beresp</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">X</span><span class="o">-</span><span class="n">No</span><span class="o">-</span><span class="n">Cache</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">set</span> <span class="n">beresp</span><span class="o">.</span><span class="n">uncacheable</span> <span class="o">=</span> <span class="n">true</span><span class="p">;</span>
+        <span class="nb">set</span> <span class="n">beresp</span><span class="o">.</span><span class="n">ttl</span> <span class="o">=</span> <span class="mi">120</span><span class="n">s</span><span class="p">;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">deliver</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="req-not-available-in-vcl-backend-response">
+<h3>req.* not available in vcl_backend_response<a class="headerlink" href="#req-not-available-in-vcl-backend-response" title="Permalink to this headline">¶</a></h3>
+<p>req.* used to be available in <cite>vcl_fetch</cite>, but after the split of
+functionality, you only have 'bereq.*' in <cite>vcl_backend_response</cite>.</p>
+</div>
+<div class="section" id="vcl-reserved">
+<h3>vcl_* reserved<a class="headerlink" href="#vcl-reserved" title="Permalink to this headline">¶</a></h3>
+<p>Any custom-made subs cannot be named 'vcl_*' anymore. This namespace
+is reserved for builtin subs.</p>
+</div>
+<div class="section" id="req-backend-healthy-replaced-by-std-healthy-req-backend-hint">
+<h3>req.backend.healthy replaced by std.healthy(req.backend_hint)<a class="headerlink" href="#req-backend-healthy-replaced-by-std-healthy-req-backend-hint" title="Permalink to this headline">¶</a></h3>
+<p>Remember to import the std module if you're not doing so already.</p>
+</div>
+<div class="section" id="client-port-and-server-port-replaced-by-respectively-std-port-client-ip-and-std-port-server-ip">
+<h3>client.port, and server.port replaced by respectively std.port(client.ip) and std.port(server.ip)<a class="headerlink" href="#client-port-and-server-port-replaced-by-respectively-std-port-client-ip-and-std-port-server-ip" title="Permalink to this headline">¶</a></h3>
+<p><cite>client.ip</cite> and <cite>server.ip</cite> are now proper data types, which renders
+as an IP address by default. You need to use the <cite>std.port()</cite>
+function to get the port number.</p>
+</div>
+<div class="section" id="invalidation-with-purge">
+<h3>Invalidation with purge<a class="headerlink" href="#invalidation-with-purge" title="Permalink to this headline">¶</a></h3>
+<p>Cache invalidation with purges is now done via <cite>return(purge)</cite> from <cite>vcl_recv</cite>.
+The <cite>purge;</cite> keyword has been retired.</p>
+</div>
+<div class="section" id="obj-is-now-read-only">
+<h3>obj is now read-only<a class="headerlink" href="#obj-is-now-read-only" title="Permalink to this headline">¶</a></h3>
+<p><cite>obj</cite> is now read-only.  <cite>obj.last_use</cite> has been retired.</p>
+</div>
+<div class="section" id="some-return-values-have-been-replaced">
+<h3>Some return values have been replaced<a class="headerlink" href="#some-return-values-have-been-replaced" title="Permalink to this headline">¶</a></h3>
+<p>Apart from the new <cite>synth</cite> return value described above, the
+following has changed:</p>
+<blockquote>
+<div><ul class="simple">
+<li><cite>vcl_recv</cite> must now return <cite>hash</cite> instead of <cite>lookup</cite></li>
+<li><cite>vcl_hash</cite> must now return <cite>lookup</cite> instead of <cite>hash</cite></li>
+<li><cite>vcl_pass</cite> must now return <cite>fetch</cite> instead of <cite>pass</cite></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="backend-restarts-are-now-retry">
+<h3>Backend restarts are now retry<a class="headerlink" href="#backend-restarts-are-now-retry" title="Permalink to this headline">¶</a></h3>
+<p>In 3.0 it was possible to do <cite>return(restart)</cite> after noticing that
+the backend response was wrong, to change to a different backend.</p>
+<p>This is now called <cite>return(retry)</cite>, and jumps back up to <cite>vcl_backend_fetch</cite>.</p>
+<p>This only influences the backend fetch thread, client-side handling is not affected.</p>
+</div>
+<div class="section" id="default-builtin-vcl-changes">
+<h3>default/builtin VCL changes<a class="headerlink" href="#default-builtin-vcl-changes" title="Permalink to this headline">¶</a></h3>
+<p>The VCL code that is appended to user-configured VCL automatically
+is now called the builtin VCL. (previously default.vcl)</p>
+<p>The builtin VCL now honors Cache-Control: no-cache (and friends)
+to indicate uncacheable content from the backend.</p>
+</div>
+<div class="section" id="the-remove-keyword-is-gone">
+<h3>The <cite>remove</cite> keyword is gone<a class="headerlink" href="#the-remove-keyword-is-gone" title="Permalink to this headline">¶</a></h3>
+<p>Replaced by <cite>unset</cite>.</p>
+</div>
+<div class="section" id="x-forwarded-for-is-now-set-before-vcl-recv">
+<h3>X-Forwarded-For is now set before vcl_recv<a class="headerlink" href="#x-forwarded-for-is-now-set-before-vcl-recv" title="Permalink to this headline">¶</a></h3>
+<p>In many cases, people unintentionally removed X-Forwarded-For when
+implementing their own vcl_recv. Therefore it has been moved to before
+vcl_recv, so if you don't want an IP added to it, you should remove it
+in vcl_recv.</p>
+</div>
+</div>
+<div class="section" id="changes-to-existing-parameters">
+<h2>Changes to existing parameters<a class="headerlink" href="#changes-to-existing-parameters" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="session-linger">
+<h3>session_linger<a class="headerlink" href="#session-linger" title="Permalink to this headline">¶</a></h3>
+<p><cite>session_linger</cite> has been renamed to <cite>timeout_linger</cite> and it is in
+seconds now (previously was milliseconds).</p>
+</div>
+<div class="section" id="sess-timeout">
+<h3>sess_timeout<a class="headerlink" href="#sess-timeout" title="Permalink to this headline">¶</a></h3>
+<p><cite>sess_timeout</cite> has been renamed to <cite>timeout_idle</cite>.</p>
+</div>
+<div class="section" id="sess-workspace">
+<h3>sess_workspace<a class="headerlink" href="#sess-workspace" title="Permalink to this headline">¶</a></h3>
+<p>In 3.0 it was often necessary to increase <cite>sess_workspace</cite> if a
+lot of VMODs, complex header operations or ESI were in use.</p>
+<p>This is no longer necessary, because ESI scratch space happens
+elsewhere in 4.0.</p>
+<p>If you are using a lot of VMODs,  you may need to increase
+either <cite>workspace_backend</cite> and <cite>workspace_client</cite> based on where
+your VMOD is doing its work.</p>
+</div>
+<div class="section" id="thread-pool-purge-delay">
+<h3>thread_pool_purge_delay<a class="headerlink" href="#thread-pool-purge-delay" title="Permalink to this headline">¶</a></h3>
+<p><cite>thread_pool_purge_delay</cite> has been renamed to <cite>thread_pool_destroy_delay</cite>
+and it is in seconds now (previously was milliseconds).</p>
+</div>
+<div class="section" id="thread-pool-add-delay-and-thread-pool-fail-delay">
+<h3>thread_pool_add_delay and thread_pool_fail_delay<a class="headerlink" href="#thread-pool-add-delay-and-thread-pool-fail-delay" title="Permalink to this headline">¶</a></h3>
+<p>They are in seconds now (previously were milliseconds).</p>
+</div>
+</div>
+<div class="section" id="new-parameters-since-3-0">
+<h2>New parameters since 3.0<a class="headerlink" href="#new-parameters-since-3-0" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="vcc-allow-inline-c">
+<h3>vcc_allow_inline_c<a class="headerlink" href="#vcc-allow-inline-c" title="Permalink to this headline">¶</a></h3>
+<p>You can now completely disable inline C in your VCL, and it is
+disabled by default.</p>
+</div>
+</div>
+<div class="section" id="other-changes">
+<h2>Other changes<a class="headerlink" href="#other-changes" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="new-log-filtering">
+<h3>New log filtering<a class="headerlink" href="#new-log-filtering" title="Permalink to this headline">¶</a></h3>
+<p>The logging framework has a new filtering language, which means that
+the -m switch has been replaced with a new -q switch.  See
+<a class="reference internal" href="../reference/vsl-query.html#vsl-query-7"><span class="std std-ref">vsl-query</span></a> for more information about the new query language.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Upgrading to Varnish 4.0</a><ul>
+<li><a class="reference internal" href="#changes-to-vcl">Changes to VCL</a><ul>
+<li><a class="reference internal" href="#version-statement">Version statement</a></li>
+<li><a class="reference internal" href="#req-request-is-now-req-method">req.request is now req.method</a></li>
+<li><a class="reference internal" href="#vcl-fetch-is-now-vcl-backend-response">vcl_fetch is now vcl_backend_response</a></li>
+<li><a class="reference internal" href="#directors-have-been-moved-to-the-vmod-directors">Directors have been moved to the vmod_directors</a></li>
+<li><a class="reference internal" href="#use-the-hash-director-as-a-client-director">Use the hash director as a client director</a></li>
+<li><a class="reference internal" href="#vcl-error-is-now-vcl-backend-error">vcl_error is now vcl_backend_error</a></li>
+<li><a class="reference internal" href="#error-is-now-synth">error() is now synth()</a></li>
+<li><a class="reference internal" href="#synthetic-responses-in-vcl-synth">Synthetic responses in vcl_synth</a></li>
+<li><a class="reference internal" href="#obj-in-vcl-error-replaced-by-beresp-in-vcl-backend-error">obj in vcl_error replaced by beresp in vcl_backend_error</a></li>
+<li><a class="reference internal" href="#hit-for-pass-objects-are-created-using-beresp-uncacheable">hit_for_pass objects are created using beresp.uncacheable</a></li>
+<li><a class="reference internal" href="#req-not-available-in-vcl-backend-response">req.* not available in vcl_backend_response</a></li>
+<li><a class="reference internal" href="#vcl-reserved">vcl_* reserved</a></li>
+<li><a class="reference internal" href="#req-backend-healthy-replaced-by-std-healthy-req-backend-hint">req.backend.healthy replaced by std.healthy(req.backend_hint)</a></li>
+<li><a class="reference internal" href="#client-port-and-server-port-replaced-by-respectively-std-port-client-ip-and-std-port-server-ip">client.port, and server.port replaced by respectively std.port(client.ip) and std.port(server.ip)</a></li>
+<li><a class="reference internal" href="#invalidation-with-purge">Invalidation with purge</a></li>
+<li><a class="reference internal" href="#obj-is-now-read-only">obj is now read-only</a></li>
+<li><a class="reference internal" href="#some-return-values-have-been-replaced">Some return values have been replaced</a></li>
+<li><a class="reference internal" href="#backend-restarts-are-now-retry">Backend restarts are now retry</a></li>
+<li><a class="reference internal" href="#default-builtin-vcl-changes">default/builtin VCL changes</a></li>
+<li><a class="reference internal" href="#the-remove-keyword-is-gone">The <cite>remove</cite> keyword is gone</a></li>
+<li><a class="reference internal" href="#x-forwarded-for-is-now-set-before-vcl-recv">X-Forwarded-For is now set before vcl_recv</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#changes-to-existing-parameters">Changes to existing parameters</a><ul>
+<li><a class="reference internal" href="#session-linger">session_linger</a></li>
+<li><a class="reference internal" href="#sess-timeout">sess_timeout</a></li>
+<li><a class="reference internal" href="#sess-workspace">sess_workspace</a></li>
+<li><a class="reference internal" href="#thread-pool-purge-delay">thread_pool_purge_delay</a></li>
+<li><a class="reference internal" href="#thread-pool-add-delay-and-thread-pool-fail-delay">thread_pool_add_delay and thread_pool_fail_delay</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#new-parameters-since-3-0">New parameters since 3.0</a><ul>
+<li><a class="reference internal" href="#vcc-allow-inline-c">vcc_allow_inline_c</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-changes">Other changes</a><ul>
+<li><a class="reference internal" href="#new-log-filtering">New log filtering</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="upgrading-4.1.html"
+                        title="previous chapter">Upgrading to Varnish 4.1</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../dev-guide/index.html"
+                        title="next chapter">The Varnish Developers Guide</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/whats-new/upgrading-4.0.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../dev-guide/index.html" title="The Varnish Developers Guide"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="upgrading-4.1.html" title="Upgrading to Varnish 4.1"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >What's new / Upgrading</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

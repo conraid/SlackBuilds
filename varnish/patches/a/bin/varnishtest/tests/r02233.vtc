@@ -1,0 +1,32 @@
+varnishtest "Fail earlier if we cannot fit the query string"
+
+server s1 {
+	rxreq
+	txresp
+} -start
+
+varnish v1 -vcl+backend {
+	import std;
+	import vtc;
+
+	sub vcl_recv {
+		vtc.workspace_alloc(client, -92);
+		if (std.querysort(req.url) == req.url) {
+			std.log("querysort failed");
+		}
+	}
+} -start
+
+logexpect l1 -v v1 {
+	expect * *	VCL_Log	"querysort failed"
+} -start
+
+client c1 {
+	txreq -url /?a=2&a=1&a=1&a=1&a=1&a=1&a=1&a=1&a=1&a=1&a=1&a=1&a=1
+	rxresp
+	expect resp.status == 500
+} -run
+
+logexpect l1 -wait
+varnish v1 -expect client_resp_500 == 1
+varnish v1 -expect ws_client_overflow == 1

@@ -1,0 +1,267 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Purging and banning &#8212; Varnish version 6.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Compression" href="compression.html" />
+    <link rel="prev" title="Achieving a high hitrate" href="increasing-your-hitrate.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="compression.html" title="Compression"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="increasing-your-hitrate.html" title="Achieving a high hitrate"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Users Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="performance.html" accesskey="U">Varnish and Website Performance</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="purging-and-banning">
+<span id="users-guide-purging"></span><h1>Purging and banning<a class="headerlink" href="#purging-and-banning" title="Permalink to this headline">¶</a></h1>
+<p>One of the most effective ways of increasing your hit ratio is to
+increase the time-to-live (ttl) of your objects. But, as you're aware
+of, in this twitterific day of age, serving content that is outdated is
+bad for business.</p>
+<p>The solution is to notify Varnish when there is fresh content
+available. This can be done through three mechanisms. HTTP purging,
+banning and forced cache misses. First, lets look at HTTP purging.</p>
+<div class="section" id="http-purging">
+<h2>HTTP Purging<a class="headerlink" href="#http-purging" title="Permalink to this headline">¶</a></h2>
+<p>A <em>purge</em> is what happens when you pick out an object from the cache
+and discard it along with its variants. Usually a purge is invoked
+through HTTP with the method <cite>PURGE</cite>.</p>
+<p>An HTTP purge is similar to an HTTP GET request, except that the
+<em>method</em> is <cite>PURGE</cite>. Actually you can call the method whatever you'd
+like, but most people refer to this as purging. Squid, for example, supports the
+same mechanism. In order to support purging in Varnish you need the
+following VCL in place:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>acl purge {
+        &quot;localhost&quot;;
+        &quot;192.168.55.0&quot;/24;
+}
+
+sub vcl_recv {
+        # allow PURGE from localhost and 192.168.55...
+
+        if (req.method == &quot;PURGE&quot;) {
+                if (!client.ip ~ purge) {
+                        return(synth(405,&quot;Not allowed.&quot;));
+                }
+                return (purge);
+        }
+}
+</pre></div>
+</div>
+<p>As you can see we have used a new action - return(purge). This ends
+execution of vcl_recv and jumps to vcl_hash. This is just like we
+handle a regular request. When vcl_hash calls return(lookup) Varnish
+will purge the object and then call vcl_purge. Here you have the
+option of adding any particular actions you want Varnish to take once
+it has purge the object.</p>
+<p>So for example.com to invalidate their front page they would call out
+to Varnish like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">PURGE</span> <span class="o">/</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.0</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">example</span><span class="o">.</span><span class="n">com</span>
+</pre></div>
+</div>
+<p>And Varnish would then discard the front page. This will remove all
+variants as defined by Vary.</p>
+</div>
+<div class="section" id="bans">
+<h2>Bans<a class="headerlink" href="#bans" title="Permalink to this headline">¶</a></h2>
+<p>There is another way to invalidate content: Bans. You can think of
+bans as a sort of a filter on objects already in the cache. You <code class="docutils literal"><span class="pre">ban</span></code>
+certain content from being served from your cache. You can ban
+content based on any metadata we have.
+A ban will only work on objects already in the cache, it does not
+prevent new content from entering the cache or being served.</p>
+<p>Support for bans is built into Varnish and available in the CLI
+interface. To ban every png object belonging on example.com, issue
+the following command from the shell:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">varnishadm</span> <span class="n">ban</span> <span class="n">req</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">host</span> <span class="o">==</span> <span class="n">example</span><span class="o">.</span><span class="n">com</span> <span class="s1">&#39;&amp;&amp;&#39;</span> <span class="n">req</span><span class="o">.</span><span class="n">url</span> <span class="s1">&#39;~&#39;</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">.png$&#39;</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="../reference/vcl.html#vcl-7-ban"><span class="std std-ref">ban(STRING)</span></a> for details on the syntax of ban expressions. In
+particular, note that in the example given above, the quotes are
+required for execution from the shell and escaping the backslash in
+the regular expression is required by the Varnish cli interface.</p>
+<p>Bans are checked when we hit an object in the cache, but before we
+deliver it. <em>An object is only checked against newer bans</em>.</p>
+<p>Bans that only match against <cite>obj.*</cite> are also processed by a background
+worker threads called the <cite>ban lurker</cite>. The <cite>ban lurker</cite> will walk the
+heap and try to match objects and will evict the matching objects. How
+aggressive the <cite>ban lurker</cite> is can be controlled by the parameter
+'ban_lurker_sleep'. The <cite>ban lurker</cite> can be disabled by setting
+'ban_lurker_sleep' to 0.</p>
+<p>Bans that are older than the oldest objects in the cache are discarded
+without evaluation. If you have a lot of objects with long TTL, that
+are seldom accessed, you might accumulate a lot of bans. This might
+impact CPU usage and thereby performance.</p>
+<p>You can also add bans to Varnish via HTTP. Doing so requires a bit of VCL:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>sub vcl_recv {
+        if (req.method == &quot;BAN&quot;) {
+                # Same ACL check as above:
+                if (!client.ip ~ purge) {
+                        return(synth(403, &quot;Not allowed.&quot;));
+                }
+                ban(&quot;req.http.host == &quot; + req.http.host +
+                      &quot; &amp;&amp; req.url == &quot; + req.url);
+
+                # Throw a synthetic page so the
+                # request won&#39;t go to the backend.
+                return(synth(200, &quot;Ban added&quot;));
+        }
+}
+</pre></div>
+</div>
+<p>This VCL stanza enables Varnish to handle a <cite>HTTP BAN</cite> method, adding a
+ban on the URL, including the host part.</p>
+<p>The <cite>ban lurker</cite> can help you keep the ban list at a manageable size, so
+we recommend that you avoid using <cite>req.*</cite> in your bans, as the request
+object is not available in the <cite>ban lurker</cite> thread.</p>
+<p>You can use the following template to write <cite>ban lurker</cite> friendly bans:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>sub vcl_backend_response {
+  set beresp.http.url = bereq.url;
+}
+
+sub vcl_deliver {
+  unset resp.http.url; # Optional
+}
+
+sub vcl_recv {
+  if (req.method == &quot;PURGE&quot;) {
+    if (client.ip !~ purge) {
+      return(synth(403, &quot;Not allowed&quot;));
+    }
+    ban(&quot;obj.http.url ~ &quot; + req.url); # Assumes req.url is a regex. This might be a bit too simple
+  }
+}
+</pre></div>
+</div>
+<p>To inspect the current ban list, issue the <code class="docutils literal"><span class="pre">ban.list</span></code> command in the CLI. This
+will produce a status of all current bans:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mh">0xb75096d0</span> <span class="mf">1318329475.377475</span>    <span class="mi">10</span>      <span class="n">obj</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">url</span> <span class="o">~</span> <span class="n">test</span>
+<span class="mh">0xb7509610</span> <span class="mf">1318329470.785875</span>    <span class="mi">20</span><span class="n">G</span>     <span class="n">obj</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">url</span> <span class="o">~</span> <span class="n">test</span>
+</pre></div>
+</div>
+<p>The ban list contains the ID of the ban, the timestamp when the ban
+entered the ban list. A count of the objects that has reached this point
+in the ban list, optionally postfixed with a 'G' for &quot;Gone&quot;, if the ban
+is no longer valid.  Finally, the ban expression is listed. Notice
+that durations are not necessarily expressed in the originally given
+unit, for instance <code class="docutils literal"><span class="pre">7d</span></code> will get turned into <code class="docutils literal"><span class="pre">1w</span></code>.</p>
+<p>The ban can be marked as &quot;Gone&quot; if it is a duplicate ban, but is still
+kept in the list for optimization purposes.</p>
+</div>
+<div class="section" id="forcing-a-cache-miss">
+<h2>Forcing a cache miss<a class="headerlink" href="#forcing-a-cache-miss" title="Permalink to this headline">¶</a></h2>
+<p>The final way to invalidate an object is a method that allows you to
+refresh an object by forcing a <cite>hash miss</cite> for a single request. If you set
+'req.hash_always_miss' to true, Varnish will miss the current object in the
+cache, thus forcing a fetch from the backend. This can in turn add the
+freshly fetched object to the cache, thus overriding the current one. The
+old object will stay in the cache until ttl expires or it is evicted by
+some other means.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Purging and banning</a><ul>
+<li><a class="reference internal" href="#http-purging">HTTP Purging</a></li>
+<li><a class="reference internal" href="#bans">Bans</a></li>
+<li><a class="reference internal" href="#forcing-a-cache-miss">Forcing a cache miss</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="increasing-your-hitrate.html"
+                        title="previous chapter">Achieving a high hitrate</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="compression.html"
+                        title="next chapter">Compression</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/users-guide/purging.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="compression.html" title="Compression"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="increasing-your-hitrate.html" title="Achieving a high hitrate"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Varnish version 6.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >The Varnish Users Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="performance.html" >Varnish and Website Performance</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010-2014, Varnish Software AS.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>
