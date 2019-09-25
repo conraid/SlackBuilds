@@ -1,0 +1,53 @@
+diff -Naupr a/Makefile b/Makefile
+--- a/Makefile	2010-07-12 05:46:36.000000000 +0200
++++ b/Makefile	2019-09-23 10:23:30.905072648 +0200
+@@ -6,20 +6,20 @@
+ 
+ NAME=ipguard
+ 
+-PREFIX?=/usr/local
++PREFIX?=/usr
+ ETHERS?=/etc/ethers
+ 
+ ## FreeBSD
+-LOCALBASE=/usr/local
+-LIBNET_CONFIG=libnet11-config
++#LOCALBASE=/usr/local
++#LIBNET_CONFIG=libnet11-config
+ 
+ ## OpenBSD (tested by irix)
+ # LOCALBASE=/usr/local
+ # LIBNET_CONFIG=libnet-config-1.1
+ 
+ ## Linux
+-# LOCALBASE=/usr
+-# LIBNET_CONFIG=libnet-config
++LOCALBASE=/usr
++LIBNET_CONFIG=libnet-config
+ 
+ INCLUDES=`${LIBNET_CONFIG} --cflags`
+ LIBS=`${LIBNET_CONFIG} --libs` -lpcap -L${LOCALBASE}/lib
+@@ -47,7 +47,7 @@ start:
+ 
+ $(NAME): $(OBJS)
+ 	@echo Linking $@
+-	@$(CC) -o $@ $(OBJS) $(LIBS) $(STATIC)
++	@$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS) $(STATIC)
+ 
+ clean:
+ 	@echo Cleaning OBJS
+@@ -58,10 +58,10 @@ cleanall: clean
+ 	@rm -f $(NAME)
+ 
+ install: all
+-	mkdir -p -m 755 $(PREFIX)/sbin
+-	install -s -m 755 $(NAME) $(PREFIX)/sbin/$(NAME)
+-	mkdir -p -m 755 $(PREFIX)/man/man8
+-	install -m 644 doc/$(NAME).8 $(PREFIX)/man/man8/$(NAME).8
++	mkdir -p -m 755 $(DESTDIR)/$(PREFIX)/sbin
++	install -s -m 755 $(NAME) $(DESTDIR)/$(PREFIX)/sbin/$(NAME)
++	mkdir -p -m 755 $(DESTDIR)/$(PREFIX)/man/man8
++	install -m 644 doc/$(NAME).8 $(DESTDIR)/$(PREFIX)/man/man8/$(NAME).8
+ 
+ uninstall: deinstall
+ 

@@ -1,0 +1,35 @@
+#! /bin/sh
+
+iface=eth0
+daemon=ipguard
+daemon_path=/usr/sbin
+daemon_pid=/var/run/${daemon}_${iface}.pid
+daemon_flags="-u 300 -xz"
+
+case $1 in
+    start)
+        if [ -x ${daemon_path}/$daemon ]; then
+            echo -n "ipguard..."
+            ${daemon_path}/$daemon $daemon_flags $iface
+            echo " started"
+        fi
+        ;;
+    stop)
+        if [ -f $daemon_pid ]; then
+            echo -n "ipguard..."
+            kill `head -1 $daemon_pid`
+            echo " stopped"
+        fi
+        ;;
+    restart)
+        $0 stop
+        sleep 1
+        $0 start
+        ;;
+    *)
+        echo "Usage: `basename $0` {start|stop|restart}" >&2
+        exit 64
+        ;;
+esac
+
+exit 0

@@ -1,0 +1,18 @@
+
+Slackware Current Repository by Conraid
+
+======================================================================
+
+ipguard (tool to protect LAN IP adress space by ARP spoofing)
+
+ipguard listens network for ARP packets. All permitted MAC/IP pairs
+listed in 'ethers' file. If it recieves one with MAC/IP pair, which
+is not listed in 'ethers' file, it will send ARP reply with
+configured fake address. This will prevent not permitted host to
+work properly in this ethernet segment.
+
+HOME: http://ipguard.deep.perm.ru/
+
+======================================================================
+REQUIRES: libnet
+
