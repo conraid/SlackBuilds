@@ -32,7 +32,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=redis
-VERSION=5.0.4
+VERSION=5.0.6
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -81,9 +81,12 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-# Apply patch for use system jemalloc and hiredis
-sed "s/%LIBDIRSUFFIX%/$LIBDIRSUFFIX/g" $CWD/patches/jemallochiredis.patch | patch -p1
-rm -rf deps/hiredis deps/jemalloc
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
 
 make CFLAGS="$SLKCFLAGS"
 make PREFIX=$PKG/usr install
