@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=unibilium
 SRCVERSION=92d929fabaf94ea4feb48149bbc3bbea77c4fab0
-VERSION=$(echo $COMMIT | cut -c -7)
+VERSION=$(echo $SRCVERSION | cut -c-7)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
