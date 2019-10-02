@@ -658,10 +658,10 @@ SLACKBUILD SHORT DESCRIPTION:  coffeescript (Unfancy JavaScript)
 SLACKBUILD NAME: collectd
 SLACKBUILD LOCATION: ./collectd
 SLACKBUILD FILES: README collectd.SlackBuild collectd.info doinst.sh rc.collectd slack-desc
-SLACKBUILD VERSION: 5.9.0
+SLACKBUILD VERSION: 5.9.2
 SLACKBUILD REQUIRED: audit hiredis libdbi libesmtp libmemcached libmicrohttpd libnsl liboping libstatgrab libvirt lua protobuf-c rrdtool yajl postgresql
-SLACKBUILD DOWNLOAD: http://collectd.org/files/collectd-5.9.0.tar.bz2
-SLACKBUILD MD5SUM: 84fbc1940b90ad34c10870c3187d7022
+SLACKBUILD DOWNLOAD: https://github.com/collectd/collectd/releases/download/collectd-5.9.2/collectd-5.9.2.tar.bz2
+SLACKBUILD MD5SUM: 4ec308f256a3d3575f6c8a2be4338966
 SLACKBUILD SHORT DESCRIPTION:  collectd (system statistics collection daemon)
 
 SLACKBUILD NAME: colorama
@@ -1099,10 +1099,10 @@ SLACKBUILD SHORT DESCRIPTION:  exempi (XMP SDK )
 SLACKBUILD NAME: exiftool
 SLACKBUILD LOCATION: ./exiftool
 SLACKBUILD FILES: README exiftool.SlackBuild exiftool.info slack-desc
-SLACKBUILD VERSION: 11.67
+SLACKBUILD VERSION: 11.68
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://owl.phy.queensu.ca/~phil/exiftool/Image-ExifTool-11.67.tar.gz
-SLACKBUILD MD5SUM: 0ee4deac11ca6d7ab7abf1c3325a0d91
+SLACKBUILD DOWNLOAD: http://owl.phy.queensu.ca/~phil/exiftool/Image-ExifTool-11.68.tar.gz
+SLACKBUILD MD5SUM: 9c8b8c80b2effcbfc9499b4583f6f751
 SLACKBUILD SHORT DESCRIPTION:  exiftool (read, write, and edit EXIF and other meta information)
 
 SLACKBUILD NAME: exploitdb
@@ -1270,10 +1270,10 @@ SLACKBUILD SHORT DESCRIPTION:  gif2apng (gif animations to Animated PNG)
 SLACKBUILD NAME: gif2png
 SLACKBUILD LOCATION: ./gif2png
 SLACKBUILD FILES: README gif2png.SlackBuild gif2png.info slack-desc
-SLACKBUILD VERSION: 2.5.14
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.catb.org/~esr/gif2png/gif2png-2.5.14.tar.gz
-SLACKBUILD MD5SUM: c63d13030a1386e2b3b4c6da2bb6a007
+SLACKBUILD VERSION: 3.0.0
+SLACKBUILD REQUIRED: go-sys go-crypto go
+SLACKBUILD DOWNLOAD: http://www.catb.org/~esr/gif2png/gif2png-3.0.0.tar.gz
+SLACKBUILD MD5SUM: 6316268a550406a4b098a4d5cfe9c2b2
 SLACKBUILD SHORT DESCRIPTION:  gif2png (Convert GIFs to PNGs)
 
 SLACKBUILD NAME: gifsicle
@@ -1438,6 +1438,33 @@ SLACKBUILD DOWNLOAD: http://ftp.gnu.org/gnu/gnuit/gnuit-4.9.5.tar.gz
 SLACKBUILD MD5SUM: 6b88eea39361ead2ad48b33b17a870f5
 SLACKBUILD SHORT DESCRIPTION:  gnuit (GNU Interactive Tools)
 
+SLACKBUILD NAME: go-crypto
+SLACKBUILD LOCATION: ./go-crypto
+SLACKBUILD FILES: README go-crypto.SlackBuild go-crypto.info slack-desc
+SLACKBUILD VERSION: f9e2070
+SLACKBUILD REQUIRED: go
+SLACKBUILD DOWNLOAD: https://github.com/golang/crypto/archive/f9e2070545dcd4128a854a97ddf10fbfc3c4b6e4.tar.gz
+SLACKBUILD MD5SUM: 057e9b8e3376e2af103652eac584583f
+SLACKBUILD SHORT DESCRIPTION:  go-crypto (supplementary Go cryptography libraries)
+
+SLACKBUILD NAME: go-net
+SLACKBUILD LOCATION: ./go-net
+SLACKBUILD FILES: README go-net.SlackBuild go-net.info slack-desc
+SLACKBUILD VERSION: 2ec1893
+SLACKBUILD REQUIRED: go
+SLACKBUILD DOWNLOAD: https://github.com/golang/net/archive/2ec189313ef0a07735684caebd1ba8b8ebca456f.tar.gz
+SLACKBUILD MD5SUM: 4fd97d853c6e5e06365ea94ff850c530
+SLACKBUILD SHORT DESCRIPTION:  go-net (supplementary Go networking libraries)
+
+SLACKBUILD NAME: go-sys
+SLACKBUILD LOCATION: ./go-sys
+SLACKBUILD FILES: README go-sys.SlackBuild go-sys.info slack-desc
+SLACKBUILD VERSION: b397fe3
+SLACKBUILD REQUIRED: go
+SLACKBUILD DOWNLOAD: https://github.com/golang/sys/archive/b397fe3ad8ed895c98fa54584f61835a88e65ff5.tar.gz
+SLACKBUILD MD5SUM: ea37f6859cdc81855c74b8b5a2460c0b
+SLACKBUILD SHORT DESCRIPTION:  go-sys (supplementary Go low-level libraries)
+
 SLACKBUILD NAME: go
 SLACKBUILD LOCATION: ./go
 SLACKBUILD FILES: README go.SlackBuild go.info slack-desc
@@ -1476,11 +1503,11 @@ SLACKBUILD SHORT DESCRIPTION:  GraphicsMagick (Image Processing System)
 
 SLACKBUILD NAME: graphviz
 SLACKBUILD LOCATION: ./graphviz
-SLACKBUILD FILES: README doinst.sh graphviz.SlackBuild graphviz.info slack-desc
-SLACKBUILD VERSION: 2.41.20171026.1811
+SLACKBUILD FILES: README doinst.sh graphviz.SlackBuild graphviz.info patches/ghostscript918.patch patches/ruby-config.patch slack-desc
+SLACKBUILD VERSION: 2.42.2
 SLACKBUILD REQUIRED: gts lua
-SLACKBUILD DOWNLOAD: https://graphviz.gitlab.io/pub/graphviz/development/SOURCES/graphviz-working.tar.gz
-SLACKBUILD MD5SUM: f21d326bcdc45cc52f7daa28faa87279
+SLACKBUILD DOWNLOAD: https://gitlab.com/graphviz/graphviz/-/archive/stable_release_2.42.2/graphviz-stable_release_2.42.2.tar.bz2
+SLACKBUILD MD5SUM: dc967dfef34870ada07dcd3e9a98b110
 SLACKBUILD SHORT DESCRIPTION:  graphviz (Graph Visualization Software)
 
 SLACKBUILD NAME: greenlet
@@ -2890,10 +2917,10 @@ SLACKBUILD SHORT DESCRIPTION:  md5deep (Advanced checksum hashing tool)
 SLACKBUILD NAME: memcached
 SLACKBUILD LOCATION: ./memcached
 SLACKBUILD FILES: README doinst.sh files/memcached.conf files/rc.memcached memcached.SlackBuild memcached.info slack-desc
-SLACKBUILD VERSION: 1.5.18
+SLACKBUILD VERSION: 1.5.19
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.memcached.org/files/memcached-1.5.18.tar.gz
-SLACKBUILD MD5SUM: 58ec46859977c879d64f795eab576e71
+SLACKBUILD DOWNLOAD: http://www.memcached.org/files/memcached-1.5.19.tar.gz
+SLACKBUILD MD5SUM: 60d6a6da08edad8b06945e75fbf28249
 SLACKBUILD SHORT DESCRIPTION:  memcached (object caching system)
 
 SLACKBUILD NAME: minidb
@@ -3052,10 +3079,10 @@ SLACKBUILD SHORT DESCRIPTION:  mutagen (Python 2/3 module for handling audio met
 SLACKBUILD NAME: mysqltuner
 SLACKBUILD LOCATION: ./mysqltuner
 SLACKBUILD FILES: README mysqltuner.SlackBuild mysqltuner.info slack-desc
-SLACKBUILD VERSION: 1.7.15
+SLACKBUILD VERSION: 1.7.17
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/major/MySQLTuner-perl/archive/1.7.15.tar.gz
-SLACKBUILD MD5SUM: 7f9303d3dca715d38d6a7eb6e0cb97ec
+SLACKBUILD DOWNLOAD: https://github.com/major/MySQLTuner-perl/archive/1.7.17.tar.gz
+SLACKBUILD MD5SUM: 2a8609d93e6288cc4a42575d22c8f33c
 SLACKBUILD SHORT DESCRIPTION:  mysqltuner (MySQL Tuning Script)
 
 SLACKBUILD NAME: nacl
@@ -3439,10 +3466,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-unminify (reverse transformations applied by
 SLACKBUILD NAME: node
 SLACKBUILD LOCATION: ./node
 SLACKBUILD FILES: README files/test-torque.tq node.SlackBuild node.info slack-desc
-SLACKBUILD VERSION: 12.11.0
+SLACKBUILD VERSION: 12.11.1
 SLACKBUILD REQUIRED: libuv c-ares npm
-SLACKBUILD DOWNLOAD: https://nodejs.org/dist/v12.11.0/node-v12.11.0.tar.gz
-SLACKBUILD MD5SUM: 88f7748cbea7115a138c3e91af5b458f
+SLACKBUILD DOWNLOAD: https://nodejs.org/dist/v12.11.1/node-v12.11.1.tar.gz
+SLACKBUILD MD5SUM: c822bd35c0fba7e20099ba6b9c5288d4
 SLACKBUILD SHORT DESCRIPTION:  Node (Evented I/O for V8 JavaScript)
 
 SLACKBUILD NAME: npm-check-updates
