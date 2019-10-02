@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=graphviz
-VERSION=2.41.20171026.1811
-BUILD=${BUILD:-13}
+VERSION=2.42.2
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,13 +72,14 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$PKGNAM-working.tar.gz
-cd $PKGNAM-$VERSION
+rm -rf ${PKGNAM}-stable_release_${VERSION}
+tar xvf $CWD/${PKGNAM}-stable_release_${VERSION}.tar.bz2
+cd ${PKGNAM}-stable_release_${VERSION}
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
+NOCONFIG=1 ./autogen.sh
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -90,15 +91,16 @@ CXXFLAGS="$SLKCFLAGS" \
   --mandir=/usr/man \
   --infodir=/usr/info \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --enable-static=no \
-  --enable-shared=yes \
+  --disable-static \
+  --enable-shared \
   --disable-php \
   --enable-python2 \
   --enable-python3 \
   --enable-lua \
   --enable-perl \
-  --enable-ruby \
+  --disable-ruby \
   --enable-tcl \
+  --enable-go \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 

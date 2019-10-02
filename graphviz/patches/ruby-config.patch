@@ -1,0 +1,32 @@
+Index: graphviz-2.38.0/config/config_ruby.rb
+===================================================================
+--- graphviz-2.38.0.orig/config/config_ruby.rb
++++ graphviz-2.38.0/config/config_ruby.rb
+@@ -4,8 +4,12 @@ CONFIG = RbConfig::MAKEFILE_CONFIG
+ 
+ 
+ case ARGV[0]
++when "arch"
++    puts RbConfig::expand(CONFIG["arch"])
+ when "archdir"
+     puts RbConfig::expand(CONFIG["archdir"])
++when "hdrdir"
++    puts RbConfig::expand(CONFIG["rubyhdrdir"])
+ when "lib"
+     puts RbConfig::expand(CONFIG["libdir"])
+ when "vendorarchdir"
+Index: graphviz-2.38.0/configure.ac
+===================================================================
+--- graphviz-2.38.0.orig/configure.ac
++++ graphviz-2.38.0/configure.ac
+@@ -1411,7 +1411,9 @@ else
+           if test "x$RUBY" = "x"; then
+ 	    use_ruby="No (ruby not available)"
+           else
+-            RUBY_CFLAGS="-I`$RUBY $srcdir/config/config_ruby.rb archdir`"
++            rubyincdir=`$RUBY $srcdir/config/config_ruby.rb hdrdir`
++            rubyarch=`$RUBY $srcdir/config/config_ruby.rb arch`
++            RUBY_CFLAGS="-I$rubyincdir -I$rubyincdir/$rubyarch"
+ 	    # hack for powerpc-darwin8 (10.4)
+ 	    if test "x$DARWIN" = "xyes"; then
+ 	      RUBY_CFLAGS=`echo $RUBY_CFLAGS | sed 's/powerpc/universal/'`
