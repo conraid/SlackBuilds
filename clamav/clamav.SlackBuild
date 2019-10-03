@@ -48,8 +48,8 @@ fi
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=clamav
-VERSION=0.101.4
-BUILD=${BUILD:-2}
+VERSION=0.102.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -152,7 +152,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-clamdtop \
   --enable-experimental \
   --enable-id-check \
-  --enable-milter \
   --with-dbdir=/var/lib/clamav \
   --with-libjson \
   --disable-zlib-check \
@@ -189,8 +188,6 @@ touch $PKG/var/log/clamav/{clamd,freshclam}.log.new
 # Fixup some ownership and permissions issues
 chown -R root:root $PKG
 chmod -R o-w $PKG
-chown clamav $PKG/usr/sbin/clamav-milter
-chmod 4700 $PKG/usr/sbin/clamav-milter
 chmod 0770 $PKG/var/lib/clamav
 touch $PKG/var/lib/clamav/main.cvd $PKG/var/lib/clamav/daily.cvd
 chmod 0660 $PKG/var/lib/clamav/*
