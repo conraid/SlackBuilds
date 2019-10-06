@@ -31,7 +31,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=unminify
 PKGNAM=node-$(echo $PRGNAM | tr A-Z a-z)
-VERSION=1.1.0
+SRCVERSION=b6aaff1c8c85bf3ffd97cb1b1ff3b97ab13259c7
+VERSION=$(echo $SRCVERSION | head -c7)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -61,9 +62,34 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
-DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $CWD/$PRGNAM-$VERSION.tgz
+cd $TMP
+rm -rf $PRGNAM-$SRCVERSION
+tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION.tar.gz
+cd $PRGNAM-$SRCVERSION
+
+chown -R root:root .
+chmod -R u+w,go+r-w,a+X-s .
+
+DESTDIR=$PKG npm install --user root -g --no-bin-links $(npm pack | tail -1)
+
+mkdir -p $PKG/usr/bin
+ln -s /usr/lib${LIBDIRSUFFIX}/node_modules/unminify/bin/cli.js $PKG/usr/bin/unminify
+
+# Remove empty dir
+rmdir $PKG/usr/etc || true
+
+# Remove unneeded files.
+find $PKG/usr \( -name '.git*' -o -name '.travis.yml' \) -exec rm -f {} \;
+
+# Remove occurrences of $PKG
+find $PKG -name "package.json" \
+  -exec sed -e "s|${TMP}/${PRGNAM}-build||" \
+            -e "s|${TMP}/${PRGNAM}-${VERSION}|/usr/lib${LIBDIRSUFFIX}/node_modules/${PRGNAM}|" \
+            -e "s|$CWD||g" \
+            -i '{}' \;
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
