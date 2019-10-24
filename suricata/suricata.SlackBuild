@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=suricata
-VERSION=4.1.5
+VERSION=5.0.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -82,7 +82,7 @@ chmod -R u+w,go+r-w,a+X-s .
 # Change magic file path with default slackware magic file path.
 sed "s|/usr/share/file/magic|/etc/file/magic.mgc|g" -i suricata.yaml.in
 
-autoreconf
+autoreconf -vfi
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -113,6 +113,7 @@ CXXFLAGS="$SLKCFLAGS" \
 
 make
 make DESTDIR=$PKG install
+make DESTDIR=$PKG install-conf
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -120,23 +121,21 @@ rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
-# Install config files
-install -Dm644 classification.config $PKG/etc/suricata/classification.config.new
-install -Dm644 reference.config $PKG/etc/suricata/reference.config.new
-install -Dm644 threshold.config $PKG/etc/suricata/threshold.config.new
-install -Dm644 suricata.yaml $PKG/etc/suricata/suricata.yaml.new
+if [ -d $PKG/usr/man ]; then
+  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+fi
 
-# Install rules
-install -d $PKG/etc/suricata/rules
-install -m644 rules/*.rules $PKG/etc/suricata/rules/
+# Rename config files
+rename .config .config.new $PKG/etc/suricata/*.config
+rename .yaml .yaml.new $PKG/etc/suricata/*.yaml
 
 # Install init file
 install -Dm644 $CWD/rc.suricata $PKG/etc/rc.d/rc.suricata.new
 
-# Create var log dir
-mkdir -p $PKG/var/log/suricata/{files,certs}
-# Create run dir
-mkdir -p $PKG/var/run/suricata
+# Install rules files
+install -d $PKG/etc/suricata/rules
+install -m644 rules/*.rules $PKG/etc/suricata/rules/
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION
