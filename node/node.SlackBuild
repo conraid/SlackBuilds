@@ -35,7 +35,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=node
-VERSION=12.12.0
+VERSION=13.0.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -67,7 +67,7 @@ elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe"
+  SLKCFLAGS="-O2"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -97,15 +97,6 @@ sed -e "s|share/doc/node/|doc/$PKGNAM-$VERSION/|g" \
   -e "s|\(['/]\)lib/|\1lib${LIBDIRSUFFIX}/|g" -i tools/install.py
 sed -e "s|'lib'|'lib${LIBDIRSUFFIX}'|" -i lib/module.js
 
-# Fix nghttp2 pkgconfig name
-if ! [ -e /usr/lib${LIBDIRSUFFIX}/pkgconfig/nghttp2.pc ]; then
-  LINKNGHTTP2=1
-  ln -s /usr/lib${LIBDIRSUFFIX}/pkgconfig/libnghttp2.pc /usr/lib${LIBDIRSUFFIX}/pkgconfig/nghttp2.pc
-fi
-
-# Fix https://github.com/nodejs/node/issues/29709
-install -Dm644 $CWD/files/test-torque.tq deps/v8/test/torque/test-torque.tq
-
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
@@ -115,9 +106,9 @@ CXXFLAGS="$SLKCFLAGS" \
   --shared-cares \
   --shared-nghttp2 \
   --shared-openssl \
-  --with-intl=system-icu \
   --experimental-http-parser \
-  --without-npm
+  --without-npm \
+  --with-intl=system-icu
 
 make PREFIX="/usr" CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS"
 make PREFIX="/usr" DESTDIR=$PKG install
@@ -160,11 +151,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-
-# Remove nghttp2 pkgconfig link
-if [ "x$LINKNGHTTP2" == 'x1' ]; then
-  rm /usr/lib${LIBDIRSUFFIX}/pkgconfig/nghttp2.pc
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
