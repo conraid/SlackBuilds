@@ -30,8 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=njmon
-VERSION=30
+VERSION=32
 VERSION_COLLECTOR=31
+VERSION_SCRIPT=30
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -72,8 +73,8 @@ mkdir -p $PKGNAM-$VERSION
 cd $PKGNAM-$VERSION
 
 unzip $CWD/${PKGNAM}_linux_code_v${VERSION}.zip
-unzip $CWD/${PKGNAM}_linux_JSON_samples_v${VERSION}.zip
-unzip $CWD/${PKGNAM}chart_aix_linux_v${VERSION}.zip
+unzip $CWD/${PKGNAM}_linux_JSON_samples_v${VERSION_SCRIPT}.zip
+unzip $CWD/${PKGNAM}chart_aix_linux_v${VERSION_SCRIPT}.zip
 
 gcc -o njmon njmon_linux_v${VERSION}.c $SLKCFLAGS
 install -Dsm755 $PKGNAM $PKG/usr/bin/njmon
@@ -93,7 +94,7 @@ help2man ./$PKGNAM | gzip -9 > $PKG/usr/man/man1/$PKGNAM.1.gz
 help2man ./njmon_collector | gzip -9 > $PKG/usr/man/man1/njmon_collector.1.gz
 
 # Install utilities
-install -Dm644 $CWD/njmon_*.py njmonchart_linux_v${VERSION}.py -t $PKG/usr/share/njmon
+install -Dm644 $CWD/njmon_*.py njmonchart_linux_v${VERSION_SCRIPT}.py -t $PKG/usr/share/njmon
 
 # Install JSON samples
 install -Dm644 *.json -t $PKG/usr/doc/$PKGNAM-$VERSION/samples/
