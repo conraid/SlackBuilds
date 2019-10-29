@@ -31,7 +31,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=VeraCrypt
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-VERSION=1.24
+SRCVERSION=1.24-Hotfix1
+VERSION=1.24_1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -75,7 +76,7 @@ mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PRGNAM-$VERSION
 mkdir -p $PRGNAM-$VERSION
-tar xvf $CWD/${PRGNAM}_${VERSION}_Source.tar.bz2 -C $PRGNAM-$VERSION
+tar xvf $CWD/${PRGNAM}_${SRCVERSION}_Source.tar.bz2 -C $PRGNAM-$VERSION
 cd $PRGNAM-$VERSION
 
 chown -R root:root .
@@ -95,6 +96,14 @@ TC_EXTRA_CFLAGS="$SLKCFLAGS -maes" \
 TC_EXTRA_CXXFLAGS="$SLKCFLAGS -maes"
 
 install -Dsm755 Main/$PKGNAM $PKG/usr/bin/$PKGNAM
+
+make NOGUI=1 clean
+make NOGUI=1 NOTEST=1  \
+TC_EXTRA_LDFLAGS+="-ldl -L/usr/lib$LIBDIRSUFFIX" \
+TC_EXTRA_CFLAGS="$SLKCFLAGS -maes" \
+TC_EXTRA_CXXFLAGS="$SLKCFLAGS -maes"
+
+install -Dsm755 Main/$PKGNAM $PKG/usr/bin/$PKGNAM-nox
 
 cd ..
 
