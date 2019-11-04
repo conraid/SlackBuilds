@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Slackware build script for atop
 #
-# Copyright 2014-2019 Corrado Franco (http://conraid.net)
+# Copyright 2014-2019 Corrado Franco (https://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=atop
-SRCVERSION=2.4.0
+SRCVERSION=2.5.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -92,11 +92,8 @@ sed -e 's|exit 0|exit 1|' \
     -e 's|/usr/share/atop/atop.daily\&|/etc/cron.daily/atop \&|g' \
     -i atop.init
 
-# Fix man path
-sed -i 's|/usr/share/man/man|/usr/man/man|g' Makefile
-
 make CFLAGS="$SLKCFLAGS"
-make DESTDIR=$PKG INIPATH=/etc/rc.d CRNPATH=/etc/cron.daily sysvinstall
+make DESTDIR=$PKG sysvinstall
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -114,6 +111,7 @@ mv $PKG/etc/rc.d/rc.atop $PKG/etc/rc.d/rc.atop.new
 mv $PKG/etc/logrotate.d/psaccs_atop $PKG/etc/logrotate.d/psaccs_atop.new
 mv $PKG/etc/logrotate.d/psaccu_atop $PKG/etc/logrotate.d/psaccu_atop.new
 mv $PKG/etc/cron.daily/atop.daily $PKG/etc/cron.daily/atop.new
+mv $PKG/etc/default/atop $PKG/etc/default/atop.new
 
 # Install logrotate (Thanks to SBo)
 install -Dm0644 $CWD/files/psacct.logrotate $PKG/etc/logrotate.d/psacct.new

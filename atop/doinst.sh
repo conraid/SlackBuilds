@@ -28,6 +28,7 @@ config etc/cron.daily/atop.new
 config etc/logrotate.d/psacct.new
 config etc/logrotate.d/psaccs_atop.new
 config etc/logrotate.d/psaccu_atop.new
+config etc/default/atop.new
 
 touch var/log/atop/daily.log
 
