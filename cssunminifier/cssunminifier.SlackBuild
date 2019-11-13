@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=cssunminifier
 VERSION=0.0.2
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -61,6 +61,24 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
 DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $CWD/$PKGNAM-$VERSION.tgz
+
+cd $PKG
+
+chown -R root:root .
+chmod -R u+w,go+r-w,a+X-s .
+
+# Remove empty dir
+rmdir $PKG/usr/etc || true
+
+# Remove unneeded files.
+find $PKG/usr \( -name '.git*' -o -name '.travis.yml' \) -exec rm -f {} \;
+
+# Remove occurrences of $PKG
+find $PKG -name "package.json" \
+  -exec sed -e "s|${TMP}/${PKGNAM}-build||" \
+            -e "s|${TMP}/${PKGNAM}-${VERSION}|/usr/lib${LIBDIRSUFFIX}/node_modules/${PKGNAM}|" \
+            -e "s|$CWD||g" \
+            -i '{}' \;
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
