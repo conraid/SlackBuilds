@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=sitespeed.io
 PKGNAM=sitespeedio
-VERSION=11.1.0
+VERSION=11.2.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -62,6 +62,19 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
 DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $CWD/$PRGNAM-$VERSION.tgz
+
+# Remove empty dir
+rmdir $PKG/usr/etc || true
+
+# Remove unneeded files.
+find $PKG/usr \( -name '.git*' -o -name '.travis.yml' \) -exec rm -f {} \;
+
+# Remove occurrences of $PKG
+find $PKG -name "package.json" \
+  -exec sed -e "s|${TMP}/${PRGNAM}-build||" \
+            -e "s|${TMP}/${PRGNAM}-${VERSION}|/usr/lib${LIBDIRSUFFIX}/node_modules/${PRGNAM}|" \
+            -e "s|$CWD||g" \
+            -i '{}' \;
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
