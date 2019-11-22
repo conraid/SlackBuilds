@@ -3,7 +3,7 @@
 # Build and package mod_php on Slackware.
 # by:  David Cantrell <david@slackware.com>
 # Modified for PHP 4-5 by volkerdi@slackware.com
-# Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015  Patrick Volkerding, Sebeka, MN, USA
+# Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2017  Patrick Volkerding, Sebeka, MN, USA
 # Copyright 2018-2019 Corrado Franco <https://conraid.net>
 # All rights reserved.
 #
@@ -24,14 +24,14 @@
 #  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Modified for PHP7.3 and PGSQL by Corrado Franco <https://conraid.net>
+# Modified for PGSQL by Corrado Franco <https://conraid.net>
 
 set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=php
 PKGNAM=php-pgsql
-VERSION=7.3.11
+VERSION=7.3.12
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 
