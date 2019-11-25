@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAM=cli
 PKGNAM=npm
-VERSION=6.12.1
+VERSION=6.13.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -76,6 +76,9 @@ if [ -e $CWD/patches/ ]; then
     patch -p1 -i $PATCH
   done
 fi
+
+# Fix sharp
+sed '/shar/s/0.22.1/0.23.3/g' -i docs/package*.json
 
 # Fix man page path.
 sed "/var manRoot/s/'share',//" -i lib/{,un}build.js
