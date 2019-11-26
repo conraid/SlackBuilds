@@ -1,0 +1,36 @@
+diff -Naupr a/Makefile b/Makefile
+--- a/Makefile	2019-09-28 20:01:48.000000000 +0200
++++ b/Makefile	2019-11-26 15:03:43.652771414 +0100
+@@ -52,7 +52,7 @@ bup_cmds := cmd/bup-python\
+ 
+ bup_deps := bup lib/bup/_checkout.py lib/bup/_helpers$(SOEXT) $(bup_cmds)
+ 
+-all: $(bup_deps) Documentation/all $(current_sampledata)
++all: $(bup_deps) $(current_sampledata)
+ 
+ bup:
+ 	ln -s main.py bup
+@@ -66,21 +66,9 @@ define install-python-bin
+   chmod 0755 $2;
+ endef
+ 
+-PANDOC ?= $(shell type -p pandoc)
+-
+-ifeq (,$(PANDOC))
+-  $(shell echo "Warning: pandoc not found; skipping manpage generation" 1>&2)
+-  man_md :=
+-else
+-  man_md := $(wildcard Documentation/*.md)
+-endif
+-
+-man_roff := $(patsubst %.md,%.1,$(man_md))
+-man_html := $(patsubst %.md,%.html,$(man_md))
+-
+ INSTALL=install
+-PREFIX=/usr/local
+-MANDIR=$(PREFIX)/share/man
++PREFIX=/usr
++MANDIR=$(PREFIX)/man
+ DOCDIR=$(PREFIX)/share/doc/bup
+ BINDIR=$(PREFIX)/bin
+ LIBDIR=$(PREFIX)/lib/bup

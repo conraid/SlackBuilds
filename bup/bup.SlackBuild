@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=bup
-VERSION=0.29.3
+VERSION=0.30
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -88,8 +88,8 @@ fi
 
 ./configure
 
-make PREFIX=/usr MANDIR=/usr/man DOCDIR=/usr/doc/bup-$VERSION CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS"
-make PREFIX=/usr MANDIR=/usr/man DOCDIR=/usr/doc/bup-$VERSION DESTDIR=$PKG install
+make DOCDIR=/usr/doc/bup-$VERSION LIBDIR=/usr/lib${LIBDIRSUFFIX}/bup CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS"
+make DOCDIR=/usr/doc/bup-$VERSION LIBDIR=/usr/lib${LIBDIRSUFFIX}/bup DESTDIR=$PKG install
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -97,13 +97,17 @@ rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
-mkdir -p $PKG/usr/man/man1
-cp -r $CWD/files/man/* $PKG/usr/man/man1
+# Install doc and man pages
+cd $PKG/usr
+tar xzf $CWD/files/doc.tar.gz
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION/html
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
-cp -r $CWD/files/doc/* $PKG/usr/doc/$PKGNAM-$VERSION/html
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
+
+# Install doc and man pages
+cd $PKG/usr
+tar xzf $CWD/files/doc.tar.gz
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
