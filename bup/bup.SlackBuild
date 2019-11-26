@@ -88,8 +88,8 @@ fi
 
 ./configure
 
-make DOCDIR=/usr/doc/bup-$VERSION LIBDIR=/usr/lib${LIBDIRSUFFIX}/bup CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS"
-make DOCDIR=/usr/doc/bup-$VERSION LIBDIR=/usr/lib${LIBDIRSUFFIX}/bup DESTDIR=$PKG install
+make DOCDIR=/usr/doc/bup-$VERSION CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS"
+make DOCDIR=/usr/doc/bup-$VERSION DESTDIR=$PKG install
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
