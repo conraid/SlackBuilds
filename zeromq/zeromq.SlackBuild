@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=zeromq
 VERSION=4.3.2
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -75,6 +75,7 @@ cd $TMP
 rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
 cd $PKGNAM-$VERSION
+tar --wildcards -xf $CWD/cppzmq-*.tar.gz */zmq.hpp */zmq_addon.hpp --strip=1
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -101,6 +102,10 @@ CXXFLAGS="$SLKCFLAGS" \
 
 make
 make DESTDIR=$PKG install
+
+# Install header
+install -Dm644 zmq.hpp "$PKG/usr/include/zmq.hpp"
+install -Dm644 zmq_addon.hpp "$PKG/usr/include/zmq_addon.hpp"
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
