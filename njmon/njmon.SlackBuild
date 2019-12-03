@@ -30,9 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=njmon
-VERSION=32
+VERSION=41
 VERSION_COLLECTOR=31
-VERSION_SCRIPT=30
+VERSION_CHART=30
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -73,19 +73,19 @@ mkdir -p $PKGNAM-$VERSION
 cd $PKGNAM-$VERSION
 
 unzip $CWD/${PKGNAM}_linux_code_v${VERSION}.zip
-unzip $CWD/${PKGNAM}_linux_JSON_samples_v${VERSION_SCRIPT}.zip
-unzip $CWD/${PKGNAM}chart_aix_linux_v${VERSION_SCRIPT}.zip
+unzip $CWD/${PKGNAM}_tools_v${VERSION}.zip
+unzip $CWD/njmonchart_aix_linux_v${VERSION_CHART}.zip njmonchart_linux_v${VERSION_CHART}.py
 
 gcc -o njmon njmon_linux_v${VERSION}.c $SLKCFLAGS
 install -Dsm755 $PKGNAM $PKG/usr/bin/njmon
 
-gcc -o njmon_collector $CWD/njmon_collector_v$VERSION_COLLECTOR.c $SLKCFLAGS
+gcc -o njmon_collector njmon_collector_v$VERSION_COLLECTOR.c $SLKCFLAGS
 install -Dsm755 njmon_collector $PKG/usr/bin/njmon_collector
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 ./njmon -h > $PKG/usr/doc/$PKGNAM-$VERSION/njmon.txt
 ./njmon_collector -h > $PKG/usr/doc/$PKGNAM-$VERSION/njmon_collector.txt
-cp -a $CWD/files/*.txt $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $CWD/files/*.txt *.conf  $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 # Install man pages
@@ -94,10 +94,7 @@ help2man ./$PKGNAM | gzip -9 > $PKG/usr/man/man1/$PKGNAM.1.gz
 help2man ./njmon_collector | gzip -9 > $PKG/usr/man/man1/njmon_collector.1.gz
 
 # Install utilities
-install -Dm644 $CWD/njmon_*.py njmonchart_linux_v${VERSION_SCRIPT}.py -t $PKG/usr/share/njmon
-
-# Install JSON samples
-install -Dm644 *.json -t $PKG/usr/doc/$PKGNAM-$VERSION/samples/
+install -Dm644 *.py -t $PKG/usr/share/njmon
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
