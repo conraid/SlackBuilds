@@ -30,9 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=phpspy
-SRCVERSION=6a1c47594ab8d7286f6ce22f8d82be50dcaebb74
-VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-7}
+VERSION=0.5.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -73,9 +72,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$SRCVERSION
-tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/v$SRCVERSION.tar.gz
-cd $PKGNAM-$SRCVERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
