@@ -31,7 +31,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libosinfo
-VERSION=1.6.0
+VERSION=1.7.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -74,7 +74,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
+tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
@@ -87,36 +87,35 @@ if [ -e $CWD/patches/ ]; then
   done
 fi
 
-LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib$LIBDIRSUFFIX \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --infodir=/usr/info \
-  --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --disable-static \
-  --enable-shared \
-  --disable-tests \
-  --enable-udev \
-  --enable-vala \
-  --enable-introspection=yes \
-  --with-usb-ids-path=/usr/share/hwdata/usb.ids \
-  --with-pci-ids-path=/usr/share/hwdata/pci.ids \
-  --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
+export CFLAGS="$SLKCFLAGS"
+export CXXFLAGS="$SLKCFLAGS"
+mkdir meson-build
+cd meson-build
+meson setup \
+  -Dprefix=/usr \
+  -Dlibdir=/usr/lib$LIBDIRSUFFIX \
+  -Dmandir=man \
+  -Dinfodir=info \
+  -Denable-vala=enabled \
+  -Denable-tests=false \
+  -Denable-introspection=enabled \
+  -Denable-gtk-doc=false \
+  -Dwith-usb-ids-path=/usr/share/hwdata/usb.ids \
+  -Dwith-pci-ids-path=/usr/share/hwdata/pci.ids \
+  ..
 
-make
-make DESTDIR=$PKG install
+ninja
+DESTDIR=$PKG ninja install
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+
+if [ -d $PKG/usr/share/man ]; then
+  mv $PKG/usr/share/man $PKG/usr
+fi
 
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
