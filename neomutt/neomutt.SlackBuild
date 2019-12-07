@@ -30,9 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=neomutt
-SRCVERSION=20191129
+SRCVERSION=20191207
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,7 +72,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$SRCVERSION
-tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION.tar.gz
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz
 cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
@@ -107,6 +107,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --idn2 \
   --kyotocabinet \
   --sqlite \
+  --full-doc \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
@@ -135,7 +136,9 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 install -Dm644 $CWD/files/$PKGNAM.desktop $PKG/usr/share/applications/$PKGNAM.desktop
-install -Dm644 contrib/logo/$PKGNAM.svg $PKG/usr/share/pixmaps/$PKGNAM.svg
+for i in 32 64 128 256; do
+  install -Dm644 contrib/logo/$PKGNAM-$i.png $PKG/usr/share/icons/hicolor/${i}x${i}/apps/$PKGNAM.png
+done
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
