@@ -44,7 +44,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=tor
-VERSION=0.4.1.6
+VERSION=0.4.2.5
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -119,7 +119,6 @@ rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 mkdir -p $PKG/var/{run,log,lib}/tor
 chown tor:tor $PKG/var/{run,log,lib}/tor
 chmod 0700 $PKG/var/lib/tor
-install -Dm755 contrib/dist/torctl $PKG/usr/bin/torctl
 rename .sample .new $PKG/etc/tor/torrc.sample
 mkdir -p $PKG/etc/logrotate.d
 sed -e "s/_tor/tor/" \
