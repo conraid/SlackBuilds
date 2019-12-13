@@ -1,9 +1,9 @@
 diff -Naupr a/testssl.sh b/testssl.sh
---- a/testssl.sh	2019-02-18 20:33:08.000000000 +0100
-+++ b/testssl.sh	2019-03-07 09:07:25.903716394 +0100
-@@ -135,7 +135,7 @@ declare -r PROG_NAME="$(basename "$0")"
- declare -r RUN_DIR="$(dirname "$0")"
+--- a/testssl.sh	2019-12-11 21:51:23.000000000 +0100
++++ b/testssl.sh	2019-12-13 08:36:08.292042093 +0100
+@@ -136,7 +136,7 @@ declare -r RUN_DIR="$(dirname "$0")"
  declare -r SYSTEM="$(uname -s)"
+ declare -r SYSTEMREV="$(uname -r)"
  SYSTEM2=""                                        # currently only being used for WSL = bash on windows
 -TESTSSL_INSTALL_DIR="${TESTSSL_INSTALL_DIR:-""}"  # If you run testssl.sh and it doesn't find it necessary file automagically set TESTSSL_INSTALL_DIR
 +TESTSSL_INSTALL_DIR="${TESTSSL_INSTALL_DIR:-"/usr/share/testssl.sh"}"  # If you run testssl.sh and it doesn't find it necessary file automagically set TESTSSL_INSTALL_DIR
