@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=protobuf
-VERSION=3.11.1
+VERSION=3.11.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -109,29 +109,8 @@ rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 # Python
 if [ $BUILD_PYTHON = "YES" ]; then
   cd python
-  python setup.py install --root=$PKG
-  cd -
-fi
-
-# Ruby
-if [ $BUILD_RUBY = "YES" ]; then
-  cd ruby
-  rake
-  rake clobber_package gem
-  gem install $(ls pkg/google-protobuf-*.gem)
-  DESTDIR="$(ruby -e'puts Gem.default_dir')"
-  HOME="/tmp" \
-  GEM_HOME="$DESTDIR" \
-  GEM_PATH="$DESTDIR" \
-  gem install \
-   --local \
-   --no-update-sources \
-   --ignore-dependencies \
-   --backtrace \
-   --no-user-install \
-   --install-dir $PKG/$DESTDIR \
-   --bindir $PKG/usr/bin \
-  pkg/google-protobuf-3.0.0.gem
+  python setup.py install --cpp_implementation --root=$PKG
+  python3 setup.py install --cpp_implementation --root=$PKG
   cd -
 fi
 
@@ -143,6 +122,10 @@ fi
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
+
+# Install emacs and vim syntax files
+install -Dm644 editors/protobuf-mode.el -t "$PKG/usr/share/emacs/site-lisp/"
+install -Dm644 editors/proto.vim -t "$PKG/usr/share/vim/vimfiles/syntax"
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
