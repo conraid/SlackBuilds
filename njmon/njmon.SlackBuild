@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=njmon
-VERSION=41
+VERSION=42
 VERSION_TOOL=41b
 VERSION_COLLECTOR=31
 VERSION_CHART=30
@@ -73,11 +73,11 @@ rm -rf $PKGNAM-$VERSION
 mkdir -p $PKGNAM-$VERSION
 cd $PKGNAM-$VERSION
 
-unzip $CWD/${PKGNAM}_linux_code_v${VERSION}.zip
+#unzip $CWD/${PKGNAM}_linux_code_v${VERSION}.zip
 unzip $CWD/${PKGNAM}_tools_v${VERSION_TOOL}.zip
 unzip $CWD/njmonchart_aix_linux_v${VERSION_CHART}.zip njmonchart_linux_v${VERSION_CHART}.py
 
-gcc -o njmon njmon_linux_v${VERSION}.c $SLKCFLAGS
+gcc -o njmon $CWD/njmon_linux_v${VERSION}.c $SLKCFLAGS
 install -Dsm755 $PKGNAM $PKG/usr/bin/njmon
 
 gcc -o njmon_collector njmon_collector_v$VERSION_COLLECTOR.c $SLKCFLAGS
