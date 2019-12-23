@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=nDPI
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-VERSION=2.8
+VERSION=3.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -86,7 +86,7 @@ sed -e "s|libdata|lib$LIBDIRSUFFIX|g" \
 
 # Fix lib dir and cflags
 sed -e "/^libdir/s|/lib$|/lib$LIBDIRSUFFIX|" \
-    -e "/^CFLAGS/s|-O2 -g$|$SLKCFLAGS|" \
+    -e "/^CFLAGS/s|-O2 -g|$SLKCFLAGS|" \
     -i src/lib/Makefile.in
 
 LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
