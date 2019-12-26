@@ -33,7 +33,7 @@ PKGNAM=csscss
 SRCVERSION=bac3e424b2deddbeade08677b9958533c52828e6
 VERSION=$(echo $SRCVERSION | head -c 7)
 GEMVERSION=1.3.3
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -73,6 +73,7 @@ chmod -R u+w,go+r-w,a+X-s .
 
 # Get the full path of the ruby installation, for gems
 DESTDIR="$(ruby -e'puts Gem.default_dir')"
+GEMDIR="$(gem environment gemdir)"
 
 HOME="/tmp"  \
 gem build $PKGNAM.gemspec
@@ -85,7 +86,7 @@ gem install \
    --bindir $PKG/usr/bin \
    $PKGNAM-$GEMVERSION.gem
 
-cp -r lib test *.gemspec *.md Rakefile $PKG/usr/lib64/ruby/gems/2.6.0/gems/csscss-$GEMVERSION
+cp -r lib test *.gemspec *.md Rakefile $PKG/$GEMDIR/gems/csscss-$GEMVERSION
 install -Dm755 bin/$PKGNAM $PKG/usr/bin/$PKGNAM
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
