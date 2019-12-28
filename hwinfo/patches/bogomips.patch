@@ -1,0 +1,36 @@
+From: Tomasz Buchert <tomasz@debian.org>
+Date: Sat, 1 Feb 2014 14:26:41 +0100
+Subject: Read BogoMIPS from /proc/cpuinfo as well
+
+---
+ src/hd/cpu.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/hd/cpu.c b/src/hd/cpu.c
+index 958993c..4b5d27d 100644
+--- a/src/hd/cpu.c
++++ b/src/hd/cpu.c
+@@ -104,6 +104,7 @@ void read_cpuinfo(hd_data_t *hd_data)
+ #ifdef __alpha__
+   char model_id[80], system_id[80], serial_number[80], platform[80];
+   unsigned cpu_variation, cpu_revision, u, hz;
++  double bogo;
+   cpu_info_t *ct1;
+ #endif
+ 
+@@ -161,6 +162,7 @@ void read_cpuinfo(hd_data_t *hd_data)
+ #ifdef __alpha__
+   *model_id = *system_id = *serial_number = *platform = 0;
+   cpu_variation = cpu_revision = hz = 0;
++  bogo = 0;
+ 
+   for(sl = hd_data->cpu; sl; sl = sl->next) {
+     if(sscanf(sl->str, "cpu model : %79[^\n]", model_id) == 1) continue;
+@@ -171,6 +173,7 @@ void read_cpuinfo(hd_data_t *hd_data)
+     if(sscanf(sl->str, "cpus detected : %u", &cpus) == 1) continue;
+     if(sscanf(sl->str, "cycle frequency [Hz] : %u", &hz) == 1) continue;
+     if(sscanf(sl->str, "system variation : %79[^\n]", platform) == 1) continue;
++    if(sscanf(sl->str, "BogoMIPS : %lg", &bogo) == 1) continue;
+   }
+ 
+   if(*model_id || *system_id) {	/* at least one of those */
