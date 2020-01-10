@@ -33,8 +33,8 @@ PKGNAM=njmon
 VERSION=42
 VERSION_TOOL=41b
 VERSION_COLLECTOR=33
-VERSION_CHART=30
-BUILD=${BUILD:-2}
+VERSION_CHART=40
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -75,7 +75,7 @@ cd $PKGNAM-$VERSION
 
 unzip $CWD/${PKGNAM}_tools_v${VERSION_TOOL}.zip
 rm -rf njmon_collector*
-unzip $CWD/njmonchart_aix_linux_v${VERSION_CHART}.zip njmonchart_linux_v${VERSION_CHART}.py
+unzip $CWD/njmonchart_v${VERSION_CHART}.zip njmonchart_linux_v${VERSION_CHART}.py
 unzip $CWD/njmon_collector_v${VERSION_COLLECTOR}.zip
 
 gcc -o njmon $CWD/njmon_linux_v${VERSION}.c $SLKCFLAGS
