@@ -10,10 +10,10 @@ SLACKBUILD SHORT DESCRIPTION:  abook
 SLACKBUILD NAME: acme.sh
 SLACKBUILD LOCATION: ./acme.sh
 SLACKBUILD FILES: README acme.sh.SlackBuild acme.sh.info slack-desc
-SLACKBUILD VERSION: 2.8.3
+SLACKBUILD VERSION: 2.8.4
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/Neilpang/acme.sh/archive/2.8.3/acme.sh-2.8.3.tar.gz
-SLACKBUILD MD5SUM: f1faea62db62cf36040926be6b169c2f
+SLACKBUILD DOWNLOAD: https://github.com/Neilpang/acme.sh/archive/2.8.4/acme.sh-2.8.4.tar.gz
+SLACKBUILD MD5SUM: f9f3efb3c1485e7f6ef8c418fad6e875
 SLACKBUILD SHORT DESCRIPTION:  acme.sh (ACME client protocol)
 
 SLACKBUILD NAME: acpiclient
@@ -1747,10 +1747,10 @@ SLACKBUILD SHORT DESCRIPTION:  httperf (HTTP load generator)
 SLACKBUILD NAME: httpie
 SLACKBUILD LOCATION: ./httpie
 SLACKBUILD FILES: README doinst.sh httpie.SlackBuild httpie.info slack-desc
-SLACKBUILD VERSION: 1.0.3
+SLACKBUILD VERSION: 2.0.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/jakubroztocil/httpie/archive/1.0.3.tar.gz
-SLACKBUILD MD5SUM: 01e8446c1b9aac50cefa52cd8db4e0f3
+SLACKBUILD DOWNLOAD: https://github.com/jakubroztocil/httpie/archive/2.0.0.tar.gz
+SLACKBUILD MD5SUM: 502190c265c2cf4f6db9a9123b7cb452
 SLACKBUILD SHORT DESCRIPTION:  httpie (modern command line HTTP client)
 
 SLACKBUILD NAME: httping
@@ -2458,10 +2458,10 @@ SLACKBUILD SHORT DESCRIPTION:  libmilter (Implementation of the sendmail Mail Fi
 SLACKBUILD NAME: libmodsecurity
 SLACKBUILD LOCATION: ./libmodsecurity
 SLACKBUILD FILES: README libmodsecurity.SlackBuild libmodsecurity.info slack-desc
-SLACKBUILD VERSION: 3.0.3
+SLACKBUILD VERSION: 3.0.4
 SLACKBUILD REQUIRED: lua ssdeep libmaxminddb
-SLACKBUILD DOWNLOAD: https://github.com/SpiderLabs/ModSecurity/releases/download/v3.0.3/modsecurity-v3.0.3.tar.gz
-SLACKBUILD MD5SUM: 807f7ac45c028da551e91cb3b9f26520
+SLACKBUILD DOWNLOAD: https://github.com/SpiderLabs/ModSecurity/releases/download/v3.0.4/modsecurity-v3.0.4.tar.gz
+SLACKBUILD MD5SUM: a8791b94fa09f2d3693fa1d22523e6c4
 SLACKBUILD SHORT DESCRIPTION:  libmodsecurity (web application firewall)
 
 SLACKBUILD NAME: libmp3splt
@@ -3013,6 +3013,15 @@ SLACKBUILD DOWNLOAD: https://github.com/SpiderLabs/ModSecurity-apache/releases/d
 SLACKBUILD MD5SUM: 9d9188407abd5120d56815a67770a423
 SLACKBUILD SHORT DESCRIPTION:  ModSecurity (ModSecurity v3 Apache Connector)
 
+SLACKBUILD NAME: modsecurity-nginx
+SLACKBUILD LOCATION: ./modsecurity-nginx
+SLACKBUILD FILES: PKGNOTE README doinst.sh files/modsecurity.conf modsecurity-nginx.SlackBuild modsecurity-nginx.info slack-desc
+SLACKBUILD VERSION: 0.0.9-beta1
+SLACKBUILD REQUIRED: libmodsecurity nginx
+SLACKBUILD DOWNLOAD: https://github.com/SpiderLabs/ModSecurity-nginx/releases/download/v1.0.1/modsecurity-nginx-v1.0.1.tar.gz
+SLACKBUILD MD5SUM: 09c02430626a2ec267d40708904bdc03
+SLACKBUILD SHORT DESCRIPTION:  ModSecurity (ModSecurity v3 Nginx Connector)
+
 SLACKBUILD NAME: monit
 SLACKBUILD LOCATION: ./monit
 SLACKBUILD FILES: README doinst.sh monit.SlackBuild monit.info rc.monit slack-desc
@@ -3287,7 +3296,7 @@ SLACKBUILD NAME: nginx
 SLACKBUILD LOCATION: ./nginx
 SLACKBUILD FILES: README doinst.sh files/nginx.logrotate files/rc.nginx nginx.SlackBuild nginx.info slack-desc
 SLACKBUILD VERSION: 1.17.7
-SLACKBUILD REQUIRED: geoip
+SLACKBUILD REQUIRED: geoip libmodsecurity
 SLACKBUILD DOWNLOAD: https://nginx.org/download/nginx-1.17.7.tar.gz
 SLACKBUILD MD5SUM: 69d3f19f92cd6c85daacc8f18d0f75d6
 SLACKBUILD SHORT DESCRIPTION:  nginx (http/imap/pop3 proxy)
@@ -4564,10 +4573,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-slip (convenience, extension and workaroun
 SLACKBUILD NAME: python-spotipy
 SLACKBUILD LOCATION: ./python-spotipy
 SLACKBUILD FILES: README python-spotipy.SlackBuild python-spotipy.info slack-desc
-SLACKBUILD VERSION: 2.5.0
+SLACKBUILD VERSION: 2.6.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/spotipy/spotipy-2.5.0.tar.gz
-SLACKBUILD MD5SUM: 424087963ec605ecc9e3100cf4a97f96
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/spotipy/spotipy-2.6.1.tar.gz
+SLACKBUILD MD5SUM: 0e1107c71f6f308cd620474b758a2419
 SLACKBUILD SHORT DESCRIPTION:  python-spotipy (Python library for the Spotify Web API) 
 
 SLACKBUILD NAME: python-structlog
@@ -5383,10 +5392,10 @@ SLACKBUILD SHORT DESCRIPTION:  stylelint-config-standard (The standard config fo
 SLACKBUILD NAME: stylelint
 SLACKBUILD LOCATION: ./stylelint
 SLACKBUILD FILES: README slack-desc stylelint.SlackBuild stylelint.info
-SLACKBUILD VERSION: 12.0.1
+SLACKBUILD VERSION: 13.0.0
 SLACKBUILD REQUIRED: npm
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/stylelint/-/stylelint-12.0.1.tgz
-SLACKBUILD MD5SUM: 138a130a6b86702cca0ca1352b74afb1
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/stylelint/-/stylelint-13.0.0.tgz
+SLACKBUILD MD5SUM: c099127694e0bf2bd9fe2f8a5515782c
 SLACKBUILD SHORT DESCRIPTION:  stylelint (css linter)
 
 SLACKBUILD NAME: subtitleeditor
