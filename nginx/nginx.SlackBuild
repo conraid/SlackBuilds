@@ -2,7 +2,7 @@
 #
 # Slackware build script for nginx
 #
-# Copyright 2017-2019 Corrado Franco (https://conraid.net)
+# Copyright 2017-2020 Corrado Franco (https://conraid.net)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=nginx
 VERSION=1.17.7
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -91,15 +91,14 @@ sed -e '/root[ ]*html/s|html;|/var/www/&|' \
     -e 's|^events.*|include /etc/nginx/modules/\*.conf;\n\n&|' \
     -i conf/$PKGNAM.conf
 
-LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
 ./configure \
+  --with-cc-opt="$SLKCFLAGS" \
   --prefix=/usr \
   --sbin-path=/usr/sbin/nginx \
   --conf-path=/etc/nginx/nginx.conf \
   --pid-path=/var/run/nginx.pid \
   --lock-path=/var/lock/subsys \
+  --modules-path=/usr/lib${LIBDIRSUFFIX}/nginx/modules \
   --user=nobody \
   --group=nogroup \
   --error-log-path=/var/log/nginx/error.log \
@@ -116,8 +115,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-http_v2_module \
   --with-http_realip_module \
   --with-http_addition_module \
-  --with-http_xslt_module \
-  --with-http_image_filter_module \
   --with-http_sub_module \
   --with-http_dav_module \
   --with-http_flv_module \
@@ -130,10 +127,8 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-http_degradation_module \
   --with-http_slice_module \
   --with-http_stub_status_module \
-  --with-http_perl_module \
-  --with-mail \
+  --with-mail=dynamic \
   --with-mail_ssl_module \
-  --with-stream \
   --with-stream_ssl_module \
   --with-stream_realip_module \
   --with-stream_ssl_preread_module \
@@ -142,11 +137,16 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-pcre \
   --with-pcre-jit \
   --with-libatomic \
-  --with-http_geoip_module \
-  --with-stream_geoip_module
+  --with-http_geoip_module=dynamic \
+  --with-stream_geoip_module=dynamic \
+  --with-http_perl_module=dynamic \
+  --with-http_image_filter_module=dynamic \
+  --with-http_xslt_module=dynamic \
+  --with-stream=dynamic \
+  --with-threads
 
 make
-make DESTDIR=$PKG INSTALLDIRS=vendor INSTALLVENDORMAN3DIR=/usr/man/man3install install
+make DESTDIR=$PKG INSTALLDIRS=vendor INSTALLVENDORMAN3DIR=/usr/man/man3 install
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
