@@ -2,7 +2,7 @@
 #
 # Slackware build script for njmon
 #
-# Copyright 2019-2020 Corrado Franco (https://conraid.net)
+# Copyright 2019-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=njmon
-VERSION=42
-VERSION_TOOL=41b
+VERSION=50
+VERSION_TOOL=50
 VERSION_COLLECTOR=33
 VERSION_CHART=40
 BUILD=${BUILD:-1}
@@ -73,12 +73,12 @@ rm -rf $PKGNAM-$VERSION
 mkdir -p $PKGNAM-$VERSION
 cd $PKGNAM-$VERSION
 
+unzip $CWD/${PKGNAM}_linux_code_v${VERSION}.zip
 unzip $CWD/${PKGNAM}_tools_v${VERSION_TOOL}.zip
-rm -rf njmon_collector*
 unzip $CWD/njmonchart_v${VERSION_CHART}.zip njmonchart_linux_v${VERSION_CHART}.py
-unzip $CWD/njmon_collector_v${VERSION_COLLECTOR}.zip
+unzip $CWD/${PKGNAM}_collector_v${VERSION_COLLECTOR}.zip
 
-gcc -o njmon $CWD/njmon_linux_v${VERSION}.c $SLKCFLAGS
+gcc -o njmon njmon_linux_v${VERSION}.c $SLKCFLAGS
 install -Dsm755 $PKGNAM $PKG/usr/bin/njmon
 
 gcc -o njmon_collector njmon_collector_v$VERSION_COLLECTOR.c $SLKCFLAGS
