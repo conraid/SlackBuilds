@@ -2,7 +2,7 @@
 #
 # Slackware build script for neomutt
 #
-# Copyright 2016-2019 Corrado Franco (https://conraid.net)
+# Copyright 2016-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=neomutt
 SRCVERSION=20191207
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -98,6 +98,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-mailpath=/var/spool/mail \
   --ssl \
   --sasl \
+  --gss \
   --gdbm \
   --gpgme \
   --notmuch \
