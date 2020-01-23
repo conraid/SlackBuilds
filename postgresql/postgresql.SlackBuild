@@ -3,7 +3,7 @@
 # Slackware build script for postgresql
 #
 # Copyright 2007-2015 Adis Nezirovic <adis_at_linux.org.ba>
-# Copyright 2016-2019 Corrado Franco (https://conraid.net)
+# Copyright 2016-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=postgresql
 VERSION=12.1
 PG_VERSION=12
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -117,6 +117,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-uuid=e2fs \
   --enable-nls \
   --enable-thread-safety \
+  --with-gssapi \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
