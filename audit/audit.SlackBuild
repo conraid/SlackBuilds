@@ -2,7 +2,7 @@
 #
 # Slackware build script for audit
 #
-# Copyright 2015-2019 Corrado Franco (https://conraid.net)
+# Copyright 2015-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=audit
 VERSION=2.8.5
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -95,6 +95,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-python3 \
   --with-libwrap \
   --with-libcap-ng=yes \
+  --enable-gssapi-krb5=yes \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
