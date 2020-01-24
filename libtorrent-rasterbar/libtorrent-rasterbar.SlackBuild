@@ -2,7 +2,7 @@
 #
 # Slackware build script for libtorrent-rasterbar
 #
-# Copyright 2015-2019 Corrado Franco (https://conraid.net)
+# Copyright 2015-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libtorrent-rasterbar
-VERSION=1.1.14
+VERSION=1.2.3
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -86,9 +86,10 @@ if [ -e $CWD/patches/ ]; then
   done
 fi
 
-LDFLAGS="-L/usr/lib${LIBDIRSUFFIX} $(/usr/bin/pkg-config --libs python)" \
+PYTHON="python2" \
+LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS -std=c++11" \
+CXXFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -102,12 +103,43 @@ CXXFLAGS="$SLKCFLAGS -std=c++11" \
   --with-libiconv \
   --enable-python-binding \
   --with-boost-system=boost_system \
-  --with-boost-python \
+  --with-boost-python=boost_python \
+  --with-boost-libdir=/usr/lib${LIBDIRSUFFIX} \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
 make -j1
 make DESTDIR=$PKG install
+
+make clean
+PYTHON="python3" \
+LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+  --prefix=/usr \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --sysconfdir=/etc \
+  --localstatedir=/var \
+  --mandir=/usr/man \
+  --infodir=/usr/info \
+  --docdir=/usr/doc/$PKGNAM-$VERSION \
+  --enable-static=no \
+  --enable-shared=yes \
+  --with-libiconv \
+  --enable-python-binding \
+  --with-boost-system=boost_system \
+  --with-boost-python=boost_python3 \
+  --with-boost-libdir=/usr/lib${LIBDIRSUFFIX} \
+  --host=$ARCH-slackware-linux \
+  --build=$ARCH-slackware-linux
+
+make -j1
+make DESTDIR=$PKG install
+
+make -C examples dump_torrent make_torrent
+install -Dm755 examples/dump_torrent $PKG/usr/bin/dump_torrent
+install -Dm755 examples/make_torrent $PKG/usr/bin/make_torrent
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
