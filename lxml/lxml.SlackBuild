@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=lxml
 VERSION=4.5.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -77,7 +77,6 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-CFLAGS="$SLKCFLAGS -fno-strict-aliasing" python setup.py install --with-unicode-strings --root=$PKG
 CFLAGS="$SLKCFLAGS -fno-strict-aliasing" python3 setup.py install --with-unicode-strings --root=$PKG
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
