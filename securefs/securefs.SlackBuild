@@ -2,7 +2,7 @@
 #
 # Slackware build script for securefs
 #
-# Copyright 2017-2019 Corrado Franco (http://conraid.net)
+# Copyright 2017-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=securefs
-VERSION=0.8.3
+VERSION=0.9.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -76,6 +76,11 @@ rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
 cd $PKGNAM-$VERSION
 
+git clone -n https://github.com/JuliaStrings/utf8proc.git external/utf8proc
+cd external/utf8proc
+git checkout 5c632c57426f2e4246e3b64dd2fd088d3920f9e5
+cd -
+
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
@@ -85,7 +90,6 @@ cmake -Wno-dev \
   -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DLOCALSTATEDIR=/var \
   ..
 
 make
