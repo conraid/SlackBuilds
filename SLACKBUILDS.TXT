@@ -1117,10 +1117,10 @@ SLACKBUILD SHORT DESCRIPTION:  Fail2Ban (bans IP that makes too many password fa
 SLACKBUILD NAME: fdupes
 SLACKBUILD LOCATION: ./fdupes
 SLACKBUILD FILES: README fdupes.SlackBuild fdupes.info slack-desc
-SLACKBUILD VERSION: 1.6.1
+SLACKBUILD VERSION: 2.0.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/adrianlopezroche/fdupes/archive/v1.6.1.tar.gz
-SLACKBUILD MD5SUM: 4fc41681fb506e518a40d610fec50aea
+SLACKBUILD DOWNLOAD: https://github.com/adrianlopezroche/fdupes/releases/download/2.0.0/fdupes-2.0.0.tar.gz
+SLACKBUILD MD5SUM: a8867b5dcc754b2e7f7bdb6c478a5ae4
 SLACKBUILD SHORT DESCRIPTION:  fdupes (find duplicate files)
 
 SLACKBUILD NAME: ferm
@@ -1144,9 +1144,9 @@ SLACKBUILD SHORT DESCRIPTION:  filezilla (the free FTP solution)
 SLACKBUILD NAME: findomain
 SLACKBUILD LOCATION: ./findomain
 SLACKBUILD FILES: PKGNOTE README findomain.SlackBuild findomain.info slack-desc
-SLACKBUILD VERSION: 1.3.0-rc.3
+SLACKBUILD VERSION: 1.3.0-rc.4
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/Edu4rdSHL/findomain/archive/1.3.0-rc.3/findomain-1.2.0.tar.gz
+SLACKBUILD DOWNLOAD: https://github.com/Edu4rdSHL/findomain/archive/1.3.0-rc.4/findomain-1.3.0-rc.4.tar.gz
 SLACKBUILD MD5SUM: ced19bc0cae2da2ebd47e60f297540bb
 SLACKBUILD SHORT DESCRIPTION:  findomain (subdomain enumerator)
 
@@ -1725,6 +1725,15 @@ SLACKBUILD REQUIRED: npm
 SLACKBUILD DOWNLOAD: https://registry.npmjs.org/html-minifier/-/html-minifier-4.0.0.tgz
 SLACKBUILD MD5SUM: 544a6be903907fc601e6ca771e9fa810
 SLACKBUILD SHORT DESCRIPTION:  html-minifier (HTML compressor/minifier)
+
+SLACKBUILD NAME: html5lib-python
+SLACKBUILD LOCATION: ./html5lib-python
+SLACKBUILD FILES: README html5lib-python.SlackBuild html5lib-python.info slack-desc
+SLACKBUILD VERSION: 1.0.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/h/html5lib/html5lib-1.0.1.tar.gz
+SLACKBUILD MD5SUM: 942a0688d6bdf20d087c9805c40182ad
+SLACKBUILD SHORT DESCRIPTION:  html5lib-python (python-library for parsing HTML)
 
 SLACKBUILD NAME: http-parser
 SLACKBUILD LOCATION: ./http-parser
@@ -2855,7 +2864,7 @@ SLACKBUILD NAME: lxml
 SLACKBUILD LOCATION: ./lxml
 SLACKBUILD FILES: README lxml.SlackBuild lxml.info slack-desc
 SLACKBUILD VERSION: 4.5.0
-SLACKBUILD REQUIRED: beautifulsoup4
+SLACKBUILD REQUIRED: beautifulsoup4 html5lib-python python-cssselect
 SLACKBUILD DOWNLOAD: http://lxml.de/files/lxml-4.5.0.tgz
 SLACKBUILD MD5SUM: f088e452ed45b030b6f84269f1e84d11
 SLACKBUILD SHORT DESCRIPTION:  lxml
@@ -4240,9 +4249,9 @@ SLACKBUILD SHORT DESCRIPTION:  purgecss-with-wordpress (Purgecss with wordpress)
 SLACKBUILD NAME: purgecss
 SLACKBUILD LOCATION: ./purgecss
 SLACKBUILD FILES: README purgecss.SlackBuild purgecss.info slack-desc
-SLACKBUILD VERSION: 1.4.2
+SLACKBUILD VERSION: 2.0.5
 SLACKBUILD REQUIRED: npm
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/purgecss/-/purgecss-1.4.2.tgz
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/purgecss/-/purgecss-2.0.5.tgz
 SLACKBUILD MD5SUM: 3a75040d232c9120ce4472d30cd38bda
 SLACKBUILD SHORT DESCRIPTION:  purgecss (Remove unused)
 
@@ -4398,6 +4407,15 @@ SLACKBUILD REQUIRED: cffi
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/bcrypt/bcrypt-3.1.7.tar.gz
 SLACKBUILD MD5SUM: 5d6f93b575ce52470af37a8e7dce76fe
 SLACKBUILD SHORT DESCRIPTION:  python-bcrypt (password hashing)
+
+SLACKBUILD NAME: python-cssselect
+SLACKBUILD LOCATION: ./python-cssselect
+SLACKBUILD FILES: README python-cssselect.SlackBuild python-cssselect.info slack-desc
+SLACKBUILD VERSION: 1.1.0
+SLACKBUILD REQUIRED: beautifulsoup4
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/cssselect/cssselect-1.1.0.tar.gz
+SLACKBUILD MD5SUM: fa57704c1cb66cc8e537b782bd6b227e
+SLACKBUILD SHORT DESCRIPTION:  python-cssselect (CSS Selectors for Python)
 
 SLACKBUILD NAME: python-dateutil
 SLACKBUILD LOCATION: ./python-dateutil
@@ -4632,6 +4650,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/U/Unidecode/Unidecode-1.1.1.tar.gz
 SLACKBUILD MD5SUM: e3497dde89fe129d709d9e6c6824aaa1
 SLACKBUILD SHORT DESCRIPTION:  python-unidecode (ASCII transliterations of Unicode text)
+
+SLACKBUILD NAME: python-webencodings
+SLACKBUILD LOCATION: ./python-webencodings
+SLACKBUILD FILES: README python-webencodings.SlackBuild python-webencodings.info slack-desc
+SLACKBUILD VERSION: 0.5.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/w/webencodings/webencodings-0.5.1.tar.gz
+SLACKBUILD MD5SUM: 32f6e261d52e57bf7e1c4d41546d15b8
+SLACKBUILD SHORT DESCRIPTION:  python-webencodings (Character encoding for the web)
 
 SLACKBUILD NAME: python-wheel
 SLACKBUILD LOCATION: ./python-wheel
@@ -4951,10 +4978,10 @@ SLACKBUILD SHORT DESCRIPTION:  secretstorage: secretstorage (securely storing pa
 SLACKBUILD NAME: securefs
 SLACKBUILD LOCATION: ./securefs
 SLACKBUILD FILES: README securefs.SlackBuild securefs.info slack-desc
-SLACKBUILD VERSION: 0.8.3
+SLACKBUILD VERSION: 0.9.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/netheril96/securefs/archive/0.8.3.tar.gz
-SLACKBUILD MD5SUM: 856bb57ef88d08d13046781a9ec3df67
+SLACKBUILD DOWNLOAD: https://github.com/netheril96/securefs/archive/0.9.0.tar.gz
+SLACKBUILD MD5SUM: 9b90ffc4074cf4a69bd13f4249e7b854
 SLACKBUILD SHORT DESCRIPTION:  securefs (FUSE transparent encryption filesystem)
 
 SLACKBUILD NAME: sencrypt
@@ -5879,7 +5906,7 @@ SLACKBUILD NAME: urlwatch
 SLACKBUILD LOCATION: ./urlwatch
 SLACKBUILD FILES: README slack-desc urlwatch.SlackBuild urlwatch.info
 SLACKBUILD VERSION: 2.17
-SLACKBUILD REQUIRED: chump python-keyring minidb
+SLACKBUILD REQUIRED: chump python-keyring minidb lxml
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/u/urlwatch/urlwatch-2.17.tar.gz
 SLACKBUILD MD5SUM: ef18ed243c26806a3fa825b75d8644f1
 SLACKBUILD SHORT DESCRIPTION:  urlwatch (Watch web pages and arbitrary URLs for changes)
