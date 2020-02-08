@@ -703,10 +703,10 @@ SLACKBUILD SHORT DESCRIPTION:  Confuse (configuration file parser library)
 SLACKBUILD NAME: containerd
 SLACKBUILD LOCATION: ./containerd
 SLACKBUILD FILES: README containerd.SlackBuild containerd.info slack-desc
-SLACKBUILD VERSION: 1.3.2
+SLACKBUILD VERSION: 1.3.3
 SLACKBUILD REQUIRED: runc
-SLACKBUILD DOWNLOAD: https://github.com/containerd/containerd/archive/v1.3.2/containerd-1.3.2.tar.gz
-SLACKBUILD MD5SUM: d28ec96dd7586f7a1763c54c5448921e
+SLACKBUILD DOWNLOAD: https://github.com/containerd/containerd/archive/v1.3.3/containerd-1.3.3.tar.gz
+SLACKBUILD MD5SUM: edb511837cf5c85ec828e09356168942
 SLACKBUILD SHORT DESCRIPTION:  containerd (a daemon to control runC)
 
 SLACKBUILD NAME: cpprestsdk
@@ -1144,10 +1144,10 @@ SLACKBUILD SHORT DESCRIPTION:  filezilla (the free FTP solution)
 SLACKBUILD NAME: findomain
 SLACKBUILD LOCATION: ./findomain
 SLACKBUILD FILES: PKGNOTE README findomain.SlackBuild findomain.info slack-desc
-SLACKBUILD VERSION: 1.3.0
+SLACKBUILD VERSION: 1.4.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/Edu4rdSHL/findomain/archive/1.3.0/findomain-1.3.0.tar.gz
-SLACKBUILD MD5SUM: c036ccf806ec7880af49d47abe719054
+SLACKBUILD DOWNLOAD: https://github.com/Edu4rdSHL/findomain/archive/1.4.0/findomain-1.4.0.tar.gz
+SLACKBUILD MD5SUM: 96eccd022ccfdd129a1ff911d946becb
 SLACKBUILD SHORT DESCRIPTION:  findomain (subdomain enumerator)
 
 SLACKBUILD NAME: firewalld
@@ -2441,7 +2441,7 @@ SLACKBUILD NAME: libmodsecurity
 SLACKBUILD LOCATION: ./libmodsecurity
 SLACKBUILD FILES: README libmodsecurity.SlackBuild libmodsecurity.info slack-desc
 SLACKBUILD VERSION: 3.0.4
-SLACKBUILD REQUIRED: lua ssdeep libmaxminddb
+SLACKBUILD REQUIRED: lua53 ssdeep libmaxminddb
 SLACKBUILD DOWNLOAD: https://github.com/SpiderLabs/ModSecurity/releases/download/v3.0.4/modsecurity-v3.0.4.tar.gz
 SLACKBUILD MD5SUM: a8791b94fa09f2d3693fa1d22523e6c4
 SLACKBUILD SHORT DESCRIPTION:  libmodsecurity (web application firewall)
@@ -2755,10 +2755,10 @@ SLACKBUILD SHORT DESCRIPTION:  lterm ( free terminal and multiprotocol client fo
 SLACKBUILD NAME: lua
 SLACKBUILD LOCATION: ./lua
 SLACKBUILD FILES: README files/lua.pc lua.SlackBuild lua.info patches/liblua.so.patch slack-desc
-SLACKBUILD VERSION: 5.3.5
+SLACKBUILD VERSION: 5.4.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.lua.org/ftp/lua-5.3.5.tar.gz
-SLACKBUILD MD5SUM: 4f4b4f323fd3514a68e0ab3da8ce3455
+SLACKBUILD DOWNLOAD: http://www.lua.org/work/lua-5.4.0-beta.tar.gz
+SLACKBUILD MD5SUM: 961e2692a10a4a3c6fe80086e4cbefd5
 SLACKBUILD SHORT DESCRIPTION:  Lua (a powerful, fast, light-weight, embeddable scripting language)
 
 SLACKBUILD NAME: lua51-lpeg
@@ -2797,6 +2797,15 @@ SLACKBUILD DOWNLOAD: http://www.lua.org/ftp/lua-5.2.4.tar.gz
 SLACKBUILD MD5SUM: 913fdb32207046b273fdb17aad70be13
 SLACKBUILD SHORT DESCRIPTION:  Lua 5.2.* (powerful,fast,light-weight,embeddable scripting language)
 
+SLACKBUILD NAME: lua53
+SLACKBUILD LOCATION: ./lua53
+SLACKBUILD FILES: README files/lua53.pc lua53.SlackBuild lua53.info patches/liblua.so.patch slack-desc
+SLACKBUILD VERSION: 5.3.5
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://www.lua.org/ftp/lua-5.3.5.tar.gz
+SLACKBUILD MD5SUM: 4f4b4f323fd3514a68e0ab3da8ce3455
+SLACKBUILD SHORT DESCRIPTION:  Lua 5.3.* (powerful,fast,light-weight,embeddable scripting language)
+
 SLACKBUILD NAME: luajit
 SLACKBUILD LOCATION: ./luajit
 SLACKBUILD FILES: README luajit.SlackBuild luajit.info slack-desc
@@ -2810,7 +2819,7 @@ SLACKBUILD NAME: luarocks
 SLACKBUILD LOCATION: ./luarocks
 SLACKBUILD FILES: README luarocks.SlackBuild luarocks.info slack-desc
 SLACKBUILD VERSION: 2.4.4
-SLACKBUILD REQUIRED: lua lua51 lua52
+SLACKBUILD REQUIRED: lua lua51 lua52 lua53
 SLACKBUILD DOWNLOAD: http://luarocks.org/releases/luarocks-2.4.4.tar.gz
 SLACKBUILD MD5SUM: 04e8b19d565e86b1d08f745adc4b1a56
 SLACKBUILD SHORT DESCRIPTION:  luarocks (package manager for Lua modules)
@@ -3206,7 +3215,7 @@ SLACKBUILD NAME: neomutt
 SLACKBUILD LOCATION: ./neomutt
 SLACKBUILD FILES: README doinst.sh files/neomutt.desktop files/neomutt.xpm neomutt.SlackBuild neomutt.info slack-desc
 SLACKBUILD VERSION: 20191207
-SLACKBUILD REQUIRED: notmuch lua kyotocabinet
+SLACKBUILD REQUIRED: notmuch lua53 kyotocabinet
 SLACKBUILD DOWNLOAD: https://github.com/neomutt/neomutt/archive/20191207/neomutt-20191207.tar.gz
 SLACKBUILD MD5SUM: 0f9ddc2a17baf0ee4d355bb397b09d3e
 SLACKBUILD SHORT DESCRIPTION:  neomutt (Bringing together all the Mutt code)
@@ -4095,10 +4104,10 @@ SLACKBUILD SHORT DESCRIPTION:  pngcrush
 
 SLACKBUILD NAME: podofo
 SLACKBUILD LOCATION: ./podofo
-SLACKBUILD FILES: README patches/podofo-0.9.4_build.patch podofo.SlackBuild podofo.info slack-desc
-SLACKBUILD VERSION: 0.9.5
-SLACKBUILD REQUIRED: cppunit lua
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/podofo/podofo-0.9.5.tar.gz
+SLACKBUILD FILES: README podofo.SlackBuild podofo.info slack-desc
+SLACKBUILD VERSION: 0.9.6
+SLACKBUILD REQUIRED: lua
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/podofo/podofo-0.9.6.tar.gz
 SLACKBUILD MD5SUM: 4751a6cf41250bea550a73ff960b7228
 SLACKBUILD SHORT DESCRIPTION:  PoDoFo (Is a library to work with the PDF file format)
 
@@ -4168,10 +4177,10 @@ SLACKBUILD SHORT DESCRIPTION:  Privoxy (a web proxy with advanced filtering capa
 SLACKBUILD NAME: profanity
 SLACKBUILD LOCATION: ./profanity
 SLACKBUILD FILES: README profanity.SlackBuild profanity.info slack-desc
-SLACKBUILD VERSION: 0.8.0
+SLACKBUILD VERSION: 0.8.1
 SLACKBUILD REQUIRED: libotr libmesode
-SLACKBUILD DOWNLOAD: https://github.com/boothj5/profanity/releases/download/0.8.0/profanity-0.8.0.tar.gz
-SLACKBUILD MD5SUM: 2abee20fb6cd70e3f6956d5d6fce2c50
+SLACKBUILD DOWNLOAD: https://github.com/boothj5/profanity/releases/download/0.8.1/profanity-0.8.1.tar.gz
+SLACKBUILD MD5SUM: 10c4c96ecd2ed3a02846afbed397e9de
 SLACKBUILD SHORT DESCRIPTION:  profanity (A console based XMPP client)
 
 SLACKBUILD NAME: protobuf-c
@@ -5077,10 +5086,10 @@ SLACKBUILD SHORT DESCRIPTION:  sitemap_gen (Sitemap Generator)
 SLACKBUILD NAME: sitespeedio
 SLACKBUILD LOCATION: ./sitespeedio
 SLACKBUILD FILES: PKGNOTE README sitespeedio.SlackBuild sitespeedio.info slack-desc
-SLACKBUILD VERSION: 12.0.0
+SLACKBUILD VERSION: 12.0.1
 SLACKBUILD REQUIRED: node
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/sitespeed.io/-/sitespeed.io-12.0.0.tgz
-SLACKBUILD MD5SUM: 20e20217df4f768f6e31de8c697a03bd
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/sitespeed.io/-/sitespeed.io-12.0.1.tgz
+SLACKBUILD MD5SUM: 75e9ac30c525be046c699d4071c9a589
 SLACKBUILD SHORT DESCRIPTION:  sitespeed.io (complete web performance tool)
 
 SLACKBUILD NAME: sk1libs
@@ -5576,7 +5585,7 @@ SLACKBUILD VERSION: 0.18.0
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://github.com/krallin/tini/archive/v0.18.0/tini-0.18.0.tar.gz
 SLACKBUILD MD5SUM: cc3b205a1b83b8e6ed6892fc5e8ef2c3
-SLACKBUILD SHORT DESCRIPTION:  tini (a tiny but valid init for containers)
+SLACKBUILD SHORT DESCRIPTION:  tini (A tiny but valid `init` for containers)
 
 SLACKBUILD NAME: tiny-dnn
 SLACKBUILD LOCATION: ./tiny-dnn
@@ -6084,7 +6093,7 @@ SLACKBUILD SHORT DESCRIPTION:  websocketpp (C++ websocket client/server library)
 
 SLACKBUILD NAME: weechat
 SLACKBUILD LOCATION: ./weechat
-SLACKBUILD FILES: README slack-desc weechat.SlackBuild weechat.info
+SLACKBUILD FILES: README patches/9d16e85d375281ba827480b7a697cd0f725e6733.patch slack-desc weechat.SlackBuild weechat.info
 SLACKBUILD VERSION: 2.7
 SLACKBUILD REQUIRED: lua asciidoctor
 SLACKBUILD DOWNLOAD: http://www.weechat.org/files/src/weechat-2.7.tar.bz2
