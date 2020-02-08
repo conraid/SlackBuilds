@@ -1,7 +1,15 @@
-diff --git a/Makefile b/Makefile
-index 7fa91c8..dccf485 100644
---- a/Makefile
-+++ b/Makefile
+diff -Naupr a/Makefile b/Makefile
+--- a/Makefile	2019-05-29 12:27:15.000000000 +0200
++++ b/Makefile	2020-02-08 13:30:22.969460785 +0100
+@@ -10,7 +10,7 @@ PLAT= none
+ # so take care if INSTALL_TOP is not an absolute path. See the local target.
+ # You may want to make INSTALL_LMOD and INSTALL_CMOD consistent with
+ # LUA_ROOT, LUA_LDIR, and LUA_CDIR in luaconf.h.
+-INSTALL_TOP= /usr/local
++INSTALL_TOP= /usr/
+ INSTALL_BIN= $(INSTALL_TOP)/bin
+ INSTALL_INC= $(INSTALL_TOP)/include
+ INSTALL_LIB= $(INSTALL_TOP)/lib
 @@ -52,7 +52,7 @@ R= $V.0
  all:	$(PLAT)
  
@@ -11,19 +19,18 @@ index 7fa91c8..dccf485 100644
  
  test:	dummy
  	src/lua -v
-diff --git a/src/Makefile b/src/Makefile
-index 2e7a412..fa5769f 100644
---- a/src/Makefile
-+++ b/src/Makefile
+diff -Naupr a/src/Makefile b/src/Makefile
+--- a/src/Makefile	2019-10-07 20:11:28.000000000 +0200
++++ b/src/Makefile	2020-02-08 13:31:27.563456039 +0100
 @@ -29,6 +29,7 @@ MYOBJS=
- PLATS= aix bsd c89 freebsd generic linux macosx mingw posix solaris
+ PLATS= aix bsd c89 freebsd generic guess linux linux-readline macosx mingw posix solaris
  
  LUA_A=	liblua.a
 +LUA_SO= liblua.so
- CORE_O=	lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o \
- 	lmem.o lobject.o lopcodes.o lparser.o lstate.o lstring.o ltable.o \
- 	ltm.o lundump.o lvm.o lzio.o
-@@ -43,7 +44,7 @@ LUAC_T=	luac
+ CORE_O=	lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o lmem.o lobject.o lopcodes.o lparser.o lstate.o lstring.o ltable.o ltm.o lundump.o lvm.o lzio.o
+ LIB_O=	lauxlib.o lbaselib.o lcorolib.o ldblib.o liolib.o lmathlib.o loadlib.o loslib.o lstrlib.o ltablib.o lutf8lib.o linit.o
+ BASE_O= $(CORE_O) $(LIB_O) $(MYOBJS)
+@@ -40,7 +41,7 @@ LUAC_T=	luac
  LUAC_O=	luac.o
  
  ALL_O= $(BASE_O) $(LUA_O) $(LUAC_O)
@@ -32,7 +39,7 @@ index 2e7a412..fa5769f 100644
  ALL_A= $(LUA_A)
  
  # Targets start here.
-@@ -59,6 +60,12 @@ $(LUA_A): $(BASE_O)
+@@ -56,6 +57,11 @@ $(LUA_A): $(BASE_O)
  	$(AR) $@ $(BASE_O)
  	$(RANLIB) $@
  
@@ -41,15 +48,13 @@ index 2e7a412..fa5769f 100644
 +	ln -sf $(LUA_SO).$(R) $(LUA_SO).$(V)
 +	ln -sf $(LUA_SO).$(R) $(LUA_SO)
 +
-+
  $(LUA_T): $(LUA_O) $(LUA_A)
  	$(CC) -o $@ $(LDFLAGS) $(LUA_O) $(LUA_A) $(LIBS)
  
-diff --git a/src/luaconf.h b/src/luaconf.h
-index fd28d21..e2662cc 100644
---- a/src/luaconf.h
-+++ b/src/luaconf.h
-@@ -175,7 +175,7 @@
+diff -Naupr a/src/luaconf.h b/src/luaconf.h
+--- a/src/luaconf.h	2019-10-01 01:52:16.000000000 +0200
++++ b/src/luaconf.h	2020-02-08 13:30:35.158459890 +0100
+@@ -227,7 +227,7 @@
  
  #else			/* }{ */
  
@@ -57,4 +62,4 @@ index fd28d21..e2662cc 100644
 +#define LUA_ROOT	"/usr/"
  #define LUA_LDIR	LUA_ROOT "share/lua/" LUA_VDIR "/"
  #define LUA_CDIR	LUA_ROOT "lib/lua/" LUA_VDIR "/"
- #define LUA_PATH_DEFAULT  \
+ 
