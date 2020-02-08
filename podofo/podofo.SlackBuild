@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Slackware build script for podofo
 #
-# Copyright 2009-2018 Corrado Franco (http://conraid.net)
+# Copyright 2009-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -25,11 +25,11 @@
 
 set -eu
 
-CWD=$(pwd)
+cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=podofo
-VERSION=0.9.5
-BUILD=${BUILD:-5}
+VERSION=0.9.6
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -43,6 +43,14 @@ if [ -z ${ARCH:=""} ]; then
     arm*) ARCH=arm ;;
        *) ARCH=$( uname -m ) ;;
   esac
+fi
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  exit 0
 fi
 
 if [ "$ARCH" = "i586" ]; then
@@ -79,29 +87,36 @@ fi
 # Fix man path
 sed 's|share/man/|man/|' -i CMakeLists.txt
 
+# Fix test
+mkdir -p "test/TokenizerTest/objects"
+
 mkdir build
 cd build
 cmake \
-  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_BUILD_TYPE=None \
+  -DCMAKE_C_FLAGS_RELEASE="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_CXX_FLAGS_RELEASE="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DPODOFO_BUILD_STATIC:BOOL=FALSE \
-  -DPODOFO_BUILD_SHARED:BOOL=TRUE \
+  -DPODOFO_BUILD_STATIC=0 \
+  -DPODOFO_BUILD_SHARED=1 \
   -DPODOFO_USE_VISIBILITY=1 \
-  -DLUA_INCLUDE_DIR="/usr/include/lua5.3" \
-  -DPODOFO_USE_VISIBILITY:BOOL=1 \
-  -DCMAKE_CXX_STANDARD:STRING=11 \
-  -DLIB_SUFFIX:STRING="$LIBDIRSUFFIX" \
-  -DWANT_BOOST:BOOL=1 \
+  -DPODOFO_HAVE_JPEG_LIB=1 \
+  -DPODOFO_HAVE_PNG_LIB=1 \
+  -DPODOFO_HAVE_TIFF_LIB=1 \
+  -DWANT_FONTCONFIG=1 \
+  -DWANT_BOOST=1 \
+  -DLIB_SUFFIX="$LIBDIRSUFFIX" \
   ..
 
 make
-make DESTDIR=$PKG install/strip
+make DESTDIR=$PKG install
 cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
+
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 if [ -d $PKG/usr/man ]; then
   find  $PKG/usr/man -type f -exec gzip -9 {} \;
