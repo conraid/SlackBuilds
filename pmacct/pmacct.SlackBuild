@@ -26,7 +26,8 @@
 set -eu
 
 PKGNAM=pmacct
-VERSION=1.7.4
+SRCVERSION=1.7.4
+VERSION=1.7.4p1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 cd $(dirname $0) ; CWD=$(pwd)
@@ -69,9 +70,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
+rm -rf $PKGNAM-$SRCVERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
