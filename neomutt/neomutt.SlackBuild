@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=neomutt
 SRCVERSION=20191207
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -109,6 +109,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --kyotocabinet \
   --sqlite \
   --full-doc \
+  --autocrypt \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
