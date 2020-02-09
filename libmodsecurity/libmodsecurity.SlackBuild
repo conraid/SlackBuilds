@@ -33,7 +33,7 @@ PRGNAM=modsecurity
 PKGNAM=libmodsecurity
 SRCVERSION=v3.0.4
 VERSION=3.0.4
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -120,6 +120,7 @@ cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/${PKGNAM}.SlackBui
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD${TAG}.txz
