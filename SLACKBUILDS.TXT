@@ -36,11 +36,11 @@ SLACKBUILD SHORT DESCRIPTION:  acpitool (Configuration and Power Interface clien
 
 SLACKBUILD NAME: adns
 SLACKBUILD LOCATION: ./adns
-SLACKBUILD FILES: README adns.SlackBuild adns.info slack-desc
+SLACKBUILD FILES: README adns.SlackBuild adns.info patches/destdir.patch slack-desc
 SLACKBUILD VERSION: 1.5.1
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://www.chiark.greenend.org.uk/~ian/adns/ftp/adns-1.5.1.tar.gz
-SLACKBUILD MD5SUM: 88bc7bbf3f62a8d4fb186b8f72ead853
+SLACKBUILD MD5SUM: 8b6274d314af0de1a00cf3ef49f6dd56
 SLACKBUILD SHORT DESCRIPTION:  adns (asyncronous resolver library)
 
 SLACKBUILD NAME: afflib
@@ -96,6 +96,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/alien-pkg-convert/alien_8.95.tar.xz
 SLACKBUILD MD5SUM: 4b7fcb47616593578c87102f74c20d63
 SLACKBUILD SHORT DESCRIPTION:  alien (converting program)
+
+SLACKBUILD NAME: ansifilter
+SLACKBUILD LOCATION: ./ansifilter
+SLACKBUILD FILES: PKGNOTE README ansifilter.SlackBuild ansifilter.info slack-desc
+SLACKBUILD VERSION: 2.16
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://andre-simon.de/zip/ansifilter-2.16.tar.bz2
+SLACKBUILD MD5SUM: 6db191414b77bbb6d3c579e5ff753e23
+SLACKBUILD SHORT DESCRIPTION:  ansifilter
 
 SLACKBUILD NAME: antiword
 SLACKBUILD LOCATION: ./antiword
@@ -709,6 +718,15 @@ SLACKBUILD DOWNLOAD: https://github.com/containerd/containerd/archive/v1.3.3/con
 SLACKBUILD MD5SUM: edb511837cf5c85ec828e09356168942
 SLACKBUILD SHORT DESCRIPTION:  containerd (a daemon to control runC)
 
+SLACKBUILD NAME: converseen
+SLACKBUILD LOCATION: ./converseen
+SLACKBUILD FILES: README converseen.SlackBuild converseen.info doinst.sh slack-desc
+SLACKBUILD VERSION: 0.9.8.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/converseen/converseen-0.9.8.1.tar.bz2
+SLACKBUILD MD5SUM: c7a5cf9b791777da0bc3689075986155
+SLACKBUILD SHORT DESCRIPTION:  converseen
+
 SLACKBUILD NAME: cpprestsdk
 SLACKBUILD LOCATION: ./cpprestsdk
 SLACKBUILD FILES: README cpprestsdk.SlackBuild cpprestsdk.info slack-desc
@@ -1081,10 +1099,10 @@ SLACKBUILD SHORT DESCRIPTION:  exempi (XMP SDK )
 SLACKBUILD NAME: exiftool
 SLACKBUILD LOCATION: ./exiftool
 SLACKBUILD FILES: README exiftool.SlackBuild exiftool.info slack-desc
-SLACKBUILD VERSION: 11.86
+SLACKBUILD VERSION: 11.87
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://owl.phy.queensu.ca/~phil/exiftool/Image-ExifTool-11.86.tar.gz
-SLACKBUILD MD5SUM: c463bbc30f23faf819d95cb8ac66f70e
+SLACKBUILD DOWNLOAD: http://owl.phy.queensu.ca/~phil/exiftool/Image-ExifTool-11.87.tar.gz
+SLACKBUILD MD5SUM: 8345842819b084e21a483770ea438232
 SLACKBUILD SHORT DESCRIPTION:  exiftool (read, write, and edit EXIF and other meta information)
 
 SLACKBUILD NAME: exploitdb
@@ -1144,10 +1162,10 @@ SLACKBUILD SHORT DESCRIPTION:  filezilla (the free FTP solution)
 SLACKBUILD NAME: findomain
 SLACKBUILD LOCATION: ./findomain
 SLACKBUILD FILES: PKGNOTE README findomain.SlackBuild findomain.info slack-desc
-SLACKBUILD VERSION: 1.4.0
+SLACKBUILD VERSION: 1.4.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/Edu4rdSHL/findomain/archive/1.4.0/findomain-1.4.0.tar.gz
-SLACKBUILD MD5SUM: 96eccd022ccfdd129a1ff911d946becb
+SLACKBUILD DOWNLOAD: https://github.com/Edu4rdSHL/findomain/archive/1.4.1/findomain-1.4.1.tar.gz
+SLACKBUILD MD5SUM: 56ca0bcdf6fb2a6f1ef9c9dd0c9386e9
 SLACKBUILD SHORT DESCRIPTION:  findomain (subdomain enumerator)
 
 SLACKBUILD NAME: firewalld
@@ -1450,10 +1468,10 @@ SLACKBUILD SHORT DESCRIPTION:  go-sys (supplementary Go low-level libraries)
 SLACKBUILD NAME: go
 SLACKBUILD LOCATION: ./go
 SLACKBUILD FILES: README go.SlackBuild go.info slack-desc
-SLACKBUILD VERSION: 1.13.1
+SLACKBUILD VERSION: 1.13.8
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://dl.google.com/go/go1.13.1.src.tar.gz
-SLACKBUILD MD5SUM: 7f8b17613d150fa73980f4ede9e3969c
+SLACKBUILD DOWNLOAD: https://dl.google.com/go/go1.13.8.src.tar.gz
+SLACKBUILD MD5SUM: 984c244563f2d2f48103e8d6db8a8308
 SLACKBUILD SHORT DESCRIPTION:  go (Google's Go Language kit with gc tool chain)
 
 SLACKBUILD NAME: goaccess
@@ -2482,6 +2500,15 @@ SLACKBUILD DOWNLOAD: https://github.com/OpenShot/libopenshot-audio/archive/v0.1.
 SLACKBUILD MD5SUM: fc5c7b857c20f3fe48e3c05dcc96d5b9
 SLACKBUILD SHORT DESCRIPTION:  libopenshot-audio (OpenShot Audio library)
 
+SLACKBUILD NAME: libopenshot
+SLACKBUILD LOCATION: ./libopenshot
+SLACKBUILD FILES: README libopenshot.SlackBuild libopenshot.info slack-desc
+SLACKBUILD VERSION: 0.2.4
+SLACKBUILD REQUIRED:  libopenshot-audio zeromq unittest-cpp
+SLACKBUILD DOWNLOAD: https://github.com/OpenShot/libopenshot/archive/v0.2.4/libopenshot-0.2.4.tar.gz
+SLACKBUILD MD5SUM: 91af3b0da2fbcffbef8fa78eeebec978
+SLACKBUILD SHORT DESCRIPTION:  libopenshot (OpenShot Video Library)
+
 SLACKBUILD NAME: liboping
 SLACKBUILD LOCATION: ./liboping
 SLACKBUILD FILES: README liboping.SlackBuild liboping.info slack-desc
@@ -2833,6 +2860,15 @@ SLACKBUILD DOWNLOAD: https://github.com/CISOfy/lynis/archive/2.7.5/lynix-2.7.5.t
 SLACKBUILD MD5SUM: 5f4149ebc5698520b0671bc3359ef45b
 SLACKBUILD SHORT DESCRIPTION:  lynis
 
+SLACKBUILD NAME: lyx
+SLACKBUILD LOCATION: ./lyx
+SLACKBUILD FILES: PKGNOTE README doinst.sh lyx.SlackBuild lyx.info slack-desc
+SLACKBUILD VERSION: 2.3.4.2
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: ftp://ftp.lyx.org/pub/lyx/stable/2.3.x/lyx-2.3.4.2.tar.xz
+SLACKBUILD MD5SUM: d3c2d1e57a00981634fadce9a734ae0e
+SLACKBUILD SHORT DESCRIPTION:  LyX (WYSIWYM document processor)
+
 SLACKBUILD NAME: lz4
 SLACKBUILD LOCATION: ./lz4
 SLACKBUILD FILES: README lz4.SlackBuild lz4.info slack-desc
@@ -2949,6 +2985,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/mjpeg/mjpegtools/2.1.0/mjpegtools-2.1.0.tar.gz
 SLACKBUILD MD5SUM: 57bf5dd78976ca9bac972a6511b236f3
 SLACKBUILD SHORT DESCRIPTION:  mjpegtools (video recording/playback tools)
+
+SLACKBUILD NAME: mkvtoolnix
+SLACKBUILD LOCATION: ./mkvtoolnix
+SLACKBUILD FILES: README mkvtoolnix.SlackBuild mkvtoolnix.info slack-desc
+SLACKBUILD VERSION: 43.0.0
+SLACKBUILD REQUIRED: cmark pugixml 
+SLACKBUILD DOWNLOAD: https://mkvtoolnix.download/sources/mkvtoolnix-43.0.0.tar.xz
+SLACKBUILD MD5SUM: 41036afe31231e8d8ab4fe684271e0eb
+SLACKBUILD SHORT DESCRIPTION:  mkvtoolnix (tools to create, alter and inspect Matroska files)
 
 SLACKBUILD NAME: mm-common
 SLACKBUILD LOCATION: ./mm-common
@@ -3183,6 +3228,15 @@ SLACKBUILD REQUIRED: notmuch lua53 kyotocabinet
 SLACKBUILD DOWNLOAD: https://github.com/neomutt/neomutt/archive/20191207/neomutt-20191207.tar.gz
 SLACKBUILD MD5SUM: 0f9ddc2a17baf0ee4d355bb397b09d3e
 SLACKBUILD SHORT DESCRIPTION:  neomutt (Bringing together all the Mutt code)
+
+SLACKBUILD NAME: neovim-qt
+SLACKBUILD LOCATION: ./neovim-qt
+SLACKBUILD FILES: README doinst.sh neovim-qt.SlackBuild neovim-qt.info slack-desc
+SLACKBUILD VERSION: 0.2.15
+SLACKBUILD REQUIRED:  msgpack-c neovim
+SLACKBUILD DOWNLOAD: https://github.com/equalsraf/neovim-qt/archive/v0.2.15/neovim-qt-0.2.15.tar.gz
+SLACKBUILD MD5SUM: 18de373ae92141f16fdb636e86356060
+SLACKBUILD SHORT DESCRIPTION:  neovim-qt (Neovim client library and GUI, in Qt5)
 
 SLACKBUILD NAME: neovim
 SLACKBUILD LOCATION: ./neovim
@@ -3709,11 +3763,20 @@ SLACKBUILD SHORT DESCRIPTION:  osinfo-db-tools (operating systems database tools
 SLACKBUILD NAME: osinfo-db
 SLACKBUILD LOCATION: ./osinfo-db
 SLACKBUILD FILES: README osinfo-db.SlackBuild osinfo-db.info slack-desc
-SLACKBUILD VERSION: 20200203
+SLACKBUILD VERSION: 20200214
 SLACKBUILD REQUIRED: osinfo-db-tools
-SLACKBUILD DOWNLOAD: https://releases.pagure.org/libosinfo/osinfo-db-20200203.tar.xz
-SLACKBUILD MD5SUM: c5093ad06d7ecd4924473beb01426bee
+SLACKBUILD DOWNLOAD: https://releases.pagure.org/libosinfo/osinfo-db-20200214.tar.xz
+SLACKBUILD MD5SUM: 7a13f3ed18961dce2126db9196b9c3a8
 SLACKBUILD SHORT DESCRIPTION:  osinfo-db (operating systems database)
+
+SLACKBUILD NAME: ostinato
+SLACKBUILD LOCATION: ./ostinato
+SLACKBUILD FILES: README files/remote-ext.h ostinato.SlackBuild ostinato.info slack-desc
+SLACKBUILD VERSION: 1.0
+SLACKBUILD REQUIRED: protobuf 
+SLACKBUILD DOWNLOAD: https://github.com/pstavirs/ostinato/archive/v1.0.tar.gz
+SLACKBUILD MD5SUM: 51a5e89f7e84b95e6c54e08505021743
+SLACKBUILD SHORT DESCRIPTION:  ostinato (Packet/Traffic Generator and Analyzer)
 
 SLACKBUILD NAME: owamp
 SLACKBUILD LOCATION: ./owamp
@@ -4132,19 +4195,19 @@ SLACKBUILD SHORT DESCRIPTION:  profanity (A console based XMPP client)
 SLACKBUILD NAME: protobuf-c
 SLACKBUILD LOCATION: ./protobuf-c
 SLACKBUILD FILES: README patches/protobuf-c-1.3.0-no-build-tests.patch protobuf-c.SlackBuild protobuf-c.info slack-desc
-SLACKBUILD VERSION: 1.3.2
+SLACKBUILD VERSION: 1.3.3
 SLACKBUILD REQUIRED: protobuf
-SLACKBUILD DOWNLOAD: https://github.com/protobuf-c/protobuf-c/releases/download/v1.3.2/protobuf-c-1.3.2.tar.gz
-SLACKBUILD MD5SUM: b4395fd8cb5cba21afa12410741b2a92
+SLACKBUILD DOWNLOAD: https://github.com/protobuf-c/protobuf-c/releases/download/v1.3.3/protobuf-c-1.3.3.tar.gz
+SLACKBUILD MD5SUM: dabc05a5f11c21b96d8d6db4153f5343
 SLACKBUILD SHORT DESCRIPTION:  protobuf-c (C bindings for Google's Protocol Buffers)
 
 SLACKBUILD NAME: protobuf
 SLACKBUILD LOCATION: ./protobuf
 SLACKBUILD FILES: README protobuf.SlackBuild protobuf.info slack-desc
-SLACKBUILD VERSION: 3.11.3
+SLACKBUILD VERSION: 3.11.4
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/google/protobuf/archive/v3.11.3/protobuf-3.11.3.tar.gz
-SLACKBUILD MD5SUM: 4d272a72a2afed3fa361d8d584d6677c
+SLACKBUILD DOWNLOAD: https://github.com/google/protobuf/archive/v3.11.4/protobuf-3.11.4.tar.gz
+SLACKBUILD MD5SUM: 9b649590a4b74e93024ea3a28c0d3a22
 SLACKBUILD SHORT DESCRIPTION:  protobuf (Google's data interchange format)
 
 SLACKBUILD NAME: psensor
@@ -4660,6 +4723,24 @@ SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/q4wine/q4wine-1.3.5.tar.bz
 SLACKBUILD MD5SUM: 31c0bf8a3e7da419f727b716c3be58e8
 SLACKBUILD SHORT DESCRIPTION:  q4wine (Qt4 GUI for wine)
 
+SLACKBUILD NAME: qbittorrent
+SLACKBUILD LOCATION: ./qbittorrent
+SLACKBUILD FILES: README doinst.sh qbittorrent.SlackBuild qbittorrent.info slack-desc
+SLACKBUILD VERSION: 4.2.1
+SLACKBUILD REQUIRED: libtorrent-rasterbar 
+SLACKBUILD DOWNLOAD: https://downloads.sourceforge.net/qbittorrent/qbittorrent-4.2.1.tar.xz
+SLACKBUILD MD5SUM: 92af608d88e6ca45265cc42596ee6c0a
+SLACKBUILD SHORT DESCRIPTION:  qBittorrent (a C++/Qt4 Bittorrent Client)
+
+SLACKBUILD NAME: qdirstat
+SLACKBUILD LOCATION: ./qdirstat
+SLACKBUILD FILES: README doinst.sh qdirstat.SlackBuild qdirstat.info slack-desc
+SLACKBUILD VERSION: 1.6.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/shundhammer/qdirstat/archive/1.6.1/qdirstat-1.6.1.tar.gz
+SLACKBUILD MD5SUM: 4cdf3cea0a9c0e7cedbf2ce01cf632ea
+SLACKBUILD SHORT DESCRIPTION:  qdirstat (Qt-based directory statistics)
+
 SLACKBUILD NAME: qemu
 SLACKBUILD LOCATION: ./qemu
 SLACKBUILD FILES: README files/65-kvm.rules qemu.SlackBuild qemu.info slack-desc
@@ -4669,6 +4750,15 @@ SLACKBUILD DOWNLOAD: https://download.qemu.org/qemu-4.2.0.tar.xz
 SLACKBUILD MD5SUM: 278eeb294e4b497e79af7a57e660cb9a
 SLACKBUILD SHORT DESCRIPTION:  qemu (open source processor emulator)
 
+SLACKBUILD NAME: qnetstatview
+SLACKBUILD LOCATION: ./qnetstatview
+SLACKBUILD FILES: README doinst.sh qnetstatview.SlackBuild qnetstatview.desktop qnetstatview.info slack-desc
+SLACKBUILD VERSION: 1.5.5
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://bitbucket.org/admsasha/qnetstatview/downloads/qnetstatview-1.5.5.tar.gz
+SLACKBUILD MD5SUM: 42944cb27261772fb5de00fc55837fab
+SLACKBUILD SHORT DESCRIPTION:  QNetStatView 
+
 SLACKBUILD NAME: qoauth
 SLACKBUILD LOCATION: ./qoauth
 SLACKBUILD FILES: README qoauth.SlackBuild qoauth.info slack-desc
@@ -4677,6 +4767,33 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://github.com/ayoy/qoauth/archive/v2.0.0.tar.gz
 SLACKBUILD MD5SUM: a30ab54144bcdb5b5adaf4d45b59a7d4
 SLACKBUILD SHORT DESCRIPTION:  qoauth (A Qt-based C++ library for OAuth authorization scheme)
+
+SLACKBUILD NAME: qt5ct
+SLACKBUILD LOCATION: ./qt5ct
+SLACKBUILD FILES: README qt5ct.SlackBuild qt5ct.info slack-desc
+SLACKBUILD VERSION: 0.38
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://prdownloads.sourceforge.net/qt5ct/qt5ct-0.38.tar.bz2
+SLACKBUILD MD5SUM: ed7b47c401e2d08b945092633a6210aa
+SLACKBUILD SHORT DESCRIPTION:  qt5ct (Qt5 configuration utility)
+
+SLACKBUILD NAME: qtkeychain
+SLACKBUILD LOCATION: ./qtkeychain
+SLACKBUILD FILES: README qtkeychain.SlackBuild qtkeychain.info slack-desc
+SLACKBUILD VERSION: 0.10.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/frankosterfeld/qtkeychain/archive/v0.10.0.tar.gz
+SLACKBUILD MD5SUM: 00856441d995146b11fb8cfab87b8bc6
+SLACKBUILD SHORT DESCRIPTION:  qtkeychain (Qt API for storing passwords securely)
+
+SLACKBUILD NAME: qtpass
+SLACKBUILD LOCATION: ./qtpass
+SLACKBUILD FILES: README doinst.sh qtpass.SlackBuild qtpass.info slack-desc
+SLACKBUILD VERSION: 1.3.2
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/IJHack/qtpass/archive/v1.3.2.tar.gz
+SLACKBUILD MD5SUM: a711cd4c4f92832e37dbad45cd84618e
+SLACKBUILD SHORT DESCRIPTION:  qtpass (A multi-platform GUI for pass)
 
 SLACKBUILD NAME: qwt
 SLACKBUILD LOCATION: ./qwt
@@ -4894,6 +5011,15 @@ SLACKBUILD DOWNLOAD: https://github.com/scour-project/scour/archive/v0.37.tar.gz
 SLACKBUILD MD5SUM: 1de595a0b1627d47b01b4e5fa2976087
 SLACKBUILD SHORT DESCRIPTION:  scour (SVG scrubber)
 
+SLACKBUILD NAME: scribus
+SLACKBUILD LOCATION: ./scribus
+SLACKBUILD FILES: README doinst.sh scribus.SlackBuild scribus.info slack-desc
+SLACKBUILD VERSION: 1.5.5
+SLACKBUILD REQUIRED: podofo 
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/scribus/scribus-1.5.5.tar.xz
+SLACKBUILD MD5SUM: 6a9ddc8c45356d3c6c741e4c7bb0565a
+SLACKBUILD SHORT DESCRIPTION:  Scribus (open-source professional page layout program)
+
 SLACKBUILD NAME: sdl_sound
 SLACKBUILD LOCATION: ./sdl_sound
 SLACKBUILD FILES: README sdl_sound.SlackBuild sdl_sound.info slack-desc
@@ -4942,10 +5068,10 @@ SLACKBUILD SHORT DESCRIPTION:  setconf (Utility for changing settings in configu
 SLACKBUILD NAME: setuptools-scm
 SLACKBUILD LOCATION: ./setuptools-scm
 SLACKBUILD FILES: README setuptools-scm.SlackBuild setuptools-scm.info slack-desc
-SLACKBUILD VERSION: 3.4.3
+SLACKBUILD VERSION: 3.5.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/setuptools_scm/setuptools_scm-3.4.3.tar.gz
-SLACKBUILD MD5SUM: cf3f044990221c9ad0355549b983859b
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/setuptools_scm/setuptools_scm-3.5.0.tar.gz
+SLACKBUILD MD5SUM: 86ec1eb9ec02ba018b097787e98897c5
 SLACKBUILD SHORT DESCRIPTION:  setuptools-scm (manage versions by scm tags)
 
 SLACKBUILD NAME: shorewall-core
@@ -5236,6 +5362,15 @@ SLACKBUILD DOWNLOAD: https://github.com/jarulraj/sqlcheck/archive/v1.2.tar.gz
 SLACKBUILD MD5SUM: 0041660c0ee97dd6ad783ab0dd063cb4
 SLACKBUILD SHORT DESCRIPTION:  sqlcheck (Automatically identify anti-patterns in SQL queries)
 
+SLACKBUILD NAME: sqlitebrowser
+SLACKBUILD LOCATION: ./sqlitebrowser
+SLACKBUILD FILES: PKGNOTE README doinst.sh slack-desc sqlitebrowser.SlackBuild sqlitebrowser.info
+SLACKBUILD VERSION: 3.11.2
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/sqlitebrowser/sqlitebrowser/archive/v3.11.2.tar.gz
+SLACKBUILD MD5SUM: 9991541d1f93ebcd7769ac8e15475c71
+SLACKBUILD SHORT DESCRIPTION:  sqlitebrowser (QT GUI editor for SQLite databases)
+
 SLACKBUILD NAME: sqlmap
 SLACKBUILD LOCATION: ./sqlmap
 SLACKBUILD FILES: README doinst.sh slack-desc sqlmap.SlackBuild sqlmap.info
@@ -5365,10 +5500,10 @@ SLACKBUILD SHORT DESCRIPTION:  stylelint-config-standard (The standard config fo
 SLACKBUILD NAME: stylelint
 SLACKBUILD LOCATION: ./stylelint
 SLACKBUILD FILES: README slack-desc stylelint.SlackBuild stylelint.info
-SLACKBUILD VERSION: 13.1.0
+SLACKBUILD VERSION: 13.2.0
 SLACKBUILD REQUIRED: npm
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/stylelint/-/stylelint-13.1.0.tgz
-SLACKBUILD MD5SUM: 4e4dc96d0f21b67b46ef21ce58e0e825
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/stylelint/-/stylelint-13.2.0.tgz
+SLACKBUILD MD5SUM: 8d585aaf70c3eb5f4e07bd623844b009
 SLACKBUILD SHORT DESCRIPTION:  stylelint (css linter)
 
 SLACKBUILD NAME: subtitleeditor
@@ -6082,6 +6217,15 @@ SLACKBUILD DOWNLOAD: https://downloads.sourceforge.net/project/wipe/wipe/2.3.1/w
 SLACKBUILD MD5SUM: 3aed00711e0490edbec115bc283b8544
 SLACKBUILD SHORT DESCRIPTION:  wipe (a secure file wiping utility)
 
+SLACKBUILD NAME: wireshark
+SLACKBUILD LOCATION: ./wireshark
+SLACKBUILD FILES: README doinst.sh slack-desc wireshark.SlackBuild wireshark.info
+SLACKBUILD VERSION: 3.2.1
+SLACKBUILD REQUIRED: asciidoctor c-ares lua52 libmaxminddb libsmi lz4  minizip
+SLACKBUILD DOWNLOAD: https://1.eu.dl.wireshark.org/src/wireshark-3.2.1.tar.xz
+SLACKBUILD MD5SUM: e699b1e001c6303013791d81faf7727d
+SLACKBUILD SHORT DESCRIPTION:  WireShark (packet sniffer and protocol analyzer)
+
 SLACKBUILD NAME: wol
 SLACKBUILD LOCATION: ./wol
 SLACKBUILD FILES: README slack-desc wol.SlackBuild wol.info
@@ -6306,6 +6450,15 @@ SLACKBUILD REQUIRED:  redis byacc gengetopt
 SLACKBUILD DOWNLOAD: https://github.com/zmap/zmap/archive/v2.1.1.tar.gz
 SLACKBUILD MD5SUM: a37555ac2beda1dc6f3754b411be545e
 SLACKBUILD SHORT DESCRIPTION:  zmap (Network scanner for Internet-wide network surveys)
+
+SLACKBUILD NAME: zulucrypt
+SLACKBUILD LOCATION: ./zulucrypt
+SLACKBUILD FILES: README doinst.sh slack-desc zulucrypt.SlackBuild zulucrypt.info
+SLACKBUILD VERSION: 5.7.1
+SLACKBUILD REQUIRED: zuluplay
+SLACKBUILD DOWNLOAD: https://github.com/mhogomchungu/zuluCrypt/releases/download/5.7.1/zuluCrypt-5.7.1.tar.xz
+SLACKBUILD MD5SUM: 668ee82a859b520c4876380d47b60d8d
+SLACKBUILD SHORT DESCRIPTION:  zulucrypt (front end to cryptsetup and True/VeraCrypt)
 
 SLACKBUILD NAME: zuluplay
 SLACKBUILD LOCATION: ./zuluplay
