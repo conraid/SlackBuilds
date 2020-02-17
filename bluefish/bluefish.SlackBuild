@@ -2,7 +2,7 @@
 #
 # Slackware build script for bluefish (http://bluefish.openoffice.nl)
 #
-# Copyright 2008-2019 Corrado Franco (https://conraid.net)
+# Copyright 2008-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=bluefish
-VERSION=r8811
+VERSION=2.2.11
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -70,14 +70,13 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-code-$VERSION-trunk-$PKGNAM
-unzip $CWD/$PKGNAM-code-$VERSION-trunk-$PKGNAM.zip
-cd $PKGNAM-code-$VERSION-trunk-$PKGNAM
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-./autogen.sh
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
