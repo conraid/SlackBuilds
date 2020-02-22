@@ -2,7 +2,7 @@
 #
 # Slackware build script for netdata
 #
-# Copyright 2017-2019 Corrado Franco (https://conraid.net)
+# Copyright 2017-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -44,8 +44,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=netdata
-VERSION=1.19.0
-BUILD=${BUILD:-2}
+VERSION=1.20.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -124,12 +124,9 @@ if [ -d $PKG/usr/man ]; then
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
-# Change permissions
-chown -R netdata:netdata $PKG/var/lib/netdata
-chown -R netdata:netdata $PKG/var/log/netdata
-chown -R netdata:netdata $PKG/var/cache/netdata
-chown -R netdata:netdata $PKG/usr/share/netdata/web
-chown -R netdata:netdata $PKG/etc/netdata
+
+# Make utility dir
+mkdir -p $PKG/var/{lib,log,cache}/netdata
 
 # Rename config file
 for CONF in $(find $PKG/etc/netdata -name "*.conf"); do
@@ -141,6 +138,13 @@ install -Dm755 $CWD/files/rc.netdata $PKG/etc/rc.d/rc.netdata.new
 
 # Install conf file
 install -Dm644 $CWD/files/netdata.conf $PKG/etc/netdata/netdata.conf.new
+
+# Change permissions
+chown -R netdata:netdata $PKG/var/lib/netdata
+chown -R netdata:netdata $PKG/var/log/netdata
+chown -R netdata:netdata $PKG/var/cache/netdata
+chown -R netdata:netdata $PKG/usr/share/netdata/web
+chown -R netdata:netdata $PKG/etc/netdata
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
