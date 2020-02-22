@@ -2,7 +2,7 @@
 #
 # Slackware build script for filezilla
 #
-# Copyright 2009-2019 Corrado Franco (https://conraid.net)
+# Copyright 2009-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=filezilla
-SRCVERSION=3.46.3
+SRCVERSION=3.47.0-rc1
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -77,6 +77,13 @@ cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
+
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
 
 LIBS="-lhogweed -lnettle" \
 CFLAGS="$SLKCFLAGS" \
