@@ -2,7 +2,7 @@
 #
 # Slackware build script for monit
 #
-# Copyright 2013-2019 Corrado Franco (https://conraid.net)
+# Copyright 2013-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=monit
 VERSION=5.26.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -90,7 +90,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --mandir=/usr/man \
   --infodir=/usr/info \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --without-pam \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
