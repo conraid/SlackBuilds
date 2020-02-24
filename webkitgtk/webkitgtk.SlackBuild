@@ -29,11 +29,9 @@ set -eu
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=webkitgtk
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=2.26.3
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+PKGNAM=webkitgtk
+VERSION=2.26.4
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -74,9 +72,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$SRCVERSION
-tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.xz
-cd $PRGNAM-$SRCVERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
