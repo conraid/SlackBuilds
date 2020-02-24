@@ -7,6 +7,15 @@ SLACKBUILD DOWNLOAD: http://abook.sourceforge.net/devel/abook-0.6.1.tar.gz
 SLACKBUILD MD5SUM: 4bffd4c47ac41b688abd58f65bfe0bfb
 SLACKBUILD SHORT DESCRIPTION:  abook
 
+SLACKBUILD NAME: accounts-qml-module
+SLACKBUILD LOCATION: ./accounts-qml-module
+SLACKBUILD FILES: README accounts-qml-module.SlackBuild accounts-qml-module.info patches/69e17dec5add40655cd9334ec7ad4eef13fed8a4.patch slack-desc
+SLACKBUILD VERSION: 0.7
+SLACKBUILD REQUIRED: libaccounts-qt signond
+SLACKBUILD DOWNLOAD: https://gitlab.com/accounts-sso/accounts-qml-module/-/archive/VERSION_0.7/accounts-qml-module-VERSION_0.7.tar.bz2
+SLACKBUILD MD5SUM: 17f735646b47d42b5bfebaf85a561484
+SLACKBUILD SHORT DESCRIPTION:  accounts-qml-module (QML bindings for libaccounts-qt + libsignon-qt)
+
 SLACKBUILD NAME: acme.sh
 SLACKBUILD LOCATION: ./acme.sh
 SLACKBUILD FILES: README acme.sh.SlackBuild acme.sh.info slack-desc
@@ -739,10 +748,10 @@ SLACKBUILD SHORT DESCRIPTION:  converseen
 SLACKBUILD NAME: cpprestsdk
 SLACKBUILD LOCATION: ./cpprestsdk
 SLACKBUILD FILES: README cpprestsdk.SlackBuild cpprestsdk.info slack-desc
-SLACKBUILD VERSION: 2.10.14
+SLACKBUILD VERSION: 2.10.15
 SLACKBUILD REQUIRED: websocketpp
-SLACKBUILD DOWNLOAD: https://github.com/Microsoft/cpprestsdk/archive/v2.10.14.tar.gz
-SLACKBUILD MD5SUM: 45ff1d153431de0d2af9bb2753161c6b
+SLACKBUILD DOWNLOAD: https://github.com/Microsoft/cpprestsdk/archive/v2.10.15.tar.gz
+SLACKBUILD MD5SUM: 92d3a53ad6b5d586aff4534dad4aa163
 SLACKBUILD SHORT DESCRIPTION:  cpprestsdk (client-server using a modern asynchronous C++ API design)
 
 SLACKBUILD NAME: cppunit
@@ -2176,6 +2185,24 @@ SLACKBUILD DOWNLOAD: https://github.com/DanBloomberg/leptonica/archive/1.79.0.ta
 SLACKBUILD MD5SUM: 22f87191b5f35161598734a413d20cc2
 SLACKBUILD SHORT DESCRIPTION:  leptonica (Image Processing Library)
 
+SLACKBUILD NAME: libaccounts-glib
+SLACKBUILD LOCATION: ./libaccounts-glib
+SLACKBUILD FILES: README libaccounts-glib.SlackBuild libaccounts-glib.info slack-desc
+SLACKBUILD VERSION: 1.24
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://gitlab.com/accounts-sso/libaccounts-glib/-/archive/VERSION_1.24/libaccounts-glib-VERSION_1.24.tar.bz2
+SLACKBUILD MD5SUM: eb857fc006668a6ce4376c2a606c86c8
+SLACKBUILD SHORT DESCRIPTION:  libaccounts-glib (GLib-based client library for the accounts database)
+
+SLACKBUILD NAME: libaccounts-qt
+SLACKBUILD LOCATION: ./libaccounts-qt
+SLACKBUILD FILES: README libaccounts-qt.SlackBuild libaccounts-qt.info slack-desc
+SLACKBUILD VERSION: 1.16
+SLACKBUILD REQUIRED: libaccounts-glib
+SLACKBUILD DOWNLOAD: https://gitlab.com/accounts-sso/libaccounts-qt/-/archive/VERSION_1.16/libaccounts-qt-VERSION_1.16.tar.bz2
+SLACKBUILD MD5SUM: 36fd9d6b6fd5582bf6c503bfd3827a62
+SLACKBUILD SHORT DESCRIPTION:  libaccounts-qt (Qt-based client library for the accounts database)
+
 SLACKBUILD NAME: libasecnsp11
 SLACKBUILD LOCATION: ./libasecnsp11
 SLACKBUILD FILES: README libasecnsp11.SlackBuild libasecnsp11.info slack-desc
@@ -2332,10 +2359,10 @@ SLACKBUILD SHORT DESCRIPTION:  libfdk-aac (Fraunhofer FDK AAC code from Android.
 SLACKBUILD NAME: libfilezilla
 SLACKBUILD LOCATION: ./libfilezilla
 SLACKBUILD FILES: README libfilezilla.SlackBuild libfilezilla.info slack-desc
-SLACKBUILD VERSION: 0.20.0
+SLACKBUILD VERSION: 0.20.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://download.filezilla-project.org/libfilezilla/libfilezilla-0.20.0.tar.bz2
-SLACKBUILD MD5SUM: 9046be99633a7365b9b6bd6659dddd91
+SLACKBUILD DOWNLOAD: https://download.filezilla-project.org/libfilezilla/libfilezilla-0.20.1.tar.bz2
+SLACKBUILD MD5SUM: 6f88581fa907b4bfd6893da49373cf01
 SLACKBUILD SHORT DESCRIPTION:  libfilezilla (library for filezilla)
 
 SLACKBUILD NAME: libgit2
@@ -2688,6 +2715,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://github.com/neovim/libvterm/archive/1aa95e24d8f07a396aa80b7cd52f93e2b5bcca79.tar.gz
 SLACKBUILD MD5SUM: 89e8830d67a55dbb2bb4268719bb9e4c
 SLACKBUILD SHORT DESCRIPTION:  libvterm (terminal emulator)
+
+SLACKBUILD NAME: libwpe
+SLACKBUILD LOCATION: ./libwpe
+SLACKBUILD FILES: README libwpe.SlackBuild libwpe.info slack-desc
+SLACKBUILD VERSION: 1.4.0.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://wpewebkit.org/releases/libwpe-1.4.0.1.tar.xz
+SLACKBUILD MD5SUM: 1d4d38413ee0d0043f74d0445cab906f
+SLACKBUILD SHORT DESCRIPTION:  libwpe (General-purpose library for WPE WebKit)
 
 SLACKBUILD NAME: libx86emu
 SLACKBUILD LOCATION: ./libx86emu
@@ -3967,6 +4003,15 @@ SLACKBUILD DOWNLOAD: https://github.com/phar-io/phive/releases/download/0.13.2/p
 SLACKBUILD MD5SUM: 1e44235059d526839dd1fbece1e1d5b8
 SLACKBUILD SHORT DESCRIPTION:  phive (The Phar Installation and Verification Environment)
 
+SLACKBUILD NAME: php-antimalware-scanner
+SLACKBUILD LOCATION: ./php-antimalware-scanner
+SLACKBUILD FILES: README files/php-scanner php-antimalware-scanner.SlackBuild php-antimalware-scanner.info slack-desc
+SLACKBUILD VERSION: 0.5.0.69
+SLACKBUILD REQUIRED: php-composer
+SLACKBUILD DOWNLOAD: https://github.com/marcocesarato/PHP-Antimalware-Scanner/archive/v0.5.0.69/PHP-Antimalware-Scanner-0.5.0.69.tar.gz
+SLACKBUILD MD5SUM: 09b5d11aba6510238aec05f07ea424a4
+SLACKBUILD SHORT DESCRIPTION:  php-antimalware-scanner (Antimalware Scanner)
+
 SLACKBUILD NAME: php-apcu
 SLACKBUILD LOCATION: ./php-apcu
 SLACKBUILD FILES: README doinst.sh files/apcu.ini php-apcu.SlackBuild php-apcu.info slack-desc
@@ -4185,7 +4230,7 @@ SLACKBUILD SHORT DESCRIPTION:  postcss (Transforming styles with JS plugins)
 
 SLACKBUILD NAME: postgresql
 SLACKBUILD LOCATION: ./postgresql
-SLACKBUILD FILES: README SLACKWARE.README doinst.sh files/postgresql.logrotate files/rc.postgresql postgresql.SlackBuild postgresql.info slack-desc
+SLACKBUILD FILES: README SLACKWARE.README doinst.sh files/postgresql.logrotate files/postgresql.pam files/rc.postgresql postgresql.SlackBuild postgresql.info slack-desc
 SLACKBUILD VERSION: 12.2
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://ftp.postgresql.org/pub/source/v12.2/postgresql-12.2.tar.bz2
@@ -5137,6 +5182,33 @@ SLACKBUILD DOWNLOAD: http://download.joedog.org/siege/siege-4.0.4.tar.gz
 SLACKBUILD MD5SUM: aed6db62c4bf199f86218bd7b2fda14f
 SLACKBUILD SHORT DESCRIPTION:  siege (http server benchmark)
 
+SLACKBUILD NAME: signon-plugin-oauth2
+SLACKBUILD LOCATION: ./signon-plugin-oauth2
+SLACKBUILD FILES: README signon-plugin-oauth2.SlackBuild signon-plugin-oauth2.info slack-desc
+SLACKBUILD VERSION: 0.24-0bae45d2
+SLACKBUILD REQUIRED: signond
+SLACKBUILD DOWNLOAD: https://gitlab.com/accounts-sso/signon-plugin-oauth2/-/archive/0bae45d2d3efeadca2904a85132215ce1e82ebc7/signon-plugin-oauth2-0bae45d2d3efeadca2904a85132215ce1e82ebc7.tar.bz2
+SLACKBUILD MD5SUM: 6062ac7c62383fbbff5b6ba12027fe05
+SLACKBUILD SHORT DESCRIPTION:  signon-plugin-oauth2 (OAuth 2 plugin for signon)
+
+SLACKBUILD NAME: signon-ui
+SLACKBUILD LOCATION: ./signon-ui
+SLACKBUILD FILES: README doinst.sh patches/fake-user-agent.patch signon-ui.SlackBuild signon-ui.info slack-desc
+SLACKBUILD VERSION: 0.17-4368bb77
+SLACKBUILD REQUIRED: libaccounts-qt signond accounts-qml-module
+SLACKBUILD DOWNLOAD: https://gitlab.com/accounts-sso/signon-ui/-/archive/4368bb77d9d1abc2978af514225ba4a42c29a646/signon-ui-4368bb77d9d1abc2978af514225ba4a42c29a646.tar.bz2
+SLACKBUILD MD5SUM: 2fa23435b45f0b9bd0f1fd1ea7c52db6
+SLACKBUILD SHORT DESCRIPTION:  signon-ui (Online Accounts Sign-on UI)
+
+SLACKBUILD NAME: signond
+SLACKBUILD LOCATION: ./signond
+SLACKBUILD FILES: README doinst.sh signond.SlackBuild signond.info slack-desc
+SLACKBUILD VERSION: 8.60
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://gitlab.com/accounts-sso/signond/-/archive/VERSION_8.60/signond-VERSION_8.60.tar.bz2
+SLACKBUILD MD5SUM: 2b3112b725348e5e75abf7288692976c
+SLACKBUILD SHORT DESCRIPTION:  signond (SignOn Daemon (Qt))
+
 SLACKBUILD NAME: simplejson
 SLACKBUILD LOCATION: ./simplejson
 SLACKBUILD FILES: README simplejson.SlackBuild simplejson.info slack-desc
@@ -5400,7 +5472,7 @@ SLACKBUILD SHORT DESCRIPTION:  sqlmap (Automatic SQL injection and database take
 
 SLACKBUILD NAME: squid
 SLACKBUILD LOCATION: ./squid
-SLACKBUILD FILES: README SLACKWARE.README doinst.sh files/rc.squid files/squid.logrotate slack-desc squid.SlackBuild squid.info
+SLACKBUILD FILES: README SLACKWARE.README doinst.sh files/rc.squid files/squid.logrotate files/squid.pam slack-desc squid.SlackBuild squid.info
 SLACKBUILD VERSION: 4.10
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://www.squid-cache.org/Versions/v4/squid-4.10.tar.bz2
@@ -5815,10 +5887,10 @@ SLACKBUILD SHORT DESCRIPTION:  txt2man (converts text to man page)
 SLACKBUILD NAME: typescript
 SLACKBUILD LOCATION: ./typescript
 SLACKBUILD FILES: README slack-desc typescript.SlackBuild typescript.info
-SLACKBUILD VERSION: 3.7.5
+SLACKBUILD VERSION: 3.8.2
 SLACKBUILD REQUIRED: npm
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/typescript/-/typescript-3.7.5.tgz
-SLACKBUILD MD5SUM: 70ece7e783b2b2e8ca81e2feeaa8c063
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/typescript/-/typescript-3.8.2.tgz
+SLACKBUILD MD5SUM: dfe808afe1d9f4e335090512e4c99cba
 SLACKBUILD SHORT DESCRIPTION:  typescript (superset of JavaScript)
 
 SLACKBUILD NAME: udiskie
@@ -6193,9 +6265,9 @@ SLACKBUILD SHORT DESCRIPTION:  webcoach (find performance problems on your web p
 SLACKBUILD NAME: webkitgtk
 SLACKBUILD LOCATION: ./webkitgtk
 SLACKBUILD FILES: README slack-desc webkitgtk.SlackBuild webkitgtk.info
-SLACKBUILD VERSION: 2.26.3
-SLACKBUILD REQUIRED: libseccomp bubblewrap xdg-dbus-proxy
-SLACKBUILD DOWNLOAD: https://www.webkitgtk.org/releases/webkitgtk-2.26.3.tar.xz
+SLACKBUILD VERSION: 2.26.4
+SLACKBUILD REQUIRED: libseccomp bubblewrap xdg-dbus-proxy libwpe wpebackend-fdo
+SLACKBUILD DOWNLOAD: https://www.webkitgtk.org/releases/webkitgtk-2.26.4.tar.xz
 SLACKBUILD MD5SUM: 4c27d59a032710dae3cffa5990bb6aea
 SLACKBUILD SHORT DESCRIPTION:  webkitgtk (Web content rendering)
 
@@ -6297,6 +6369,15 @@ SLACKBUILD REQUIRED: php-composer
 SLACKBUILD DOWNLOAD: https://github.com/wp-cli/wp-cli/releases/download/v2.4.0/wp-cli-2.4.0.phar
 SLACKBUILD MD5SUM: dedd5a662b80cda66e9e25d44c23b25c
 SLACKBUILD SHORT DESCRIPTION:  wp-cli (A command line interface for WordPress)
+
+SLACKBUILD NAME: wpebackend-fdo
+SLACKBUILD LOCATION: ./wpebackend-fdo
+SLACKBUILD FILES: README slack-desc wpebackend-fdo.SlackBuild wpebackend-fdo.info
+SLACKBUILD VERSION: 1.4.1
+SLACKBUILD REQUIRED: libwpe
+SLACKBUILD DOWNLOAD: https://wpewebkit.org/releases/wpebackend-fdo-1.4.1.tar.xz
+SLACKBUILD MD5SUM: c6362491a4a38ddac42b66f140e1cff2
+SLACKBUILD SHORT DESCRIPTION:  wpebackend-fdo (freedesktop.org backend for WPE WebKit)
 
 SLACKBUILD NAME: wpscan
 SLACKBUILD LOCATION: ./wpscan
