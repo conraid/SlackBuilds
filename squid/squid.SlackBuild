@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=squid
 VERSION=4.10
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -96,8 +96,10 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-static=no \
   --enable-shared=yes \
   --enable-auth \
-  --enable-auth-basic="DB,LDAP,NCSA,NIS,POP3,RADIUS,SASL,SMB,getpwnam" \
-  --enable-auth-digest="LDAP,file" \
+  --enable-auth-basic \
+  --enable-auth-digest \
+  --enable-auth-negotiate \
+  --enable-auth-ntlm \
   --enable-cache-digests \
   --enable-delay-pools \
   --enable-external-acl-helpers="LDAP_group,unix_group,wbinfo_group,file_userip,SQL_session,session,time_quota" \
