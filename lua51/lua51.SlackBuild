@@ -3,7 +3,7 @@
 # Slackware build script for lua (http://www.lua.org/)
 #
 # Copyright 2008 Menno Duursma from SlackBuilds.org
-# Copyright 2015-2019 Corrado Franco (https://conraid.net)
+# Copyright 2015-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@
 #
 # Modified by the SlackBuilds.org project
 # Modified by Aaron W. Hsu
-# Modified by Corrado Franco <https://conraid.net>
+# Modified by Corrado Franco <https://corradofranco.it>
 
 set -eu
 
@@ -36,7 +36,7 @@ PRGNAM=lua
 PKGNAM=lua51
 VERSION=5.1.5
 MAINVERSION=$(echo $VERSION | cut -d. -f-2)
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-7}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -113,6 +113,9 @@ mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
 sed -e "s|prefix}/lib|prefix}/lib${LIBDIRSUFFIX}|g" \
   -e "s/%VER%/$MAINVERSION/g;s/%REL%/$VERSION/g" \
   $CWD/files/lua51.pc > $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/lua51.pc
+
+ln -sf lua51.pc $PKG/usr/lib$LIBDIRSUFFIX/pkgconfig/lua5.1.pc
+ln -sf lua51.pc $PKG/usr/lib$LIBDIRSUFFIX/pkgconfig/lua-5.1.pc
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
