@@ -36,7 +36,7 @@ PRGNAM=lua
 PKGNAM=lua53
 VERSION=5.3.5
 MAINVERSION=$(echo $VERSION | cut -d. -f-2)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -116,6 +116,9 @@ mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
 sed -e "s|prefix}/lib|prefix}/lib${LIBDIRSUFFIX}|g" \
   -e "s/%VER%/$MAINVERSION/g;s/%REL%/$VERSION/g" \
   $CWD/files/lua53.pc > $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/lua53.pc
+
+ln -sf lua53.pc $PKG/usr/lib$LIBDIRSUFFIX/pkgconfig/lua5.3.pc
+ln -sf lua53.pc $PKG/usr/lib$LIBDIRSUFFIX/pkgconfig/lua-5.3.pc
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
