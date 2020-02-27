@@ -988,6 +988,42 @@ SLACKBUILD DOWNLOAD: http://www.mavetju.org/download/dnstracer-1.9.tar.gz
 SLACKBUILD MD5SUM: 7db73ce3070119c98049a617fe52ea84
 SLACKBUILD SHORT DESCRIPTION:  dnstracer (trace a chain of DNS servers to the source)
 
+SLACKBUILD NAME: docker-compose
+SLACKBUILD LOCATION: ./docker-compose
+SLACKBUILD FILES: README docker-compose.SlackBuild docker-compose.info slack-desc
+SLACKBUILD VERSION: 1.25.4
+SLACKBUILD REQUIRED: python-docopt docker python-cached-property python-docker python-dockerpty paramiko python-websocket-client pyyaml python-jsonschema python-texttable
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/d/docker-compose/docker-compose-1.25.4.tar.gz
+SLACKBUILD MD5SUM: 893fbb804a9057d6c470b5312407e0d1
+SLACKBUILD SHORT DESCRIPTION:  docker-compose (multi-container orchestration for docker)
+
+SLACKBUILD NAME: docker-proxy
+SLACKBUILD LOCATION: ./docker-proxy
+SLACKBUILD FILES: README docker-proxy.SlackBuild docker-proxy.info slack-desc
+SLACKBUILD VERSION: 264bffc
+SLACKBUILD REQUIRED: go
+SLACKBUILD DOWNLOAD: https://github.com/docker/libnetwork/archive/264bffcb88c1b6b7471c04e3c6b3f301233a544b.tar.gz
+SLACKBUILD MD5SUM: c7cc22089641dec3bf43a1c71bd2b7d9
+SLACKBUILD SHORT DESCRIPTION:  docker-proxy (docker networking)
+
+SLACKBUILD NAME: docker-pycreds
+SLACKBUILD LOCATION: ./docker-pycreds
+SLACKBUILD FILES: README docker-pycreds.SlackBuild docker-pycreds.info slack-desc
+SLACKBUILD VERSION: 0.4.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/d/docker-pycreds/docker-pycreds-0.4.0.tar.gz
+SLACKBUILD MD5SUM: 322f570cea6b4661c6ac335683988e18
+SLACKBUILD SHORT DESCRIPTION:  docker-pycreds (Python bindings for the docker credentials store API)
+
+SLACKBUILD NAME: docker
+SLACKBUILD LOCATION: ./docker
+SLACKBUILD FILES: PKGNOTE README docker.SlackBuild docker.info doinst.sh files/docker.default files/docker.logrotate files/rc.docker slack-desc
+SLACKBUILD VERSION: 19.03.6
+SLACKBUILD REQUIRED: go docker-proxy tini libseccomp
+SLACKBUILD DOWNLOAD: https://github.com/docker/docker-ce/archive/v19.03.6.tar.gz
+SLACKBUILD MD5SUM: 11626265ad9b5c36f3fec8c8c2a0c15b
+SLACKBUILD SHORT DESCRIPTION:  docker (manager for applications in Linux containers)
+
 SLACKBUILD NAME: dos2unix
 SLACKBUILD LOCATION: ./dos2unix
 SLACKBUILD FILES: README dos2unix.SlackBuild dos2unix.info slack-desc
@@ -2890,10 +2926,10 @@ SLACKBUILD SHORT DESCRIPTION:  luceneplusplus ((text search engine)
 SLACKBUILD NAME: luv
 SLACKBUILD LOCATION: ./luv
 SLACKBUILD FILES: README luv.SlackBuild luv.info slack-desc
-SLACKBUILD VERSION: 1.34.1-1
-SLACKBUILD REQUIRED:  luajit lua
-SLACKBUILD DOWNLOAD: https://github.com/luvit/luv/releases/download/1.34.1-1/luv-1.34.1-1.tar.gz
-SLACKBUILD MD5SUM: 71308721869742e42f2309d117395abd
+SLACKBUILD VERSION: 1.34.2-0
+SLACKBUILD REQUIRED: luajit
+SLACKBUILD DOWNLOAD: https://github.com/luvit/luv/releases/download/1.34.2-0/luv-1.34.2-0.tar.gz
+SLACKBUILD MD5SUM: 613e5900f4bd9df4ea68e854692e6cca
 SLACKBUILD SHORT DESCRIPTION:  luv (Bare libuv bindings for lua)
 
 SLACKBUILD NAME: lwatch
@@ -3673,10 +3709,10 @@ SLACKBUILD SHORT DESCRIPTION:  npm-check (check node dependencies)
 SLACKBUILD NAME: npm
 SLACKBUILD LOCATION: ./npm
 SLACKBUILD FILES: README npm.SlackBuild npm.info slack-desc
-SLACKBUILD VERSION: 6.14.0
+SLACKBUILD VERSION: 6.14.1
 SLACKBUILD REQUIRED: node
-SLACKBUILD DOWNLOAD: https://github.com/npm/cli/archive/v6.14.0.tar.gz
-SLACKBUILD MD5SUM: 5d67f4dffa93e682c36581ce2ae8ad51
+SLACKBUILD DOWNLOAD: https://github.com/npm/cli/archive/v6.14.1.tar.gz
+SLACKBUILD MD5SUM: 2cd51d9955d01e6227ae67bea92a0b33
 SLACKBUILD SHORT DESCRIPTION:  npm (package manager for node)
 
 SLACKBUILD NAME: nsoq
@@ -4489,6 +4525,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/66/37/6fed89b484c8012a0343
 SLACKBUILD MD5SUM: 1a83df3a208430b772c0ead179a8b022
 SLACKBUILD SHORT DESCRIPTION:  pyte (Simple VTXXX-compatible linux terminal emulator)
 
+SLACKBUILD NAME: python-attrs
+SLACKBUILD LOCATION: ./python-attrs
+SLACKBUILD FILES: README python-attrs.SlackBuild python-attrs.info slack-desc
+SLACKBUILD VERSION: 19.3.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/attrs/attrs-19.3.0.tar.gz
+SLACKBUILD MD5SUM: 5b2db50fcc31be34d32798183c9bd062
+SLACKBUILD SHORT DESCRIPTION:  python-attrs (Attributes without boilerplate)
+
 SLACKBUILD NAME: python-bcrypt
 SLACKBUILD LOCATION: ./python-bcrypt
 SLACKBUILD FILES: README python-bcrypt.SlackBuild python-bcrypt.info slack-desc
@@ -4497,6 +4542,15 @@ SLACKBUILD REQUIRED: cffi
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/bcrypt/bcrypt-3.1.7.tar.gz
 SLACKBUILD MD5SUM: 5d6f93b575ce52470af37a8e7dce76fe
 SLACKBUILD SHORT DESCRIPTION:  python-bcrypt (password hashing)
+
+SLACKBUILD NAME: python-cached-property
+SLACKBUILD LOCATION: ./python-cached-property
+SLACKBUILD FILES: README python-cached-property.SlackBuild python-cached-property.info slack-desc
+SLACKBUILD VERSION: 1.5.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/cached-property/cached-property-1.5.1.tar.gz
+SLACKBUILD MD5SUM: 4b6f3cd429da5f487f4ebf3242bb991f
+SLACKBUILD SHORT DESCRIPTION:  python-cached-property (decorator for caching properties in classes)
 
 SLACKBUILD NAME: python-cssselect
 SLACKBUILD LOCATION: ./python-cssselect
@@ -4515,6 +4569,24 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/python-dateutil/python-dateutil-2.8.1.tar.gz
 SLACKBUILD MD5SUM: f2a1d4b680b297b367a974664ca3a4f6
 SLACKBUILD SHORT DESCRIPTION:  python-dateutil (Python extensions datetime)
+
+SLACKBUILD NAME: python-docker
+SLACKBUILD LOCATION: ./python-docker
+SLACKBUILD FILES: README python-docker.SlackBuild python-docker.info slack-desc
+SLACKBUILD VERSION: 4.2.0
+SLACKBUILD REQUIRED: paramiko python-websocket-client docker-pycreds
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/d/docker/docker-4.2.0.tar.gz
+SLACKBUILD MD5SUM: 19f803f6a7113301daa5d82a2d1d0c30
+SLACKBUILD SHORT DESCRIPTION:  python-docker (A Python library for the Docker Engine API)
+
+SLACKBUILD NAME: python-dockerpty
+SLACKBUILD LOCATION: ./python-dockerpty
+SLACKBUILD FILES: README python-dockerpty.SlackBuild python-dockerpty.info slack-desc
+SLACKBUILD VERSION: 0.4.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/d/dockerpty/dockerpty-0.4.1.tar.gz
+SLACKBUILD MD5SUM: 028bacb34536f3ee6a2ccd668c27e8e4
+SLACKBUILD SHORT DESCRIPTION:  python-dockerpty
 
 SLACKBUILD NAME: python-docopt
 SLACKBUILD LOCATION: ./python-docopt
@@ -4542,6 +4614,24 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/f/fuse-python/fuse-python-1.0.0.tar.gz
 SLACKBUILD MD5SUM: 24b927e681f8da1f92dbd90657cf5a56
 SLACKBUILD SHORT DESCRIPTION:  python-fuse (Python bindings for libfuse 2.x )
+
+SLACKBUILD NAME: python-importlib-metadata
+SLACKBUILD LOCATION: ./python-importlib-metadata
+SLACKBUILD FILES: README python-importlib-metadata.SlackBuild python-importlib-metadata.info slack-desc
+SLACKBUILD VERSION: 1.5.0
+SLACKBUILD REQUIRED: python-zipp
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/i/importlib_metadata/importlib_metadata-1.5.0.tar.gz
+SLACKBUILD MD5SUM: 1ec9bfc71c20e8618eac4a267aee2ad1
+SLACKBUILD SHORT DESCRIPTION:  python-importlib-metadata (Read metadata from Python packages)
+
+SLACKBUILD NAME: python-jsonschema
+SLACKBUILD LOCATION: ./python-jsonschema
+SLACKBUILD FILES: README python-jsonschema.SlackBuild python-jsonschema.info slack-desc
+SLACKBUILD VERSION: 3.2.0
+SLACKBUILD REQUIRED: python-pyrsistent python-attrs python-importlib-metadata
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/j/jsonschema/jsonschema-3.2.0.tar.gz
+SLACKBUILD MD5SUM: f1a0b5011f05a02a8dee1070cd10a26d
+SLACKBUILD SHORT DESCRIPTION:  python-jsonschema (An implementation of JSON Schema for Python)
 
 SLACKBUILD NAME: python-keyring
 SLACKBUILD LOCATION: ./python-keyring
@@ -4624,6 +4714,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pathlib2/pathlib2
 SLACKBUILD MD5SUM: f2bd0a363eb0f8fa0556f35c1d9e66fb
 SLACKBUILD SHORT DESCRIPTION:  python-pathlib2 (Object-oriented filesystem paths)
 
+SLACKBUILD NAME: python-pyrsistent
+SLACKBUILD LOCATION: ./python-pyrsistent
+SLACKBUILD FILES: README python-pyrsistent.SlackBuild python-pyrsistent.info slack-desc
+SLACKBUILD VERSION: 0.15.7
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pyrsistent/pyrsistent-0.15.7.tar.gz
+SLACKBUILD MD5SUM: da9486d00ef5b213f40d5cf3c5bca82d
+SLACKBUILD SHORT DESCRIPTION:  python-pyrsistent (Persistent/Immutable/Functional data structures)
+
 SLACKBUILD NAME: python-pyzmq
 SLACKBUILD LOCATION: ./python-pyzmq
 SLACKBUILD FILES: README python-pyzmq.SlackBuild python-pyzmq.info slack-desc
@@ -4687,6 +4786,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/structlog/structl
 SLACKBUILD MD5SUM: f011903a800d0d37860a0016d4c57355
 SLACKBUILD SHORT DESCRIPTION:  python-structlog (Structured Logging for Python)
 
+SLACKBUILD NAME: python-texttable
+SLACKBUILD LOCATION: ./python-texttable
+SLACKBUILD FILES: README python-texttable.SlackBuild python-texttable.info slack-desc
+SLACKBUILD VERSION: 1.6.2
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/texttable/texttable-1.6.2.tar.gz
+SLACKBUILD MD5SUM: 763141f0bdf598cdc5cf780ed4d2eb94
+SLACKBUILD SHORT DESCRIPTION:  python-texttable
+
 SLACKBUILD NAME: python-titlecase
 SLACKBUILD LOCATION: ./python-titlecase
 SLACKBUILD FILES: README python-titlecase.SlackBuild python-titlecase.info slack-desc
@@ -4741,6 +4849,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/w/webencodings/webe
 SLACKBUILD MD5SUM: 32f6e261d52e57bf7e1c4d41546d15b8
 SLACKBUILD SHORT DESCRIPTION:  python-webencodings (Character encoding for the web)
 
+SLACKBUILD NAME: python-websocket-client
+SLACKBUILD LOCATION: ./python-websocket-client
+SLACKBUILD FILES: README python-websocket-client.SlackBuild python-websocket-client.info slack-desc
+SLACKBUILD VERSION: 0.57.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/w/websocket_client/websocket_client-0.57.0.tar.gz
+SLACKBUILD MD5SUM: d41d8cd98f00b204e9800998ecf8427e
+SLACKBUILD SHORT DESCRIPTION:  python-websocket-client (WebSocket client library for Python)
+
 SLACKBUILD NAME: python-wheel
 SLACKBUILD LOCATION: ./python-wheel
 SLACKBUILD FILES: README python-wheel.SlackBuild python-wheel.info slack-desc
@@ -4749,6 +4866,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/w/wheel/wheel-0.33.6.tar.gz
 SLACKBUILD MD5SUM: 7aac11026bffef3696e04286208a4493
 SLACKBUILD SHORT DESCRIPTION:  python-wheel (A built-package format for Python)
+
+SLACKBUILD NAME: python-zipp
+SLACKBUILD LOCATION: ./python-zipp
+SLACKBUILD FILES: README python-zipp.SlackBuild python-zipp.info slack-desc
+SLACKBUILD VERSION: 3.0.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/z/zipp/zipp-3.0.0.tar.gz
+SLACKBUILD MD5SUM: e96f9fb08c6677a58044c8f250008882
+SLACKBUILD SHORT DESCRIPTION:  python-zipp (Pathlib-compatible object wrapper for zip files)
 
 SLACKBUILD NAME: pythondialog
 SLACKBUILD LOCATION: ./pythondialog
@@ -6355,10 +6481,10 @@ SLACKBUILD SHORT DESCRIPTION:  wipe (a secure file wiping utility)
 SLACKBUILD NAME: wireshark
 SLACKBUILD LOCATION: ./wireshark
 SLACKBUILD FILES: README doinst.sh slack-desc wireshark.SlackBuild wireshark.info
-SLACKBUILD VERSION: 3.2.1
+SLACKBUILD VERSION: 3.2.2
 SLACKBUILD REQUIRED: asciidoctor c-ares lua52 libmaxminddb libsmi lz4  minizip
-SLACKBUILD DOWNLOAD: https://1.eu.dl.wireshark.org/src/wireshark-3.2.1.tar.xz
-SLACKBUILD MD5SUM: e699b1e001c6303013791d81faf7727d
+SLACKBUILD DOWNLOAD: https://1.eu.dl.wireshark.org/src/wireshark-3.2.2.tar.xz
+SLACKBUILD MD5SUM: e468b78e1176e0212b13ef809f59dcbb
 SLACKBUILD SHORT DESCRIPTION:  WireShark (packet sniffer and protocol analyzer)
 
 SLACKBUILD NAME: wol
