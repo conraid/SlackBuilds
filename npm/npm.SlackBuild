@@ -32,7 +32,7 @@ CWD=$(pwd)
 
 PRGNAM=cli
 PKGNAM=npm
-VERSION=6.14.0
+VERSION=6.14.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -77,20 +77,16 @@ if [ -e $CWD/patches/ ]; then
   done
 fi
 
-# Fix sharp
-sed '/shar/s/0.22.1/0.23.3/g' -i docs/package*.json
-
 # Fix man page path.
-sed "/var manRoot/s/'share',//" -i lib/{,un}build.js
+sed "/manRoot/s/'share',//" -i lib/unbuild.js
 # Fix libdir for 64-bit.
 sed "s/'lib'/'lib${LIBDIRSUFFIX}'/" -i lib/npm.js
 
-make DESTDIR=$PKG install
+NODE_PATH=/usr/lib${LIBDIRSUFFIX}/nome_modules make DESTDIR=$PKG install
 
 # Non-deterministic race in npm gives 777 permissions to random directories.
 # See https://github.com/npm/npm/issues/9359 for details.
 chmod -R u=rwX,go=rX $PKG
-
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -99,7 +95,7 @@ find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cu
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 # Fix files owned by nobody:
-chown -R root:root $PKG/usr/lib${LIBDIRSUFFIX}/node_modules
+chown -R root:root $PKG
 
 # Fix node-gyp
 sed -e 's|`dirname "$0"`/../../|/usr/lib%LIBDIRSUFFIX%/node_modules/npm/|' \
@@ -113,9 +109,6 @@ if [ -d $PKG/usr/lib${LIBDIRSUFFIX}/node_modules/npm/man/ ]; then
   find $PKG/usr/lib${LIBDIRSUFFIX}/node_modules/npm/man/ -type f -exec gzip -9 {} \;
 fi
 
-# Move man pages (fix not work)
-mv $PKG/usr/share/man/ $PKG/usr/
-
 # Fix symbolic link of npm man pages
 rm -f $PKG/usr/man/man{1,5,7}/*
 mkdir -p $PKG/usr/man/man{1,5,7}
@@ -126,6 +119,20 @@ for DIR in man{1,5,7}; do
   done
   cd -
 done
+
+# Fix npm prefix to man5 and man7
+pushd $PKG/usr/man/
+for i in man{5,7}; do
+  cd "$i"
+    for j in *; do
+      mv "${j}" "npm-${j}"
+    done
+  cd -
+done
+popd
+
+# Remove empty share
+rm -rf $PKG/usr/share
 
 # Remove unneeded files.
 find $PKG/usr \( -name '.git*' -o -name '.travis.yml' \) -exec rm -f {} \;
