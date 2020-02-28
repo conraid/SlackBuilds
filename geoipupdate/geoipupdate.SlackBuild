@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=geoipupdate
 VERSION=4.2.2
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -91,19 +91,14 @@ export PATH="${GOROOT}/bin:${PATH}"
 
 sed 's/EditionIDs .*/EditionIDs GeoLite2-ASN GeoLite2-City GeoLite2-Country/' -i conf/GeoIP.conf.default
 
-# Don't build make page
-sed -e '/$(BUILDDIR)\/GeoIP\.conf\.5 \\/d' \
-    -e '/$(BUILDDIR)\/geoipupdate\.1/d' \
-    -i Makefile
-
-mkdir build
-
 CONFFILE=/etc/GeoIP.conf \
 DATADIR=/usr/share/GeoIP \
 make
 
 install -Dm755 build/$PKGNAM $PKG/usr/bin/$PKGNAM
 install -Dm644 build/GeoIP.conf $PKG/etc/GeoIP.conf.new
+install -Dm644 build/$PKGNAM.1 $PKG/usr/man/man1/$PKGNAM.1
+install -Dm644 build/GeoIP.conf.5 $PKG/usr/man/man5/GeoIP.conf.5
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -111,8 +106,10 @@ rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
-install -Dm644 $CWD/files/$PKGNAM.1.gz $PKG/usr/man/man1/$PKGNAM.1.gz
-install -Dm644 $CWD/files/GeoIP.conf.5.gz $PKG/usr/man/man5/GeoIP.conf.5.gz
+if [ -d $PKG/usr/man ]; then
+  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
