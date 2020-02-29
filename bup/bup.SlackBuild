@@ -2,7 +2,7 @@
 #
 # Slackware build script for bup
 #
-# Copyright 2019 Corrado Franco (https://conraid.net)
+# Copyright 2019-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=bup
 VERSION=0.30
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -88,8 +88,16 @@ fi
 
 ./configure
 
-make DOCDIR=/usr/doc/bup-$VERSION CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS"
-make DOCDIR=/usr/doc/bup-$VERSION DESTDIR=$PKG install
+make CFLAGS="$SLKCFLAGS" \
+     CXXFLAGS="$SLKCFLAGS" \
+     PREFIX="/usr" \
+     DOCDIR="/usr/doc/bup-$VERSION/html"
+
+make DESTDIR=$PKG \
+     PREFIX="/usr" \
+     MANDIR="/usr/man" \
+     DOCDIR="/usr/doc/bup-$VERSION/html" \
+     install
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -97,17 +105,14 @@ rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
-# Install doc and man pages
-cd $PKG/usr
-tar xzf $CWD/files/doc.tar.gz
+if [ -d $PKG/usr/man ]; then
+  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION/html
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
-
-# Install doc and man pages
-cd $PKG/usr
-tar xzf $CWD/files/doc.tar.gz
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
