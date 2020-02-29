@@ -1,0 +1,107 @@
+#!/bin/bash
+
+# Slackware build script for slack
+
+# Ryan P.C. McQuen | Everett, WA | ryanpcmcquen@member.fsf.org
+# Harald Achitz | Stockholm/Sweden | harald.achitz@gmail.com
+
+# Copyright 2018-2020 Corrado Franco (https://corradofranco.it)
+
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version, with the following exception:
+# the text of the GPL license may be omitted.
+
+# This program is distributed in the hope that it will be useful, but
+# without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose. Compiling,
+# interpreting, executing or merely reading the text of the program
+# may result in lapses of consciousness and/or very being, up to and
+# including the end of all existence and the Universe as we know it.
+# See the GNU General Public License for more details.
+
+# You may have received a copy of the GNU General Public License along
+# with this program (most likely, a file named COPYING).  If not, see
+# <https://www.gnu.org/licenses/>.
+
+set -eu
+cd $(dirname $0) ; CWD=$(pwd)
+
+PRGNAM=slack
+PKGNAM=slack-bin
+VERSION=4.3.2
+BUILD=${BUILD:-1}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+PKG=$TMP/package-$PKGNAM
+OUTPUT=${OUTPUT:-/tmp}
+
+ARCH=${ARCH:-$(uname -m)}
+
+case "$ARCH" in
+  x86_64) DEBARCH="amd64";;
+  *) echo "Package for $(uname -m) architecture is not available." ; exit 1 ;;
+esac
+
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  exit 0
+fi
+
+if [ "$ARCH" = "i586" ]; then
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  LIBDIRSUFFIX="64"
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+fi
+
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+rm -rf $PRGNAM-$VERSION
+mkdir -p $PRGNAM-$VERSION
+cd $PRGNAM-$VERSION
+
+ar p $CWD/${PRGNAM}-desktop-${VERSION}-${DEBARCH}.deb data.tar.xz | tar xJv
+
+chown -R root:root .
+chmod -R u+w,go+r-w,a+X-s .
+
+mv * $PKG/
+
+# Remove all unnecessary stuff
+rm -rf $PKG/etc
+rm -rf $PKG/usr/share/lintian
+rm -rf $PKG/usr/share/doc
+
+# Move lib if 64
+if [ $ARCH = "x86_64" ]; then
+  mv $PKG/usr/lib $PKG/usr/lib$LIBDIRSUFFIX
+  rm -f $PKG/usr/bin/$PRGNAM
+  ln -s ../lib64/slack/slack $PKG/usr/bin/slack
+fi
+
+# Fix icon
+sed 's/^Icon=.*/Icon=slack/' -i $PKG/usr/share/applications/slack.desktop
+
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION/
+cp -a $PKG/usr/lib$LIBDIRSUFFIX/slack/LICENSE $PKG/usr/doc/$PKGNAM-$VERSION/
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-${BUILD}$TAG.${PKGTYPE:-txz}
