@@ -223,6 +223,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/asn1crypto/asn1cr
 SLACKBUILD MD5SUM: fc3815cdd4812505e3ee297740c5f5d3
 SLACKBUILD SHORT DESCRIPTION:  asn1crypto (Python ASN.1 library)
 
+SLACKBUILD NAME: atom-bin
+SLACKBUILD LOCATION: ./atom-bin
+SLACKBUILD FILES: README atom-bin.SlackBuild atom-bin.info doinst.sh files/atom.desktop slack-desc
+SLACKBUILD VERSION: 1.44.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/atom/atom/releases/download/v1.44.0/atom-amd64.tar.gz
+SLACKBUILD MD5SUM: 7397b062e05f0bc476a60c55f3d4ab23
+SLACKBUILD SHORT DESCRIPTION:  atom (text editor)
+
 SLACKBUILD NAME: atool
 SLACKBUILD LOCATION: ./atool
 SLACKBUILD FILES: README atool.SlackBuild atool.info slack-desc
@@ -450,9 +459,9 @@ SLACKBUILD SHORT DESCRIPTION:  bubblewrap (unprivileged sandboxing tool)
 
 SLACKBUILD NAME: bup
 SLACKBUILD LOCATION: ./bup
-SLACKBUILD FILES: README bup.SlackBuild bup.info files/doc.tar.gz patches/make.patch slack-desc
+SLACKBUILD FILES: README bup.SlackBuild bup.info slack-desc
 SLACKBUILD VERSION: 0.30
-SLACKBUILD REQUIRED: par2cmdline pylibacl python-fuse pyxattr
+SLACKBUILD REQUIRED: par2cmdline pylibacl python-fuse pyxattr pandoc
 SLACKBUILD DOWNLOAD: https://github.com/bup/bup/archive/0.30/bup-0.30.tar.gz
 SLACKBUILD MD5SUM: ebefebaa727ab7dc73952c91a28e9af2
 SLACKBUILD SHORT DESCRIPTION:  bup
@@ -1231,6 +1240,15 @@ SLACKBUILD DOWNLOAD: https://github.com/t-woerner/firewalld/archive/v0.4.4.5.tar
 SLACKBUILD MD5SUM: 22959cecc70cb5a241069c3dfc775303
 SLACKBUILD SHORT DESCRIPTION:  firewalld (Firewall daemon with D-Bus interface)
 
+SLACKBUILD NAME: flash_player_npapi-bin
+SLACKBUILD LOCATION: ./flash_player_npapi-bin
+SLACKBUILD FILES: README doinst.sh flash_player_npapi-bin.SlackBuild flash_player_npapi-bin.info slack-desc
+SLACKBUILD VERSION: 
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://fpdownload.macromedia.com/pub/labs/flashruntimes/flashplayer/linux64/flash_player_npapi_linux.x86_64.tar.gz
+SLACKBUILD MD5SUM: 48bbcf2e5955328af23fc7a2740c7944
+SLACKBUILD SHORT DESCRIPTION:  flash_player_npapi (flash plugin for web browsers)
+
 SLACKBUILD NAME: flickcurl
 SLACKBUILD LOCATION: ./flickcurl
 SLACKBUILD FILES: README flickcurl.SlackBuild flickcurl.info slack-desc
@@ -1334,7 +1352,7 @@ SLACKBUILD NAME: geoipupdate
 SLACKBUILD LOCATION: ./geoipupdate
 SLACKBUILD FILES: README doinst.sh geoipupdate.SlackBuild geoipupdate.info slack-desc
 SLACKBUILD VERSION: 4.2.2
-SLACKBUILD REQUIRED: go pandoc
+SLACKBUILD REQUIRED: go pandoc-bin
 SLACKBUILD DOWNLOAD: https://github.com/maxmind/geoipupdate/archive/v4.2.2/geoipupdate-4.2.2.tar.gz
 SLACKBUILD MD5SUM: be84500d897d31a80ee73bb277643bad
 SLACKBUILD SHORT DESCRIPTION:  geoipupdate (GeoIP Update Program)
@@ -2067,6 +2085,15 @@ SLACKBUILD REQUIRED: npm
 SLACKBUILD DOWNLOAD: https://github.com/mhevery/jasmine-node/archive/1.16.0.tar.gz
 SLACKBUILD MD5SUM: 6e31638fc57ccf8ad9e5630875c3a118
 SLACKBUILD SHORT DESCRIPTION:  jasmine-node (Integration of Jasmine Spec framework with Node.js)
+
+SLACKBUILD NAME: jdk
+SLACKBUILD LOCATION: ./jdk
+SLACKBUILD FILES: README jdk.SlackBuild jdk.info slack-desc
+SLACKBUILD VERSION: 13.0.2
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://download.oracle.com/otn-pub/java/jdk/13.0.2+8/d4173c853231432d94f001e99d882ca7/jdk-13.0.2_linux-x64_bin.tar.gz?AuthParam=1582991378_a7a2510e9507ae5dfbbf1eff0d7778cc
+SLACKBUILD MD5SUM: d9cd84b90be7130094b1cae31b352abe
+SLACKBUILD SHORT DESCRIPTION:  Java(TM) 2 Platform Standard Edition Development Kit.
 
 SLACKBUILD NAME: jhead
 SLACKBUILD LOCATION: ./jhead
@@ -3355,6 +3382,15 @@ SLACKBUILD DOWNLOAD: https://github.com/neovim/neovim/archive/v0.4.3/neovim-0.4.
 SLACKBUILD MD5SUM: f95f06420887748a0524c26d83039fc8
 SLACKBUILD SHORT DESCRIPTION:  neovim (Vim-fork focused on extensibility and agility.)
 
+SLACKBUILD NAME: netbeans-bin
+SLACKBUILD LOCATION: ./netbeans-bin
+SLACKBUILD FILES: README doinst.sh files/netbeans.desktop netbeans-bin.SlackBuild netbeans-bin.info slack-desc
+SLACKBUILD VERSION: 11.0
+SLACKBUILD REQUIRED: jdk
+SLACKBUILD DOWNLOAD: http://it.apache.contactlab.it/incubator/netbeans/incubating-netbeans/incubating-11.0/incubating-netbeans-11.0-bin.zip
+SLACKBUILD MD5SUM: 815e21c1b1a6608b3f5e6803f10a848f
+SLACKBUILD SHORT DESCRIPTION:  netbeans (IDE for Java, HTML5, PHP, C and C++)
+
 SLACKBUILD NAME: netcat-openbsd
 SLACKBUILD LOCATION: ./netcat-openbsd
 SLACKBUILD FILES: README netcat-openbsd.SlackBuild netcat-openbsd.info patches/broadcast-support.patch patches/build-without-TLS-support.patch patches/connect-timeout.patch patches/dccp-support.patch patches/destination-port-list.patch patches/get-sev-by-name.patch patches/misc-failures-and-features.patch patches/port-to-linux-with-libsd.patch patches/quit-timer.patch patches/send-crlf.patch patches/serialized-handling-multiple-clients.patch patches/series patches/set-TCP-MD5SIG-correctly-for-client-connections.patch patches/udp-scan-timeout.patch patches/use-flags-to-specify-listen-address.patch patches/verbose-numeric-port.patch slack-desc
@@ -3931,14 +3967,14 @@ SLACKBUILD DOWNLOAD: http://packetfactory.openwall.net/projects/packit/downloads
 SLACKBUILD MD5SUM: 270594ff97f6c203131136208bb4d2ca
 SLACKBUILD SHORT DESCRIPTION:  packit (network injection and capture)
 
-SLACKBUILD NAME: pandoc
-SLACKBUILD LOCATION: ./pandoc
-SLACKBUILD FILES: README pandoc.SlackBuild pandoc.info slack-desc
+SLACKBUILD NAME: pandoc-bin
+SLACKBUILD LOCATION: ./pandoc-bin
+SLACKBUILD FILES: README pandoc-bin.SlackBuild pandoc-bin.info slack-desc
 SLACKBUILD VERSION: 2.9.2
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://github.com/jgm/pandoc/releases/download/2.9.2/pandoc-2.9.2-linux-amd64.tar.gz
 SLACKBUILD MD5SUM: 85ee68f2fec31eb6829dabce3b1d8a8f
-SLACKBUILD SHORT DESCRIPTION:  pandoc (Universal markup converter)
+SLACKBUILD SHORT DESCRIPTION:  pandoc-bin (Universal markup converter)
 
 SLACKBUILD NAME: paperkey
 SLACKBUILD LOCATION: ./paperkey
@@ -4299,6 +4335,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://ftp.postgresql.org/pub/source/v12.2/postgresql-12.2.tar.bz2
 SLACKBUILD MD5SUM: a88ceea8ecf2741307f663e4539b58b7
 SLACKBUILD SHORT DESCRIPTION:  postgresql (object-relational database management system)
+
+SLACKBUILD NAME: postman-bin
+SLACKBUILD LOCATION: ./postman-bin
+SLACKBUILD FILES: README doinst.sh files/postman.desktop postman-bin.SlackBuild postman-bin.info slack-desc
+SLACKBUILD VERSION: 7.19.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://dl.pstmn.io/download/latest/linux64
+SLACKBUILD MD5SUM: 41976a8d05a27a48a751bb0eb8c99c4b
+SLACKBUILD SHORT DESCRIPTION:  postman (Build, test, and document your APIs faster)
 
 SLACKBUILD NAME: potrace
 SLACKBUILD LOCATION: ./potrace
@@ -5236,6 +5281,15 @@ SLACKBUILD DOWNLOAD: https://github.com/scour-project/scour/archive/v0.37.tar.gz
 SLACKBUILD MD5SUM: 1de595a0b1627d47b01b4e5fa2976087
 SLACKBUILD SHORT DESCRIPTION:  scour (SVG scrubber)
 
+SLACKBUILD NAME: screamingfrogseospider-bin
+SLACKBUILD LOCATION: ./screamingfrogseospider-bin
+SLACKBUILD FILES: README doinst.sh screamingfrogseospider-bin.SlackBuild screamingfrogseospider-bin.info slack-desc
+SLACKBUILD VERSION: 12.6
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://download.screamingfrog.co.uk/products/seo-spider/screamingfrogseospider_12.6_all.deb
+SLACKBUILD MD5SUM: 533c21dea87209d2423eacc9079ac7ee
+SLACKBUILD SHORT DESCRIPTION:  screamingfrogseospider (SEO Spider Tool)
+
 SLACKBUILD NAME: scribus
 SLACKBUILD LOCATION: ./scribus
 SLACKBUILD FILES: README doinst.sh scribus.SlackBuild scribus.info slack-desc
@@ -5298,6 +5352,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/setuptools_scm/setuptools_scm-3.5.0.tar.gz
 SLACKBUILD MD5SUM: 86ec1eb9ec02ba018b097787e98897c5
 SLACKBUILD SHORT DESCRIPTION:  setuptools-scm (manage versions by scm tags)
+
+SLACKBUILD NAME: shellcheck-bin
+SLACKBUILD LOCATION: ./shellcheck-bin
+SLACKBUILD FILES: README shellcheck-bin.SlackBuild shellcheck-bin.info slack-desc
+SLACKBUILD VERSION: 0.7.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://shellcheck.storage.googleapis.com/shellcheck-v0.7.0.linux.x86_64.tar.xz
+SLACKBUILD MD5SUM: 98e9244e85ff4ed2b0d30b214527f3d6
+SLACKBUILD SHORT DESCRIPTION:  shellcheck (shell script analysis tool)
 
 SLACKBUILD NAME: shorewall-core
 SLACKBUILD LOCATION: ./shorewall-core
@@ -5416,6 +5479,24 @@ SLACKBUILD DOWNLOAD: https://storage.googleapis.com/google-code-archive-download
 SLACKBUILD MD5SUM: e18088bbc8a105e7535a96f40b80f284
 SLACKBUILD SHORT DESCRIPTION:  sk1libs (python libs for sK1 Project)
 
+SLACKBUILD NAME: skypeforlinux-bin
+SLACKBUILD LOCATION: ./skypeforlinux-bin
+SLACKBUILD FILES: README doinst.sh skypeforlinux-bin.SlackBuild skypeforlinux-bin.info slack-desc
+SLACKBUILD VERSION: 8.56.0.153
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://go.skype.com/skypeforlinux-64.deb
+SLACKBUILD MD5SUM: 3d71bc7c20b2c7e543b2af9bb89a2430
+SLACKBUILD SHORT DESCRIPTION:  Skype (Free Internet telephony)
+
+SLACKBUILD NAME: slack-bin
+SLACKBUILD LOCATION: ./slack-bin
+SLACKBUILD FILES: README doinst.sh slack-bin.SlackBuild slack-bin.info slack-desc
+SLACKBUILD VERSION: 4.3.2
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://downloads.slack-edge.com/linux_releases/slack-desktop-4.3.2-amd64.deb
+SLACKBUILD MD5SUM: d6f11e7d87952e7d953154aaa3316a22
+SLACKBUILD SHORT DESCRIPTION:  slack (A messaging app for teams.)
+
 SLACKBUILD NAME: sleuthkit
 SLACKBUILD LOCATION: ./sleuthkit
 SLACKBUILD FILES: README slack-desc sleuthkit.SlackBuild sleuthkit.info
@@ -5428,10 +5509,10 @@ SLACKBUILD SHORT DESCRIPTION:  sleuthkit (tsk)
 SLACKBUILD NAME: slpkg
 SLACKBUILD LOCATION: ./slpkg
 SLACKBUILD FILES: README doinst.sh slack-desc slpkg.SlackBuild slpkg.info
-SLACKBUILD VERSION: 3.8.0
+SLACKBUILD VERSION: 3.8.4
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://gitlab.com/dslackw/slpkg/-/archive/3.8.0/slpkg-3.8.0.tar.bz2
-SLACKBUILD MD5SUM: d778525837e7a65143882281abd75ebc
+SLACKBUILD DOWNLOAD: https://gitlab.com/dslackw/slpkg/-/archive/3.8.4/slpkg-3.8.4.tar.bz2
+SLACKBUILD MD5SUM: 4ae9d6c2f0c7394dd986a51e38616869
 SLACKBUILD SHORT DESCRIPTION:  slpkg (Slackware Packaging Tool)
 
 SLACKBUILD NAME: slurm
@@ -5812,6 +5893,15 @@ SLACKBUILD DOWNLOAD: https://github.com/bchretien/tcptrack/archive/v1.4.3.tar.gz
 SLACKBUILD MD5SUM: 32b552476e5e74cc80844051415b7860
 SLACKBUILD SHORT DESCRIPTION:  tcptrack (tcp sniffer)
 
+SLACKBUILD NAME: telegram-bin
+SLACKBUILD LOCATION: ./telegram-bin
+SLACKBUILD FILES: README doinst.sh files/telegram.desktop files/telegram.png slack-desc telegram-bin.SlackBuild telegram-bin.info
+SLACKBUILD VERSION: 1.9.19
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/telegramdesktop/tdesktop/releases/download/v1.9.19/tsetup.1.9.19.beta.tar.xz
+SLACKBUILD MD5SUM: dee27e755264e37a0e2ce47406eb7119
+SLACKBUILD SHORT DESCRIPTION:  telegram (messaging app)
+
 SLACKBUILD NAME: termbox
 SLACKBUILD LOCATION: ./termbox
 SLACKBUILD FILES: README slack-desc termbox.SlackBuild termbox.info
@@ -6040,10 +6130,10 @@ SLACKBUILD SHORT DESCRIPTION:  txt2man (converts text to man page)
 SLACKBUILD NAME: typescript
 SLACKBUILD LOCATION: ./typescript
 SLACKBUILD FILES: README slack-desc typescript.SlackBuild typescript.info
-SLACKBUILD VERSION: 3.8.2
+SLACKBUILD VERSION: 3.8.3
 SLACKBUILD REQUIRED: npm
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/typescript/-/typescript-3.8.2.tgz
-SLACKBUILD MD5SUM: dfe808afe1d9f4e335090512e4c99cba
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/typescript/-/typescript-3.8.3.tgz
+SLACKBUILD MD5SUM: 4b2148e248d002efd3b8f70dc2bf2473
 SLACKBUILD SHORT DESCRIPTION:  typescript (superset of JavaScript)
 
 SLACKBUILD NAME: udiskie
@@ -6535,10 +6625,10 @@ SLACKBUILD SHORT DESCRIPTION:  wpebackend-fdo (freedesktop.org backend for WPE W
 SLACKBUILD NAME: wpscan
 SLACKBUILD LOCATION: ./wpscan
 SLACKBUILD FILES: README slack-desc wpscan.SlackBuild wpscan.info
-SLACKBUILD VERSION: 3.7.8
+SLACKBUILD VERSION: 3.7.9
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://rubygems.org/downloads/wpscan-3.7.8.gem
-SLACKBUILD MD5SUM: 003e5680500b1fe1c8e6c8b856fd2624
+SLACKBUILD DOWNLOAD: https://rubygems.org/downloads/wpscan-3.7.9.gem
+SLACKBUILD MD5SUM: 3526223d5ff14900d143fe88efc680c1
 SLACKBUILD SHORT DESCRIPTION:  wpscan (black box WordPress vulnerability scanner)
 
 SLACKBUILD NAME: wput
