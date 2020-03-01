@@ -35,7 +35,7 @@ PKGNAM=telegram-bin
 PRGNAM=telegram
 SRCVERSION=1.9.19.beta
 VERSION=1.9.19
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -83,7 +83,7 @@ find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | gr
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
 
 mkdir -p $PKG/usr/bin
-ln -sf /usr/share/$PRGNAM/Telegram $PKG/usr/bin/$PRGNAM
+ln -sf /usr/share/$PRGNAM/Telegram $PKG/usr/bin/Telegram
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
