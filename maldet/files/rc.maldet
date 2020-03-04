@@ -6,8 +6,8 @@
 # description: Linux Malware Detect file monitoring
 # processname: maldet
 
-inspath='/usr/share/maldetect'
-intcnf="$inspath/internals/internals.conf"
+inspath='/usr/share/maldet'
+intcnf="/etc/maldet/internals.conf"
 
 if [ -f "$intcnf" ]; then
 	source $intcnf
@@ -42,12 +42,12 @@ fi
 
 start() {
         echo -n "Starting $prog: "
-        $inspath/maldet --monitor $MONITOR_MODE
+        /usr/bin/maldet --monitor $MONITOR_MODE
 }
 
 stop() {
         echo -n "Shutting down $prog: "
-        $inspath/maldet --kill-monitor && success || failure
+        /usr/bin/maldet --kill-monitor && success || failure
 }
 
 restart() {
