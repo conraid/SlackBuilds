@@ -2,7 +2,7 @@
 #
 # Slackware build script for atop
 #
-# Copyright 2014-2019 Corrado Franco (https://conraid.net)
+# Copyright 2014-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=atop
 SRCVERSION=2.5.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -117,7 +117,7 @@ mv $PKG/etc/default/atop $PKG/etc/default/atop.new
 install -Dm0644 $CWD/files/psacct.logrotate $PKG/etc/logrotate.d/psacct.new
 
 # Delete some dir and files
-rm -f $PKG/etc/cron.daily/atop
+rm -f $PKG/etc/cron.d/atop
 rm -f $PKG/etc/rc.d/atopacct
 rm -f $PKG/usr/bin/atop*-$VERSION
 
