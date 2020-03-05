@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=linux-malware-detect
 PKGNAM=maldet
 VERSION=1.6.4
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -98,7 +98,7 @@ mkdir -p $PKG/var/lib/$PKGNAM/{quarantine,sess,sigs,clean,tmp,pub,internals}
 mkdir -p $PKG/var/log/$PKGNAM
 mkdir -p $PKG/etc/{cron.d,cron.daily,$PKGNAM}
 
-sed -e 's|/usr/local/maldetect/|/usr/bin/|' cron.d.pub > $PKG/etc/cron.d/maldet_pub
+sed -e 's|root /usr/local/maldetect/|/usr/bin/|' cron.d.pub > $PKG/etc/cron.d/maldet_pub
 chmod 644 /etc/cron.d/maldet_pub
 sed -e 's|/usr/local/maldetect|/usr/share/maldet|' cron.daily > $PKG/etc/cron.daily/maldet
 chmod 755 /etc/cron.daily/maldet
