@@ -23,4 +23,4 @@ perms() {
     config $NEW
 }
 
-perms etc/rc.d/rc.firewall.new
+perms etc/rc.d/rc.shorewall.new

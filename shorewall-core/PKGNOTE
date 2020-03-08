@@ -8,3 +8,12 @@ The shorewall-core package is needed for both,
 but you must install at least one of the other two,
 depending on your network type.
 
+
+Start Shorewall on boot by adding the following lines to /etc/rc.d/rc.local
+or /etc/rc.d/rc.firewall
+
+if [ -x /etc/rc.d/rc.shorewall ]; then
+/etc/rc.d/rc.shorewall start
+fi
+
+Or rename rc.shorewall to rc.firewall
