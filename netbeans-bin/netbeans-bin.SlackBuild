@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=netbeans
 PKGNAM=netbeans-bin
-VERSION=11.0
+VERSION=11.3
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -53,7 +53,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG/usr/share $OUTPUT
 
 cd $PKG/usr/share
-unzip $CWD/incubating-netbeans-${VERSION}-bin.zip
+unzip $CWD/netbeans-${VERSION}-bin.zip
 cd $PRGNAM
 
 chown -R root:root .
