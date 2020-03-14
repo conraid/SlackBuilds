@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=neovim
-COMMIT=49cd750d6a72efc0571a89d7a874bbb01081227f
-VERSION=0.5.0
+COMMIT=2b00d1d09c0ff7ee6cc2de7ba70d9e84167540e5
+VERSION=0.5.0_$(echo $COMMIT | head -c7)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
