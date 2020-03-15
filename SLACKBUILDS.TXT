@@ -1195,6 +1195,24 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/e/eyeD3/eyeD3-0.8.1
 SLACKBUILD MD5SUM: af7ff002e9da684e1fd753ed33b4e29e
 SLACKBUILD SHORT DESCRIPTION:  eyed3 (Python module and commandline program for processing ID3 tags)
 
+SLACKBUILD NAME: faac
+SLACKBUILD LOCATION: ./faac
+SLACKBUILD FILES: README faac.SlackBuild faac.info slack-desc
+SLACKBUILD VERSION: 1.30
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/knik0/faac/archive/1_30/faac-1_30.tar.gz
+SLACKBUILD MD5SUM: 8d61e6d55088e599aa91532d5e6995b0
+SLACKBUILD SHORT DESCRIPTION:  faac (Freeware Advanced Audio Coder)
+
+SLACKBUILD NAME: faad2
+SLACKBUILD LOCATION: ./faad2
+SLACKBUILD FILES: README faad2.SlackBuild faad2.info slack-desc
+SLACKBUILD VERSION: 2_9_1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/knik0/faad2/archive/2_9_1/faad2-2_9_1.tar.gz
+SLACKBUILD MD5SUM: a880fadc4fc4a564d0833f0c1e7c08b5
+SLACKBUILD SHORT DESCRIPTION:  Faad2 (MPEG2 and MPEG-4 AAC decoder)
+
 SLACKBUILD NAME: fail2ban
 SLACKBUILD LOCATION: ./fail2ban
 SLACKBUILD FILES: README doinst.sh fail2ban.SlackBuild fail2ban.info files/fail2ban.logrotate files/paths-slackware.conf files/rc.fail2ban slack-desc
@@ -1635,6 +1653,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://downloads.sourceforge.net/gsmartcontrol/gsmartcontrol-0.9.0.tar.bz2
 SLACKBUILD MD5SUM: bd7816722eb376b059d85bb42e4ff62e
 SLACKBUILD SHORT DESCRIPTION:  gsmartcontrol (Hard disk drive and SSD health inspection tool)
+
+SLACKBUILD NAME: gst-plugins-bad
+SLACKBUILD LOCATION: ./gst-plugins-bad
+SLACKBUILD FILES: README gst-plugins-bad.SlackBuild gst-plugins-bad.info slack-desc
+SLACKBUILD VERSION: 1.16.2
+SLACKBUILD REQUIRED: faac faad2 timidity libdc1394 soundtouch rtmpdump
+SLACKBUILD DOWNLOAD: https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.16.2.tar.xz
+SLACKBUILD MD5SUM: ccc7404230afddec723bbdb63c89feec
+SLACKBUILD SHORT DESCRIPTION:  gst-plugins-bad (bad set of GStreamer plugins)
 
 SLACKBUILD NAME: gst-plugins-ugly
 SLACKBUILD LOCATION: ./gst-plugins-ugly
@@ -2971,10 +2998,10 @@ SLACKBUILD SHORT DESCRIPTION:  luceneplusplus ((text search engine)
 SLACKBUILD NAME: luv
 SLACKBUILD LOCATION: ./luv
 SLACKBUILD FILES: README luv.SlackBuild luv.info slack-desc
-SLACKBUILD VERSION: 1.34.2-1
+SLACKBUILD VERSION: 1.34.2-2
 SLACKBUILD REQUIRED: luajit
-SLACKBUILD DOWNLOAD: https://github.com/luvit/luv/releases/download/1.34.2-1/luv-1.34.2-1.tar.gz
-SLACKBUILD MD5SUM: 03093be3cdb3637453268299dd84bf6d
+SLACKBUILD DOWNLOAD: https://github.com/luvit/luv/releases/download/1.34.2-2/luv-1.34.2-2.tar.gz
+SLACKBUILD MD5SUM: 095ba9f4b93b158414c5842ed50fc52d
 SLACKBUILD SHORT DESCRIPTION:  luv (Bare libuv bindings for lua)
 
 SLACKBUILD NAME: lwatch
@@ -4906,10 +4933,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-trollius (Port of the asyncio project to P
 SLACKBUILD NAME: python-ujson
 SLACKBUILD LOCATION: ./python-ujson
 SLACKBUILD FILES: README python-ujson.SlackBuild python-ujson.info slack-desc
-SLACKBUILD VERSION: 2.0.1
+SLACKBUILD VERSION: 2.0.2
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/u/ujson/ujson-2.0.1.tar.gz
-SLACKBUILD MD5SUM: affa2566384c65e01ac01a8a54396dbf
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/u/ujson/ujson-2.0.2.tar.gz
+SLACKBUILD MD5SUM: 7320660ebfc5c65e72873e40e88ac7a6
 SLACKBUILD SHORT DESCRIPTION:  python-ujson (Ultra fast JSON encoder and decoder for Python)
 
 SLACKBUILD NAME: python-unidecode
@@ -5932,10 +5959,10 @@ SLACKBUILD SHORT DESCRIPTION:  tcptrack (tcp sniffer)
 SLACKBUILD NAME: telegram-bin
 SLACKBUILD LOCATION: ./telegram-bin
 SLACKBUILD FILES: README doinst.sh files/telegram.desktop files/telegram.png slack-desc telegram-bin.SlackBuild telegram-bin.info
-SLACKBUILD VERSION: 1.9.19
+SLACKBUILD VERSION: 1.9.20
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/telegramdesktop/tdesktop/releases/download/v1.9.19/tsetup.1.9.19.beta.tar.xz
-SLACKBUILD MD5SUM: dee27e755264e37a0e2ce47406eb7119
+SLACKBUILD DOWNLOAD: https://github.com/telegramdesktop/tdesktop/releases/download/v1.9.20/tsetup.1.9.20.beta.tar.xz
+SLACKBUILD MD5SUM: 82071c3eb3bedfa11f6f5e03ff45d2ad
 SLACKBUILD SHORT DESCRIPTION:  telegram (messaging app)
 
 SLACKBUILD NAME: termbox
@@ -6018,6 +6045,15 @@ SLACKBUILD REQUIRED: confuse
 SLACKBUILD DOWNLOAD: https://github.com/lanoxx/tilda/archive/tilda-1.5.0.tar.gz
 SLACKBUILD MD5SUM: 41b521e15f924f8e797a57df97e50007
 SLACKBUILD SHORT DESCRIPTION:  tilda (an FPS-style terminal)
+
+SLACKBUILD NAME: timidity
+SLACKBUILD LOCATION: ./timidity
+SLACKBUILD FILES: README doinst.sh patches/autoconf.patch patches/timidity-jack.patch rc.timidity slack-desc timidity.SlackBuild timidity.info
+SLACKBUILD VERSION: 2.15.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/timidity/TiMidity++-2.15.0.tar.xz
+SLACKBUILD MD5SUM: 27927182d62ba24abbf447a9e9919c53
+SLACKBUILD SHORT DESCRIPTION:  TiMidity++ (a software midi synthesizer)
 
 SLACKBUILD NAME: tini
 SLACKBUILD LOCATION: ./tini
@@ -6247,10 +6283,10 @@ SLACKBUILD SHORT DESCRIPTION:  unicode-character-database (unicode database)
 SLACKBUILD NAME: unicode-emoji
 SLACKBUILD LOCATION: ./unicode-emoji
 SLACKBUILD FILES: README slack-desc unicode-emoji.SlackBuild unicode-emoji.info
-SLACKBUILD VERSION: 11.0
+SLACKBUILD VERSION: 13.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://unicode.org/Public/emoji/12.1/emoji-data.txt
-SLACKBUILD MD5SUM: fd9a509b9fec19ac48fb064217115e6e
+SLACKBUILD DOWNLOAD: https://www.unicode.org/Public/13.0.0/ucd/emoji/emoji-data.txt
+SLACKBUILD MD5SUM: 94a18a73bd69791f6fb5d9cd24257630
 SLACKBUILD SHORT DESCRIPTION:  unicode-emoji (Unicode Emoji Data Files)
 
 SLACKBUILD NAME: unicode-slugify
@@ -6563,7 +6599,7 @@ SLACKBUILD NAME: webkitgtk
 SLACKBUILD LOCATION: ./webkitgtk
 SLACKBUILD FILES: README slack-desc webkitgtk.SlackBuild webkitgtk.info
 SLACKBUILD VERSION: 2.28.0
-SLACKBUILD REQUIRED: libseccomp bubblewrap xdg-dbus-proxy libwpe wpebackend-fdo
+SLACKBUILD REQUIRED: libseccomp bubblewrap xdg-dbus-proxy libwpe wpebackend-fdo gst-plugins-bad
 SLACKBUILD DOWNLOAD: https://www.webkitgtk.org/releases/webkitgtk-2.28.0.tar.xz
 SLACKBUILD MD5SUM: 0bf11df8117ea64f6b8de59d278a2c78
 SLACKBUILD SHORT DESCRIPTION:  webkitgtk (Web content rendering)
@@ -6615,11 +6651,11 @@ SLACKBUILD SHORT DESCRIPTION:  wifite (automated wireless auditor)
 
 SLACKBUILD NAME: wine
 SLACKBUILD LOCATION: ./wine
-SLACKBUILD FILES: README doinst.sh files/wine.svg files/winecfg.desktop files/winecfg.png files/winecfg.svg slack-desc wine.SlackBuild wine.info
-SLACKBUILD VERSION: 5.3
-SLACKBUILD REQUIRED: fontforge cabextract
-SLACKBUILD DOWNLOAD: https://dl.winehq.org/wine/source/5.x/wine-5.3.tar.xz
-SLACKBUILD MD5SUM: 91fa1b27f16301b919ac298163fbd47d
+SLACKBUILD FILES: README doinst.sh files/wine.svg files/winecfg.desktop files/winecfg.png files/winecfg.svg patches/a1246b5e921ea950851e4a971fb3dae535d7b982.patch slack-desc wine.SlackBuild wine.info
+SLACKBUILD VERSION: 5.4
+SLACKBUILD REQUIRED: fontforge cabextract gst-plugins-bad
+SLACKBUILD DOWNLOAD: https://dl.winehq.org/wine/source/5.x/wine-5.4.tar.xz
+SLACKBUILD MD5SUM: fbb096166c8bb7fc25dd636c7f371a80
 SLACKBUILD SHORT DESCRIPTION:  wine (Wine Is Not an Emulator)
 
 SLACKBUILD NAME: winetricks
