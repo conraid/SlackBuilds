@@ -2,7 +2,7 @@
 #
 # Slackware build script for unicode-emoji
 #
-# Copyright 2018-2020 Corrado Franco (https://conraid.net)
+# Copyright 2018-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=unicode-emoji
-VERSION=12.1
+VERSION=13.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -49,10 +49,7 @@ if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
   exit 0
 fi
 
-FILES="data sequences test variation-sequences zwj-sequences"
-for FILE in $FILES; do
-   install -Dm644 $CWD/emoji-$FILE.txt -t $PKG/usr/share/unicode/emoji/
-done
+install -Dm644 $CWD/emoji-*.txt -t $PKG/usr/share/unicode/emoji/
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
