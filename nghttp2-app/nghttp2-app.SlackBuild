@@ -2,7 +2,7 @@
 #
 # Slackware build script for nghttp2
 #
-# Copyright 2016-2019 Corrado Franco (https://conraid.net)
+# Copyright 2016-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=nghttp2
 PKGNAM=nghttp2-app
-VERSION=1.39.1 # Same version of the Slackware package nghttp2.
+VERSION=1.40.0 # Same version of the Slackware package nghttp2.
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -103,6 +103,9 @@ CXXFLAGS="$SLKCFLAGS" \
 make
 make DESTDIR=$PKG install
 make -C lib DESTDIR=$PKG uninstall
+
+# Remove empty dir and dir exists in slackware package
+rm -rf $PKG/usr/{include,lib*,share}
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
