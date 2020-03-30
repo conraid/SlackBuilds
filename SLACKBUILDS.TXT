@@ -460,10 +460,10 @@ SLACKBUILD SHORT DESCRIPTION:  browsertime (Web Performance Timeline)
 SLACKBUILD NAME: bubblewrap
 SLACKBUILD LOCATION: ./bubblewrap
 SLACKBUILD FILES: README bubblewrap.SlackBuild bubblewrap.info slack-desc
-SLACKBUILD VERSION: 0.4.0
+SLACKBUILD VERSION: 0.4.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/containers/bubblewrap/releases/download/v0.4.0/bubblewrap-0.4.0.tar.xz
-SLACKBUILD MD5SUM: a0f3f2c80a3bad535af5bbd1b502450c
+SLACKBUILD DOWNLOAD: https://github.com/containers/bubblewrap/releases/download/v0.4.1/bubblewrap-0.4.1.tar.xz
+SLACKBUILD MD5SUM: 1104b0e43006f22076b5057c129939c8
 SLACKBUILD SHORT DESCRIPTION:  bubblewrap (unprivileged sandboxing tool)
 
 SLACKBUILD NAME: bup
@@ -1068,6 +1068,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://ftp.de.debian.org/debian/pool/main/d/dpkg/dpkg_1.19.7.tar.xz
 SLACKBUILD MD5SUM: 60f57c5494e6dfa177504d47bfa0e383
 SLACKBUILD SHORT DESCRIPTION:  dpkg (Debian package management system)
+
+SLACKBUILD NAME: dsniff
+SLACKBUILD LOCATION: ./dsniff
+SLACKBUILD FILES: README dsniff.SlackBuild dsniff.info patches/01_time.h.patch patches/02_mailsnarf_corrupt.patch patches/03_pcap_read_dump.patch patches/04_multiple_intf.patch patches/05_amd64_fix.patch patches/06_urlsnarf_zeropad.patch patches/07_libnet_1.1.patch patches/08_openssl-0.9.8.patch patches/09_sysconf_clocks.patch patches/10_urlsnarf_escape.patch patches/11_string_header.patch patches/12_arpa_inet_header.patch patches/13_pop_with_version.patch patches/14_obsolete_time.patch patches/15_checksum_libnids.patch patches/16_TDS_decoder.patch patches/17_checksum.patch patches/18_sshcrypto.patch patches/19_rewrite-and-modernize-POP-decoder.patch patches/20_debian_dirs.patch patches/21_msgsnarf_segfault.patch patches/22_handlepp.patch patches/23_urlsnarf_timestamp.patch patches/24_Fix-OpenSSL1.1.0-Build.patch patches/25_fix-spelling-errors.patch patches/26_arpspoof-add-r-switch-to-poison-both-directions.patch patches/27_arpspoof-allow-use-of-of-multiple-targets.patch patches/28_arpspoof-allow-selection-of-source-hw-address.patch patches/29_libnet_name2addr4.patch patches/30_pntohl_shift.patch patches/31_sysconf_clocks.patch patches/32_rpc_segfault.patch patches/33_sshcrypto_DES.patch patches/34_fix-parallel-FTBFS.patch patches/35_Add_CPPFLAGS.patch patches/36_implicit_declarations.patch patches/series slack-desc
+SLACKBUILD VERSION: 2.4b1
+SLACKBUILD REQUIRED: libnet libnids
+SLACKBUILD DOWNLOAD: http://www.monkey.org/~dugsong/dsniff/beta/dsniff-2.4b1.tar.gz
+SLACKBUILD MD5SUM: 2f761fa3475682a7512b0b43568ee7d6
+SLACKBUILD SHORT DESCRIPTION:  dsniff (network auditing and penetration testing)
 
 SLACKBUILD NAME: dwdiff
 SLACKBUILD LOCATION: ./dwdiff
@@ -3160,10 +3169,10 @@ SLACKBUILD SHORT DESCRIPTION:  md5deep (Advanced checksum hashing tool)
 SLACKBUILD NAME: memcached
 SLACKBUILD LOCATION: ./memcached
 SLACKBUILD FILES: README doinst.sh files/memcached.conf files/rc.memcached memcached.SlackBuild memcached.info slack-desc
-SLACKBUILD VERSION: 1.6.2
+SLACKBUILD VERSION: 1.6.3
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.memcached.org/files/memcached-1.6.2.tar.gz
-SLACKBUILD MD5SUM: f4405eaff0448523406e868b32186a7d
+SLACKBUILD DOWNLOAD: http://www.memcached.org/files/memcached-1.6.3.tar.gz
+SLACKBUILD MD5SUM: 5a4188901cf63f1f0f883f6b4b26ea3f
 SLACKBUILD SHORT DESCRIPTION:  memcached (object caching system)
 
 SLACKBUILD NAME: minidb
@@ -3430,10 +3439,10 @@ SLACKBUILD SHORT DESCRIPTION:  NDisc6 (IPV6 network utilities)
 SLACKBUILD NAME: ndpi
 SLACKBUILD LOCATION: ./ndpi
 SLACKBUILD FILES: README ndpi.SlackBuild ndpi.info slack-desc
-SLACKBUILD VERSION: 3.0
+SLACKBUILD VERSION: 17d531e
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/ntop/nDPI/archive/3.0/nDPI-3.0.tar.gz
-SLACKBUILD MD5SUM: e1df6041ca61e78284254e183741f51d
+SLACKBUILD DOWNLOAD: https://github.com/ntop/nDPI/archive/17d531e3db61326f286c7d0d543f4ea5b00bc796.tar.gz
+SLACKBUILD MD5SUM: 5490be7f26f08cff1a5e90ba8b44b062
 SLACKBUILD SHORT DESCRIPTION:  ndpi (Open Source Deep Packet Inspection Software Toolkit)
 
 SLACKBUILD NAME: neofetch
@@ -3511,10 +3520,10 @@ SLACKBUILD SHORT DESCRIPTION:  netdata (Real-time performance monitoring)
 SLACKBUILD NAME: nethogs
 SLACKBUILD LOCATION: ./nethogs
 SLACKBUILD FILES: README nethogs.SlackBuild nethogs.info slack-desc
-SLACKBUILD VERSION: 0.8.5
+SLACKBUILD VERSION: 0.8.6
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/raboof/nethogs/archive/v0.8.5.tar.gz
-SLACKBUILD MD5SUM: 002fd7227d8ed2a8b0fcb0a1b44731bf
+SLACKBUILD DOWNLOAD: https://github.com/raboof/nethogs/archive/v0.8.6.tar.gz
+SLACKBUILD MD5SUM: e7acdcf0fd73975eb8bdf3704c952b2a
 SLACKBUILD SHORT DESCRIPTION:  NetHogs (a small 'net top' tool)
 
 SLACKBUILD NAME: netperf
@@ -3628,10 +3637,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-bower (A package manager for the web)
 SLACKBUILD NAME: node-browserify
 SLACKBUILD LOCATION: ./node-browserify
 SLACKBUILD FILES: README node-browserify.SlackBuild node-browserify.info slack-desc
-SLACKBUILD VERSION: 16.5.0
+SLACKBUILD VERSION: 16.5.1
 SLACKBUILD REQUIRED: node
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/browserify/-/browserify-16.5.0.tgz
-SLACKBUILD MD5SUM: c033c22c44760ba252a689d8f7bbf636
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/browserify/-/browserify-16.5.1.tgz
+SLACKBUILD MD5SUM: 32e8fad0815ada577093c22d78a589e0
 SLACKBUILD SHORT DESCRIPTION:  node-browserify (browser-side require() the node.js way)
 
 SLACKBUILD NAME: node-clean-css-cli
@@ -3871,10 +3880,10 @@ SLACKBUILD SHORT DESCRIPTION:  nsoq (Network Security over a 'Q'rawler and RSOI 
 SLACKBUILD NAME: ntopng
 SLACKBUILD LOCATION: ./ntopng
 SLACKBUILD FILES: README doinst.sh ntopng.SlackBuild ntopng.info rc.ntopng slack-desc
-SLACKBUILD VERSION: 3.8.1
-SLACKBUILD REQUIRED: hiredis geoip rrdtool redis zeromq libmaxminddb ndpi
-SLACKBUILD DOWNLOAD: https://github.com/ntop/ntopng/archive/3.8.1/ntopng-3.8.1.tar.gz
-SLACKBUILD MD5SUM: 04f0f5be653f693c19c2b7b25490bc38
+SLACKBUILD VERSION: 4.0
+SLACKBUILD REQUIRED: hiredis geoipupdate rrdtool redis zeromq libmaxminddb ndpi node-uglifyjs
+SLACKBUILD DOWNLOAD: https://github.com/ntop/ntopng/archive/4.0/ntopng-4.0.tar.gz
+SLACKBUILD MD5SUM: 73d5cdfae5d1c72a93321b9ab5c920f6
 SLACKBUILD SHORT DESCRIPTION:  ntopng (next generation network top)
 
 SLACKBUILD NAME: numpy
@@ -5473,9 +5482,9 @@ SLACKBUILD SHORT DESCRIPTION:  secretstorage: secretstorage (securely storing pa
 SLACKBUILD NAME: securefs
 SLACKBUILD LOCATION: ./securefs
 SLACKBUILD FILES: README securefs.SlackBuild securefs.info slack-desc
-SLACKBUILD VERSION: 0.9.0
+SLACKBUILD VERSION: 0.11.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/netheril96/securefs/archive/0.9.0.tar.gz
+SLACKBUILD DOWNLOAD: https://github.com/netheril96/securefs/archive/0.11.1.tar.gz
 SLACKBUILD MD5SUM: 9b90ffc4074cf4a69bd13f4249e7b854
 SLACKBUILD SHORT DESCRIPTION:  securefs (FUSE transparent encryption filesystem)
 
@@ -6454,10 +6463,10 @@ SLACKBUILD SHORT DESCRIPTION:  unoconv (Universal Office Converter)
 SLACKBUILD NAME: unrar
 SLACKBUILD LOCATION: ./unrar
 SLACKBUILD FILES: README files/unrar-nonfree.1.gz files/unrar.1.gz slack-desc unrar.SlackBuild unrar.info
-SLACKBUILD VERSION: 5.9.1
+SLACKBUILD VERSION: 5.9.2
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.rarlab.com/rar/unrarsrc-5.9.1.tar.gz
-SLACKBUILD MD5SUM: b1e3f57234288b18f5f9dbe8ef198c3b
+SLACKBUILD DOWNLOAD: http://www.rarlab.com/rar/unrarsrc-5.9.2.tar.gz
+SLACKBUILD MD5SUM: 67148484b431aea1329653b885ffcdf2
 SLACKBUILD SHORT DESCRIPTION:  unrar (unpacker for the RAR archive format)
 
 SLACKBUILD NAME: unrtf
@@ -6723,11 +6732,11 @@ SLACKBUILD SHORT DESCRIPTION:  websocketpp (C++ websocket client/server library)
 
 SLACKBUILD NAME: weechat
 SLACKBUILD LOCATION: ./weechat
-SLACKBUILD FILES: README patches/9d16e85d375281ba827480b7a697cd0f725e6733.patch slack-desc weechat.SlackBuild weechat.info
-SLACKBUILD VERSION: 2.7.1
+SLACKBUILD FILES: README slack-desc weechat.SlackBuild weechat.info
+SLACKBUILD VERSION: 2.8
 SLACKBUILD REQUIRED: lua asciidoctor
-SLACKBUILD DOWNLOAD: http://www.weechat.org/files/src/weechat-2.7.1.tar.bz2
-SLACKBUILD MD5SUM: 5d187f3b21bf06c1cc0b59d667dcf9a0
+SLACKBUILD DOWNLOAD: http://www.weechat.org/files/src/weechat-2.8.tar.bz2
+SLACKBUILD MD5SUM: 738a230dbc6de93f5358d8583500b512
 SLACKBUILD SHORT DESCRIPTION:  WeeChat (fast, light & extensible chat client)
 
 SLACKBUILD NAME: whatweb
