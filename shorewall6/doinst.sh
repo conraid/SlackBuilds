@@ -25,3 +25,7 @@ perms() {
 
 perms etc/rc.d/rc.shorewall6.new
 perms etc/logrotate.d/shorewall6.new
+for NEW in etc/shorewall6/*.new; do
+  config $NEW
+done
+
