@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=shorewall
 VERSION=5.2.4
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 ARCH=noarch
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -75,11 +75,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
-
-# Add config files in doinst.sh (thanks to SBo)
-for NEW in $PKG/etc/shorewall/*.new; do
-   echo $NEW | sed 's/.*etc/config etc/' >> $PKG/install/doinst.sh
-done
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
