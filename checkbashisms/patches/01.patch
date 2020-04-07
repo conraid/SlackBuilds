@@ -1,0 +1,91 @@
+From de03e363ff8a07c5732a3275d2685e7fe116864d Mon Sep 17 00:00:00 2001
+From: Mattia Rizzolo <mattia@debian.org>
+Date: Mon, 6 Apr 2020 15:35:02 +0200
+Subject: [PATCH] checkbashisms: Improve `command` recognition.
+
++ Improve check for `command` to properly detect options other than -p
+  also when -p is not the first option.
++ After Policy v4.1.5, the POSIX standard for shell script is
+  POSIX.1-2017.  Recognize `command -v` and `command -V` as valid.
+
+Closes: #835498
+Thanks: Eero Vuojolahti <eero@vuojolahti.com> for the initial patch
+Signed-off-by: Mattia Rizzolo <mattia@debian.org>
+---
+ scripts/checkbashisms.pl     |  2 +-
+ test/bashisms/command.sh     | 14 ++++++++++++--
+ test/bashisms/command.sh.out | 16 ++++++++++++----
+ test/test_checkbashisms      |  1 +
+ 5 files changed, 32 insertions(+), 7 deletions(-)
+
+diff --git a/scripts/checkbashisms.pl b/scripts/checkbashisms.pl
+index 0eb03c09..fcb15fc3 100755
+--- a/scripts/checkbashisms.pl
++++ b/scripts/checkbashisms.pl
+@@ -699,7 +699,7 @@ qr'(?:^|\s)(?<func>function\s)?\s*(?:[^<>\(\)\[\]\{\};|\s]*[^<>\(\)\[\]\{\};|\s\
+         $LEADIN . qr'jobs\s'   => q<jobs>,
+  #	$LEADIN . qr'jobs\s+-[^lp]\s' =>  q<'jobs' with option other than -l or -p>,
+         $LEADIN
+-          . qr'command\s+-[^p]\s' => q<'command' with option other than -p>,
++          . qr'command\s+(?:-[pvV]+\s+)*-(?:[pvV])*[^pvV\s]' => q<'command' with option other than -p, -v or -V>,
+         $LEADIN
+           . qr'setvar\s' =>
+           q<setvar 'foo' 'bar' should be eval 'foo="'"$bar"'"'>,
+diff --git a/test/bashisms/command.sh b/test/bashisms/command.sh
+index ae60c973..bdfb8c6b 100644
+--- a/test/bashisms/command.sh
++++ b/test/bashisms/command.sh
+@@ -2,5 +2,15 @@
+ 
+ command test
+ command -p test
+-command -v test # BASHISM
+-command -V test # BASHISM
++command -v test
++command -V test
++command -p test
++command -p -v test
++command -pv test
++command -p -v -a test # BASHISM
++command -p -a -v test # BASHISM
++command -pa test # BASHISM
++command -ap test # BASHISM
++command -p -a test # BASHISM
++command -pV -a test # BASHISM
++command -p test
+diff --git a/test/bashisms/command.sh.out b/test/bashisms/command.sh.out
+index 7a6b081a..1e1e111f 100644
+--- a/test/bashisms/command.sh.out
++++ b/test/bashisms/command.sh.out
+@@ -1,4 +1,12 @@
+-possible bashism in bashisms/command.sh line 5 ('command' with option other than -p):
+-command -v test # BASHISM
+-possible bashism in bashisms/command.sh line 6 ('command' with option other than -p):
+-command -V test # BASHISM
++possible bashism in bashisms/command.sh line 10 ('command' with option other than -p, -v or -V):
++command -p -v -a test # BASHISM
++possible bashism in bashisms/command.sh line 11 ('command' with option other than -p, -v or -V):
++command -p -a -v test # BASHISM
++possible bashism in bashisms/command.sh line 12 ('command' with option other than -p, -v or -V):
++command -pa test # BASHISM
++possible bashism in bashisms/command.sh line 13 ('command' with option other than -p, -v or -V):
++command -ap test # BASHISM
++possible bashism in bashisms/command.sh line 14 ('command' with option other than -p, -v or -V):
++command -p -a test # BASHISM
++possible bashism in bashisms/command.sh line 15 ('command' with option other than -p, -v or -V):
++command -pV -a test # BASHISM
+diff --git a/test/test_checkbashisms b/test/test_checkbashisms
+index be7ac730..38d4c4a9 100755
+--- a/test/test_checkbashisms
++++ b/test/test_checkbashisms
+@@ -20,6 +20,7 @@ if test "${1:-}" = --installed; then
+     COMMAND=checkbashisms
+     shift
+ else
++    # shellcheck disable=SC2034
+     COMMAND="../scripts/checkbashisms.pl"
+ fi
+ 
+-- 
+2.25.0
+
