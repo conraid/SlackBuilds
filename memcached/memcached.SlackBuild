@@ -28,7 +28,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=memcached
-VERSION=1.6.3
+VERSION=1.6.4
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -80,6 +80,14 @@ chmod -R u+w,go+r-w,a+X-s .
 # Set 64bit config
 [ "$ARCH" = "x86_64" ] && CONF64="--enable-64bit" || CONF64=""
 
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
+
+autoreconf -fvi
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \

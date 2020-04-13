@@ -1,0 +1,14 @@
+diff -Naupr a/configure.ac b/configure.ac
+--- a/configure.ac	2020-04-12 22:39:36.000000000 +0200
++++ b/configure.ac	2020-04-13 16:02:31.019900444 +0200
+@@ -490,6 +490,10 @@ if test "x$enable_static" = "xyes"; then
+   LDFLAGS="-static $LDFLAGS"
+ fi
+ 
++PKG_CHECK_MODULES([SASL2], [libsasl2], [
++    LIBS="$SASL2_LIBS $LIBS"
++])
++
+ dnl ----------------------------------------------------------------------------
+ 
+ AC_SEARCH_LIBS(gethugepagesizes, hugetlbfs)
