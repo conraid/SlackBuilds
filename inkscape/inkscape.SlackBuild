@@ -2,7 +2,7 @@
 #
 # Slackware build script for inkscape (http://inkscape.org)
 #
-# Copyright 2008-2019 Corrado Franco (https://conraid.net)
+# Copyright 2008-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=inkscape
-VERSION=0.92.4
+VERSION=0.92.5
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -86,9 +86,6 @@ fi
 
 # Fix man path
 sed 's|\${SHARE_INSTALL}/man/man|man/man|g' -i CMakeScripts/Pod2man.cmake
-
-# Fix for gsl 2.4
-sed 's| abs(| std::fabs(|g' -i src/ui/tools/flood-tool.cpp
 
 # Fix lib path
 sed "/INKSCAPE_LIBDIR/s/lib/lib$LIBDIRSUFFIX/g" -i CMakeScripts/ConfigPaths.cmake
