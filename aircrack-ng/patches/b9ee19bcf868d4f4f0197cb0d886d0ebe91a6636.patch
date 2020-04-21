@@ -1,0 +1,23 @@
+From b9ee19bcf868d4f4f0197cb0d886d0ebe91a6636 Mon Sep 17 00:00:00 2001
+From: Mister X <3520734+Mister-X-@users.noreply.github.com>
+Date: Sat, 22 Feb 2020 17:56:08 -0700
+Subject: [PATCH] airgraph-ng: fix dist targets
+
+Fixes: #2119
+Committed-by: Joseph Benden <joe@benden.us>
+---
+ scripts/airgraph-ng/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/airgraph-ng/Makefile.am b/scripts/airgraph-ng/Makefile.am
+index b2d879f9b..8afdffee3 100644
+--- a/scripts/airgraph-ng/Makefile.am
++++ b/scripts/airgraph-ng/Makefile.am
+@@ -63,6 +63,6 @@ EXTRA_DIST = airgraph-ng \
+ 			 airodump-join \
+ 			 lib \
+ 			 setup.py \
+-			 graphviz \
++			 airgraphviz \
+ 			 README \
+ 			 test

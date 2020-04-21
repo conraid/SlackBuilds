@@ -1,0 +1,63 @@
+From 5815bfe2ede99c094709a3289172335c3ba5b255 Mon Sep 17 00:00:00 2001
+From: Mister X <3520734+Mister-X-@users.noreply.github.com>
+Date: Sat, 22 Feb 2020 17:39:11 -0700
+Subject: [PATCH] airgraph-ng: fix graphviz package conflict.
+
+Renamed the `graphviz` package to prevent conflict.
+
+Fixes: #2119
+Committed-by: Joseph Benden <joe@benden.us>
+---
+ scripts/airgraph-ng/airgraph-ng                                 | 2 +-
+ scripts/airgraph-ng/{graphviz => airgraphviz}/__init__.py       | 0
+ scripts/airgraph-ng/{graphviz => airgraphviz}/libDumpParse.py   | 0
+ scripts/airgraph-ng/{graphviz => airgraphviz}/libOuiParse.py    | 0
+ .../airgraph-ng/{graphviz => airgraphviz}/lib_Airgraphviz.py    | 0
+ scripts/airgraph-ng/setup.py                                    | 2 +-
+ 6 files changed, 2 insertions(+), 2 deletions(-)
+ rename scripts/airgraph-ng/{graphviz => airgraphviz}/__init__.py (100%)
+ rename scripts/airgraph-ng/{graphviz => airgraphviz}/libDumpParse.py (100%)
+ rename scripts/airgraph-ng/{graphviz => airgraphviz}/libOuiParse.py (100%)
+ rename scripts/airgraph-ng/{graphviz => airgraphviz}/lib_Airgraphviz.py (100%)
+
+diff --git a/scripts/airgraph-ng/airgraph-ng b/scripts/airgraph-ng/airgraph-ng
+index 6d5ad076b..c28ee9f2a 100644
+--- a/scripts/airgraph-ng/airgraph-ng
++++ b/scripts/airgraph-ng/airgraph-ng
+@@ -13,7 +13,7 @@ import sys, argparse, os
+ import pdb
+ 
+ try:
+-    from graphviz import *
++    from airgraphviz import *
+ except ImportError as error:
+     raise Exception("Your airgraph-ng installation is broken, could not import libraries: %s" %(error))
+ 
+diff --git a/scripts/airgraph-ng/graphviz/__init__.py b/scripts/airgraph-ng/airgraphviz/__init__.py
+similarity index 100%
+rename from scripts/airgraph-ng/graphviz/__init__.py
+rename to scripts/airgraph-ng/airgraphviz/__init__.py
+diff --git a/scripts/airgraph-ng/graphviz/libDumpParse.py b/scripts/airgraph-ng/airgraphviz/libDumpParse.py
+similarity index 100%
+rename from scripts/airgraph-ng/graphviz/libDumpParse.py
+rename to scripts/airgraph-ng/airgraphviz/libDumpParse.py
+diff --git a/scripts/airgraph-ng/graphviz/libOuiParse.py b/scripts/airgraph-ng/airgraphviz/libOuiParse.py
+similarity index 100%
+rename from scripts/airgraph-ng/graphviz/libOuiParse.py
+rename to scripts/airgraph-ng/airgraphviz/libOuiParse.py
+diff --git a/scripts/airgraph-ng/graphviz/lib_Airgraphviz.py b/scripts/airgraph-ng/airgraphviz/lib_Airgraphviz.py
+similarity index 100%
+rename from scripts/airgraph-ng/graphviz/lib_Airgraphviz.py
+rename to scripts/airgraph-ng/airgraphviz/lib_Airgraphviz.py
+diff --git a/scripts/airgraph-ng/setup.py b/scripts/airgraph-ng/setup.py
+index cd37f023b..b58109181 100644
+--- a/scripts/airgraph-ng/setup.py
++++ b/scripts/airgraph-ng/setup.py
+@@ -13,6 +13,6 @@
+       classifiers=[
+           'Development Status :: 4 - Beta',
+       ],
+-      packages=['graphviz'],
++      packages=['airgraphviz'],
+       scripts=['airodump-join', 'airgraph-ng'],
+      )
