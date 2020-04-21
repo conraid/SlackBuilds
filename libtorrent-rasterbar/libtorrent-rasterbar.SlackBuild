@@ -86,32 +86,6 @@ if [ -e $CWD/patches/ ]; then
   done
 fi
 
-PYTHON="python2" \
-LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --infodir=/usr/info \
-  --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --enable-static=no \
-  --enable-shared=yes \
-  --with-libiconv \
-  --enable-python-binding \
-  --with-boost-system=boost_system \
-  --with-boost-python=boost_python \
-  --with-boost-libdir=/usr/lib${LIBDIRSUFFIX} \
-  --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
-
-make -j1
-make DESTDIR=$PKG install
-
-make clean
 PYTHON="python3" \
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
