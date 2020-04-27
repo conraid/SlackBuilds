@@ -2,7 +2,7 @@
 #
 # Slackware build script for afl-utils
 #
-# Copyright 2017-2019 Corrado Franco (https://conraid.net)
+# Copyright 2017-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=afl-utils
-VERSION=1.33a
-BUILD=${BUILD:-5}
+VERSION=1.34a
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,14 +72,13 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM-v$VERSION
+tar xvf $CWD/$PKGNAM-v$VERSION.tar.bz2
+cd $PKGNAM-v$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-CFLAGS="$SLKCFLAGS" python setup.py install --root=$PKG
 CFLAGS="$SLKCFLAGS" python3 setup.py install --root=$PKG
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
