@@ -2,7 +2,7 @@
 #
 # Slackware build script for reppy
 #
-# Copyright 2019 Corrado Franco (https://conraid.net)
+# Copyright 2019-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=reppy
 VERSION=0.4.14
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -79,7 +79,6 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-CFLAGS="$SLKCFLAGS" python2 setup.py install --root=$PKG
 CFLAGS="$SLKCFLAGS" python3 setup.py install --root=$PKG
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
