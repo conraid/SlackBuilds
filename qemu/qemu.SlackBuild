@@ -29,7 +29,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=qemu
-SRCVERSION=4.2.0
+SRCVERSION=5.0.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -118,7 +118,6 @@ ARFLAGS="rv" \
   --enable-vnc-png \
   --enable-virtfs \
   --enable-curl \
-  --enable-bluez \
   --enable-kvm \
   --enable-vde \
   --enable-cap-ng \
@@ -136,6 +135,7 @@ ARFLAGS="rv" \
   --enable-smartcard \
   --enable-fdt \
   --enable-libnfs \
+  --enable-xfsctl \
   --audio-drv-list="alsa,sdl,pa" \
   --target-list="x86_64-softmmu,x86_64-linux-user"
 
