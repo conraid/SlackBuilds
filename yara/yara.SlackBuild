@@ -2,7 +2,7 @@
 #
 # Slackware build script for yara
 #
-# Copyright 2018-2019 Corrado Franco (https://conraid.net)
+# Copyright 2018-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=yara
-VERSION=3.11.0
+VERSION=4.0.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -92,6 +92,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --infodir=/usr/info \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
   --enable-magic \
+  --with-crypto \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
