@@ -36,7 +36,7 @@ PRGNAM=docker-ce
 PKGNAM=docker
 VERSION=19.03.8
 COMMIT=afacb8b7f0d8d4f9d2a8e8736e9c993e672b41f3
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -133,7 +133,7 @@ ln -s tini-static $PKG/usr/bin/docker-init
 
 # Completion.
 cd components/cli/contrib/completion
-  install -Dm644 bash/docker $PKG/etc/bash-completion.d/docker
+  install -Dm644 bash/docker $PKG/etc/bash_completion.d/docker
   install -Dm644 zsh/_docker $PKG/usr/share/zsh/site-functions/_docker
 cd -
 
