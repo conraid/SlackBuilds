@@ -33,7 +33,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=wine
-SRCVERSION=5.4
+SRCVERSION=5.7
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -88,7 +88,6 @@ if [ -e $CWD/$PKGNAM-staging-$SRCVERSION.tar.gz ]; then
   echo "Apply staging patches..."
   tar xvf $CWD/$PKGNAM-staging-$SRCVERSION.tar.gz
   cd $TMP/$PKGNAM-staging-$SRCVERSION/
-  patch -p1 -i $CWD/patches/*.patch
   cd patches
   ./patchinstall.sh --all DESTDIR=$TMP/$PKGNAM-$SRCVERSION
   cd ../..
