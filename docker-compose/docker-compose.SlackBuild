@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=docker-compose
 VERSION=1.25.5
 VERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -92,7 +92,7 @@ fi
 
 # Completion.
 install -Dm644 contrib/completion/bash/docker-compose \
-  $PKG/etc/bash-completion.d/docker-compose
+  $PKG/etc/bash_completion.d/docker-compose
 install -Dm644 contrib/completion/zsh/_docker-compose \
   $PKG/usr/share/zsh/site-functions/_docker-compose
 
