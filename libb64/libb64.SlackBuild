@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Slackware build script for libb64
 #
-# Copyright 2017-2018 Corrado Franco (http://conraid.net)
+# Copyright 2017-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -26,18 +26,17 @@
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
 set -eu
-
-CWD=$(pwd)
+cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libb64
 VERSION=1.2.1
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="AUTHOR BENCHMARKS CHANGELOG INSTALL LICENSE README"
+DOCFILES="AUTHORS BUGS CHANGES COPYING* COPYRIGHT ChangeLog HACKING INSTALL LICENSE MAINTAINERS MANIFEST NEWS README* THANKS TODO VERSION"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -45,6 +44,14 @@ if [ -z ${ARCH:=""} ]; then
     arm*) ARCH=arm ;;
        *) ARCH=$( uname -m ) ;;
   esac
+fi
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-$BUILD.txz "
+  exit 0
 fi
 
 if [ "$ARCH" = "i586" ]; then
@@ -71,16 +78,25 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-CFLAGS="$SLKCFLAGS" make
+# Apply patches
+if [ -e $CWD/patches ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
 
-cd src
-GCCCFLAGS="$SLKCFLAGS -shared -Wl,-soname,$PKGNAM.so.0"
-gcc -L/usr/lib$LIBDIRSUFFIX $GCCCFLAGS *.o -o $PKGNAM.so.0
-cd -
+# Fix warnings as errors.
+sed -i 's|-Werror||' */Makefile
 
-install -Dm0755 src/$PKGNAM.so.0 $PKG/usr/lib${LIBDIRSUFFIX}/$PKGNAM.so.0
-ln -s /usr/lib${LIBDIRSUFFIX}/$PKGNAM.so.0 $PKG/usr/lib${LIBDIRSUFFIX}/$PKGNAM.so
-cp -r include $PKG/usr
+CFLAGS="$SLKCFLAGS" \
+make
+
+install -Dm755 src/libb64.so.0 -t $PKG/usr/lib${LIBDIRSUFFIX}
+ln -s $PKGNAM.so.0 $PKG/usr/lib${LIBDIRSUFFIX}/$PKGNAM.so
+mv include $PKG/usr
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
