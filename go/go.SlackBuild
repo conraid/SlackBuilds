@@ -33,13 +33,15 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=go
 VERSION=1.14.2
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="AUTHORS CONTRIBUT* LICENSE PATENTS README*"
+
+unset GOBIN GOPATH GOOS GOARCH BASH_ENV
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -97,7 +99,6 @@ fi
 
 RELEASE="linux"
 
-unset GOBIN GOPATH GOOS GOARCH BASH_ENV
 export GOROOT_BOOTSTRAP="/usr"
 export GOROOT="$(pwd)"
 export GOROOT_FINAL="/usr/lib${LIBDIRSUFFIX}/go"
