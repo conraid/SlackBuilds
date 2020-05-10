@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=cpprestsdk
 VERSION=2.10.16
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -95,6 +95,7 @@ cmake ../Relese -Wno-dev \
   -DCMAKE_INSTALL_LIBDIR=lib$LIBDIRSUFFIX \
   -DBUILD_TESTS=OFF \
   -DBUILD_SAMPLES=OFF \
+  -DWERROR=OFF \
   ..
 
 make
