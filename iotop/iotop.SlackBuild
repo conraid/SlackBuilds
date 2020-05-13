@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=iotop
 VERSION=0.6
-BUILD=${BUILD:-7}
+BUILD=${BUILD:-9}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -68,7 +68,10 @@ chmod -R u+w,go+r-w,a-s .
 # Sane man path
 sed -i 's|share/man/man|man/man|g' setup.py
 
-python2 setup.py install --root=$PKG
+# Fix for python3
+sed 's/itervalues/values/g' -i *.py
+
+python3 setup.py install --root=$PKG
 
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
