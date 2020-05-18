@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Slackware build script for enum
 #
-# Copyright 2016-2018 Corrado Franco (http://conraid.net)
+# Copyright 2016-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -27,11 +27,11 @@
 
 set -eu
 
-CWD=$(pwd)
+cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=enum
-VERSION=0.4.6
-BUILD=${BUILD:-4}
+VERSION=0.4.7
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -44,7 +44,28 @@ if [ -z ${ARCH:=""} ]; then
      *) ARCH=$( uname -m ) ;;
   esac
 fi
-[ "$ARCH" = "x86_64" ] && LIBDIRSUFFIX="64" || LIBDIRSUFFIX=""
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  exit 0
+fi
+
+if [ "$ARCH" = "i586" ]; then
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  LIBDIRSUFFIX="64"
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
@@ -56,7 +77,7 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-python setup.py install --root=$PKG
+CFLAGS="$SLKCFLAGS" python2 setup.py install --root=$PKG
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
@@ -70,7 +91,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a LICENSE $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
