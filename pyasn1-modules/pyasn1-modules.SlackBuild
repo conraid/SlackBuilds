@@ -2,7 +2,7 @@
 #
 # Slackware build script for pyasn1-modules
 #
-# Copyright 2015-2019 Corrado Franco (https://conraid.net)
+# Copyright 2015-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=pyasn1-modules
-VERSION=0.2.7
+VERSION=0.2.8
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -78,8 +78,7 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-CFLAGS="$SLKCFLAGS" python setup.py install --root=$PKG
-CFLAGS="$SLKCFLAGS" python setup.py install --root=$PKG
+CFLAGS="$SLKCFLAGS" python3 setup.py install --root=$PKG
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
