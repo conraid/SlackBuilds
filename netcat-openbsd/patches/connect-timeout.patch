@@ -3,13 +3,13 @@ Date: Mon, 13 Feb 2012 14:43:56 +0800
 Subject: connect timeout
 
 ---
- netcat.c |   78 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 76 insertions(+), 2 deletions(-)
+ netcat.c |   84 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 79 insertions(+), 5 deletions(-)
 
 --- a/netcat.c
 +++ b/netcat.c
-@@ -89,6 +89,7 @@
- 
+@@ -90,6 +90,7 @@
+ #include <ctype.h>
  #include <err.h>
  #include <errno.h>
 +#include <fcntl.h>
@@ -37,24 +37,34 @@ Subject: connect timeout
  int
  main(int argc, char *argv[])
  {
-@@ -1066,11 +1074,14 @@ remote_connect(const char *host, const c
- 
- 		set_common_sockopts(s, res->ai_family);
+@@ -1112,18 +1120,21 @@ remote_connect(const char *host, const c
+ 			}
+ 		}
  
 -		if (timeout_connect(s, res->ai_addr, res->ai_addrlen) == 0)
-+		if ((error = connect_with_timeout(s, res->ai_addr, res->ai_addrlen, timeout)) == CONNECTION_SUCCESS)
++		if ((error = connect_with_timeout(s, res->ai_addr, res->ai_addrlen,
++		    timeout)) == CONNECTION_SUCCESS)
  			break;
--		if (vflag)
-+		if (vflag && error == CONNECTION_FAILED)
- 			warn("connect to %s port %s (%s) failed", host, port,
- 			    uflag ? "udp" : "tcp");
-+                else if (vflag && error == CONNECTION_TIMEOUT)
-+                    warn("connect to %s port %s (%s) timed out", host, port,
-+                            uflag ? "udp" : "tcp");
+ 
+ 		if (vflag) {
+ 			/* only print IP if there is something to report */
+ 			if (nflag || ipaddr == NULL ||
+ 			    (strncmp(host, ipaddr, NI_MAXHOST) == 0))
+-				warn("connect to %s port %s (%s) failed", host,
+-				    port, uflag ? "udp" : "tcp");
++				warn("connect to %s port %s (%s) %s", host,
++				    port, uflag ? "udp" : "tcp",
++				    error == CONNECTION_TIMEOUT ? "timed out" : "failed");
+ 			else
+-				warn("connect to %s (%s) port %s (%s) failed",
+-				    host, ipaddr, port, uflag ? "udp" : "tcp");
++				warn("connect to %s (%s) port %s (%s) %s",
++				    host, ipaddr, port, uflag ? "udp" : "tcp",
++				    error == CONNECTION_TIMEOUT ? "timed out" : "failed");
+ 		}
  
  		save_errno = errno;
- 		close(s);
-@@ -1111,6 +1122,69 @@ timeout_connect(int s, const struct sock
+@@ -1165,6 +1176,69 @@ timeout_connect(int s, const struct sock
  	return ret;
  }
  

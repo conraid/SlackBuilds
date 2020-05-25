@@ -29,7 +29,7 @@ Subject: broadcast support
  data is translated into CR+LF before being written to the socket.  Line
 --- a/netcat.c
 +++ b/netcat.c
-@@ -133,6 +133,7 @@
+@@ -132,6 +132,7 @@
  #define UDP_SCAN_TIMEOUT 3			/* Seconds */
  
  /* Command Line Options */
@@ -37,7 +37,7 @@ Subject: broadcast support
  int	dflag;					/* detached, no stdin */
  int	Fflag;					/* fdpass sock to stdout */
  unsigned int iflag;				/* Interval Flag */
-@@ -262,9 +263,9 @@ main(int argc, char *argv[])
+@@ -264,9 +265,9 @@ main(int argc, char *argv[])
  
  	while ((ch = getopt(argc, argv,
  # if defined(TLS)
@@ -49,7 +49,7 @@ Subject: broadcast support
  # endif
  	    != -1) {
  		switch (ch) {
-@@ -274,6 +275,13 @@ main(int argc, char *argv[])
+@@ -276,6 +277,13 @@ main(int argc, char *argv[])
  		case '6':
  			family = AF_INET6;
  			break;
@@ -63,7 +63,7 @@ Subject: broadcast support
  		case 'U':
  			family = AF_UNIX;
  			break;
-@@ -1833,6 +1841,15 @@ set_common_sockopts(int s, int af)
+@@ -1902,6 +1910,15 @@ set_common_sockopts(int s, int af)
  {
  	int x = 1;
  
@@ -79,7 +79,7 @@ Subject: broadcast support
  # if defined(TCP_MD5SIG)
  	if (Sflag) {
  		if (setsockopt(s, IPPROTO_TCP, TCP_MD5SIG,
-@@ -2129,6 +2146,7 @@ help(void)
+@@ -2180,6 +2197,7 @@ help(void)
  	fprintf(stderr, "\tCommand Summary:\n\
  	\t-4		Use IPv4\n\
  	\t-6		Use IPv6\n\

@@ -4,8 +4,8 @@ Subject: use -s/-p flags to specify listen address
 
 ---
  nc.1     |   18 ++++++++++++++----
- netcat.c |   49 +++++++++++++++++++++++++++++--------------------
- 2 files changed, 43 insertions(+), 24 deletions(-)
+ netcat.c |   47 +++++++++++++++++++++++++++++++----------------
+ 2 files changed, 45 insertions(+), 20 deletions(-)
 
 --- a/nc.1
 +++ b/nc.1
@@ -32,7 +32,7 @@ Subject: use -s/-p flags to specify listen address
  Additionally, any timeouts specified with the
  .Fl w
  option are ignored.
-@@ -194,8 +206,6 @@ For
+@@ -193,8 +205,6 @@ For
  datagram sockets, specifies the local temporary socket file
  to create and use so that datagrams can be received.
  Cannot be used together with
@@ -43,34 +43,32 @@ Subject: use -s/-p flags to specify listen address
  Change the IPv4 TOS/IPv6 traffic class value.
 --- a/netcat.c
 +++ b/netcat.c
-@@ -508,31 +508,40 @@ main(int argc, char *argv[])
+@@ -510,27 +510,42 @@ main(int argc, char *argv[])
  # endif
  
  	/* Cruft to make sure options are clean, and used properly. */
--	if (argv[0] && !argv[1] && family == AF_UNIX) {
+-	if (argc == 1 && family == AF_UNIX) {
 -# if defined(IPPROTO_DCCP) && defined(SOCK_DCCP)
 -		if (dccpflag)
 -			errx(1, "cannot use -Z and -U");
 -# endif
 -		host = argv[0];
--		uport = NULL;
--	} else if (!argv[0] && lflag) {
+-	} else if (argc == 0 && lflag) {
 -		if (sflag)
 -			errx(1, "cannot use -s and -l");
 -		if (pflag)
 -			errx(1, "cannot use -p and -l");
 -		if (zflag)
 -			errx(1, "cannot use -z and -l");
--	} else if (argv[0] && !argv[1]) {
--		if (!lflag)
--			usage(1);
+-	} else if (argc == 1 && lflag) {
 -		uport = &argv[0];
--		host = NULL;
--	} else if (argv[0] && argv[1]) {
+-	} else if (argc == 2) {
 +	if (argc == 0 && lflag) {
 +		uport = &pflag;
 +		host = sflag;
-+	} else if (argc == 1 && !pflag && !sflag) {
++	} else if (argc == 1 && !pflag &&
++			/* `nc -l 12345` or `nc -U bar` or `nc -uU -s foo bar` */
++			(!sflag || (family == AF_UNIX && uflag && !lflag))) {
 +		if (family == AF_UNIX) {
 +			host = argv[0];
 +			uport = NULL;

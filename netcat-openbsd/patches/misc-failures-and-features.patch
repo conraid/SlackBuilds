@@ -22,7 +22,7 @@ Subject: misc failures and features
  LDFLAGS=  -Wl,--no-add-needed
 --- a/nc.1
 +++ b/nc.1
-@@ -365,6 +365,54 @@ and which side is being used as a
+@@ -364,6 +364,54 @@ and which side is being used as a
  The connection may be terminated using an
  .Dv EOF
  .Pq Sq ^D .
@@ -77,7 +77,7 @@ Subject: misc failures and features
  .Sh DATA TRANSFER
  The example in the previous section can be expanded to build a
  basic data transfer model.
-@@ -517,6 +565,9 @@ Original implementation by
+@@ -516,6 +564,9 @@ Original implementation by
  .br
  Rewritten with IPv6 support by
  .An Eric Jackson Aq Mt ericj@monkey.org .
@@ -97,7 +97,7 @@ Subject: misc failures and features
  #include <stdarg.h>
  #include <stdio.h>
  #include <stdlib.h>
-@@ -248,7 +249,10 @@ main(int argc, char *argv[])
+@@ -247,7 +248,10 @@ main(int argc, char *argv[])
  	struct addrinfo hints;
  	struct servent *sv;
  	socklen_t len;
@@ -109,8 +109,8 @@ Subject: misc failures and features
  	char *proxy = NULL, *proxyport = NULL;
  	const char *errstr;
  	struct addrinfo proxyhints;
-@@ -939,6 +943,8 @@ unix_bind(char *path, int flags)
- 	    0)) < 0)
+@@ -970,6 +974,8 @@ unix_bind(char *path, int flags)
+ 	    0)) == -1)
  		return -1;
  
 +	unlink(path);
@@ -118,26 +118,26 @@ Subject: misc failures and features
  	memset(&s_un, 0, sizeof(struct sockaddr_un));
  	s_un.sun_family = AF_UNIX;
  
-@@ -1062,8 +1068,10 @@ unix_connect(char *path)
- 		if ((s = unix_bind(unix_dg_tmp_socket, SOCK_CLOEXEC)) < 0)
+@@ -1096,8 +1102,10 @@ unix_connect(char *path)
+ 		if ((s = unix_bind(unix_dg_tmp_socket, SOCK_CLOEXEC)) == -1)
  			return -1;
  	} else {
--		if ((s = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0)) < 0)
-+		if ((s = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0)) < 0) {
+-		if ((s = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0)) == -1)
++		if ((s = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0)) == -1) {
 +			errx(1, "create unix socket failed");
  			return -1;
 +		}
  	}
  
  	memset(&s_un, 0, sizeof(struct sockaddr_un));
-@@ -1073,10 +1081,12 @@ unix_connect(char *path)
+@@ -1107,10 +1115,12 @@ unix_connect(char *path)
  	    sizeof(s_un.sun_path)) {
  		close(s);
  		errno = ENAMETOOLONG;
 +		warn("unix connect abandoned");
  		return -1;
  	}
- 	if (connect(s, (struct sockaddr *)&s_un, sizeof(s_un)) < 0) {
+ 	if (connect(s, (struct sockaddr *)&s_un, sizeof(s_un)) == -1) {
  		save_errno = errno;
 +		warn("unix connect failed");
  		close(s);

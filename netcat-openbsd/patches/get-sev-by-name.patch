@@ -8,7 +8,7 @@ Subject: get sev by name
 
 --- a/netcat.c
 +++ b/netcat.c
-@@ -1653,11 +1653,16 @@ strtoport(char *portstr, int udp)
+@@ -1721,11 +1721,16 @@ strtoport(char *portstr, int udp)
  void
  build_ports(char *p)
  {
@@ -17,12 +17,12 @@ Subject: get sev by name
  	int hi, lo, cp;
  	int x = 0;
  
--	if ((n = strchr(p, '-')) != NULL) {
+-	if (isdigit((unsigned char)*p) && (n = strchr(p, '-')) != NULL) {
 +	sv = getservbyname(p, uflag ? "udp" : "tcp");
 +	if (sv) {
 +		if (asprintf(&portlist[0], "%d", ntohs(sv->s_port)) < 0)
 +			err(1, "asprintf");
-+	} else if ((n = strchr(p, '-')) != NULL) {
++	} else if (isdigit((unsigned char)*p) && (n = strchr(p, '-')) != NULL) {
  		*n = '\0';
  		n++;
  

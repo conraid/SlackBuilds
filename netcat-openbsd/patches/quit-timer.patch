@@ -4,8 +4,8 @@ Subject: quit timer
 
 ---
  nc.1     |   10 ++++++++++
- netcat.c |   50 +++++++++++++++++++++++++++++++++++++++++---------
- 2 files changed, 51 insertions(+), 9 deletions(-)
+ netcat.c |   60 +++++++++++++++++++++++++++++++++++++++++++++++++-----------
+ 2 files changed, 59 insertions(+), 11 deletions(-)
 
 --- a/nc.1
 +++ b/nc.1
@@ -14,7 +14,7 @@ Subject: quit timer
  .Op Fl P Ar proxy_username
  .Op Fl p Ar source_port
 +.Op Fl q Ar seconds
- .Op Fl s Ar source
+ .Op Fl s Ar sourceaddr
  .Op Fl T Ar keyword
  .Op Fl V Ar rtable
 @@ -167,6 +168,15 @@ Proxy authentication is only supported f
@@ -52,7 +52,7 @@ Subject: quit timer
  int
  main(int argc, char *argv[])
  {
-@@ -253,9 +256,9 @@ main(int argc, char *argv[])
+@@ -257,9 +260,9 @@ main(int argc, char *argv[])
  
  	while ((ch = getopt(argc, argv,
  # if defined(TLS)
@@ -64,7 +64,7 @@ Subject: quit timer
  # endif
  	    != -1) {
  		switch (ch) {
-@@ -347,6 +350,13 @@ main(int argc, char *argv[])
+@@ -351,6 +354,13 @@ main(int argc, char *argv[])
  		case 'p':
  			pflag = optarg;
  			break;
@@ -78,7 +78,7 @@ Subject: quit timer
  # if defined(TLS)
  		case 'R':
  			tls_cachanged = 1;
-@@ -1297,15 +1307,27 @@ readwrite(int net_fd)
+@@ -1361,15 +1371,27 @@ readwrite(int net_fd)
  	while (1) {
  		/* both inputs are gone, buffers are empty, we are done */
  		if (pfd[POLL_STDIN].fd == -1 && pfd[POLL_NETIN].fd == -1 &&
@@ -112,22 +112,37 @@ Subject: quit timer
  
  		/* poll */
  		num_fds = poll(pfd, 4, timeout);
-@@ -2032,6 +2054,7 @@ help(void)
+@@ -1526,6 +1548,13 @@ readwrite(int net_fd)
+ 			if (pfd[POLL_NETOUT].fd != -1 && Nflag)
+ 				shutdown(pfd[POLL_NETOUT].fd, SHUT_WR);
+ 			pfd[POLL_NETOUT].fd = -1;
++ 			/* #817050: handle UDP sockets and kflag */
++			if ((lflag || uflag) && pfd[POLL_NETIN].fd != -1 &&
++			    qflag >= 0 && netinbufpos == 0) {
++				shutdown(pfd[POLL_NETIN].fd, SHUT_RD);
++				pfd[POLL_NETIN].fd = -1;
++				kflag = 0;
++			}
+ 		}
+ 		/* net in gone and queue empty? */
+ 		if (pfd[POLL_NETIN].fd == -1 && netinbufpos == 0) {
+@@ -2097,6 +2126,7 @@ help(void)
  	\t-O length	TCP send buffer length\n\
  	\t-P proxyuser\tUsername for proxy authentication\n\
  	\t-p port\t	Specify local port for remote connects\n\
 +	\t-q secs\t	quit after EOF on stdin and delay of secs\n\
  	\t-r		Randomize remote ports\n\
  	\t-S		Enable the TCP MD5 signature option\n\
- 	\t-s source	Local source address\n\
-@@ -2056,10 +2079,19 @@ usage(int ret)
+ 	\t-s sourceaddr	Local source address\n\
+@@ -2121,10 +2151,18 @@ usage(int ret)
  	fprintf(stderr,
  	    "usage: nc [-46CDdFhklNnrStUuvz] [-I length] [-i interval] [-M ttl]\n"
  	    "\t  [-m minttl] [-O length] [-P proxy_username] [-p source_port]\n"
--	    "\t  [-s source] [-T keyword] [-V rtable] [-W recvlimit] "
-+	    "\t  [-q seconds] [-s source] [-T keyword] [-V rtable] [-W recvlimit] "
- 	    "[-w timeout]\n"
- 	    "\t  [-X proxy_protocol] [-x proxy_address[:port]] "
+-	    "\t  [-s sourceaddr] [-T keyword] [-V rtable] [-W recvlimit] "
+-	    "[-w timeout]\n"
+-	    "\t  [-X proxy_protocol] [-x proxy_address[:port]]\n"
++	    "\t  [-q seconds] [-s sourceaddr] [-T keyword] [-V rtable] [-W recvlimit]\n"
++	    "\t  [-w timeout] [-X proxy_protocol] [-x proxy_address[:port]]\n"
  	    "\t  [destination] [port]\n");
  	if (ret)
  		exit(1);
