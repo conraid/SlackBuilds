@@ -28,8 +28,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=inkscape
-SRCVERSION=1.0rc1_2020-04-09_09960d6f05
-VERSION=1.0rc1
+VERSION=1.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -71,9 +70,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$SRCVERSION
-tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.xz
-cd $PKGNAM-$SRCVERSION
+rm -rf $PKGNAM-${VERSION}_*
+tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
+cd $PKGNAM-${VERSION}_*
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
