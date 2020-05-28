@@ -28,7 +28,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=inkscape
-VERSION=1.0
+VERSION=0.92.5
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -70,9 +70,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-${VERSION}_*
-tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
-cd $PKGNAM-${VERSION}_*
+rm -rf $PKGNAM-${VERSION}
+tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
+cd $PKGNAM-${VERSION}
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -83,6 +83,16 @@ if [ -e $CWD/patches/ ]; then
     patch -p1 -i $PATCH
   done
 fi
+
+# Fix man path
+sed 's|\${SHARE_INSTALL}/man/man|man/man|g' -i CMakeScripts/Pod2man.cmake
+
+# Fix lib path
+sed "/INKSCAPE_LIBDIR/s/lib/lib$LIBDIRSUFFIX/g" -i CMakeScripts/ConfigPaths.cmake
+sed -e "s|lib/inkscape|lib$LIBDIRSUFFIX/inkscape|g" \
+    -e "/LIBRARY_OUTPUT_PATH/s|/lib|/lib$LIBDIRSUFFIX|" \
+    -i CMakeLists.txt
+sed -e "s|lib/inkscape|lib$LIBDIRSUFFIX/inkscape|g" -i src/CMakeLists.txt -i CMakeScripts/HelperMacros.cmake
 
 mkdir -p build
 cd build
@@ -95,10 +105,8 @@ cmake -Wno-dev \
   -DENABLE_LCMS=ON \
   -DENABLE_POPPLER=ON \
   -DENABLE_POPPLER_CAIRO=ON \
-  -DWITH_DBUS=ON \
-  -DWITH_GRAPHICS_MAGICK=ON \
-  -DWITH_GTKSPELL=ON \
-  -DWITH_JEMALLOC=ON \
+  -DWITH_GNOME_VFS=OFF \
+  -DCMAKE_WITH_NLS=ON \
   ..
 
 make
