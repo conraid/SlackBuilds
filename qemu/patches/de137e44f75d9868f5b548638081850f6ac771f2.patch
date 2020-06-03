@@ -1,0 +1,68 @@
+From de137e44f75d9868f5b548638081850f6ac771f2 Mon Sep 17 00:00:00 2001
+From: Stefan Hajnoczi <stefanha@redhat.com>
+Date: Mon, 11 May 2020 19:36:29 +0100
+Subject: [PATCH] aio-posix: don't duplicate fd handler deletion in
+ fdmon_io_uring_destroy()
+
+The io_uring file descriptor monitoring implementation has an internal
+list of fd handlers that are pending submission to io_uring.
+fdmon_io_uring_destroy() deletes all fd handlers on the list.
+
+Don't delete fd handlers directly in fdmon_io_uring_destroy() for two
+reasons:
+1. This duplicates the aio-posix.c AioHandler deletion code and could
+   become outdated if the struct changes.
+2. Only handlers with the FDMON_IO_URING_REMOVE flag set are safe to
+   remove. If the flag is not set then something still has a pointer to
+   the fd handler. Let aio-posix.c and its user worry about that. In
+   practice this isn't an issue because fdmon_io_uring_destroy() is only
+   called when shutting down so all users have removed their fd
+   handlers, but the next patch will need this!
+
+Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+Tested-by: Oleksandr Natalenko <oleksandr@redhat.com>
+Message-id: 20200511183630.279750-2-stefanha@redhat.com
+Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+---
+ util/aio-posix.c      |  1 +
+ util/fdmon-io_uring.c | 13 ++++++++++---
+ 2 files changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/util/aio-posix.c b/util/aio-posix.c
+index c3613d299e4..8af334ab195 100644
+--- a/util/aio-posix.c
++++ b/util/aio-posix.c
+@@ -679,6 +679,7 @@ void aio_context_destroy(AioContext *ctx)
+ {
+     fdmon_io_uring_destroy(ctx);
+     fdmon_epoll_disable(ctx);
++    aio_free_deleted_handlers(ctx);
+ }
+ 
+ void aio_context_set_poll_params(AioContext *ctx, int64_t max_ns,
+diff --git a/util/fdmon-io_uring.c b/util/fdmon-io_uring.c
+index d5a80ed6fbd..1d14177df07 100644
+--- a/util/fdmon-io_uring.c
++++ b/util/fdmon-io_uring.c
+@@ -342,11 +342,18 @@ void fdmon_io_uring_destroy(AioContext *ctx)
+ 
+         io_uring_queue_exit(&ctx->fdmon_io_uring);
+ 
+-        /* No need to submit these anymore, just free them. */
++        /* Move handlers due to be removed onto the deleted list */
+         while ((node = QSLIST_FIRST_RCU(&ctx->submit_list))) {
++            unsigned flags = atomic_fetch_and(&node->flags,
++                    ~(FDMON_IO_URING_PENDING |
++                      FDMON_IO_URING_ADD |
++                      FDMON_IO_URING_REMOVE));
++
++            if (flags & FDMON_IO_URING_REMOVE) {
++                QLIST_INSERT_HEAD_RCU(&ctx->deleted_aio_handlers, node, node_deleted);
++            }
++
+             QSLIST_REMOVE_HEAD_RCU(&ctx->submit_list, node_submitted);
+-            QLIST_REMOVE(node, node);
+-            g_free(node);
+         }
+ 
+         ctx->fdmon_ops = &fdmon_poll_ops;
