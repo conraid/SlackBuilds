@@ -28,11 +28,11 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=lua
-SRCVERSION=5.4.0-beta
-PKGVERSION=5.4.0_beta
+SRCVERSION=5.4.0-rc4
+PKGVERSION=5.4.0_rc4
 VERSION=5.4.0
 MAINVERSION=$(echo $VERSION | cut -d. -f-2)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -73,18 +73,15 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$SRCVERSION
+rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz
-cd $PKGNAM-$SRCVERSION
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 # Fix up a to-be-installed header and the pkgconfig file
 sed -i "s|lib/lua|lib${LIBDIRSUFFIX}/lua|" src/luaconf.h
-
-# Lua has wrong release version in its Makefile. Fix it.
-sed "s/^R= \$V.4/R= \$V.5/" -i Makefile
 
 # Apply patches
 if [ -e $CWD/patches/*.patch ]; then

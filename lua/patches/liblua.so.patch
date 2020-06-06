@@ -1,36 +1,36 @@
 diff -Naupr a/Makefile b/Makefile
---- a/Makefile	2019-05-29 12:27:15.000000000 +0200
-+++ b/Makefile	2020-02-08 13:30:22.969460785 +0100
-@@ -10,7 +10,7 @@ PLAT= none
+--- a/Makefile	2020-04-15 14:55:07.000000000 +0200
++++ b/Makefile	2020-06-06 11:54:36.029583496 +0200
+@@ -10,7 +10,7 @@ PLAT= guess
  # so take care if INSTALL_TOP is not an absolute path. See the local target.
  # You may want to make INSTALL_LMOD and INSTALL_CMOD consistent with
  # LUA_ROOT, LUA_LDIR, and LUA_CDIR in luaconf.h.
 -INSTALL_TOP= /usr/local
-+INSTALL_TOP= /usr/
++INSTALL_TOP= /usr
  INSTALL_BIN= $(INSTALL_TOP)/bin
  INSTALL_INC= $(INSTALL_TOP)/include
  INSTALL_LIB= $(INSTALL_TOP)/lib
 @@ -52,7 +52,7 @@ R= $V.0
  all:	$(PLAT)
  
- $(PLATS) clean:
--	cd src && $(MAKE) $@
-+	cd src && $(MAKE) $@ V=$(V) R=$(R)
+ $(PLATS) help test clean:
+-	@cd src && $(MAKE) $@
++	@cd src && $(MAKE) $@ V=$(V) R=$(R)
  
- test:	dummy
- 	src/lua -v
+ install: dummy
+ 	cd src && $(MKDIR) $(INSTALL_BIN) $(INSTALL_INC) $(INSTALL_LIB) $(INSTALL_MAN) $(INSTALL_LMOD) $(INSTALL_CMOD)
 diff -Naupr a/src/Makefile b/src/Makefile
---- a/src/Makefile	2019-10-07 20:11:28.000000000 +0200
-+++ b/src/Makefile	2020-02-08 13:31:27.563456039 +0100
-@@ -29,6 +29,7 @@ MYOBJS=
- PLATS= aix bsd c89 freebsd generic guess linux linux-readline macosx mingw posix solaris
+--- a/src/Makefile	2020-04-15 15:00:29.000000000 +0200
++++ b/src/Makefile	2020-06-06 11:56:29.421812337 +0200
+@@ -33,6 +33,7 @@ CMCFLAGS= -Os
+ PLATS= guess aix bsd c89 freebsd generic linux linux-readline macosx mingw posix solaris
  
  LUA_A=	liblua.a
 +LUA_SO= liblua.so
  CORE_O=	lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o lmem.o lobject.o lopcodes.o lparser.o lstate.o lstring.o ltable.o ltm.o lundump.o lvm.o lzio.o
  LIB_O=	lauxlib.o lbaselib.o lcorolib.o ldblib.o liolib.o lmathlib.o loadlib.o loslib.o lstrlib.o ltablib.o lutf8lib.o linit.o
  BASE_O= $(CORE_O) $(LIB_O) $(MYOBJS)
-@@ -40,7 +41,7 @@ LUAC_T=	luac
+@@ -44,7 +45,7 @@ LUAC_T=	luac
  LUAC_O=	luac.o
  
  ALL_O= $(BASE_O) $(LUA_O) $(LUAC_O)
@@ -39,7 +39,7 @@ diff -Naupr a/src/Makefile b/src/Makefile
  ALL_A= $(LUA_A)
  
  # Targets start here.
-@@ -56,6 +57,11 @@ $(LUA_A): $(BASE_O)
+@@ -60,6 +61,11 @@ $(LUA_A): $(BASE_O)
  	$(AR) $@ $(BASE_O)
  	$(RANLIB) $@
  
@@ -52,8 +52,8 @@ diff -Naupr a/src/Makefile b/src/Makefile
  	$(CC) -o $@ $(LDFLAGS) $(LUA_O) $(LUA_A) $(LIBS)
  
 diff -Naupr a/src/luaconf.h b/src/luaconf.h
---- a/src/luaconf.h	2019-10-01 01:52:16.000000000 +0200
-+++ b/src/luaconf.h	2020-02-08 13:30:35.158459890 +0100
+--- a/src/luaconf.h	2020-06-01 21:10:14.000000000 +0200
++++ b/src/luaconf.h	2020-06-06 11:56:50.783478566 +0200
 @@ -227,7 +227,7 @@
  
  #else			/* }{ */
