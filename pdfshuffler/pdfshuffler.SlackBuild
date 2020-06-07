@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Slackware build script for pdfshuffler
 #
-# Copyright 2017-2018 Corrado Franco (http://conraid.net)
+# Copyright 2017-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -27,11 +27,11 @@
 
 set -eu
 
-CWD=$(pwd)
+cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=pdfshuffler
 VERSION=0.6.0
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -45,6 +45,14 @@ if [ -z ${ARCH:=""} ]; then
   arm*) ARCH=arm ;;
      *) ARCH=$( uname -m ) ;;
   esac
+fi
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  exit 0
 fi
 
 if [ "$ARCH" = "i586" ]; then
@@ -73,7 +81,7 @@ chmod -R u+w,go+r-w,a+X-s .
 
 sed 's/pyPdf/PyPDF2/' -i pdfshuffler/pdfshuffler.py
 
-CFLAGS="$SLKCFLAGS" python setup.py install --root=$PKG
+CFLAGS="$SLKCFLAGS" python2 setup.py install --root=$PKG
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
