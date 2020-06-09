@@ -1297,10 +1297,10 @@ SLACKBUILD SHORT DESCRIPTION:  firewalld (Firewall daemon with D-Bus interface)
 SLACKBUILD NAME: flash_player_npapi-bin
 SLACKBUILD LOCATION: ./flash_player_npapi-bin
 SLACKBUILD FILES: README doinst.sh flash_player_npapi-bin.SlackBuild flash_player_npapi-bin.info slack-desc
-SLACKBUILD VERSION: 32.0.0.371
+SLACKBUILD VERSION: 32.0.0.387
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://fpdownload.adobe.com/get/flashplayer/pdc/32.0.0.371/flash_player_npapi_linux.x86_64.tar.gz
-SLACKBUILD MD5SUM: a20bb3725ea35e0611386d27ceb19305
+SLACKBUILD DOWNLOAD: https://fpdownload.adobe.com/get/flashplayer/pdc/32.0.0.387/flash_player_npapi_linux.x86_64.tar.gz
+SLACKBUILD MD5SUM: b9f3f08369e1e88f73f97ffe7eb70dd1
 SLACKBUILD SHORT DESCRIPTION:  flash_player_npapi (flash plugin for web browsers)
 
 SLACKBUILD NAME: flickcurl
@@ -1658,10 +1658,55 @@ SLACKBUILD NAME: goobook
 SLACKBUILD LOCATION: ./goobook
 SLACKBUILD FILES: README goobook.SlackBuild goobook.info slack-desc
 SLACKBUILD VERSION: 3.4
-SLACKBUILD REQUIRED: simplejson gdata-python-client
+SLACKBUILD REQUIRED: simplejson gdata-python-client google-api-python-client python-uritemplate google-api-core google-auth-httplib2 google-auth googleapis-common-protos pytz
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/g/goobook/goobook-3.4.tar.gz
-SLACKBUILD MD5SUM: 41f2246336ea713591e7d912d9d05193
+SLACKBUILD MD5SUM: 0619156efa7a7662900b0fb465bd3185
 SLACKBUILD SHORT DESCRIPTION:  GooBook (Access your Google contacts from the command line)
+
+SLACKBUILD NAME: google-api-core
+SLACKBUILD LOCATION: ./google-api-core
+SLACKBUILD FILES: README google-api-core.SlackBuild google-api-core.info slack-desc
+SLACKBUILD VERSION: 1.19.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/g/google-api-core/google-api-core-1.19.1.tar.gz
+SLACKBUILD MD5SUM: 31e02422f412607a15d3442116f85e84
+SLACKBUILD SHORT DESCRIPTION:  google-api-core (Core Library for Google Client Libraries)
+
+SLACKBUILD NAME: google-api-python-client
+SLACKBUILD LOCATION: ./google-api-python-client
+SLACKBUILD FILES: README google-api-python-client.SlackBuild google-api-python-client.info slack-desc
+SLACKBUILD VERSION: 1.9.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/g/google-api-python-client/google-api-python-client-1.9.1.tar.gz
+SLACKBUILD MD5SUM: 7ed51e378891031a07a6ddb4a3963e53
+SLACKBUILD SHORT DESCRIPTION:  google-api-python-client
+
+SLACKBUILD NAME: google-auth-httplib2
+SLACKBUILD LOCATION: ./google-auth-httplib2
+SLACKBUILD FILES: README google-auth-httplib2.SlackBuild google-auth-httplib2.info slack-desc
+SLACKBUILD VERSION: 0.0.3
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/g/google-auth-httplib2/google-auth-httplib2-0.0.3.tar.gz
+SLACKBUILD MD5SUM: 83b4035bcbf23da76394a1f51b522afa
+SLACKBUILD SHORT DESCRIPTION:  google-auth-httplib2 (Transport for Google Auth)
+
+SLACKBUILD NAME: google-auth
+SLACKBUILD LOCATION: ./google-auth
+SLACKBUILD FILES: README google-auth.SlackBuild google-auth.info slack-desc
+SLACKBUILD VERSION: 1.16.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/g/google-auth/google-auth-1.16.1.tar.gz
+SLACKBUILD MD5SUM: 38415eb5838c074ed398fadc684b3196
+SLACKBUILD SHORT DESCRIPTION:  google-auth (Google Auth Python Library)
+
+SLACKBUILD NAME: googleapis-common-protos
+SLACKBUILD LOCATION: ./googleapis-common-protos
+SLACKBUILD FILES: README googleapis-common-protos.SlackBuild googleapis-common-protos.info slack-desc
+SLACKBUILD VERSION: 1.52.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/g/googleapis-common-protos/googleapis-common-protos-1.52.0.tar.gz
+SLACKBUILD MD5SUM: 250011bead17cc2cbb8ad24cd3c2bd44
+SLACKBUILD SHORT DESCRIPTION:  googleapis-common-protos (Google APIs common protos)
 
 SLACKBUILD NAME: graphicsmagick
 SLACKBUILD LOCATION: ./graphicsmagick
@@ -4761,7 +4806,7 @@ SLACKBUILD SHORT DESCRIPTION:  pyquery (A jquery-like library for python)
 
 SLACKBUILD NAME: pyrit
 SLACKBUILD LOCATION: ./pyrit
-SLACKBUILD FILES: README patches/fix-broken-join.patch patches/scapy-2.4.0.patch pyrit.SlackBuild pyrit.info slack-desc
+SLACKBUILD FILES: README pyrit.SlackBuild pyrit.info slack-desc
 SLACKBUILD VERSION: 0.5.0
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://github.com/JPaulMora/Pyrit/archive/v0.5.0.tar.gz
@@ -4906,10 +4951,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-hpack (HTTP/2 Header Encoding for Python)
 SLACKBUILD NAME: python-hstspreload
 SLACKBUILD LOCATION: ./python-hstspreload
 SLACKBUILD FILES: README python-hstspreload.SlackBuild python-hstspreload.info slack-desc
-SLACKBUILD VERSION: 2020.6.5
+SLACKBUILD VERSION: 2020.6.9
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/h/hstspreload/hstspreload-2020.6.5.tar.gz
-SLACKBUILD MD5SUM: a45e1d0cc27d8c744de87a9781baa76d
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/h/hstspreload/hstspreload-2020.6.9.tar.gz
+SLACKBUILD MD5SUM: cf1d8ead3d0ecb6b95feeddc06c01216
 SLACKBUILD SHORT DESCRIPTION:  python-hstspreload (HSTS Preload list)
 
 SLACKBUILD NAME: python-httpx
@@ -5077,10 +5122,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-redis (Redis Python client)
 SLACKBUILD NAME: python-regex
 SLACKBUILD LOCATION: ./python-regex
 SLACKBUILD FILES: README python-regex.SlackBuild python-regex.info slack-desc
-SLACKBUILD VERSION: 2020.6.7
+SLACKBUILD VERSION: 2020.6.8
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/regex/regex-2020.6.7.tar.gz
-SLACKBUILD MD5SUM: 5914dfe9d5b09e0a16b99f2d28721b5e
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/regex/regex-2020.6.8.tar.gz
+SLACKBUILD MD5SUM: a991f73b0ccfe8f6e9a99bd1bc9071b1
 SLACKBUILD SHORT DESCRIPTION:  python-regex (Alternative python regular expression module)
 
 SLACKBUILD NAME: python-requests-oauthlib
@@ -5209,6 +5254,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/U/Unidecode/Unideco
 SLACKBUILD MD5SUM: e3497dde89fe129d709d9e6c6824aaa1
 SLACKBUILD SHORT DESCRIPTION:  python-unidecode (ASCII transliterations of Unicode text)
 
+SLACKBUILD NAME: python-uritemplate
+SLACKBUILD LOCATION: ./python-uritemplate
+SLACKBUILD FILES: README python-uritemplate.SlackBuild python-uritemplate.info slack-desc
+SLACKBUILD VERSION: 3.0.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/u/uritemplate/uritemplate-3.0.1.tar.gz
+SLACKBUILD MD5SUM: 869fb44fbd56713490db7272eb36c8ae
+SLACKBUILD SHORT DESCRIPTION:  python-uritemplate (URI template parsing per RFC6750 )
+
 SLACKBUILD NAME: python-urwid
 SLACKBUILD LOCATION: ./python-urwid
 SLACKBUILD FILES: README python-urwid.SlackBuild python-urwid.info slack-desc
@@ -5280,6 +5334,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pythondialog/pythondialog-3.5.1.tar.gz
 SLACKBUILD MD5SUM: 07e257d91099b804e040c6ea5ec56041
 SLACKBUILD SHORT DESCRIPTION:  pythondialog (python dialog wrapper)
+
+SLACKBUILD NAME: pytz
+SLACKBUILD LOCATION: ./pytz
+SLACKBUILD FILES: README pytz.SlackBuild pytz.info slack-desc
+SLACKBUILD VERSION: 2020.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pytz/pytz-2020.1.tar.gz
+SLACKBUILD MD5SUM: 0349106ac02f2bfe565dd6d5594e3a15
+SLACKBUILD SHORT DESCRIPTION:  pytz (World Timezone Definitions for Python)
 
 SLACKBUILD NAME: pyudev
 SLACKBUILD LOCATION: ./pyudev
@@ -7030,10 +7093,10 @@ SLACKBUILD SHORT DESCRIPTION:  wpebackend-fdo (freedesktop.org backend for WPE W
 SLACKBUILD NAME: wpscan
 SLACKBUILD LOCATION: ./wpscan
 SLACKBUILD FILES: README slack-desc wpscan.SlackBuild wpscan.info
-SLACKBUILD VERSION: 3.8.1
+SLACKBUILD VERSION: 3.8.2
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://rubygems.org/downloads/wpscan-3.8.1.gem
-SLACKBUILD MD5SUM: fbca6d4fa09f2e484ffd001366f03e15
+SLACKBUILD DOWNLOAD: https://rubygems.org/downloads/wpscan-3.8.2.gem
+SLACKBUILD MD5SUM: c8ddd2492be5950a5445d4c16aba9e08
 SLACKBUILD SHORT DESCRIPTION:  wpscan (black box WordPress vulnerability scanner)
 
 SLACKBUILD NAME: wput
