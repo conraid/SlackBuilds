@@ -2,7 +2,7 @@
 #
 # Slackware build script for ModSecurity Apache module
 #
-# Copyright 2015-2020 Corrado Franco (https://conraid.net)
+# Copyright 2015-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,8 +32,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=modsecurity-apache
 SRCVERSION=v0.0.9-beta1
 VERSION=$(echo $SRCVERSION | tr - _ | sed 's/^v//')
-CRSVERSION=3.2.0
-BUILD=${BUILD:-2}
+CRSVERSION=3.3.0-rc1
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -77,7 +77,7 @@ cd $TMP
 rm -rf $PKGNAM-$SRCVERSION
 tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz
 cd $PKGNAM-$SRCVERSION
-tar xvf $CWD/owasp-modsecurity-crs-${CRSVERSION}.tar.gz || tar xvf $CWD/${CRSVERSION}.tar.gz
+tar xvf $CWD/coreruleset-${CRSVERSION}.tar.gz
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
@@ -113,7 +113,7 @@ mkdir -p $PKG/etc/httpd/modsecurity.d
 sed "s|%LIBDIRSUFFIX%|$LIBDIRSUFFIX|" $CWD/files/mod_security3.conf > $PKG/etc/httpd/mod_security3.conf.new
 
 # Install Core Rule Set
-cd owasp-modsecurity-crs-$CRSVERSION
+cd coreruleset-$CRSVERSION
   mkdir -p $PKG/etc/httpd/modsecurity.d/crs/rules
   install -m644 crs-setup.conf.example $PKG/etc/httpd/modsecurity.d/crs/crs-setup.conf.new
   cd rules
