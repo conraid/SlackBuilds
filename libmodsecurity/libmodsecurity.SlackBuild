@@ -33,7 +33,7 @@ PRGNAM=modsecurity
 PKGNAM=libmodsecurity
 SRCVERSION=v3.0.4
 VERSION=3.0.4
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -113,6 +113,9 @@ find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r st
 
 # Install recommended conf for apache
 install -Dm644 modsecurity.conf-recommended $PKG/etc/httpd/modsecurity.d/modsecurity.conf.new
+
+# Install unicode.mapping
+install -Dm644 unicode.mapping -t $PKG/etc/httpd/modsecurity.d
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION || true
