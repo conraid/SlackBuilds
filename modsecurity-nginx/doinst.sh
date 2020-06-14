@@ -12,4 +12,6 @@ config() {
 }
 
 config etc/nginx/modules/modsecurity.conf.new
+config etc/nginx/modsec/main.conf.new
+config etc/nginx/modsec/crs/crs-setup.conf.new
 

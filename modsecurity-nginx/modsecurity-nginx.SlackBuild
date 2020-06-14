@@ -2,7 +2,7 @@
 #
 # Slackware build script for ModSecurity Apache module
 #
-# Copyright 2015-2020 Corrado Franco (https://conraid.net)
+# Copyright 2015-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,8 +32,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=modsecurity-nginx
 SRCVERSION=v1.0.1
 VERSION=$(echo $SRCVERSION | tr - _ | sed 's/^v//')
-NGINXVERSION=1.17.7
-BUILD=${BUILD:-1}
+NGINXVERSION=1.19.0
+CRSVERSION=3.3.0-rc1
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -74,8 +75,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$SRCVERSION
+rm -rf $PKGNAM-$SRCVERSION nginx-$NGINXVERSION
 tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz
+tar xvf $CWD/coreruleset-${CRSVERSION}.tar.gz -C $PKGNAM-$SRCVERSION
 tar xvf $CWD/nginx-$NGINXVERSION.tar.gz
 cd nginx-$NGINXVERSION
 
@@ -102,6 +104,17 @@ cd ../$PKGNAM-$SRCVERSION
 # Install config file
 mkdir -p $PKG/etc/nginx/modules
 sed "s/%LIBDIRSUFFIX%/$LIBDIRSUFFIX/" $CWD/files/modsecurity.conf > $PKG/etc/nginx/modules/modsecurity.conf.new
+
+# Install Core Rule Set
+cd coreruleset-$CRSVERSION
+  mkdir -p $PKG/etc/nginx/modsec/crs/rules
+  install -m644 crs-setup.conf.example $PKG/etc/nginx/modsec/crs/crs-setup.conf.new
+  cd rules
+  rename .conf.example .conf *.conf.example
+  cd ..
+  cp -r rules $PKG/etc/nginx/modsec/crs
+cd ..
+install -Dm644 $CWD/files/modsec.conf $PKG/etc/nginx/modsec/main.conf.new
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -r $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
