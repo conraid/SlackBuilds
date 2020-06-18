@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=nDPI
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-COMMIT="17d531e3db61326f286c7d0d543f4ea5b00bc796"
+COMMIT=b2c24558c53a282e138e0b86ab684cdcde1f358f
 VERSION=3.3_$( echo $COMMIT | head -c7)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -82,7 +82,7 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 # Fix pkgconfig dir
-sed -e "s|libdata|lib$LIBDIRSUFFIX|g" \
+sed -e "s|\$(libdir)|/usr/lib$LIBDIRSUFFIX|g" \
     -i Makefile.am
 
 # Fix lib dir and cflags
