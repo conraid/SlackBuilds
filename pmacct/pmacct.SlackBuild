@@ -26,9 +26,9 @@
 set -eu
 
 PKGNAM=pmacct
-SRCVERSION=1.7.4
-VERSION=1.7.4p1
-BUILD=${BUILD:-2}
+SRCVERSION=1.7.5
+VERSION=1.7.5
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 cd $(dirname $0) ; CWD=$(pwd)
 TMP=${TMP:-/tmp/pkg}
@@ -101,6 +101,8 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-shared=yes \
   --enable-nflog \
   --enable-zmq \
+  --enable-redis \
+  --enable-dpi \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
