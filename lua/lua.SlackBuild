@@ -28,9 +28,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=lua
-SRCVERSION=5.4.0-rc5
-PKGVERSION=5.4.0_rc5
-VERSION=5.4.0
+SRCVERSION=5.4.0-rc6
+PKGVERSION=$(echo $SRCVERSION | tr - _)
+VERSION=$(echo $SRCVERSION | cut -d- -f1)
 MAINVERSION=$(echo $VERSION | cut -d. -f-2)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
