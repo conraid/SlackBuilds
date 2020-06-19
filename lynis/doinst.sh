@@ -12,4 +12,4 @@ config() {
 }
 
 config etc/lynis/default.prf.new
-
+config etc/lynis/developer.prf.new

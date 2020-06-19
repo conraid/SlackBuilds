@@ -33,7 +33,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=lynis
-VERSION=2.7.5
+VERSION=3.0.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -71,6 +71,7 @@ cp -r db include plugins $PKG/usr/share/$PKGNAM
 
 # Install config file
 install -Dm644 default.prf $PKG/etc/lynis/default.prf.new
+install -Dm644 developer.prf $PKG/etc/lynis/developer.prf.new
 
 # Install and compress manpage
 install -Dm644 lynis.8 $PKG/usr/man/man8/lynis.8
