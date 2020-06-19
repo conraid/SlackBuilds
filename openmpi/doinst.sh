@@ -13,3 +13,4 @@ config() {
 config etc/openmpi/openmpi-default-hostfile.new
 config etc/openmpi/openmpi-mca-params.conf.new
 config etc/openmpi/openmpi-totalview.tcl.new
+config etc/openmpi/pmix-mca-params.conf.new
