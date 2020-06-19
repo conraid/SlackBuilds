@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=httpie
-VERSION=2.1.0
+VERSION=2.2.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -90,7 +90,7 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 # Install bash completion
-install -Dm644 extras/httpie-completion.bash $PKG/etc/bash_completion.d/httpie
+install -Dm644 $CWD/files/httpie-completion.bash $PKG/etc/bash_completion.d/httpie
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
