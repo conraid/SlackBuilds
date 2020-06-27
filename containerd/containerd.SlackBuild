@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=containerd
-VERSION=1.3.4
-GITHASH=814b7956fafc7a0980ea07e950f983d0837e5578
+VERSION=1.3.5
+COMMIT=9b6f3ec0307a825c38617b93ad55162b5bb94234
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -89,7 +89,7 @@ fi
 
 sed -i \
   -e "s/^VERSION.*/VERSION=${VERSION}/" \
-  -e "s/^REVISION.*/REVISION=${GITHASH}/" \
+  -e "s/^REVISION.*/REVISION=${COMMIT}/" \
   -e 's/-s -w //' \
   Makefile
 
