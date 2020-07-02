@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=graphviz
-VERSION=2.44.0
-BUILD=${BUILD:-2}
+VERSION=2.44.1
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,9 +72,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf ${PKGNAM}-stable_release_${VERSION}
-tar xvf $CWD/${PKGNAM}-stable_release_${VERSION}.tar.bz2
-cd ${PKGNAM}-stable_release_${VERSION}
+rm -rf ${PKGNAM}-${VERSION}
+tar xvf $CWD/${PKGNAM}-${VERSION}.tar.bz2
+cd ${PKGNAM}-${VERSION}
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
