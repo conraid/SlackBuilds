@@ -34,6 +34,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=wine
 SRCVERSION=5.12
+STAGEVERSION=5.12.1
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -80,14 +81,14 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$SRCVERSION $PKGNAM-staging-$SRCVERSION
+rm -rf $PKGNAM-$SRCVERSION $PKGNAM-staging-$STAGEVERSION
 tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.xz
 
 # Apply staging patches
-if [ -e $CWD/$PKGNAM-staging-$SRCVERSION.tar.gz ]; then
+if [ -e $CWD/$PKGNAM-staging-$STAGEVERSION.tar.gz ]; then
   echo "Apply staging patches..."
-  tar xvf $CWD/$PKGNAM-staging-$SRCVERSION.tar.gz
-  cd $TMP/$PKGNAM-staging-$SRCVERSION/
+  tar xvf $CWD/$PKGNAM-staging-$STAGEVERSION.tar.gz
+  cd $TMP/$PKGNAM-staging-$STAGEVERSION/
     if [ -e $CWD/patches-staging ]; then
       if [ -e $CWD/patches-staging/series ]; then
         for PATCH in $(cat $CWD/patches-staging/series); do
