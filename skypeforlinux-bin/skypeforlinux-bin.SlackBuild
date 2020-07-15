@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=skypeforlinux
 PKGNAM=skypeforlinux-bin
-VERSION=8.61.0.95
+VERSION=8.63.76.24
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -55,7 +55,7 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $PKG
-ar p $CWD/$PRGNAM-64.deb data.tar.xz | tar xvJ
+ar p $CWD/${PRGNAM}_${VERSION}_amd64.deb data.tar.xz | tar xvJ
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
