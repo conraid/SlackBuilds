@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=qemu
 SRCVERSION=5.0.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -142,6 +142,7 @@ ARFLAGS="rv" \
   --enable-fdt \
   --enable-libnfs \
   --enable-xfsctl \
+  --enable-linux-io-uring \
   --audio-drv-list="alsa,sdl,pa" \
   --target-list="x86_64-softmmu,x86_64-linux-user"
 
