@@ -30,8 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=neovim
-COMMIT=326b87feb6179d1b36375844eab493e0bb4dbf7f
-VERSION=0.5.0_$(echo $COMMIT | head -c7)
+VERSION=0.4.4
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -73,9 +72,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$COMMIT
-tar xvf $CWD/$PKGNAM-$COMMIT.tar.gz || tar xvf $CWD/$COMMIT.tar.gz
-cd $PKGNAM-$COMMIT
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
