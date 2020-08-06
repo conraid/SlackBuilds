@@ -30,14 +30,12 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gitkraken
 PKGNAM=gitkraken-bin
-VERSION=7.0.0
-BUILD=${BUILD:-2}
+VERSION=7.2.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
-
-DOCFILES="AUTHORS BUGS CHANGES COPYING* COPYRIGHT ChangeLog HACKING INSTALL LICENSE MAINTAINERS MANIFEST NEWS README* THANKS TODO VERSION"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -55,9 +53,7 @@ if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
   exit 0
 fi
 
-if [ "$ARCH" = "x86_64" ]; then
-  LIBDIRSUFFIX="64"
-else
+if [ "$ARCH" != "x86_64" ]; then
   echo "This platform is not supported."
   exit 1
 fi
@@ -79,14 +75,15 @@ mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
-# Install script wrapper file
-install -Dm755 $CWD/files/$PRGNAM.sh $PKG/usr/bin/$PRGNAM
+# Make symlink
+mkdir -p $PKG/usr/bin
+ln -s /usr/share/$PRGNAM/$PRGNAM $PKG/usr/bin/$PRGNAM
 
 # Add a desktop file
-install -Dm744 $CWD/files/$PRGNAM.desktop $PKG/usr/share/applications/$PRGNAM.desktop
+install -Dm644 $CWD/files/*.desktop -t $PKG/usr/share/applications/
 
 # Add an icon
-install -Dm744 $PKG/usr/share/$PRGNAM/$PRGNAM.png $PKG/usr/share/pixmaps/$PRGNAM.png
+install -Dm644 $CWD/files/$PRGNAM.png $PKG/usr/share/pixmaps/$PRGNAM.png
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}

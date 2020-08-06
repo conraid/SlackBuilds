@@ -2,10 +2,11 @@
 Name=GitKraken
 Comment=Unleash your repo
 GenericName=Git Client
-Exec=/usr/share/gitkraken/gitkraken %U
+Exec=/usr/share/gitkraken/gitkraken --uri %U
 Icon=/usr/share/pixmaps/gitkraken.png
 Type=Application
+NoDisplay=true
 StartupNotify=true
 Categories=GNOME;GTK;Development;RevisionControl;
-MimeType=text/plain;
+MimeType=x-scheme-handler/gitkraken;
 StartupWMClass=gitkraken
