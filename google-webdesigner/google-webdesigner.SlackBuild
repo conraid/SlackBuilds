@@ -32,7 +32,7 @@ PRGNAM=google-webdesigner
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=8.0.3.0603
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -65,7 +65,6 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $PKG
 ar p $CWD/${PRGNAM}_current_${DEBARCH}.deb data.tar.xz | tar xJv
-cd $PKG
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
