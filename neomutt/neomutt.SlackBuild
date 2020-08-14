@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=neomutt
-SRCVERSION=20200807
+SRCVERSION=20200814
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -84,8 +84,6 @@ if [ -e $CWD/patches/ ]; then
     patch -p1 -i $PATCH
   done
 fi
-
-
 
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
