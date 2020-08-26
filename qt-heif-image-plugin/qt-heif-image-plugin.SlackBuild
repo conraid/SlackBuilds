@@ -31,8 +31,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=qt-heif-image-plugin
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=0.3.3
-VERSION=$(echo $SRCVERSION | tr - _)
+SRCVERSION=3ab3539b8d4afc09674a75fd91769e951dd33a13
+VERSION=$(echo $SRCVERSION | head -c7)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
