@@ -33,7 +33,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libvirt
-VERSION=6.6.0
+VERSION=6.7.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -89,33 +89,37 @@ if [ -e $CWD/patches/ ]; then
   done
 fi
 
-mkdir -p build
-cd build
-LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-../configure \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --infodir=/usr/info \
-  --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --enable-static=no \
-  --enable-shared=yes \
-  --with-lxc \
-  --with-qemu \
-  --with-qemu-group=users \
-  --with-init-script=none \
-  --with-audit \
-  --with-yajl \
-  --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
+export CFLAGS="$SLKCFLAGS"
+export CXXFLAGS="$SLKCFLAGS"
+mkdir meson-build
+cd meson-build
+meson setup \
+  --prefix          /usr \
+  --libdir          lib${LIBDIRSUFFIX} \
+  --libexecdir      /usr/libexec \
+  --sysconfdir      /etc \
+  --localstatedir   /var \
+  --mandir          /usr/man \
+  --infodir         /usr/info \
+  --bindir          /usr/bin \
+  --sbindir         /usr/sbin \
+  --includedir      /usr/include \
+  --datadir         /usr/share \
+  --buildtype       release \
+  --default-library shared \
+  --buildtype       plain \
+  --wrap-mode       nodownload \
+  -D                no_git=true \
+  -D                b_lto=true \
+  -D                b_pie=true \
+  -D                documentation=false \
+  -D                bash_completion=enabled \
+  -D                bash_completion_dir=/etc/bash_completion.d \
+  -D                qemu_group=users \
+  ..
 
-make HTML_DIR=/usr/doc/$PKGNAM-$VERSION EXAMPLE_DIR=/usr/doc/$PKGNAM-$VERSION/examples
-make HTML_DIR=/usr/doc/$PKGNAM-$VERSION EXAMPLE_DIR=/usr/doc/$PKGNAM-$VERSION/examples DESTDIR=$PKG install
-
+ ninja
+DESTDIR=$PKG ninja install
 cd ..
 
 # Don't ship .la files:
