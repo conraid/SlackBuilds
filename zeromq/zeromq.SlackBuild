@@ -2,7 +2,7 @@
 #
 # Slackware build script for zeromq
 #
-# Copyright 2017-2019 Corrado Franco (https://conraid.net)
+# Copyright 2017-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,8 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=zeromq
-VERSION=4.3.2
-BUILD=${BUILD:-2}
+VERSION=4.3.3
+CPPVERSION=4.6.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -75,7 +76,7 @@ cd $TMP
 rm -rf $PKGNAM-$VERSION
 tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
 cd $PKGNAM-$VERSION
-tar --wildcards -xf $CWD/cppzmq-*.tar.gz */zmq.hpp */zmq_addon.hpp --strip=1
+tar --wildcards -xf $CWD/cppzmq-$CPPVERSION.tar.gz */zmq.hpp */zmq_addon.hpp --strip=1
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
