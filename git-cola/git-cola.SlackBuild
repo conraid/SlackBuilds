@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=git-cola
 VERSION=3.3
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -80,15 +80,11 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 sed -e 's|/share/man/|/man/|g' \
-    -e "s|share/doc/git-cola/|doc/$PKGNAM-$VERSION|g" \
+    -e "s|share/doc/git-cola|doc/$PKGNAM-$VERSION|g" \
     -i setup* \
     -i share/doc/git-cola/Makefile
 
-make PYTHON=python3 DESTDIR=$PKG prefix=/usr install
-if [ -x "$(which sphinx-build)" ]; then
-  make PYTHON=python3 DESTDIR=$PKG prefix=/usr install-doc install-man install-html
-fi
-
+make PYTHON=python3 DESTDIR=$PKG prefix=/usr docdir=/usr/doc/$PKGNAM-$VERSION install install-man install-doc install-html
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
