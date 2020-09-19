@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=hiredis
-VERSION=0.14.1
+VERSION=1.0.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -79,8 +79,33 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-make OPTIMIZATION="" DEBUG="" CFLAGS="$SLKCFLAGS" LIBRARY_PATH=lib${LIBDIRSUFFIX}
-make DESTDIR=$PKG PREFIX=/usr LIBRARY_PATH=lib${LIBDIRSUFFIX} install
+# Apply patches
+if [ -e $CWD/patches ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
+fi
+
+mkdir -p build
+cd build
+cmake -Wno-dev \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DDISABLE_TESTS=ON \
+  -DENABLE_SSL=ON \
+  -DCMAKE_INSTALL_LIBDIR=lib${LIBDIRSUFFIX} \
+  ..
+
+make
+make DESTDIR=$PKG install
+cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
