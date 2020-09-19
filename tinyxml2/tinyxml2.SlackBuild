@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Slackware build script for tinyxml2
 #
-# Copyright 2017-2018 Corrado Franco (http://conraid.net)
+# Copyright 2017-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -27,10 +27,10 @@
 
 set -eu
 
-CWD=$(pwd)
+cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=tinyxml2
-VERSION=7.0.1
+VERSION=8.0.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -45,6 +45,14 @@ if [ -z ${ARCH:=""} ]; then
     arm*) ARCH=arm ;;
        *) ARCH=$( uname -m ) ;;
   esac
+fi
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  exit 0
 fi
 
 if [ "$ARCH" = "i586" ]; then
@@ -77,24 +85,16 @@ for i in *.cpp *.h; do
 done
 
 # Fix Cmake install directory.
-
-# Don't ship .la files:
-rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 sed -i "s|lib/cmake|lib${LIBDIRSUFFIX}/cmake|" CMakeLists.txt
 
 mkdir -p build
 cd build
 cmake -Wno-dev \
-  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
-  -DCMAKE_LD_FLAGS_RELEASE:STRING="-L/usr/lib${LIBDIRSUFFIX}" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DMAN_INSTALL_DIR=/usr/man \
-  -DSYSCONF_INSTALL_DIR=/etc \
-  -DLOCALSTATEDIR=/var \
-  -DHTML_INSTALL_DIR=/usr/doc/HTML \
-  -DLIB_SUFFIX=$LIBDIRSUFFIX \
+  -DBUILD_TESTS=OFF \
+  -DBUILD_TESTING=OFF \
   ..
 
 make
