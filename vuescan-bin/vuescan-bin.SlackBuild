@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=VueScan
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-bin
 SRCVERSION=97
-VERSION=9.7.33
+VERSION=9.7.34
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -88,8 +88,6 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 install -Dm644 $CWD/files/vuescan.desktop $PKG/usr/share/applications/vuescan.desktop
-install -Dm644 $CWD/files/vuescan.svg $PKG/usr/share/icons/hicolor/scalable/apps/vuescan.svg
-
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
