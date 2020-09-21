@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Slackware build script for nikto
 #
-# Copyright 2017-2018 Corrado Franco (http://conraid.net)
+# Copyright 2017-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -27,19 +27,19 @@
 
 set -eu
 
-CWD=$(pwd)
+cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=nikto
-COMMIT="0b80a7fce2fe99123db102973319c4da85628803"
+COMMIT="f6d99d0f3c78a270bb63da2836d8d498b41c6b31"
 SRCVERSION=$COMMIT
-VERSION=20170430_git
-BUILD=${BUILD:-3}
+VERSION=$(echo $COMMIT | head -c7)_git
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="README* program/docs/*.txt program/docs/*.html"
+DOCFILES="COPYING *.md program/docs/*.txt program/docs/*.html"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -47,6 +47,14 @@ if [ -z ${ARCH:=""} ]; then
   arm*) ARCH=arm ;;
   *) ARCH=$( uname -m ) ;;
   esac
+fi
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  exit 0
 fi
 
 if [ "$ARCH" = "i586" ]; then
@@ -74,9 +82,15 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 # Install
-mkdir -p $PKG/usr/share/nikto
-sed '/EXECDIR/ a\EXECDIR=/usr/share/nikto' -i program/nikto.conf
-install -Dm644 program/nikto.conf $PKG/etc/nikto.conf.new
+mkdir -p $PKG/usr/share/nikto $PKG/etc
+sed -e '/Default plugin macros/ i\
+EXECDIR=/usr/share/nikto				# Location of Nikto\
+PLUGINDIR=/usr/share/nikto/plugins			# Location of plugin dir\
+DBDIR=/usr/share/nikto/databases			# Location of database dir\
+TEMPLATEDIR=/usr/share/nikto/templates		# Location of template dir\
+DOCDIR=/usr/share/nikto/docs			# Location of docs dir\
+\
+' program/nikto.conf.default > $PKG/etc/nikto.conf.new
 cp -r program/* $PKG/usr/share/nikto/
 install -Dm755 $CWD/files/nikto.sh $PKG/usr/bin/nikto
 install -Dm644 documentation/nikto.1 $PKG/usr/man/man1/nikto.1
