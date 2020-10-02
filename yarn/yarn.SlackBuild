@@ -29,8 +29,9 @@ set -eu
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PKGNAM=yarn
-VERSION=1.22.5
+PRGNAM=yarn
+PKGNAM=$(echo $PRGNAM | tr - _)
+VERSION=1.22.10
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -59,21 +60,26 @@ fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
-cd $TMP
-rm -rf $PKGNAM-$VERSION
-mkdir -p $PKGNAM-$VERSION
-cd $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-v$VERSION.tar.gz
+
+DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $CWD/$PRGNAM-$VERSION.tgz
+
+cd $PKG
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-mkdir -p $PKG/usr/lib$LIBDIRSUFFIX/node_modules/yarn
-cp -r */* $PKG/usr/lib$LIBDIRSUFFIX/node_modules/yarn
+# Remove empty dir
+rmdir $PKG/usr/etc || true
 
-mkdir -p $PKG/usr/bin
-ln -s /usr/lib$LIBDIRSUFFIX/node_modules/yarn/bin/yarn $PKG/usr/bin/yarn
-ln -s /usr/lib$LIBDIRSUFFIX/node_modules/yarn/bin/yarnpkg $PKG/usr/bin/yarnpkg
+# Remove unneeded files.
+find $PKG/usr \( -name '.git*' -o -name '.travis.yml' \) -exec rm -f {} \;
+
+# Remove occurrences of $PKG
+find $PKG -name "package.json" \
+  -exec sed -e "s|${TMP}/${PRGNAM}-build||" \
+            -e "s|${TMP}/${PRGNAM}-${VERSION}|/usr/lib${LIBDIRSUFFIX}/node_modules/${PRGNAM}|" \
+            -e "s|$CWD||g" \
+            -i '{}' \;
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
