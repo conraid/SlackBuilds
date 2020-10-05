@@ -73,10 +73,10 @@ SLACKBUILD SHORT DESCRIPTION:  afl-utils (Utilities for automated crash sample p
 SLACKBUILD NAME: afl
 SLACKBUILD LOCATION: ./afl
 SLACKBUILD FILES: README afl.SlackBuild afl.info slack-desc
-SLACKBUILD VERSION: 2.52b
+SLACKBUILD VERSION: 2.57b
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://lcamtuf.coredump.cx/afl/releases/afl-2.52b.tgz
-SLACKBUILD MD5SUM: d4fa778e6c2221aee4f5326f22e1983d
+SLACKBUILD DOWNLOAD: https://github.com/google/AFL/archive/v2.57b/AFL-2.57b.tar.gz
+SLACKBUILD MD5SUM: 1d3a5279f2257aad925451d04d4371ac
 SLACKBUILD SHORT DESCRIPTION:  afl (security-oriented fuzzer )
 
 SLACKBUILD NAME: aide
@@ -198,7 +198,7 @@ SLACKBUILD SHORT DESCRIPTION:  arp-scan
 
 SLACKBUILD NAME: arpalert
 SLACKBUILD LOCATION: ./arpalert
-SLACKBUILD FILES: README arpalert.SlackBuild arpalert.info doinst.sh rc.arpalert slack-desc
+SLACKBUILD FILES: README arpalert.SlackBuild arpalert.info doinst.sh patches/0001-fix-some-spelling-errors.patch patches/0002-adjust-syslog-facility.patch patches/0003-fix-makefiles-for-hardening.patch patches/0004-fix-manpage-spelling-erros.patch patches/0005-gcc10.patch patches/0006-spelling.patch patches/series rc.arpalert slack-desc
 SLACKBUILD VERSION: 2.0.12
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://www.arpalert.org/src/arpalert-2.0.12.tar.gz
@@ -313,15 +313,6 @@ SLACKBUILD DOWNLOAD: http://pawsa.fedorapeople.org/balsa/balsa-2.6.1.tar.bz2
 SLACKBUILD MD5SUM: 95d9c7a550144ae912f5c81d65ee68fa
 SLACKBUILD SHORT DESCRIPTION:  balsa (Email Client)
 
-SLACKBUILD NAME: barnyard2
-SLACKBUILD LOCATION: ./barnyard2
-SLACKBUILD FILES: README SLACKWARE.README barnyard2.SlackBuild barnyard2.info doinst.sh rc.barnyard2 slack-desc
-SLACKBUILD VERSION: 1.13
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/firnsy/barnyard2/archive/v2-1.13.tar.gz
-SLACKBUILD MD5SUM: 212066058364f18a4806720b271ffd87
-SLACKBUILD SHORT DESCRIPTION:  barnyard2 (Snort output processor)
-
 SLACKBUILD NAME: bash-language-server
 SLACKBUILD LOCATION: ./bash-language-server
 SLACKBUILD FILES: README bash-language-server.SlackBuild bash-language-server.info slack-desc
@@ -334,10 +325,10 @@ SLACKBUILD SHORT DESCRIPTION:  bash-language-server (A language server for Bash)
 SLACKBUILD NAME: bashdb
 SLACKBUILD LOCATION: ./bashdb
 SLACKBUILD FILES: README bashdb.SlackBuild bashdb.info slack-desc
-SLACKBUILD VERSION: 4.4-0.94
+SLACKBUILD VERSION: 5.0-1.1.2
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/bashdb/bashdb-4.4-0.94.tar.bz2
-SLACKBUILD MD5SUM: 77cac216d0e83997dabcbc12232eebb4
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/bashdb/bashdb-5.0-1.1.2.tar.bz2
+SLACKBUILD MD5SUM: 33eceddaffd52f42c74795178e7744ee
 SLACKBUILD SHORT DESCRIPTION:  bashdb  (Bash Debugger)
 
 SLACKBUILD NAME: bashstyle-ng
@@ -802,10 +793,10 @@ SLACKBUILD SHORT DESCRIPTION:  cppunit (C++ unit testing framework)
 SLACKBUILD NAME: cpuid
 SLACKBUILD LOCATION: ./cpuid
 SLACKBUILD FILES: README cpuid.SlackBuild cpuid.info slack-desc
-SLACKBUILD VERSION: 20170122
+SLACKBUILD VERSION: 20300427
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://etallen.com/cpuid/cpuid-20170122.src.tar.gz
-SLACKBUILD MD5SUM: 1c46a6662626c5a6eaca626f23a5a7d7
+SLACKBUILD DOWNLOAD: http://etallen.com/cpuid/cpuid-20200427.src.tar.gz
+SLACKBUILD MD5SUM: daa93ee2fdaf461e515b4713e7337076
 SLACKBUILD SHORT DESCRIPTION:  cpuid (Linux tool to dump x86 CPUID information about the CPUs)
 
 SLACKBUILD NAME: cpuid2cpuflags
@@ -861,15 +852,6 @@ SLACKBUILD REQUIRED: npm
 SLACKBUILD DOWNLOAD: https://registry.npmjs.org/cssunminifier/-/cssunminifier-0.0.2.tgz
 SLACKBUILD MD5SUM: e623f7d17b80ecc826b335ff3196ea60
 SLACKBUILD SHORT DESCRIPTION:  cssunminifier (CSS unminifier)
-
-SLACKBUILD NAME: ctunnel
-SLACKBUILD LOCATION: ./ctunnel
-SLACKBUILD FILES: README ctunnel.SlackBuild ctunnel.info slack-desc
-SLACKBUILD VERSION: 0.7
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://alienrobotarmy.com/ctunnel/0.7/ctunnel-0.7.tar.gz
-SLACKBUILD MD5SUM: bdc00916c1567906428984a50f6fac26
-SLACKBUILD SHORT DESCRIPTION:  ctunnel  (Crypto Tunnel for Proxying and Forwarding TCP Connections)
 
 SLACKBUILD NAME: cuneiform
 SLACKBUILD LOCATION: ./cuneiform
@@ -964,10 +946,10 @@ SLACKBUILD SHORT DESCRIPTION:  detox (Tames problematic filenames)
 SLACKBUILD NAME: device-tree-compiler
 SLACKBUILD LOCATION: ./device-tree-compiler
 SLACKBUILD FILES: README device-tree-compiler.SlackBuild device-tree-compiler.info slack-desc
-SLACKBUILD VERSION: 1.4.7
+SLACKBUILD VERSION: 1.6.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://git.kernel.org/pub/scm/utils/dtc/dtc.git/snapshot/dtc-1.4.7.tar.gz
-SLACKBUILD MD5SUM: 8e858312a07fee560f00ab9197db593c
+SLACKBUILD DOWNLOAD: https://git.kernel.org/pub/scm/utils/dtc/dtc.git/snapshot/dtc-1.6.0.tar.gz
+SLACKBUILD MD5SUM: bbc45ed6169bcf42f3fc57f8a0df9fa1
 SLACKBUILD SHORT DESCRIPTION:  device-tree-compiler (Device Tree Compiler for Flat Device Trees)
 
 SLACKBUILD NAME: dia
@@ -1396,10 +1378,10 @@ SLACKBUILD SHORT DESCRIPTION:  fwbuilder (Firewall creation utility)
 SLACKBUILD NAME: fwknop
 SLACKBUILD LOCATION: ./fwknop
 SLACKBUILD FILES: README doinst.sh fwknop.SlackBuild fwknop.info rc.fwknopd slack-desc
-SLACKBUILD VERSION: 2.6.10
+SLACKBUILD VERSION: 2.6.11-pre1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.cipherdyne.org/fwknop/download/fwknop-2.6.10.tar.bz2
-SLACKBUILD MD5SUM: 47a9c7c214c40dceb5dc2aa8832e4f32
+SLACKBUILD DOWNLOAD: https://github.com/mrash/fwknop/archive/2.6.11-pre1/fwknop-2.6.11-pre1.tar.gz
+SLACKBUILD MD5SUM: 9ed4cffb187a9eef0c032d12b93e0dde
 SLACKBUILD SHORT DESCRIPTION:  fwknop (Single Packet Authorization and Port Knocking)
 
 SLACKBUILD NAME: gdata-python-client
@@ -1488,8 +1470,8 @@ SLACKBUILD LOCATION: ./gimp-lqr-plugin
 SLACKBUILD FILES: README gimp-lqr-plugin.SlackBuild gimp-lqr-plugin.info slack-desc
 SLACKBUILD VERSION: 0.7.2
 SLACKBUILD REQUIRED: liblqr 
-SLACKBUILD DOWNLOAD: http://liquidrescale.wikidot.com/local--files/en:download-page-sources/gimp-lqr-plugin-0.7.2.tar.bz2
-SLACKBUILD MD5SUM: af7eb1a0d480bacfa6e5eff9b06bd877
+SLACKBUILD DOWNLOAD: https://github.com/carlobaldassi/gimp-lqr-plugin/archive/22a274942434ae841b0b51a183979ddb560996f9/gimp-lqr-plugin-22a274942434ae841b0b51a183979ddb560996f9.tar.gz
+SLACKBUILD MD5SUM: e88e6fe02ba81cd77b0be8626ca6fee0
 SLACKBUILD SHORT DESCRIPTION:  gimp-lqr-plugin (Liquid Rescale GIMP plugin)
 
 SLACKBUILD NAME: gimp-plugin-export-layers
@@ -1516,7 +1498,7 @@ SLACKBUILD FILES: README gimp-script-fu.SlackBuild gimp-script-fu.info slack-des
 SLACKBUILD VERSION: 48
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://www.gimphelp.org/DL/gimp_scripts-2.10.tar.bz2
-SLACKBUILD MD5SUM: dfb0df6283eff59b3c21579c9a610041
+SLACKBUILD MD5SUM: 24d6068fff64f76ea1639c16f1141296
 SLACKBUILD SHORT DESCRIPTION:  gimp-script-fu
 
 SLACKBUILD NAME: gimp-separate+
@@ -1530,11 +1512,11 @@ SLACKBUILD SHORT DESCRIPTION: gimp-separate+: gimp-separate+ (CMYK support for G
 
 SLACKBUILD NAME: gimp
 SLACKBUILD LOCATION: ./gimp
-SLACKBUILD FILES: README gimp.SlackBuild gimp.info slack-desc
-SLACKBUILD VERSION: 2.10.20
+SLACKBUILD FILES: README gimp.SlackBuild gimp.info patches/0001-no-check-update.patch slack-desc
+SLACKBUILD VERSION: 2.10.22
 SLACKBUILD REQUIRED: libheif webkitgtk
-SLACKBUILD DOWNLOAD: https://download.gimp.org/pub/gimp/v2.10/gimp-2.10.20.tar.bz2
-SLACKBUILD MD5SUM: 7479a4e90b28628d2948e6612fe44049
+SLACKBUILD DOWNLOAD: https://download.gimp.org/pub/gimp/v2.10/gimp-2.10.22.tar.bz2
+SLACKBUILD MD5SUM: 9d559ba6f039da033754f1d62a91cc39
 SLACKBUILD SHORT DESCRIPTION:  gimp (The GNU Image Manipulation Program)
 
 SLACKBUILD NAME: gimp_instagram_effects
@@ -1612,10 +1594,10 @@ SLACKBUILD SHORT DESCRIPTION:  gitpython (Python git library)
 SLACKBUILD NAME: glade
 SLACKBUILD LOCATION: ./glade
 SLACKBUILD FILES: README doinst.sh glade.SlackBuild glade.info slack-desc
-SLACKBUILD VERSION: 3.38.0
+SLACKBUILD VERSION: 3.38.1
 SLACKBUILD REQUIRED: webkitgtk
-SLACKBUILD DOWNLOAD: http://ftp.gnome.org/pub/GNOME/sources/glade/3.38/glade-3.38.0.tar.xz
-SLACKBUILD MD5SUM: 09ed7311fa2e81dad59f19115e212f2d
+SLACKBUILD DOWNLOAD: http://ftp.gnome.org/pub/GNOME/sources/glade/3.38/glade-3.38.1.tar.xz
+SLACKBUILD MD5SUM: ff264c44e009448b7bc0f5481e2264d5
 SLACKBUILD SHORT DESCRIPTION:  glade (GTK+ User Interface Builder)
 
 SLACKBUILD NAME: gmime2
@@ -1684,10 +1666,10 @@ SLACKBUILD SHORT DESCRIPTION:  go (Google's Go Language kit with gc tool chain)
 SLACKBUILD NAME: goaccess
 SLACKBUILD LOCATION: ./goaccess
 SLACKBUILD FILES: README doinst.sh goaccess.SlackBuild goaccess.info slack-desc
-SLACKBUILD VERSION: 1.3
+SLACKBUILD VERSION: 1.4
 SLACKBUILD REQUIRED: libmaxminddb tokyocabinet
-SLACKBUILD DOWNLOAD: https://tar.goaccess.io/goaccess-1.3.tar.gz
-SLACKBUILD MD5SUM: 5209c5d4e9e04b5b3e7f13134c5e146c
+SLACKBUILD DOWNLOAD: https://tar.goaccess.io/goaccess-1.4.tar.gz
+SLACKBUILD MD5SUM: 6f4b60f87755a7d1b350badfedda0aa3
 SLACKBUILD SHORT DESCRIPTION:  goaccess (httpd log analyzer)
 
 SLACKBUILD NAME: goobook
@@ -1843,15 +1825,6 @@ SLACKBUILD DOWNLOAD: http://ponce.cc/slackware/sources/repo/gtkimageview-1.6.4.t
 SLACKBUILD MD5SUM: 8346b42012a82d5fe6f1c151bae346c3
 SLACKBUILD SHORT DESCRIPTION:  gtkimageview (a simple image viewer widget for GTK)
 
-SLACKBUILD NAME: gtklp
-SLACKBUILD LOCATION: ./gtklp
-SLACKBUILD FILES: README files/gtklp.png files/gtklpq.desktop files/gtklpq.png gtklp.SlackBuild gtklp.info slack-desc
-SLACKBUILD VERSION: 1.3.3
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/gtklp/gtklp/1.3.3/gtklp-1.3.3.src.tar.gz
-SLACKBUILD MD5SUM: 7f70beea1f3a2a2401973f9e0d6e4042
-SLACKBUILD SHORT DESCRIPTION:  gtklp (CUPS frontend)
-
 SLACKBUILD NAME: gtksourceview4
 SLACKBUILD LOCATION: ./gtksourceview4
 SLACKBUILD FILES: README gtksourceview4.SlackBuild gtksourceview4.info slack-desc
@@ -1968,15 +1941,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://github.com/dvorka/hstr/archive/2.2/hstr-2.2.tar.gz
 SLACKBUILD MD5SUM: 941138a88005e3e17a9f81c82fa2906d
 SLACKBUILD SHORT DESCRIPTION:  hstr (Shell history suggest box)
-
-SLACKBUILD NAME: ht
-SLACKBUILD LOCATION: ./ht
-SLACKBUILD FILES: README ht.SlackBuild ht.info patches/0000-abs-uint-ambiguous.patch slack-desc
-SLACKBUILD VERSION: 2.1.0
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/hte/ht-2.1.0.tar.bz2
-SLACKBUILD MD5SUM: 09b2a4461d75e9cd03af1cd67fadc1ec
-SLACKBUILD SHORT DESCRIPTION:  ht (Hex editor and debugger)
 
 SLACKBUILD NAME: html-minifier
 SLACKBUILD LOCATION: ./html-minifier
@@ -3006,11 +2970,11 @@ SLACKBUILD SHORT DESCRIPTION:  libtorrent-rasterbar
 
 SLACKBUILD NAME: libtorrent
 SLACKBUILD LOCATION: ./libtorrent
-SLACKBUILD FILES: README libtorrent.SlackBuild libtorrent.info patches/openssl1.1.patch slack-desc
-SLACKBUILD VERSION: 0.13.6
+SLACKBUILD FILES: README libtorrent.SlackBuild libtorrent.info slack-desc
+SLACKBUILD VERSION: 0.13.8
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/rakshasa/libtorrent/archive/0.13.6.tar.gz
-SLACKBUILD MD5SUM: 8c8eaa9fa03bd113967c68eea26493e7
+SLACKBUILD DOWNLOAD: https://github.com/rakshasa/rtorrent/releases/download/v0.9.8/libtorrent-0.13.8.tar.gz
+SLACKBUILD MD5SUM: ca02e624fde0d704780085987010f99a
 SLACKBUILD SHORT DESCRIPTION:  libtorrent (C++ torrent library)
 
 SLACKBUILD NAME: libtrash
@@ -3304,10 +3268,10 @@ SLACKBUILD SHORT DESCRIPTION:  lxml
 SLACKBUILD NAME: lynis
 SLACKBUILD LOCATION: ./lynis
 SLACKBUILD FILES: README doinst.sh lynis.SlackBuild lynis.info slack-desc
-SLACKBUILD VERSION: 3.0.0
+SLACKBUILD VERSION: 3.0.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/CISOfy/lynis/archive/3.0.0/lynix-3.0.0.tar.gz
-SLACKBUILD MD5SUM: 7c6951c86ad4db5c78d0b38654466573
+SLACKBUILD DOWNLOAD: https://github.com/CISOfy/lynis/archive/3.0.1/lynix-3.0.1.tar.gz
+SLACKBUILD MD5SUM: 2a1b60c72fae4cc9e1ba9c9a1b9d7bd1
 SLACKBUILD SHORT DESCRIPTION:  lynis
 
 SLACKBUILD NAME: lyx
@@ -3430,10 +3394,10 @@ SLACKBUILD SHORT DESCRIPTION:  mjpegtools (video recording/playback tools)
 SLACKBUILD NAME: mkvtoolnix
 SLACKBUILD LOCATION: ./mkvtoolnix
 SLACKBUILD FILES: README mkvtoolnix.SlackBuild mkvtoolnix.info slack-desc
-SLACKBUILD VERSION: 50.0.0
+SLACKBUILD VERSION: 51.0.0
 SLACKBUILD REQUIRED: cmark pugixml 
-SLACKBUILD DOWNLOAD: https://mkvtoolnix.download/sources/mkvtoolnix-50.0.0.tar.xz
-SLACKBUILD MD5SUM: 9587a95f85e5fb65b54447d635047cf0
+SLACKBUILD DOWNLOAD: https://mkvtoolnix.download/sources/mkvtoolnix-51.0.0.tar.xz
+SLACKBUILD MD5SUM: 74c9704a2b01d1b15c89cd979649f8d0
 SLACKBUILD SHORT DESCRIPTION:  mkvtoolnix (tools to create, alter and inspect Matroska files)
 
 SLACKBUILD NAME: mm-common
@@ -3490,15 +3454,6 @@ SLACKBUILD DOWNLOAD: https://mosh.org/mosh-1.3.2.tar.gz
 SLACKBUILD MD5SUM: 5122f4d2b973ab7c38dcdac8c35cb61e
 SLACKBUILD SHORT DESCRIPTION:  mosh (MObile SHell server and client)
 
-SLACKBUILD NAME: mp3check
-SLACKBUILD LOCATION: ./mp3check
-SLACKBUILD FILES: README mp3check.SlackBuild mp3check.info slack-desc
-SLACKBUILD VERSION: 0.8.7
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/mp3check/mp3check-0.8.7.tgz
-SLACKBUILD MD5SUM: 83f5fd6514a55c88126725275aa2d1d5
-SLACKBUILD SHORT DESCRIPTION:  mp3check (Check mp3 files for errors and list their properties)
-
 SLACKBUILD NAME: mp3diags
 SLACKBUILD LOCATION: ./mp3diags
 SLACKBUILD FILES: README doinst.sh mp3diags.SlackBuild mp3diags.info slack-desc
@@ -3507,24 +3462,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/mp3diags/mp3diags-src/MP3Diags-1.2.03.tar.gz
 SLACKBUILD MD5SUM: 9a749bb903dc9941877983c854e18e02
 SLACKBUILD SHORT DESCRIPTION:  MP3 Diags 
-
-SLACKBUILD NAME: mp3splt-gtk
-SLACKBUILD LOCATION: ./mp3splt-gtk
-SLACKBUILD FILES: README doinst.sh mp3splt-gtk.SlackBuild mp3splt-gtk.info slack-desc
-SLACKBUILD VERSION: 0.9.2
-SLACKBUILD REQUIRED: libmp3splt
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/mp3splt/mp3splt-gtk/0.9.2/mp3splt-gtk-0.9.2.tar.gz
-SLACKBUILD MD5SUM: 17cd1445a13e127a03c13b740e1945fc
-SLACKBUILD SHORT DESCRIPTION:  mp3splt-gtk (gtk2 gui from the mp3splt project)
-
-SLACKBUILD NAME: mp3splt
-SLACKBUILD LOCATION: ./mp3splt
-SLACKBUILD FILES: README mp3splt.SlackBuild mp3splt.info slack-desc
-SLACKBUILD VERSION: 2.6.2
-SLACKBUILD REQUIRED: libmp3splt
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/mp3splt/mp3splt/2.6.2/mp3splt-2.6.2.tar.gz
-SLACKBUILD MD5SUM: 6f25341bdadb54d51c3c5d0644e6307a
-SLACKBUILD SHORT DESCRIPTION:  mp3splt (command line program from the mp3splt project)
 
 SLACKBUILD NAME: mps-youtube
 SLACKBUILD LOCATION: ./mps-youtube
@@ -3645,11 +3582,11 @@ SLACKBUILD SHORT DESCRIPTION:  ncdu (NCurses Disk Usage)
 
 SLACKBUILD NAME: ncrack
 SLACKBUILD LOCATION: ./ncrack
-SLACKBUILD FILES: README ncrack.SlackBuild ncrack.info patches/ncrack-nullcheck.patch patches/openssl-1.1-1.patch patches/openssl-1.1-2.patch slack-desc
-SLACKBUILD VERSION: ncrack-0.6
+SLACKBUILD FILES: README ncrack.SlackBuild ncrack.info slack-desc
+SLACKBUILD VERSION: ncrack-0.7
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://nmap.org/ncrack/dist/ncrack-0.6.tar.gz
-SLACKBUILD MD5SUM: bde92d8b16949432c7e8b04614314e85
+SLACKBUILD DOWNLOAD: http://nmap.org/ncrack/dist/ncrack-0.7.tar.gz
+SLACKBUILD MD5SUM: a6417241c994d8687dcfef1f40ac3f34
 SLACKBUILD SHORT DESCRIPTION:  ncrack (high-speed network authentication cracking tool)
 
 SLACKBUILD NAME: ndisc6
@@ -3762,7 +3699,7 @@ SLACKBUILD SHORT DESCRIPTION:  NetHogs (a small 'net top' tool)
 
 SLACKBUILD NAME: netperf
 SLACKBUILD LOCATION: ./netperf
-SLACKBUILD FILES: README netperf.SlackBuild netperf.info slack-desc
+SLACKBUILD FILES: README netperf.SlackBuild netperf.info patches/001-fix-inlining.patch slack-desc
 SLACKBUILD VERSION: 2.7.0
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://github.com/HewlettPackard/netperf/archive/netperf-2.7.0.tar.gz
@@ -4015,10 +3952,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-uglifycss (minifier css)
 SLACKBUILD NAME: node-uglifyjs
 SLACKBUILD LOCATION: ./node-uglifyjs
 SLACKBUILD FILES: README node-uglifyjs.SlackBuild node-uglifyjs.info slack-desc
-SLACKBUILD VERSION: 3.11.0
+SLACKBUILD VERSION: 3.11.1
 SLACKBUILD REQUIRED: npm
-SLACKBUILD DOWNLOAD: https://github.com/mishoo/UglifyJS2/archive/v3.11.0/UglifyJS-3.11.0.tar.gz
-SLACKBUILD MD5SUM: 986aa42555d939db259511148beaabd9
+SLACKBUILD DOWNLOAD: https://github.com/mishoo/UglifyJS2/archive/v3.11.1/UglifyJS-3.11.1.tar.gz
+SLACKBUILD MD5SUM: 140e6351e2439fb22243f864a8f58e19
 SLACKBUILD SHORT DESCRIPTION:  node-uglify-js (JavaScript compressor/minifier)
 
 SLACKBUILD NAME: node-unminify
@@ -4074,15 +4011,6 @@ SLACKBUILD REQUIRED: node
 SLACKBUILD DOWNLOAD: https://github.com/npm/cli/archive/v6.14.8.tar.gz
 SLACKBUILD MD5SUM: 5b1cdfa0ebf8661fbb06cde4e7b86fc6
 SLACKBUILD SHORT DESCRIPTION:  npm (package manager for node)
-
-SLACKBUILD NAME: nsoq
-SLACKBUILD LOCATION: ./nsoq
-SLACKBUILD FILES: README nsoq.SlackBuild nsoq.info slack-desc
-SLACKBUILD VERSION: 1.9.5
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/FelipeEcker/nsoq/archive/v1.9.5.tar.gz
-SLACKBUILD MD5SUM: 47ecf25a5064991d99cea79e5579e2e0
-SLACKBUILD SHORT DESCRIPTION:  nsoq (Network Security over a 'Q'rawler and RSOI Handler)
 
 SLACKBUILD NAME: ntopng
 SLACKBUILD LOCATION: ./ntopng
@@ -4266,7 +4194,7 @@ SLACKBUILD SHORT DESCRIPTION:  p0f (passive os fingerprint tool)
 
 SLACKBUILD NAME: p7zip
 SLACKBUILD LOCATION: ./p7zip
-SLACKBUILD FILES: README doinst.sh files/7zFM.desktop p7zip.SlackBuild p7zip.info patches/10_CVE-2016-9296.patch patches/20_CVE-2017-17969.patch patches/30_CVE-2018-5996.patch patches/40_CVE-2018-10115.patch slack-desc
+SLACKBUILD FILES: README doinst.sh files/7zFM.desktop p7zip.SlackBuild p7zip.info patches/10_CVE-2016-9296.patch patches/20_CVE-2017-17969.patch patches/30_CVE-2018-5996.patch patches/40_CVE-2018-10115.patch patches/gcc10-conversion.patch slack-desc
 SLACKBUILD VERSION: 16.02
 SLACKBUILD REQUIRED: wxgtk
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/p7zip/p7zip_16.02_src_all.tar.bz2
@@ -4281,15 +4209,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://github.com/jemcek/packETH/archive/2.1/packETH/2.1.tar.gz
 SLACKBUILD MD5SUM: 31f72ebe0ff6ae0398d4e0abc04eaa34
 SLACKBUILD SHORT DESCRIPTION:  packETH (ethernet packet generator)
-
-SLACKBUILD NAME: packit
-SLACKBUILD LOCATION: ./packit
-SLACKBUILD FILES: README files/s2pgen.pl packit.SlackBuild packit.info patches/README patches/fix-spellings-manpage.patch patches/fix_call_to_pcap-bpf_h.patch patches/fix_dups_paths_man_page.patch patches/fix_inject_mode_segfault.patch patches/fix_spelling_errors.patch patches/fix_typo_in_source_code.patch patches/tcpdump.patch patches/update_homepage.patch slack-desc
-SLACKBUILD VERSION: 1.0
-SLACKBUILD REQUIRED: libnet
-SLACKBUILD DOWNLOAD: http://packetfactory.openwall.net/projects/packit/downloads/packit-1.0.tgz
-SLACKBUILD MD5SUM: 270594ff97f6c203131136208bb4d2ca
-SLACKBUILD SHORT DESCRIPTION:  packit (network injection and capture)
 
 SLACKBUILD NAME: pandoc-bin
 SLACKBUILD LOCATION: ./pandoc-bin
@@ -4438,19 +4357,19 @@ SLACKBUILD SHORT DESCRIPTION:  phive (The Phar Installation and Verification Env
 SLACKBUILD NAME: php-antimalware-scanner
 SLACKBUILD LOCATION: ./php-antimalware-scanner
 SLACKBUILD FILES: README files/php-scanner php-antimalware-scanner.SlackBuild php-antimalware-scanner.info slack-desc
-SLACKBUILD VERSION: 0.5.0.71
+SLACKBUILD VERSION: 0.5.1.72
 SLACKBUILD REQUIRED: php-composer
-SLACKBUILD DOWNLOAD: https://github.com/marcocesarato/PHP-Antimalware-Scanner/archive/0.5.0.71/PHP-Antimalware-Scanner-0.5.0.71.tar.gz
-SLACKBUILD MD5SUM: 196428d0bebf7c953033abbd6d2ea741
+SLACKBUILD DOWNLOAD: https://github.com/marcocesarato/PHP-Antimalware-Scanner/archive/v0.5.1.72/PHP-Antimalware-Scanner-0.5.1.72.tar.gz
+SLACKBUILD MD5SUM: 26baaed0fa6c194d43a94d72d36f493d
 SLACKBUILD SHORT DESCRIPTION:  php-antimalware-scanner (Antimalware Scanner)
 
 SLACKBUILD NAME: php-apcu
 SLACKBUILD LOCATION: ./php-apcu
 SLACKBUILD FILES: README doinst.sh files/apcu.ini php-apcu.SlackBuild php-apcu.info slack-desc
-SLACKBUILD VERSION: 5.1.17
+SLACKBUILD VERSION: 5.1.19
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://pecl.php.net/get/apcu-5.1.17.tgz
-SLACKBUILD MD5SUM: 8d60ffd6dcec221f8bce957a09511f87
+SLACKBUILD DOWNLOAD: http://pecl.php.net/get/apcu-5.1.19.tgz
+SLACKBUILD MD5SUM: a868ee0b4179fb240cf6eb7e49723794
 SLACKBUILD SHORT DESCRIPTION:  php-apc (APC Alternative PHP Cache)
 
 SLACKBUILD NAME: php-ast
@@ -5644,10 +5563,10 @@ SLACKBUILD SHORT DESCRIPTION:  rclone (rsync for cloud storage)
 SLACKBUILD NAME: reaver
 SLACKBUILD LOCATION: ./reaver
 SLACKBUILD FILES: README doinst.sh reaver.SlackBuild reaver.info slack-desc
-SLACKBUILD VERSION: 1.6.1
+SLACKBUILD VERSION: 1.6.6
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/t6x/reaver-wps-fork-t6x/releases/download/v1.6.1/reaver-1.6.1.tar.xz
-SLACKBUILD MD5SUM: b0d2844ed121e37e4caf5e9514c06b83
+SLACKBUILD DOWNLOAD: https://github.com/t6x/reaver-wps-fork-t6x/releases/download/v1.6.6/reaver-1.6.6.tar.xz
+SLACKBUILD MD5SUM: 0866a852763efb083958a22ee9c13c1a
 SLACKBUILD SHORT DESCRIPTION:  reaver (Brute force attack against Wifi Protected Setup)
 
 SLACKBUILD NAME: redis
@@ -5725,10 +5644,10 @@ SLACKBUILD SHORT DESCRIPTION:  rtmpdump (RTMP streams toolkit)
 SLACKBUILD NAME: rtorrent
 SLACKBUILD LOCATION: ./rtorrent
 SLACKBUILD FILES: README rtorrent.SlackBuild rtorrent.info slack-desc
-SLACKBUILD VERSION: 0.9.6
+SLACKBUILD VERSION: 0.9.8
 SLACKBUILD REQUIRED: libtorrent
-SLACKBUILD DOWNLOAD: https://github.com/rakshasa/rtorrent/archive/0.9.6.tar.gz
-SLACKBUILD MD5SUM: b8b4009f95f8543244ae1d23b1810d7c
+SLACKBUILD DOWNLOAD: https://github.com/rakshasa/rtorrent/releases/download/v0.9.8/rtorrent-0.9.8.tar.gz
+SLACKBUILD MD5SUM: cbdf499faa0882e20d60fcb85a8f51d3
 SLACKBUILD SHORT DESCRIPTION:  rtorrent (command-line torrent client)
 
 SLACKBUILD NAME: runc
@@ -6460,15 +6379,6 @@ SLACKBUILD DOWNLOAD: https://github.com/bwalex/tc-play/archive/v3.3/tc-play-3.3.
 SLACKBUILD MD5SUM: 5b00094011506cbc07e5c2fbff9ab576
 SLACKBUILD SHORT DESCRIPTION:  tc-play (TrueCrypt/VeraCrypt Implementation based on dm-crypt)
 
-SLACKBUILD NAME: tcpflow
-SLACKBUILD LOCATION: ./tcpflow
-SLACKBUILD FILES: README slack-desc tcpflow.SlackBuild tcpflow.info
-SLACKBUILD VERSION: 1.5.2
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/simsong/tcpflow/archive/tcpflow-1.5.2.tar.gz
-SLACKBUILD MD5SUM: ad22136f088bf35c6083f782fd7a5c21
-SLACKBUILD SHORT DESCRIPTION:  tcpflow (TCP/IP session demultiplexer)
-
 SLACKBUILD NAME: tcpick
 SLACKBUILD LOCATION: ./tcpick
 SLACKBUILD FILES: README patches/CVE-2006-0048.patch patches/fix-build-with-gcc5.patch patches/fix-double-free-error.patch patches/fix-infinite-loop-on-powerpc.patch patches/fix-man-invocation.patch slack-desc tcpick.SlackBuild tcpick.info
@@ -6585,15 +6495,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://github.com/krallin/tini/archive/v0.19.0/tini-0.19.0.tar.gz
 SLACKBUILD MD5SUM: 72935bca9232313409a052833068fb1d
 SLACKBUILD SHORT DESCRIPTION:  tini (A tiny but valid `init` for containers)
-
-SLACKBUILD NAME: tiny-dnn
-SLACKBUILD LOCATION: ./tiny-dnn
-SLACKBUILD FILES: README slack-desc tiny-dnn.SlackBuild tiny-dnn.info
-SLACKBUILD VERSION: 1.0.0a3
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/tiny-dnn/tiny-dnn/archive/v1.0.0a3.tar.gz
-SLACKBUILD MD5SUM: adb1c512e09ca2c7a6faef36f9c53e59
-SLACKBUILD SHORT DESCRIPTION:  tiny-dnn (header only, dependency-free deep learning framework)
 
 SLACKBUILD NAME: tinyxml
 SLACKBUILD LOCATION: ./tinyxml
@@ -7344,7 +7245,7 @@ SLACKBUILD SHORT DESCRIPTION:  xping (A terminal based multi target icmp-echo to
 
 SLACKBUILD NAME: xsel
 SLACKBUILD LOCATION: ./xsel
-SLACKBUILD FILES: README slack-desc xsel.SlackBuild xsel.info
+SLACKBUILD FILES: README patches/git.patch slack-desc xsel.SlackBuild xsel.info
 SLACKBUILD VERSION: 1.2.0
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: http://www.vergenet.net/~conrad/software/xsel/download/xsel-1.2.0.tar.gz
@@ -7372,10 +7273,10 @@ SLACKBUILD SHORT DESCRIPTION:  yajl (A fast streaming JSON parsing library in C)
 SLACKBUILD NAME: yapet
 SLACKBUILD LOCATION: ./yapet
 SLACKBUILD FILES: README files/yapet.png slack-desc yapet.SlackBuild yapet.info
-SLACKBUILD VERSION: 2.1
+SLACKBUILD VERSION: 2.4
 SLACKBUILD REQUIRED: cppunit
-SLACKBUILD DOWNLOAD: https://yapet.guengel.ch/downloads/yapet-2.1.tar.xz
-SLACKBUILD MD5SUM: 7f1824b225e99d36e4e951d68ba6cecd
+SLACKBUILD DOWNLOAD: https://yapet.guengel.ch/downloads/yapet-2.4.tar.xz
+SLACKBUILD MD5SUM: e9ebcfc21f8fd59f04e0d16d2330f3ce
 SLACKBUILD SHORT DESCRIPTION:  yapet
 
 SLACKBUILD NAME: yara-python
@@ -7404,15 +7305,6 @@ SLACKBUILD REQUIRED: npm
 SLACKBUILD DOWNLOAD: https://registry.npmjs.org/yarn/-/yarn-1.22.10.tgz
 SLACKBUILD MD5SUM: 44648180b5b1f7076096bf4d0b6161d2
 SLACKBUILD SHORT DESCRIPTION:  yarn (Fast, reliable, and secure dependency management)
-
-SLACKBUILD NAME: yersinia
-SLACKBUILD LOCATION: ./yersinia
-SLACKBUILD FILES: README slack-desc yersinia.SlackBuild yersinia.info
-SLACKBUILD VERSION: 0.7.2
-SLACKBUILD REQUIRED: libnet
-SLACKBUILD DOWNLOAD: http://www.yersinia.net/download/yersinia-0.7.3.tar.gz
-SLACKBUILD MD5SUM: 53ca82d6cb463810b6a205d0e2362784
-SLACKBUILD SHORT DESCRIPTION:  yersinia 
 
 SLACKBUILD NAME: youtube-dl
 SLACKBUILD LOCATION: ./youtube-dl
