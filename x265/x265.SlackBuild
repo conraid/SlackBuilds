@@ -1,11 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Slackware build script for x265
 #
 # Based on https://slackbuilds.org/slackbuilds/14.2/multimedia/x265/x265.SlackBuild
 # (c) 2014-2018 Willy Sudiarto Raharjo <willysr@slackbuilds.org>
 
-# Copyright 2018 Corrado Franco (http://conraid.net)
+# Copyright 2018-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,13 +30,13 @@
 
 set -eu
 
-CWD=$(pwd)
+cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=multicoreware
 PKGNAM=x265
 SRCVERSION=a158a3a02966
 VERSION=2.8
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -50,6 +50,14 @@ if [ -z ${ARCH:=""} ]; then
     arm*) ARCH=arm ;;
        *) ARCH=$( uname -m ) ;;
   esac
+fi
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  exit 0
 fi
 
 if [ "$ARCH" = "i586" ]; then
