@@ -16,9 +16,9 @@ diff -Naurp hping3-20051105-orig/Makefile.in hping3-20051105/Makefile.in
 -		echo "@@@@@@ WARNING @@@@@@"; \
 -		echo "Can't install the man page: ${INSTALL_MANPATH}/man8 does not exist"; \
 -	fi
-+	install -Dm755 hping3 ${DESTDIR}/usr/sbin/hping3
-+	ln -s hping3 ${DESTDIR}/usr/sbin/hping
-+	ln -s hping3 ${DESTDIR}/usr/sbin/hping2
++	install -Dm755 hping3 ${DESTDIR}/usr/bin/hping3
++	ln -s hping3 ${DESTDIR}/usr/bin/hping
++	ln -s hping3 ${DESTDIR}/usr/bin/hping2
 +	install -Dm644 ./docs/hping3.8 ${DESTDIR}${INSTALL_MANPATH}/man8/hping3.8
  
  strip: hping3

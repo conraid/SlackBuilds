@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Slackware build script for hping
 #
-# Copyright 2014-2019 Corrado Franco (http://conraid.net)
+# Copyright 2014-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=hping
 VERSION=3.0.0_git
 COMMIT="3547c7691742c6eaa31f8402e0ccbb81387c1b99"
-BUILD=${BUILD:-12}
+BUILD=${BUILD:-13}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -88,7 +88,7 @@ done
 # Patch Makefile.in
 patch -p1 -i $CWD/patches/Makefile.in.patch
 
-sed "s/CCOPT= -O2 -Wall/CCOPT= $SLKCFLAGS/" -i Makefile.in
+sed "s/CCOPT= -O2 -Wall/CCOPT= $SLKCFLAGS -fcommon/" -i Makefile.in
 MANPATH="/usr/man" ./configure
 
 make
