@@ -1,0 +1,72 @@
+Description: fix FTBFS with gcc10
+Author: Thorsten Alteholz <debian@alteholz.de>
+Index: arpalert-2.0.12/loadconfig.c
+===================================================================
+--- arpalert-2.0.12.orig/loadconfig.c	2020-08-06 20:18:10.000000000 +0000
++++ arpalert-2.0.12/loadconfig.c	2020-08-06 20:28:19.880927392 +0000
+@@ -15,6 +15,11 @@
+ #include "loadconfig.h"
+ #include "log.h"
+ 
++// if true, the data is updated
++int flagdump;
++char config_file[CONFIGFILE_LEN];
++
++
+ extern int errno;
+ 
+ char msg[4096];
+Index: arpalert-2.0.12/loadconfig.h
+===================================================================
+--- arpalert-2.0.12.orig/loadconfig.h	2011-11-08 19:36:51.000000000 +0000
++++ arpalert-2.0.12/loadconfig.h	2020-08-06 20:28:35.625001446 +0000
+@@ -105,7 +105,7 @@
+ };
+ 
+ // if true, the data is updated
+-int flagdump;
++extern int flagdump;
+ 
+ 
+ /*
+@@ -132,7 +132,7 @@
+ 
+ extern struct config_cell config[];
+ 
+-char config_file[CONFIGFILE_LEN];
++extern char config_file[CONFIGFILE_LEN];
+ 
+ // load config file values
+ void config_load(int, char **);
+Index: arpalert-2.0.12/arpalert.c
+===================================================================
+--- arpalert-2.0.12.orig/arpalert.c	2011-11-08 19:36:51.000000000 +0000
++++ arpalert-2.0.12/arpalert.c	2020-08-06 20:29:14.433183976 +0000
+@@ -34,6 +34,12 @@
+ #include "func_time.h"
+ #include "macname.h"
+ 
++// time_t current_time;
++struct timeval current_t;
++
++// is forked
++int is_forked;
++
+ extern int errno;
+ 
+ void die(int);
+Index: arpalert-2.0.12/arpalert.h
+===================================================================
+--- arpalert-2.0.12.orig/arpalert.h	2011-11-08 19:36:51.000000000 +0000
++++ arpalert-2.0.12/arpalert.h	2020-08-06 20:29:28.329249328 +0000
+@@ -8,8 +8,8 @@
+ #include <sys/time.h>
+ 
+ // time_t current_time;
+-struct timeval current_t;
++extern struct timeval current_t;
+ 
+ // is forked
+-int is_forked;
++extern int is_forked;
+ 

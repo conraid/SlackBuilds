@@ -1,0 +1,116 @@
+From a15a623c957c9186724b402bec555d09cd6fb5be Mon Sep 17 00:00:00 2001
+From: Bernhard R. Link <brlink@debian.org>
+Date: Sat, 17 Sep 2011 17:48:08 +0200
+Subject: fix some spelling errors
+
+---
+ doc/arpalert.8 |    4 ++--
+ maclist.c      |    4 ++--
+ sens.c         |    2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+Index: arpalert-2.0.12/doc/arpalert.8
+===================================================================
+--- arpalert-2.0.12.orig/doc/arpalert.8	2011-11-08 20:36:51.000000000 +0100
++++ arpalert-2.0.12/doc/arpalert.8	2018-09-05 08:46:41.000000000 +0200
+@@ -17,7 +17,7 @@
+ Comma separated network interfaces listen to.
+ .TP
+ \fB\-p pid_file\fR
+-Use this pid file. this file containis a pid number of the arpalert session. If the file exist and his locked, the deamon do not run.
++Use this pid file. this file containis a pid number of the arpalert session. If the file exist and his locked, the daemon do not run.
+ .TP
+ \fB\-e exec_script\fR
+ Script launched when an alert is send.
+@@ -71,7 +71,7 @@
+ .br
+ The program read the config file and open the syslog socket before the chroot:
+ .br
+-The kill -HUP does not work with chroot.
++The kill \-HUP does not work with chroot.
+ .br
+ If the syslog program is restarted, the socket change and the arpalert syslog system can't be connect to the new socket:
+ the logs with syslog are disabled. Prefere to use the log file.
+Index: arpalert-2.0.12/maclist.c
+===================================================================
+--- arpalert-2.0.12.orig/maclist.c	2011-11-08 20:36:51.000000000 +0100
++++ arpalert-2.0.12/maclist.c	2018-09-04 10:37:02.000000000 +0200
+@@ -144,7 +144,7 @@
+ 		// first arg: mac addr
+ 		if(str_to_mac(args[0], &mac) == -1){
+ 			logmsg(LOG_ERR,
+-			       "file: \"%s\", line %d: mac adress error",
++			       "file: \"%s\", line %d: mac address error",
+ 			       file_name, ligne);
+ 			return -1;
+ 		}
+@@ -153,7 +153,7 @@
+ 		ip.s_addr = inet_addr(args[1]);
+ 		if(ip.s_addr == INADDR_NONE){
+ 			logmsg(LOG_ERR,
+-			       "file: \"%s\", line %d: ip adress error: %s",
++			       "file: \"%s\", line %d: ip address error: %s",
+ 			       file_name, ligne, args[1]);
+ 			return -1;
+ 		}
+Index: arpalert-2.0.12/sens.c
+===================================================================
+--- arpalert-2.0.12.orig/sens.c	2011-11-08 20:36:51.000000000 +0100
++++ arpalert-2.0.12/sens.c	2018-09-05 08:48:45.006767690 +0200
+@@ -240,7 +240,7 @@
+ 			// set mac address
+ 			if(str_to_mac(args[0], &mac) == -1){
+ 				logmsg(LOG_ERR,
+-				       "file: \"%s\", line %d: mac addess error",
++				       "file: \"%s\", line %d: mac address error",
+ 				       config[CF_AUTHFILE].valeur.string,
+ 				       ligne);
+ 				return -1;
+@@ -267,7 +267,7 @@
+ 			ip.s_addr = inet_addr(str_ip);
+ 			if(ip.s_addr == INADDR_NONE){
+ 				logmsg(LOG_ERR,
+-				       "file: \"%s\", line %d: ip adress error: %s",
++				       "file: \"%s\", line %d: ip address error: %s",
+ 				       config[CF_AUTHFILE].valeur.string,
+ 				       ligne, str_ip);
+ 				return -1;
+Index: arpalert-2.0.12/capture.c
+===================================================================
+--- arpalert-2.0.12.orig/capture.c	2011-11-08 20:36:51.000000000 +0100
++++ arpalert-2.0.12/capture.c	2018-09-05 08:48:57.470767316 +0200
+@@ -225,7 +225,7 @@
+ 
+ 	// check type of link
+ 	if(pcap_datalink(idcap) != DLT_EN10MB){
+-		logmsg(LOG_ERR, "[%s %i] pcap_datalink errror: "
++		logmsg(LOG_ERR, "[%s %i] pcap_datalink error: "
+ 		       "unrecognized link",
+ 		       __FILE__, __LINE__);
+ 		exit(1);
+Index: arpalert-2.0.12/data.c
+===================================================================
+--- arpalert-2.0.12.orig/data.c	2011-11-08 20:36:51.000000000 +0100
++++ arpalert-2.0.12/data.c	2018-09-05 08:48:07.418768817 +0200
+@@ -232,7 +232,7 @@
+ 	datap->alerts = field;
+ }
+ 
+-// add mac address in hash whith discover time
++// add mac address in hash with discover time
+ void data_add_time(struct ether_addr *mac, int status,
+                    struct in_addr ip, struct capt *idcap,
+                    struct timeval *tv){
+Index: arpalert-2.0.12/loadconfig.c
+===================================================================
+--- arpalert-2.0.12.orig/loadconfig.c	2011-11-08 20:36:51.000000000 +0100
++++ arpalert-2.0.12/loadconfig.c	2018-09-05 08:48:03.186768943 +0200
+@@ -40,7 +40,7 @@
+ 	"    -f conf_file: configuration file\n"
+ 	"    -i devices:   comma separated list of interfaces\n"
+ 	"    -p pid_file:  file with pid of daemon\n"
+-	"    -e script:    script executed whith alerts\n"
++	"    -e script:    script executed with alerts\n"
+ 	"    -D loglevel:  loglevel (0 to 7)\n"
+ 	"    -l leases:    file to store mac addresses\n"
+ 	"    -m module:    module file to load\n"
