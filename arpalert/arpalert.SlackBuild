@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Slackware build script for arpalert (http://www.arpalert.org)
 #
-# Copyright 2008-2018 Corrado Franco (http://conraid.net)
+# Copyright 2008-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,11 +31,11 @@
 
 set -eu
 
-CWD=$(pwd)
+cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=arpalert
 VERSION=2.0.12
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -51,6 +51,14 @@ if [ -z ${ARCH:=""} ]; then
   esac
 fi
 
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  exit 0
+fi
+
 if [ "$ARCH" = "i586" ]; then
   SLKCFLAGS="-O2 -march=i586 -mtune=i686"
   LIBDIRSUFFIX=""
@@ -58,7 +66,7 @@ elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  SLKCFLAGS="-O2 -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -75,6 +83,20 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
+# Apply patches
+if [ -e $CWD/patches ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
+fi
+
+autoreconf -fiv
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
