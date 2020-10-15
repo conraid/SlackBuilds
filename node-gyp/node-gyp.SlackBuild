@@ -30,9 +30,11 @@ set -eu
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PKGNAM=node-gyp
-VERSION=3.8.0
-BUILD=${BUILD:-2}
+PRGNAM=node-gyp
+PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
+SRCVERSION=7.1.1
+VERSION=$(echo $SRCVERSION | tr - _)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -58,22 +60,18 @@ fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
-cd $TMP
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
-cd $PKGNAM-$VERSION
 
-chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-DESTDIR=$PKG npm install --user root -g $(npm pack | tail -1)
+DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $CWD/$PRGNAM-$VERSION.tgz
 
-# Remove empty dir
-rmdir $PKG/usr/etc || true
+# Remove unneeded files.
+find $PKG/usr \( -name '.git*' -o -name '.travis.yml' \) -exec rm -f {} \;
 
 # Remove occurrences of $PKG
 find $PKG -name "package.json" \
-  -exec sed -e "s|$TMP/$PKGNAM-build||" \
-            -e "s|$TMP/$PKGNAM-$VERSION|/usr/lib${LIBDIRSUFFIX}/node_modules/${PKGNAM}|" \
+  -exec sed -e "s|${TMP}/${PRGNAM}-build||" \
+            -e "s|${TMP}/${PRGNAM}-${VERSION}|/usr/lib${LIBDIRSUFFIX}/node_modules/${PRGNAM}|" \
             -e "s|$CWD||g" \
             -i '{}' \;
 
