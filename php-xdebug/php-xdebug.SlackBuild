@@ -29,8 +29,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=xdebug
 PKGNAM=php-xdebug
-VERSION=2.9.8
-BUILD=${BUILD:-2}
+VERSION=3.0.0beta1
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -90,19 +90,6 @@ CFLAGS="$SLKCFLAGS" \
 
 make
 install -Dsm755 modules/xdebug.so $PKG/usr/lib${LIBDIRSUFFIX}/php/extensions/xdebug.so
-
-cd debugclient
-./buildconf
-CFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --with-libedit \
-  --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
-
-make
-install -Dsm755 debugclient $PKG/usr/bin/debugclient
-cd -
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
