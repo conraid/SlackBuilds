@@ -35,7 +35,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=node
-VERSION=14.13.1
+VERSION=14.14.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -95,7 +95,7 @@ fi
 sed -e "s|share/doc/node/|doc/$PKGNAM-$VERSION/|g" \
   -e 's|share/man|man|g' \
   -e "s|\(['/]\)lib/|\1lib${LIBDIRSUFFIX}/|g" -i tools/install.py
-sed -e "s|'lib'|'lib${LIBDIRSUFFIX}'|" -i lib/module.js
+sed -e "s|'lib'|'lib${LIBDIRSUFFIX}'|" -i lib/module.js -i deps/npm/lib/npm.js
 
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -107,7 +107,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --shared-nghttp2 \
   --shared-openssl \
   --experimental-http-parser \
-  --without-npm \
   --with-intl=system-icu
 
 make PREFIX="/usr" CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS"
@@ -123,6 +122,28 @@ if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
+
+# Fix symbolic link of npm man pages
+mkdir -p $PKG/usr/man/man{1,5,7}
+for DIR in man{1,5,7}; do
+  cd $PKG/usr/lib${LIBDIRSUFFIX}/node_modules/npm/man/$DIR
+  for FILE in *; do
+    ln -s /usr/lib${LIBDIRSUFFIX}/node_modules/npm/man/$DIR/$FILE $PKG/usr/man/$DIR/
+  done
+  cd -
+done
+
+# Fix npm prefix to man5 and man7
+pushd $PKG/usr/man/
+for i in man{5,7}; do
+  cd "$i"
+    for j in *; do
+      mv "${j}" "npm-${j}"
+    done
+  cd -
+done
+popd
+
 
 # Remove unneeded files.
 find $PKG/usr \( -name '.git*' -o -name '.travis.yml' \) -exec rm -f {} \;
@@ -148,6 +169,9 @@ chmod 0755 $PKG/etc/profile.d/*
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
+
+# Add bash completion file
+install -D -m 644 deps/npm/lib/utils/completion.sh $PKG/etc/bash_completion.d/npm
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
