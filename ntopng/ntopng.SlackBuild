@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=ntopng
-COMMIT=c8db38a06c7d924efc7fa836987d2c4aebec2fc9
+COMMIT=d7f1ce0d8c4541775efb403240298d618ab1c52b
 VERSION=4.0_$(echo $COMMIT | head -c7)
 BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
@@ -98,7 +98,6 @@ CXXFLAGS="$SLKCFLAGS -fpermissive" \
   --build=$ARCH-slackware-linux
 
 make
-make geoip
 make DESTDIR=$PKG install
 
 # Don't ship .la files:
