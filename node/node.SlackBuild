@@ -35,7 +35,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=node
-VERSION=14.14.0
+VERSION=15.0.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -103,7 +103,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --prefix=/usr \
   --shared-zlib \
   --shared-libuv \
-  --shared-cares \
   --shared-nghttp2 \
   --shared-openssl \
   --experimental-http-parser \
