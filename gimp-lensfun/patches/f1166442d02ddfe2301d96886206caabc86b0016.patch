@@ -1,0 +1,38 @@
+From f1166442d02ddfe2301d96886206caabc86b0016 Mon Sep 17 00:00:00 2001
+From: Sebastian Kraft <mail@sebastiankraft.net>
+Date: Sat, 1 Jul 2017 16:35:34 +0200
+Subject: [PATCH] Fix warnings about invalid string conversion to char* in C++
+
+---
+ src/gimplensfun.cpp | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/src/gimplensfun.cpp b/src/gimplensfun.cpp
+index c80e335..91b691a 100644
+--- a/src/gimplensfun.cpp
++++ b/src/gimplensfun.cpp
+@@ -189,18 +189,18 @@ static void  query (void)
+     {
+         {
+             GIMP_PDB_INT32,
+-            "run-mode",
+-            "Run mode"
++            (char *)"run-mode",
++            (char *)"Run mode"
+         },
+         {
+             GIMP_PDB_IMAGE,
+-            "image",
+-            "Input image"
++            (char *)"image",
++            (char *)"Input image"
+         },
+         {
+             GIMP_PDB_DRAWABLE,
+-            "drawable",
+-            "Input drawable"
++            (char *)"drawable",
++            (char *)"Input drawable"
+         }
+     };
+ 
