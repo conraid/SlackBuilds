@@ -1,0 +1,2208 @@
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/CHANGELOG soundkonverter-master/src/CHANGELOG
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/CHANGELOG	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/CHANGELOG	2020-07-26 12:02:34.000000000 +0200
+@@ -1,3 +1,8 @@
++unreleased:
++-Fix: Add directories to the Replay Gain tool
++-Fix: Install appdata in /usr/share/metainfo
++-Fix: Find taglib with ECM 5.72.0 (thanks to Andreas Sturmlechner <asturm@gentoo.org>)
++
+ 3.0.1:
+ -Fix: Destination mode "Source directory" creates filenames consisting only of the file extension
+ -Fix: All files "Failed" to convert when dragging a folder (Invalid URL)
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/CMakeLists.txt soundkonverter-master/src/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -19,9 +19,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}
+ 
+ # kde libs
+ find_package(ECM REQUIRED NO_MODULE)
+-set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
+-
+-add_definitions(-DSOUNDKONVERTER_KF5_BUILD)
++set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${ECM_MODULE_PATH})
+ 
+ include(KDEInstallDirs)
+ include(KDECompilerSettings)
+@@ -30,7 +28,7 @@ include(CMakePackageConfigHelpers)
+ include(ECMInstallIcons)
+ include(FeatureSummary)
+ 
+-find_package(Qt5 REQUIRED COMPONENTS Network Core Widgets)
++find_package(Qt5 REQUIRED COMPONENTS Core Widgets Xml)
+ find_package(KF5 REQUIRED COMPONENTS I18n XmlGui KIO Solid Config ConfigWidgets WidgetsAddons KDELibs4Support)
+ find_package(KF5Cddb)
+ find_package(Phonon4Qt5 REQUIRED)
+@@ -40,7 +38,7 @@ find_package(Phonon4Qt5 REQUIRED)
+ find_package(Cdparanoia REQUIRED)
+ 
+ set(TAGLIB_MIN_VERSION "1.10")
+-find_package(Taglib REQUIRED)
++find_package(Taglib ${TAGLIB_MIN_VERSION} REQUIRED)
+ 
+ 
+ # plugins 
+@@ -48,7 +46,7 @@ add_subdirectory(plugins)
+ 
+ 
+ # include directories
+-include_directories(${TAGLIB_INCLUDES} ${CDPARANOIA_INCLUDE_DIR})
++include_directories(${CDPARANOIA_INCLUDE_DIR})
+ 
+ 
+ # translation
+@@ -120,7 +118,7 @@ set(soundkonverter_SRCS
+ )
+ 
+ add_executable(soundkonverter ${soundkonverter_SRCS})
+-target_link_libraries(soundkonverter KF5::WidgetsAddons KF5::KIOFileWidgets KF5::KIOCore KF5::Solid KF5::Cddb Phonon::phonon4qt5 ${TAGLIB_LIBRARIES} ${CDPARANOIA_LIBRARIES} KF5::KDELibs4Support soundkonvertercore)
++target_link_libraries(soundkonverter KF5::WidgetsAddons KF5::KIOFileWidgets KF5::KIOCore KF5::Solid KF5::Cddb Phonon::phonon4qt5 Taglib::Taglib ${CDPARANOIA_LIBRARIES} KF5::KDELibs4Support soundkonvertercore)
+ 
+ install(TARGETS soundkonverter DESTINATION ${BIN_INSTALL_DIR})
+ 
+@@ -135,7 +133,7 @@ install(FILES soundkonverter_replaygainp
+ install(FILES soundkonverter_ripperplugin.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR})
+ install(FILES soundkonverter-rip-audiocd.desktop DESTINATION ${DATA_INSTALL_DIR}/solid/actions)
+ 
+-install(FILES soundkonverter.appdata.xml DESTINATION ${SHARE_INSTALL_PREFIX}/appdata)
++install(FILES soundkonverter.appdata.xml DESTINATION ${SHARE_INSTALL_PREFIX}/metainfo)
+ 
+ add_subdirectory(icons)
+ add_subdirectory(images)
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/cmake/modules/FindTaglib-Extras.cmake soundkonverter-master/src/cmake/modules/FindTaglib-Extras.cmake
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/cmake/modules/FindTaglib-Extras.cmake	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/cmake/modules/FindTaglib-Extras.cmake	1970-01-01 01:00:00.000000000 +0100
+@@ -1,135 +0,0 @@
+-# - Try to find the Taglib-Extras library
+-# Once done this will define
+-#
+-#  TAGLIB-EXTRAS_FOUND - system has the taglib library
+-#  TAGLIB-EXTRAS_CFLAGS - the taglib cflags
+-#  TAGLIB-EXTRAS_LIBRARIES - The libraries needed to use taglib
+-
+-# Copyright (c) 2006, Laurent Montel, <montel@kde.org>
+-#
+-# Redistribution and use is allowed according to the terms of the BSD license.
+-# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+-
+-if(NOT TAGLIB-EXTRAS_MIN_VERSION)
+-  set(TAGLIB-EXTRAS_MIN_VERSION "1.0")
+-endif(NOT TAGLIB-EXTRAS_MIN_VERSION)
+-
+-if(NOT WIN32)
+-    find_program(TAGLIB-EXTRASCONFIG_EXECUTABLE NAMES taglib-extras-config PATHS
+-       ${BIN_INSTALL_DIR}
+-    )
+-endif(NOT WIN32)
+-
+-#reset vars
+-set(TAGLIB-EXTRAS_LIBRARIES)
+-set(TAGLIB-EXTRAS_CFLAGS)
+-
+-# if taglib-extras-config has been found
+-if(TAGLIB-EXTRASCONFIG_EXECUTABLE)
+-
+-  exec_program(${TAGLIB-EXTRASCONFIG_EXECUTABLE} ARGS --version RETURN_VALUE _return_VALUE OUTPUT_VARIABLE TAGLIB-EXTRAS_VERSION)
+-
+-  if(TAGLIB-EXTRAS_VERSION STRLESS "${TAGLIB-EXTRAS_MIN_VERSION}")
+-     message(STATUS "TagLib-Extras version too old: version searched :${TAGLIB-EXTRAS_MIN_VERSION}, found ${TAGLIB-EXTRAS_VERSION}")
+-     set(TAGLIB-EXTRAS_FOUND FALSE)
+-  else(TAGLIB-EXTRAS_VERSION STRLESS "${TAGLIB-EXTRAS_MIN_VERSION}")
+-
+-     exec_program(${TAGLIB-EXTRASCONFIG_EXECUTABLE} ARGS --libs RETURN_VALUE _return_VALUE OUTPUT_VARIABLE TAGLIB-EXTRAS_LIBRARIES)
+-
+-     exec_program(${TAGLIB-EXTRASCONFIG_EXECUTABLE} ARGS --cflags RETURN_VALUE _return_VALUE OUTPUT_VARIABLE TAGLIB-EXTRAS_CFLAGS)
+-
+-     if(TAGLIB-EXTRAS_LIBRARIES AND TAGLIB-EXTRAS_CFLAGS)
+-        set(TAGLIB-EXTRAS_FOUND TRUE)
+-     endif(TAGLIB-EXTRAS_LIBRARIES AND TAGLIB-EXTRAS_CFLAGS)
+-     string(REGEX REPLACE " *-I" ";" TAGLIB-EXTRAS_INCLUDES "${TAGLIB-EXTRAS_CFLAGS}")
+-  endif(TAGLIB-EXTRAS_VERSION STRLESS "${TAGLIB-EXTRAS_MIN_VERSION}") 
+-  mark_as_advanced(TAGLIB-EXTRAS_CFLAGS TAGLIB-EXTRAS_LIBRARIES TAGLIB-EXTRAS_INCLUDES)
+-
+-else(TAGLIB-EXTRASCONFIG_EXECUTABLE)
+-
+-  find_path(TAGLIB-EXTRAS_INCLUDES
+-    NAMES
+-    tfile_helper.h
+-    PATH_SUFFIXES taglib-extras
+-    PATHS
+-    ${KDE4_INCLUDE_DIR}
+-    ${INCLUDE_INSTALL_DIR}
+-  )
+-
+-    IF(NOT WIN32)
+-      # on non-win32 we don't need to take care about WIN32_DEBUG_POSTFIX
+-
+-      FIND_LIBRARY(TAGLIB-EXTRAS_LIBRARIES tag-extras PATHS ${KDE4_LIB_DIR} ${LIB_INSTALL_DIR})
+-
+-    ELSE(NOT WIN32)
+-
+-      # 1. get all possible libnames
+-      SET(args PATHS ${KDE4_LIB_DIR} ${LIB_INSTALL_DIR})             
+-      SET(newargs "")               
+-      SET(libnames_release "")      
+-      SET(libnames_debug "")        
+-
+-      LIST(LENGTH args listCount)
+-
+-        # just one name
+-        LIST(APPEND libnames_release "tag-extras")
+-        LIST(APPEND libnames_debug   "tag-extrasd")
+-
+-        SET(newargs ${args})
+-
+-      # search the release lib
+-      FIND_LIBRARY(TAGLIB-EXTRAS_LIBRARIES_RELEASE
+-                   NAMES ${libnames_release}
+-                   ${newargs}
+-      )
+-
+-      # search the debug lib
+-      FIND_LIBRARY(TAGLIB-EXTRAS_LIBRARIES_DEBUG
+-                   NAMES ${libnames_debug}
+-                   ${newargs}
+-      )
+-
+-      IF(TAGLIB-EXTRAS_LIBRARIES_RELEASE AND TAGLIB-EXTRAS_LIBRARIES_DEBUG)
+-
+-        # both libs found
+-        SET(TAGLIB-EXTRAS_LIBRARIES optimized ${TAGLIB-EXTRAS_LIBRARIES_RELEASE}
+-                        debug     ${TAGLIB-EXTRAS_LIBRARIES_DEBUG})
+-
+-      ELSE(TAGLIB-EXTRAS_LIBRARIES_RELEASE AND TAGLIB-EXTRAS_LIBRARIES_DEBUG)
+-
+-        IF(TAGLIB-EXTRAS_LIBRARIES_RELEASE)
+-
+-          # only release found
+-          SET(TAGLIB-EXTRAS_LIBRARIES ${TAGLIB-EXTRAS_LIBRARIES_RELEASE})
+-
+-        ELSE(TAGLIB-EXTRAS_LIBRARIES_RELEASE)
+-
+-          # only debug (or nothing) found
+-          SET(TAGLIB-EXTRAS_LIBRARIES ${TAGLIB-EXTRAS_LIBRARIES_DEBUG})
+-
+-        ENDIF(TAGLIB-EXTRAS_LIBRARIES_RELEASE)
+-
+-      ENDIF(TAGLIB-EXTRAS_LIBRARIES_RELEASE AND TAGLIB-EXTRAS_LIBRARIES_DEBUG)
+-
+-      MARK_AS_ADVANCED(TAGLIB-EXTRAS_LIBRARIES_RELEASE)
+-      MARK_AS_ADVANCED(TAGLIB-EXTRAS_LIBRARIES_DEBUG)
+-
+-    ENDIF(NOT WIN32)
+-  
+-  INCLUDE(FindPackageMessage)
+-  INCLUDE(FindPackageHandleStandardArgs)
+-  FIND_PACKAGE_HANDLE_STANDARD_ARGS(Taglib-Extras DEFAULT_MSG TAGLIB-EXTRAS_INCLUDES TAGLIB-EXTRAS_LIBRARIES)
+-
+-endif(TAGLIB-EXTRASCONFIG_EXECUTABLE)
+-
+-
+-if(TAGLIB-EXTRAS_FOUND)
+-  if(NOT Taglib-Extras_FIND_QUIETLY AND TAGLIB-EXTRASCONFIG_EXECUTABLE)
+-    message(STATUS "Taglib-Extras found: ${TAGLIB-EXTRAS_LIBRARIES}")
+-  endif(NOT Taglib-Extras_FIND_QUIETLY AND TAGLIB-EXTRASCONFIG_EXECUTABLE)
+-else(TAGLIB-EXTRAS_FOUND)
+-  if(Taglib-Extras_FIND_REQUIRED)
+-    message(FATAL_ERROR "Could not find Taglib-Extras")
+-  endif(Taglib-Extras_FIND_REQUIRED)
+-endif(TAGLIB-EXTRAS_FOUND)
+-
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/cmake/modules/FindTaglib.cmake soundkonverter-master/src/cmake/modules/FindTaglib.cmake
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/cmake/modules/FindTaglib.cmake	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/cmake/modules/FindTaglib.cmake	2020-07-26 12:02:34.000000000 +0200
+@@ -1,135 +1,90 @@
+-# - Try to find the Taglib library
+-# Once done this will define
++#.rst:
++# FindTaglib
++# ----------
+ #
+-#  TAGLIB_FOUND - system has the taglib library
+-#  TAGLIB_CFLAGS - the taglib cflags
+-#  TAGLIB_LIBRARIES - The libraries needed to use taglib
+-
+-# Copyright (c) 2006, Laurent Montel, <montel@kde.org>
++# Try to find the Taglib library.
+ #
+-# Redistribution and use is allowed according to the terms of the BSD license.
+-# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+-
+-if(NOT TAGLIB_MIN_VERSION)
+-  set(TAGLIB_MIN_VERSION "1.6")
+-endif(NOT TAGLIB_MIN_VERSION)
+-
+-if(NOT WIN32)
+-    find_program(TAGLIBCONFIG_EXECUTABLE NAMES taglib-config PATHS
+-       ${BIN_INSTALL_DIR}
+-    )
+-endif(NOT WIN32)
+-
+-#reset vars
+-set(TAGLIB_LIBRARIES)
+-set(TAGLIB_CFLAGS)
+-
+-# if taglib-config has been found
+-if(TAGLIBCONFIG_EXECUTABLE)
+-
+-  exec_program(${TAGLIBCONFIG_EXECUTABLE} ARGS --version RETURN_VALUE _return_VALUE OUTPUT_VARIABLE TAGLIB_VERSION)
+-
+-  if(TAGLIB_VERSION VERSION_LESS "${TAGLIB_MIN_VERSION}")
+-     message(STATUS "TagLib version too old: version searched :${TAGLIB_MIN_VERSION}, found ${TAGLIB_VERSION}")
+-     set(TAGLIB_FOUND FALSE)
+-  else(TAGLIB_VERSION VERSION_LESS "${TAGLIB_MIN_VERSION}")
+-
+-     exec_program(${TAGLIBCONFIG_EXECUTABLE} ARGS --libs RETURN_VALUE _return_VALUE OUTPUT_VARIABLE TAGLIB_LIBRARIES)
+-
+-     exec_program(${TAGLIBCONFIG_EXECUTABLE} ARGS --cflags RETURN_VALUE _return_VALUE OUTPUT_VARIABLE TAGLIB_CFLAGS)
++# This will define the following variables:
++#
++# ``Taglib_FOUND``
++#       True if the system has the taglib library of at least the minimum
++#       version specified by the version parameter to find_package()
++# ``Taglib_INCLUDE_DIRS``
++#       The taglib include dirs for use with target_include_directories
++# ``Taglib_LIBRARIES``
++#       The taglib libraries for use with target_link_libraries()
++# ``Taglib_VERSION``
++#       The version of taglib that was found
++#
++# If ``Taglib_FOUND is TRUE, it will also define the following imported
++# target:
++#
++# ``Taglib::Taglib``
++#       The Taglib library
++#
++# Since 5.72.0
++#
++# SPDX-FileCopyrightText: 2006 Laurent Montel <montel@kde.org>
++# SPDX-FileCopyrightText: 2019 Heiko Becker <heirecka@exherbo.org>
++# SPDX-FileCopyrightText: 2020 Elvis Angelaccio <elvis.angelaccio@kde.org>
++# SPDX-License-Identifier: BSD-3-Clause
+ 
+-     if(TAGLIB_LIBRARIES AND TAGLIB_CFLAGS)
+-        set(TAGLIB_FOUND TRUE)
+-     endif(TAGLIB_LIBRARIES AND TAGLIB_CFLAGS)
+-     string(REGEX REPLACE " *-I" ";" TAGLIB_INCLUDES "${TAGLIB_CFLAGS}")
+-  endif(TAGLIB_VERSION VERSION_LESS "${TAGLIB_MIN_VERSION}")
+-  mark_as_advanced(TAGLIB_CFLAGS TAGLIB_LIBRARIES TAGLIB_INCLUDES)
++find_package(PkgConfig QUIET)
+ 
+-else(TAGLIBCONFIG_EXECUTABLE)
++pkg_search_module(PC_TAGLIB QUIET taglib)
+ 
+-  find_path(TAGLIB_INCLUDES
+-    NAMES
+-    tag.h
++find_path(Taglib_INCLUDE_DIRS
++    NAMES tag.h
+     PATH_SUFFIXES taglib
+-    PATHS
+-    ${KDE4_INCLUDE_DIR}
+-    ${INCLUDE_INSTALL_DIR}
+-  )
+-
+-    IF(NOT WIN32)
+-      # on non-win32 we don't need to take care about WIN32_DEBUG_POSTFIX
+-
+-      FIND_LIBRARY(TAGLIB_LIBRARIES tag PATHS ${KDE4_LIB_DIR} ${LIB_INSTALL_DIR})
+-
+-    ELSE(NOT WIN32)
+-
+-      # 1. get all possible libnames
+-      SET(args PATHS ${KDE4_LIB_DIR} ${LIB_INSTALL_DIR})             
+-      SET(newargs "")               
+-      SET(libnames_release "")      
+-      SET(libnames_debug "")        
+-
+-      LIST(LENGTH args listCount)
+-
+-        # just one name
+-        LIST(APPEND libnames_release "tag")
+-        LIST(APPEND libnames_debug   "tagd")
+-
+-        SET(newargs ${args})
+-
+-      # search the release lib
+-      FIND_LIBRARY(TAGLIB_LIBRARIES_RELEASE
+-                   NAMES ${libnames_release}
+-                   ${newargs}
+-      )
+-
+-      # search the debug lib
+-      FIND_LIBRARY(TAGLIB_LIBRARIES_DEBUG
+-                   NAMES ${libnames_debug}
+-                   ${newargs}
+-      )
+-
+-      IF(TAGLIB_LIBRARIES_RELEASE AND TAGLIB_LIBRARIES_DEBUG)
+-
+-        # both libs found
+-        SET(TAGLIB_LIBRARIES optimized ${TAGLIB_LIBRARIES_RELEASE}
+-                        debug     ${TAGLIB_LIBRARIES_DEBUG})
+-
+-      ELSE(TAGLIB_LIBRARIES_RELEASE AND TAGLIB_LIBRARIES_DEBUG)
+-
+-        IF(TAGLIB_LIBRARIES_RELEASE)
+-
+-          # only release found
+-          SET(TAGLIB_LIBRARIES ${TAGLIB_LIBRARIES_RELEASE})
+-
+-        ELSE(TAGLIB_LIBRARIES_RELEASE)
+-
+-          # only debug (or nothing) found
+-          SET(TAGLIB_LIBRARIES ${TAGLIB_LIBRARIES_DEBUG})
+-
+-        ENDIF(TAGLIB_LIBRARIES_RELEASE)
+-
+-      ENDIF(TAGLIB_LIBRARIES_RELEASE AND TAGLIB_LIBRARIES_DEBUG)
+-
+-      MARK_AS_ADVANCED(TAGLIB_LIBRARIES_RELEASE)
+-      MARK_AS_ADVANCED(TAGLIB_LIBRARIES_DEBUG)
+-
+-    ENDIF(NOT WIN32)
+-  
+-  INCLUDE(FindPackageMessage)
+-  INCLUDE(FindPackageHandleStandardArgs)
+-  FIND_PACKAGE_HANDLE_STANDARD_ARGS(Taglib DEFAULT_MSG TAGLIB_INCLUDES TAGLIB_LIBRARIES)
+-
+-endif(TAGLIBCONFIG_EXECUTABLE)
++    HINTS ${PC_TAGLIB_INCLUDEDIR}
++)
+ 
++find_library(Taglib_LIBRARIES
++    NAMES tag
++    HINTS ${PC_TAGLIB_LIBDIR}
++)
++
++set(Taglib_VERSION ${PC_TAGLIB_VERSION})
++
++if (Taglib_INCLUDE_DIRS AND NOT Taglib_VERSION)
++    if(EXISTS "${Taglib_INCLUDE_DIRS}/taglib.h")
++        file(READ "${Taglib_INCLUDE_DIRS}/taglib.h" TAGLIB_H)
++
++        string(REGEX MATCH "#define TAGLIB_MAJOR_VERSION[ ]+[0-9]+" TAGLIB_MAJOR_VERSION_MATCH ${TAGLIB_H})
++        string(REGEX MATCH "#define TAGLIB_MINOR_VERSION[ ]+[0-9]+" TAGLIB_MINOR_VERSION_MATCH ${TAGLIB_H})
++        string(REGEX MATCH "#define TAGLIB_PATCH_VERSION[ ]+[0-9]+" TAGLIB_PATCH_VERSION_MATCH ${TAGLIB_H})
++
++        string(REGEX REPLACE ".*_MAJOR_VERSION[ ]+(.*)" "\\1" TAGLIB_MAJOR_VERSION "${TAGLIB_MAJOR_VERSION_MATCH}")
++        string(REGEX REPLACE ".*_MINOR_VERSION[ ]+(.*)" "\\1" TAGLIB_MINOR_VERSION "${TAGLIB_MINOR_VERSION_MATCH}")
++        string(REGEX REPLACE ".*_PATCH_VERSION[ ]+(.*)" "\\1" TAGLIB_PATCH_VERSION "${TAGLIB_PATCH_VERSION_MATCH}")
++
++        set(Taglib_VERSION "${TAGLIB_MAJOR_VERSION}.${TAGLIB_MINOR_VERSION}.${TAGLIB_PATCH_VERSION}")
++    endif()
++endif()
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Taglib
++    FOUND_VAR
++        Taglib_FOUND
++    REQUIRED_VARS
++        Taglib_LIBRARIES
++        Taglib_INCLUDE_DIRS
++    VERSION_VAR
++        Taglib_VERSION
++)
++
++if (Taglib_FOUND AND NOT TARGET Taglib::Taglib)
++    add_library(Taglib::Taglib UNKNOWN IMPORTED)
++    set_target_properties(Taglib::Taglib PROPERTIES
++        IMPORTED_LOCATION "${Taglib_LIBRARIES}"
++        INTERFACE_INCLUDE_DIRECTORIES "${Taglib_INCLUDE_DIRS}"
++    )
++endif()
+ 
+-if(TAGLIB_FOUND)
+-  if(NOT Taglib_FIND_QUIETLY AND TAGLIBCONFIG_EXECUTABLE)
+-    message(STATUS "Taglib found: ${TAGLIB_LIBRARIES}")
+-  endif(NOT Taglib_FIND_QUIETLY AND TAGLIBCONFIG_EXECUTABLE)
+-else(TAGLIB_FOUND)
+-  if(Taglib_FIND_REQUIRED)
+-    message(FATAL_ERROR "Could not find Taglib")
+-  endif(Taglib_FIND_REQUIRED)
+-endif(TAGLIB_FOUND)
++mark_as_advanced(Taglib_LIBRARIES Taglib_INCLUDE_DIRS)
+ 
++include(FeatureSummary)
++set_package_properties(Taglib PROPERTIES
++    URL "https://taglib.org/"
++    DESCRIPTION "A library for reading and editing the meta-data of audio formats"
++)
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/config.cpp soundkonverter-master/src/config.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/config.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/config.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -328,7 +328,7 @@ void Config::load()
+         if( QFile::exists(src) && !QFile::exists(dest) )
+         {
+             QFile::copy(src, dest);
+-            logger->log( 1000, i18n("Importing old profiles from: %1").arg(src) );
++            logger->log( 1000, i18n("Importing old profiles from: %1",src) );
+         }
+     }
+ 
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/configdialog/configgeneralpage.cpp soundkonverter-master/src/configdialog/configgeneralpage.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/configdialog/configgeneralpage.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/configdialog/configgeneralpage.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -134,7 +134,7 @@ ConfigGeneralPage::ConfigGeneralPage( Co
+     QLabel *lNumFiles = new QLabel( i18n("Number of files to convert at once:"), this );
+     numFilesBox->addWidget( lNumFiles );
+     iNumFiles = new KIntSpinBox( this );
+-    iNumFiles->setToolTip( i18n("You shouldn't set this number higher than the amount of installed processor cores.\nThere have been %1 processor cores detected.").arg(processorsCount) );
++    iNumFiles->setToolTip( i18n("You shouldn't set this number higher than the amount of installed processor cores.\nThere have been %1 processor cores detected.", processorsCount) );
+     iNumFiles->setRange( 1, 100 );
+     iNumFiles->setValue( config->data.general.numFiles );
+     numFilesBox->addWidget( iNumFiles );
+@@ -193,7 +193,7 @@ ConfigGeneralPage::ConfigGeneralPage( Co
+     QLabel *lNumReplayGainFiles = new QLabel( i18n("Number of items to process at once:"), this );
+     numReplayGainFilesBox->addWidget( lNumReplayGainFiles );
+     iNumReplayGainFiles = new KIntSpinBox( this );
+-    iNumReplayGainFiles->setToolTip( i18n("You shouldn't set this number higher than the amount of installed processor cores.\nThere have been %1 processor cores detected.").arg(processorsCount) );
++    iNumReplayGainFiles->setToolTip( i18n("You shouldn't set this number higher than the amount of installed processor cores.\nThere have been %1 processor cores detected.", processorsCount) );
+     iNumReplayGainFiles->setRange( 1, 100 );
+     iNumReplayGainFiles->setValue( config->data.general.numReplayGainFiles );
+     numReplayGainFilesBox->addWidget( iNumReplayGainFiles );
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/filelist.cpp soundkonverter-master/src/filelist.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/filelist.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/filelist.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -295,7 +295,7 @@ int FileList::listDir( const QString& di
+             if( filter.contains(codecName) )
+             {
+                 QList<QUrl> urls;
+-                urls.append("file://" + directory + "/" + fileName);
++                urls.append(QUrl::fromLocalFile(directory + '/' + fileName));
+                 addFiles( urls, 0, "", codecName, conversionOptionsId );
+             }
+ 
+@@ -649,7 +649,7 @@ void FileList::updateItem( FileListItem
+         }
+         else // shouldn't be possible
+         {
+-            item->setText( Column_Input, i18n("CD track %1").arg(item->track) );
++            item->setText( Column_Input, i18n("CD track %1",item->track) );
+         }
+     }
+     else
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/main.cpp soundkonverter-master/src/main.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/main.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/main.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -9,7 +9,7 @@
+ #include <K4AboutData>
+ #include <KCmdLineArgs>
+ #include <KLocale>
+-
++#include <KLocalizedString>
+ 
+ static const char description[] =
+ I18N_NOOP("soundKonverter is a frontend to various audio converters, Replay Gain tools and CD rippers.\n\nPlease file bug reports at https://github.com/dfaust/soundkonverter/issues");
+@@ -18,6 +18,8 @@ static const char version[] = SOUNDKONVE
+ 
+ int main(int argc, char **argv)
+ {
++    KLocalizedString::setApplicationDomain("soundkonverter");
++    
+     K4AboutData about("soundkonverter", 0, ki18n("soundKonverter"), version, ki18n(description), K4AboutData::License_GPL, ki18n("(C) 2005-2017 Daniel Faust"), KLocalizedString(), 0, "hessijames@gmail.com");
+     about.addAuthor( ki18n("Daniel Faust"), KLocalizedString(), "hessijames@gmail.com" );
+     about.addCredit( ki18n("David Vignoni"), ki18n("Nuvola icon theme"), 0, "http://www.icon-king.com" );
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/opener/cdopener.cpp soundkonverter-master/src/opener/cdopener.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/opener/cdopener.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/opener/cdopener.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -553,7 +553,7 @@ QMap<QString,QString> CDOpener::cdDevice
+                 cdDrive = cdda_identify( device.toAscii(), CDDA_MESSAGE_PRINTIT, 0 );
+                 if( cdDrive && cdda_open(cdDrive) == 0 )
+                 {
+-                    const QString desc = i18n("%1 (%2): Audio CD with %3 tracks").arg(name).arg(device).arg(cdda_audio_tracks(cdDrive));
++                    const QString desc = i18n("%1 (%2): Audio CD with %3 tracks",name,device,cdda_audio_tracks(cdDrive));
+                     devices.insert( device, desc );
+                 }
+             }
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/optionsdetailed.cpp soundkonverter-master/src/optionsdetailed.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/optionsdetailed.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/optionsdetailed.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -278,7 +278,7 @@ void OptionsDetailed::encoderChanged( co
+     if( !plugin )
+     {
+ //         TODO leads to crashes
+-//         KMessageBox::error( this, i18n("Sorry, this shouldn't happen.\n\nPlease report this bug and attach the following error message:\n\nOptionsDetailed::encoderChanged; PluginLoader::codecPluginByName returned 0 for encoder: '%1'").arg(encoder), i18n("Internal error") );
++//         KMessageBox::error( this, i18n("Sorry, this shouldn't happen.\n\nPlease report this bug and attach the following error message:\n\nOptionsDetailed::encoderChanged; PluginLoader::codecPluginByName returned 0 for encoder: '%1'",encoder), i18n("Internal error") );
+         return;
+     }
+     if( wPlugin )
+@@ -319,7 +319,7 @@ void OptionsDetailed::somethingChanged()
+     {
+         const QString dataRateString = Global::prettyNumber(dataRate,"B");
+         lEstimSize->setText( QString(QChar(8776))+" "+dataRateString+" / min." );
+-        lEstimSize->setToolTip( i18n("Using the current conversion options will create files with approximately %1 per minute.").arg(dataRateString) );
++        lEstimSize->setToolTip( i18n("Using the current conversion options will create files with approximately %1 per minute.",dataRateString) );
+     }
+     else
+     {
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/optionseditor.cpp soundkonverter-master/src/optionseditor.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/optionseditor.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/optionseditor.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -468,7 +468,7 @@ void OptionsEditor::itemsSelected( QList
+     }
+     else // selectedItems.count() > 1
+     {
+-        setWindowTitle(i18n("%1 Files").arg(selectedItems.count()));
++        setWindowTitle(i18n("%1 Files",selectedItems.count()));
+ 
+         FileListItem *firstItem = selectedItems.first();
+         const int     conversionOptionsId = firstItem->conversionOptionsId;
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/optionssimple.cpp soundkonverter-master/src/optionssimple.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/optionssimple.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/optionssimple.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -231,7 +231,7 @@ void OptionsSimple::profileRemove()
+ {
+     const QString profileName = cProfile->currentText();
+ 
+-    const int ret = KMessageBox::questionYesNo( this, i18n("Do you really want to remove the profile: %1").arg(profileName), i18n("Remove profile?") );
++    const int ret = KMessageBox::questionYesNo( this, i18n("Do you really want to remove the profile: %1",profileName), i18n("Remove profile?") );
+     if( ret == KMessageBox::Yes )
+     {
+         QDomDocument list("soundkonverter_profilelist");
+@@ -389,7 +389,7 @@ void OptionsSimple::currentDataRateChang
+     {
+         const QString dataRateString = Global::prettyNumber(dataRate,"B");
+         lEstimSize->setText( QString(QChar(8776))+" "+dataRateString+" / min." );
+-        lEstimSize->setToolTip( i18n("Using the current conversion options will create files with approximately %1 per minute.").arg(dataRateString) );
++        lEstimSize->setToolTip( i18n("Using the current conversion options will create files with approximately %1 per minute.",dataRateString) );
+     }
+     else
+     {
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_aften/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_aften/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_aften/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_aften/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_aften)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_aften_SRCS
+    soundkonverter_codec_aften.cpp
+    aftencodecwidget.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_faac/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_faac/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_faac/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_faac/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_faac)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_faac_SRCS
+    soundkonverter_codec_faac.cpp
+    faaccodecwidget.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_ffmpeg/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_ffmpeg/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_ffmpeg/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_ffmpeg/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_ffmpeg)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_ffmpeg_SRCS
+    soundkonverter_codec_ffmpeg.cpp
+    ffmpegcodecwidget.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_ffmpeg/soundkonverter_codec_ffmpeg.cpp soundkonverter-master/src/plugins/soundkonverter_codec_ffmpeg/soundkonverter_codec_ffmpeg.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_ffmpeg/soundkonverter_codec_ffmpeg.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_ffmpeg/soundkonverter_codec_ffmpeg.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -273,7 +273,7 @@ void soundkonverter_codec_ffmpeg::showCo
+     if( !configDialog.data() )
+     {
+         configDialog = new KDialog( parent );
+-        configDialog.data()->setCaption( i18n("Configure %1").arg(global_plugin_name)  );
++        configDialog.data()->setCaption( i18n("Configure %1",*global_plugin_name) );
+         configDialog.data()->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Default );
+ 
+         QWidget *configDialogWidget = new QWidget( configDialog.data() );
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_flac/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_flac/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_flac/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_flac/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_flac)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_flac_SRCS
+    soundkonverter_codec_flac.cpp
+    flaccodecwidget.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_flake/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_flake/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_flake/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_flake/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_flake)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_flake_SRCS
+    soundkonverter_codec_flake.cpp
+    flakecodecwidget.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_fluidsynth/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_fluidsynth/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_fluidsynth/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_fluidsynth/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_fluidsynth)
+ 
+-find_package(KF5 REQUIRED COMPONENTS KIO WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_fluidsynth_SRCS
+    soundkonverter_codec_fluidsynth.cpp
+    fluidsynthcodecwidget.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_fluidsynth/soundkonverter_codec_fluidsynth.cpp soundkonverter-master/src/plugins/soundkonverter_codec_fluidsynth/soundkonverter_codec_fluidsynth.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_fluidsynth/soundkonverter_codec_fluidsynth.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_fluidsynth/soundkonverter_codec_fluidsynth.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -82,7 +82,7 @@ void soundkonverter_codec_fluidsynth::sh
+         const int fontHeight = QFontMetrics(QApplication::font()).boundingRect("M").size().height();
+ 
+         configDialog = new KDialog( parent );
+-        configDialog.data()->setCaption( i18n("Configure %1").arg(global_plugin_name)  );
++        configDialog.data()->setCaption( i18n("Configure %1",*global_plugin_name) );
+         configDialog.data()->setButtons( KDialog::Ok | KDialog::Cancel );
+ 
+         QWidget *configDialogWidget = new QWidget( configDialog.data() );
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_lame/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_lame/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_lame/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_lame/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_lame)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_lame_SRCS
+    soundkonverter_codec_lame.cpp
+    lameconversionoptions.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_lame/soundkonverter_codec_lame.cpp soundkonverter-master/src/plugins/soundkonverter_codec_lame/soundkonverter_codec_lame.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_lame/soundkonverter_codec_lame.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_lame/soundkonverter_codec_lame.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -110,7 +110,7 @@ void soundkonverter_codec_lame::showConf
+     if( !configDialog.data() )
+     {
+         configDialog = new KDialog( parent );
+-        configDialog.data()->setCaption( i18n("Configure %1").arg(global_plugin_name)  );
++        configDialog.data()->setCaption( i18n("Configure %1",*global_plugin_name) );
+         configDialog.data()->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Default );
+ 
+         QWidget *configDialogWidget = new QWidget( configDialog.data() );
+@@ -165,7 +165,7 @@ bool soundkonverter_codec_lame::hasInfo(
+ void soundkonverter_codec_lame::showInfo( QWidget *parent )
+ {
+     KDialog *dialog = new KDialog( parent );
+-    dialog->setCaption( i18n("About %1").arg(global_plugin_name)  );
++    dialog->setCaption( i18n("About %1",*global_plugin_name) );
+     dialog->setButtons( KDialog::Ok );
+ 
+     QLabel *widget = new QLabel( dialog );
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_libav/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_libav/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_libav/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_libav/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_libav)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_libav_SRCS
+    soundkonverter_codec_libav.cpp
+    libavcodecwidget.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_libav/soundkonverter_codec_libav.cpp soundkonverter-master/src/plugins/soundkonverter_codec_libav/soundkonverter_codec_libav.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_libav/soundkonverter_codec_libav.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_libav/soundkonverter_codec_libav.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -365,7 +365,7 @@ void soundkonverter_codec_libav::showCon
+     if( !configDialog.data() )
+     {
+         configDialog = new KDialog( parent );
+-        configDialog.data()->setCaption( i18n("Configure %1").arg(global_plugin_name)  );
++        configDialog.data()->setCaption( i18n("Configure %1",*global_plugin_name) );
+         configDialog.data()->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Default );
+ 
+         QWidget *configDialogWidget = new QWidget( configDialog.data() );
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_mac/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_mac/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_mac/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_mac/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_mac)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_mac_SRCS
+    soundkonverter_codec_mac.cpp
+    maccodecwidget.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_mplayer/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_mplayer/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_mplayer/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_mplayer/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_mplayer)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_mplayer_SRCS
+    soundkonverter_codec_mplayer.cpp
+ )
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_musepack/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_musepack/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_musepack/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_musepack/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_musepack)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_musepack_SRCS
+    soundkonverter_codec_musepack.cpp
+    musepackcodecwidget.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_neroaac/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_neroaac/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_neroaac/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_neroaac/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_neroaac)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_neroaac_SRCS
+    soundkonverter_codec_neroaac.cpp
+    neroaaccodecwidget.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_opustools/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_opustools/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_opustools/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_opustools/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_opustools)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_opustools_SRCS
+    soundkonverter_codec_opustools.cpp
+    opustoolscodecwidget.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_opustools/soundkonverter_codec_opustools.cpp soundkonverter-master/src/plugins/soundkonverter_codec_opustools/soundkonverter_codec_opustools.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_opustools/soundkonverter_codec_opustools.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_opustools/soundkonverter_codec_opustools.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -80,7 +80,7 @@ void soundkonverter_codec_opustools::sho
+     if( !configDialog.data() )
+     {
+         configDialog = new KDialog( parent );
+-        configDialog.data()->setCaption( i18n("Configure %1").arg(global_plugin_name)  );
++        configDialog.data()->setCaption( i18n("Configure %1",*global_plugin_name) );
+         configDialog.data()->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Default );
+ 
+         QWidget *configDialogWidget = new QWidget( configDialog.data() );
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_shorten/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_shorten/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_shorten/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_shorten/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_shorten)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_shorten_SRCS
+    soundkonverter_codec_shorten.cpp
+    shortencodecwidget.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_speex/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_speex/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_speex/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_speex/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_speex)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_speex_SRCS
+    soundkonverter_codec_speex.cpp
+    speexcodecwidget.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_timidity/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_timidity/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_timidity/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_timidity/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_timidity)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_timidity_SRCS
+    soundkonverter_codec_timidity.cpp
+    timiditycodecwidget.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_ttaenc/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_ttaenc/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_ttaenc/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_ttaenc/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_ttaenc)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_ttaenc_SRCS
+    soundkonverter_codec_ttaenc.cpp
+    ttaenccodecwidget.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_twolame/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_twolame/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_twolame/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_twolame/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_twolame)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_twolame_SRCS
+    soundkonverter_codec_twolame.cpp
+    twolamecodecwidget.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_twolame/soundkonverter_codec_twolame.cpp soundkonverter-master/src/plugins/soundkonverter_codec_twolame/soundkonverter_codec_twolame.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_twolame/soundkonverter_codec_twolame.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_twolame/soundkonverter_codec_twolame.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -66,7 +66,7 @@ void soundkonverter_codec_twolame::showC
+     Q_UNUSED(parent)
+ 
+ //     KDialog *dialog = new KDialog( parent );
+-//     dialog->setCaption( i18n("Configure %1").arg(global_plugin_name)  );
++//     dialog->setCaption( i18n("Configure %1",*global_plugin_name) );
+ //     dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+ 
+ //     QWidget *widget = new QWidget( dialog );
+@@ -89,7 +89,7 @@ bool soundkonverter_codec_twolame::hasIn
+ void soundkonverter_codec_twolame::showInfo( QWidget *parent )
+ {
+     KDialog *dialog = new KDialog( parent );
+-    dialog->setCaption( i18n("About %1").arg(global_plugin_name)  );
++    dialog->setCaption( i18n("About %1",*global_plugin_name) );
+     dialog->setButtons( KDialog::Ok );
+ 
+     QLabel *widget = new QLabel( dialog );
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_vorbistools/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_vorbistools/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_vorbistools/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_vorbistools/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_vorbistools)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_vorbistools_SRCS
+    soundkonverter_codec_vorbistools.cpp
+    vorbistoolscodecwidget.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_wavpack/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_codec_wavpack/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_codec_wavpack/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_codec_wavpack/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_codec_wavpack)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_codec_wavpack_SRCS
+    soundkonverter_codec_wavpack.cpp
+    wavpackcodecwidget.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_filter_normalize/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_filter_normalize/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_filter_normalize/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_filter_normalize/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_filter_normalize)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_filter_normalize_SRCS
+    soundkonverter_filter_normalize.cpp
+    normalizefilteroptions.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_filter_sox/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_filter_sox/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_filter_sox/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_filter_sox/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,8 +1,5 @@
+ project(soundkonverter_filter_sox)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-find_package(Qt5 REQUIRED COMPONENTS Xml)
+-
+ set(soundkonverter_filter_sox_SRCS
+    soundkonverter_filter_sox.cpp
+    soxfilteroptions.cpp
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_filter_sox/soundkonverter_filter_sox.cpp soundkonverter-master/src/plugins/soundkonverter_filter_sox/soundkonverter_filter_sox.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_filter_sox/soundkonverter_filter_sox.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_filter_sox/soundkonverter_filter_sox.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -239,7 +239,7 @@ void soundkonverter_filter_sox::showConf
+     if( !configDialog.data() )
+     {
+         configDialog = new KDialog( parent );
+-        configDialog.data()->setCaption( i18n("Configure %1").arg(global_plugin_name)  );
++        configDialog.data()->setCaption( i18n("Configure %1",*global_plugin_name) );
+         configDialog.data()->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Default );
+ 
+         QWidget *configDialogWidget = new QWidget( configDialog.data() );
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_replaygain_aacgain/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_replaygain_aacgain/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_replaygain_aacgain/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_replaygain_aacgain/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,7 +1,5 @@
+ project(soundkonverter_replaygain_aacgain)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-
+ set(soundkonverter_replaygain_aacgain_SRCS
+    soundkonverter_replaygain_aacgain.cpp
+ )
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_replaygain_aacgain/soundkonverter_replaygain_aacgain.cpp soundkonverter-master/src/plugins/soundkonverter_replaygain_aacgain/soundkonverter_replaygain_aacgain.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_replaygain_aacgain/soundkonverter_replaygain_aacgain.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_replaygain_aacgain/soundkonverter_replaygain_aacgain.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -86,7 +86,7 @@ void soundkonverter_replaygain_aacgain::
+     if( !configDialog.data() )
+     {
+         configDialog = new KDialog( parent );
+-        configDialog.data()->setCaption( i18n("Configure %1").arg(global_plugin_name)  );
++        configDialog.data()->setCaption( i18n("Configure %1",*global_plugin_name) );
+         configDialog.data()->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Default );
+ 
+         QWidget *configDialogWidget = new QWidget( configDialog.data() );
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_replaygain_metaflac/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_replaygain_metaflac/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_replaygain_metaflac/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_replaygain_metaflac/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,7 +1,5 @@
+ project(soundkonverter_replaygain_metaflac)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-
+ set(soundkonverter_replaygain_metaflac_SRCS
+    soundkonverter_replaygain_metaflac.cpp
+ )
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_replaygain_mp3gain/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_replaygain_mp3gain/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_replaygain_mp3gain/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_replaygain_mp3gain/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,7 +1,5 @@
+ project(soundkonverter_replaygain_mp3gain)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-
+ set(soundkonverter_replaygain_mp3gain_SRCS
+    soundkonverter_replaygain_mp3gain.cpp
+ )
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_replaygain_mp3gain/soundkonverter_replaygain_mp3gain.cpp soundkonverter-master/src/plugins/soundkonverter_replaygain_mp3gain/soundkonverter_replaygain_mp3gain.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_replaygain_mp3gain/soundkonverter_replaygain_mp3gain.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_replaygain_mp3gain/soundkonverter_replaygain_mp3gain.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -79,7 +79,7 @@ void soundkonverter_replaygain_mp3gain::
+     if( !configDialog.data() )
+     {
+         configDialog = new KDialog( parent );
+-        configDialog.data()->setCaption( i18n("Configure %1").arg(global_plugin_name)  );
++        configDialog.data()->setCaption( i18n("Configure %1",*global_plugin_name) );
+         configDialog.data()->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Default );
+ 
+         QWidget *configDialogWidget = new QWidget( configDialog.data() );
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_replaygain_musepack/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_replaygain_musepack/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_replaygain_musepack/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_replaygain_musepack/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,7 +1,5 @@
+ project(soundkonverter_replaygain_musepackgain)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-
+ set(soundkonverter_replaygain_musepackgain_SRCS
+    soundkonverter_replaygain_musepackgain.cpp
+ )
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_replaygain_vorbisgain/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_replaygain_vorbisgain/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_replaygain_vorbisgain/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_replaygain_vorbisgain/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,7 +1,5 @@
+ project(soundkonverter_replaygain_vorbisgain)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-
+ set(soundkonverter_replaygain_vorbisgain_SRCS
+    soundkonverter_replaygain_vorbisgain.cpp
+ )
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_replaygain_wvgain/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_replaygain_wvgain/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_replaygain_wvgain/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_replaygain_wvgain/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,7 +1,5 @@
+ project(soundkonverter_replaygain_wvgain)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-
+ set(soundkonverter_replaygain_wvgain_SRCS
+    soundkonverter_replaygain_wvgain.cpp
+ )
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_ripper_cdparanoia/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_ripper_cdparanoia/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_ripper_cdparanoia/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_ripper_cdparanoia/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,7 +1,5 @@
+ project(soundkonverter_ripper_cdparanoia)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-
+ set(soundkonverter_ripper_cdparanoia_SRCS
+    soundkonverter_ripper_cdparanoia.cpp
+ )
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_ripper_cdparanoia/soundkonverter_ripper_cdparanoia.cpp soundkonverter-master/src/plugins/soundkonverter_ripper_cdparanoia/soundkonverter_ripper_cdparanoia.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_ripper_cdparanoia/soundkonverter_ripper_cdparanoia.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_ripper_cdparanoia/soundkonverter_ripper_cdparanoia.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -79,7 +79,7 @@ void soundkonverter_ripper_cdparanoia::s
+     if( !configDialog.data() )
+     {
+         configDialog = new KDialog( parent );
+-        configDialog.data()->setCaption( i18n("Configure %1").arg(global_plugin_name)  );
++        configDialog.data()->setCaption( i18n("Configure %1",*global_plugin_name) );
+         configDialog.data()->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Default );
+ 
+         QWidget *configDialogWidget = new QWidget( configDialog.data() );
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_ripper_icedax/CMakeLists.txt soundkonverter-master/src/plugins/soundkonverter_ripper_icedax/CMakeLists.txt
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/plugins/soundkonverter_ripper_icedax/CMakeLists.txt	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/plugins/soundkonverter_ripper_icedax/CMakeLists.txt	2020-07-26 12:02:34.000000000 +0200
+@@ -1,7 +1,5 @@
+ project(soundkonverter_ripper_icedax)
+ 
+-find_package(KF5 REQUIRED COMPONENTS WidgetsAddons)
+-
+ set(soundkonverter_ripper_icedax_SRCS
+    soundkonverter_ripper_icedax.cpp
+ )
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/po/es.po soundkonverter-master/src/po/es.po
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/po/es.po	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/po/es.po	2020-07-26 12:02:34.000000000 +0200
+@@ -22,19 +22,19 @@ msgstr ""
+ 
+ #: aboutplugins.cpp:20
+ msgid "About plugins"
+-msgstr "Sobre los plugins"
++msgstr "Acerca de los enchufes"
+ 
+ #: aboutplugins.cpp:34
+ msgid "Installed plugins:"
+-msgstr "Plugins instalados:"
++msgstr "Enchufes instalados:"
+ 
+ #: aboutplugins.cpp:131
+ msgid "About plugin %1:"
+-msgstr "Sobre el plugin %1:"
++msgstr "Acerca de enchufes %1:"
+ 
+ #: aboutplugins.cpp:133
+ msgid "Plugin type: %1"
+-msgstr "Tipo de plugin: %1"
++msgstr "Tipo de enchufes: %1"
+ 
+ #: aboutplugins.cpp:139
+ msgid "Backend binaries:"
+@@ -50,7 +50,7 @@ msgstr "%1 (no encontrado)"
+ 
+ #: aboutplugins.cpp:167 aboutplugins.cpp:202 aboutplugins.cpp:233
+ msgid "Supported codecs:"
+-msgstr "Codecs soportados:"
++msgstr "códecs soportados:"
+ 
+ #: aboutplugins.cpp:172 aboutplugins.cpp:180 aboutplugins.cpp:207
+ #: aboutplugins.cpp:215 aboutplugins.cpp:230
+@@ -73,37 +73,35 @@ msgstr "Configurar %1 ..."
+ 
+ #: codecoptimizations.cpp:17 codecproblems.cpp:14
+ msgid "Solutions for backend problems"
+-msgstr "Soluciones para problemas de binarios externos"
++msgstr "Soluciones para los problemas de binario"
+ 
+ #: codecoptimizations.cpp:27
+ msgid ""
+ "You have installed or removed backends and your soundKonverter settings can "
+ "be optimized."
+ msgstr ""
+-"Ha instalado o eliminado binarios externos y sus configuraciones de "
+-"soundKonverter pueden ser optimizadas."
++"Ha instalado o eliminado binarios y sus configuraciones de soundKonverter pueden "
++"ser optimizadas."
+ 
+ #: codecoptimizations.cpp:51
+ msgid "For encoding %1 files the backend '%2' can be replaced with '%3'."
+-msgstr ""
+-"Para codificar archivos %1, el binario '%2' puede ser reemplazado con .'%3'"
++msgstr "Para codificar archivos %1, el binario '%2' puede ser reemplazado con '%3'."
+ 
+ #: codecoptimizations.cpp:55
+ msgid "For ripping audio CDs the backend '%1' can be replaced with '%2'."
+-msgstr ""
++msgstr "Para extraer CD de audio, el binario '%1' puede ser reemplazado por '%2'."
+ 
+ #: codecoptimizations.cpp:59
+ msgid "For decoding %1 files the backend '%2' can be replaced with '%3'."
+-msgstr ""
+-"Para decodificar archivos %1, el binario '%2' puede ser reemplazado por '%3'."
++msgstr "Para decodificar archivos %1 el binario '%2' puede ser reemplazado por '%3'."
+ 
+ #: codecoptimizations.cpp:63
+ msgid ""
+ "For applying Replay Gain to %1 files the backend '%2' can be replaced with "
+ "'%3'."
+ msgstr ""
+-"Para aplicar Replay Gain en los archiivos %1, el binario '%2' puede ser "
+-"reemplazado por '%3'."
++"Para aplicar Replay Gain en los archivos %1 el binario '%2' puede ser reemplazado con "
++"'%3'."
+ 
+ #: codecoptimizations.cpp:66
+ msgid "Ignore"
+@@ -119,33 +117,33 @@ msgid ""
+ "If you are missing some file formats you might need to install an additional "
+ "plugin via the package manager of your distribution."
+ msgstr ""
+-"soundKonverter no pudo encontrar los paquetes que faltan.⏎ Si le falta algún "
+-"formato archivo, deberá instalar un plugin adicional con el administrador de "
+-"paquetes de su distribución."
++"soundKonverter no pudo encontrar los paquetes que faltan.\n"
++"Si le falta algún archivo de formatos, deberá instalar un enchufe adicional "
++"con el administrador de paquetes de su distribución."
+ 
+ #: codecproblems.cpp:32
+ msgid ""
+ "Some of the installed plugins aren't working.\n"
+ "Possible solutions are listed below."
+ msgstr ""
+-"Algún de los plugins instalados no está funcionando.⏎ Las posibles "
+-"soluciones se listan debajo."
++"Algúnos de los enchufes instalados no están funcionando.\n"
++"Las posibles soluciones se listan abajo."
+ 
+ #: codecproblems.cpp:37
+ msgid ""
+ "Some files can't be decoded.\n"
+ "Possible solutions are listed below."
+ msgstr ""
+-"Algunos archivos no se pueden codificar.⏎ Las posibles soluciones se listan "
+-"debajo."
++"Algunos archivos no pueden ser decodificados.\n"
++"Las posibles soluciones se listan abajo."
+ 
+ #: codecproblems.cpp:41
+ msgid ""
+ "Replay Gain isn't supported for some files.\n"
+ "Possible solutions are listed below."
+ msgstr ""
+-"Replay Gain no está soportado por algunos archivos.⏎ Las posibles soluciones "
+-"se listan debajo."
++"Replay Gain no está soportado por algunos archivos.\n"
++"Las posibles soluciones se listan abajo."
+ 
+ #: codecproblems.cpp:47
+ msgid ""
+@@ -153,17 +151,17 @@ msgid ""
+ "Please have a look at your distributions package manager in order to get a "
+ "cd ripper plugin for soundKonverter."
+ msgstr ""
+-"La extracción de CDs no está soportada por ninguno de los plugins instalados."
+-"⏎ Consulte en el administrador de paquetes de su distribución para poder "
+-"extraer CDs con soundKonverter."
++"La extracción de CDs no está soportada por ninguno de los enchufes instalados.\n"
++"Consulte en el administrador de paquetes de su distribución para poder "
++"extraer CDs con enchufes de soundKonverter."
+ 
+ #: codecproblems.cpp:51
+ msgid ""
+ "Ripping audio CDs is currently not supported because of missing backends.\n"
+ "Possible solutions are listed below."
+ msgstr ""
+-"La extracción de CDs no está soportada porque faltan los binarios para ello."
+-"⏎ Las posibles soluciones se listan debajo."
++"La extracción de CDs no está soportada porque faltan los binarios.\n"
++"Las posibles soluciones se listan abajo."
+ 
+ #: codecproblems.cpp:67 codecproblems.cpp:71
+ msgid "Possible solutions for %1"
+@@ -235,7 +233,7 @@ msgstr "cubierta"
+ #: config.cpp:234 config.cpp:260 config.cpp:262 convert.cpp:172 convert.cpp:244
+ #: convert.cpp:411
+ msgid "Try internal"
+-msgstr "Interna"
++msgstr "Probar interno"
+ 
+ #: config.cpp:386 config.cpp:402 configdialog/configgeneralpage.cpp:72
+ #: configdialog/configgeneralpage.cpp:270 optionsdetailed.cpp:469
+@@ -433,7 +431,7 @@ msgstr "Híbrido"
+ #: plugins/soundkonverter_codec_vorbistools/vorbistoolscodecwidget.cpp:170
+ #: plugins/soundkonverter_filter_sox/soxcodecwidget.cpp:455
+ msgid "User defined"
+-msgstr "Definido por el usuario"
++msgstr "Definido por usuario"
+ 
+ #: config.cpp:579
+ msgid "Convert with soundKonverter"
+@@ -463,10 +461,14 @@ msgid ""
+ "Comments will be written to the selected field, when reading tags the "
+ "selected field will be preferred."
+ msgstr ""
++"Algunas aplicaciones usan el campo DESCRIPCIÓN aunque el campo COMENTARIO es "
++"el correcto.\n"
++"Comments will be written to the selected field, when reading tags the "
++"selected field will be preferred."
+ 
+ #: configdialog/configadvancedpage.cpp:79
+ msgid "Preferred total tracks number tag field for ogg vorbis and flac files:"
+-msgstr ""
++msgstr "Número preferido de pistas totales y campo de etiquetas para ogg vorbis y archivos flac:"
+ 
+ #: configdialog/configadvancedpage.cpp:80
+ #: configdialog/configadvancedpage.cpp:83
+@@ -476,10 +478,14 @@ msgid ""
+ "When using the field TRACKNUMBER, the track number and the total tracks "
+ "number will be written to the same field separated by a slash ('/')."
+ msgstr ""
++"El número total de pistas se escribirán en el campo seleccionado al leer las etiquetas"
++"el campo seleccionado será preferido.\n"
++"Cuando se utiliza el campo NÚMERO DE PISTA, el número de pista y el total de pistas"
++"el número se escribirá en el mismo campo separado por una diagonal ('/')."
+ 
+ #: configdialog/configadvancedpage.cpp:98
+ msgid "Preferred total discs number tag field for ogg vorbis and flac files:"
+-msgstr ""
++msgstr "Campo de etiqueta del número total de discos preferidos para ogg vorbis y archivos flac:"
+ 
+ #: configdialog/configadvancedpage.cpp:99
+ #: configdialog/configadvancedpage.cpp:102
+@@ -489,6 +495,10 @@ msgid ""
+ "When using the field DISCNUMBER, the disc number and the total discs number "
+ "will be written to the same field separated by a slash ('/')."
+ msgstr ""
++"El número total de discos se escribirán en el campo seleccionado al leer las etiquetas "
++"el campo seleccionado será preferido.\n"
++"Cuando se usa el campo NÚMERO DE DISCO, el número de disco y el número total de discos "
++"se escribirán en el mismo campo separado por una diagonal ('/')."
+ 
+ #: configdialog/configadvancedpage.cpp:117
+ msgid "Always use FAT compatible output file names"
+@@ -500,13 +510,13 @@ msgid ""
+ "If the output directory is on a FAT file system FAT compatible file names "
+ "will automatically be used independently from this option."
+ msgstr ""
+-"Reemplazar algunos caracteres especiales como '?' por '_'.⏎ Si el directorio "
+-"de salida está en un sistema de archivo FAT, se usarán nombres de archivos "
+-"compatibles con FAT automáticamente independientemente de esta opción."
++"Reemplazar algunos caracteres especiales como '?' por '_'.\n"
++"Si el directorio de salida está en un sistema de archivo FAT, compatible a nombres de archivos "
++"podria se usado automáticamente independientemente de esta opción."
+ 
+ #: configdialog/configadvancedpage.cpp:128
+ msgid "Eject CD after ripping has been completed"
+-msgstr ""
++msgstr "Expulsar CD después de terminar la extracción"
+ 
+ #: configdialog/configadvancedpage.cpp:135
+ msgid "Debug"
+@@ -523,9 +533,10 @@ msgid ""
+ "the log viewer.\n"
+ "Log files will be written to %1"
+ msgstr ""
+-"Escribir registros al disco rígido mientras se convierte.⏎ Ésto puede ser "
+-"útil si ocurre una falla y no puede acceder al registro usando un visor de "
+-"registro.⏎ Los registros se escribirán en %1"
++"Escribir registros al disco rígido mientras se convierte.\n"
++"Ésto puede ser útil si ocurre una falla y no puede acceder al archivo de registro usando "
++"el visor de registros.\n"
++"Archivos de registro se escribirán en %1"
+ 
+ #: configdialog/configadvancedpage.cpp:152
+ msgid "Experimental"
+@@ -533,9 +544,7 @@ msgstr "Experimental"
+ 
+ #: configdialog/configadvancedpage.cpp:161
+ msgid "Store temporary files in memory unless the estimated size is more than:"
+-msgstr ""
+-"Guardar archivos temporarios en memoria a menos que el tamaño estimado sea "
+-"más que:"
++msgstr "Guardar archivos temporarios en memoria a menos que el tamaño estimado sea más que:"
+ 
+ #: configdialog/configadvancedpage.cpp:162
+ #: configdialog/configadvancedpage.cpp:166
+@@ -543,8 +552,8 @@ msgid ""
+ "Don't store files that are expected to be bigger than this value in memory "
+ "to avoid swapping"
+ msgstr ""
+-"No almacenar los archivos que sean mayores que este valor en memoria para "
+-"evitar swapping."
++"No almacenar los archivos que sean mayores que este valor en memoria "
++"para evitar intercambios"
+ 
+ #: configdialog/configadvancedpage.cpp:167
+ msgctxt "mega in bytes"
+@@ -565,9 +574,9 @@ msgid ""
+ "performance.\n"
+ "But some backends cause errors in this mode so be cautious."
+ msgstr ""
+-"Las tuberías son necesarias cuando se usan archivos temporales, mejorando el "
+-"rendimiento.⏎ Pero algunos binarios causan errores cuando se usa este modo, "
+-"por lo tanto debe ser cuidadoso."
++"Las tuberías son innecesarias cuando se usan archivos temporales, mejorando el "
++"rendimiento.\n"
++"Pero algunos binarios causan errores cuando se usa este modo por lo tanto ser cuidadoso."
+ 
+ #: configdialog/configbackendspage.cpp:136
+ #: configdialog/configbackendspage.cpp:197
+@@ -606,7 +615,7 @@ msgstr "Extractor de CD"
+ 
+ #: configdialog/configbackendspage.cpp:241
+ msgid "Use plugin:"
+-msgstr "Usar plugin:"
++msgstr "Usar enchufe:"
+ 
+ #: configdialog/configbackendspage.cpp:265
+ msgid "Filters"
+@@ -614,7 +623,7 @@ msgstr "Filtros"
+ 
+ #: configdialog/configbackendspage.cpp:281
+ msgid "Enable plugins:"
+-msgstr "Habilitar plugins:"
++msgstr "Habilitar enchufes:"
+ 
+ #: configdialog/configbackendspage.cpp:320
+ msgid "Priorities"
+@@ -622,7 +631,7 @@ msgstr "Prioridades"
+ 
+ #: configdialog/configbackendspage.cpp:332
+ msgid "Configure plugin priorities for format:"
+-msgstr "Configurar prioridades de plugin para el formato:"
++msgstr "Configurar prioridades de enchufe para el formato:"
+ 
+ #: configdialog/configbackendspage.cpp:359
+ msgid "Show possible optimizations"
+@@ -634,7 +643,7 @@ msgid ""
+ "Do you want to save them?"
+ msgstr ""
+ "Ha modificado las configuraciones actuales.\n"
+-"¿Desea guardarlas?"
++"Desea guardarlas?"
+ 
+ #: configdialog/configbackendspage.cpp:399
+ msgid "Settings changed"
+@@ -647,10 +656,14 @@ msgid ""
+ "\n"
+ "Do you want to continue?"
+ msgstr ""
++"Esto elegirá los mejores binarios para todos los formatos y guardará las nuevas"
++"preferencias inmediatamente.\n"
++"\n"
++"Quieres continuar?"
+ 
+ #: configdialog/configbackendspage.cpp:607
+ msgid "All backend settings seem to be optimal, there is nothing to do."
+-msgstr "Todos los binarios parecen estar bien, no hay nada que hacer."
++msgstr "Todos los ajustes de los binarios parecen estar bien, no hay nada que hacer."
+ 
+ #: configdialog/configcoverartpage.cpp:24
+ msgid "Saving covers to output directory"
+@@ -666,7 +679,7 @@ msgstr "Siempre"
+ 
+ #: configdialog/configcoverartpage.cpp:40
+ msgid "Only if embedding the covers into the output files is not possible"
+-msgstr "Sólo embeber las cubiertas si no es posible"
++msgstr "Solo si no es posible embeber las cubiertas en los archivos de salida"
+ 
+ #: configdialog/configcoverartpage.cpp:42
+ msgid "Never"
+@@ -675,8 +688,7 @@ msgstr "Nunca"
+ #: configdialog/configcoverartpage.cpp:62
+ msgid "File name for the cover (when saving to output directory)"
+ msgstr ""
+-"Nombre de archivo para la cubierta (cuando se guarda en el directorio de "
+-"salida)"
++"Nombre de archivo para la cubierta (cuando se guarda en el directorio de salida)"
+ 
+ #: configdialog/configcoverartpage.cpp:64
+ msgid "The embedded cover description"
+@@ -700,13 +712,17 @@ msgid ""
+ "%d - Cover description\n"
+ "%r - Cover role"
+ msgstr ""
+-"Las siguientes líneas son comodines para ser reemplazados por la información "
+-"en los metadatos:⏎  ⏎  %a - Artista ⏎  %b - Álbum %d - Descripción de "
+-"cubierta ⏎ %r - Tipo de cubierta"
++"Las siguientes cadenas son comodines que ser reemplazados\n"
++"por la información en los metadatos:\n"
++"\n"
++"%a - Artista\n"
++"%b - Álbum\n"
++"%d - Descripción de cubierta\n"
++"%r - Papel de portada"
+ 
+ #: configdialog/configdialog.cpp:29
+ msgid "Settings"
+-msgstr "Configuraciones"
++msgstr "Ajustes"
+ 
+ #: configdialog/configdialog.cpp:42
+ msgid "General"
+@@ -776,8 +792,9 @@ msgid ""
+ "cores.\n"
+ "There have been %1 processor cores detected."
+ msgstr ""
+-"Este número no debería ser mayor que la cantidad de núcleos de procesador "
+-"disponibles.⏎ Se detectaron %1 núcleos de procesador."
++"Este número no debería ser mayor a la cantidad de núcleos del "
++"procesador.\n"
++"Se detectaron %1 núcleos de procesador."
+ 
+ #: configdialog/configgeneralpage.cpp:150
+ msgid "Apply album gain to converted files"
+@@ -788,18 +805,20 @@ msgid ""
+ "Keep songs of the same album waiting in file list in order to apply album "
+ "gain to all files."
+ msgstr ""
+-"Mantener las canciones del mismo álbum esperando en la lista de archivos "
+-"para poder aplicarle ganancia de álbum a todas ellas."
++"Mantener las canciones del mismo álbum esperando en la lista de archivos para poder aplicar al álbum "
++"de ganancia a todos los archivos."
+ 
+ #: configdialog/configgeneralpage.cpp:161
+ msgid "Copy files instead of converting to the same file format"
+-msgstr ""
++msgstr "Copiar archivos en lugar de convertirlos al mismo formato de archivo"
+ 
+ #: configdialog/configgeneralpage.cpp:162
+ msgid ""
+ "If the input and the output file format are the same, copy the files instead "
+ "of re-encoding them."
+ msgstr ""
++"Si la entrada y el formato del archivo de salida son iguales, copiar los archivos en lugar "
++"de volver a codificarlos."
+ 
+ #: configdialog/configgeneralpage.cpp:169
+ #: replaygainscanner/replaygainscanner.cpp:34
+@@ -809,7 +828,7 @@ msgstr "Herramienta Replay Gain"
+ 
+ #: configdialog/configgeneralpage.cpp:178
+ msgid "Group files in the Replay Gain tool by:"
+-msgstr "Agrupar archivos en la herramienta Replay Gain por:"
++msgstr "Grupo de archivos en la herramienta Replay Gain por:"
+ 
+ #: configdialog/configgeneralpage.cpp:181
+ msgctxt "Group files in the Replay Gain tool by"
+@@ -828,7 +847,7 @@ msgstr "Sólo directorios"
+ 
+ #: configdialog/configgeneralpage.cpp:193
+ msgid "Number of items to process at once:"
+-msgstr "Número de ítems a procesar a la vez:"
++msgstr "Número de elementos a procesar a la vez:"
+ 
+ #: convert.cpp:68 convert.cpp:1450
+ msgid "Getting file"
+@@ -840,11 +859,11 @@ msgstr "Copiando \"%1\" a \"%2\""
+ 
+ #: convert.cpp:103 convert.cpp:1138
+ msgid "File is encrypted, conversion not possible"
+-msgstr ""
++msgstr "El archivo está encriptado, la conversión no es posible"
+ 
+ #: convert.cpp:121
+ msgid "Cannot create output directory \"%1\""
+-msgstr ""
++msgstr "No se puede crear el directorio de salida \"% 1 \""
+ 
+ #: convert.cpp:144 convert.cpp:478 convert.cpp:495
+ #: replaygainscanner/replaygainprocessor.cpp:64
+@@ -862,20 +881,20 @@ msgid ""
+ "Conversion failed. At least one of the used backends needs to be configured "
+ "properly."
+ msgstr ""
+-"Falló la conversión. Al menos uno de los binarios utilizados debe "
+-"configurarse apropiadamente."
++"Falló la conversión. Al menos uno de los binarios utilizados debe configurarse "
++"apropiadamente."
+ 
+ #: convert.cpp:202 convert.cpp:441 convert.cpp:558
+ msgid ""
+ "Conversion failed. The preferred plugin lacks support for a necessary "
+ "feature."
+ msgstr ""
+-"Falló conversión. El plugin preferido carece de soporte para la "
+-"característica necesitada."
++"Falló la conversión. El enchufe preferido carece de soporte para la característica "
++"necesitada."
+ 
+ #: convert.cpp:208 convert.cpp:447 convert.cpp:564
+ msgid "Conversion failed. Unknown Error."
+-msgstr "Falló conversión. Error desconocido."
++msgstr "Falló la conversión. Error desconocido."
+ 
+ #: convert.cpp:369 convert.cpp:1462 filelist.cpp:577
+ msgid "Ripping"
+@@ -903,7 +922,7 @@ msgstr "Aplicando Replay Gain"
+ 
+ #: convert.cpp:531 replaygainscanner/replaygainprocessor.cpp:89
+ msgid "Waiting for running Vorbis Gain process to finish"
+-msgstr ""
++msgstr "Esperando correr el proceso Vorbis Gain para terminar"
+ 
+ #: convert.cpp:580
+ msgid "Writing tags"
+@@ -937,16 +956,16 @@ msgstr "Falló la conversión. Código d
+ #: convert.cpp:1107
+ msgctxt "identificator for the logger"
+ msgid "CD track %1: %2 - %3"
+-msgstr "Pista %1: %2 - %3"
++msgstr "Pista de CD %1: %2 - %3"
+ 
+ #: convert.cpp:1111
+ msgctxt "identificator for the logger"
+ msgid "CD track %1"
+-msgstr "Pista %1"
++msgstr "Pista de CD %1"
+ 
+ #: convert.cpp:1118
+ msgid "Adding new item to conversion list: '%1'"
+-msgstr "Agregando nuevo ítem a la lista de conversión: '%1'"
++msgstr "Agregando nuevo elemento a la lista de conversión: '%1'"
+ 
+ #: convert.cpp:1127 replaygainscanner/replaygainprocessor.cpp:281
+ msgid "Got log ID: %1"
+@@ -969,8 +988,8 @@ msgid ""
+ "An error occurred, the output file size is less than one percent of the "
+ "input file size"
+ msgstr ""
+-"Ocurrió un error, el tamaño del archivo de salida es menor que el uno por "
+-"ciento del archivo de entrada"
++"Ocurrió un error, el tamaño del archivo de salida es menor que el uno por ciento "
++"del archivo de entrada"
+ 
+ #: convert.cpp:1238
+ msgid "Conversion failed, trying again. Exit code: -2 (%1)"
+@@ -988,7 +1007,7 @@ msgstr "Salida normal"
+ #: convert.cpp:1256 replaygainscanner/replaygainprocessor.cpp:326
+ msgctxt "Conversion exit status"
+ msgid "Succeeded but problems occurred"
+-msgstr ""
++msgstr "Tuve éxito pero ocurrieron problemas"
+ 
+ #: convert.cpp:1259 replaygainscanner/replaygainprocessor.cpp:329
+ msgctxt "Conversion exit status"
+@@ -998,7 +1017,7 @@ msgstr "Abortado por usuario"
+ #: convert.cpp:1262 replaygainscanner/replaygainprocessor.cpp:332
+ msgctxt "Conversion exit status"
+ msgid "Backend needs configuration"
+-msgstr "Ejecutable necesita configuración"
++msgstr "Binario necesita configuración"
+ 
+ #: convert.cpp:1265
+ msgctxt "Conversion exit status"
+@@ -1008,7 +1027,7 @@ msgstr "No hay suficiente espacio en el
+ #: convert.cpp:1268
+ msgctxt "Conversion exit status"
+ msgid "Cannot write to output directory, please check permissions"
+-msgstr ""
++msgstr "No se puede escribir en el directorio de salida, compruebe los permisos"
+ 
+ #: convert.cpp:1271
+ msgctxt "Conversion exit status"
+@@ -1018,7 +1037,7 @@ msgstr "El archivo ya existe"
+ #: convert.cpp:1274
+ msgctxt "Conversion exit status"
+ msgid "File is encrypted"
+-msgstr ""
++msgstr "El archivo está encriptado"
+ 
+ #: convert.cpp:1277 replaygainscanner/replaygainprocessor.cpp:338
+ msgctxt "Conversion exit status"
+@@ -1043,7 +1062,7 @@ msgstr "Tamaño del archivo de salida"
+ 
+ #: convert.cpp:1328
+ msgid "File size ratio"
+-msgstr "Razón de tamaño de archivo"
++msgstr "proporción de tamaño de archivo"
+ 
+ #: convert.cpp:1435
+ msgctxt "The conversion progress can't be determined"
+@@ -1070,6 +1089,11 @@ msgid ""
+ "<br><br><a href=\"http://en.wikipedia.org/wiki/WAV\">http://en.wikipedia.org/"
+ "wiki/WAV</a>"
+ msgstr ""
++"(Wave) es un formato de audio muy simple que no comprime la transmisión de audio "
++"es sin pérdida pero el tamaño del archivo es muy grande y no admite avanzadas "
++"características como etiquetas.<br>Es compatible con cualquier programa o dispositivo."
++"<br><br><a href=\"http://en.wikipedia.org/wiki/WAV\">http://en.wikipedia.org/"
++"wiki/WAV</a>"
+ 
+ #: core/backendplugin.cpp:47
+ msgid ""
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/po/et.po soundkonverter-master/src/po/et.po
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/po/et.po	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/po/et.po	2020-07-26 12:02:34.000000000 +0200
+@@ -1,26 +1,22 @@
+-# SOME DESCRIPTIVE TITLE.
+ # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+ # This file is distributed under the same license as the PACKAGE package.
+ #
+ # Translators:
+-# Daniel Faust <hessijames@gmail.com>, 2012
+-# Mihkel Tõnnov <mihhkel@gmail.com>, 2011-2013
+-# Mihkel Tõnnov <mihhkel@gmail.com>, 2011
++# Mihkel Tõnnov <mihhkel@gmail.com>, 2008-2009, 2011-2014, 2020.
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: soundkonverter\n"
+-"Report-Msgid-Bugs-To: https://bugs.launchpad.net/ubuntu/%2Bsource/"
+-"soundkonverter/\n"
++"Report-Msgid-Bugs-To: https://bugs.launchpad.net/ubuntu/%2Bsource/soundkonverter/\n"
+ "POT-Creation-Date: 2016-05-21 10:30+0200\n"
+-"PO-Revision-Date: 2016-05-03 15:47+0000\n"
+-"Last-Translator: Daniel Faust <hessijames@gmail.com>\n"
+-"Language-Team: Estonian (http://www.transifex.com/hessijames/soundkonverter/"
+-"language/et/)\n"
++"PO-Revision-Date: 2020-04-07 13:51+0200\n"
++"Last-Translator: Mihkel Tõnnov <mihhkel@gmail.com>\n"
++"Language-Team: Estonian <>\n"
+ "Language: et\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+ "Plural-Forms: nplurals=2; plural=(n != 1);\n"
++"X-Generator: Lokalize 19.12.3\n"
+ 
+ #: aboutplugins.cpp:20
+ msgid "About plugins"
+@@ -71,7 +67,7 @@ msgstr "Dekodeerimine: %1"
+ #: configdialog/configbackendspage.cpp:309
+ #: configdialog/configbackendspage.cpp:388 optionsdetailed.cpp:304
+ msgid "Configure %1 ..."
+-msgstr "%1 seadistamine..."
++msgstr "%1i seadistamine..."
+ 
+ #: codecoptimizations.cpp:17 codecproblems.cpp:14
+ msgid "Solutions for backend problems"
+@@ -623,7 +619,7 @@ msgstr "Kasutatav plugin:"
+ 
+ #: configdialog/configbackendspage.cpp:265
+ msgid "Filters"
+-msgstr "Fintrid"
++msgstr "Filtrid"
+ 
+ #: configdialog/configbackendspage.cpp:281
+ msgid "Enable plugins:"
+@@ -814,12 +810,14 @@ msgstr ""
+ #: configdialog/configgeneralpage.cpp:161
+ msgid "Copy files instead of converting to the same file format"
+ msgstr ""
++"Samasse vormingusse teisendamise asemel failid kopeeritakse"
+ 
+ #: configdialog/configgeneralpage.cpp:162
+ msgid ""
+ "If the input and the output file format are the same, copy the files instead "
+ "of re-encoding them."
+ msgstr ""
++"Kui sisend- ja väljundvorming on sama, siis failide uuesti kodeerimise asemel need lihtsalt kopeeritakse."
+ 
+ #: configdialog/configgeneralpage.cpp:169
+ #: replaygainscanner/replaygainscanner.cpp:34
+@@ -861,10 +859,12 @@ msgstr "Kopeerimine: \"%1\" -> \"%2\""
+ #: convert.cpp:103 convert.cpp:1138
+ msgid "File is encrypted, conversion not possible"
+ msgstr ""
++"Fail on krüptitud, teisendamine pole võimalik"
+ 
+ #: convert.cpp:121
+ msgid "Cannot create output directory \"%1\""
+ msgstr ""
++"Väljundkataloogi \"%1\" loomine pole võimalik"
+ 
+ #: convert.cpp:144 convert.cpp:478 convert.cpp:495
+ #: replaygainscanner/replaygainprocessor.cpp:64
+@@ -924,6 +924,7 @@ msgstr "Helitugevuse paranduse rakendami
+ #: convert.cpp:531 replaygainscanner/replaygainprocessor.cpp:89
+ msgid "Waiting for running Vorbis Gain process to finish"
+ msgstr ""
++"Vorbis Gaini protsessi lõpetamise järel ootamine"
+ 
+ #: convert.cpp:580
+ msgid "Writing tags"
+@@ -1028,6 +1029,7 @@ msgstr "Väljundseadmel pole piisavalt r
+ msgctxt "Conversion exit status"
+ msgid "Cannot write to output directory, please check permissions"
+ msgstr ""
++"Väljundkataloogi kirjutamine pole võimalik - vaata, et õigused oleks paigas"
+ 
+ #: convert.cpp:1271
+ msgctxt "Conversion exit status"
+@@ -1038,6 +1040,7 @@ msgstr "Fail on juba olemas"
+ msgctxt "Conversion exit status"
+ msgid "File is encrypted"
+ msgstr ""
++"Fail on krüptitud"
+ 
+ #: convert.cpp:1277 replaygainscanner/replaygainprocessor.cpp:338
+ msgctxt "Conversion exit status"
+@@ -1453,6 +1456,7 @@ msgstr "Jäetakse vahele"
+ #: filelist.cpp:552
+ msgid "Will be copied"
+ msgstr ""
++"Kopeeritakse"
+ 
+ #: filelist.cpp:556 soundkonverter.cpp:111 soundkonverter.cpp:115
+ msgid "Waiting"
+@@ -1462,21 +1466,25 @@ msgstr "Ootel"
+ msgctxt "Short conversion status"
+ msgid "Stopped"
+ msgstr ""
++"Peatatud"
+ 
+ #: filelist.cpp:601
+ msgctxt "Short conversion status"
+ msgid "Backend not configured"
+ msgstr ""
++"Taustprogramm seadistamata"
+ 
+ #: filelist.cpp:606
+ msgctxt "Short conversion status"
+ msgid "Disc full"
+ msgstr ""
++"Ketas täis"
+ 
+ #: filelist.cpp:611
+ msgctxt "Short conversion status"
+ msgid "Can't write output"
+ msgstr ""
++"Väljundfaili pole võimalik kirjutada"
+ 
+ #: filelist.cpp:614 filelist.cpp:631 filelist.cpp:643
+ msgid ""
+@@ -1489,16 +1497,19 @@ msgstr ""
+ #: filelist.cpp:623
+ msgid "Skipped"
+ msgstr ""
++"Jäeti vahele"
+ 
+ #: filelist.cpp:628
+ msgctxt "Short conversion status"
+ msgid "File is encrypted"
+ msgstr ""
++"Fail on krüptitud"
+ 
+ #: filelist.cpp:640
+ msgctxt "Short conversion status"
+ msgid "Failed"
+ msgstr ""
++"Ebaõnnestus"
+ 
+ #: filelist.cpp:666
+ msgid "CD track %1"
+@@ -1594,9 +1605,11 @@ msgid ""
+ "soundKonverter is a frontend to various audio converters, Replay Gain tools "
+ "and CD rippers.\n"
+ "\n"
+-"Please file bug reports at https://github.com/dfaust/soundkonverter/"
+-"issues"
++"Please file bug reports at https://github.com/dfaust/soundkonverter/issues"
+ msgstr ""
++"soundKonverter on mitmete audioteisendajate, helitugevuse parandustööriistade ja CD-rippijate kasutajaliides\n"
++"\n"
++"Palun esita veateated aadressil https://github.com/dfaust/soundkonverter/issues"
+ 
+ #: main.cpp:22
+ msgid "soundKonverter"
+@@ -1605,6 +1618,7 @@ msgstr "soundKonverter"
+ #: main.cpp:22
+ msgid "(C) 2005-2016 Daniel Faust"
+ msgstr ""
++"(C) 2005-2016 Daniel Faust"
+ 
+ #: main.cpp:23
+ msgid "Daniel Faust"
+@@ -1696,6 +1710,7 @@ msgstr ""
+ #: main.cpp:41
+ msgid "Load the file list at <path> after starting soundKonverter"
+ msgstr ""
++"soundKonverteri käivitamise järel laaditakse <asukohast> faililoend"
+ 
+ #: main.cpp:42
+ msgid "Audio file(s) to append to the file list"
+@@ -2461,8 +2476,7 @@ msgid "Unknown Title"
+ msgstr "Pealkiri teadmata"
+ 
+ #: outputdirectory.cpp:354
+-msgctxt ""
+-"will be appended to the filename if a file with the same name already exists"
++msgctxt "will be appended to the filename if a file with the same name already exists"
+ msgid "new"
+ msgstr "uus"
+ 
+@@ -2589,6 +2603,7 @@ msgstr ""
+ #: plugins/soundkonverter_codec_faac/soundkonverter_codec_faac.cpp:87
+ msgid "Compile faac with MP4 support."
+ msgstr ""
++"Kompileeri faac MP4 toega."
+ 
+ #: plugins/soundkonverter_codec_ffmpeg/ffmpegcodecwidget.cpp:30
+ #: plugins/soundkonverter_codec_libav/libavcodecwidget.cpp:30
+@@ -3110,11 +3125,13 @@ msgstr "Sildivorming:"
+ #: plugins/soundkonverter_replaygain_mp3gain/soundkonverter_replaygain_mp3gain.cpp:98
+ msgid "Adjust gain:"
+ msgstr ""
++"Kohandatud parandus:"
+ 
+ #: plugins/soundkonverter_replaygain_aacgain/soundkonverter_replaygain_aacgain.cpp:110
+ #: plugins/soundkonverter_replaygain_mp3gain/soundkonverter_replaygain_mp3gain.cpp:103
+ msgid "Lower or raise the suggested gain"
+ msgstr ""
++"Pakutava helitugevuse paranduse suurendamine või vähendamine"
+ 
+ #: plugins/soundkonverter_replaygain_aacgain/soundkonverter_replaygain_aacgain.cpp:115
+ #: plugins/soundkonverter_replaygain_mp3gain/soundkonverter_replaygain_mp3gain.cpp:108
+@@ -3152,6 +3169,7 @@ msgstr "Sunnitakse lugemiskiirust:"
+ msgctxt "Byte-Order"
+ msgid "Endianness:"
+ msgstr ""
++"Baidijärjestus:"
+ 
+ #: plugins/soundkonverter_ripper_cdparanoia/soundkonverter_ripper_cdparanoia.cpp:109
+ msgid "Maximum read retries:"
+@@ -3450,3 +3468,305 @@ msgstr "Helifailide teisendaja, CD-rippi
+ #: rc.cpp:4
+ msgid "Rip Audio CD with soundKonverter"
+ msgstr "Ripi audio-CD soundKonverteriga"
++
++#~ msgid "Running user script"
++#~ msgstr "Kasutajaskripti käivitamine"
++
++#~ msgid "Stopped"
++#~ msgstr "Peatatud"
++
++#~ msgid "Backend not configured"
++#~ msgstr "Taustprogramm seadistamata"
++
++#~ msgid "Disc full"
++#~ msgstr "Ketas täis"
++
++#~ msgid "Failed"
++#~ msgstr "Ebaõnnestus"
++
++#~ msgid ""
++#~ "soundKonverter is a frontend to various audio converters, Replay Gain "
++#~ "tools and CD rippers.\n"
++#~ "\n"
++#~ "Please file bug reports at https://bugs.launchpad.net/soundkonverter\n"
++#~ "or simply send me a mail to hessijames@gmail.com"
++#~ msgstr ""
++#~ "soundKonverter on mitmete audioteisendajate, helitugevuse "
++#~ "parandustööriistade ja CD-rippijate kasutajaliides.\n"
++#~ "\n"
++#~ "Palun esita veateated aadressil https://bugs.launchpad.net/ubuntu/+source/"
++#~ "soundkonverter\n"
++#~ "või lihtsalt saada e-kiri: hessijames@gmail.com"
++
++#~ msgid "(C) 2005-2012 Daniel Faust"
++#~ msgstr "(C) 2005-2012 Daniel Faust"
++
++#~ msgid "Endianness:"
++#~ msgstr "Otsalisus:"
++
++#~ msgid "Tools"
++#~ msgstr "Tööriistad"
++
++#~ msgid "Various Artists"
++#~ msgstr "Mitu esitajat"
++
++#~ msgid "Various Composer"
++#~ msgstr "Mitu heliloojat"
++
++#~ msgid "Unknown"
++#~ msgstr "Teadmata"
++
++#~ msgid "DVD Recorder"
++#~ msgstr "DVD-kirjuti"
++
++#~ msgid "CD Recorder"
++#~ msgstr "CD-kirjuti"
++
++#~ msgid "DVD Player"
++#~ msgstr "DVD-lugeja"
++
++#~ msgid "CD Player"
++#~ msgstr "CD-lugeja"
++
++#~ msgid "Quality level from -50 to 50."
++#~ msgstr "Kvaliteedi tase vahemikus -50 kuni 50."
++
++#~ msgid "Quality level from 9 to 0 where 0 is the highest quality."
++#~ msgstr ""
++#~ "Kvaliteeditase vahemikus 9 kuni 0, kusjuures 0 on kõrgeim kvaliteet."
++
++#~ msgid ""
++#~ "Reading/writing covers is not supported for ogg/METADATA_BLOCK_PICTURE, "
++#~ "flac and asf/wma files. TagLib 1.7 is needed for that."
++#~ msgstr ""
++#~ "Kaanepiltide lugemist-kirjutamist ei toetata FLAC- ja ASF/WMA-failide "
++#~ "ning ogg/METADATA_BLOCK_PICTURE puhul. Selleks on vaja TagLib'i versiooni "
++#~ "1.7."
++
++#~ msgid ""
++#~ "Conversion failed. The preferred plugin lacks support for a ecessary "
++#~ "feature."
++#~ msgstr ""
++#~ "Teisendamine ebaõnnestus. Eelistatud plugin ei toeta vajalikku "
++#~ "funktsiooni."
++
++#~ msgid "Status update delay"
++#~ msgstr "Oleku uuendamise viivitus"
++
++#~ msgid "Update the progress bar in this interval (time in milliseconds)"
++#~ msgstr "Määrab edenemise uuendamise intervalli (millisekundites)."
++
++#~ msgid "Remove partially converted files if a conversion fails"
++#~ msgstr "Teisenduse nurjumisel eemaldatakse poolelijäänud failid"
++
++#~ msgid ""
++#~ "Disable this for debugging or if you are sure the files get converted "
++#~ "correctly."
++#~ msgstr ""
++#~ "See tasub välja lülitada vigade otsimisel või kui oled kindel, et failid "
++#~ "teisendatakse korrektselt."
++
++#~ msgid "Backend"
++#~ msgstr "Taustprogramm"
++
++#~ msgid "%1 settings"
++#~ msgstr "Vormingu \"%1\" seaded"
++
++#~ msgid "File name for the cover"
++#~ msgstr "Kaanepildi failinimi"
++
++#~ msgid "Create actions menus for the file manager"
++#~ msgstr "Failihalduri toimingumenüüsse kirjete loomine"
++
++#~ msgid ""
++#~ "These service menus won't get removed if you uninstall soundKonverter.\n"
++#~ "But you can remove them by disabling this option."
++#~ msgstr ""
++#~ "soundKonverteri eemaldamisel jäävad teenusmenüü kirjeid alles.\n"
++#~ "Selle valiku keelamisel nad kustutatakse."
++
++#~ msgid "Moving file to destination"
++#~ msgstr "Faili liigutamine sihtkohta"
++
++#~ msgid "Wave won't compress the audio stream."
++#~ msgstr "Wave helivoogu kokku ei paki."
++
++#~ msgid ""
++#~ "Advanced Audio Coding is a lossy and popular audio format. It is widely "
++#~ "used by Apple Inc."
++#~ msgstr ""
++#~ "Advanced Audio Coding on populaarne kadudega helivorming. Kasutatakse "
++#~ "laialt Apple'i toodetes."
++
++#~ msgid ""
++#~ "m4a files are encoded with the aac codec. It is widely used by Apple Inc."
++#~ msgstr ""
++#~ "m4a-failid kodeeritakse AAC-koodekiga. Kasutatakse laialt Apple'i "
++#~ "toodetes."
++
++#~ msgid ""
++#~ "Ogg Vorbis is a free and lossy high quality audio codec.\n"
++#~ "For more information see: http://www.xiph.org/vorbis/"
++#~ msgstr ""
++#~ "Ogg Vorbis on vaba ja kõrgekvaliteetne kadudega helikoodek.\n"
++#~ "Lisainfo: http://www.xiph.org/vorbis/"
++
++#~ msgid ""
++#~ "MP3 is the most popular lossy audio codec. It's supported by all audio "
++#~ "players."
++#~ msgstr ""
++#~ "MP3 on populaarseim kadudega helikoodek. Seda toetavad kõik audiomängijad."
++
++#~ msgid ""
++#~ "Flac is the free lossless audio codec.\n"
++#~ "As it's name says, it compresses without any loss of quality."
++#~ msgstr ""
++#~ "FLAC (\"Free Lossless Audio Codec\") on vaba kadudeta helikoodek.\n"
++#~ "Nagu nimi ütleb, pakib see heli ilma kvaliteedikadudeta."
++
++#~ msgid "Windows Media Audio is a proprietary audio codec from Microsoft."
++#~ msgstr "Windows Media Audio on Microsofti omanduslik helikoodek."
++
++#~ msgid "Dolby Digital-Audio"
++#~ msgstr "Dolby Digital heli"
++
++#~ msgid ""
++#~ "Apple Lossless Audio Codec is a lossless audio format from Apple Inc.."
++#~ msgstr "Apple Lossless Audio Codec on Apple'i kadudeta helivorming."
++
++#~ msgid "MPEG-1 Audio Layer II is an old lossy audio format."
++#~ msgstr "MPEG-1 Audio Layer II on vana kadudega helivorming."
++
++#~ msgid "MPEG-4 Audio Lossless Coding"
++#~ msgstr "MPEG-4 Audio Lossless Coding (kaduteta helivorming)"
++
++#~ msgid ""
++#~ "Adaptive Multi-Rate Narrow-Band is based on 3gp and mainly used for "
++#~ "speech compression in mobile communication."
++#~ msgstr ""
++#~ "Adaptive Multi-Rate Narrow-Band põhineb 3GP-l ja seda kasutatakse "
++#~ "peamiselt kõne pakkimisel mobiilsides."
++
++#~ msgid ""
++#~ "Adaptive Multi-Rate Wide-Band is an advanced version of amr nb which uses "
++#~ "a higher data rate resulting in a higher quality."
++#~ msgstr ""
++#~ "Adaptive Multi-Rate Wide-Band on AMR NB täiuslikum versioon, mis kasutab "
++#~ "suuremat andmekiirust ja seega pakub kõrgemat kvaliteeti."
++
++#~ msgid ""
++#~ "Monkey’s Audio is a fast and efficient but proprietary lossless audio "
++#~ "format."
++#~ msgstr ""
++#~ "Monkey’s Audio on kiire ja tõhus, kuid omanduslik kaduteta helivorming."
++
++#~ msgid ""
++#~ "Speex is a free and lossy audio codec designed for low quality speech "
++#~ "encoding.\n"
++#~ "For more information see: http://www.speex.org"
++#~ msgstr ""
++#~ "Speex on vaba kadudega helikoodek, mis loodi kõne madalakvaliteediliseks "
++#~ "kodeerimiseks.\n"
++#~ "Lisainfo: http://www.speex.org"
++
++#~ msgid "MPEG-1 Audio Layer I very old and lossy file format."
++#~ msgstr "MPEG-1 Audio Layer I on väga vana kadudega helivorming."
++
++#~ msgid ""
++#~ "Shorten is a free and lossless audio codec.\n"
++#~ "For more information see: http://etree.org/shnutils/shorten/"
++#~ msgstr ""
++#~ "Shorten on vaba kadudeta helikoodek.\n"
++#~ "Lisainfo: http://etree.org/shnutils/shorten/"
++
++#~ msgid "True Audio is a free lossless audio format."
++#~ msgstr "True Audio on vaba kadudeta helivorming."
++
++#~ msgid ""
++#~ "WavPack is a free and lossless audio codec.\n"
++#~ "For more information see: http://www.wavpack.com"
++#~ msgstr ""
++#~ "WavPack on vaba kadudeta helikoodek.\n"
++#~ "Lisainfo: http://www.wavpack.com"
++
++#~ msgid "Real Media Audio is a proprietary and lossy codec."
++#~ msgstr "Real Media Audio on omanduslik kadudega koodek."
++
++#~ msgid "3GP is a audio/video container format for mobile devices."
++#~ msgstr "3GP on audio/video-konteinervorming mobiilseadmete jaoks."
++
++#~ msgid "Real Media is a proprietary and lossy codec."
++#~ msgstr "Real Media on omanduslik kadudega koodek."
++
++#~ msgid ""
++#~ "midi is a very old sound file format, that doesn't encode audio waves but "
++#~ "stores instrument timings."
++#~ msgstr ""
++#~ "MIDI on väga vana helifailivorming, milles kodeeritud helilainete asemel "
++#~ "on kirjas instrumentide ajastused."
++
++#~ msgid ""
++#~ "Amiga-SoundTracker-Audio is a very old sound file format, that doesn't "
++#~ "encode audio waves but stores instrument timings."
++#~ msgstr ""
++#~ "Amiga-SoundTracker-Audio on väga vana failivorming, milles kodeeritud "
++#~ "helilainete asemel on kirjas instrumentide ajastused."
++
++#~ msgid "Filename"
++#~ msgstr "Failinimi"
++
++#~ msgid "Output format"
++#~ msgstr "Väljundvorming"
++
++#~ msgid "Choose your prefered output options and click on \"Apply\"!"
++#~ msgstr "Vali soovitud väljundseaded ja klõpsa \"Rakenda\"."
++
++#~ msgid "More"
++#~ msgstr "Rohkem"
++
++#~ msgid ""
++#~ "This produces sound files of a medium quality.\n"
++#~ "If your disc space is limited, you can use this to save your music."
++#~ msgstr ""
++#~ "Seda profiili kasutades luuakse keskpärase helikvaliteediga failid.\n"
++#~ "Kui kettaruum on piiratud, võib muusika salvestamiseks just seda kasutada."
++
++#~ msgid ""
++#~ "This produces sound files of a very high quality.\n"
++#~ "You should only use this, if you are a quality freak and have enough disc "
++#~ "space available."
++#~ msgstr ""
++#~ "Seda profiili kasutades luuakse ülikõrge helikvaliteediga failid.\n"
++#~ "Seda peaks kasutama ainult juhul, kui oled tõeline kvaliteedifriik ja "
++#~ "kettal on palju vaba ruumi."
++
++#~ msgid ""
++#~ "This produces files, that have exact the same quality as the input "
++#~ "files.\n"
++#~ "This files are very big and definitely only for quality freaks."
++#~ msgstr ""
++#~ "Seda profiili kasutades luuakse failid, mille helikvaliteet on "
++#~ "sisendfailiga identne.\n"
++#~ "Saadavad failid on väga suured ja mõeldud kahtlemata ainult "
++#~ "kvaliteedifriikidele."
++
++#~ msgid ""
++#~ "This produces two files. One lossy compressed playable file and one "
++#~ "correction file.\n"
++#~ "Both files together result in a file that is equivalent to the input file."
++#~ msgstr ""
++#~ "Seda profiili kasutades luuakse kaks faili: üks kadudega pakitud, "
++#~ "esitamiseks mõeldud fail, ning üks korrektsioonifail.\n"
++#~ "Need kaks koos annavad sisendfailiga võrdse helikvaliteedi."
++
++#~ msgid "Resample"
++#~ msgstr "Ümberdiskreetimine"
++
++#~ msgid "Joint"
++#~ msgstr "Liitstereo"
++
++#~ msgid "Dual"
++#~ msgstr "Kaks kanalit"
++
++#~ msgid "The following files could not be added:"
++#~ msgstr "Järgmisi faile polnud võimalik lisada:"
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/replaygainscanner/replaygainfilelist.cpp soundkonverter-master/src/replaygainscanner/replaygainfilelist.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/replaygainscanner/replaygainfilelist.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/replaygainscanner/replaygainfilelist.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -355,7 +355,7 @@ int ReplayGainFileList::listDir( const Q
+             if( filter.contains(codecName) )
+             {
+                 QList<QUrl> urls;
+-                urls.append(directory + "/" + fileName);
++                urls.append("file://" + directory + "/" + fileName);
+                 addFiles( urls, codecName );
+             }
+ 
+diff -Naupr soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/soundkonverter.cpp soundkonverter-master/src/soundkonverter.cpp
+--- soundkonverter-aa20a5ad025cd30adaec16989ca4f8868da69f72/src/soundkonverter.cpp	2017-10-01 10:39:49.000000000 +0200
++++ soundkonverter-master/src/soundkonverter.cpp	2020-07-26 12:02:34.000000000 +0200
+@@ -40,9 +40,9 @@ soundKonverter::soundKonverter()
+     const int fontHeight = QFontMetrics(QApplication::font()).boundingRect("M").size().height();
+ 
+     logger = new Logger( this );
+-    logger->log( 1000, i18n("This is soundKonverter %1").arg(SOUNDKONVERTER_VERSION_STRING) );
++    logger->log( 1000, i18n("This is soundKonverter %1",*SOUNDKONVERTER_VERSION_STRING) );
+ 
+-    logger->log( 1000, "\n" + i18n("Compiled with TagLib %1.%2.%3").arg(TAGLIB_MAJOR_VERSION).arg(TAGLIB_MINOR_VERSION).arg(TAGLIB_PATCH_VERSION) );
++    logger->log( 1000, "\n" + i18n("Compiled with TagLib %1.%2.%3",TAGLIB_MAJOR_VERSION,TAGLIB_MINOR_VERSION,TAGLIB_PATCH_VERSION) );
+ 
+     config = new Config( logger, this );
+     config->load();
+@@ -258,12 +258,12 @@ void soundKonverter::startupChecks()
+         if( QFile::exists(QDir::homePath()+"/.kde4/share/kde4/services/ServiceMenus/convert_with_soundkonverter.desktop") )
+         {
+             QFile::remove(QDir::homePath()+"/.kde4/share/kde4/services/ServiceMenus/convert_with_soundkonverter.desktop");
+-            logger->log( 1000, i18n("Removing old file: %1").arg(QDir::homePath()+"/.kde4/share/kde4/services/ServiceMenus/convert_with_soundkonverter.desktop") );
++            logger->log( 1000, i18n("Removing old file: %1",QDir::homePath()+"/.kde4/share/kde4/services/ServiceMenus/convert_with_soundkonverter.desktop") );
+         }
+         if( QFile::exists(QDir::homePath()+"/.kde4/share/kde4/services/ServiceMenus/add_replaygain_with_soundkonverter.desktop") )
+         {
+             QFile::remove(QDir::homePath()+"/.kde4/share/kde4/services/ServiceMenus/add_replaygain_with_soundkonverter.desktop");
+-            logger->log( 1000, i18n("Removing old file: %1").arg(QDir::homePath()+"/.kde4/share/kde4/services/ServiceMenus/add_replaygain_with_soundkonverter.desktop") );
++            logger->log( 1000, i18n("Removing old file: %1",QDir::homePath()+"/.kde4/share/kde4/services/ServiceMenus/add_replaygain_with_soundkonverter.desktop") );
+         }
+     }
+ 
+@@ -278,7 +278,7 @@ void soundKonverter::startupChecks()
+         if( *it != "1000.log" && (*it).endsWith(".log") )
+         {
+             QFile::remove( dir.absolutePath() + "/" + (*it) );
+-            logger->log( 1000, i18n("Removing old file: %1").arg(dir.absolutePath()+"/"+(*it)) );
++            logger->log( 1000, i18n("Removing old file: %1",dir.absolutePath()+"/"+(*it)) );
+         }
+     }
+ 
