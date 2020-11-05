@@ -1,0 +1,23 @@
+Description: Detect libc++ and include cinttypes accordingly
+ Upstream uses the C++11 cinttypes unconditionally which leads to problems with
+ compilers that need those features enables expicitly (like GCC).
+ Include the TR1 cinttypes which are an addition to C++03 if the library is not
+ libc++.
+Author: Denis Denisov
+Last-Update:2014-03-17
+Bug: https://bugs.launchpad.net/libmemcached/+bug/1284765
+
+--- a/libmemcached-1.0/memcached.h
++++ b/libmemcached-1.0/memcached.h
+@@ -43,7 +43,11 @@
+ #endif
+ 
+ #ifdef __cplusplus
++#ifdef _LIBCPP_VERSION
+ #  include <cinttypes>
++#else
++#  include <tr1/cinttypes>
++#endif
+ #  include <cstddef>
+ #  include <cstdlib>
+ #else

@@ -1,0 +1,47 @@
+From 6dc88ef3fb7ffde4bba5f5d22751f65b760a06cf Mon Sep 17 00:00:00 2001
+From: JackieFei <sigmafei@ms1.hinet.net>
+Date: Thu, 24 May 2018 15:23:10 +0800
+Subject: [PATCH] Comment the POPPLER_TYPE_ORIENTATION enum no longer exists.
+
+---
+ README    |  0
+ README.md | 10 ++++++++++
+ poppler.c |  3 ++-
+ 3 files changed, 12 insertions(+), 1 deletion(-)
+ delete mode 100644 README
+ create mode 100644 README.md
+
+diff --git a/README b/README
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/README.md b/README.md
+new file mode 100644
+index 0000000..22ed411
+--- /dev/null
++++ b/README.md
+@@ -0,0 +1,10 @@
++# pypoppler
++
++  Forked from pypoppler 0.12.2 https://pypi.org/project/pypoppler/
++
++  Source from https://files.pythonhosted.org/packages/d5/de/ae15f112f5750bd1fa6e296c5c5500b9a3e1bbc110a981e77d12ddfe30c6/pypoppler-0.12.2.tar.gz
++
++  Fix poppler.c:4504:53: error: use of undeclared identifier 'POPPLER_TYPE_ORIENTATION'
++
++  Reference : https://bugs.freedesktop.org/show_bug.cgi?id=93229
++ 
+\ No newline at end of file
+diff --git a/poppler.c b/poppler.c
+index 31b4489..0f53ed4 100644
+--- a/poppler.c
++++ b/poppler.c
+@@ -4501,7 +4501,8 @@ py_poppler_add_constants(PyObject *module, const gchar *strip_prefix)
+   pyg_enum_add(module, "FormTextType", strip_prefix, POPPLER_TYPE_FORM_TEXT_TYPE);
+   pyg_enum_add(module, "FormChoiceType", strip_prefix, POPPLER_TYPE_FORM_CHOICE_TYPE);
+   pyg_enum_add(module, "Error", strip_prefix, POPPLER_TYPE_ERROR);
+-  pyg_enum_add(module, "Orientation", strip_prefix, POPPLER_TYPE_ORIENTATION);
++  // 2018/05/24 poppler.c:4504:53: error: use of undeclared identifier 'POPPLER_TYPE_ORIENTATION'
++  // pyg_enum_add(module, "Orientation", strip_prefix, POPPLER_TYPE_ORIENTATION);
+   pyg_enum_add(module, "PageTransitionType", strip_prefix, POPPLER_TYPE_PAGE_TRANSITION_TYPE);
+   pyg_enum_add(module, "PageTransitionAlignment", strip_prefix, POPPLER_TYPE_PAGE_TRANSITION_ALIGNMENT);
+   pyg_enum_add(module, "PageTransitionDirection", strip_prefix, POPPLER_TYPE_PAGE_TRANSITION_DIRECTION);
