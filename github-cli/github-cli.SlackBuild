@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cli
 PKGNAM=github-cli
-SRCVERSION=1.1.0
+SRCVERSION=1.2.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -118,7 +118,7 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 bin/gh completion -s bash | install -Dm644 /dev/stdin $PKG/etc/bash-completion.d/gh
-bin/gh completion -s zsh | install -Dm644 /dev/stdin $PKG/share/zsh/site-functions/_gh
+bin/gh completion -s zsh | install -Dm644 /dev/stdin $PKG/usr/share/zsh/site-functions/_gh
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
