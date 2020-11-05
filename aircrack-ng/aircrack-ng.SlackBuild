@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=aircrack-ng
 SRCVERSION=1.6
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -98,8 +98,8 @@ function relinkp2 {
 trap relinkp2 EXIT
 
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
+CFLAGS="$SLKCFLAGS -fcommon" \
+CXXFLAGS="$SLKCFLAGS -fcommon" \
 ./configure \
   --prefix=/usr \
   --libdir=/usr/lib$LIBDIRSUFFIX \
