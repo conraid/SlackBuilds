@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libmemcached
 VERSION=1.0.18
-BUILD=${BUILD:-17}
+BUILD=${BUILD:-18}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -88,15 +88,14 @@ if [ -e $CWD/patches/ ]; then
 fi
 
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX} -lpthread" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS -fpermissive" \
+CFLAGS="$SLKCFLAGS -fno-common" \
+CXXFLAGS="$SLKCFLAGS -fpermissive -fno-common" \
 ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
   --mandir=/usr/man \
   --enable-static=no \
   --enable-libmemcachedprotocol \
-  --enable-memaslap \
   --enable-dtrace \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
