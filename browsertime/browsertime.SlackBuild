@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=browsertime
-VERSION=10.6.2
+VERSION=10.6.4
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -60,6 +60,7 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
+mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
 DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $CWD/$PKGNAM-$VERSION.tgz
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
