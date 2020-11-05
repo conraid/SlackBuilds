@@ -1,0 +1,86 @@
+From 2420b04e3d01cd02c26e238221a7603614830d15 Mon Sep 17 00:00:00 2001
+From: Dan Leinir Turthra Jensen <admin@leinir.dk>
+Date: Mon, 17 Feb 2020 11:55:10 +0000
+Subject: Unbreak the Accounts KCM
+
+Summary:
+Prior to this, the Accounts KCM would show only the first account,
+because the listview was a zero by zero size (which results in
+the first item still being shown because labels will overpaint
+unless told otherwise). The reson it looked like there was a
+view there before was that the view was set to the ScrollViewKCM's
+default scroll view. In other words: All the accounts were in fact
+there, but they were not displayed because the listview was
+not there.
+
+BUG:415267
+
+Reviewers: #plasma, nicolasfella, bshah
+
+Reviewed By: #plasma, bshah
+
+Subscribers: arojas
+
+Tags: #plasma
+
+Differential Revision: https://phabricator.kde.org/D27454
+---
+ src/kcm/package/contents/ui/Accounts.qml          | 4 ++--
+ src/kcm/package/contents/ui/AvailableAccounts.qml | 4 +---
+ src/kcm/package/contents/ui/AvailableServices.qml | 3 +--
+ 3 files changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/src/kcm/package/contents/ui/Accounts.qml b/src/kcm/package/contents/ui/Accounts.qml
+index 4c73dd5..ad2f7bc 100644
+--- a/src/kcm/package/contents/ui/Accounts.qml
++++ b/src/kcm/package/contents/ui/Accounts.qml
+@@ -34,7 +34,7 @@ ScrollViewKCM {
+     id: kaccountsRoot
+ 
+     // Existing accounts
+-    ListView {
++    view: ListView {
+         model: OA.AccountServiceModel {
+             id: accountsModel
+             service: "global"
+@@ -45,7 +45,7 @@ ScrollViewKCM {
+             width: ListView.view.width
+ 
+             contentItem: Controls.Label {
+-                text: i18n("%1 (%2)", model.displayName, providerName)
++                text: i18n("%1 (%2)", model.displayName, model.providerName)
+ 
+                 OA.Account {
+                     id: account
+diff --git a/src/kcm/package/contents/ui/AvailableAccounts.qml b/src/kcm/package/contents/ui/AvailableAccounts.qml
+index d300956..7b1c5d0 100644
+--- a/src/kcm/package/contents/ui/AvailableAccounts.qml
++++ b/src/kcm/package/contents/ui/AvailableAccounts.qml
+@@ -29,9 +29,7 @@ ScrollViewKCM {
+     id: root
+     title: i18n("Add new Account")
+ 
+-    ListView {
+-        anchors.fill: parent
+-
++    view: ListView {
+         model: OA.ProviderModel {}
+ 
+         delegate: Kirigami.BasicListItem {
+diff --git a/src/kcm/package/contents/ui/AvailableServices.qml b/src/kcm/package/contents/ui/AvailableServices.qml
+index 37521f6..0ece090 100644
+--- a/src/kcm/package/contents/ui/AvailableServices.qml
++++ b/src/kcm/package/contents/ui/AvailableServices.qml
+@@ -31,8 +31,7 @@ ScrollViewKCM {
+ 
+     property alias accountId: servicesModel.accountId
+ 
+-    ListView {
+-        anchors.fill: parent
++    view: ListView {
+         model: OA.AccountServiceModel {
+             id: servicesModel
+         }
+-- 
+cgit v1.1
+
