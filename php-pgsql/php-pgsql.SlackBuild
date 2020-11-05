@@ -33,7 +33,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=php
 PKGNAM=php-pgsql
-VERSION=7.4.11
+VERSION=7.4.12
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -158,8 +158,6 @@ CXXFLAGS="$SLKCFLAGS -DU_USING_ICU_NAMESPACE=1" \
   --enable-dba=shared \
   --with-gdbm=/usr \
   --with-db4=/usr \
-  --enable-exif=shared \
-  --enable-ftp=shared \
   --enable-gd \
   --with-external-gd \
   --with-jpeg \
@@ -170,21 +168,16 @@ CXXFLAGS="$SLKCFLAGS -DU_USING_ICU_NAMESPACE=1" \
   --with-iconv=shared \
   --with-ldap=shared \
   --enable-mbstring=shared \
-  --enable-mysqlnd=shared \
-  --with-mysqli=shared,mysqlnd \
-  --with-mysql-sock=/var/run/mysql/mysql.sock \
-  --with-iodbc=shared,/usr \
   --enable-pdo=shared \
-  --with-pdo-mysql=shared,mysqlnd \
-  --with-pdo-sqlite=shared,/usr \
-  --with-pdo-odbc=shared,iODBC,/usr \
+  --without-pdo-mysql \
+  --without-pdo-sqlite \
+  --without-pdo-odbc \
   --with-pspell=shared,/usr \
   --with-enchant=shared,/usr \
   --enable-shmop=shared \
   --with-snmp=shared,/usr \
   --enable-soap=shared \
   --enable-sockets \
-  --with-sqlite3=shared \
   --enable-sysvmsg \
   --enable-sysvsem \
   --enable-sysvshm \
