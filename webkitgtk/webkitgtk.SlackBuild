@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=webkitgtk
 VERSION=2.30.2
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -80,11 +80,20 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 # Apply patches
-if [ -e $CWD/patches/ ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
+if [ -e $CWD/patches ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
 fi
+
+# Ensure backward compatibility with the latest version of icu. Thanks to LFS
+echo 'add_compile_definitions("U_DEFINE_FALSE_AND_TRUE=1")' >> Source/WTF/wtf/CMakeLists.txt
 
 mkdir -p build
 cd build
@@ -96,7 +105,7 @@ cmake -Wno-dev \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DLIB_INSTALL_DIR=/usr/lib${LIBDIRSUFFIX} \
-	-DLIBEXEC_INSTALL_DIR=/usr/lib${LIBDIRSUFFIX}/webkit2gtk-4.0 \
+  -DLIBEXEC_INSTALL_DIR=/usr/lib${LIBDIRSUFFIX}/webkit2gtk-4.0 \
   -DENABLE_MINIBROWSER=ON \
   -DUSE_SYSTEMD=OFF \
   ..
