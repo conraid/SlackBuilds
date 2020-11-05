@@ -30,9 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=ntopng
-COMMIT=d7f1ce0d8c4541775efb403240298d618ab1c52b
-VERSION=4.0_$(echo $COMMIT | head -c7)
-BUILD=${BUILD:-3}
+SRCVERSION=4.2
+VERSION=$(echo $SRCVERSION | tr - _)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM/
@@ -73,9 +73,9 @@ fi
 rm -rf $PKG $TMP
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$COMMIT
-tar xvf $CWD/$PKGNAM-$COMMIT.tar.gz || tar xvf $CWD/$COMMIT.tar.gz
-cd $PKGNAM-$COMMIT
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION.tar.gz
+cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
