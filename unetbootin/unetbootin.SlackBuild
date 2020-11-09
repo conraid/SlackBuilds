@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=unetbootin
-VERSION=681
+VERSION=700
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -85,7 +85,7 @@ chmod -R u+w,go+r-w,a+X-s .
 sed -i '/^RESOURCES/d' unetbootin.pro
 lupdate unetbootin.pro
 lrelease unetbootin.pro
-qmake \
+qmake-qt5 \
 PREFIX=/usr QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" \
 "DEFINES += NOSTATIC" "RESOURCES -= unetbootin.qrc"
 make
