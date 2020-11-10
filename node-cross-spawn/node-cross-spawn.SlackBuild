@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=node-cross-spawn
 VERSION=6.0.5
-BUILD=${BUILD:-8}
+BUILD=${BUILD:-9}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -64,6 +64,7 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
+mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
 DESTDIR=$PKG npm install --user root -g $(npm pack | tail -1)
 
 # Remove empty dir
