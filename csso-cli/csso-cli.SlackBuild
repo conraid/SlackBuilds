@@ -2,7 +2,7 @@
 #
 # Slackware build script for cli
 #
-# Copyright 2019 Corrado Franco (https://conraid.net)
+# Copyright 2019-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=csso-cli
 VERSION=3.0.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -60,6 +60,7 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
+mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
 DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $CWD/$PKGNAM-$VERSION.tgz
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
