@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=node-sass
 VERSION=5.0.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -69,6 +69,7 @@ chmod -R u+w,go+r-w,a+X-s .
 
 mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
 
+mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
 DESTDIR=$PKG npm install --user root -g --no-bin-links $(npm pack | tail -1)
 
 if ! [ -e $PKG/usr/bin/$PKGNAM ]; then
