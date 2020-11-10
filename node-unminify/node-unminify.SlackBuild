@@ -2,7 +2,7 @@
 #
 # Slackware build script for unminify
 #
-# Copyright 2019 Corrado Franco (https://conraid.net)
+# Copyright 2019-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ PRGNAM=unminify
 PKGNAM=node-$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=b6aaff1c8c85bf3ffd97cb1b1ff3b97ab13259c7
 VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -70,6 +70,7 @@ cd $PRGNAM-$SRCVERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
+mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
 DESTDIR=$PKG npm install --user root -g --no-bin-links $(npm pack | tail -1)
 
 cd $PKG
