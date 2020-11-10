@@ -2,7 +2,7 @@
 #
 # Slackware build script for purifycss
 #
-# Copyright 2019 Corrado Franco (https://conraid.net)
+# Copyright 2019-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=purifycss
 PKGNAM=node-$(echo $PRGNAM | tr A-Z a-z)
 VERSION=1.2.6
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -61,6 +61,7 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
+mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
 DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $CWD/$PRGNAM-$VERSION.tgz
 
 cd $PKG
