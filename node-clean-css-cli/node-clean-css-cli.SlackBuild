@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=clean-css-cli
 PKGNAM=node-$(echo $PRGNAM | tr A-Z a-z)
 VERSION=4.1.11
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -65,6 +65,7 @@ cd $PRGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
+mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
 DESTDIR=$PKG npm install --user root -g $(npm pack | tail -1) 
 
 # Remove empty dir
