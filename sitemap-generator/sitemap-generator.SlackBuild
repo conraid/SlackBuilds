@@ -33,7 +33,7 @@ PRGNAM=sitemap-generator
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=8.5.1
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -62,6 +62,7 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
+mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
 DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $CWD/$PKGNAM-$VERSION.tgz
 
 # Remove empty dir
