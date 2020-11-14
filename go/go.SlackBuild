@@ -32,7 +32,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=go
-VERSION=1.15.4
+VERSION=1.15.5
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -99,7 +99,8 @@ fi
 
 RELEASE="linux"
 
-
+# gcc 10+ is go1.14 API, so we can't bootstrap with it
+# but we have to use go package 1.15.*
 export GOROOT_BOOTSTRAP="/usr/lib${LIBDIRSUFFIX}/go"
 export GOROOT="$(pwd)"
 export GOROOT_FINAL="/usr/lib${LIBDIRSUFFIX}/go"
