@@ -1,0 +1,32 @@
+From 57b7fe7c6905297e29adfa1513bfb2ea94bc5a27 Mon Sep 17 00:00:00 2001
+From: Stefanos Mitropoulos <stefmitropoulos@gmail.com>
+Date: Sat, 18 Jul 2020 00:31:45 +0300
+Subject: [PATCH] CLI exit code change
+
+---
+ src/cli.main.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/src/cli.main.c b/src/cli.main.c
+index 6b040fe..6e90240 100644
+--- a/src/cli.main.c
++++ b/src/cli.main.c
+@@ -11,12 +11,13 @@ int main(int argc, char **argv) {
+     if ( argc != 2 )
+     {
+         perror("Please provide one and only mac address\n");
+-        exit(-1);
++        exit(3);
+     }
+ 
+     unsigned char packet[MAGIC_PACKET_LENGTH];
+     createMagicPacket(packet, argv[1]);
+-    sendWOLPacket(packet);
+-    printf("Packet sent!\n");
+-
++    if ( !sendWOLPacket(packet))
++    {
++        printf("Packet sent!\n");
++    }
+ }
+\ No newline at end of file
