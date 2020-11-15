@@ -871,15 +871,6 @@ SLACKBUILD DOWNLOAD: https://registry.npmjs.org/cssunminifier/-/cssunminifier-0.
 SLACKBUILD MD5SUM: e623f7d17b80ecc826b335ff3196ea60
 SLACKBUILD SHORT DESCRIPTION:  cssunminifier (CSS unminifier)
 
-SLACKBUILD NAME: cuneiform
-SLACKBUILD LOCATION: ./cuneiform
-SLACKBUILD FILES: README cuneiform.SlackBuild cuneiform.info patches/20-libdm.patch patches/30-casser.patch patches/build-fix.patch slack-desc
-SLACKBUILD VERSION: 1.1.0
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://launchpad.net/cuneiform-linux/1.1/1.1/+download/cuneiform-linux-1.1.0.tar.bz2
-SLACKBUILD MD5SUM: 09fd160cdfc512f26442a7e91246598d
-SLACKBUILD SHORT DESCRIPTION:  cuneiform (an OCR system)
-
 SLACKBUILD NAME: cunit
 SLACKBUILD LOCATION: ./cunit
 SLACKBUILD FILES: README cunit.SlackBuild cunit.info slack-desc
@@ -2788,6 +2779,15 @@ SLACKBUILD DOWNLOAD: https://github.com/OISF/libhtp/archive/0.5.35.tar.gz
 SLACKBUILD MD5SUM: 188ebe7e1804f8bfaf00db007736f3f6
 SLACKBUILD SHORT DESCRIPTION:  libhtp (security http parser)
 
+SLACKBUILD NAME: libimagequant
+SLACKBUILD LOCATION: ./libimagequant
+SLACKBUILD FILES: README libimagequant.SlackBuild libimagequant.info slack-desc
+SLACKBUILD VERSION: 2.13.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/ImageOptim/libimagequant/archive/2.13.0/libimagequant-2.13.0.tar.gz
+SLACKBUILD MD5SUM: 3f0972f86d703a7c6fa8d0ef51e7643a
+SLACKBUILD SHORT DESCRIPTION:  libimagequant (Image Quantization Library)
+
 SLACKBUILD NAME: libiptcdata
 SLACKBUILD LOCATION: ./libiptcdata
 SLACKBUILD FILES: README libiptcdata.SlackBuild libiptcdata.info slack-desc
@@ -4033,10 +4033,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-uglifycss (minifier css)
 SLACKBUILD NAME: node-uglifyjs
 SLACKBUILD LOCATION: ./node-uglifyjs
 SLACKBUILD FILES: README node-uglifyjs.SlackBuild node-uglifyjs.info slack-desc
-SLACKBUILD VERSION: 3.11.5
+SLACKBUILD VERSION: 3.11.6
 SLACKBUILD REQUIRED: node
-SLACKBUILD DOWNLOAD: https://github.com/mishoo/UglifyJS2/archive/v3.11.5/UglifyJS-3.11.5.tar.gz
-SLACKBUILD MD5SUM: 794bcfcfa0181f161176bbad7e52ed07
+SLACKBUILD DOWNLOAD: https://github.com/mishoo/UglifyJS2/archive/v3.11.6/UglifyJS-3.11.6.tar.gz
+SLACKBUILD MD5SUM: b380fbd224bdc40d94984ada60e87827
 SLACKBUILD SHORT DESCRIPTION:  node-uglify-js (JavaScript compressor/minifier)
 
 SLACKBUILD NAME: node-unminify
@@ -4564,10 +4564,10 @@ SLACKBUILD SHORT DESCRIPTION:  php-stat (A super modern high performance profile
 SLACKBUILD NAME: php-xdebug
 SLACKBUILD LOCATION: ./php-xdebug
 SLACKBUILD FILES: README doinst.sh files/xdebug.ini php-xdebug.SlackBuild php-xdebug.info slack-desc
-SLACKBUILD VERSION: 3.0.0beta1
+SLACKBUILD VERSION: 3.0.0RC1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/xdebug/xdebug/archive/3.0.0beta1/xdebug-3.0.0beta1.tar.gz
-SLACKBUILD MD5SUM: 64639e61cfca3dab9be98957a663991e
+SLACKBUILD DOWNLOAD: https://github.com/xdebug/xdebug/archive/3.0.0RC1/xdebug-3.0.0RC1.tar.gz
+SLACKBUILD MD5SUM: a71a2ab8d65e8f4aa56aad70363e3797
 SLACKBUILD SHORT DESCRIPTION:  php-xdebug (debug extension for php)
 
 SLACKBUILD NAME: phpdocumentor
@@ -5176,10 +5176,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-keyring (Python keyring library)
 SLACKBUILD NAME: python-logzero
 SLACKBUILD LOCATION: ./python-logzero
 SLACKBUILD FILES: README python-logzero.SlackBuild python-logzero.info slack-desc
-SLACKBUILD VERSION: 1.5.0
+SLACKBUILD VERSION: 1.6.3
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/l/logzero/logzero-1.5.0.tar.gz
-SLACKBUILD MD5SUM: 0492657045030de80a580a951aeda0d1
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/l/logzero/logzero-1.6.3.tar.gz
+SLACKBUILD MD5SUM: 5515689a4b3d1f755ce3b52c26a6cc48
 SLACKBUILD SHORT DESCRIPTION:  python-logzero (Robust and effective logging for Python 2 and 3)
 
 SLACKBUILD NAME: python-lyricwikia
@@ -5244,6 +5244,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pathlib2/pathlib2-2.3.5.tar.gz
 SLACKBUILD MD5SUM: f2bd0a363eb0f8fa0556f35c1d9e66fb
 SLACKBUILD SHORT DESCRIPTION:  python-pathlib2 (Object-oriented filesystem paths)
+
+SLACKBUILD NAME: python-pillow
+SLACKBUILD LOCATION: ./python-pillow
+SLACKBUILD FILES: README python-pillow.SlackBuild python-pillow.info slack-desc
+SLACKBUILD VERSION: 8.0.1
+SLACKBUILD REQUIRED: libimagequant
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/P/Pillow/Pillow-8.0.1.tar.gz
+SLACKBUILD MD5SUM: d41d8cd98f00b204e9800998ecf8427e
+SLACKBUILD SHORT DESCRIPTION:  python-pillow (Python Imaging Library)
 
 SLACKBUILD NAME: python-polib
 SLACKBUILD LOCATION: ./python-polib
@@ -5532,6 +5541,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/z/zipp/zipp-3.4.0.tar.gz
 SLACKBUILD MD5SUM: ae81f228995578b840d76d1b7d87fede
 SLACKBUILD SHORT DESCRIPTION:  python-zipp (Pathlib-compatible object wrapper for zip files)
+
+SLACKBUILD NAME: python2-pillow
+SLACKBUILD LOCATION: ./python2-pillow
+SLACKBUILD FILES: README python2-pillow.SlackBuild python2-pillow.info slack-desc
+SLACKBUILD VERSION: 6.2.2
+SLACKBUILD REQUIRED: libimagequant
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/P/Pillow/Pillow-6.2.2.tar.gz
+SLACKBUILD MD5SUM: 46cad14f0044a5ac4b2d801271528893
+SLACKBUILD SHORT DESCRIPTION:  python2-pillow (Python Imaging Library)
 
 SLACKBUILD NAME: python2-pyxattr
 SLACKBUILD LOCATION: ./python2-pyxattr
@@ -6805,10 +6823,10 @@ SLACKBUILD SHORT DESCRIPTION:  torsocks (Wrapper to safely torify applications)
 SLACKBUILD NAME: trash-cli
 SLACKBUILD LOCATION: ./trash-cli
 SLACKBUILD FILES: README slack-desc trash-cli.SlackBuild trash-cli.info
-SLACKBUILD VERSION: 0.20.11.7
+SLACKBUILD VERSION: 0.20.11.14
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/trash-cli/trash-cli-0.20.11.7.tar.gz
-SLACKBUILD MD5SUM: 194dc3cc4a8831e2c397037c723f6f23
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/trash-cli/trash-cli-0.20.11.14.tar.gz
+SLACKBUILD MD5SUM: 61f9ad20e0d0644d9ad774fb4275bc19
 SLACKBUILD SHORT DESCRIPTION:  trash-cli (command line interface to the FreeDesktop.org trash)
 
 SLACKBUILD NAME: trimage
@@ -6977,7 +6995,7 @@ SLACKBUILD NAME: uniconvertor
 SLACKBUILD LOCATION: ./uniconvertor
 SLACKBUILD FILES: README slack-desc uniconvertor.SlackBuild uniconvertor.info
 SLACKBUILD VERSION: 2.0rc4_20190503
-SLACKBUILD REQUIRED: sk1libs
+SLACKBUILD REQUIRED: sk1libs python2-pillow
 SLACKBUILD DOWNLOAD: http://slack.conraid.net/sources/uniconvertor-2.0rc4_20190503.tar.gz
 SLACKBUILD MD5SUM: 979d8675c214f86e8d292208068bf91b
 SLACKBUILD SHORT DESCRIPTION:  uniconvertor (universal vector graphics translator)
@@ -7192,10 +7210,10 @@ SLACKBUILD SHORT DESCRIPTION:  virglrenderer (virtio GL library)
 SLACKBUILD NAME: virt-manager
 SLACKBUILD LOCATION: ./virt-manager
 SLACKBUILD FILES: README doinst.sh patches/slackware.patch slack-desc virt-manager.SlackBuild virt-manager.info
-SLACKBUILD VERSION: 3.1.0
+SLACKBUILD VERSION: 3.2.0
 SLACKBUILD REQUIRED:  libosinfo tunctl gtk-vnc libvirt-glib libvirt-python spice-gtk gtksourceview4
-SLACKBUILD DOWNLOAD: https://virt-manager.org/download/sources/virt-manager/virt-manager-3.1.0.tar.gz
-SLACKBUILD MD5SUM: 0953495e2acea682603566422acd9454
+SLACKBUILD DOWNLOAD: https://virt-manager.org/download/sources/virt-manager/virt-manager-3.2.0.tar.gz
+SLACKBUILD MD5SUM: a87507223c32d15eb12e1754404061dc
 SLACKBUILD SHORT DESCRIPTION:  virt-manager (a gtk interface for libvirt)
 
 SLACKBUILD NAME: virt-viewer
@@ -7503,15 +7521,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: http://www.vergenet.net/~conrad/software/xsel/download/xsel-1.2.0.tar.gz
 SLACKBUILD MD5SUM: 75983f143ce83dc259796c6eaf85c8f5
 SLACKBUILD SHORT DESCRIPTION:  XSel
-
-SLACKBUILD NAME: yagf
-SLACKBUILD LOCATION: ./yagf
-SLACKBUILD FILES: README doinst.sh slack-desc yagf.SlackBuild yagf.info
-SLACKBUILD VERSION: 0.9.3
-SLACKBUILD REQUIRED: cuneiform
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/yagf-ocr/yagf-0.9.5.tar.gz
-SLACKBUILD MD5SUM: cc01d671fafbfa71fad3d95591ccca37
-SLACKBUILD SHORT DESCRIPTION:  yagf (graphical interface for cuneiform)
 
 SLACKBUILD NAME: yajl
 SLACKBUILD LOCATION: ./yajl
