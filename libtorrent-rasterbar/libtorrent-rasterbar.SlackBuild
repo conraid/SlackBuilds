@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libtorrent-rasterbar
-VERSION=1.2.7
-BUILD=${BUILD:-3}
+VERSION=1.2.11
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -86,34 +86,23 @@ if [ -e $CWD/patches/ ]; then
   done
 fi
 
-PYTHON="python3" \
-LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --infodir=/usr/info \
-  --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --enable-static=no \
-  --enable-shared=yes \
-  --with-libiconv \
-  --enable-python-binding \
-  --with-boost-system=boost_system \
-  --with-boost-python=boost_python3 \
-  --with-boost-libdir=/usr/lib${LIBDIRSUFFIX} \
-  --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
+mkdir -p build
+cd build
+cmake -Wno-dev \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DCMAKE_CXX_STANDARD=14 \
+  -Dpython-bindings=ON \
+  -Dpython-egg-info=ON \
+  -Dbuild_examples=ON \
+  -Dbuild_tools=ON \
+  ..
 
-make -j1
+make
 make DESTDIR=$PKG install
 
-make -C examples dump_torrent make_torrent
-install -Dm755 examples/dump_torrent $PKG/usr/bin/dump_torrent
-install -Dm755 examples/make_torrent $PKG/usr/bin/make_torrent
+cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
