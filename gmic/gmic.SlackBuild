@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=gmic
-SRCVERSION=2.9.2
+SRCVERSION=2.9.3
 VERSION=$SRCVERSION
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -38,8 +38,10 @@ TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
+# Plugins: none, gimp, krita, digikam
+# I don't activate digikam because it gives an error in cmake check
 PLUGINS=${PLUGINS:-"none gimp krita"} # Plugins: none, gimp, krita, digikam
-ZART=${ZART:-"NO"} # YES to compile ZART. In my system it produces a segfault
+
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -121,25 +123,21 @@ for PLUGIN_TYPE in $PLUGINS; do
 done
 cd ..
 
-if [ $ZART == "YES" ]; then
-  ## Build zart
-  cd zart
-  SLKCFLAGS=${SLKCFLAGS/-O2/}
-  qmake-qt5 \
-    PREFIX=/usr \
-    QMAKE_CFLAGS="$SLKCFLAGS" \
-    QMAKE_CXXFLAGS="$SLKCFLAGS -DOPENCV2_HEADERS" \
-    QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" \
-    QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS -DOPENCV2_HEADERS" \
-    GMIC_DYNAMIC_LINKING=on \
-    GMIC_PATH=../src \
-    GMIC_LIB_PATH=$TMP/$PKGNAM-$VERSION/build \
-    -o Makefile zart.pro
+cd zart
+qmake-qt5 \
+  PREFIX=/usr \
+  QMAKE_CFLAGS="$SLKCFLAGS -g" \
+  QMAKE_CXXFLAGS="$SLKCFLAGS -g" \
+  QMAKE_CFLAGS_RELEASE="$SLKCFLAGS -g" \
+  QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS -g" \
+  GMIC_DYNAMIC_LINKING=on \
+  GMIC_PATH=../src \
+  GMIC_LIB_PATH=$TMP/$PKGNAM-$VERSION/build \
+  -o Makefile zart.pro
 
-  make -j1
-  install -Dm755 zart $PKG/usr/bin/zart
+make -j1
+install -Dm755 zart $PKG/usr/bin/zart
 cd ..
-fi
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
