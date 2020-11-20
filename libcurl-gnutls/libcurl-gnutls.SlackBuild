@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libcurl-gnutls
 PRGNAM=curl
-VERSION=7.70.0 # This is the version in Slackware current
+VERSION=7.73.0 # This is the version in Slackware current
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -104,10 +104,12 @@ CXXFLAGS="$SLKCFLAGS" \
 make -C lib
 make -C lib DESTDIR=$PKG install
 
-mv ${PKG}/usr/lib${LIBDIRSUFFIX}/libcurl{,-gnutls}.so.4.6.0
+CURLLIB=$(echo $PKG/usr/lib$LIBDIRSUFFIX/libcurl.so.4.?.? | cut -d. -f3-)
+
+mv ${PKG}/usr/lib${LIBDIRSUFFIX}/libcurl{,-gnutls}.so.$CURLLIB
 rm ${PKG}/usr/lib${LIBDIRSUFFIX}/libcurl.so*
-for VERSIONLIB in 3 4 4.0.0 4.1.0 4.2.0 4.3.0 4.4.0 4.5.0; do
-  ln -s libcurl-gnutls.so.4.6.0 $PKG/usr/lib${LIBDIRSUFFIX}/libcurl-gnutls.so.${VERSIONLIB}
+for VERSIONLIB in 3 4 4.0.0 4.1.0 4.2.0 4.3.0 4.4.0 4.5.0 4.6.0; do
+  ln -s libcurl-gnutls.so.$CURLLIB $PKG/usr/lib${LIBDIRSUFFIX}/libcurl-gnutls.so.${VERSIONLIB}
 done
 
 # Don't ship .la files:
