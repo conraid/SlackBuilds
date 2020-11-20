@@ -23,13 +23,13 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 
-set -e 
+set -e
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=dnstracer
-VERSION=1.9
-BUILD=${BUILD:-11}
+VERSION=1.10
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -70,31 +70,22 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM
+tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
+cd $PKGNAM
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --infodir=/usr/info \
-  --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
-  
-make 
-make DESTDIR=$PKG install-strip
+CFLAGS="$SLKCFLAGS" make
+mkdir -p $PKG/usr/{bin,man/man8}
+make PREFIX=$PKG/usr install
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
+
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
