@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=evtest
-VERSION=1.33
-BUILD=${BUILD:-6}
+VERSION=1.34
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,9 +72,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM-$PKGNAM-$VERSION || rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$PKGNAM-$VERSION.tar.bz2 || tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
+cd $PKGNAM-$PKGNAM-$VERSION || cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
