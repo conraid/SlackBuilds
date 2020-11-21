@@ -30,9 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=neomutt
-SRCVERSION=20200925
+SRCVERSION=20201120
 VERSION=$(echo $SRCVERSION | tr - _ | head -c7)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
