@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=snort
-VERSION=2.9.16.1
+VERSION=2.9.17
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -89,6 +89,7 @@ sed 's#\${datadir}/doc/\${PACKAGE}#@docdir@#g' -i {doc,tools/*}/Makefile.in
 
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
+CPPFLAGS="$SLKCFLAGS -I/usr/include/tirpc/" \
 ./configure \
  --prefix=/usr \
  --libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -148,10 +149,10 @@ sed -e "s/%LIBDIRSUFFIX%/${LIBDIRSUFFIX}/" $CWD/rc.snort > $PKG/etc/rc.d/rc.snor
 # Add blacklist and whitelist reputation files (see README.reputation)
 touch $PKG/etc/snort/rules/{black,white}_list.rules.new
 
-mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION 
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
