@@ -28,7 +28,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=netsniff-ng
-VERSION=0.6.7
+COMMIT=0f4320298fd992cc856134e28dca9ed653b2b15d
+VERSION=$(echo $COMMIT | head -c7)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -70,19 +71,32 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM-$COMMIT
+tar xvf $CWD/$PKGNAM-$COMMIT.tar.gz
+cd $PKGNAM-$COMMIT
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
+# Apply patches
+if [ -e $CWD/patches ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
+fi
+
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
+CFLAGS="$SLKCFLAGS -fcommon" \
+CXXFLAGS="$SLKCFLAGS -fcommon" \
 ./configure
 
-make PREFIX=/usr ETCDIR=/etc MAN8DIR=/usr/man/man8 DISTRO=1 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" CFLAGS_DEF+="$SLKCFLAGS" 
+make PREFIX=/usr ETCDIR=/etc MAN8DIR=/usr/man/man8 DISTRO=1 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" CFLAGS_DEF+="$SLKCFLAGS -fcommon"
 make PREFIX=/usr ETCDIR=/etc MAN8DIR=/usr/man/man8 DESTDIR=$PKG install
 
 # Don't ship .la files:
