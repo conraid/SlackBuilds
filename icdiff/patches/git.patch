@@ -1,0 +1,195 @@
+diff -Naupr icdiff-release-1.9.5/git-icdiff icdiff-master/git-icdiff
+--- icdiff-release-1.9.5/git-icdiff	2019-09-22 16:08:08.000000000 +0200
++++ icdiff-master/git-icdiff	2020-11-17 03:17:31.000000000 +0100
+@@ -4,14 +4,14 @@ ICDIFF_OPTIONS="${ICDIFF_OPTIONS} --is-g
+ GITPAGER=$(git config --get icdiff.pager)
+ 
+ if [ -z "$GITPAGER" ]; then
+-  if git config --get core.pager; then
+-    GITPAGER=$(git config --get core.pager)
+-  else
+-    GITPAGER="${PAGER:-less}"
+-  fi
++  GITPAGER=$(git config --get core.pager)
+ fi
+ 
+-if [ "$GITPAGER" = "more" ] || [ "$GITPAGER" = "less" ]; then
++if [ -z "$GITPAGER" ]; then
++  GITPAGER="${PAGER:-less}"
++fi
++
++if [ "${GITPAGER%% *}" = "more" ] || [ "${GITPAGER%% *}" = "less" ]; then
+   GITPAGER="$GITPAGER -R"
+ fi
+ 
+diff -Naupr icdiff-release-1.9.5/icdiff icdiff-master/icdiff
+--- icdiff-release-1.9.5/icdiff	2019-09-22 16:08:08.000000000 +0200
++++ icdiff-master/icdiff	2020-11-17 03:17:31.000000000 +0100
+@@ -23,7 +23,7 @@ import filecmp
+ import unicodedata
+ import codecs
+ 
+-__version__ = "1.9.5"
++__version__ = "1.9.4"
+ 
+ color_codes = {
+     "black":   '\033[0;30m',
+@@ -171,50 +171,55 @@ class ConsoleDiff(object):
+         text line list.  This function is used recursively to handle
+         the second part of the split line to further split it.
+         """
+-        # if blank line or context separator, just add it to the output list
+-        if not line_num:
+-            data_list.append((line_num, text))
+-            return
+-
+-        # if line text doesn't need wrapping, just add it to the output list
+-        if ((self._display_len(text) - (text.count('\0') * 3) <=
+-             self._wrapcolumn)):
+-            data_list.append((line_num, text))
+-            return
+ 
+-        # scan text looking for the wrap point, keeping track if the wrap
+-        # point is inside markers
+-        i = 0
+-        n = 0
+-        mark = ''
+-        while n < self._wrapcolumn and i < len(text):
+-            if text[i] == '\0':
+-                i += 1
+-                mark = text[i]
+-                i += 1
+-            elif text[i] == '\1':
+-                i += 1
+-                mark = ''
+-            else:
+-                n += self._display_len(text[i])
+-                i += 1
++        while True:
++            # if blank line or context separator, just add it to the output
++            # list
++            if not line_num:
++                data_list.append((line_num, text))
++                return
+ 
+-        # wrap point is inside text, break it up into separate lines
+-        line1 = text[:i]
+-        line2 = text[i:]
+-
+-        # if wrap point is inside markers, place end marker at end of first
+-        # line and start marker at beginning of second line because each
+-        # line will have its own table tag markup around it.
+-        if mark:
+-            line1 = line1 + '\1'
+-            line2 = '\0' + mark + line2
++            # if line text doesn't need wrapping, just add it to the output
++            # list
++            if ((self._display_len(text) - (text.count('\0') * 3) <=
++                 self._wrapcolumn)):
++                data_list.append((line_num, text))
++                return
+ 
+-        # tack on first line onto the output list
+-        data_list.append((line_num, line1))
++            # scan text looking for the wrap point, keeping track if the wrap
++            # point is inside markers
++            i = 0
++            n = 0
++            mark = ''
++            while n < self._wrapcolumn and i < len(text):
++                if text[i] == '\0':
++                    i += 1
++                    mark = text[i]
++                    i += 1
++                elif text[i] == '\1':
++                    i += 1
++                    mark = ''
++                else:
++                    n += self._display_len(text[i])
++                    i += 1
+ 
+-        # use this routine again to wrap the remaining text
+-        self._split_line(data_list, '>', line2)
++            # wrap point is inside text, break it up into separate lines
++            line1 = text[:i]
++            line2 = text[i:]
++
++            # if wrap point is inside markers, place end marker at end of first
++            # line and start marker at beginning of second line because each
++            # line will have its own table tag markup around it.
++            if mark:
++                line1 = line1 + '\1'
++                line2 = '\0' + mark + line2
++
++            # tack on first line onto the output list
++            data_list.append((line_num, line1))
++
++            # use this routine again to wrap the remaining text
++            line_num = '>'
++            text = line2
+ 
+     def _line_wrapper(self, diffs):
+         """Returns iterator that splits (wraps) mdiff text lines"""
+@@ -510,6 +515,9 @@ def create_option_parser():
+     parser.add_option("-r", "--recursive", default=False,
+                       action="store_true",
+                       help="recursively compare subdirectories")
++    parser.add_option("-s", "--report-identical-files", default=False,
++                      action="store_true",
++                      help="report when two files are the same")
+     parser.add_option("--show-all-spaces", default=False,
+                       action="store_true",
+                       help="color all non-matching whitespace including "
+@@ -594,7 +602,22 @@ def start():
+     validate_has_two_arguments(parser, args)
+     if not options.cols:
+         set_cols_option(options)
+-    diff(options, *args)
++    try:
++        diff(options, *args)
++    except KeyboardInterrupt:
++        pass
++    except IOError as e:
++        if e.errno == errno.EPIPE:
++            pass
++        else:
++            raise
++
++    # Close stderr to prevent printing errors when icdiff is piped to
++    # something that closes before icdiff is done writing
++    #
++    # See: https://stackoverflow.com/questions/26692284/...
++    #      ...how-to-prevent-brokenpipeerror-when-doing-a-flush-in-python
++    sys.stderr.close()
+ 
+ 
+ def codec_print(s, options):
+@@ -618,6 +641,8 @@ def diff(options, a, b):
+         try:
+             if not filecmp.cmp(a, b, shallow=False):
+                 diff_files(options, a, b)
++            elif options.report_identical_files:
++                print("Files %s and %s are identical." % (a, b))
+         except OSError as e:
+             if e.errno == errno.ENOENT:
+                 print_meta("error: file '%s' was not found" % e.filename)
+@@ -755,18 +780,4 @@ def diff_files(options, a, b):
+ 
+ 
+ if __name__ == "__main__":
+-    try:
+-        start()
+-    except KeyboardInterrupt:
+-        pass
+-    except IOError as e:
+-        if e.errno == errno.EPIPE:
+-            pass
+-        else:
+-            raise
+-    # Close stderr to prevent printing errors when icdiff is piped to
+-    # something that closes before icdiff is done writing
+-    #
+-    # See: https://stackoverflow.com/questions/26692284/
+-    #              how-to-prevent-brokenpipeerror-when-doing-a-flush-in-python
+-    sys.stderr.close()
++    start()
