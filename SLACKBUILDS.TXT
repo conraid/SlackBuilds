@@ -1096,15 +1096,6 @@ SLACKBUILD DOWNLOAD: https://clientupdates.dropboxstatic.com/dbx-releng/client/d
 SLACKBUILD MD5SUM: 285e1dc3b44d2af562e4acfe052c373c
 SLACKBUILD SHORT DESCRIPTION:  Dropbox (store, sync and share files online)
 
-SLACKBUILD NAME: dsniff
-SLACKBUILD LOCATION: ./dsniff
-SLACKBUILD FILES: README dsniff.SlackBuild dsniff.info patches/01_time.h.patch patches/02_mailsnarf_corrupt.patch patches/03_pcap_read_dump.patch patches/04_multiple_intf.patch patches/05_amd64_fix.patch patches/06_urlsnarf_zeropad.patch patches/07_libnet_1.1.patch patches/08_openssl-0.9.8.patch patches/09_sysconf_clocks.patch patches/10_urlsnarf_escape.patch patches/11_string_header.patch patches/12_arpa_inet_header.patch patches/13_pop_with_version.patch patches/14_obsolete_time.patch patches/15_checksum_libnids.patch patches/16_TDS_decoder.patch patches/17_checksum.patch patches/18_sshcrypto.patch patches/19_rewrite-and-modernize-POP-decoder.patch patches/20_debian_dirs.patch patches/21_msgsnarf_segfault.patch patches/22_handlepp.patch patches/23_urlsnarf_timestamp.patch patches/24_Fix-OpenSSL1.1.0-Build.patch patches/25_fix-spelling-errors.patch patches/26_arpspoof-add-r-switch-to-poison-both-directions.patch patches/27_arpspoof-allow-use-of-of-multiple-targets.patch patches/28_arpspoof-allow-selection-of-source-hw-address.patch patches/29_libnet_name2addr4.patch patches/30_pntohl_shift.patch patches/31_sysconf_clocks.patch patches/32_rpc_segfault.patch patches/33_sshcrypto_DES.patch patches/34_fix-parallel-FTBFS.patch patches/35_Add_CPPFLAGS.patch patches/36_implicit_declarations.patch patches/series slack-desc
-SLACKBUILD VERSION: 2.4b1
-SLACKBUILD REQUIRED: libnet libnids
-SLACKBUILD DOWNLOAD: http://www.monkey.org/~dugsong/dsniff/beta/dsniff-2.4b1.tar.gz
-SLACKBUILD MD5SUM: 2f761fa3475682a7512b0b43568ee7d6
-SLACKBUILD SHORT DESCRIPTION:  dsniff (network auditing and penetration testing)
-
 SLACKBUILD NAME: ecryptfs-simple
 SLACKBUILD LOCATION: ./ecryptfs-simple
 SLACKBUILD FILES: README ecryptfs-simple.SlackBuild ecryptfs-simple.info slack-desc
@@ -2122,6 +2113,15 @@ SLACKBUILD DOWNLOAD: http://software.internet2.edu/sources/I2util/I2util-1.2.tar
 SLACKBUILD MD5SUM: 08762c549e63a8102bfa9fe9a0f09c5f
 SLACKBUILD SHORT DESCRIPTION:  I2util (error logging and command-line parsing)
 
+SLACKBUILD NAME: icdiff
+SLACKBUILD LOCATION: ./icdiff
+SLACKBUILD FILES: README icdiff.SlackBuild icdiff.info patches/git.patch slack-desc
+SLACKBUILD VERSION: 1.9.5
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/jeffkaufman/icdiff/archive/release-1.9.5/icdiff-release-1.9.5.tar.gz
+SLACKBUILD MD5SUM: c896202f930336dfa461a0295019f887
+SLACKBUILD SHORT DESCRIPTION:  icdiff (improved colored diff )
+
 SLACKBUILD NAME: icoutils
 SLACKBUILD LOCATION: ./icoutils
 SLACKBUILD FILES: README icoutils.SlackBuild icoutils.info slack-desc
@@ -2529,7 +2529,7 @@ SLACKBUILD SHORT DESCRIPTION:  libaccounts-qt (Qt-based client library for the a
 
 SLACKBUILD NAME: libasecnsp11
 SLACKBUILD LOCATION: ./libasecnsp11
-SLACKBUILD FILES: README libasecnsp11.SlackBuild libasecnsp11.info slack-desc smart_card.zip
+SLACKBUILD FILES: README libasecnsp11.SlackBuild libasecnsp11.info slack-desc
 SLACKBUILD VERSION: 1
 SLACKBUILD REQUIRED: pcsc-lite
 SLACKBUILD DOWNLOAD: http://www.regione.toscana.it/documents/10180/595930/smart_card.zip
@@ -2539,10 +2539,10 @@ SLACKBUILD SHORT DESCRIPTION:  libasecnsp11 (PKCS#11 library of the EuropeanHeal
 SLACKBUILD NAME: libb64
 SLACKBUILD LOCATION: ./libb64
 SLACKBUILD FILES: README libb64.SlackBuild libb64.info patches/shared-library.patch slack-desc
-SLACKBUILD VERSION: 1.2.1
+SLACKBUILD VERSION: 2.0.0.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/libb64/libb64-1.2.1.zip
-SLACKBUILD MD5SUM: 8a5dc72eb7e32f074605260bc127c764
+SLACKBUILD DOWNLOAD: https://github.com/libb64/libb64/archive/v2.0.0.1.tar.gz
+SLACKBUILD MD5SUM: 03fc5b7a89a99880d0188f77107fdf75
 SLACKBUILD SHORT DESCRIPTION:  libb64 (C routines for base64 encoding/decoding)
 
 SLACKBUILD NAME: libbfio
@@ -2566,10 +2566,10 @@ SLACKBUILD SHORT DESCRIPTION:  libbsd (library of BSD functions)
 SLACKBUILD NAME: libcacard
 SLACKBUILD LOCATION: ./libcacard
 SLACKBUILD FILES: README libcacard.SlackBuild libcacard.info slack-desc
-SLACKBUILD VERSION: 2.7.0
+SLACKBUILD VERSION: 2.8.0
 SLACKBUILD REQUIRED: pcsc-lite
-SLACKBUILD DOWNLOAD: https://www.spice-space.org/download/libcacard/libcacard-2.7.0.tar.xz
-SLACKBUILD MD5SUM: b4cd5746c05d92169aa96f6ed4027dec
+SLACKBUILD DOWNLOAD: https://www.spice-space.org/download/libcacard/libcacard-2.8.0.tar.xz
+SLACKBUILD MD5SUM: 71ac03db1786bdd891d8185a2524909f
 SLACKBUILD SHORT DESCRIPTION:  libcacard (Virtual Smart Card Emulator library)
 
 SLACKBUILD NAME: libcdr
@@ -2674,10 +2674,10 @@ SLACKBUILD SHORT DESCRIPTION:  libesmtp (A library for posting Electronic Mail)
 SLACKBUILD NAME: libev
 SLACKBUILD LOCATION: ./libev
 SLACKBUILD FILES: README libev.SlackBuild libev.info slack-desc
-SLACKBUILD VERSION: 4.24
+SLACKBUILD VERSION: 4.33
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://dist.schmorp.de/libev/libev-4.24.tar.gz
-SLACKBUILD MD5SUM: 94459a5a22db041dec6f98424d6efe54
+SLACKBUILD DOWNLOAD: http://dist.schmorp.de/libev/libev-4.33.tar.gz
+SLACKBUILD MD5SUM: a3433f23583167081bf4acdd5b01b34f
 SLACKBUILD SHORT DESCRIPTION:  libev (a high-performance event loop/model)
 
 SLACKBUILD NAME: libewf
@@ -2712,7 +2712,7 @@ SLACKBUILD LOCATION: ./libgee
 SLACKBUILD FILES: README libgee.SlackBuild libgee.info slack-desc
 SLACKBUILD VERSION: 0.20.3
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://ftp.acc.umu.se/pub/GNOME/sources/libgee/0.20/libgee-0.20.3.tar.xz
+SLACKBUILD DOWNLOAD: https://download.gnome.org/sources/libgee/0.20/libgee-0.20.3.tar.xz
 SLACKBUILD MD5SUM: e574b3952b93d219b5ec7c74c5892c33
 SLACKBUILD SHORT DESCRIPTION:  libgee (GObject-based interfaces and classes)
 
@@ -2764,28 +2764,28 @@ SLACKBUILD SHORT DESCRIPTION:  libhtp (security http parser)
 SLACKBUILD NAME: libimagequant
 SLACKBUILD LOCATION: ./libimagequant
 SLACKBUILD FILES: README libimagequant.SlackBuild libimagequant.info slack-desc
-SLACKBUILD VERSION: 2.13.0
+SLACKBUILD VERSION: 2.13.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/ImageOptim/libimagequant/archive/2.13.0/libimagequant-2.13.0.tar.gz
+SLACKBUILD DOWNLOAD: https://github.com/ImageOptim/libimagequant/archive/2.13.1/libimagequant-2.13.1.tar.gz
 SLACKBUILD MD5SUM: 3f0972f86d703a7c6fa8d0ef51e7643a
 SLACKBUILD SHORT DESCRIPTION:  libimagequant (Image Quantization Library)
 
 SLACKBUILD NAME: libiptcdata
 SLACKBUILD LOCATION: ./libiptcdata
 SLACKBUILD FILES: README libiptcdata.SlackBuild libiptcdata.info slack-desc
-SLACKBUILD VERSION: 1.0.4
+SLACKBUILD VERSION: 1.0.5
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/libiptcdata/libiptcdata-1.0.4.tar.gz
-SLACKBUILD MD5SUM: af886556ecb129b694f2d365d03d95a8
+SLACKBUILD DOWNLOAD: https://github.com/ianw/libiptcdata/releases/download/release_1_0_5/libiptcdata-1.0.5.tar.gz
+SLACKBUILD MD5SUM: c04bc1375c280d41c0106255d1df711a
 SLACKBUILD SHORT DESCRIPTION:  libiptcdata (IPTC Information Interchange Model)
 
 SLACKBUILD NAME: libircclient
 SLACKBUILD LOCATION: ./libircclient
 SLACKBUILD FILES: README libircclient.SlackBuild libircclient.info slack-desc
-SLACKBUILD VERSION: 1.9
+SLACKBUILD VERSION: 1.10
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/libircclient/libircclient/1.9/libircclient-1.9.tar.gz
-SLACKBUILD MD5SUM: 783c48fe9153ed55a5565c818a178d67
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/libircclient/libircclient/1.10/libircclient-1.10.tar.gz
+SLACKBUILD MD5SUM: 7dec70a16abbaf5147d21729b325b180
 SLACKBUILD SHORT DESCRIPTION:  libircclient (a small client-server IRC protocol library)
 
 SLACKBUILD NAME: liblqr
@@ -2881,10 +2881,10 @@ SLACKBUILD SHORT DESCRIPTION:  Libmpeg2 (Free MPEG-2 video stream decoder)
 SLACKBUILD NAME: libnet
 SLACKBUILD LOCATION: ./libnet
 SLACKBUILD FILES: README libnet.SlackBuild libnet.info slack-desc
-SLACKBUILD VERSION: 1.1.6
+SLACKBUILD VERSION: 1.2
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/libnet-dev/libnet-1.1.6.tar.gz
-SLACKBUILD MD5SUM: 710296fe424a49344e5fcc0d09e53317
+SLACKBUILD DOWNLOAD: https://github.com/libnet/libnet/releases/download/v1.2/libnet-1.2.tar.gz
+SLACKBUILD MD5SUM: a36c669e0cdfda6a2aa3adfb1f6fe60a
 SLACKBUILD SHORT DESCRIPTION:  Libnet (Network library to forge packets) 
 
 SLACKBUILD NAME: libnfs
@@ -3403,10 +3403,10 @@ SLACKBUILD SHORT DESCRIPTION:  md5deep (Advanced checksum hashing tool)
 SLACKBUILD NAME: memcached
 SLACKBUILD LOCATION: ./memcached
 SLACKBUILD FILES: README doinst.sh files/memcached.conf files/rc.memcached memcached.SlackBuild memcached.info patches/sasl.patch slack-desc
-SLACKBUILD VERSION: 1.6.8
+SLACKBUILD VERSION: 1.6.9
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.memcached.org/files/memcached-1.6.8.tar.gz
-SLACKBUILD MD5SUM: 24b5302363d51884ab623cf00a3152d6
+SLACKBUILD DOWNLOAD: http://www.memcached.org/files/memcached-1.6.9.tar.gz
+SLACKBUILD MD5SUM: ee802a316d7d622aaaec22382ca65004
 SLACKBUILD SHORT DESCRIPTION:  memcached (object caching system)
 
 SLACKBUILD NAME: minidb
@@ -3961,10 +3961,10 @@ SLACKBUILD SHORT DESCRIPTION:  nan (Native Abstractions for Node.js )
 SLACKBUILD NAME: node-nativefier
 SLACKBUILD LOCATION: ./node-nativefier
 SLACKBUILD FILES: README node-nativefier.SlackBuild node-nativefier.info slack-desc
-SLACKBUILD VERSION: 10.1.5
+SLACKBUILD VERSION: 11.0.2
 SLACKBUILD REQUIRED: node
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/nativefier/-/nativefier-10.1.5.tgz
-SLACKBUILD MD5SUM: 6e3f6df73476ae2a7acab18ba969024f
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/nativefier/-/nativefier-11.0.2.tgz
+SLACKBUILD MD5SUM: 9defc3fc8b7c4209465855f34699eced
 SLACKBUILD SHORT DESCRIPTION:  node-nativefier (Make any web page a desktop application)
 
 SLACKBUILD NAME: node-purifycss
@@ -4330,10 +4330,10 @@ SLACKBUILD SHORT DESCRIPTION:  PBZIP2 (Parallel BZIP2)
 SLACKBUILD NAME: pcsc-lite
 SLACKBUILD LOCATION: ./pcsc-lite
 SLACKBUILD FILES: README SLACKWARE.README doinst.sh pcsc-lite.SlackBuild pcsc-lite.info rc.pcscd slack-desc
-SLACKBUILD VERSION: 1.8.26
+SLACKBUILD VERSION: 1.9.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pcsclite.apdu.fr/files/pcsc-lite-1.8.26.tar.bz2
-SLACKBUILD MD5SUM: 9d36882998449daceec267c68a21ff0d
+SLACKBUILD DOWNLOAD: https://pcsclite.apdu.fr/files/pcsc-lite-1.9.0.tar.bz2
+SLACKBUILD MD5SUM: eb595f2d398ff229207a6ec09fbc4e98
 SLACKBUILD SHORT DESCRIPTION:  pcsc-lite (Middleware to access a smart card using SCard API)
 
 SLACKBUILD NAME: pcsc-perl
@@ -4654,10 +4654,10 @@ SLACKBUILD SHORT DESCRIPTION:  postcss-cli (Simple CLI for postcss)
 SLACKBUILD NAME: postcss
 SLACKBUILD LOCATION: ./postcss
 SLACKBUILD FILES: README postcss.SlackBuild postcss.info slack-desc
-SLACKBUILD VERSION: 8.1.7
+SLACKBUILD VERSION: 8.1.9
 SLACKBUILD REQUIRED: node
-SLACKBUILD DOWNLOAD: https://github.com/postcss/postcss/archive/8.1.7/postcss-8.1.7.tar.gz
-SLACKBUILD MD5SUM: 07659e749dd5d574e9cb0a5f3f4c86dd
+SLACKBUILD DOWNLOAD: https://github.com/postcss/postcss/archive/8.1.9/postcss-8.1.9.tar.gz
+SLACKBUILD MD5SUM: a401633fc65da136393c4fab58887cf7
 SLACKBUILD SHORT DESCRIPTION:  postcss (Transforming styles with JS plugins)
 
 SLACKBUILD NAME: postgresql
@@ -5275,10 +5275,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-pyzmq (Python3 bindings for 0MQ)
 SLACKBUILD NAME: python-rapidfuzz
 SLACKBUILD LOCATION: ./python-rapidfuzz
 SLACKBUILD FILES: README python-rapidfuzz.SlackBuild python-rapidfuzz.info slack-desc
-SLACKBUILD VERSION: 0.13.2
+SLACKBUILD VERSION: 0.13.3
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/rapidfuzz/rapidfuzz-0.13.2.tar.gz
-SLACKBUILD MD5SUM: b0b966e04f962baf97e9fad405355017
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/rapidfuzz/rapidfuzz-0.13.3.tar.gz
+SLACKBUILD MD5SUM: cbda22dd255677ed7f3ecaf08cca69cd
 SLACKBUILD SHORT DESCRIPTION:  python-rapidfuzz ()fuzzy string matching in Python & C++)
 
 SLACKBUILD NAME: python-redis
@@ -5419,10 +5419,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-tornado (web framework and asynchronous ne
 SLACKBUILD NAME: python-tqdm
 SLACKBUILD LOCATION: ./python-tqdm
 SLACKBUILD FILES: README python-tqdm.SlackBuild python-tqdm.info slack-desc
-SLACKBUILD VERSION: 4.52.0
+SLACKBUILD VERSION: 4.53.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/tqdm/tqdm-4.52.0.tar.gz
-SLACKBUILD MD5SUM: eccf60439e665178b8a2d33f7d465376
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/tqdm/tqdm-4.53.0.tar.gz
+SLACKBUILD MD5SUM: fc17d9760f43d67c8bd787007523ded8
 SLACKBUILD SHORT DESCRIPTION:  python-tqdm (A Fast, Extensible Progress Bar for Python and CLI)
 
 SLACKBUILD NAME: python-trollius
@@ -6220,10 +6220,10 @@ SLACKBUILD SHORT DESCRIPTION:  slurm (Realtime network interface monitor)
 SLACKBUILD NAME: smb4k
 SLACKBUILD LOCATION: ./smb4k
 SLACKBUILD FILES: README doinst.sh slack-desc smb4k.SlackBuild smb4k.info
-SLACKBUILD VERSION: 3.0.6
+SLACKBUILD VERSION: 3.0.73
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/smb4k/smb4k-3.0.6.tar.xz
-SLACKBUILD MD5SUM: 03cad88c8bf62721c677386bb52afd47
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/smb4k/smb4k-3.0.73.tar.xz
+SLACKBUILD MD5SUM: 531778ec7350799b5f9e0fe8b6bbd230
 SLACKBUILD SHORT DESCRIPTION:  smb4k (Advanced Network Neighborhood Browser for KDE)
 
 SLACKBUILD NAME: smbnetfs
@@ -7561,10 +7561,10 @@ SLACKBUILD SHORT DESCRIPTION:  yarn (Fast, reliable, and secure dependency manag
 SLACKBUILD NAME: youtube-dl
 SLACKBUILD LOCATION: ./youtube-dl
 SLACKBUILD FILES: README patches/slack.patch slack-desc youtube-dl.SlackBuild youtube-dl.info
-SLACKBUILD VERSION: 2020.11.19
+SLACKBUILD VERSION: 2020.11.21.1
 SLACKBUILD REQUIRED: rtmpdump
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/y/youtube_dl/youtube_dl-2020.11.19.tar.gz
-SLACKBUILD MD5SUM: 0ed59bc037089a5d8269aa42aa5e3773
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/y/youtube_dl/youtube_dl-2020.11.21.1.tar.gz
+SLACKBUILD MD5SUM: 676195858933f755b09a36caf5842f28
 SLACKBUILD SHORT DESCRIPTION:  youtube-dl (YouTube video download utility)
 
 SLACKBUILD NAME: zenity
