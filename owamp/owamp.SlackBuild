@@ -30,10 +30,10 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=owamp
-SRCVERSION=3.4-10
+SRCVERSION=4.3.2
 MAINVERSION=$(echo $SRCVERSION | cut -d- -f1)
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -81,6 +81,8 @@ cd $PKGNAM-$MAINVERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
+./bootstrap
+rm -rf I2util
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
