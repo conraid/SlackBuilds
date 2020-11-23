@@ -1,14 +1,8 @@
-diff -Naupr a/Makefile b/Makefile
---- a/Makefile	2016-12-20 17:26:08.000000000 +0100
-+++ b/Makefile	2020-02-08 13:22:27.639495709 +0100
-@@ -46,13 +46,13 @@ TO_MAN= lua.1 luac.1
- 
- # Lua version and release.
- V= 5.3
--R= $V.4
-+R= $V.5
- 
- # Targets start here.
+diff --git a/Makefile b/Makefile
+index 7fa91c8..dccf485 100644
+--- a/Makefile
++++ b/Makefile
+@@ -52,7 +52,7 @@ R= $V.0
  all:	$(PLAT)
  
  $(PLATS) clean:
@@ -17,9 +11,10 @@ diff -Naupr a/Makefile b/Makefile
  
  test:	dummy
  	src/lua -v
-diff -Naupr a/src/Makefile b/src/Makefile
---- a/src/Makefile	2018-06-25 19:46:36.000000000 +0200
-+++ b/src/Makefile	2020-02-08 13:18:46.655511945 +0100
+diff --git a/src/Makefile b/src/Makefile
+index 2e7a412..fa5769f 100644
+--- a/src/Makefile
++++ b/src/Makefile
 @@ -29,6 +29,7 @@ MYOBJS=
  PLATS= aix bsd c89 freebsd generic linux macosx mingw posix solaris
  
@@ -37,7 +32,7 @@ diff -Naupr a/src/Makefile b/src/Makefile
  ALL_A= $(LUA_A)
  
  # Targets start here.
-@@ -59,6 +60,11 @@ $(LUA_A): $(BASE_O)
+@@ -59,6 +60,12 @@ $(LUA_A): $(BASE_O)
  	$(AR) $@ $(BASE_O)
  	$(RANLIB) $@
  
@@ -46,13 +41,15 @@ diff -Naupr a/src/Makefile b/src/Makefile
 +	ln -sf $(LUA_SO).$(R) $(LUA_SO).$(V)
 +	ln -sf $(LUA_SO).$(R) $(LUA_SO)
 +
++
  $(LUA_T): $(LUA_O) $(LUA_A)
  	$(CC) -o $@ $(LDFLAGS) $(LUA_O) $(LUA_A) $(LIBS)
  
-diff -Naupr a/src/luaconf.h b/src/luaconf.h
---- a/src/luaconf.h	2017-04-19 19:29:57.000000000 +0200
-+++ b/src/luaconf.h	2020-02-08 13:13:53.702533469 +0100
-@@ -200,7 +200,7 @@
+diff --git a/src/luaconf.h b/src/luaconf.h
+index fd28d21..e2662cc 100644
+--- a/src/luaconf.h
++++ b/src/luaconf.h
+@@ -175,7 +175,7 @@
  
  #else			/* }{ */
  
