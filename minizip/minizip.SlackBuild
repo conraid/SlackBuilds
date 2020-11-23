@@ -2,7 +2,7 @@
 #
 # Slackware build script for minizip
 #
-# Copyright 2019 Corrado Franco (https://conraid.net)
+# Copyright 2019-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,9 +29,9 @@ set -eu
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=zlib
+PRGNAM=minizip
 PKGNAM=minizip
-VERSION=1.2.11
+VERSION=2.10.3
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -87,34 +87,20 @@ if [ -e $CWD/patches ]; then
   done
 fi
 
-CFLAGS="$SLKCFLAGS -I../.." \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --static
-make
-
-cd contrib/minizip
-cp Makefile Makefile.orig
-autoreconf -i
-CFLAGS="$SLKCFLAGS -I../.." \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib$LIBDIRSUFFIX \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --infodir=/usr/info \
-  --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --enable-static=no \
-  --enable-shared=yes \
-  --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
+mkdir -p build
+cd build
+cmake -Wno-dev \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DMZ_OPENSSL=ON \
+  -DBUILD_SHARED_LIBS=ON \
+  -DINSTALL_INC_DIR=/usr/include/minizip \
+  ..
 
 make
 make DESTDIR=$PKG install
-make CFLAGS="$SLKCFLAGS -I../.." -f Makefile.orig
-install -Dm755 minizip miniunz -t $PKG/usr/bin
+cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
