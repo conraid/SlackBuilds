@@ -11,6 +11,6 @@ config() {
   # Otherwise, we leave the .new copy for the admin to consider...
 }
 
-config etc/prifile.d/ladspa.sh.new
-config etc/prifile.d/ladspa.csh.new
+config etc/profile.d/ladspa.sh.new
+config etc/profile.d/ladspa.csh.new
 
