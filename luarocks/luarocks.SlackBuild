@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=luarocks
-VERSION=2.4.4
-BUILD=${BUILD:-4}
+VERSION=3.4.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -90,46 +90,18 @@ LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
-  --prefix=/usr \
-  --sysconfdir=/etc/luarocks \
-  --lua-version=5.1 \
-  --lua-suffix=5.1 \
-  --with-lua-include=/usr/include/lua5.1 \
-  --with-downloader=curl \
-  --versioned-rocks-dir
-make
-sed -i 's/env lua/env lua5.1/' src/bin/luarocks{,-admin}
-make DESTDIR=$PKG install
+--lua-version=5.4 \
+--prefix=/usr \
 
-make clean
-LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --sysconfdir=/etc/luarocks \
-  --lua-version=5.2 \
-  --lua-suffix=5.2 \
-  --with-lua-include=/usr/include/lua5.2 \
-  --with-downloader=curl \
-  --versioned-rocks-dir
-make
-sed -i 's/env lua/env lua5.2/' src/bin/luarocks{,-admin}
-make DESTDIR=$PKG install
+make ./build/luarocks ./build/luarocks-admin LUA_INCDIR=/usr/include/lua5.4 ./build/config-5.4.lua
+make LUA_VERSION=5.1 LUA_INTERPRETER=lua5.1 LUA_INCDIR=/usr/include/lua5.1 ./build/config-5.1.lua
+make LUA_VERSION=5.2 LUA_INTERPRETER=lua5.2 LUA_INCDIR=/usr/include/lua5.2 ./build/config-5.2.lua
+make LUA_VERSION=5.3 LUA_INTERPRETER=lua5.3 LUA_INCDIR=/usr/include/lua5.3 ./build/config-5.3.lua
 
-make clean
-LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --sysconfdir=/etc/luarocks \
-  --lua-version=5.3 \
-  --with-lua-include=/usr/include \
-  --with-downloader=curl \
-  --versioned-rocks-dir
-make
 make DESTDIR=$PKG install
+make DESTDIR=$PKG LUA_VERSION=5.1 install-config
+make DESTDIR=$PKG LUA_VERSION=5.2 install-config
+make DESTDIR=$PKG LUA_VERSION=5.3 install-config
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
