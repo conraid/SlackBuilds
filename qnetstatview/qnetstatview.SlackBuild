@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=qnetstatview
-VERSION=1.5.5
+VERSION=1.5.6
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -99,7 +99,7 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 # Add a desktop file
-install -Dm644 $CWD/$PKGNAM.desktop $PKG/usr/share/applications/$PKGNAM.desktop
+install -Dm644 $CWD/files/$PKGNAM.desktop $PKG/usr/share/applications/$PKGNAM.desktop
 
 # Add an icon
 mkdir -p $PKG/usr/share/pixmaps
