@@ -1,0 +1,181 @@
+From 4a5765606049631ded47dc0057a30db2b2335710 Mon Sep 17 00:00:00 2001
+From: Alienrobotarmy <jess@alienrobotarmy.com>
+Date: Sat, 4 Jul 2020 19:14:57 -0700
+Subject: [PATCH] Fix build. Fixed compile warnings
+
+---
+ src/cidr.c       | 79 ------------------------------------------------
+ src/exec.c       | 19 ++++++++++--
+ src/keyfile.c    | 12 ++++++--
+ src/vpn_thread.c |  5 ++-
+ 4 files changed, 30 insertions(+), 85 deletions(-)
+ delete mode 100644 src/cidr.c
+
+diff --git a/src/cidr.c b/src/cidr.c
+deleted file mode 100644
+index 305e4f0..0000000
+--- a/src/cidr.c
++++ /dev/null
+@@ -1,79 +0,0 @@
+-/*
+- * Ctunnel - Cyptographic tunnel.
+- * Copyright (C) 2008-2020 Jess Mahan <ctunnel@alienrobotarmy.com>
+- */
+-#include <stdio.h>
+-#include <stdlib.h>
+-#include <unistd.h>
+-#include <sys/types.h>
+-#include <sys/stat.h>
+-#include <sys/time.h>
+-#include <time.h>
+-#include <fcntl.h>
+-#include <signal.h>
+-#include <string.h>
+-#include <ctype.h>
+-#include <errno.h>
+-#ifdef __linux__
+-#include <linux/tcp.h>
+-#endif
+-
+-#include "ctunnel.h"
+-
+-int in_subnet(char *net, char *host, char *mask)
+-{
+-    unsigned long n, h, m = (unsigned long)-0;
+-
+-    if ((n = inet_addr(net)) == INADDR_NONE)
+-        return -1;
+-    if ((h = inet_addr(host)) == INADDR_NONE)
+-        return -1;
+-    if ((m = inet_addr(mask)) == INADDR_NONE)
+-        return -1;
+-    n = ntohl(n);
+-    h = ntohl(h);
+-    m = ntohl(m);
+-
+-    return ((n & m) == (h & m));
+-}
+-int cidr_to_mask(char *data, int cidr)
+-{
+-    int order = 32 / cidr;
+-    int msk;
+-    long pow = 1;
+-    int i = 0;
+-
+-    if (cidr < 1 || cidr > 32)
+-        return -1;
+-
+-    if (cidr > 0)
+-        order = 1;
+-    if (cidr > 8)
+-        order = 2;
+-    if (cidr > 16)
+-        order = 3;
+-    if (cidr > 24)
+-        order = 4;
+-
+-    for (i = 0; i < order; i++)
+-    {
+-        pow = 256 * pow;
+-    }
+-    //    pow -= 2;
+-    for (i = 1; i < order; i++)
+-    {
+-        strncat(data, "255.", 4);
+-    }
+-    msk = 256 - (pow >> cidr);
+-    sprintf(data, "%s%d", data, msk);
+-    for (i = 0; i < 4 - order; i++)
+-        strncat(data, ".0", 2);
+-
+-    return 0;
+-}
+-int main(int argc, char *argv[])
+-{
+-    char nm[256] = "";
+-    cidr_to_mask(nm, atoi(argv[1]));
+-    fprintf(stdout, "[%s]\n", nm);
+-}
+diff --git a/src/exec.c b/src/exec.c
+index a08a76c..3d35504 100644
+--- a/src/exec.c
++++ b/src/exec.c
+@@ -54,7 +54,11 @@ int run(char *f)
+     args = realloc(args, sizeof(char **) * (i + 1));
+     args[i] = NULL;
+ 
+-    pipe(sout);
++    if (pipe(sout) == -1)
++    {
++        ctunnel_log(stderr, LOG_CRIT, "pipe(): %s", strerror(errno));
++        return -1;
++    }
+ 
+     if ((pid = fork()) == 0)
+     {
+@@ -133,8 +137,17 @@ int prun(char *f)
+         return -1;
+     }
+ 
+-    pipe(so);
+-    pipe(si);
++    if (pipe(so) == -1)
++    {
++        ctunnel_log(stderr, LOG_CRIT, "pipe(): %s", strerror(errno));
++        return -1;
++    }
++
++    if (pipe(si) == -1)
++    {
++        ctunnel_log(stderr, LOG_CRIT, "pipe(): %s", strerror(errno));
++        return -1;
++    }
+ 
+     if ((pid = forkpty(&p, NULL, NULL, NULL)) == 0)
+     {
+diff --git a/src/keyfile.c b/src/keyfile.c
+index aaa3107..3a50d15 100644
+--- a/src/keyfile.c
++++ b/src/keyfile.c
+@@ -57,7 +57,11 @@ int keyfile_read(struct options *opt, char *filename)
+         free(passkey);
+         return fd;
+     }
+-    read(fd, &opt->key, sizeof(struct keys));
++    if (read(fd, &opt->key, sizeof(struct keys)) == -1)
++    {
++        ctunnel_log(stderr, LOG_CRIT, "pipe(): %s", strerror(errno));
++        return -1;
++    }
+     close(fd);
+     free(passkey);
+     return 1;
+@@ -111,7 +115,11 @@ int keyfile_write(struct options *opt, char *filename)
+         return fd;
+     }
+     opt->key.version = CONFIG_VERSION;
+-    write(fd, &opt->key, sizeof(struct keys));
++    if (write(fd, &opt->key, sizeof(struct keys)) == -1)
++    {
++        ctunnel_log(stderr, LOG_CRIT, "pipe(): %s", strerror(errno));
++        return -1;
++    }
+     close(fd);
+     free(passkey);
+     return 1;
+diff --git a/src/vpn_thread.c b/src/vpn_thread.c
+index 0ab4262..ca92172 100644
+--- a/src/vpn_thread.c
++++ b/src/vpn_thread.c
+@@ -277,7 +277,10 @@ void vpn_thread(void *arg)
+ 						else
+ 						{
+ 							data++;
+-							write(ct->tunfd, data, ret - sizeof(int));
++							if (write(ct->tunfd, data, ret - sizeof(int)) == -1)
++							{
++								ctunnel_log(stderr, LOG_CRIT, "write() error");
++							}
+ 							data = rwind;
+ 						}
+ 					}
