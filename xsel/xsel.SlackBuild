@@ -29,8 +29,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=xsel
-VERSION=1.2.0
-BUILD=${BUILD:-10}
+COMMIT=062e6d373537c60829fa9b5dcddbcd942986b3c3
+VERSION=git_$(echo $COMMIT | head -c7)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -71,9 +72,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xzvf $CWD/$PKGNAM-$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM-$COMMIT
+tar xzvf $CWD/$PKGNAM-$COMMIT.tar.gz
+cd $PKGNAM-$COMMIT
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
@@ -91,6 +92,7 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
+./autogen.sh
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
