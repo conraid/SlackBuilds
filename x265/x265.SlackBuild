@@ -32,11 +32,9 @@ set -eu
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=multicoreware
 PKGNAM=x265
-SRCVERSION=a158a3a02966
-VERSION=2.8
-BUILD=${BUILD:-2}
+VERSION=3.4
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -77,9 +75,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$PKGNAM-$SRCVERSION
-tar xvf $CWD/$PRGNAM-$PKGNAM-$SRCVERSION.tar.bz2 || tar xvf $CWD/$SRCVERSION.tar.bz2
-cd $PRGNAM-$PKGNAM-$SRCVERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
