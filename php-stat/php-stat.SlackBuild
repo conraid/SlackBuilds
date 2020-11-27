@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=stat
 PKGNAM=php-$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=cd1970f07bb6bec7967f5b025a4f85de67cac3fb
+SRCVERSION=eff23e7ce505920856290d80801f89519883c584
 VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-18}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -109,7 +109,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 # Make ini file
 mkdir -p $PKG/etc/php.d
-echo -e "zend_extension=stat.so\nstat.socket=/var/run/zend.stat.socket" > $PKG/etc/php.d/stat.ini.new
+cat $CWD/files/stat.ini > $PKG/etc/php.d/stat.ini.new
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
