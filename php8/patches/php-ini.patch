@@ -1,0 +1,167 @@
+diff -Naur a/php.ini-development b/php.ini-development
+--- a/php.ini-development	2020-11-24 18:04:03.000000000 +0100
++++ b/php.ini-development	2020-11-28 11:39:23.887468696 +0100
+@@ -917,44 +917,50 @@
+ ;   extension folders as well as the separate PECL DLL download (PHP 5+).
+ ;   Be sure to appropriately set the extension_dir directive.
+ ;
+-;extension=bz2
+-;extension=curl
+-;extension=ffi
+-;extension=ftp
+-;extension=fileinfo
+-;extension=gd
+-;extension=gettext
+-;extension=gmp
+-;extension=intl
+-;extension=imap
+-;extension=ldap
+-;extension=mbstring
+-;extension=exif      ; Must be after mbstring as it depends on it
+-;extension=mysqli
+-;extension=oci8_12c  ; Use with Oracle Database 12c Instant Client
+-;extension=odbc
+-;extension=openssl
+-;extension=pdo_firebird
+-;extension=pdo_mysql
+-;extension=pdo_oci
+-;extension=pdo_odbc
+-;extension=pdo_pgsql
+-;extension=pdo_sqlite
+-;extension=pgsql
+-;extension=shmop
++extension=bz2
++extension=calendar
++extension=ctype
++extension=curl
++extension=dba
++extension=dom
++extension=enchant
++extension=ffi
++extension=ftp
++extension=gd
++extension=gettext
++extension=gmp
++extension=iconv
++extension=intl
++extension=ldap
++extension=mbstring
++extension=exif      ; Must be after mbstring as it depends on it
++extension=mysqlnd
++extension=mysqli ; Must be after mysqlnd as it depends on it
++extension=odbc
++extension=openssl
++extension=pdo
++extension=pdo_mysql
++extension=pdo_odbc
++extension=pdo_pgsql
++extension=pdo_sqlite
++extension=pgsql
++extension=pspell
++extension=shmop
+ 
+ ; The MIBS data available in the PHP distribution must be installed.
+ ; See http://www.php.net/manual/en/snmp.installation.php
+ ;extension=snmp
+ 
+-;extension=soap
+-;extension=sockets
+-;extension=sodium
+-;extension=sqlite3
+-;extension=tidy
+-;extension=xsl
++extension=soap
++extension=sqlite3
++extension=tidy
++extension=xmlreader
++extension=xmlrpc
++extension=xsl
++extension=zip
++extension=zlib
+ 
+-;zend_extension=opcache
++zend_extension=opcache
+ 
+ ;;;;;;;;;;;;;;;;;;;
+ ; Module Settings ;
+@@ -1345,7 +1351,7 @@
+ ; where MODE is the octal representation of the mode. Note that this
+ ; does not overwrite the process's umask.
+ ; http://php.net/session.save-path
+-;session.save_path = "/tmp"
++session.save_path = "/var/lib/php"
+ 
+ ; Whether to use strict session mode.
+ ; Strict session mode does not accept an uninitialized session ID, and
+diff -Naur a/php.ini-production b/php.ini-production
+--- a/php.ini-production	2020-11-24 18:04:03.000000000 +0100
++++ b/php.ini-production	2020-11-28 11:39:22.228492316 +0100
+@@ -920,29 +920,33 @@
+ ;   Be sure to appropriately set the extension_dir directive.
+ ;
+ ;extension=bz2
++;extension=calendar
++;extension=ctype
+ ;extension=curl
++;extension=dba
++;extension=dom
++;extension=enchant
+ ;extension=ffi
+ ;extension=ftp
+-;extension=fileinfo
+ ;extension=gd
+ ;extension=gettext
+ ;extension=gmp
++;extension=iconv
+ ;extension=intl
+-;extension=imap
+ ;extension=ldap
+ ;extension=mbstring
+ ;extension=exif      ; Must be after mbstring as it depends on it
+-;extension=mysqli
+-;extension=oci8_12c  ; Use with Oracle Database 12c Instant Client
++;extension=mysqlnd
++;extension=mysqli ; Must be after mysqlnd as it depends on it
+ ;extension=odbc
+ ;extension=openssl
+-;extension=pdo_firebird
++;extension=pdo
+ ;extension=pdo_mysql
+-;extension=pdo_oci
+ ;extension=pdo_odbc
+ ;extension=pdo_pgsql
+ ;extension=pdo_sqlite
+ ;extension=pgsql
++;extension=pspell
+ ;extension=shmop
+ 
+ ; The MIBS data available in the PHP distribution must be installed.
+@@ -950,14 +954,17 @@
+ ;extension=snmp
+ 
+ ;extension=soap
+-;extension=sockets
+-;extension=sodium
+ ;extension=sqlite3
+ ;extension=tidy
++;extension=xmlreader
++;extension=xmlrpc
+ ;extension=xsl
++;extension=zip
++;extension=zlib
+ 
+ ;zend_extension=opcache
+ 
++
+ ;;;;;;;;;;;;;;;;;;;
+ ; Module Settings ;
+ ;;;;;;;;;;;;;;;;;;;
+@@ -1347,7 +1354,7 @@
+ ; where MODE is the octal representation of the mode. Note that this
+ ; does not overwrite the process's umask.
+ ; http://php.net/session.save-path
+-;session.save_path = "/tmp"
++session.save_path = "/var/lib/php"
+ 
+ ; Whether to use strict session mode.
+ ; Strict session mode does not accept an uninitialized session ID, and

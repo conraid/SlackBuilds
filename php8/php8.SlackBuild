@@ -1,0 +1,352 @@
+#!/bin/bash
+
+# Build and package mod_php on Slackware.
+# by:  David Cantrell <david@slackware.com>
+# Modified for PHP 4-5 by volkerdi@slackware.com
+# Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2017, 2019, 2020  Patrick Volkerding, Sebeka, MN, USA
+# Copyright 2018-2020 Corrado Franco <https://corradofranco.it>
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Modified for PHP7.3 and PGSQL by Corrado Franco <https://corradofranco.it>
+
+set -eu
+cd $(dirname $0) ; CWD=$(pwd)
+
+PRGNAM=php
+PKGNAM=php8
+VERSION=8.0.0
+ALPINE=2.24
+BUILD=${BUILD:-1}
+TAG=${TAG:-cf}
+
+# Set if clean IMAPLIBDIR after building
+DELETE_IMAPLIBDIR=${DELETE_IMAPLIBDIR:-no}
+
+# Automatically determine the architecture we're building on:
+if [ -z ${ARCH:=""} ]; then
+  case "$( uname -m )" in
+    i?86) export ARCH=i586 ;;
+    arm*) export ARCH=arm ;;
+       *) export ARCH=$( uname -m ) ;;
+  esac
+fi
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:=""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-$BUILD.txz"
+  exit 0
+fi
+
+NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
+
+TMP=${TMP:-/tmp/pkg}
+PKG=$TMP/package-$PKGNAM/
+OUTPUT=${OUTPUT:-/tmp}
+
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
+
+
+if [ "$ARCH" = "i586" ]; then
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  LIBDIRSUFFIX="64"
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+fi
+
+# Look for Kerberos on the machine and in any precompiled c-client.a:
+if /bin/ls /lib${LIBDIRSUFFIX}/libkrb5.so.? 1> /dev/null 2> /dev/null ; then
+  # Remove the c-client library if it doesn't contain Kerberos support:
+  if ! grep -q krb5_ /usr/local/lib${LIBDIRSUFFIX}/c-client/lib${LIBDIRSUFFIX}/c-client.a 2> /dev/null ; then
+    rm -rf /usr/local/lib${LIBDIRSUFFIX}/c-client
+  fi
+else
+  # Remove the c-client library if it contains Kerberos support:
+  if grep -q krb5_ /usr/local/lib${LIBDIRSUFFIX}/c-client/lib${LIBDIRSUFFIX}/c-client.a 2> /dev/null ; then
+    rm -rf /usr/local/lib${LIBDIRSUFFIX}/c-client
+  fi
+fi
+
+# we need to compile alpine to get c-client.a for IMAP support:
+IMAPLIBDIR=/usr/local/lib${LIBDIRSUFFIX}/c-client
+if [ -r $IMAPLIBDIR/lib${LIBDIRSUFFIX}/c-client.a ]; then
+  echo "Using IMAP library:"
+  ls -l $IMAPLIBDIR/lib${LIBDIRSUFFIX}/c-client.a
+  sleep 5
+else
+  ( cd $CWD/../alpine ; VERSION=${ALPINE} ; ./alpine.SlackBuild )
+  ( cd $TMP/alpine-${ALPINE}/imap/c-client
+    strip -g c-client.a
+    mkdir -p $IMAPLIBDIR/lib${LIBDIRSUFFIX}
+    cp c-client.a $IMAPLIBDIR/lib${LIBDIRSUFFIX}
+    mkdir -p $IMAPLIBDIR/include
+    cp *.h $IMAPLIBDIR/include
+  )
+fi
+
+# Set Kerberos build option:
+if /bin/ls /lib${LIBDIRSUFFIX}/libkrb5.so.? 1> /dev/null 2> /dev/null ; then
+  KRB5_OPTION="--with-kerberos"
+else
+  unset KRB5_OPTION
+fi
+
+mkdir -p $PKG/etc/httpd $PKG/etc/php.d
+
+# A trick from DaMouse to enable building php into $PKG.
+# We'll remove this later on.
+cat /etc/httpd/original/httpd.conf > $PKG/etc/httpd/httpd.conf
+if [ ! -e /etc/httpd/original/httpd.conf ]; then
+  echo "FATAL:  no /etc/httpd/original/httpd.conf found."
+  exit 1
+fi
+
+cd $TMP
+rm -rf $PRGNAM-$VERSION
+tar xvf $CWD/$PRGNAM-$VERSION.tar.xz
+cd $PRGNAM-$VERSION
+
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
+
+# cleanup:
+find . -name "*.orig" -delete
+
+# Fixup perms/owners:
+chown -R root:root .
+find . \
+  \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
+
+find . -name "*.h" -exec chmod 644 {} \;
+
+# Sometimes they ship a few of these:
+find . -name "*.orig" -exec rm {} \;
+
+# Install the build folder into /usr/lib$LIBDIRSUFFIX/php/build
+# and adapt phpize accordingly:
+sed -i "s|build$|php/build|" scripts/Makefile.frag
+sed -i "s|build\"$|php/build\"|" scripts/phpize.in
+
+# NOTE: Added -DU_USING_ICU_NAMESPACE=1 to CXXFLAGS, which should be a temporary
+# requirement. See the link below:
+# http://site.icu-project.org/download/61#TOC-Migration-Issues
+
+# Generic "kitchen sink" configure function, with as many things as possible (and
+# maybe then some ;-) compiled as shared extensions:
+EXTENSION_DIR=/usr/lib${LIBDIRSUFFIX}/php/extensions \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS -DU_USING_ICU_NAMESPACE=1" \
+./configure \
+  --prefix=/usr \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --with-libdir=lib${LIBDIRSUFFIX} \
+  --localstatedir=/var \
+  --sysconfdir=/etc \
+  --datarootdir=/usr/share \
+  --datadir=/usr/share \
+  --infodir=/usr/info \
+  --mandir=/usr/man \
+  --with-apxs2=/usr/bin/apxs \
+  --enable-fpm \
+  --with-fpm-user=apache \
+  --with-fpm-group=apache \
+  --enable-maintainer-zts \
+  --enable-pcntl \
+  --enable-mbregex \
+  --enable-tokenizer=shared \
+  --with-config-file-scan-dir=/etc/php.d \
+  --with-config-file-path=/etc \
+  --with-layout=PHP \
+  --disable-sigchild \
+  --with-libxml \
+  --with-xmlrpc=shared \
+  --with-expat \
+  --enable-simplexml \
+  --enable-xmlreader=shared \
+  --enable-dom=shared \
+  --enable-filter \
+  --disable-debug \
+  --with-openssl=shared \
+  $KRB5_OPTION \
+  --with-external-pcre \
+  --with-zlib=shared,/usr \
+  --enable-bcmath=shared \
+  --with-bz2=shared,/usr \
+  --enable-calendar=shared \
+  --enable-ctype=shared \
+  --with-curl=shared \
+  --enable-dba=shared \
+  --with-gdbm=/usr \
+  --with-db4=/usr \
+  --enable-exif=shared \
+  --enable-ftp=shared \
+  --enable-gd=shared \
+  --with-external-gd \
+  --with-jpeg \
+  --with-xpm \
+  --with-gettext=shared,/usr \
+  --with-gmp=shared,/usr \
+  --with-iconv=shared \
+  --with-imap-ssl=/usr,shared \
+  --with-imap=$IMAPLIBDIR \
+  --with-ldap=shared \
+  --enable-mbstring=shared \
+  --enable-mysqlnd=shared \
+  --with-mysqli=shared,mysqlnd \
+  --with-mysql-sock=/var/run/mysql/mysql.sock \
+  --with-iodbc=shared,/usr \
+  --enable-pdo=shared \
+  --with-pdo-mysql=shared,mysqlnd \
+  --with-pdo-sqlite=shared,/usr \
+  --with-pdo-odbc=shared,iODBC,/usr \
+  --with-pspell=shared,/usr \
+  --with-enchant=shared,/usr \
+  --enable-shmop=shared \
+  --with-snmp=shared,/usr \
+  --enable-soap=shared \
+  --enable-sockets \
+  --with-sqlite3=shared \
+  --enable-sysvmsg \
+  --enable-sysvsem \
+  --enable-sysvshm \
+  --with-xsl=shared,/usr \
+  --with-zip=shared \
+  --with-tsrm-pthreads \
+  --enable-intl=shared \
+  --enable-opcache \
+  --enable-shared=yes \
+  --enable-static=no \
+  --with-gnu-ld \
+  --with-pic \
+  --enable-phpdbg \
+  --with-sodium \
+  --with-password-argon2 \
+  --without-readline \
+  --with-libedit \
+  --with-pear \
+  --with-tidy=shared \
+  --with-ffi=shared \
+  --with-pgsql=shared \
+  --with-pdo-pgsql=shared \
+  --build=$ARCH-slackware-linux
+
+# I am told this option is worse than nothing.  :-)
+#  --enable-safe-mode
+#
+# I would recommend *against* and will take no responbility for turning on
+# "safe" mode.
+
+make $NUMJOBS
+make install INSTALL_ROOT=$PKG
+
+# Don't include the c-client library in php-config output:
+sed -i "s| -L/usr/local/lib${LIBDIRSUFFIX}/c-client/lib${LIBDIRSUFFIX}||g" $PKG/usr/bin/php-config
+sed -i "s|  -lc-client||g" $PKG/usr/bin/php-config
+
+mkdir -p $PKG/etc/rc.d $PKG/etc/php-fpm.d
+cp sapi/fpm/init.d.php-fpm $PKG/etc/rc.d/rc.$PRGNAM-fpm.new
+chmod 644 $PKG/etc/rc.d/rc.$PRGNAM-fpm.new
+
+# PHP (used to) install Pear with some strange permissions.
+chmod 755 $PKG/usr/bin/pear
+
+# PHP sometimes puts junk in the root directory:
+( cd $PKG
+  rm -rf .channels .depdb .depdblock .filemap .lock .registry
+)
+
+# We do not package static extension libraries:
+rm -f $PKG/usr/lib${LIBDIRSUFFIX}/$PRGNAM/extensions/*.a
+
+# Fix $PKG/usr/lib/php perms:
+( cd $PKG/usr/lib${LIBDIRSUFFIX}/php
+  find . \
+   \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+   -exec chmod 755 {} \; -o \
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \;
+)
+
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a \
+  CODING_STANDARDS CREDITS EXTENSIONS INSTALL LICENSE NEWS README* UPGRADING* \
+  sapi/cgi/README.FastCGI \
+  $PKG/usr/doc/$PKGNAM-$VERSION || true
+chown -R root:root $PKG/usr/doc/$PKGNAM-$VERSION
+chmod 644 $PKG/usr/doc/$PKGNAM-$VERSION/UPGRADING*
+
+mkdir -p $PKG/etc/httpd
+cat $CWD/files/mod_php.conf.example | sed -e "s#lib/httpd#lib${LIBDIRSUFFIX}/httpd#" \
+  > $PKG/etc/httpd/mod_php.conf.new
+chmod 644 $PKG/etc/httpd/*
+chown root:root $PKG/etc/httpd/*
+
+cp -a php.ini-development php.ini-production $PKG/etc
+chmod 755 $PKG/etc/php.d $PKG/etc/php-fpm.d $PKG/etc/httpd
+chown root:root $PKG/etc/*
+
+# This can go now.
+rm -f $PKG/etc/httpd/httpd*
+
+# Session directory for PHP.
+# (I use 777 for php-fpm. Alternatively, you can use default /tmp ):
+mkdir -p $PKG/var/lib/php
+chmod 777 $PKG/var/lib/php
+chown root:apache $PKG/var/lib/php
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
+
+# Strip ELF objects.
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF \
+  | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+
+gzip -9 $PKG/usr/man/man?/*.?
+
+mkdir -p $PKG/install
+zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+if [ "$DELETE_IMAPLIBDIR" == "yes" ]; then
+  if [ -d "$IMAPLIBDIR" ]; then
+    ( cd $IMAPLIBDIR && rm -rf * )
+    rmdir $IMAPLIBDIR
+  fi
+fi
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz
+
