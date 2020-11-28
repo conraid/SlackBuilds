@@ -33,8 +33,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=php
 PKGNAM=php-pgsql
-VERSION=7.4.12
-BUILD=${BUILD:-2}
+VERSION=7.4.13 # Version of slackware package
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -141,69 +141,32 @@ CXXFLAGS="$SLKCFLAGS -DU_USING_ICU_NAMESPACE=1" \
   --infodir=/usr/info \
   --mandir=/usr/man \
   --with-apxs2=/usr/bin/apxs \
-  --enable-fpm \
-  --with-fpm-user=apache \
-  --with-fpm-group=apache \
   --enable-maintainer-zts \
   --enable-pcntl \
   --enable-mbregex \
-  --enable-tokenizer=shared \
   --with-config-file-scan-dir=/etc/php.d \
   --with-config-file-path=/etc \
   --with-layout=PHP \
   --disable-sigchild \
   --with-libxml \
-  --with-xmlrpc=shared \
   --with-expat \
   --enable-simplexml \
-  --enable-xmlreader=shared \
-  --enable-dom=shared \
   --enable-filter \
   --disable-debug \
-  --with-openssl=shared \
   --with-external-pcre \
-  --with-zlib=shared,/usr \
-  --enable-bcmath=shared \
-  --with-bz2=shared,/usr \
-  --enable-calendar=shared \
-  --enable-ctype=shared \
-  --with-curl=shared \
-  --enable-dba=shared \
-  --with-gdbm=/usr \
-  --with-db4=/usr \
-  --enable-gd \
-  --with-external-gd \
-  --with-jpeg \
-  --with-xpm \
-  --with-freetype \
-  --with-gettext=shared,/usr \
-  --with-gmp=shared,/usr \
-  --with-iconv=shared \
-  --with-ldap=shared \
-  --enable-mbstring=shared \
   --enable-pdo=shared \
   --without-pdo-mysql \
   --without-pdo-sqlite \
   --without-pdo-odbc \
-  --with-pspell=shared,/usr \
-  --with-enchant=shared,/usr \
-  --enable-shmop=shared \
-  --with-snmp=shared,/usr \
-  --enable-soap=shared \
   --enable-sockets \
   --enable-sysvmsg \
   --enable-sysvsem \
   --enable-sysvshm \
-  --with-xsl=shared,/usr \
-  --with-zip \
   --with-tsrm-pthreads \
-  --enable-intl=shared \
-  --enable-opcache \
   --enable-shared=yes \
   --enable-static=no \
   --with-gnu-ld \
   --with-pic \
-  --enable-phpdbg \
   --with-sodium \
   --with-password-argon2 \
   --without-readline \
