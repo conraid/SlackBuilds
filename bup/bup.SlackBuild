@@ -30,7 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=bup
-VERSION=0.31
+SRCVERSION=a35c571a85a25a7b50532089e77aa83a58986548
+VERSION=$(echo $SRCVERSION | head -c7)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -72,9 +73,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRcVERSION.tar.gz
+cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
@@ -91,10 +92,12 @@ fi
 make CFLAGS="$SLKCFLAGS" \
      CXXFLAGS="$SLKCFLAGS" \
      PREFIX="/usr" \
+     LIBDIR="/usr/lib${LIBDIRSUFFIX}/bup" \
      DOCDIR="/usr/doc/bup-$VERSION/html"
 
 make DESTDIR=$PKG \
      PREFIX="/usr" \
+     LIBDIR="/usr/lib${LIBDIRSUFFIX}/bup" \
      MANDIR="/usr/man" \
      DOCDIR="/usr/doc/bup-$VERSION/html" \
      install
