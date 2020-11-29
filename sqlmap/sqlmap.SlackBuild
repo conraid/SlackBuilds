@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=sqlmap
 VERSION=1.4.3
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -75,7 +75,7 @@ mkdir -p $PKG/usr/share/$PKGNAM $PKG/etc $PKG/usr/bin $PKG/usr/doc/
 cat << EOF > $PKG/usr/bin/$PKGNAM
 #!/bin/bash
 cd /usr/share/$PKGNAM
-python sqlmap.py "\$@"
+python3 sqlmap.py "\$@"
 EOF
 chmod 755 $PKG/usr/bin/$PKGNAM
 
