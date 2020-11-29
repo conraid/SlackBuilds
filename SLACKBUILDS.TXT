@@ -522,11 +522,11 @@ SLACKBUILD SHORT DESCRIPTION:  bully (Retrieve WPA/WPA2 passphrase from a WPS en
 
 SLACKBUILD NAME: bup
 SLACKBUILD LOCATION: ./bup
-SLACKBUILD FILES: README bup.SlackBuild bup.info slack-desc
-SLACKBUILD VERSION: 0.31
-SLACKBUILD REQUIRED: par2cmdline pylibacl python-fuse python2-pyxattr pandoc-bin
-SLACKBUILD DOWNLOAD: https://github.com/bup/bup/archive/0.31/bup-0.31.tar.gz
-SLACKBUILD MD5SUM: 5cd1d4ebd61abb6bf1fa47b8846c860f
+SLACKBUILD FILES: README bup.SlackBuild bup.info patches/python39.patch slack-desc
+SLACKBUILD VERSION: a35c571
+SLACKBUILD REQUIRED: par2cmdline pylibacl python-fuse pyxattr pandoc-bin
+SLACKBUILD DOWNLOAD: https://github.com/bup/bup/archive/a35c571a85a25a7b50532089e77aa83a58986548/bup-a35c571a85a25a7b50532089e77aa83a58986548.tar.gz
+SLACKBUILD MD5SUM: 8628ebe0a6a73c4a31ea4e55fd7297be
 SLACKBUILD SHORT DESCRIPTION:  bup
 
 SLACKBUILD NAME: bwm-ng
@@ -4888,10 +4888,10 @@ SLACKBUILD SHORT DESCRIPTION:  pyinotify (Monitoring filesystems events)
 SLACKBUILD NAME: pylibacl
 SLACKBUILD LOCATION: ./pylibacl
 SLACKBUILD FILES: README pylibacl.SlackBuild pylibacl.info slack-desc
-SLACKBUILD VERSION: 0.5.4
+SLACKBUILD VERSION: 0.6.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pylibacl/pylibacl-0.5.4.tar.gz
-SLACKBUILD MD5SUM: aba415da393e5b6dc791fd860ed9c5a9
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pylibacl/pylibacl-0.6.0.tar.gz
+SLACKBUILD MD5SUM: 21a4cf82472842f0755f7f7e5980f44c
 SLACKBUILD SHORT DESCRIPTION:  pylibacl (A python module to manipulate the POSIX.1e ACLs)
 
 SLACKBUILD NAME: pynacl
@@ -5550,15 +5550,6 @@ SLACKBUILD REQUIRED: libimagequant
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/P/Pillow/Pillow-6.2.2.tar.gz
 SLACKBUILD MD5SUM: 46cad14f0044a5ac4b2d801271528893
 SLACKBUILD SHORT DESCRIPTION:  python2-pillow (Python Imaging Library)
-
-SLACKBUILD NAME: python2-pyxattr
-SLACKBUILD LOCATION: ./python2-pyxattr
-SLACKBUILD FILES: README python2-pyxattr.SlackBuild python2-pyxattr.info slack-desc
-SLACKBUILD VERSION: 0.6.1
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pyxattr/pyxattr-0.6.1.tar.gz
-SLACKBUILD MD5SUM: 523e9d90f9801141c785d93e6197cc33
-SLACKBUILD SHORT DESCRIPTION:  pyxattr (A python module to manipulate the extended attributes)
 
 SLACKBUILD NAME: python2-ujson
 SLACKBUILD LOCATION: ./python2-ujson
@@ -6658,6 +6649,15 @@ SLACKBUILD DOWNLOAD: https://github.com/bchretien/tcptrack/archive/v1.4.3.tar.gz
 SLACKBUILD MD5SUM: 32b552476e5e74cc80844051415b7860
 SLACKBUILD SHORT DESCRIPTION:  tcptrack (tcp sniffer)
 
+SLACKBUILD NAME: teamviewer-bin
+SLACKBUILD LOCATION: ./teamviewer-bin
+SLACKBUILD FILES: PKGNOTE README doinst.sh files/rc.teamviewerd files/teamviewer.desktop files/teamviewer.sh slack-desc teamviewer-bin.SlackBuild teamviewer-bin.info
+SLACKBUILD VERSION: 15.12.4
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://dl.tvcdn.de/download/linux/version_15x/teamviewer_15.12.4_amd64.deb
+SLACKBUILD MD5SUM: 3b4a1541bd9242c00cfb212d524619e7
+SLACKBUILD SHORT DESCRIPTION:  teamviewer (remote control application)
+
 SLACKBUILD NAME: telegram-bin
 SLACKBUILD LOCATION: ./telegram-bin
 SLACKBUILD FILES: README doinst.sh files/telegram.desktop files/telegram.png slack-desc telegram-bin.SlackBuild telegram-bin.info
@@ -7021,10 +7021,10 @@ SLACKBUILD SHORT DESCRIPTION:  unittest-cpp (A lightweight unit testing framewor
 SLACKBUILD NAME: universal-ctags
 SLACKBUILD LOCATION: ./universal-ctags
 SLACKBUILD FILES: README slack-desc universal-ctags.SlackBuild universal-ctags.info
-SLACKBUILD VERSION: p5.9.20201115.0
+SLACKBUILD VERSION: p5.9.20201129.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/universal-ctags/ctags/archive/p5.9.20201115.0.tar.gz
-SLACKBUILD MD5SUM: 9552d909a531e02db6bf728fe1043856
+SLACKBUILD DOWNLOAD: https://github.com/universal-ctags/ctags/archive/p5.9.20201129.0.tar.gz
+SLACKBUILD MD5SUM: 0c54366169dea3c0a79ab54453fcb9f1
 SLACKBUILD SHORT DESCRIPTION:  universal-ctags (A maintained ctags implementation)
 
 SLACKBUILD NAME: unix-privesc-check
@@ -7570,10 +7570,10 @@ SLACKBUILD SHORT DESCRIPTION:  yarn (Fast, reliable, and secure dependency manag
 SLACKBUILD NAME: youtube-dl
 SLACKBUILD LOCATION: ./youtube-dl
 SLACKBUILD FILES: README patches/slack.patch slack-desc youtube-dl.SlackBuild youtube-dl.info
-SLACKBUILD VERSION: 2020.11.26
+SLACKBUILD VERSION: 2020.11.29
 SLACKBUILD REQUIRED: rtmpdump
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/y/youtube_dl/youtube_dl-2020.11.26.tar.gz
-SLACKBUILD MD5SUM: d5d499eddfb0ffe2788a1f577205127b
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/y/youtube_dl/youtube_dl-2020.11.29.tar.gz
+SLACKBUILD MD5SUM: 11cf91b0e3e55bcec1fdf8ea7117d23f
 SLACKBUILD SHORT DESCRIPTION:  youtube-dl (YouTube video download utility)
 
 SLACKBUILD NAME: zenity
