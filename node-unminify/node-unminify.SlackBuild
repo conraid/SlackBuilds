@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=unminify
 PKGNAM=node-$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=b6aaff1c8c85bf3ffd97cb1b1ff3b97ab13259c7
+SRCVERSION=75d64f6eb44a1ff4044005557ed979d0bec39c2b
 VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
