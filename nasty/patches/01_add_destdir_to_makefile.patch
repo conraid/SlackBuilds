@@ -1,0 +1,25 @@
+Description: add DESTDIR to send the binary to the right place in Makefile.
+Author: Tiago Bortoletto Vaz <tiago@debian.org>
+Last-Update: 2009-09-27
+Index: nasty-0.6/Makefile
+===================================================================
+--- nasty-0.6.orig/Makefile
++++ nasty-0.6/Makefile
+@@ -3,6 +3,7 @@ VERSION=0.6
+ DEBUG=-g # -pg
+ CFLAGS+=-Wall -O2 -DVERSION=\"${VERSION}\" $(DEBUG)
+ LDFLAGS=-lgpgme $(DEBUG)
++BINDIR=/usr/bin
+ 
+ OBJS=nasty.o
+ 
+@@ -12,7 +13,8 @@ nasty: $(OBJS)
+ 	$(CC) -Wall -W $(OBJS) $(LDFLAGS) -o nasty
+ 
+ install: nasty
+-	cp nasty /usr/bin
++	mkdir -p $(DESTDIR)/$(BINDIR)
++	cp nasty $(DESTDIR)/$(BINDIR)
+ 
+ clean:
+ 	rm -f $(OBJS) nasty core

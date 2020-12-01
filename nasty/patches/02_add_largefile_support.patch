@@ -1,0 +1,22 @@
+Description: support large files in order to avoid problems in chroot builds
+Author: Tiago Bortoletto Vaz <tiago@debian.org>
+Last-Update: 2009-09-28
+
+Description: change LDFLAGS in upstream Makefile to support GCC hardening.
+Author: Joao Eriberto Mota Filho <eriberto@debian.org>
+Last-Update: 2015-07-12
+Index: nasty-0.6/Makefile
+===================================================================
+--- nasty-0.6.orig/Makefile
++++ nasty-0.6/Makefile
+@@ -1,8 +1,8 @@
+ VERSION=0.6
+ 
+ DEBUG=-g # -pg
+-CFLAGS+=-Wall -O2 -DVERSION=\"${VERSION}\" $(DEBUG)
+-LDFLAGS=-lgpgme $(DEBUG)
++CFLAGS+=-Wall -O2 -DVERSION=\"${VERSION}\" $(DEBUG) -D_FILE_OFFSET_BITS=64
++LDFLAGS+=-lgpgme $(DEBUG)
+ BINDIR=/usr/bin
+ 
+ OBJS=nasty.o

@@ -1,0 +1,58 @@
+.TH NASTY "1" "September 2009" "nasty " "User Commands"
+.SH NAME
+nasty \- A tool which helps you to recover your GPG passphrase
+.SH SYNOPSIS
+.B nasty
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+.B nasty
+is a program that helps you to recover the passphrase of your PGP or GPG-key in
+case you forget or lost it.
+.SH OPTIONS
+.TP
+\fB\-a x\fR
+set minimum length of passphrase
+.TP
+\fB\-b x\fR
+set maximum length
+.TP
+\fB\-m x\fR
+set guessing mode:
+.BR
+   \fBincremental\fR: try them all
+.BR
+   \fBrandom\fR: try at random
+.BR
+   \fBfile\fR: read phrases from file (use \-i)
+.TP
+\fB\-i x\fR
+file to read the passphrases from
+.TP
+\fB\-f x\fR
+file to write the found passphrase to
+.TP
+\fB\-c x...\fR
+charset, one or more from the following:
+.BR
+   a: a\-z
+.BR
+   A: A\-Z
+.BR
+   0: 0\-9
+.BR
+   .: all ascii values (32...126)
+.BR
+   +: 32...255 (default(!))
+
+.TP
+\fB\-h\fR
+show command options
+.SH ISSUES
+.PP
+Nasty will not work if you try it with a gpg-agent running in your system. For
+obvious reasons the agent will ask you the passphrase to access your private
+key - which you probably don't record, right? :)
+.SH AUTHOR
+.PP
+This manual page was written by Tiago Bortoletto Vaz <tiago@debian.org> for
+the Debian GNU/Linux system (but may be used by others).
