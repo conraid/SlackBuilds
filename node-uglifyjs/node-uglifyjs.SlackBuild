@@ -29,9 +29,9 @@ set -eu
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=UglifyJS
+PRGNAM=uglify-js
 PKGNAM=node-uglifyjs
-VERSION=3.12.0
+VERSION=3.12.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -58,16 +58,14 @@ fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
-cd $TMP
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
-cd $PRGNAM-$VERSION
+
+mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
+DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $CWD/$PRGNAM-$VERSION.tgz
+
+cd $PKG
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
-
-mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
-
-DESTDIR=$PKG npm install --user root -g $(npm pack | tail -1)
 
 # Remove empty dir
 rmdir $PKG/usr/etc || true
