@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=mu
 VERSION=1.4.13
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -79,6 +79,19 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
+# Apply patches
+if [ -e $CWD/patches ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
+fi
+
 autoreconf -i
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
@@ -101,6 +114,7 @@ make DESTDIR=$PKG install
 
 # Install GUI
 install -Dm755 toys/mug/mug $PKG/usr/bin/mug
+install -Dm644 toys/mug/mug.svg $PKG/usr/share/pixmaps/mug.svg
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
