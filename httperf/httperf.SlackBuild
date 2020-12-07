@@ -2,7 +2,7 @@
 #
 # Slackware build script for httperf
 #
-# Copyright 2012-2019 Corrado Franco (https://conraid.net)
+# Copyright 2012-2020 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,9 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=httperf
-COMMIT=5f5568b3c4596acaa29faf0651fc54ad7fc0b24b
+COMMIT=de8cd6ad8a79779a0cb74a4aa2175afa9e24df57
 VERSION=$(echo $COMMIT | head -c7)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
