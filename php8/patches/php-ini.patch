@@ -1,0 +1,96 @@
+diff -Naupr a/php.ini-development b/php.ini-development
+--- a/php.ini-development	2020-11-24 18:04:03.000000000 +0100
++++ b/php.ini-development	2020-12-07 09:48:17.950981024 +0100
+@@ -917,44 +917,44 @@ default_socket_timeout = 60
+ ;   extension folders as well as the separate PECL DLL download (PHP 5+).
+ ;   Be sure to appropriately set the extension_dir directive.
+ ;
+-;extension=bz2
+-;extension=curl
+-;extension=ffi
+-;extension=ftp
+-;extension=fileinfo
+-;extension=gd
+-;extension=gettext
+-;extension=gmp
+-;extension=intl
+-;extension=imap
+-;extension=ldap
+-;extension=mbstring
+-;extension=exif      ; Must be after mbstring as it depends on it
+-;extension=mysqli
++extension=bz2
++extension=curl
++extension=ffi
++extension=ftp
++extension=fileinfo
++extension=gd
++extension=gettext
++extension=gmp
++extension=intl
++extension=imap
++extension=ldap
++extension=mbstring
++extension=exif      ; Must be after mbstring as it depends on it
++extension=mysqli
+ ;extension=oci8_12c  ; Use with Oracle Database 12c Instant Client
+-;extension=odbc
+-;extension=openssl
++extension=odbc
++extension=openssl
+ ;extension=pdo_firebird
+-;extension=pdo_mysql
++extension=pdo_mysql
+ ;extension=pdo_oci
+-;extension=pdo_odbc
+-;extension=pdo_pgsql
+-;extension=pdo_sqlite
+-;extension=pgsql
+-;extension=shmop
++extension=pdo_odbc
++extension=pdo_pgsql
++extension=pdo_sqlite
++extension=pgsql
++extension=shmop
+ 
+ ; The MIBS data available in the PHP distribution must be installed.
+ ; See http://www.php.net/manual/en/snmp.installation.php
+ ;extension=snmp
+ 
+-;extension=soap
+-;extension=sockets
+-;extension=sodium
+-;extension=sqlite3
+-;extension=tidy
+-;extension=xsl
++extension=soap
++extension=sockets
++extension=sodium
++extension=sqlite3
++extension=tidy
++extension=xsl
+ 
+-;zend_extension=opcache
++zend_extension=opcache
+ 
+ ;;;;;;;;;;;;;;;;;;;
+ ; Module Settings ;
+@@ -1346,6 +1346,7 @@ session.save_handler = files
+ ; does not overwrite the process's umask.
+ ; http://php.net/session.save-path
+ ;session.save_path = "/tmp"
++session.save_path = "/var/lib/php"
+ 
+ ; Whether to use strict session mode.
+ ; Strict session mode does not accept an uninitialized session ID, and
+diff -Naupr a/php.ini-production b/php.ini-production
+--- a/php.ini-production	2020-11-24 18:04:03.000000000 +0100
++++ b/php.ini-production	2020-12-07 09:14:38.245859203 +0100
+@@ -1348,6 +1348,7 @@ session.save_handler = files
+ ; does not overwrite the process's umask.
+ ; http://php.net/session.save-path
+ ;session.save_path = "/tmp"
++session.save_path = "/var/lib/php"
+ 
+ ; Whether to use strict session mode.
+ ; Strict session mode does not accept an uninitialized session ID, and
