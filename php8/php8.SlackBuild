@@ -33,7 +33,7 @@ PRGNAM=php
 PKGNAM=php8
 VERSION=8.0.0
 ALPINE=2.24
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 
 # Set if clean IMAPLIBDIR after building
@@ -259,6 +259,7 @@ CXXFLAGS="$SLKCFLAGS -DU_USING_ICU_NAMESPACE=1" \
   --enable-fileinfo=shared \
   --with-pgsql=shared \
   --with-pdo-pgsql=shared \
+  --enable-zts \
   --build=$ARCH-slackware-linux
 
 # I am told this option is worse than nothing.  :-)
