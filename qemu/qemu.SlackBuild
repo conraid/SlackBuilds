@@ -29,9 +29,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=qemu
-SRCVERSION=5.1.0
+SRCVERSION=5.2.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -143,12 +143,12 @@ ARFLAGS="rv" \
   --enable-libnfs \
   --enable-xfsctl \
   --enable-linux-io-uring \
+  --enable-plugins \
   --audio-drv-list="alsa,sdl,pa" \
   --target-list="x86_64-softmmu,x86_64-linux-user"
 
-make config-all-devices.mak config-all-disas.mak
-make V=1
-make DESTDIR=$PKG install
+make
+make DESTDIR="$PKG" install
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
