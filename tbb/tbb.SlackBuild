@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=oneTBB
 PKGNAM=tbb
-VERSION=2020.3
+VERSION=2021.1.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -81,27 +81,30 @@ chmod -R u+w,go+r-w,a+X-s .
 
 # Apply patches
 if [ -e $CWD/patches ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
 fi
 
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
+mkdir -p build
+cd build
+cmake -Wno-dev \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DTBB_TEST=OFF \
+  ..
+
 make
-
-mkdir -p $PKG/usr/{lib${LIBDIRSUFFIX},include}
-cp -a build/linux_*_release/*.so.* $PKG/usr/lib${LIBDIRSUFFIX}
-ln -s libtbb.so.2 $PKG/usr/lib${LIBDIRSUFFIX}/libtbb.so
-ln -s libtbbmalloc.so.2 $PKG/usr/lib${LIBDIRSUFFIX}/libtbbmalloc.so
-ln -s libtbbmalloc_proxy.so.2 $PKG/usr/lib${LIBDIRSUFFIX}/libtbbmalloc_proxy.so
-cp -a include/tbb $PKG/usr/include/
-
-cmake \
-    -DINSTALL_DIR=$PKG/usr/lib${LIBDIRSUFFIX}/cmake/TBB \
-    -DSYSTEM_NAME=Linux \
-    -TBB_VERSION_FILE=$PKG/usr/include/tbb/tbb_stddef.h \
-    -P cmake/tbb_config_installer.cmake
+make DESTDIR=$PKG install
+cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
