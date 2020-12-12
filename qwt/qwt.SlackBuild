@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=qwt
 VERSION=6.1.5
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -81,13 +81,18 @@ chmod -R u+w,go+r-w,a-s .
 
 # Apply patches
 if [ -e $CWD/patches ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
 fi
 
-sed -e "s%@LIBDIRSUFFIX@%${LIBDIRSUFFIX}%" -e "s%@QT4DIR@%$QT4DIR%" -e "s%@DOCVERSION@%${VERSION}%" -i qwtconfig.pri
-qmake PREFIX=/usr INSTALLBASE=/usr CONFIG+=QwtExamples
+qmake-qt5 PREFIX=/usr INSTALLBASE=/usr CONFIG+=QwtExamples LIBDIRSUFFIX=$LIBDIRSUFFIX
 
 make CFLAGS+="$SLKCFLAGS" CXXFLAGS+="$SLKCFLAGS"
 make install INSTALL_ROOT=$PKG
@@ -102,15 +107,18 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
+# Sane html path
+mv $PKG/usr/doc/html $PKG/usr/doc/$PKGNAM-$VERSION
+
 # Sane man path
-mv $PKG/usr/doc/qwt-$VERSION/man $PKG/usr
+mv $PKG/usr/doc/man $PKG/usr
 
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
