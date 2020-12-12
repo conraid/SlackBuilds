@@ -28,9 +28,10 @@
 set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
-PKGNAM=findomain
-SRCVERSION=2.1.4
-VERSION=2.1.4
+PRGNAM=Findomain
+PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
+SRCVERSION=2.1.5
+VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -72,9 +73,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$SRCVERSION
-tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION.tar.gz
-cd $PKGNAM-$SRCVERSION
+rm -rf $PRGNAM-$SRCVERSION
+tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION.tar.gz
+cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
