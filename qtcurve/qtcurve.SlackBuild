@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=qtcurve
 SRCVERSION=0020a42c02a3c488fef23d33a27fea41f302ba98
 VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -39,8 +39,8 @@ OUTPUT=${OUTPUT:-/tmp}
 DOCFILES="AUTHORS Bugs* COPYING README* ChangeLog.md README* TODO*"
 
 # Enable or disable QT/KDE 4/5 support
-# Set yes to QT4 and KDE4 (default in Slackware current)
-ENABLE_QT4=${ENABLE_QT4:-YES}
+# Set yes to QT5 and KDE5 (default in Slackware current)
+ENABLE_QT4=${ENABLE_QT4:-NO}
 ENABLE_QT5=${ENABLE_QT5:-YES}
 ENABLE_KDE4=${ENABLE_KDE4:-NO}
 ENABLE_KDE5=${ENABLE_KDE5:-YES}
