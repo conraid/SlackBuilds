@@ -27,10 +27,10 @@ set -eu
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=MP3Diags
+PRGNAM=MP3Diags-unstable
 PKGNAM=mp3diags
-VERSION=1.2.03
-BUILD=${BUILD:-11}
+VERSION=1.5.01
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -79,11 +79,10 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 ./AdjustMt.sh
-qmake PREFIX=/usr QMAKE_CFLAGS="$SLKCFLAGS" QMAKE_CXXFLAGS="$SLKCFLAGS" -o Makefile $PKGNAM.pro
+qmake-qt5 PREFIX=/usr QMAKE_CFLAGS="$SLKCFLAGS" QMAKE_CXXFLAGS="$SLKCFLAGS" -o Makefile $PKGNAM.pro
 
 make
-install -Dpm 755 bin/MP3Diags $PKG/usr/bin/MP3Diags
-strip $PKG/usr/bin/MP3Diags
+install -Dpsm755 bin/$PRGNAM $PKG/usr/bin/$PRGNAM
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
