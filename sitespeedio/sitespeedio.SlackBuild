@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=sitespeed.io
 PKGNAM=sitespeedio
-VERSION=15.9.0
+VERSION=16.0.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -70,7 +70,7 @@ sed 's/4.12.0/4.13.1/g' -i package/*.json
 tar czf $PRGNAM-$VERSION.tgz package
 
 mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
-DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $PRGNAM-$VERSION.tgz
+EDGEDRIVER_VERSION=89.0.731.0 DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $PRGNAM-$VERSION.tgz
 
 # Remove empty dir
 rmdir $PKG/usr/etc || true
