@@ -24,6 +24,7 @@ perms() {
 }
 
 perms etc/rc.d/rc.atop.new
+perms etc/rc.d/rc.atopacct.new
 config etc/cron.daily/atop.new
 config etc/logrotate.d/psacct.new
 config etc/logrotate.d/psaccs_atop.new

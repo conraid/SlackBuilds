@@ -1,9 +1,11 @@
-diff -Naupr a/Makefile b/Makefile
---- a/Makefile	2020-12-21 20:57:55.000000000 +0100
-+++ b/Makefile	2020-12-22 10:36:28.703132681 +0100
-@@ -8,13 +8,13 @@ BINPATH  = /usr/bin
+diff -Naupr atop-2.6.0-orig/Makefile atop-2.6.0/Makefile
+--- atop-2.6.0-orig/Makefile	2020-12-21 20:57:55.000000000 +0100
++++ atop-2.6.0/Makefile	2020-12-24 09:37:17.301956332 +0100
+@@ -6,15 +6,14 @@ DESTDIR  =
+ 
+ BINPATH  = /usr/bin
  SBINPATH = /usr/sbin
- SCRPATH  = /usr/share/atop
+-SCRPATH  = /usr/share/atop
  LOGPATH  = /var/log/atop
 -MAN1PATH = /usr/share/man/man1
 -MAN5PATH = /usr/share/man/man5
@@ -16,37 +18,32 @@ diff -Naupr a/Makefile b/Makefile
  DEFPATH  = /etc/default
  SYSDPATH = /lib/systemd/system
 -CRNPATH  = /etc/cron.d
-+CRNPATH  = /etc/cron.daily
++DAYPATH  = /etc/cron.daily
  ROTPATH  = /etc/logrotate.d
  PMPATH1  = /usr/lib/pm-utils/sleep.d
  PMPATH2  = /usr/lib64/pm-utils/sleep.d
-@@ -97,12 +97,15 @@ sysvinstall:	genericinstall
- 		then	mkdir -p $(DESTDIR)$(CRNPATH);	fi
- 		if [ ! -d $(DESTDIR)$(ROTPATH) ]; 			\
- 		then	mkdir -p $(DESTDIR)$(ROTPATH);	fi
+@@ -91,18 +90,15 @@ systemdinstall:	genericinstall
+ sysvinstall:	genericinstall
+ 		if [ ! -d $(DESTDIR)$(INIPATH) ]; 			\
+ 		then	mkdir -p  $(DESTDIR)$(INIPATH);	fi
+-		if [ ! -d $(DESTDIR)$(SCRPATH) ]; 			\
+-		then	mkdir -p $(DESTDIR)$(SCRPATH);	fi
+-		if [ ! -d $(DESTDIR)$(CRNPATH) ]; 			\
+-		then	mkdir -p $(DESTDIR)$(CRNPATH);	fi
 +		if [ ! -d $(DESTDIR)$(DAYPATH) ]; 			\
 +		then	mkdir -p $(DESTDIR)$(DAYPATH);	fi
-+
+ 		if [ ! -d $(DESTDIR)$(ROTPATH) ]; 			\
+ 		then	mkdir -p $(DESTDIR)$(ROTPATH);	fi
  		#
 -		cp atop.init      $(DESTDIR)$(INIPATH)/atop
 -		cp atopacct.init  $(DESTDIR)$(INIPATH)/atopacct
-+		cp atop.init      $(DESTDIR)$(INIPATH)/rc.atop
-+		cp atopacct.init  $(DESTDIR)$(INIPATH)/rc.atopacct
- 		cp atop.cronsysv  $(DESTDIR)$(CRNPATH)/atop
+-		cp atop.cronsysv  $(DESTDIR)$(CRNPATH)/atop
 -		cp atop.daily     $(DESTDIR)$(SCRPATH)
 -		chmod 0711        $(DESTDIR)$(SCRPATH)/atop.daily
++		cp atop.init      $(DESTDIR)$(INIPATH)/rc.atop
++		cp atopacct.init  $(DESTDIR)$(INIPATH)/rc.atopacct
 +		cp atop.daily     $(DESTDIR)$(DAYPATH)
-+		chmod 0755        $(DESTDIR)$(DAYPATH)/atop.daily
++		chmod 0711        $(DESTDIR)$(DAYPATH)/atop.daily
  		cp psaccs_atop    $(DESTDIR)$(ROTPATH)/psaccs_atop
  		cp psaccu_atop    $(DESTDIR)$(ROTPATH)/psaccu_atop
  		touch             $(DESTDIR)$(LOGPATH)/dummy_before
-@@ -151,6 +154,9 @@ genericinstall:	atop atopacctd atopconve
- 		then	mkdir -p $(DESTDIR)$(MAN5PATH);	fi
- 		if [ ! -d $(DESTDIR)$(MAN8PATH) ]; 		\
- 		then	mkdir -p $(DESTDIR)$(MAN8PATH);	fi
-+		if [ ! -d $(DESTDIR)$(DEFPATH) ];       \
-+		then    mkdir -p $(DESTDIR)$(DEFPATH);  fi
-+
- 		#
- 		touch       		$(DESTDIR)$(DEFPATH)/atop
- 		chmod 644      		$(DESTDIR)$(DEFPATH)/atop

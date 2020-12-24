@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=atop
 SRCVERSION=2.6.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -108,9 +108,10 @@ fi
 
 # Move to new file
 mv $PKG/etc/rc.d/rc.atop $PKG/etc/rc.d/rc.atop.new
+mv $PKG/etc/rc.d/rc.atopacct $PKG/etc/rc.d/rc.atopacct.new
 mv $PKG/etc/logrotate.d/psaccs_atop $PKG/etc/logrotate.d/psaccs_atop.new
 mv $PKG/etc/logrotate.d/psaccu_atop $PKG/etc/logrotate.d/psaccu_atop.new
-mv $PKG/etc/cron.daily/atop $PKG/etc/cron.daily/atop.new
+mv $PKG/etc/cron.daily/atop.daily $PKG/etc/cron.daily/atop.new
 mv $PKG/etc/default/atop $PKG/etc/default/atop.new
 
 # Install logrotate (Thanks to SBo)
