@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=LucenePlusPlus
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=e6feb35c326b70b32b65bf5bebe1037f1c284746
-VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-8}
+SRCVERSION=rel_3.0.8
+VERSION=$(echo $SRCVERSION | sed 's/rel_//')
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
