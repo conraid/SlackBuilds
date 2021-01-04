@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=firewalld
 VERSION=0.9.1
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -110,6 +110,7 @@ for FILECONF in $(find $PKG/etc -name "*.conf"); do
   mv $FILECONF $FILECONF.new
 done
 mv $PKG/etc/sysconfig/firewalld $PKG/etc/sysconfig/firewalld.new
+mv $PKG/etc/logrotate.d/firewalld $PKG/etc/logrotate.d/firewalld.new
 
 # Add slackware init script
 mkdir -p $PKG/etc/rc.d
