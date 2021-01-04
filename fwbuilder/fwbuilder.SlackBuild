@@ -25,8 +25,8 @@
 set -eu
 
 PKGNAM=fwbuilder
-SRCVERSION=33fc3aa5c1e93ab8bd78c1b5504dde9056ccf99c
-VERSION=6.0.0_beta_$(echo $SRCVERSION | head -c7)
+SRCVERSION=6.0.0-rc1
+VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 cd $(dirname $0) ; CWD=$(pwd)
