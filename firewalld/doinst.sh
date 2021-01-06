@@ -50,6 +50,6 @@ fi
 perms etc/rc.d/rc.firewalld.new
 config etc/firewall/applet.conf.new
 config etc/firewalld/firewalld.conf.new
-config etc/sysconfig/firewalld.new
+config etc/default/firewalld.new
 config etc/modprobe.d/firewalld-sysctls.conf.new
 config etc/logrotate.d/firewalld.new
