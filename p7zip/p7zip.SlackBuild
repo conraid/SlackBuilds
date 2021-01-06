@@ -2,7 +2,7 @@
 #
 # Slackware build script for p7zip
 #
-# Copyright 2009-2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2009-2021 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -28,8 +28,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=p7zip
-VERSION=16.02
-BUILD=${BUILD:-10}
+VERSION=17.03
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -68,34 +68,28 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf ${PKGNAM}_$VERSION
-tar xvf $CWD/p7zip_${VERSION}_src_all.tar.bz2
-cd ${PKGNAM}_$VERSION
+rm -rf ${PKGNAM}-$VERSION
+tar xvf $CWD/p7zip-${VERSION}.tar.gz
+cd ${PKGNAM}-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 # Apply patches
-if [ -e $CWD/patches/ ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
+if [ -e $CWD/patches ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
 fi
-
-if [ $ARCH == "x86_64" ]; then
-  cp -f makefile.linux_amd64_asm makefile.machine
-else
-  cp -f makefile.linux_x86_asm_gcc_4.X makefile.machine
-fi
-
-sed \
-  -e '/Rar/d' \
-  -e '/RAR/d' \
-  -i makefile* CPP/7zip/Bundles/Format7zFree/makefile
-rm -rf CPP/7zip/Compress/Rar
 
 sed -e 's|cp -r DOC|cp -r DOC/*|g' -e 's|${DEST_SHARE_DOC}/DOC|${DEST_SHARE_DOC}|g' -i install.sh
-make all5 OPTFLAGS="$SLKCFLAGS" \
+make all3  OPTFLAGS="$SLKCFLAGS" \
   DEST_HOME=/usr \
   DEST_SHARE_DOC=/usr/doc/$PKGNAM-$VERSION \
   DEST_MAN=/usr/man \
@@ -131,17 +125,8 @@ fi
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-# Install icon
-install -Dm644 GUI/p7zip_16_ok.png $PKG/usr/share/icons/hicolor/16x16/apps/p7zip.png
-
-# Install desktop files
-rm GUI/kde4/p7zip_compress.desktop
-mkdir -p $PKG/usr/share/kde4/services/ServiceMenus
-cp GUI/kde4/*.desktop $PKG/usr/share/kde4/services/ServiceMenus/
-
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
