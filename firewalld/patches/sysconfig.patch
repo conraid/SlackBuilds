@@ -1,0 +1,88 @@
+diff -Naupr a/config/Makefile.am b/config/Makefile.am
+--- a/config/Makefile.am	2021-01-04 21:30:08.000000000 +0100
++++ b/config/Makefile.am	2021-01-06 13:15:25.340705242 +0100
+@@ -360,12 +360,12 @@ firewalld.logrotate: firewalld.logrotate
+ 	$(edit) $< >$@
+ 
+ install-sysconfig:
+-	$(MKDIR_P) $(DESTDIR)$(sysconfdir)/sysconfig
+-	$(INSTALL_DATA) $(srcdir)/firewalld.sysconfig $(DESTDIR)$(sysconfdir)/sysconfig/firewalld
++	$(MKDIR_P) $(DESTDIR)$(sysconfdir)/default
++	$(INSTALL_DATA) $(srcdir)/firewalld.sysconfig $(DESTDIR)$(sysconfdir)/default/firewalld
+ 
+ uninstall-sysconfig:
+-	rm -f $(DESTDIR)$(sysconfdir)/sysconfig/firewalld
+-	rmdir $(DESTDIR)$(sysconfdir)/sysconfig || :
++	rm -f $(DESTDIR)$(sysconfdir)/default/firewalld
++	rmdir $(DESTDIR)$(sysconfdir)/default || :
+ 
+ install-rpmmacros:
+ 	$(MKDIR_P) $(DESTDIR)$(prefix)/lib/rpm/macros.d
+diff -Naupr a/config/Makefile.in b/config/Makefile.in
+--- a/config/Makefile.in	2021-01-04 23:06:21.000000000 +0100
++++ b/config/Makefile.in	2021-01-06 13:15:15.498855189 +0100
+@@ -997,12 +997,12 @@ firewalld.logrotate: firewalld.logrotate
+ 	$(edit) $< >$@
+ 
+ install-sysconfig:
+-	$(MKDIR_P) $(DESTDIR)$(sysconfdir)/sysconfig
+-	$(INSTALL_DATA) $(srcdir)/firewalld.sysconfig $(DESTDIR)$(sysconfdir)/sysconfig/firewalld
++	$(MKDIR_P) $(DESTDIR)$(sysconfdir)/default
++	$(INSTALL_DATA) $(srcdir)/firewalld.sysconfig $(DESTDIR)$(sysconfdir)/default/firewalld
+ 
+ uninstall-sysconfig:
+-	rm -f $(DESTDIR)$(sysconfdir)/sysconfig/firewalld
+-	rmdir $(DESTDIR)$(sysconfdir)/sysconfig || :
++	rm -f $(DESTDIR)$(sysconfdir)/default/firewalld
++	rmdir $(DESTDIR)$(sysconfdir)/default || :
+ 
+ install-rpmmacros:
+ 	$(MKDIR_P) $(DESTDIR)$(prefix)/lib/rpm/macros.d
+diff -Naupr a/config/firewalld.init b/config/firewalld.init
+--- a/config/firewalld.init	2020-12-15 19:57:12.000000000 +0100
++++ b/config/firewalld.init	2021-01-06 12:49:15.441719373 +0100
+@@ -29,7 +29,7 @@ exec="/usr/sbin/firewalld"
+ prog="firewalld"
+ #config="/etc/firewalld/firewalld.conf"
+ 
+-[ -e /etc/sysconfig/$prog ] && . /etc/sysconfig/$prog
++[ -e /etc/default/$prog ] && . /etc/default/$prog
+ 
+ lockfile=/var/lock/subsys/$prog
+ 
+diff -Naupr a/config/firewalld.service.in b/config/firewalld.service.in
+--- a/config/firewalld.service.in	2020-12-15 19:57:12.000000000 +0100
++++ b/config/firewalld.service.in	2021-01-06 12:46:49.638841661 +0100
+@@ -8,7 +8,7 @@ Conflicts=iptables.service ip6tables.ser
+ Documentation=man:firewalld(1)
+ 
+ [Service]
+-EnvironmentFile=-/etc/sysconfig/firewalld
++EnvironmentFile=-/etc/default/firewalld
+ ExecStart=@sbindir@/firewalld --nofork --nopid $FIREWALLD_ARGS
+ ExecReload=/bin/kill -HUP $MAINPID
+ # supress to log debug and error output also to /var/log/messages
+diff -Naupr a/src/firewall/config/__init__.py b/src/firewall/config/__init__.py
+--- a/src/firewall/config/__init__.py	2021-01-04 23:06:35.000000000 +0100
++++ b/src/firewall/config/__init__.py	2021-01-06 12:50:18.360737385 +0100
+@@ -99,7 +99,7 @@ FIREWALLD_PIDFILE = "/var/run/firewalld.
+ 
+ FIREWALLD_TEMPDIR = '/run/firewalld'
+ 
+-SYSCONFIGDIR = '/etc/sysconfig'
++SYSCONFIGDIR = '/etc/default'
+ IFCFGDIR = "/etc/sysconfig/network-scripts"
+ 
+ SYSCTL_CONFIG = '/etc/sysctl.conf'
+diff -Naupr a/src/firewall/config/__init__.py.in b/src/firewall/config/__init__.py.in
+--- a/src/firewall/config/__init__.py.in	2021-01-04 21:30:08.000000000 +0100
++++ b/src/firewall/config/__init__.py.in	2021-01-06 12:50:54.492177212 +0100
+@@ -99,7 +99,7 @@ FIREWALLD_PIDFILE = "/var/run/firewalld.
+ 
+ FIREWALLD_TEMPDIR = '/run/firewalld'
+ 
+-SYSCONFIGDIR = '/etc/sysconfig'
++SYSCONFIGDIR = '/etc/default'
+ IFCFGDIR = "@IFCFGDIR@"
+ 
+ SYSCTL_CONFIG = '/etc/sysctl.conf'
