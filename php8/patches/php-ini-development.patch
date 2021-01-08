@@ -1,7 +1,7 @@
 diff -Naupr a/php.ini-development b/php.ini-development
---- a/php.ini-development	2020-11-24 18:04:03.000000000 +0100
-+++ b/php.ini-development	2020-12-07 09:48:17.950981024 +0100
-@@ -917,44 +917,44 @@ default_socket_timeout = 60
+--- a/php.ini-development	2021-01-05 14:54:54.000000000 +0100
++++ b/php.ini-development	2021-01-08 10:15:26.752320850 +0100
+@@ -917,45 +917,45 @@ default_socket_timeout = 60
  ;   extension folders as well as the separate PECL DLL download (PHP 5+).
  ;   Be sure to appropriately set the extension_dir directive.
  ;
@@ -25,7 +25,7 @@ diff -Naupr a/php.ini-development b/php.ini-development
 +extension=ftp
 +extension=fileinfo
 +extension=gd
-+extension=gettext
++xtension=gettext
 +extension=gmp
 +extension=intl
 +extension=imap
@@ -34,6 +34,7 @@ diff -Naupr a/php.ini-development b/php.ini-development
 +extension=exif      ; Must be after mbstring as it depends on it
 +extension=mysqli
  ;extension=oci8_12c  ; Use with Oracle Database 12c Instant Client
+ ;extension=oci8_19  ; Use with Oracle Database 19 Instant Client
 -;extension=odbc
 -;extension=openssl
 +extension=odbc
@@ -75,22 +76,3 @@ diff -Naupr a/php.ini-development b/php.ini-development
  
  ;;;;;;;;;;;;;;;;;;;
  ; Module Settings ;
-@@ -1346,6 +1346,7 @@ session.save_handler = files
- ; does not overwrite the process's umask.
- ; http://php.net/session.save-path
- ;session.save_path = "/tmp"
-+session.save_path = "/var/lib/php"
- 
- ; Whether to use strict session mode.
- ; Strict session mode does not accept an uninitialized session ID, and
-diff -Naupr a/php.ini-production b/php.ini-production
---- a/php.ini-production	2020-11-24 18:04:03.000000000 +0100
-+++ b/php.ini-production	2020-12-07 09:14:38.245859203 +0100
-@@ -1348,6 +1348,7 @@ session.save_handler = files
- ; does not overwrite the process's umask.
- ; http://php.net/session.save-path
- ;session.save_path = "/tmp"
-+session.save_path = "/var/lib/php"
- 
- ; Whether to use strict session mode.
- ; Strict session mode does not accept an uninitialized session ID, and
