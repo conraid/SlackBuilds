@@ -2,7 +2,7 @@
 #
 # Slackware build script for bup
 #
-# Copyright 2019-2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2019-2021 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=bup
-SRCVERSION=a35c571a85a25a7b50532089e77aa83a58986548
-VERSION=$(echo $SRCVERSION | head -c7)
+SRCVERSION=0.32
+VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
