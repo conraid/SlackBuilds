@@ -2,7 +2,7 @@
 #
 # Slackware build script for s3fs-fuse
 #
-# Copyright 2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2020-2021 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=s3fs-fuse
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=1.87
+SRCVERSION=1.88
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -105,8 +105,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --mandir=/usr/man \
   --infodir=/usr/info \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --enable-static=no \
-  --enable-shared=yes \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
