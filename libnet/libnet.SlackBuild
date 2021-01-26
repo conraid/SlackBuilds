@@ -2,7 +2,7 @@
 #
 # Slackware build script for libnet (http://sourceforge.net/projects/libnet-dev/)
 #
-# Copyright 2008-2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2008-2021 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -87,11 +87,12 @@ CXXFLAGS="$SLKCFLAGS" \
   --localstatedir=/var \
   --mandir=/usr/man \
   --infodir=/usr/info \
+  --docdir=/usr/doc/$PKGNAM-$VERSION \
   --disable-static \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
-make 
+make
 make install-strip DESTDIR=$PKG
 
 # Don't ship .la files:
