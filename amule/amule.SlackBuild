@@ -31,8 +31,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=aMule
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=r11081
-VERSION=svn_$(echo $SRCVERSION | tr - _ | sed 's/^r//')
+SRCVERSION=r11084
+VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
