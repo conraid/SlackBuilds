@@ -2,7 +2,7 @@
 #
 # Slackware build script for luceneplusplus
 #
-# Copyright 2016-2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2016-2021 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ PRGNAM=LucenePlusPlus
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=rel_3.0.8
 VERSION=$(echo $SRCVERSION | sed 's/rel_//')
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -81,6 +81,19 @@ cd $PRGNAM-$SRCVERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
+# Apply patches
+if [ -e $CWD/patches ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
+fi
+
 mkdir -p build
 cd build
 cmake -Wno-dev \
@@ -93,6 +106,7 @@ cmake -Wno-dev \
   -DBUILD_SHARED_LIBS=On \
   -DBoost_USE_STATIC_LIBS=OFF \
   -DBoost_NO_BOOST_CMAKE=ON \
+  -DLIB_DESTINATION=/usr/lib${LIBDIRSUFFIX} \
   ..
 
 make
