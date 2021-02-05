@@ -30,13 +30,13 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=xdebug
 PKGNAM=php-xdebug
 VERSION=3.0.2
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="CREDITS LICENSE README* contrib"
+DOCFILES="CREDITS LICENSE README* contrib *.ini"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
