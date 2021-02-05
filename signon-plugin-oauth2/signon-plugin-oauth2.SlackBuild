@@ -2,7 +2,7 @@
 #
 # Slackware build script for signon-plugin-oauth2
 #
-# Copyright 2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2020-2021 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=signon-plugin-oauth2
-COMMIT=0bae45d2d3efeadca2904a85132215ce1e82ebc7
+COMMIT=d759439066f0a34e5ad352ebab0b3bb2790d429e
 VERSION=0.24_$(echo $COMMIT | head -c7)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
