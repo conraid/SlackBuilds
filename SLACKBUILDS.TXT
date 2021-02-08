@@ -865,10 +865,10 @@ SLACKBUILD SHORT DESCRIPTION:  cpuid2cpuflags (Tool to generate CPU FLAGS)
 SLACKBUILD NAME: cryptography
 SLACKBUILD LOCATION: ./cryptography
 SLACKBUILD FILES: README cryptography.SlackBuild cryptography.info slack-desc
-SLACKBUILD VERSION: 3.3.1
-SLACKBUILD REQUIRED: cffi pyasn1 asn1crypto python-wheel
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/cryptography/cryptography-3.3.1.tar.gz
-SLACKBUILD MD5SUM: 6faa1a7125c500c0e1586ad342ba3b30
+SLACKBUILD VERSION: 3.4.1
+SLACKBUILD REQUIRED: cffi pyasn1 asn1crypto python-wheel python-setuptools-rust python-semantic_version
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/cryptography/cryptography-3.4.1.tar.gz
+SLACKBUILD MD5SUM: 890028fa4b8c2bf09ac99836f9e925b5
 SLACKBUILD SHORT DESCRIPTION:  cryptography (Python cryptography library)
 
 SLACKBUILD NAME: csscss
@@ -2089,10 +2089,10 @@ SLACKBUILD SHORT DESCRIPTION:  Httping is like 'ping' but for http-requests.
 SLACKBUILD NAME: httplib2
 SLACKBUILD LOCATION: ./httplib2
 SLACKBUILD FILES: README httplib2.SlackBuild httplib2.info slack-desc
-SLACKBUILD VERSION: 0.18.1
+SLACKBUILD VERSION: 0.19.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/httplib2/httplib2/archive/v0.18.1.tar.gz
-SLACKBUILD MD5SUM: 883f17828619757836ff510c42a7cca8
+SLACKBUILD DOWNLOAD: https://github.com/httplib2/httplib2/archive/v0.19.0.tar.gz
+SLACKBUILD MD5SUM: 44c824c2f38b74de933d4c6c318b2665
 SLACKBUILD SHORT DESCRIPTION:  httplib2 (python HTTP client library)
 
 SLACKBUILD NAME: httpry
@@ -2665,10 +2665,10 @@ SLACKBUILD SHORT DESCRIPTION:  libbfio (basic file input/output abstraction)
 SLACKBUILD NAME: libbsd
 SLACKBUILD LOCATION: ./libbsd
 SLACKBUILD FILES: README libbsd.SlackBuild libbsd.info slack-desc
-SLACKBUILD VERSION: 0.11.1
+SLACKBUILD VERSION: 0.11.2
 SLACKBUILD REQUIRED: libmd
-SLACKBUILD DOWNLOAD: https://libbsd.freedesktop.org/releases/libbsd-0.11.1.tar.xz
-SLACKBUILD MD5SUM: 2bc23d38510a277a2aeca355fb998688
+SLACKBUILD DOWNLOAD: https://libbsd.freedesktop.org/releases/libbsd-0.11.2.tar.xz
+SLACKBUILD MD5SUM: ec16d126e5f72362d57e0161460fce5e
 SLACKBUILD SHORT DESCRIPTION:  libbsd (library of BSD functions)
 
 SLACKBUILD NAME: libcacard
@@ -4264,13 +4264,22 @@ SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/nufraw/nufraw-0.43-3.tar.g
 SLACKBUILD MD5SUM: 4d77576a16f70b25f53410fe61322ed8
 SLACKBUILD SHORT DESCRIPTION:  nufraw (Unindentified Flying RAW)
 
+SLACKBUILD NAME: numactl
+SLACKBUILD LOCATION: ./numactl
+SLACKBUILD FILES: README numactl.SlackBuild numactl.info slack-desc
+SLACKBUILD VERSION: 2.0.14
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/numactl/numactl/releases/download/v2.0.14/numactl-2.0.14.tar.gz
+SLACKBUILD MD5SUM: f65f3501a82df8c3ee7cc74dc6a55636
+SLACKBUILD SHORT DESCRIPTION:  numactl (NUMA process control)
+
 SLACKBUILD NAME: numpy
 SLACKBUILD LOCATION: ./numpy
 SLACKBUILD FILES: README numpy.SlackBuild numpy.info slack-desc
-SLACKBUILD VERSION: 1.20.0
+SLACKBUILD VERSION: 1.20.1
 SLACKBUILD REQUIRED: openblas
-SLACKBUILD DOWNLOAD: https://github.com/numpy/numpy/archive/v1.20.0/numpy-1.20.0.tar.gz
-SLACKBUILD MD5SUM: 99adc5a9ebf33cf14e529634c894ec84
+SLACKBUILD DOWNLOAD: https://github.com/numpy/numpy/archive/v1.20.1/numpy-1.20.1.tar.gz
+SLACKBUILD MD5SUM: a8414e2eebac83a4d5b6a945063c4fff
 SLACKBUILD SHORT DESCRIPTION:  NumPy (a Python extension for scientific computing)
 
 SLACKBUILD NAME: nuttcp
@@ -4788,11 +4797,11 @@ SLACKBUILD SHORT DESCRIPTION:  pkgdiff (A tool for visualizing changes in Linux 
 
 SLACKBUILD NAME: pmacct
 SLACKBUILD LOCATION: ./pmacct
-SLACKBUILD FILES: README doinst.sh patches/gcc10.patch pmacct.SlackBuild pmacct.info rc.pmacctd slack-desc
-SLACKBUILD VERSION: 1.7.5
-SLACKBUILD REQUIRED: libmaxminddb postgresql zeromq redis hiredis
-SLACKBUILD DOWNLOAD: http://www.pmacct.net/pmacct-1.7.5.tar.gz
-SLACKBUILD MD5SUM: 4ce9e8f38ce37d3c60bfa3d66e0d5184
+SLACKBUILD FILES: README doinst.sh pmacct.SlackBuild pmacct.info rc.pmacctd slack-desc
+SLACKBUILD VERSION: 1.7.6
+SLACKBUILD REQUIRED: libmaxminddb postgresql zeromq redis hiredis numactl ndpi
+SLACKBUILD DOWNLOAD: http://www.pmacct.net/pmacct-1.7.6.tar.gz
+SLACKBUILD MD5SUM: b829cfdc394d5acd6d32fb23de181a6b
 SLACKBUILD SHORT DESCRIPTION:  pmacct (a small set of passive network monitoring tools)
 
 SLACKBUILD NAME: pmount
@@ -5577,6 +5586,24 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/selectors2/selectors2-2.0.2.tar.gz
 SLACKBUILD MD5SUM: 77089bc7a640bf09f784cc029195c24a
 SLACKBUILD SHORT DESCRIPTION:  python-selectors2 (Backported, durable, and portable selectors)
+
+SLACKBUILD NAME: python-semantic_version
+SLACKBUILD LOCATION: ./python-semantic_version
+SLACKBUILD FILES: README python-semantic_version.SlackBuild python-semantic_version.info slack-desc
+SLACKBUILD VERSION: 2.8.5
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/semantic_version/semantic_version-2.8.5.tar.gz
+SLACKBUILD MD5SUM: 76d7364def7ee487b6153d40b13de904
+SLACKBUILD SHORT DESCRIPTION:  python-semantic_version (Semantic version comparison for Python)
+
+SLACKBUILD NAME: python-setuptools-rust
+SLACKBUILD LOCATION: ./python-setuptools-rust
+SLACKBUILD FILES: README python-setuptools-rust.SlackBuild python-setuptools-rust.info slack-desc
+SLACKBUILD VERSION: 0.11.6
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/setuptools-rust/setuptools-rust-0.11.6.tar.gz
+SLACKBUILD MD5SUM: 319d2968f076f37279c866e51bcccbcc
+SLACKBUILD SHORT DESCRIPTION:  python-setuptools-rust (Setuptools plugin for Rust extensions)
 
 SLACKBUILD NAME: python-slip
 SLACKBUILD LOCATION: ./python-slip
@@ -6382,10 +6409,10 @@ SLACKBUILD SHORT DESCRIPTION:  simplejson (extensible JSON encoder and decoder f
 SLACKBUILD NAME: simplenote-bin
 SLACKBUILD LOCATION: ./simplenote-bin
 SLACKBUILD FILES: README doinst.sh simplenote-bin.SlackBuild simplenote-bin.info slack-desc
-SLACKBUILD VERSION: 2.5.0
+SLACKBUILD VERSION: 2.6.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/Automattic/simplenote-electron/releases/download/v2.5.0/Simplenote-linux-2.5.0-amd64.deb
-SLACKBUILD MD5SUM: 56f393193efc39e72a6478de0b9126e1
+SLACKBUILD DOWNLOAD: https://github.com/Automattic/simplenote-electron/releases/download/v2.6.0/Simplenote-linux-2.6.0-amd64.deb
+SLACKBUILD MD5SUM: 71ca30eb364ca6651c6e639ec7e386a4
 SLACKBUILD SHORT DESCRIPTION:  simplenote-bin (The simplest way to keep notes)
 
 SLACKBUILD NAME: sipcalc
@@ -6427,10 +6454,10 @@ SLACKBUILD SHORT DESCRIPTION:  sitemap-generator (Easily create XML sitemaps for
 SLACKBUILD NAME: sitespeedio
 SLACKBUILD LOCATION: ./sitespeedio
 SLACKBUILD FILES: PKGNOTE README sitespeedio.SlackBuild sitespeedio.info slack-desc
-SLACKBUILD VERSION: 16.7.1
+SLACKBUILD VERSION: 16.8.0
 SLACKBUILD REQUIRED: node
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/sitespeed.io/-/sitespeed.io-16.7.1.tgz
-SLACKBUILD MD5SUM: ed8a4e9c0b4267a8eeeef1c155e3d9f4
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/sitespeed.io/-/sitespeed.io-16.8.0.tgz
+SLACKBUILD MD5SUM: b90b4feeec64e9389479e52b602e6326
 SLACKBUILD SHORT DESCRIPTION:  sitespeed.io (complete web performance tool)
 
 SLACKBUILD NAME: skypeforlinux-bin
@@ -6481,10 +6508,10 @@ SLACKBUILD SHORT DESCRIPTION:  slurm (Realtime network interface monitor)
 SLACKBUILD NAME: smb4k
 SLACKBUILD LOCATION: ./smb4k
 SLACKBUILD FILES: README doinst.sh slack-desc smb4k.SlackBuild smb4k.info
-SLACKBUILD VERSION: 3.0.80
+SLACKBUILD VERSION: 3.0.81
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/smb4k/smb4k-3.0.80.tar.xz
-SLACKBUILD MD5SUM: 9718623198b752374547b72c134a153f
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/smb4k/smb4k-3.0.81.tar.xz
+SLACKBUILD MD5SUM: 136ffc5e3881e590cf3c6d8fc84a38ba
 SLACKBUILD SHORT DESCRIPTION:  smb4k (Advanced Network Neighborhood Browser for KDE)
 
 SLACKBUILD NAME: smbnetfs
@@ -6670,10 +6697,10 @@ SLACKBUILD SHORT DESCRIPTION:  spotify-bin (digital music client)
 SLACKBUILD NAME: spotify-downloader
 SLACKBUILD LOCATION: ./spotify-downloader
 SLACKBUILD FILES: README slack-desc spotify-downloader.SlackBuild spotify-downloader.info
-SLACKBUILD VERSION: 3.3.1
+SLACKBUILD VERSION: 3.3.2
 SLACKBUILD REQUIRED: python-spotipy mutagen pytube3 python-tqdm python-rapidfuzz
-SLACKBUILD DOWNLOAD: https://github.com/spotDL/spotify-downloader/archive/v3.3.1/spotify-downloader-3.3.1.tar.gz
-SLACKBUILD MD5SUM: d81419af9163a1918c2f4a6df1d24556
+SLACKBUILD DOWNLOAD: https://github.com/spotDL/spotify-downloader/archive/v3.3.2/spotify-downloader-3.3.2.tar.gz
+SLACKBUILD MD5SUM: 928462ce387949bf53f61a2b7c382eea
 SLACKBUILD SHORT DESCRIPTION:  spotify-downloader (Download Spotify playlists)
 
 SLACKBUILD NAME: sqlcheck
@@ -6706,10 +6733,10 @@ SLACKBUILD SHORT DESCRIPTION:  sqlmap (Automatic SQL injection and database take
 SLACKBUILD NAME: squid
 SLACKBUILD LOCATION: ./squid
 SLACKBUILD FILES: README SLACKWARE.README doinst.sh files/rc.squid files/squid.logrotate files/squid.pam slack-desc squid.SlackBuild squid.info
-SLACKBUILD VERSION: 4.13
+SLACKBUILD VERSION: 4.14
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://www.squid-cache.org/Versions/v4/squid-4.13.tar.bz2
-SLACKBUILD MD5SUM: 31e524a416715d6bfef30e072d2ca076
+SLACKBUILD DOWNLOAD: http://www.squid-cache.org/Versions/v4/squid-4.14.tar.bz2
+SLACKBUILD MD5SUM: d0bbd59ddd068d3cde93c1ee4b53b983
 SLACKBUILD SHORT DESCRIPTION:  Squid (a popular free and open source Web proxy server and web cache)
 
 SLACKBUILD NAME: srm
