@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=protonmail-bridge
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-bin
-SRCVERSION=1.6.3
+SRCVERSION=1.5.7
 VERSION=$(echo $SRCVERSION | tr - _)
 DEBVERSION=1
 BUILD=${BUILD:-1}
@@ -80,7 +80,8 @@ ln -s /usr/lib$LIBDIRSUFFIX/protonmail/bridge/$PRGNAM $PRGNAM
 cd ../..
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cp -a $PKG/usr/lib$LIBDIRSUFFIX/protonmail/bridge/{LICENSE,Changelog.md} $PKG/usr/doc/$PKGNAM-$VERSION || true
+cp -a $PKG/usr/share/doc/protonmail-bridge/* $PKG/usr/doc/$PKGNAM-$VERSION || true
+rm -rf $PKG/usr/share/doc
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
