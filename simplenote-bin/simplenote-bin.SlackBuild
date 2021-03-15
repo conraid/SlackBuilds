@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=Simplenote
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-bin
-SRCVERSION=2.6.0
+SRCVERSION=2.7.1
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -69,7 +69,7 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $PKG
-ar p $CWD/${PRGNAM}-linux-${VERSION}-$DEBARCH.deb data.tar.xz | tar xJv
+ar p $CWD/${PRGNAM}-linux-${VERSION}-$DEBARCH.deb data.tar.gz | tar xzv
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
