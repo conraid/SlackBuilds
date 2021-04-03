@@ -2,7 +2,7 @@
 #
 # Slackware build script for node-gyp
 #
-# Copyright 2015-2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2015-2021 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,9 +32,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=node-gyp
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=7.1.2
+SRCVERSION=8.0.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
