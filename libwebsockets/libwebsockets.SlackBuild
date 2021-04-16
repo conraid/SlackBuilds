@@ -2,7 +2,7 @@
 #
 # Slackware build script for libwebsockets
 #
-# Copyright 2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2020-2021 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=libwebsockets
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=4.1.6
+SRCVERSION=4.2.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -94,6 +94,9 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
+# Fix GITHASH
+sed 's|${GIT_HASH}|1367c11e1ee44d9e19daa50e1d015365bae17354|' -i CMakeLists.txt
+
 
 mkdir -p build
 cd build
@@ -106,7 +109,7 @@ cmake -Wno-dev \
   -DLWS_WITHOUT_CLIENT=OFF \
   -DLWS_WITHOUT_SERVER=OFF \
   -DLWS_WITHOUT_TESTAPPS=ON \
-  -DLWS_WITHOUT_TEST_SERVER=OFF \
+  -DLWS_WITHOUT_TEST_SERVER=ON \
   -DLWS_WITHOUT_TEST_SERVER_EXTPOLL=ON \
   -DLWS_WITHOUT_TEST_PING=ON \
   -DLWS_WITHOUT_TEST_CLIENT=ON \
@@ -114,10 +117,15 @@ cmake -Wno-dev \
   -DLWS_WITH_LIBUV=ON \
   -DLWS_WITH_LIBEV=ON \
   -DLWS_WITH_DISKCACHE=ON \
-  -DLWS_WITH_SOCKS=ON \
   -DLWS_WITH_HTTP_PROXY=ON \
+  -DLWS_WITH_HTTP_BROTLI=ON \
+  -DLWS_WITH_MBEDTLS=ON \
+  -DLWS_WITH_SOCKS5=ON \
+  -DLWS_WITH_SQLITE3=ON \
   -DLWS_WITHOUT_BUILTIN_GETIFADDRS=ON \
-  -DLWS_WITHOUT_BUILTIN_SHA1=ON \
+  -DLWS_WITHOUT_BUILTIN_SHA1=OFF \
+  -DLWS_UNIX_SOCK=ON \
+  -DLWS_IPV6=ON \
   ..
 
 make
