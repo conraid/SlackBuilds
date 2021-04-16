@@ -2,7 +2,7 @@
 #
 # Slackware build script for gtk-vnc
 #
-# Copyright 2017-2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2017-2021 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=gtk-vnc
-VERSION=1.0.0
+VERSION=1.2.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -102,7 +102,7 @@ meson setup \
   --wrap-mode       nodownload \
   -D                b_lto=true \
   -D                b_pie=true \
-  -D                with-vala=true \
+  -D                with-vala=enabled \
   ..
 ninja
 DESTDIR=$PKG ninja install
