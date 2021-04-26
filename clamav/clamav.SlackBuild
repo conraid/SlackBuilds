@@ -142,7 +142,7 @@ CXXFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc/clamav \
+  --sysconfdir=/etc \
   --localstatedir=/var \
   --mandir=/usr/man \
   --infodir=/usr/info \
@@ -174,7 +174,7 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 # Prepare the config files:
-rename .sample .new $PKG/etc/clamav/*.sample
+rename .sample .new $PKG/etc/*.sample
 
 # Install rc script and logrotate entry
 install -Dm755 $CWD/files/rc.clamav $PKG/etc/rc.d/rc.clamav.new

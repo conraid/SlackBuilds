@@ -25,7 +25,7 @@ perms() {
 
 perms etc/rc.d/rc.clamav.new
 config etc/logrotate.d/clamav.new
-for NEW in etc/clamav/*.new; do
+for NEW in etc/*.new; do
   config $NEW
 done
 
