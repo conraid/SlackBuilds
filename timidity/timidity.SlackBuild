@@ -2,7 +2,7 @@
 #
 # Slackware build script for timidity (http://timidity.sourceforge.net/)
 #
-# Copyright 2009-2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2009-2021 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=TiMidity++
 PKGNAM=timidity
 VERSION=2.15.0
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -126,7 +126,7 @@ fi
 install -Dm755 $CWD/rc.timidity $PKG/etc/rc.d/rc.timidity.new
 
 # Create a default timidity.cfg
-install -Dm644 $CWD/timidity.cfg $PKG/etc/timidity.cfg.new
+install -Dm644 $CWD/files/timidity.cfg $PKG/etc/timidity.cfg.new
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PRGNAM-$VERSION
