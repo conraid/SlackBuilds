@@ -2,7 +2,7 @@
 #
 # Slackware build script for atop
 #
-# Copyright 2014-2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2014-2021 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=atop
 SRCVERSION=2.6.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -113,6 +113,9 @@ mv $PKG/etc/logrotate.d/psaccs_atop $PKG/etc/logrotate.d/psaccs_atop.new
 mv $PKG/etc/logrotate.d/psaccu_atop $PKG/etc/logrotate.d/psaccu_atop.new
 mv $PKG/etc/cron.daily/atop.daily $PKG/etc/cron.daily/atop.new
 mv $PKG/etc/default/atop $PKG/etc/default/atop.new
+
+# Use #!/bin/bash for init scripts
+sed 's;#!/bin/sh;#!/bin/bash;g' -i $PKG/etc/rc.d/*.new
 
 # Install logrotate (Thanks to SBo)
 install -Dm0644 $CWD/files/psacct.logrotate $PKG/etc/logrotate.d/psacct.new
