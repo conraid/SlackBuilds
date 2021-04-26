@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=audit
 VERSION=3.0.1
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -114,6 +114,9 @@ fi
 
 # Move init file
 mv $PKG/etc/rc.d/init.d/auditd $PKG/etc/rc.d/rc.auditd.new
+
+# Use #!/bin/bash for init scripts
+sed 's;#!/bin/sh;#!/bin/bash;g' -i $PKG/etc/rc.d/*.new
 
 # Rename config file
 for CONF in $(find $PKG/etc -name "*.rules" -o -name "*.conf"); do
