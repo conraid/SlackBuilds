@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=privoxy
 VERSION=3.0.32
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -126,6 +126,9 @@ rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 # Install init script
 install -Dm755 slackware/rc.privoxy $PKG/etc/rc.d/rc.privoxy.new
+
+# Use #!/bin/bash for init scripts
+sed 's;#!/bin/sh;#!/bin/bash;g' -i $PKG/etc/rc.d/*.new
 
 # Make .new files so we don't clobber the existing configuration.
 # Thanks to SBo
