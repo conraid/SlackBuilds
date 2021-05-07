@@ -2,7 +2,7 @@
 #
 # Slackware build script for go-crypto
 #
-# Copyright 2019 Corrado Franco (https://conraid.net)
+# Copyright 2019-2021 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=crypto
 PKGNAM=go-$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=f9e2070545dcd4128a854a97ddf10fbfc3c4b6e4
+SRCVERSION=38f3c27a63bf8d9928ce230b01cab346d1756e88
 VERSION=$(echo $SRCVERSION | head -c7)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
