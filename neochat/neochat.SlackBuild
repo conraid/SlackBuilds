@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=neochat
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=1.1.1
+SRCVERSION=1.2.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -39,7 +39,7 @@ TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="*.md LICENSES/*" 
+DOCFILES="*.md LICENSES/*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
