@@ -2,7 +2,7 @@
 #
 # Slackware build script for sqlcheck
 #
-# Copyright 2017-2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2017-2021 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=sqlcheck
+VERSION=1.2
 BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -72,10 +73,8 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM
-git clone --recursive https://github.com/jarulraj/sqlcheck.git
+git clone https://github.com/jarulraj/sqlcheck.git --branch v${VERSION} --single-branch --recursive
 cd $PKGNAM
-
-VERSION=$(git describe --tags | tr - _)
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
