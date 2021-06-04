@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=wxgtk
 PRGNAM=wxWidgets
 VERSION=3.0.5.1
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -103,6 +103,12 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-graphics_ctx \
   --enable-ipv6 \
   --enable-shared \
+  --with-libxpm=sys \
+  --with-libjpeg=sys \
+  --with-libtiff=sys \
+  --disable-precomp-headers \
+  --enable-webview \
+  --enable-webviewwebkit \
   --build=$ARCH-slackware-linux
 
 make
@@ -135,6 +141,11 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-graphics_ctx \
   --enable-ipv6 \
   --enable-shared \
+  --with-libxpm=sys \
+  --with-libjpeg=sys \
+  --with-libtiff=sys \
+  --enable-webview \
+  --enable-webviewwebkit \
   --build=$ARCH-slackware-linux
 
 make
