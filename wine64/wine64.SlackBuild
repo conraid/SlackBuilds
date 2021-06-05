@@ -34,14 +34,16 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=wine
 PKGNAM=wine64
-SRCVERSION=6.8
-STAGEVERSION=6.8
+SRCVERSION=6.10
+STAGEVERSION=6.10
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
 OUTPUT=${OUTPUT:-/tmp}
+
+STAGING=${STAGING:-YES}
 
 # Add the "Gecko", Wine's own implementation of Internet Explorer. (Thanks to Alien)
 # For matching wine-gecko & wine versions, see http://wiki.winehq.org/Gecko
@@ -90,8 +92,9 @@ rm -rf $PRGNAM-$SRCVERSION $PRGNAM-staging-$STAGEVERSION
 tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.xz
 
 # Apply staging patches
-if [ -e $CWD/$PRGNAM-staging-$STAGEVERSION.tar.gz ]; then
+if [ -e $CWD/$PRGNAM-staging-$STAGEVERSION.tar.gz ] && [ $STAGING = "YES" ]; then
   echo "Apply staging patches..."
+
   tar xvf $CWD/$PRGNAM-staging-$STAGEVERSION.tar.gz
   cd $TMP/$PRGNAM-staging-$STAGEVERSION/
     if [ -e $CWD/patches-staging ]; then
@@ -148,7 +151,8 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-gstreamer \
   --with-xattr \
   --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
+  --build=$ARCH-slackware-linux \
+  --without-opencl # Error in opencl_types.h
 
 make
 make DESTDIR=$PKG install
