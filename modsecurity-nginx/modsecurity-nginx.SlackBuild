@@ -30,11 +30,11 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=modsecurity-nginx
-SRCVERSION=v1.0.1
+SRCVERSION=v1.0.2
 VERSION=$(echo $SRCVERSION | tr - _ | sed 's/^v//')
 NGINXVERSION=$(nginx -v 2>&1 | cut -d/ -f2)
 CRSVERSION=3.3.0
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
