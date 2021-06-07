@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=neovim
 VERSION=0.4.4
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-7}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -113,6 +113,7 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 
 install -Dm644 runtime/nvim.desktop $PKG/usr/share/applications/nvim.desktop
 install -Dm644 runtime/nvim.png $PKG/usr/share/pixmaps/nvim.png
+install -Dm644 runtime/nvim.appdata.xml $PKG/usr/share/metainfo/nvim.appdata.xml
 
 # Add vim runtimepath to neovim
 echo "set runtimepath+=/usr/share/vim/vimfiles" > $PKG/usr/share/nvim/slackers.vim
