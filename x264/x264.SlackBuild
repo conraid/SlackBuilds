@@ -2,7 +2,7 @@
 #
 # Slackware build script for x264
 #
-# Copyright 2018-2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2018-2021 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,8 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=x264
-VERSION=20191217
-BUILD=${BUILD:-2}
+SRCVERSION=b684ebe04a6f80f8207a57940a1fa00e25274f81
+VERSION=$(echo $SRCVERSION | head -c7)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,9 +73,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-snapshot-$VERSION-2245-stable
-tar xvf $CWD/$PKGNAM-snapshot-$VERSION-2245-stable.tar.bz2
-cd $PKGNAM-snapshot-$VERSION-2245-stable
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.bz2
+cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
