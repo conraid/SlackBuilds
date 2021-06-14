@@ -1,0 +1,100 @@
+
+Slackware Current Repository by Conraid
+
+======================================================================
+
+snort3 (Intrusion Detection and Prevention System)
+
+Snort is an open source network intrusion detection and prevention
+system.  It is capable of performing real-time traffic analysis,
+alerting, blocking and packet logging on IP networks.  It utilizes a
+combination of protocol analysis and pattern matching in order to
+detect anomalies, misuse and attacks.
+Snort is capable of detecting and responding in real-time, sending
+alerts, performing session sniping, logging packets, or dropping
+sessions/packets when deployed in-line.
+
+HOME: http://www.snort.org
+
+======================================================================
+NOTE: 
+
+Documentation
+-------------
+
+Please read the snort_manual.pdf file that should be included with this 
+distribution for full documentation on the program as well as a guide to 
+getting started.
+
+This package builds a very basic snort implementation useful for monitoring
+traffic as an IDS or packet logger and as a sort of improved tcpdump.
+MySQL support is included, so you should have little trouble hooking snort up
+to a database or ACID. For more information on these, check out snort's
+homepage at:
+
+  http://www.snort.org/
+  http://www.snort.org/docs/
+
+
+Starting snort
+--------------
+
+An rc.snort file has been included for your convenience, but it needs to be
+added to your init script of choice to run on boot. You should modify the
+variables in /etc/rc.d/rc.snort to reflect the interface you want to monitor,
+or start it as:
+
+  IFACE=xxxx /etc/rc.d/rc.snort start|stop|restart
+
+As an example, you can put this in your /etc/rc.d/rc.local script:
+
+  if [ -x /etc/rc.d/rc.snort ]; then
+    IFACE=eth1 /etc/rc.d/rc.snort start
+  fi
+
+And this in your /etc/rc.d/rc.local_shutdown:
+
+  if [ -x /etc/rc.d/rc.snort ]; then
+    /etc/rc.d/rc.snort stop
+  fi
+
+
+Installing / Updating Rules etc.
+--------------------------------
+
+In order for Snort to function properly, you need to provide rule files.
+You can either get a paid subscription (newest rules) at:
+
+  https://www.snort.org/vrt/buy-a-subscription
+
+or register for free (only rules >30 days old) at:
+
+  https://www.snort.org/signup
+
+Then download your rules from:
+
+  https://www.snort.org/snort-rules
+
+The downloaded file contains the rules, signatures and updated configuration
+files. Be careful when updating these, as you will probably have customized
+a few settings in your snort.conf
+At the end of this file is a sample script that you can use as a base to
+automate unpacking of the tarball. It updates the rules, signatures and some
+configurations, but copies the new snort.conf as snort.conf.new, so that you
+can examine it later.
+This script is included only as an example and without any guarantee.
+** Use at your own risk! **
+
+Basically, you need to
+1) put the new rules/*		into /etc/snort/rules/
+2) put the new preproc_rules/*	into /etc/snort/preproc_rules/
+3) put the new etc/*		into /etc/snort/ (except for snort.conf)
+
+After updating your files, restart snort with:
+
+  # /etc/rc.d/rc.snort restart
+
+
+======================
+REQUIRES: flex flatbuffers libdaq libdnet luajit hwloc hyperscan libsafec snort-openappid
+
