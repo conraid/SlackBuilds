@@ -33,7 +33,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=nginx
 VERSION=1.21.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -195,7 +195,7 @@ for i in $(find $PKG/etc/$PKGNAM -type f ! -name "*\.default"); do
 done
 
 # Install vim files
-for i in ftdetect indent syntax; do
+for i in ftdetect ftplugin indent syntax; do
 install -Dm644 contrib/vim/$i/nginx.vim $PKG/usr/share/vim/vimfiles/$i/nginx.vim
 done
 
