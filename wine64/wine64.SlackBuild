@@ -34,7 +34,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=wine
 PKGNAM=wine64
-SRCVERSION=6.10
+SRCVERSION=6.11
 STAGEVERSION=6.10
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
@@ -131,10 +131,16 @@ fi
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
+# Fix opencl.h header
 sed 's|OpenCL/opencl.h|CL/opencl.h|g' -i configure*
+# Since version 6.10 it gives me an error with opencl
+# and then in the configure I add without-opencl.
+# I prefer to do this rather than remove the "patch",
+# so as not to forget it in the future
+
 
 autoreconf -f
-CFLAGS="$SLKCFLAGS -fno-plt" \
+CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr \
@@ -149,10 +155,9 @@ CXXFLAGS="$SLKCFLAGS" \
   --${WINE64}-win64 \
   --with-x \
   --with-gstreamer \
-  --with-xattr \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux \
-  --without-opencl # Error in opencl_types.h
+  --without-opencl # Error in opencl_types.
 
 make
 make DESTDIR=$PKG install
