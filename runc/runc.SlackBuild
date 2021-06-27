@@ -4,7 +4,7 @@
 #
 # Copyright 2016 Asaf Ohayon <asaf@sysbind.co.il>
 # Copyright 2017-2018 Audrius KaÅ¾ukauskas <audrius@neutrino.lt>
-# Copyright 2019 Corrado Franco (https://conraid.net)
+# Copyright 2019-2021 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,9 +32,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=runc
-SRCVERSION=1.0.0-rc8
+SRCVERSION=1.0.0
 VERSION=$(echo $SRCVERSION | tr - _)
-COMMIT=425e105d5a03fabd737a126ad93d62a9eeede87f
+COMMIT=84113eef6fc27af1b01b3181f31bbaf708715301
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -92,17 +92,21 @@ fi
 
 export GOROOT="/usr/lib${LIBDIRSUFFIX}/go"
 export PATH="${GOROOT}/bin:${PATH}"
+export BUILDTAGS='seccomp apparmor'
+export CGO_CPPFLAGS="${SLKCFLAGS}"
+export CGO_CFLAGS="${SLKCFLAGS}"
+export CGO_CXXFLAGS="${SLKCFLAGS}"
+export GOFLAGS="-trimpath -mod=readonly -modcacherw"
 
-mkdir build
-mv vendor build/src
-ln -sf $TMP/$PKGNAM-$SRCVERSION build/src/github.com/opencontainers/runc
 
 # Do not try to get git commit hash, we're not inside git repository.
 sed -e '/^COMMIT/d' -e '/^GIT_BRANCH/d' -i Makefile
 
-make COMMIT=$COMMIT GOPATH=$TMP/$PKGNAM-$SRCVERSION/build BUILDTAGS='seccomp'
+make COMMIT=$COMMIT runc man
+
 make install BINDIR=$PKG/usr/bin
 make install-bash PREFIX=$PKG/usr
+make install-man PREFIX=$PKG/usr MANDIR=$PKG/usr/man
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
