@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=balsa
 VERSION=2.6.2
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -111,6 +111,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-libsecret \
   --with-ldap \
   --with-html-widget=webkit2 \
+  --with-spell-checker=gtkspell \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
