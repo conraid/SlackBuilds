@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=hwinfo
-VERSION=21.74
+VERSION=21.75
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -98,7 +98,7 @@ sed '/^TARGETS/s/changelog//' -i Makefile
 # use our CFLAGS
 sed -i "s/?= -O2/?= $SLKCFLAGS/" Makefile.common
 
-make LIBDIR=/usr/lib${LIBDIRSUFFIX}
+make LIBDIR=/usr/lib${LIBDIRSUFFIX} -j1 CFLAGS="$SLKCFLAGS -I${TMP}/$PKGNAM-$VERSION/src/hd -w"
 make DESTDIR=$PKG LIBDIR=/usr/lib${LIBDIRSUFFIX} install
 
 # Don't ship .la files:
