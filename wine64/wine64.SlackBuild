@@ -35,8 +35,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=wine
 PKGNAM=wine64
 SRCVERSION=6.12
-STAGEVERSION=6.10
-VERSION=$(echo $SRCVERSION | tr - _)
+STAGEVERSION=6.12.1
+VERSION=$(echo $STAGEVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -113,7 +113,7 @@ if [ -e $CWD/$PRGNAM-staging-$STAGEVERSION.tar.gz ] && [ $STAGING = "YES" ]; the
   cd ../..
 fi
 
-cd $TMP/$PRGNAM-$VERSION
+cd $TMP/$PRGNAM-$SRCVERSION
 
 # Apply patches
 if [ -e $CWD/patches ]; then
