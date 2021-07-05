@@ -2,7 +2,7 @@
 #
 # Slackware build script for snappy
 #
-# Copyright 2019-2020 Corrado Franco (https://conraid.net)
+# Copyright 2019-2021 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=snappy
-VERSION=1.1.8
+VERSION=1.1.9
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -79,13 +79,31 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
+# Apply patches
+if [ -e $CWD/patches ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
+fi
+
 mkdir -p build
 cd build
 cmake -Wno-dev \
   -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DBUILD_SHARED_LIBS=yes \
+  -DBUILD_SHARED_LIBS=YES \
+  -DSNAPPY_BUILD_BENCHMARKS=OFF \
+  -DSNAPPY_BUILD_TESTS=OFF \
+  -DHAVE_LIBZ=NO \
+	-DHAVE_LIBLZO2=NO \
+  -DHAVE_LIBLZ4=NO \
   ..
 
 make
@@ -106,7 +124,7 @@ fi
 # Install pkgconfig file
 # https://github.com/google/snappy/pull/55
 mkdir $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/
-sed "s/%LIBDIRSUFFIX%/$LIBDIRSUFFIX/" $CWD/$PKGNAM.pc > $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/$PKGNAM.pc
+sed "s/%LIBDIRSUFFIX%/$LIBDIRSUFFIX/" $CWD/files/$PKGNAM.pc > $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/$PKGNAM.pc
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
