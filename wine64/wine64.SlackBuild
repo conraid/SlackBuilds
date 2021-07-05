@@ -37,7 +37,7 @@ PKGNAM=wine64
 SRCVERSION=6.12
 STAGEVERSION=6.12.1
 VERSION=$(echo $STAGEVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -137,7 +137,6 @@ sed 's|OpenCL/opencl.h|CL/opencl.h|g' -i configure*
 # and then in the configure I add without-opencl.
 # I prefer to do this rather than remove the "patch",
 # so as not to forget it in the future
-
 
 autoreconf -f
 CFLAGS="$SLKCFLAGS" \
