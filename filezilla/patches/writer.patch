@@ -1,0 +1,11 @@
+--- a/src/engine/writer.cpp	2021/07/08 12:15:15	10323
++++ b/src/engine/writer.cpp	2021/07/08 13:00:44	10324
+@@ -309,7 +309,7 @@
+ 	CLocalPath local_path(name(), &tmp);
+ 	if (local_path.HasParent()) {
+ 		fz::native_string last_created;
+-		fz::mkdir(fz::to_native(local_path.GetPath()), true, false, &last_created);
++		fz::mkdir(fz::to_native(local_path.GetPath()), true, fz::mkdir_permissions::normal, &last_created);
+ 		if (!last_created.empty()) {
+ 			// Send out notification
+ 			auto n = std::make_unique<CLocalDirCreatedNotification>();
