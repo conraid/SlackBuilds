@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=mkvtoolnix
-VERSION=58.0.0
-BUILD=${BUILD:-2}
+VERSION=59.0.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -79,12 +79,6 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
-if [ -x /usr/bin/qmake-qt5 ]; then
-  QT=yes
-else
-  QT=no
-fi
-
 # Apply patches
 if [ -e $CWD/patches/ ]; then
   for PATCH in $CWD/patches/*.patch; do
@@ -103,7 +97,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --mandir=/usr/man \
   --infodir=/usr/info \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --enable-qt=$QT \
+  --enable-qt=on \
   --with-boost \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
