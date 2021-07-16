@@ -33,7 +33,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=telegram-bin
 PRGNAM=telegram
-SRCVERSION=2.8.6.beta
+SRCVERSION=2.8.8
 VERSION=${SRCVERSION/.beta/}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -70,7 +70,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf Telegram
-tar xvf $CWD/tsetup.$SRCVERSION.tar.xz
+tar xvf $CWD/tsetup.${SRCVERSION}*.tar.xz
 cd Telegram
 
 chown -R root:root .
