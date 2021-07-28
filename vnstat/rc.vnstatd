@@ -3,7 +3,7 @@
 VNSTATBIN="/usr/sbin/vnstatd"
 CONFIGFILE="/etc/vnstat.conf"
 BASEDIR="/var/lib/vnstat/"
-PIDFILE="/var/run/vnstat/vnstat.pid"
+PIDFILE="/run/vnstat/vnstat.pid"
 INTERFACE=$(grep Interface $CONFIGFILE | cut -d" " -f2 | cut -d'"' -f2)
 
 start_vnstat() {
