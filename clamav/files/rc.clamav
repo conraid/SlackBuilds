@@ -14,9 +14,9 @@ MILTER=0
 clamav_start() {
   if [ -x /usr/sbin/clamd ]; then
     echo -n "Starting clamd daemon:  /usr/sbin/clamd "
-    mkdir -p /var/run/clamav/
-    chown clamav:clamav /var/run/clamav/
-    chmod 771 /var/run/clamav/
+    mkdir -p /run/clamav/
+    chown clamav:clamav /run/clamav/
+    chmod 771 /run/clamav/
     /usr/sbin/clamd
     echo "."
     # Give clamd a chance to create the socket
@@ -25,8 +25,8 @@ clamav_start() {
     /usr/bin/freshclam -d -l /var/log/clamav/freshclam.log
     echo "."
     if [ "$MILTER" == "1" ]; then
-      echo -n "Starting clamav-milter daemon:  /usr/sbin/clamav-milter -dblo --max-children=2 local:/var/run/clamav/clmilter.sock "
-      /usr/sbin/clamav-milter -dblo --max-children=2 local:/var/run/clamav/clmilter.sock
+      echo -n "Starting clamav-milter daemon:  /usr/sbin/clamav-milter -dblo --max-children=2 local:/run/clamav/clmilter.sock "
+      /usr/sbin/clamav-milter -dblo --max-children=2 local:/run/clamav/clmilter.sock
       echo "."
     fi
   fi
@@ -34,9 +34,9 @@ clamav_start() {
 
 # Stop clamav:
 clamav_stop() {
-  kill $(cat /var/run/clamav/clamd.pid)
+  kill $(cat /run/clamav/clamd.pid)
   #killall freshclam
-  kill $(cat /var/run/clamav/freshclam.pid)
+  kill $(cat /run/clamav/freshclam.pid)
   [ "$MILTER" == "1" ] && killall clamav-milter
 }
 

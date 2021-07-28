@@ -49,7 +49,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=clamav
 VERSION=0.103.3
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -114,19 +114,19 @@ sed \
   -e "s/^Example/#Example/" \
   -e "s/^\#LogSyslog/LogSyslog/" \
   -e "s/^\#LogFacility/LogFacility/" \
-  -e "s/^\#PidFile.*/PidFile \/var\/run\/clamav\/freshclam.pid/" \
-  -e "s/^\#UpdateLogFile.*/UpdateLogFile \/var\/log\/clamav\/freshclam.log/" \
+  -e "s|^\#PidFile.*|PidFile /run/clamav/freshclam.pid|" \
+  -e "s|^\#UpdateLogFile.*|UpdateLogFile /var/log/clamav/freshclam.log|" \
   -e "s/^\#AllowSupplementaryGroups.*/AllowSupplementaryGroups yes/" \
   -e "s/^\#DatabaseOwner.*/DatabaseOwner clamav/" \
-  -e "s/^\#NotifyClamd.*/NotifyClamd \/etc\/clamd.conf/" \
+  -e "s|^\#NotifyClamd.*|NotifyClamd /etc/clamd.conf|" \
   -i etc/freshclam.conf.sample
 sed \
   -e "s/^Example/#Example/" \
   -e "s/^\#LogSyslog/LogSyslog/" \
   -e "s/^\#LogFacility/LogFacility/" \
-  -e "s/^\#LogFile\ .*/LogFile \/var\/log\/clamav\/clamd.log/" \
-  -e "s/^\#PidFile.*/PidFile \/var\/run\/clamav\/clamd.pid/" \
-  -e "s/^\#LocalSocket\ .*/LocalSocket \/var\/run\/clamav\/clamd.socket/" \
+  -e "s|^\#LogFile\ .*|LogFile /var/log/clamav/clamd.log|" \
+  -e "s|^\#PidFile.*|PidFile /run/clamav/clamd.pid|" \
+  -e "s|^\#LocalSocket\ .*|LocalSocket /run/clamav/clamd.socket|" \
   -e "s/^\#LocalSocketGroup.*/LocalSocketGroup clamav/" \
   -e "s/^\#LocalSocketMode/LocalSocketMode/" \
   -e "s/^\#FixStaleSocket/FixStaleSocket/" \
@@ -181,8 +181,10 @@ install -Dm755 $CWD/files/rc.clamav $PKG/etc/rc.d/rc.clamav.new
 install -Dm644 $CWD/files/logrotate.clamav $PKG/etc/logrotate.d/clamav.new
 
 # Create directories and files for pid, socket, db, and log.
-mkdir -p $PKG/var/{lib,log,run}/clamav/
-chown clamav:clamav $PKG/var/{lib,log,run}/clamav/
+mkdir -p $PKG/var/{lib,log}/clamav/
+mkdir -p $PKG/run/clamav/
+chown clamav:clamav $PKG/var/{lib,log}/clamav/
+chown clamav:clamav $PKG/run/clamav/
 touch $PKG/var/log/clamav/{clamd,freshclam}.log.new
 
 # Fixup some ownership and permissions issues
@@ -199,7 +201,7 @@ chmod 660 $PKG/var/log/clamav/clamd.log.new \
   $PKG/var/log/clamav/freshclam.log.new
 
 chown -R clamav:clamav $PKG/var/lib/clamav $PKG/var/log/clamav \
-  $PKG/var/run/clamav
+  $PKG/run/clamav
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
