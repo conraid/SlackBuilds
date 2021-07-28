@@ -6,7 +6,7 @@
 # file executable:  chmod 755 /etc/rc.d/rc.collectd
 #
 
-PIDFILE="/var/run/collectd.pid"
+PIDFILE="/run/collectd.pid"
 
 start() {
     if [ -x /usr/sbin/collectd ]; then
