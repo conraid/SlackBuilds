@@ -33,7 +33,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=fail2ban
 VERSION=0.11.2
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -110,7 +110,7 @@ rm -f $PKG/etc/fail2ban/paths-{debian,fedora,freebsd,osx}.conf.new
 install -Dm644 $CWD/files/fail2ban.logrotate $PKG/etc/logrotate.d/fail2ban.new
 
 # make directory for socket, pid file & db file
-mkdir -p $PKG/var/{run,lib}/fail2ban
+mkdir -p $PKG/{var/lib,run}/fail2ban
 
 # Install bash completion
 install -Dm644 files/bash-completion $PKG/etc/bash_completion.d/fail2ban
