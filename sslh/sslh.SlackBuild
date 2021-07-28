@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=sslh
 VERSION=1.21c
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -93,9 +93,9 @@ install -Dm644 sslh.8.gz $PKG/usr/man/man8/sslh.8.gz
 install -Dm755 $CWD/rc.sslh $PKG/etc/rc.d/rc.sslh.new
 
 # Install config files
-sed 's#/var/run/#/var/run/sslh/#' -i *.cfg
+sed 's#/var/run/#/run/sslh/#' -i *.cfg
 install -Dm644 basic.cfg $PKG/etc/default/sslh.new
-install -d -g nobody -o nobody $PKG/var/run/sslh
+install -d -g nobody -o nobody $PKG/run/sslh
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION
