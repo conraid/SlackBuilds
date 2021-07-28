@@ -44,7 +44,7 @@ if ! grep -q "^owamp:" etc/passwd; then
     fi
 fi
 
-chown owamp:owamp var/run/owamp
+chown owamp:owamp run/owamp
 
 cat << EOF
 

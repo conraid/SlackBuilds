@@ -4,8 +4,8 @@ PID=$(pidof -o %PPID /usr/bin/owampd)
 case "$1" in
   start)
     echo "Starting owampd One-Way Ping daemon... "
-    if [ -z "$PID" ]; then 
-       /usr/bin/owampd -c /etc/owamp/ -R /var/run/owamp &> /dev/null
+    if [ -z "$PID" ]; then
+       /usr/bin/owampd -c /etc/owamp/ -R /run/owamp &> /dev/null
     fi
     if [ ! -z "$PID" -o $? -gt 0 ]; then
       echo "Error"

@@ -33,7 +33,7 @@ PKGNAM=owamp
 SRCVERSION=4.4.0
 MAINVERSION=$(echo $SRCVERSION | cut -d- -f1)
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -122,14 +122,14 @@ install -Dm644 conf/owampd.limits $PKG/etc/owamp/owampd.limits.new
 # Add init script
 install -Dm644 $CWD/rc.owampd $PKG/etc/rc.d/rc.owampd.new
 
-# Make /var/run/owamp dir [Change permissions in doinst.sh]
-mkdir -p $PKG/var/run/owamp
+# Make /run/owamp dir [Change permissions in doinst.sh]
+mkdir -p $PKG/run/owamp
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
