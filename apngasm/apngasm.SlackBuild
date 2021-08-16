@@ -30,8 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=apngasm
-VERSION=3.1.6
-BUILD=${BUILD:-10}
+SRCVERSION=de1c87cd7696384be3235eb07766766891474e09
+VERSION=$(echo $SRCVERSION | head -c7)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,9 +73,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION.tar.gz
+cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
