@@ -32,7 +32,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=go
-VERSION=1.16.5
+VERSION=1.17
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -62,11 +62,13 @@ fi
 if [ "$ARCH" = "i586" ]; then
   SLKCFLAGS="-O2 -march=i586 -mtune=i686"
   LIBDIRSUFFIX=""
+  export GO386="softfloat"
   export GOARCH="386"
 elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
   export GOARCH="386"
+  export GO386="softfloat"
 elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
@@ -99,15 +101,14 @@ fi
 
 RELEASE="linux"
 
-# gcc 10+ is go1.14 API, so we can't bootstrap with it
-# but we have to use go package 1.15.*
+# To boostrap we need to use our go package
 export GOROOT_BOOTSTRAP="/usr/lib${LIBDIRSUFFIX}/go"
 export GOROOT="$(pwd)"
 export GOROOT_FINAL="/usr/lib${LIBDIRSUFFIX}/go"
 
 cd src
-LC_ALL=C ./make.bash
-$GOROOT/bin/go install -buildmode=shared std
+LC_ALL=C ./make.bash -v
+$GOROOT/bin/go install -buildmode=shared -v std
 cd ..
 
 # Clean temporary files
