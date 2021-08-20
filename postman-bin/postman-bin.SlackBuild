@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=Postman
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-bin
-VERSION=8.10.0
+VERSION=8.11.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -63,7 +63,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PRGNAM
-tar xvf $CWD/$PRGNAM-linux-x64-$VERSION.tar.gz
+tar xvf $CWD/$PRGNAM-linux-x86_64-$VERSION.tar.gz
 cd $PRGNAM
 
 chown -R root:root .
