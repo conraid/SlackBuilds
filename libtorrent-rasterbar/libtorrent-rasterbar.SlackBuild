@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libtorrent-rasterbar
 VERSION=2.0.4
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -80,10 +80,16 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a+X-s .
 
 # Apply patches
-if [ -e $CWD/patches/ ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
+if [ -e $CWD/patches ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
 fi
 
 mkdir -p build
@@ -95,7 +101,7 @@ cmake -Wno-dev \
   -DCMAKE_CXX_STANDARD=14 \
   -Dpython-bindings=ON \
   -Dpython-egg-info=ON \
-  -Dbuild_examples=ON \
+  -Dbuild_examples=OFF \
   -Dbuild_tools=ON \
   ..
 
