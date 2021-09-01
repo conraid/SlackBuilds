@@ -29,9 +29,9 @@ set -eu
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=msgpack-cxx
+PRGNAM=msgpack
 PKGNAM=msgpack-c
-VERSION=4.0.1
+VERSION=3.3.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -96,6 +96,8 @@ cmake -Wno-dev \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DCMAKE_INSTALL_LIBDIR=lib${LIBDIRSUFFIX} \
   -DMSGPACK_BUILD_EXAMPLES=NO \
+  -DBUILD_SHARED_LIBS=ON \
+  -DMSGPACK_CXX17=ON \
   ..
 
 make
