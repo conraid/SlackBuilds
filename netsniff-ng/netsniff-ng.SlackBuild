@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=netsniff-ng
 COMMIT=0.6.8
 VERSION=$(echo $COMMIT | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -96,7 +96,7 @@ CFLAGS="$SLKCFLAGS -fcommon" \
 CXXFLAGS="$SLKCFLAGS -fcommon" \
 ./configure
 
-make PREFIX=/usr ETCDIR=/etc MAN8DIR=/usr/man/man8 DISTRO=1 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" CFLAGS_DEF+="$SLKCFLAGS -fcommon"
+make PREFIX=/usr ETCDIR=/etc MAN8DIR=/usr/man/man8 DISTRO=1 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" CFLAGS_DEF+="$SLKCFLAGS"
 make PREFIX=/usr ETCDIR=/etc MAN8DIR=/usr/man/man8 DESTDIR=$PKG install
 
 # Don't ship .la files:
