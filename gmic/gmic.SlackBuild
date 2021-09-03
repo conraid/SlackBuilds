@@ -30,9 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=gmic
-SRCVERSION=2.9.7
+SRCVERSION=2.9.9
 VERSION=$SRCVERSION
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -124,21 +124,23 @@ for PLUGIN_TYPE in $PLUGINS; do
 done
 cd ..
 
-cd zart
-qmake-qt5 \
-  PREFIX=/usr \
-  QMAKE_CFLAGS="$SLKCFLAGS -g" \
-  QMAKE_CXXFLAGS="$SLKCFLAGS -g" \
-  QMAKE_CFLAGS_RELEASE="$SLKCFLAGS -g" \
-  QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS -g" \
-  GMIC_DYNAMIC_LINKING=on \
-  GMIC_PATH=../src \
-  GMIC_LIB_PATH=$TMP/$PKGNAM-$VERSION/build \
-  -o Makefile zart.pro
+if [ -d zart ]; then
+  cd zart
+  qmake-qt5 \
+    PREFIX=/usr \
+    QMAKE_CFLAGS="$SLKCFLAGS -g" \
+    QMAKE_CXXFLAGS="$SLKCFLAGS -g" \
+    QMAKE_CFLAGS_RELEASE="$SLKCFLAGS -g" \
+    QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS -g" \
+    GMIC_DYNAMIC_LINKING=on \
+    GMIC_PATH=../src \
+    GMIC_LIB_PATH=$TMP/$PKGNAM-$VERSION/build \
+    -o Makefile zart.pro
 
-make -j1
-install -Dm755 zart $PKG/usr/bin/zart
-cd ..
+  make -j1
+  install -Dm755 zart $PKG/usr/bin/zart
+  cd ..
+fi
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
