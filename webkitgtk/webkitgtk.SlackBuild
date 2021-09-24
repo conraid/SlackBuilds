@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=webkitgtk
-VERSION=2.32.4
+VERSION=2.34.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -108,6 +108,7 @@ cmake -Wno-dev \
   -DLIBEXEC_INSTALL_DIR=/usr/lib${LIBDIRSUFFIX}/webkit2gtk-4.0 \
   -DENABLE_MINIBROWSER=ON \
   -DUSE_SYSTEMD=OFF \
+  -DUSE_SOUP2=ON \
   ..
 
 ninja
