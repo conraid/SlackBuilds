@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=clean-css
 PKGNAM=node-clean-css
-VERSION=5.1.5
+VERSION=5.2.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -50,7 +50,7 @@ fi
 # the name of the created package would be, and then exit. This information
 # could be useful to other scripts.
 if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
-  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  echo "$PKGNAM-$VERSION-$ARCH-$BUILD${TAG}.txz"
   exit 0
 fi
 
@@ -59,13 +59,17 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
-mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
+mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}
 DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $CWD/$PRGNAM-$VERSION.tgz
 
 cd $PKG
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find . \
+  \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \+ -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \+
 
 # Remove empty dir
 rmdir $PKG/usr/etc || true
@@ -75,8 +79,8 @@ find $PKG/usr \( -name '.git*' -o -name '.travis.yml' \) -exec rm -f {} \;
 
 # Remove occurrences of $PKG
 find $PKG -name "package.json" \
-  -exec sed -e "s|${TMP}/${PRGNAM}-build||" \
-            -e "s|${TMP}/${PRGNAM}-${VERSION}|/usr/lib${LIBDIRSUFFIX}/node_modules/${PRGNAM}|" \
+  -exec sed -e "s|$TMP/$PRGNAM-build||" \
+            -e "s|$TMP/$PRGNAM-$VERSION|/usr/lib${LIBDIRSUFFIX}/node_modules/${PRGNAM}|" \
             -e "s|$CWD||g" \
             -i '{}' \;
 
