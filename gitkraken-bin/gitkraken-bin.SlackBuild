@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gitkraken
 PKGNAM=gitkraken-bin
-VERSION=8.0.0
+VERSION=8.0.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -65,7 +65,6 @@ rm -rf $PRGNAM
 tar xvf $CWD/$PRGNAM-amd64.tar.gz -C $PKG/usr/share
 
 chown -R root:root $PKG/usr/share
-chmod -R u+w,go+r-w,a+X-s $PKG/usr/share
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $PKG/usr/share/$PRGNAM/LICENSE* $PKG/usr/doc/$PKGNAM-$VERSION || true
