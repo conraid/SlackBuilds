@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=yarn
 PKGNAM=$(echo $PRGNAM | tr - _)
-VERSION=1.22.11
+VERSION=1.22.15
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -67,7 +67,11 @@ DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $CWD/$PRGNAM-$VERSION.
 cd $PKG
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find . \
+  \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \+ -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \+
 
 # Remove empty dir
 rmdir $PKG/usr/etc || true
