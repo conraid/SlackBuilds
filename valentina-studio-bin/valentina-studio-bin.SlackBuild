@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=vstudio
 PKGNAM=valentina-studio-bin
-VERSION=11.4.5
+VERSION=11.4.6
 MAJVER=$(echo $VERSION | cut -d. -f1)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -76,7 +76,11 @@ tar xvf data.tar.xz -C $PKG
 cd $PKG
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find . \
+  \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \+ -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \+
 
 mkdir -p $PKG/usr/share/$PRGNAM $PKG/usr/bin
 mv $PKG/opt/VStudio/* $PKG/usr/share/$PRGNAM
