@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=Simplenote
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-bin
-SRCVERSION=2.19.1
+SRCVERSION=2.20.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -72,7 +72,11 @@ cd $PKG
 ar p $CWD/${PRGNAM}-linux-${VERSION}-$DEBARCH.deb data.tar.gz | tar xzv
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find -L . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $PKG/usr/share/doc/*/* $PKG/opt/$PRGNAM/LICENSE* $PKG/usr/doc/$PKGNAM-$VERSION || true
