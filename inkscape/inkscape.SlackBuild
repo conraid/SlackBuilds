@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=inkscape
 VERSION=1.1.1
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -70,9 +70,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-${VERSION}_*
-tar xvf $CWD/$PKGNAM-${VERSION}_*.tar.xz
-cd $PKGNAM-${VERSION}_*
+rm -rf $PKGNAM-${VERSION}*
+tar xvf $CWD/$PKGNAM-${VERSION}*.tar.xz
+cd $PKGNAM-${VERSION}*
 
 chown -R root:root .
 find -L . \
@@ -118,7 +118,6 @@ cmake -Wno-dev \
   -DENABLE_POPPLER=ON \
   -DENABLE_POPPLER_CAIRO=ON \
   -DWITH_DBUS=ON \
-  -DWITH_GTKSPELL=ON \
   -DWITH_JEMALLOC=ON \
   -DWITH_GRAPHICS_MAGICK:BOOL=ON \
   -DWITH_IMAGE_MAGICK:BOOL=OFF \
