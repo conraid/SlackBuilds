@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=helix
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-editor
-SRCVERSION=0.4.1
+SRCVERSION=0.5.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -80,7 +80,11 @@ git clone -j5 --recurse-submodules --shallow-submodules --branch=v0.3.0 https://
 cd $PRGNAM
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find -L . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
 
 # Apply patches
 if [ -e $CWD/patches ]; then
