@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=smtube
-VERSION=21.7.0
+VERSION=21.10.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -75,7 +75,11 @@ tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find -L . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
 
 make QMAKE_OPTS="QMAKE_CFLAGS=\"$SLKCFLAGS\" QMAKE_CXXFLAGS=\"$SLKCFLAGS\"" PREFIX=/usr
 make PREFIX=/usr DOC_PATH=/usr/doc/$PKGNAM-$VERSION DESTDIR=$PKG install
