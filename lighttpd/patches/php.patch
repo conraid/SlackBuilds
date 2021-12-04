@@ -1,7 +1,7 @@
 diff -Naupr a/doc/config/conf.d/fastcgi.conf b/doc/config/conf.d/fastcgi.conf
---- a/doc/config/conf.d/fastcgi.conf	2018-11-29 05:07:46.000000000 +0100
-+++ b/doc/config/conf.d/fastcgi.conf	2019-01-17 16:43:05.150684564 +0100
-@@ -128,5 +128,14 @@ server.modules += ( "mod_fastcgi" )
+--- a/doc/config/conf.d/fastcgi.conf	2021-12-02 05:53:23.000000000 +0100
++++ b/doc/config/conf.d/fastcgi.conf	2021-12-04 14:01:31.807473241 +0100
+@@ -128,5 +128,15 @@ server.modules += ( "mod_fastcgi" )
  #server.document-root = "/servers/wwww.example.org/htdocs/"
  #
  
@@ -14,17 +14,18 @@ diff -Naupr a/doc/config/conf.d/fastcgi.conf b/doc/config/conf.d/fastcgi.conf
 +                   )
 +                 )
 +
++
  ##
  #######################################################################
 diff -Naupr a/doc/config/modules.conf b/doc/config/modules.conf
---- a/doc/config/modules.conf	2018-11-29 05:07:46.000000000 +0100
-+++ b/doc/config/modules.conf	2019-01-17 16:41:13.621078876 +0100
-@@ -135,7 +135,7 @@ server.modules = (
+--- a/doc/config/modules.conf	2021-12-02 05:53:23.000000000 +0100
++++ b/doc/config/modules.conf	2021-12-04 14:01:05.302883678 +0100
+@@ -143,7 +143,7 @@ server.modules = (
  ##
  ## FastCGI (mod_fastcgi)
  ##
--#include "conf.d/fastcgi.conf"
-+include "conf.d/fastcgi.conf"
+-#include conf_dir + "/conf.d/fastcgi.conf"
++include conf_dir + "/conf.d/fastcgi.conf"
  
  ##
  ## plain old CGI (mod_cgi)
