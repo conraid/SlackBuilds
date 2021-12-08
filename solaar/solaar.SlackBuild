@@ -1,6 +1,8 @@
 #!/bin/bash
 #
-# Copyright 2016-2021 Corrado Franco (https://corradofranco.it)
+# Slackware build script for solaar
+#
+# Copyright 2021 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -27,14 +29,17 @@ set -eu
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=skypeforlinux
-PKGNAM=skypeforlinux-bin
-VERSION=8.80.76.62
+PRGNAM=solaar
+PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
+SRCVERSION=1.1.0
+VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
+
+DOCFILES="LICENSE *.md *.rst"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -48,14 +53,30 @@ fi
 # the name of the created package would be, and then exit. This information
 # could be useful to other scripts.
 if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
-  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  echo "$PKGNAM-$VERSION-$ARCH-$BUILD.txz "
   exit 0
+fi
+
+if [ "$ARCH" = "i586" ]; then
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  LIBDIRSUFFIX="64"
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
 fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
-cd $PKG
-ar p $CWD/${PRGNAM}_${VERSION}_amd64.deb data.tar.gz | tar xvz
+cd $TMP
+rm -rf $PRGNAM-$SRCVERSION
+tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz
+cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
 find -L . \
@@ -64,25 +85,25 @@ find -L . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
+CFLAGS="$SLKCFLAGS" python3 setup.py install --root=$PKG
+
+install -Dm644 rules.d/42-logitech-unify-permissions.rules -t $PKG/etc/udev/rules.d
+
+
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
-mkdir -p $PKG/usr/doc/
-mv $PKG/usr/share/doc/$PRGNAM $PKG/usr/doc/$PKGNAM-$VERSION
-cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
-# Fixes: Help -> About Skype -> Third Party Notices (Thank to Sbo)
-ln -s $PKGNAM-$VERSION $PKG/usr/doc/$PKGNAM
-rmdir $PKG/usr/share/doc
+if [ -d $PKG/usr/man ]; then
+  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+fi
 
-# Remove opt
-rm -rf $PKG/opt
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-
-if [ -e $CWD/doinst.sh ]; then
-  cat $CWD/doinst.sh > $PKG/install/doinst.sh
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
