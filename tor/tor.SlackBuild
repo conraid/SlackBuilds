@@ -44,7 +44,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=tor
-VERSION=0.4.6.8
+VERSION=0.4.6.9
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -105,7 +105,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
   --sysconfdir=/etc \
   --localstatedir=/var \
-  --runstatedir=/run \
   --mandir=/usr/man \
   --infodir=/usr/info \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
