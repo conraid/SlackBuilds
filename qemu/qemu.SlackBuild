@@ -29,7 +29,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=qemu
-SRCVERSION=6.1.0
+SRCVERSION=6.2.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -76,7 +76,11 @@ rm -rf $PKGNAM-$SRCVERSION
 tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.xz
 cd $PKGNAM-$SRCVERSION
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find -L . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
 
 # Apply patches
 if [ -e $CWD/patches ]; then
@@ -91,12 +95,8 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
-# Remove double CFLAGS
-sed "s|^\ \ CFLAGS=\"-O2\ |  CFLAGS=\"|" -i configure
-
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
-ARFLAGS="rv" \
 ./configure \
   --extra-cflags="$SLKCFLAGS" \
   --extra-cxxflags="$SLKCFLAGS" \
@@ -134,17 +134,15 @@ ARFLAGS="rv" \
   --disable-tpm \
   --enable-libssh \
   --enable-vte \
-  --enable-jemalloc \
   --enable-nettle \
   --enable-virglrenderer \
   --enable-spice \
   --enable-smartcard \
-  --enable-fdt \
   --enable-libnfs \
   --enable-xfsctl \
   --enable-linux-io-uring \
   --enable-plugins \
-  --audio-drv-list="alsa sdl pa" \
+  --audio-drv-list="alsa,sdl,pa,jack" \
   --target-list="x86_64-softmmu,x86_64-linux-user"
 
 make
