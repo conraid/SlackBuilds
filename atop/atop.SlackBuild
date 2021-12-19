@@ -30,9 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=atop
-SRCVERSION=2.6.0
+SRCVERSION=2.7.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -78,7 +78,11 @@ tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz
 cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find -L . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
 
 # Apply patches
 if [ -e $CWD/patches ]; then
@@ -109,8 +113,6 @@ fi
 # Move to new file
 mv $PKG/etc/rc.d/rc.atop $PKG/etc/rc.d/rc.atop.new
 mv $PKG/etc/rc.d/rc.atopacct $PKG/etc/rc.d/rc.atopacct.new
-mv $PKG/etc/logrotate.d/psaccs_atop $PKG/etc/logrotate.d/psaccs_atop.new
-mv $PKG/etc/logrotate.d/psaccu_atop $PKG/etc/logrotate.d/psaccu_atop.new
 mv $PKG/etc/cron.daily/atop.daily $PKG/etc/cron.daily/atop.new
 mv $PKG/etc/default/atop $PKG/etc/default/atop.new
 

@@ -1,6 +1,6 @@
-diff -Naupr atop-2.6.0-orig/Makefile atop-2.6.0/Makefile
---- atop-2.6.0-orig/Makefile	2020-12-21 20:57:55.000000000 +0100
-+++ atop-2.6.0/Makefile	2020-12-24 09:37:17.301956332 +0100
+diff -Naupr a/Makefile b/Makefile
+--- a/Makefile	2021-12-18 12:04:24.000000000 +0100
++++ b/Makefile	2021-12-19 10:00:52.641456145 +0100
 @@ -6,15 +6,14 @@ DESTDIR  =
  
  BINPATH  = /usr/bin
@@ -22,7 +22,7 @@ diff -Naupr atop-2.6.0-orig/Makefile atop-2.6.0/Makefile
  ROTPATH  = /etc/logrotate.d
  PMPATH1  = /usr/lib/pm-utils/sleep.d
  PMPATH2  = /usr/lib64/pm-utils/sleep.d
-@@ -91,18 +90,15 @@ systemdinstall:	genericinstall
+@@ -92,18 +91,15 @@ install:	genericinstall
  sysvinstall:	genericinstall
  		if [ ! -d $(DESTDIR)$(INIPATH) ]; 			\
  		then	mkdir -p  $(DESTDIR)$(INIPATH);	fi
@@ -44,6 +44,6 @@ diff -Naupr atop-2.6.0-orig/Makefile atop-2.6.0/Makefile
 +		cp atopacct.init  $(DESTDIR)$(INIPATH)/rc.atopacct
 +		cp atop.daily     $(DESTDIR)$(DAYPATH)
 +		chmod 0711        $(DESTDIR)$(DAYPATH)/atop.daily
- 		cp psaccs_atop    $(DESTDIR)$(ROTPATH)/psaccs_atop
- 		cp psaccu_atop    $(DESTDIR)$(ROTPATH)/psaccu_atop
  		touch             $(DESTDIR)$(LOGPATH)/dummy_before
+ 		touch             $(DESTDIR)$(LOGPATH)/dummy_after
+ 		#
