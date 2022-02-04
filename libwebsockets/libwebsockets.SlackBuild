@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=libwebsockets
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=0b8ba7672aa25492234c9ccea0afbf6917b2b2e5
+SRCVERSION=4.3.1
 VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -97,10 +97,6 @@ if [ -e $CWD/patches ]; then
     done
   fi
 fi
-
-# Fix GITHASH
-sed 's|${GIT_HASH}|0b8ba7672aa25492234c9ccea0afbf6917b2b2e5|' -i CMakeLists.txt
-
 
 mkdir -p build
 cd build
