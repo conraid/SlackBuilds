@@ -2,7 +2,7 @@
 #
 # Slackware build script for php-imagick
 #
-# Copyright 2015-2021 Corrado Franco (https://corradofranco.it)
+# Copyright 2015-2022 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=imagick
 PKGNAM=php-imagick
-SRCVERSION=3.6.0
+SRCVERSION=3.7.0
 VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
