@@ -2,7 +2,7 @@
 #
 # Slackware build script for hping
 #
-# Copyright 2014-2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2014-2022 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=hping
 VERSION=3.0.0_git
 COMMIT="3547c7691742c6eaa31f8402e0ccbb81387c1b99"
-BUILD=${BUILD:-13}
+BUILD=${BUILD:-14}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -78,7 +78,11 @@ tar xvf $CWD/$PKGNAM-$COMMIT.tar.gz
 cd $PKGNAM-$COMMIT
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find -L . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
 
 # Add some of Debian's patchset (thanks to Debian and SBo)
 for PATCH in $CWD/patches/*.diff; do
