@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=inkscape
 VERSION=1.1.1
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -114,6 +114,7 @@ cmake -Wno-dev \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DCMAKE_INSTALL_LIBDIR=/usr/lib$LIBDIRSUFFIX \
+  -DCMAKE_INSTALL_MANDIR=/usr/man \
   -DENABLE_LCMS=ON \
   -DENABLE_POPPLER=ON \
   -DENABLE_POPPLER_CAIRO=ON \
