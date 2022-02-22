@@ -32,7 +32,7 @@ PRGNAM=signal-desktop
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-bin
 SRCVERSION=5.32.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -75,8 +75,8 @@ find . \
   -exec chmod 644 {} \+
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cp -a $PKG/usr/share/doc/$PRGNAM $PKG/opt/Signal/LICENSE* $PKG/usr/doc/$PKGNAM-$VERSION || true
-rm -rf $PKG/usr/share/doc/$PRGNAM
+cp -a $PKG/usr/share/doc/$PRGNAM/* $PKG/opt/Signal/LICENSE* $PKG/usr/doc/$PKGNAM-$VERSION || true
+rm -rf $PKG/usr/share/doc
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
