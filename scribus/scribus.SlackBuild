@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=scribus
 VERSION=1.5.8
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -90,13 +90,6 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
-# Fix man path
-sed -e "s|CMAKE_INSTALL_DATAROOTDIR}/man/|CMAKE_INSTALL_PREFIX}/man/|g" \
-    -e "s|CMAKE_INSTALL_DATAROOTDIR}/doc/\${MAIN_DIR_NAME}\${TAG_VERSION}/|CMAKE_INSTALL_PREFIX}/doc/\${MAIN_DIR_NAME}-$VERSION/|g" \
-    -e "s|CMAKE_INSTALL_DATAROOTDIR}/doc/\${MAIN_DIR_NAME}/|CMAKE_INSTALL_PREFIX}/doc/\${MAIN_DIR_NAME}-$VERSION/|g" \
-    -e "s|CMAKE_INSTALL_DATAROOTDIR}/doc/|CMAKE_INSTALL_PREFIX}/man/|g" \
-    -i CMakeLists.txt
-
 mkdir -p build
 cd build
 cmake \
@@ -128,6 +121,8 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+mv $PKG/usr/share/doc/scribus/* $PKG/usr/doc/$PKGNAM-$VERSION/
+rm -rf $PKG/usr/share/doc
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
