@@ -2,7 +2,7 @@
 #
 # Slackware build script for fontforge
 #
-# Copyright 2017-2021 Corrado Franco (https://corradofranco.it)
+# Copyright 2017-2022 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=fontforge
 VERSION=20201107
 SRCFREETYPE=$(freetype-config --ftversion) #Freetype version in -current
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -100,6 +100,7 @@ cmake -Wno-dev -GNinja \
   -DCMAKE_SKIP_RPATH=ON \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
+  -DCMAKE_INSTALL_MANDIR=/usr/man \
   -DENABLE_X11=ON \
 	-DENABLE_MAINTAINER_TOOLS=TRUE \
 	-DENABLE_FONTFORGE_EXTRAS=TRUE \
