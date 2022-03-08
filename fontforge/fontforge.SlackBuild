@@ -30,9 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=fontforge
-VERSION=20201107
+VERSION=20220308
 SRCFREETYPE=$(freetype-config --ftversion) #Freetype version in -current
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
