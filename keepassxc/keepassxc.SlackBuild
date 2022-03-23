@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=keepassxc
-VERSION=2.6.6
-BUILD=${BUILD:-2}
+VERSION=2.7.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -94,7 +94,6 @@ cmake -Wno-dev \
   -DWITH_XC_AUTOTYPE=ON \
   -DWITH_XC_BROWSER=ON \
   -DWITH_XC_KEESHARE=ON \
-  -DWITH_XC_KEESHARE_SECURE=ON \
   -DWITH_XC_NETWORKING=ON \
   -DWITH_XC_SSHAGENT=ON \
   -DWITH_XC_UPDATECHECK=ON \
