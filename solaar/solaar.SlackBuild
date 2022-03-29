@@ -33,7 +33,7 @@ PRGNAM=solaar
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=1.1.2
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -87,8 +87,11 @@ find -L . \
 
 CFLAGS="$SLKCFLAGS" python3 setup.py install --root=$PKG
 
-install -Dm644 rules.d/42-logitech-unify-permissions.rules -t $PKG/etc/udev/rules.d
 
+#install -Dm644 rules.d/42-logitech-unify-permissions.rules $PKG/etc/udev/rules.d/42-logitech-unify-permissions.rules.new
+# Fix permissions
+mkdir -p $PKG/etc/udev/rules.d
+sed '/plugdev/s/^#MODE=/MODE=/' rules.d/42-logitech-unify-permissions.rules > $PKG/etc/udev/rules.d/42-logitech-unify-permissions.rules.new
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
@@ -104,6 +107,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
