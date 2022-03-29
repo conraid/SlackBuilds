@@ -33,8 +33,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libvirt
-VERSION=8.0.0
-BUILD=${BUILD:-2}
+VERSION=8.1.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -120,6 +120,7 @@ meson setup \
   -D                bash_completion=enabled \
   -D                bash_completion_dir=/etc/bash_completion.d \
   -D                qemu_group=users \
+  -D                qemu_user=root \
   -D                runstatedir=/run \
   ..
 
