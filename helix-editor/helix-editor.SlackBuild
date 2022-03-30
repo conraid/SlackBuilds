@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=helix
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-editor
-SRCVERSION=0.6.0
+SRCVERSION=22.03
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -74,10 +74,10 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM
-# I don't use the downloaded tar.gz to initialize and download submodules.
-git clone -j5 --recurse-submodules --shallow-submodules --branch=v0.3.0 https://github.com/helix-editor/helix
-cd $PRGNAM
+rm -rf $PRGNAM-$SRCVERSION
+mkdir -p $PRGNAM-$SRCVERSION
+cd $PRGNAM-$SRCVERSION
+tar xvf $CWD/$PRGNAM-$SRCVERSION-source.tar.xz
 
 chown -R root:root .
 find -L . \
