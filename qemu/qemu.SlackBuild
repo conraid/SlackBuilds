@@ -31,11 +31,20 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=qemu
 SRCVERSION=6.2.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
+
+# Enable only x86* and arm emulation for qemu: if you want to build
+# all the targets available use TARGETS=all
+# Thanks to SBo
+if [ "${TARGETS:-=""}" = "all" ]; then
+  targets=""
+else
+  targets="--target-list=i386-softmmu,x86_64-softmmu,i386-linux-user,x86_64-linux-user,arm-softmmu,arm-linux-user,armeb-linux-user"
+fi
 
 DOCFILES="CODING_STYLE COPYING* Changelog HACKING LICENSE MAINTAINERS README docs/*"
 
@@ -95,6 +104,9 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
+# Remove double CFLAGS
+sed -i 's|^\ \ CFLAGS="-O2\ |  CFLAGS="|' configure
+
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
@@ -143,7 +155,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-linux-io-uring \
   --enable-plugins \
   --audio-drv-list="alsa,sdl,pa,jack" \
-  --target-list="x86_64-softmmu,x86_64-linux-user"
+  $targets
 
 make
 make DESTDIR="$PKG" install
