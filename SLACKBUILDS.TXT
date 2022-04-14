@@ -160,6 +160,15 @@ SLACKBUILD DOWNLOAD: http://www.winfield.demon.nl/linux/antiword-0.37.tar.gz
 SLACKBUILD MD5SUM: f868e2a269edcbc06bf77e89a55898d1
 SLACKBUILD SHORT DESCRIPTION:  antiword (a free MS Word reader)
 
+SLACKBUILD NAME: aom
+SLACKBUILD LOCATION: ./aom
+SLACKBUILD FILES: README aom.SlackBuild aom.info slack-desc
+SLACKBUILD VERSION: 3.3.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://storage.googleapis.com/aom-releases/libaom-3.3.0.tar.gz
+SLACKBUILD MD5SUM: c3f6dee19e4b4c294a535a63b70afed9
+SLACKBUILD SHORT DESCRIPTION:  aom (Open Source Video Codec)
+
 SLACKBUILD NAME: apachetop
 SLACKBUILD LOCATION: ./apachetop
 SLACKBUILD FILES: README apachetop.SlackBuild apachetop.info slack-desc
@@ -646,6 +655,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/C/CairoSVG/CairoSVG
 SLACKBUILD MD5SUM: d81b14067f683ed425ddb89664187247
 SLACKBUILD SHORT DESCRIPTION:  cairosvg (A Simple SVG Converter based on Cairo)
 
+SLACKBUILD NAME: cargo-c
+SLACKBUILD LOCATION: ./cargo-c
+SLACKBUILD FILES: README cargo-c.SlackBuild cargo-c.info slack-desc
+SLACKBUILD VERSION: 0.9.8
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/lu-zero/cargo-c/archive/v0.9.8/cargo-c-0.9.8.tar.gz
+SLACKBUILD MD5SUM: d34aca351c473c23dfbc003bed69e654
+SLACKBUILD SHORT DESCRIPTION:  cargo-c (build and install C-compatible libraries)
+
 SLACKBUILD NAME: ccid
 SLACKBUILD LOCATION: ./ccid
 SLACKBUILD FILES: README ccid.SlackBuild ccid.info slack-desc
@@ -992,7 +1010,7 @@ SLACKBUILD NAME: darktable
 SLACKBUILD LOCATION: ./darktable
 SLACKBUILD FILES: README darktable.SlackBuild darktable.info doinst.sh slack-desc
 SLACKBUILD VERSION: 3.8.1
-SLACKBUILD REQUIRED: flickcurl graphicsmagick lua pugixml gmic
+SLACKBUILD REQUIRED: flickcurl graphicsmagick lua pugixml gmic libavif libheif
 SLACKBUILD DOWNLOAD: https://github.com/darktable-org/darktable/releases/download/release-3.8.1/darktable-3.8.1.tar.xz
 SLACKBUILD MD5SUM: e2b99efd1815d2aa266c2d4719bcc188
 SLACKBUILD SHORT DESCRIPTION:  darktable (digital photography application)
@@ -1005,6 +1023,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://github.com/sass/dart-sass/releases/download/1.50.0/dart-sass-1.50.0-linux-x64.tar.gz
 SLACKBUILD MD5SUM: 7997883be8780e4da9bdbe8210e6d71d
 SLACKBUILD SHORT DESCRIPTION:  dart-sass-bin (A Dart implementation of Sass)
+
+SLACKBUILD NAME: dav1d
+SLACKBUILD LOCATION: ./dav1d
+SLACKBUILD FILES: README dav1d.SlackBuild dav1d.info slack-desc
+SLACKBUILD VERSION: 1.0.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: http://downloads.videolan.org/pub/videolan/dav1d/1.0.0/dav1d-1.0.0.tar.xz
+SLACKBUILD MD5SUM: 
+SLACKBUILD SHORT DESCRIPTION:  dav1d (AV1 cross-platform decoder)
 
 SLACKBUILD NAME: dcfldd
 SLACKBUILD LOCATION: ./dcfldd
@@ -1527,6 +1554,15 @@ SLACKBUILD REQUIRED: tesseract podofo qtspell
 SLACKBUILD DOWNLOAD: https://github.com/manisandro/gImageReader/releases/download/v3.4.0/gimagereader-3.4.0.tar.xz
 SLACKBUILD MD5SUM: 278df50a692414e637689fe3ed77ad5e
 SLACKBUILD SHORT DESCRIPTION:  gimagereader (A Gtk/Qt front-end to tesseract-ocr)
+
+SLACKBUILD NAME: gimp-avif-plugin
+SLACKBUILD LOCATION: ./gimp-avif-plugin
+SLACKBUILD FILES: README gimp-avif-plugin.SlackBuild gimp-avif-plugin.info slack-desc
+SLACKBUILD VERSION: 2.99.7.1
+SLACKBUILD REQUIRED: gimp3 libavif
+SLACKBUILD DOWNLOAD: https://github.com/novomesk/gimp-avif-plugin/archive/refs/tags/v2.99.7.1.tar.gz
+SLACKBUILD MD5SUM: 3f6f0e2e1d3676ebc227e68ea60fd3ad
+SLACKBUILD SHORT DESCRIPTION:  gimp-avif-plugin (Gimp AVIF plugin)
 
 SLACKBUILD NAME: gimp-elsamuko
 SLACKBUILD LOCATION: ./gimp-elsamuko
@@ -2708,6 +2744,15 @@ SLACKBUILD DOWNLOAD: https://github.com/libass/libass/archive/0.15.1/libass-0.15
 SLACKBUILD MD5SUM: 72414f8852cd6185d5a72bfb4ea48084
 SLACKBUILD SHORT DESCRIPTION:  libass (A portable library for SSA/ASS subtitles rendering)
 
+SLACKBUILD NAME: libavif
+SLACKBUILD LOCATION: ./libavif
+SLACKBUILD FILES: README libavif.SlackBuild libavif.info slack-desc
+SLACKBUILD VERSION: 0.10.1
+SLACKBUILD REQUIRED: aom dav1d libyuv rav1e svt-av1
+SLACKBUILD DOWNLOAD: https://github.com/AOMediaCodec/libavif/archive/v0.10.1/libavif-0.10.1.tar.gz
+SLACKBUILD MD5SUM: 03db8c35534f565d98b24800ca105cf3
+SLACKBUILD SHORT DESCRIPTION:  libavif (Library for encoding and decoding .avif files)
+
 SLACKBUILD NAME: libb64
 SLACKBUILD LOCATION: ./libb64
 SLACKBUILD FILES: README libb64.SlackBuild libb64.info patches/shared-library.patch slack-desc
@@ -2928,7 +2973,7 @@ SLACKBUILD NAME: libheif
 SLACKBUILD LOCATION: ./libheif
 SLACKBUILD FILES: README libheif.SlackBuild libheif.info slack-desc
 SLACKBUILD VERSION: 1.12.0
-SLACKBUILD REQUIRED: libde265
+SLACKBUILD REQUIRED: libde265 x265 aom rav1e dav1d
 SLACKBUILD DOWNLOAD: https://github.com/strukturag/libheif/releases/download/v1.12.0/libheif-1.12.0.tar.gz
 SLACKBUILD MD5SUM: f6dd5c4fe0efb8598eb63df71213d58b
 SLACKBUILD SHORT DESCRIPTION:  libheif (HEIF file format decoder and encoder)
@@ -3355,6 +3400,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://birdfont.org/xmlbird-releases/libxmlbird-1.2.12.tar.xz
 SLACKBUILD MD5SUM: 7c89d56379ad92a910922927566a7a92
 SLACKBUILD SHORT DESCRIPTION:  libxmlbird (XML parsing library written in Vala)
+
+SLACKBUILD NAME: libyuv
+SLACKBUILD LOCATION: ./libyuv
+SLACKBUILD FILES: README libyuv.SlackBuild libyuv.info slack-desc
+SLACKBUILD VERSION: 15e6d46448107278ed07be8204fb13874b575068
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://chromium.googlesource.com/libyuv/libyuv/+archive/15e6d46448107278ed07be8204fb13874b575068.tar.gz
+SLACKBUILD MD5SUM: 
+SLACKBUILD SHORT DESCRIPTION:  libyuv (Library for YUV scaling)
 
 SLACKBUILD NAME: libzen
 SLACKBUILD LOCATION: ./libzen
@@ -6092,6 +6146,15 @@ SLACKBUILD DOWNLOAD: https://github.com/ranger/ranger/archive/v1.9.3/ranger-1.9.
 SLACKBUILD MD5SUM: d491987cd9fb06bee100264cfea55d26
 SLACKBUILD SHORT DESCRIPTION:  ranger (A simple, vim-like file manager)
 
+SLACKBUILD NAME: rav1e
+SLACKBUILD LOCATION: ./rav1e
+SLACKBUILD FILES: README rav1e.SlackBuild rav1e.info slack-desc
+SLACKBUILD VERSION: 0.5.1
+SLACKBUILD REQUIRED: cargo-c
+SLACKBUILD DOWNLOAD: https://github.com/xiph/rav1e/archive/v0.5.1/rav1e-0.5.1.tar.gz
+SLACKBUILD MD5SUM: 36fe6bb795a8b38dcd5f56e14a6845e2
+SLACKBUILD SHORT DESCRIPTION:  rav1e (The fastest and safest AV1 encoder)
+
 SLACKBUILD NAME: rawtherapee
 SLACKBUILD LOCATION: ./rawtherapee
 SLACKBUILD FILES: README doinst.sh rawtherapee.SlackBuild rawtherapee.info slack-desc
@@ -7036,6 +7099,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://registry.npmjs.org/svgo/-/svgo-2.8.0.tgz
 SLACKBUILD MD5SUM: a1d689b3cef8275352525024208f8c16
 SLACKBUILD SHORT DESCRIPTION:  svg  (Node.js tool for optimizing SVG files)
+
+SLACKBUILD NAME: svt-av1
+SLACKBUILD LOCATION: ./svt-av1
+SLACKBUILD FILES: README slack-desc svt-av1.SlackBuild svt-av1.info
+SLACKBUILD VERSION: 0.9.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v0.9.1/SVT-AV1-v0.9.1.tar.bz2
+SLACKBUILD MD5SUM: bc361661295cce3610a703d845567e13
+SLACKBUILD SHORT DESCRIPTION:  svt-av1 (SVT-AV1 Encoder and Decoder)
 
 SLACKBUILD NAME: tbb
 SLACKBUILD LOCATION: ./tbb
