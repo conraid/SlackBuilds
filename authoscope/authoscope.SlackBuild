@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=authoscope
 VERSION=0.8.1
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -58,15 +58,19 @@ fi
 if [ "$ARCH" = "i586" ]; then
   SLKCFLAGS="-O2 -march=i586 -mtune=i686"
   LIBDIRSUFFIX=""
+  CARGOTARGET="--target i586-unknown-linux-gnu"
 elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
+  CARGOTARGET="--target i686-unknown-linux-gnu"
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  SLKCFLAGS="-O2 -fPIC"
   LIBDIRSUFFIX="64"
+  CARGOTARGET="--target x86_64-unknown-linux-gnu"
 else
   SLKCFLAGS="-O2"
   LIBDIRSUFFIX=""
+  CARGOTARGET=""
 fi
 
 rm -rf $PKG
@@ -85,15 +89,22 @@ find -L . \
 
 # Apply patches
 if [ -e $CWD/patches ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
 fi
 
-cargo build --release --locked
-
-install -Dm755 target/release/${PKGNAM} -t "${PKG}/usr/bin"
-install -Dm644 docs/authoscope.1 -t "${PKG}/usr/man/man1"
+CARGO_HOME=.cargo \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+cargo build --release $CARGOTARGET
+cargo install --frozen --offline --no-track --root "${PKG}/usr" --path="."
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -101,10 +112,9 @@ rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
-if [ -d $PKG/usr/man ]; then
-  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
-  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
-fi
+# Install man page
+install -Dm644 docs/authoscope.1 -t "${PKG}/usr/man/man1"
+gzip -9 "${PKG}/usr/man/man1/authoscope.1"
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
