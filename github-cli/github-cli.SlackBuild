@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cli
 PKGNAM=github-cli
-SRCVERSION=2.7.0
+SRCVERSION=2.8.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -103,7 +103,9 @@ export PATH="${GOROOT}/bin:${PATH}"
 export CGO_CPPFLAGS="${SLKCFLAGS}"
 export CGO_CFLAGS="${SLKCFLAGS}"
 export CGO_CXXFLAGS="${SLKCFLAGS}"
-export GOFLAGS="-buildmode=pie -trimpath -mod=readonly -modcacherw"
+export GO_LDFLAGS="-s -w"
+export CGO_ENABLED=0
+export GOFLAGS="-buildmode=pie -trimpath -mod=readonly -modcacherw -ldflags=-linkmode=external"
 
 make GH_VERSION="v$VERSION" bin/gh manpages
 
