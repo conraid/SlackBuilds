@@ -29,9 +29,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=qemu
-SRCVERSION=6.2.0
+SRCVERSION=7.0.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -92,20 +92,17 @@ find -L . \
   -exec chmod 644 {} \;
 
 # Apply patches
-if [ -e $CWD/patches ]; then
+if [ -e $CWD/patches/*.patch ]; then
   if [ -e $CWD/patches/series ]; then
     for PATCH in $(cat $CWD/patches/series); do
-      patch -p1 -i $CWD/patches/$PATCH
+      echo patch -p1 -i $CWD/patches/$PATCH
     done
   else
     for PATCH in $CWD/patches/*.patch; do
-      patch -p1 -i $PATCH
+      echo patch -p1 -i $PATCH
     done
   fi
 fi
-
-# Remove double CFLAGS
-sed -i 's|^\ \ CFLAGS="-O2\ |  CFLAGS="|' configure
 
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -151,7 +148,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-spice \
   --enable-smartcard \
   --enable-libnfs \
-  --enable-xfsctl \
   --enable-linux-io-uring \
   --enable-plugins \
   --audio-drv-list="alsa,sdl,pa,jack" \
