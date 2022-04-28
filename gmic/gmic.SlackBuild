@@ -30,18 +30,13 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=gmic
-SRCVERSION=3.0.2
+SRCVERSION=3.1.0
 VERSION=$SRCVERSION
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
-
-# Plugins: none, gimp, krita, digikam
-# I don't activate digikam because it gives an error in cmake check
-PLUGINS=${PLUGINS:-"none gimp krita"} # Plugins: none, gimp, krita, digikam
-
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -94,58 +89,16 @@ if [ -e $CWD/patches/ ]; then
   done
 fi
 
+cd src
 # Fix path
 sed -e "/^LIB/s/lib/lib$LIBDIRSUFFIX/" \
     -e "s|share/doc/gmic|doc/gmic-$VERSION|g" \
-    -e 's|/share/man|/man|g' -i src/Makefile
+    -e 's|/share/man|/man|g' -i Makefile
 
-# Build library and command line
-cmake -B build -Wno-dev \
-  -DCMAKE_CXX_FLAGS_RELEASE="$SLKCFLAGS -DNDEBUG" \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_INSTALL_PREFIX=/usr \
-  -DCMAKE_INSTALL_MANDIR=/usr/man \
-  -DENABLE_DYNAMIC_LINKING=ON \
-  -DBUILD_LIB_STATIC=OFF \
-  -DENABLE_OPENCV=ON
+make CFLAGS="$SLKCFLAGS" lib libc cli_shared gimp_shared gmic_qt_shared
+make install DESTDIR=$PKG
 
-cmake --build build
-DESTDIR=$PKG cmake --install build
-
-cd $PKGNAM-qt
-for PLUGIN_TYPE in $PLUGINS; do
-  export LDFLAGS="-L../build"
-  cmake -B build-$PLUGIN_TYPE -Wno-dev \
-    -DCMAKE_CXX_FLAGS_RELEASE="$SLKCFLAGS -DNDEBUG" \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/usr \
-    -DENABLE_DYNAMIC_LINKING=ON \
-    -DGMIC_PATH=$TMP/$PKGNAM-$VERSION/src \
-    -DGMIC_LIB_PATH=$TMP/$PKGNAM-$VERSION/build \
-    -DGMIC_QT_HOST=$PLUGIN_TYPE
-
-  cmake --build build-$PLUGIN_TYPE
-  DESTDIR=$PKG cmake --install build-$PLUGIN_TYPE
-done
 cd ..
-
-if [ -d zart ]; then
-  cd zart
-  qmake-qt5 \
-    PREFIX=/usr \
-    QMAKE_CFLAGS="$SLKCFLAGS -g" \
-    QMAKE_CXXFLAGS="$SLKCFLAGS -g" \
-    QMAKE_CFLAGS_RELEASE="$SLKCFLAGS -g" \
-    QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS -g" \
-    GMIC_DYNAMIC_LINKING=on \
-    GMIC_PATH=../src \
-    GMIC_LIB_PATH=$TMP/$PKGNAM-$VERSION/build \
-    -o Makefile zart.pro
-
-  make -j1
-  install -Dm755 zart $PKG/usr/bin/zart
-  cd ..
-fi
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
