@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=rclone
-VERSION=1.58.0
+VERSION=1.58.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -56,26 +56,27 @@ if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
 fi
 
 if [ "$ARCH" = "i586" ]; then
-  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
   LIBDIRSUFFIX=""
+  ZIPARCH="386"
 elif [ "$ARCH" = "i686" ]; then
-  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
+  ZIPARCH="386"
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
+  ZIPARCH="amd64"
 else
-  SLKCFLAGS="-O2"
-  LIBDIRSUFFIX=""
+  echo "This platform is not supporte"
+  exit 1
+
 fi
 
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-v$VERSION
-tar xvf $CWD/$PKGNAM-v$VERSION.tar.gz
-cd $PKGNAM-v$VERSION
+rm -rf $PKGNAM-v$VERSION-linux-$ZIPARCH
+unzip $CWD/$PKGNAM-v$VERSION-linux-$ZIPARCH.zip
+cd $PKGNAM-v$VERSION-linux-$ZIPARCH
 
 chown -R root:root .
 find . \
@@ -84,15 +85,6 @@ find . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \+
 
-mkdir -p .gopath/src/github.com/rclone
-ln -sf $TMP/$PKGNAM-v$VERSION .gopath/src/github.com/rclone/rclone
-
-export GOPATH="$TMP/$PKGNAM-v$VERSION/.gopath"
-export GOROOT="/usr/lib${LIBDIRSUFFIX}/go"
-export PATH="${GOROOT}/bin:${PATH}"
-
-cd $GOPATH/src/github.com/rclone/rclone
-go build -v --ldflags "-s -X github.com/rclone/rclone/fs.Version=$VERSION"
 
 ./rclone genautocomplete bash rclone.bash_completion
 ./rclone genautocomplete zsh rclone.zsh_completion
