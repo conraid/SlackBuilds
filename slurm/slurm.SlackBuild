@@ -2,7 +2,7 @@
 #
 # Slackware build script for slurm
 #
-# Copyright 2017-2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2017-2022 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=slurm
-VERSION=0.4.3
-BUILD=${BUILD:-3}
+VERSION=0.4.4
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -77,7 +77,11 @@ tar xvf $CWD/$PKGNAM-upstream-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
 cd $PKGNAM-upstream-$VERSION
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find -L . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
 
 # Apply patches
 if [ -e $CWD/patches ]; then
@@ -86,16 +90,34 @@ if [ -e $CWD/patches ]; then
   done
 fi
 
-mkdir -p build
-cd build
-cmake -Wno-dev \
-  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_INSTALL_PREFIX=/usr \
+export CFLAGS="$SLKCFLAGS"
+export CXXFLAGS="$SLKCFLAGS"
+mkdir meson-build
+cd meson-build
+meson setup \
+  --prefix          /usr \
+  --libdir          lib${LIBDIRSUFFIX} \
+  --libexecdir      /usr/libexec \
+  --sysconfdir      /etc \
+  --localstatedir   /var \
+  --mandir          /usr/man \
+  --infodir         /usr/info \
+  --bindir          /usr/bin \
+  --sbindir         /usr/sbin \
+  --includedir      /usr/include \
+  --datadir         /usr/share \
+  --buildtype       release \
+  --default-library shared \
+  --buildtype       plain \
+  --auto-features   enabled \
+  --wrap-mode       nodownload \
+  -D                b_lto=true \
+  -D                b_pie=true \
   ..
 
-make
-make DESTDIR=$PKG install
+ninja
+DESTDIR=$PKG ninja install
+cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
