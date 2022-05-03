@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=scribus
 VERSION=1.5.8
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -106,6 +106,7 @@ cmake \
   -DHAVE_PYTHON=ON \
 	-DWANT_DISTROBUILD=ON \
 	-DPython3_EXECUTABLE="python3" \
+  -DWANT_CPP17=ON \
   ..
 
 make
