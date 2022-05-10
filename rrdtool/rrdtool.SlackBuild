@@ -2,7 +2,7 @@
 #
 # Slackware build script for rrdtool (http://oss.oetiker.ch/rrdtool)
 #
-# Copyright 2008-2021 Corrado Franco (https://corradofranco.it)
+# Copyright 2008-2022 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=rrdtool
-VERSION=1.7.2
-BUILD=${BUILD:-2}
+VERSION=1.8.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -77,11 +77,21 @@ tar xzvf $CWD/$PKGNAM-$VERSION.tar.gz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find -L . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
 
 # Correct hard-coded path to lua libs (thanks to pprkut for spotting this one!)
 # Thanks to SBo
 sed -i "s|/lib/lua|/lib${LIBDIRSUFFIX}/lua|g" configure
+
+# fix FS#28521 make ruby install to vendor_ruby instead of site_ruby
+# Thanks to Arch
+sed -e 's/$(RUBY) ${abs_srcdir}\/ruby\/extconf.rb/& --vendor/' -i bindings/Makefile.am
+
+autoreconf -vi
 
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS -I/usr/include/glib-2.0" \
@@ -100,7 +110,6 @@ RRDDOCDIR="/usr/doc/$PKGNAM-$VERSION" \
   --disable-static \
   --enable-lua \
   --with-perl-options='INSTALLDIRS=vendor' \
-  --with-ruby-options="sitedir=\$DESTDIR/usr/lib${LIBDIRSUFFIX}/ruby/vendor_ruby" \
   --docdir=$PKG/usr/doc/rrdtool-$VERSION \
   --build=$ARCH-slackware-linux
 
@@ -108,7 +117,7 @@ make LIBS+="-lglib-2.0"
 
 # Correct man paths in the Perl bindings.
 sed -e 's|/usr/share/man|/usr/man|g' \
-    -i bindings/perl-*/Makefile* 
+    -i bindings/perl-*/Makefile*
 
 make install DESTDIR=$PKG
 
