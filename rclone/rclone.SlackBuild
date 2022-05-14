@@ -56,27 +56,26 @@ if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
 fi
 
 if [ "$ARCH" = "i586" ]; then
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
   LIBDIRSUFFIX=""
-  ZIPARCH="386"
 elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
-  ZIPARCH="386"
 elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
-  ZIPARCH="amd64"
 else
-  echo "This platform is not supporte"
-  exit 1
-
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
 fi
 
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-v$VERSION-linux-$ZIPARCH
-unzip $CWD/$PKGNAM-v$VERSION-linux-$ZIPARCH.zip
-cd $PKGNAM-v$VERSION-linux-$ZIPARCH
+rm -rf $PKGNAM-v$VERSION
+tar xvf $CWD/$PKGNAM-v$VERSION.tar.gz
+cd $PKGNAM-v$VERSION
 
 chown -R root:root .
 find . \
@@ -85,10 +84,25 @@ find . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \+
 
+mkdir -p .gopath/src/github.com/rclone
+ln -sf $TMP/$PKGNAM-v$VERSION .gopath/src/github.com/rclone/rclone
+
+export GOPATH="$TMP/$PKGNAM-v$VERSION/.gopath"
+
+export GOROOT="/usr/lib${LIBDIRSUFFIX}/go"
+export PATH="${GOROOT}/bin:${PATH}"
+export CGO_CFLAGS="${SLKCFLAGS}"
+export CGO_CPPFLAGS="${SLKCFLAGS}"
+
+
+mkdir -p build/src/github.com/rclone/
+ln -sf $TMP/$PKGNAM-v$VERSION build/src/github.com/rclone/rclone
+
+cd $GOPATH/src/github.com/rclone/rclone
+go build -v --ldflags "-s -X github.com/rclone/rclone/fs.Version=$VERSION"
 
 ./rclone genautocomplete bash rclone.bash_completion
 ./rclone genautocomplete zsh rclone.zsh_completion
-
 install -Dsm755 rclone $PKG/usr/bin/rclone
 install -Dm644 rclone.bash_completion $PKG/etc/bash_completion.d/rclone
 install -Dm644 rclone.zsh_completion $PKG/usr/share/zsh/site-functions/_rclone
