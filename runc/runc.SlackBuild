@@ -32,7 +32,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=runc
-SRCVERSION=1.1.1
+SRCVERSION=1.1.2
 VERSION=$(echo $SRCVERSION | tr - _)
 COMMIT=84113eef6fc27af1b01b3181f31bbaf708715301
 BUILD=${BUILD:-1}
@@ -101,7 +101,11 @@ export CGO_CPPFLAGS="${SLKCFLAGS}"
 export CGO_CFLAGS="${SLKCFLAGS}"
 export CGO_CXXFLAGS="${SLKCFLAGS}"
 export GOFLAGS="-trimpath -mod=readonly -modcacherw"
+export GOPATH="$(pwd)/build"
 
+mkdir build
+mv vendor build/src
+ln -sf $TMP/$PKGNAM-$SRCVERSION build/src/github.com/opencontainers/runc
 
 # Do not try to get git commit hash, we're not inside git repository.
 sed -e '/^COMMIT/d' -e '/^GIT_BRANCH/d' -i Makefile
