@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=Botan
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=2.19.1
+SRCVERSION=2.19.2
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -106,10 +106,11 @@ python configure.py \
   --libdir=lib$LIBDIRSUFFIX \
   --mandir=/usr/man \
   --disable-static \
+  --disable-static-library \
   --with-doxygen \
+  --with-sphinx \
   --with-bzip2 \
   --with-lzma \
-  --with-openssl \
   --with-commoncrypto \
   --with-sqlite3  \
   --with-zlib \
