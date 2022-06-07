@@ -1,0 +1,47 @@
+From c034a78f63a58b5d487c531c8bfedb10a8863701 Mon Sep 17 00:00:00 2001
+From: Biswapriyo Nath <nathbappai@gmail.com>
+Date: Sun, 14 Feb 2021 20:51:09 +0530
+Subject: [PATCH] Fix gcc warning when using configure --enable-permissive
+ option
+
+When configured with --enable-permissive option, add -fpermissive to C++
+flags, not C flags, to avoid the gcc warning
+
+command-line option '-fpermissive' is valid for C++/ObjC++ but not for C
+
+when compiling C code.
+
+See https://github.com/wxWidgets/wxWidgets/pull/2232
+
+(cherry picked from commit ae9b55712d44e7fad4f99382664e1df20f3c7e62)
+---
+ configure    | 2 +-
+ configure.in | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configure b/configure
+index 39065b4280e0..8ee17912129d 100755
+--- a/configure
++++ b/configure
+@@ -32727,7 +32727,7 @@ if test "$GCC" = "yes" ; then
+         WXCONFIG_CXXFLAGS="$WXCONFIG_CXXFLAGS -fno-exceptions"
+     fi
+     if test "$wxUSE_PERMISSIVE" = "yes" ; then
+-        WXCONFIG_CFLAGS="$WXCONFIG_CFLAGS -fpermissive"
++        WXCONFIG_CXXFLAGS="$WXCONFIG_CXXFLAGS -fpermissive"
+     fi
+ 
+                                                 case "${host}" in
+diff --git a/configure.in b/configure.in
+index ef76fd4a8971..d199818fe246 100644
+--- a/configure.in
++++ b/configure.in
+@@ -5292,7 +5292,7 @@ if test "$GCC" = "yes" ; then
+         WXCONFIG_CXXFLAGS="$WXCONFIG_CXXFLAGS -fno-exceptions"
+     fi
+     if test "$wxUSE_PERMISSIVE" = "yes" ; then
+-        WXCONFIG_CFLAGS="$WXCONFIG_CFLAGS -fpermissive"
++        WXCONFIG_CXXFLAGS="$WXCONFIG_CXXFLAGS -fpermissive"
+     fi
+ 
+     dnl Ian Brown <ian.brown@printsoft.de> reports that versions of gcc before

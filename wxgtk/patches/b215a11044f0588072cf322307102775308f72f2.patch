@@ -1,0 +1,53 @@
+From b215a11044f0588072cf322307102775308f72f2 Mon Sep 17 00:00:00 2001
+From: Lauri Nurmi <lanurmi@iki.fi>
+Date: Tue, 11 Jan 2022 09:39:53 +0200
+Subject: [PATCH] Fix too dark day number colors with dark themes in
+ wxCalendarCtrl
+
+wxBLACK was used for some day numbers, and with a dark theme the numbers
+are drawn on a nearly black background, making them barely visible.
+
+Instead, use wxBLACK explicitly for week numbers, but get the proper
+color for day numbers always (and not just sometimes) with
+GetForegroundColour().
+
+See #2643.
+
+(cherry picked from commit 783df59e668eba4d3fddb9603e86c2a312ec66e5)
+
+Closes #22038.
+---
+ src/generic/calctrlg.cpp | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/generic/calctrlg.cpp b/src/generic/calctrlg.cpp
+index 45202bf41627..e9c6134c5365 100644
+--- a/src/generic/calctrlg.cpp
++++ b/src/generic/calctrlg.cpp
+@@ -907,8 +907,6 @@ void wxGenericCalendarCtrl::OnPaint(wxPaintEvent& WXUNUSED(event))
+         }
+     }
+ 
+-    // then the calendar itself
+-    dc.SetTextForeground(*wxBLACK);
+     //dc.SetFont(*wxNORMAL_FONT);
+ 
+     y += m_heightRow;
+@@ -916,6 +914,7 @@ void wxGenericCalendarCtrl::OnPaint(wxPaintEvent& WXUNUSED(event))
+     // draw column with calendar week nr
+     if ( HasFlag( wxCAL_SHOW_WEEK_NUMBERS ) && IsExposed( 0, y, m_calendarWeekWidth, m_heightRow * 6 ))
+     {
++        dc.SetTextForeground(*wxBLACK);
+         dc.SetBackgroundMode(wxTRANSPARENT);
+         dc.SetBrush(wxBrush(m_colHeaderBg, wxSOLID));
+         dc.SetPen(wxPen(m_colHeaderBg, 1, wxSOLID));
+@@ -930,6 +929,9 @@ void wxGenericCalendarCtrl::OnPaint(wxPaintEvent& WXUNUSED(event))
+         }
+     }
+ 
++    // then the calendar itself
++    dc.SetTextForeground(GetForegroundColour());
++
+     wxDateTime date = GetStartDate();
+ 
+ #if DEBUG_PAINT
