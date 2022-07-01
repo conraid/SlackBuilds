@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=mu
-VERSION=1.8.2
+VERSION=1.8.3
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -92,10 +92,15 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
+sed 's|share/info|info|' \
+  -i meson.build \
+  -i guile/meson.build \
+  -i mu4e/meson.build 
+
 export CFLAGS="$SLKCFLAGS"
 export CXXFLAGS="$SLKCFLAGS"
-mkdir meson-build
-cd meson-build
+mkdir build
+cd build
 meson setup \
   --prefix          /usr \
   --libdir          lib${LIBDIRSUFFIX} \
@@ -137,7 +142,7 @@ fi
 
 if [ -d $PKG/usr/info ]; then
   rm -f $PKG/usr/info/dir
-  gzip -9 $PKG/usr/info/*.info*
+  gzip -9 $PKG/usr/info/*.info || true
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
