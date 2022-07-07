@@ -33,7 +33,7 @@ PRGNAM=aMule
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=2.3.3
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-7}
+BUILD=${BUILD:-8}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -86,45 +86,47 @@ find -L . \
   -exec chmod 644 {} \;
 
 # Apply patches
-if [ -e $CWD/patches ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
+if [ -e $CWD/patches/ ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
 fi
 
-LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib$LIBDIRSUFFIX \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --infodir=/usr/info \
-  --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --disable-static \
-  --enable-cas \
-  --enable-wxcas \
-  --enable-amule-daemon \
-  --enable-amulecmd \
-  --enable-amule-gui \
-  --enable-alc \
-  --enable-alcc \
-  --enable-webserver \
-  --disable-debug \
-  --enable-optimize \
-  --enable-ccache \
-  --enable-geoip \
-  --enable-upnp \
-  --with-boost \
-  --enable-fileview \
-  --with-wx-config=/usr/bin/wx-config-gtk2 \
-  --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
+mkdir -p build
+cd build
+cmake -Wno-dev \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_LD_FLAGS_RELEASE:STRING="-L/usr/lib${LIBDIRSUFFIX}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DMAN_INSTALL_DIR=/usr/man \
+  -DSYSCONF_INSTALL_DIR=/etc \
+  -DLOCALSTATEDIR=/var \
+  -DHTML_INSTALL_DIR=/usr/doc/HTML \
+  -DLIB_SUFFIX=$LIBDIRSUFFIX \
+  -DBUILD_ALC=ON \
+  -DBUILD_ALCC=ON \
+  -DBUILD_AMULECMD=ON \
+  -DBUILD_CAS=ON \
+  -DBUILD_DAEMON=ON \
+  -DBUILD_REMOTEGUI=ON \
+  -DBUILD_WEBSERVER=ON \
+  -DBUILD_WXCAS=ON \
+  -DBUILD_FILEVIEW=ON \
+  -DENABLE_NLS=ON \
+  -DBUILD_TESTING=OFF \
+  ..
 
 make
 make DESTDIR=$PKG install
+cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
