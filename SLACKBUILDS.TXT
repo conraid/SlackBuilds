@@ -135,7 +135,7 @@ SLACKBUILD SHORT DESCRIPTION:  alien (converting program)
 
 SLACKBUILD NAME: amule
 SLACKBUILD LOCATION: ./amule
-SLACKBUILD FILES: README amule.SlackBuild amule.info doinst.sh slack-desc
+SLACKBUILD FILES: README amule.SlackBuild amule.info doinst.sh patches/001-9bcd201.patch patches/002-8085232.patch patches/003-f186b3a.patch patches/004-d22e057.patch patches/005-9e1d9eb.patch patches/006-a667c61.patch slack-desc
 SLACKBUILD VERSION: 2.3.3
 SLACKBUILD REQUIRED: wxgtk libupnp geoip
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/amule/aMule-2.3.3.tar.xz
@@ -343,10 +343,10 @@ SLACKBUILD SHORT DESCRIPTION:  avahi (service discovery aka zeroconf)
 SLACKBUILD NAME: aws-cli
 SLACKBUILD LOCATION: ./aws-cli
 SLACKBUILD FILES: README aws-cli.SlackBuild aws-cli.info slack-desc
-SLACKBUILD VERSION: 1.25.23
+SLACKBUILD VERSION: 1.25.24
 SLACKBUILD REQUIRED: cryptography python-botocore colorama python-dateutil python-jmespath rsa python-s3transfer pyyaml python-wheel ruyaml ruamel-yaml awscrt
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/awscli/awscli-1.25.23.tar.gz
-SLACKBUILD MD5SUM: c989f71fc832b77f4ff12b6673c513ae
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/awscli/awscli-1.25.24.tar.gz
+SLACKBUILD MD5SUM: 5b8b3bc0608436709ab2cfceda0710f5
 SLACKBUILD SHORT DESCRIPTION:  aws-cli (Universal Command Line Interface for AWS)
 
 SLACKBUILD NAME: awscrt
@@ -1207,10 +1207,10 @@ SLACKBUILD SHORT DESCRIPTION:  dpkg (Debian package management system)
 SLACKBUILD NAME: dropbox-bin
 SLACKBUILD LOCATION: ./dropbox-bin
 SLACKBUILD FILES: README doinst.sh dropbox-bin.SlackBuild dropbox-bin.info files/dropbox.desktop files/dropbox.png slack-desc
-SLACKBUILD VERSION: 151.4.4304
+SLACKBUILD VERSION: 152.4.4880
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://clientupdates.dropboxstatic.com/dbx-releng/client/dropbox-lnx.x86_64-151.4.4304.tar.gz
-SLACKBUILD MD5SUM: 8951b12278090222c30cd53c21eac97b
+SLACKBUILD DOWNLOAD: https://clientupdates.dropboxstatic.com/dbx-releng/client/dropbox-lnx.x86_64-152.4.4880.tar.gz
+SLACKBUILD MD5SUM: f852b5a30e4fa61a6e8e303b837c6187
 SLACKBUILD SHORT DESCRIPTION:  Dropbox (store, sync and share files online)
 
 SLACKBUILD NAME: dwdiff
@@ -1288,10 +1288,10 @@ SLACKBUILD SHORT DESCRIPTION:  exempi (XMP SDK )
 SLACKBUILD NAME: exiftool
 SLACKBUILD LOCATION: ./exiftool
 SLACKBUILD FILES: README exiftool.SlackBuild exiftool.info slack-desc
-SLACKBUILD VERSION: 12.42
+SLACKBUILD VERSION: 12.43
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://exiftool.org/Image-ExifTool-12.42.tar.gz
-SLACKBUILD MD5SUM: 4baf1f4306c067de88bad4f6d25766da
+SLACKBUILD DOWNLOAD: https://exiftool.org/Image-ExifTool-12.43.tar.gz
+SLACKBUILD MD5SUM: 528bdcef3c040d6e9b4c98a78844d91d
 SLACKBUILD SHORT DESCRIPTION:  exiftool (read, write, and edit EXIF and other meta information)
 
 SLACKBUILD NAME: exploitdb
@@ -2314,10 +2314,10 @@ SLACKBUILD SHORT DESCRIPTION:  img2pdf (Losslessly convert raster images to PDF)
 SLACKBUILD NAME: imlib2
 SLACKBUILD LOCATION: ./imlib2
 SLACKBUILD FILES: README files/imlib2-config.in imlib2.SlackBuild imlib2.info slack-desc
-SLACKBUILD VERSION: 1.9.0
+SLACKBUILD VERSION: 1.9.1
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/enlightenment/imlib2-1.9.0.tar.xz
-SLACKBUILD MD5SUM: 3a0e77546a6f2559f8a5bd493296a2ae
+SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/enlightenment/imlib2-1.9.1.tar.xz
+SLACKBUILD MD5SUM: 596fd0664538adb7867aa609fb718147
 SLACKBUILD SHORT DESCRIPTION:  imlib2 (successor to Imlib)
 
 SLACKBUILD NAME: inkscape
@@ -2666,10 +2666,10 @@ SLACKBUILD SHORT DESCRIPTION:  leptonica (Image Processing Library)
 SLACKBUILD NAME: lerna
 SLACKBUILD LOCATION: ./lerna
 SLACKBUILD FILES: README lerna.SlackBuild lerna.info slack-desc
-SLACKBUILD VERSION: 5.1.6
+SLACKBUILD VERSION: 5.1.8
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/lerna/-/lerna-5.1.6.tgz
-SLACKBUILD MD5SUM: 0597fede44b95afc48a418fa8be28268
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/lerna/-/lerna-5.1.8.tgz
+SLACKBUILD MD5SUM: 71c8472defb369736a26b25c6a9d5019
 SLACKBUILD SHORT DESCRIPTION:  lerna (JavaScript tool)
 
 SLACKBUILD NAME: lfs
@@ -3917,10 +3917,10 @@ SLACKBUILD SHORT DESCRIPTION:  NDisc6 (IPV6 network utilities)
 SLACKBUILD NAME: ndpi
 SLACKBUILD LOCATION: ./ndpi
 SLACKBUILD FILES: README ndpi.SlackBuild ndpi.info slack-desc
-SLACKBUILD VERSION: 4.2
+SLACKBUILD VERSION: 4.4
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/ntop/nDPI/archive/refs/tags/4.2.tar.gz
-SLACKBUILD MD5SUM: 4c556f61cc3e5816ea0ae0b1929b76b2
+SLACKBUILD DOWNLOAD: https://github.com/ntop/nDPI/archive/refs/tags/4.4.tar.gz
+SLACKBUILD MD5SUM: fe428efafdc70d37fa7a4a4d4a80b3f2
 SLACKBUILD SHORT DESCRIPTION:  ndpi (Open Source Deep Packet Inspection Software Toolkit)
 
 SLACKBUILD NAME: neochat
@@ -4313,10 +4313,10 @@ SLACKBUILD SHORT DESCRIPTION:  notmuch (thread-based email index, search and tag
 SLACKBUILD NAME: npm-check-updates
 SLACKBUILD LOCATION: ./npm-check-updates
 SLACKBUILD FILES: README npm-check-updates.SlackBuild npm-check-updates.info slack-desc
-SLACKBUILD VERSION: 15.0.4
+SLACKBUILD VERSION: 15.2.0
 SLACKBUILD REQUIRED: npm-check node-semver
-SLACKBUILD DOWNLOAD: http://registry.npmjs.org/npm-check-updates/-/npm-check-updates-15.0.4.tgz
-SLACKBUILD MD5SUM: 8ed835dc9661eed5dc3fd4a872b075ec
+SLACKBUILD DOWNLOAD: http://registry.npmjs.org/npm-check-updates/-/npm-check-updates-15.2.0.tgz
+SLACKBUILD MD5SUM: 1ac436605cd18777b7116e6cf6389470
 SLACKBUILD SHORT DESCRIPTION:  npm-check-updates (Find newer versions of npm package dependencies)
 
 SLACKBUILD NAME: npm-check
@@ -4327,15 +4327,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://github.com/dylang/npm-check/archive/v5.9.2.tar.gz
 SLACKBUILD MD5SUM: 66a940ec13a92d211450d49477168aad
 SLACKBUILD SHORT DESCRIPTION:  npm-check (check node dependencies)
-
-SLACKBUILD NAME: ntopng
-SLACKBUILD LOCATION: ./ntopng
-SLACKBUILD FILES: README doinst.sh ntopng.SlackBuild ntopng.info rc.ntopng slack-desc
-SLACKBUILD VERSION: 5.2.1
-SLACKBUILD REQUIRED: hiredis geoipupdate rrdtool redis zeromq libmaxminddb ndpi node-uglifyjs
-SLACKBUILD DOWNLOAD: https://github.com/ntop/ntopng/archive/5.2.1/ntopng-5.2.1.tar.gz
-SLACKBUILD MD5SUM: 1dc462f0e66827f935156152ffbde2b0
-SLACKBUILD SHORT DESCRIPTION:  ntopng (next generation network top)
 
 SLACKBUILD NAME: numactl
 SLACKBUILD LOCATION: ./numactl
@@ -5015,7 +5006,7 @@ SLACKBUILD SHORT DESCRIPTION:  postgresql (object-relational database management
 SLACKBUILD NAME: postman-bin
 SLACKBUILD LOCATION: ./postman-bin
 SLACKBUILD FILES: README doinst.sh files/postman.desktop postman-bin.SlackBuild postman-bin.info slack-desc
-SLACKBUILD VERSION: 9.22.2
+SLACKBUILD VERSION: 9.23.3
 SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://dl.pstmn.io/download/latest/linux64
 SLACKBUILD MD5SUM: 
@@ -5303,10 +5294,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-bcrypt (password hashing)
 SLACKBUILD NAME: python-botocore
 SLACKBUILD LOCATION: ./python-botocore
 SLACKBUILD FILES: README python-botocore.SlackBuild python-botocore.info slack-desc
-SLACKBUILD VERSION: 1.27.23
+SLACKBUILD VERSION: 1.27.24
 SLACKBUILD REQUIRED: python-dateutil python-jmespath
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/botocore/botocore-1.27.23.tar.gz
-SLACKBUILD MD5SUM: 750edd5b826fda59b8c3229b0ef3a531
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/botocore/botocore-1.27.24.tar.gz
+SLACKBUILD MD5SUM: 54b64d238f014e415dec4aa81e092ec3
 SLACKBUILD SHORT DESCRIPTION:  python-botocore (The low-level, core functionality of boto 3)
 
 SLACKBUILD NAME: python-cached-property
@@ -6317,6 +6308,15 @@ SLACKBUILD DOWNLOAD: https://download.screamingfrog.co.uk/products/seo-spider/sc
 SLACKBUILD MD5SUM: a3df01f7884494cc4bb94c377fb550c3
 SLACKBUILD SHORT DESCRIPTION:  screamingfrogseospider (SEO Spider Tool)
 
+SLACKBUILD NAME: screentest
+SLACKBUILD LOCATION: ./screentest
+SLACKBUILD FILES: README screentest.SlackBuild screentest.info slack-desc
+SLACKBUILD VERSION: 2.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://github.com/TobiX/screentest/releases/download/2.1/screentest-2.1.tar.xz
+SLACKBUILD MD5SUM: 95bc00e7baf59fcc6c3463218fd58cfb
+SLACKBUILD SHORT DESCRIPTION:  screentest (A simple screen testing tool)
+
 SLACKBUILD NAME: scribus
 SLACKBUILD LOCATION: ./scribus
 SLACKBUILD FILES: README doinst.sh patches/01-poppler-22.02.0.patch patches/02-poppler.patch patches/03-poppler-22.03.0.patch patches/04-poppler-22.04.0.patch patches/README scribus.SlackBuild scribus.info slack-desc
@@ -7094,10 +7094,10 @@ SLACKBUILD SHORT DESCRIPTION:  termbox (ncurses alternative)
 SLACKBUILD NAME: tesseract
 SLACKBUILD LOCATION: ./tesseract
 SLACKBUILD FILES: PKGNOTE README slack-desc tesseract.SlackBuild tesseract.info
-SLACKBUILD VERSION: 5.0.1
+SLACKBUILD VERSION: 5.2.0
 SLACKBUILD REQUIRED: leptonica 
-SLACKBUILD DOWNLOAD: https://github.com/tesseract-ocr/tesseract/archive/5.0.1.tar.gz
-SLACKBUILD MD5SUM: 5b4e638bc01850278f9948938cfc390f
+SLACKBUILD DOWNLOAD: https://github.com/tesseract-ocr/tesseract/archive/5.2.0.tar.gz
+SLACKBUILD MD5SUM: 1f289de81512bca5ab9ec07d173cb7b3
 SLACKBUILD SHORT DESCRIPTION:  tesseract (Open Source OCR Engine)
 
 SLACKBUILD NAME: testdisk
