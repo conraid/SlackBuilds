@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=spice-gtk
-VERSION=0.40
+VERSION=0.41
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -114,7 +114,6 @@ meson setup \
   -D                b_lto=true \
   -D                b_pie=true \
   -D                webdav=disabled \
-  -D                celt051=disabled \
   ..
 
 ninja
