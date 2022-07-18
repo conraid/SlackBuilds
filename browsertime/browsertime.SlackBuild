@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=browsertime
-VERSION=16.11.3
+VERSION=16.11.4
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -60,7 +60,7 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
-mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
+mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}
 EDGEDRIVER_VERSION=89.0.731.0 DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $CWD/$PKGNAM-$VERSION.tgz
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
@@ -68,6 +68,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
