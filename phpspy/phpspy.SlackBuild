@@ -33,7 +33,7 @@ PRGNAM=phpspy
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=5f2368fbddc91d2c153392a6601f6d02dba123d2
 VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-17}
+BUILD=${BUILD:-18}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -108,6 +108,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
