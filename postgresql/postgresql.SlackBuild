@@ -46,7 +46,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=postgresql
 VERSION=14.3
 PG_VERSION=13
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -183,6 +183,9 @@ sed -e "s|%PG_VERSION%|$PG_VERSION|g" \
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 sed -e "s|%LIBDIRSUFFIX%|${LIBDIRSUFFIX}|g" \
     -e "s|%PG_VERSION%|$PG_VERSION|g" \
   $CWD/doinst.sh > $PKG/install/doinst.sh
