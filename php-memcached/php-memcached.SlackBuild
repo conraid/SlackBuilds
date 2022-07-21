@@ -31,7 +31,7 @@ PRGNAM=memcached
 PKGNAM=php-$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=3.2.0
 VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -115,6 +115,9 @@ grep "^.\?memcached" memcached.ini | sed 's/igbinary/php/' >> $PKG/etc/php.d/mem
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
