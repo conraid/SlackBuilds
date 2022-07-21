@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=oauth
 PKGNAM=php-$PRGNAM
 VERSION=2.0.7
-BUILD=${BUILD:-20}
+BUILD=${BUILD:-21}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -109,6 +109,9 @@ echo 'extension=oauth.so' > $PKG/etc/php.d/oauth.ini.new
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
