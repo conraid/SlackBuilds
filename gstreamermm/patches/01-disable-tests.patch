@@ -1,0 +1,41 @@
+Author: Philip Rinn <rinni@inventati.org>
+Description: Disable tests as they require gtest build as a shared library
+Last-update: 2016-10-10
+--- a/configure.ac
++++ b/configure.ac
+@@ -209,7 +209,6 @@
+                  gstreamer/src/Makefile
+                  gstreamer/gstreamermm/Makefile
+                  examples/Makefile
+-                 tests/Makefile
+                  docs/Makefile
+                  docs/reference/Doxyfile])
+ AC_OUTPUT
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -16,16 +16,6 @@
+ ACLOCAL_AMFLAGS = -I build ${ACLOCAL_FLAGS}
+ DISTCHECK_CONFIGURE_FLAGS = --enable-warnings=fatal
+ 
+-EXTRA_DIST = \
+-	tests/plugins/foo.h \
+-	tests/integration/utils.h \
+-	tests/integration/pluginbin.h \
+-	tests/resources/input-image.png \
+-	tests/mmtest.h \
+-	tests/plugins/derivedfromappsink.h \
+-	tests/plugins/derivedfromappsrc.h \
+-	tests/plugins/derivedfrombasetransform.h
+-
+ srcmm_subdirs = gstreamer/gstreamermm
+ pkgconfig_files = gstreamer/$(GSTREAMERMM_MODULE_NAME).pc
+ gstreamermm_include_HEADERS = gstreamer/gstreamermm.h
+@@ -42,7 +32,7 @@
+ endif
+ 
+ SUBDIRS = tools $(src_subdirs) $(srcmm_subdirs) \
+-          tests examples $(doc_subdirs)
++          examples $(doc_subdirs)
+ 
+ gstreamermm_includedir = $(includedir)/$(GSTREAMERMM_MODULE_NAME)
+ gstreamermm_libincludedir = $(libdir)/$(GSTREAMERMM_MODULE_NAME)/include

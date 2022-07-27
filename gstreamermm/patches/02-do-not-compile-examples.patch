@@ -1,0 +1,24 @@
+Author: Philip Rinn <rinni@inventati.org>
+Description: Don't compile examples
+Last-update: 2016-10-10
+--- a/configure.ac
++++ b/configure.ac
+@@ -208,7 +208,6 @@
+                  gstreamer/${GSTREAMERMM_MODULE_NAME}-uninstalled.pc:gstreamer/gstreamermm-uninstalled.pc.in
+                  gstreamer/src/Makefile
+                  gstreamer/gstreamermm/Makefile
+-                 examples/Makefile
+                  docs/Makefile
+                  docs/reference/Doxyfile])
+ AC_OUTPUT
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -32,7 +32,7 @@
+ endif
+ 
+ SUBDIRS = tools $(src_subdirs) $(srcmm_subdirs) \
+-          examples $(doc_subdirs)
++          $(doc_subdirs)
+ 
+ gstreamermm_includedir = $(includedir)/$(GSTREAMERMM_MODULE_NAME)
+ gstreamermm_libincludedir = $(libdir)/$(GSTREAMERMM_MODULE_NAME)/include
