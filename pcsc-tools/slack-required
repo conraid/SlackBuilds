@@ -1,0 +1,2 @@
+pcsc-lite
+pcsc-perl
