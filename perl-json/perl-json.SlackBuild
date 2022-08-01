@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=JSON
 PKGNAM=perl-$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=4.07
+SRCVERSION=4.09
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -108,7 +108,7 @@ fi
 
 if [ -d $PKG/usr/info ]; then
   rm -f $PKG/usr/info/dir
-  gzip -9 $PKG/usr/info/*.info*
+  gzip -9 $PKG/usr/info/*.info || true
 fi
 
 # Remove perllocal.pod and other special files
@@ -123,6 +123,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
