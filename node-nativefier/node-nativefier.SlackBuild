@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=nativefier
 PKGNAM=node-$(echo $PRGNAM | tr A-Z a-z)
-VERSION=48.0.0
+VERSION=49.0.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -68,7 +68,7 @@ find -L . \
   -exec chmod 644 {} \;
 
 mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
-DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $CWD/$PRGNAM-$VERSION.tgz
+DESTDIR=$PKG npm install --user root --location=global --prefix $PKG/usr $CWD/$PRGNAM-$VERSION.tgz
 
 # Remove empty dir
 rmdir $PKG/usr/etc || true
