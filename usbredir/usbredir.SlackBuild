@@ -2,7 +2,7 @@
 #
 # Slackware build script for usbredir
 #
-# Copyright 2015-2019 Corrado Franco (https://conraid.net)
+# Copyright 2015-2022 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=usbredir
-VERSION=0.8.0
+VERSION=0.13.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -73,30 +73,44 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
+tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find -L . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
 
-LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --infodir=/usr/info \
-  --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --enable-static=no \
-  --enable-shared=yes \
-  --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
+export CFLAGS="$SLKCFLAGS"
+export CXXFLAGS="$SLKCFLAGS"
+mkdir meson-build
+cd meson-build
+meson setup \
+  --prefix          /usr \
+  --libdir          lib${LIBDIRSUFFIX} \
+  --libexecdir      /usr/libexec \
+  --sysconfdir      /etc \
+  --localstatedir   /var \
+  --mandir          /usr/man \
+  --infodir         /usr/info \
+  --bindir          /usr/bin \
+  --sbindir         /usr/sbin \
+  --includedir      /usr/include \
+  --datadir         /usr/share \
+  --buildtype       release \
+  --default-library shared \
+  --buildtype       plain \
+  --auto-features   enabled \
+  --wrap-mode       nodownload \
+  -D                b_lto=true \
+  -D                b_pie=true \
+  ..
 
-make
-make DESTDIR=$PKG install
+ninja
+DESTDIR=$PKG ninja install
+cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -115,6 +129,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
