@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=lerna
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=5.3.0
+SRCVERSION=5.4.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -63,7 +63,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
 mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
-DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $CWD/$PKGNAM-$VERSION.tgz
+DESTDIR=$PKG npm install --user root --location=global --prefix $PKG/usr $CWD/$PKGNAM-$VERSION.tgz
 
 # Non-deterministic race in npm gives 777 permissions to random directories.
 # See https://github.com/npm/npm/issues/9359 for details.
