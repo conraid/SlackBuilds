@@ -801,7 +801,7 @@ SLACKBUILD SHORT DESCRIPTION:  coffeescript (Unfancy JavaScript)
 
 SLACKBUILD NAME: collectd
 SLACKBUILD LOCATION: ./collectd
-SLACKBUILD FILES: README collectd.SlackBuild collectd.info doinst.sh rc.collectd slack-desc slack-required
+SLACKBUILD FILES: README collectd.SlackBuild collectd.info doinst.sh patches/mount.patch rc.collectd slack-desc slack-required
 SLACKBUILD VERSION: 5.12.0
 SLACKBUILD REQUIRED: audit hiredis libdbi libesmtp libmemcached libmicrohttpd liboping libstatgrab libvirt lua protobuf-c rrdtool yajl postgresql
 SLACKBUILD DOWNLOAD: https://github.com/collectd/collectd/releases/download/collectd-5.12.0/collectd-5.12.0.tar.bz2
@@ -4790,10 +4790,10 @@ SLACKBUILD SHORT DESCRIPTION:  php-apc (APC Alternative PHP Cache)
 SLACKBUILD NAME: php-ast
 SLACKBUILD LOCATION: ./php-ast
 SLACKBUILD FILES: README doinst.sh files/ast.ini php-ast.SlackBuild php-ast.info slack-desc
-SLACKBUILD VERSION: 1.0.16
+SLACKBUILD VERSION: 1.1.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/nikic/php-ast/archive/v1.0.16.tar.gz
-SLACKBUILD MD5SUM: 06ac3a7c5110c0f1e2e70c19cea4c392
+SLACKBUILD DOWNLOAD: https://github.com/nikic/php-ast/archive/v1.1.0.tar.gz
+SLACKBUILD MD5SUM: 0b4764625ac8372b6b6699597a65c15b
 SLACKBUILD SHORT DESCRIPTION:  php-ast (Extension exposing PHP 7 abstract syntax tree)
 
 SLACKBUILD NAME: php-composer
@@ -5069,10 +5069,10 @@ SLACKBUILD SHORT DESCRIPTION:  protobuf-c (C bindings for Google's Protocol Buff
 SLACKBUILD NAME: protobuf
 SLACKBUILD LOCATION: ./protobuf
 SLACKBUILD FILES: README protobuf.SlackBuild protobuf.info slack-desc
-SLACKBUILD VERSION: 21.4
+SLACKBUILD VERSION: 21.5
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/google/protobuf/archive/v21.4/protobuf-21.4.tar.gz
-SLACKBUILD MD5SUM: f0876575d00775a32912895070c963b2
+SLACKBUILD DOWNLOAD: https://github.com/google/protobuf/archive/v21.5/protobuf-21.5.tar.gz
+SLACKBUILD MD5SUM: 5a1093bf62e4c60260536d1c0b64342d
 SLACKBUILD SHORT DESCRIPTION:  protobuf (Google's data interchange format)
 
 SLACKBUILD NAME: psensor
@@ -5330,10 +5330,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-bcrypt (password hashing)
 SLACKBUILD NAME: python-botocore
 SLACKBUILD LOCATION: ./python-botocore
 SLACKBUILD FILES: README python-botocore.SlackBuild python-botocore.info slack-desc slack-required
-SLACKBUILD VERSION: 1.27.47
+SLACKBUILD VERSION: 1.27.48
 SLACKBUILD REQUIRED: python-dateutil python-jmespath
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/botocore/botocore-1.27.47.tar.gz
-SLACKBUILD MD5SUM: d39aca12995bb8f4e75c4d8ece1a3a98
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/botocore/botocore-1.27.48.tar.gz
+SLACKBUILD MD5SUM: d89101e16845e44ae798124f0dca97e3
 SLACKBUILD SHORT DESCRIPTION:  python-botocore (The low-level, core functionality of boto 3)
 
 SLACKBUILD NAME: python-build
@@ -6545,10 +6545,10 @@ SLACKBUILD SHORT DESCRIPTION:  siege (http server benchmark)
 SLACKBUILD NAME: signal-desktop-bin
 SLACKBUILD LOCATION: ./signal-desktop-bin
 SLACKBUILD FILES: README doinst.sh signal-desktop-bin.SlackBuild signal-desktop-bin.info slack-desc
-SLACKBUILD VERSION: 5.53.0
+SLACKBUILD VERSION: 5.54.0
 SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://updates.signal.org/desktop/apt/pool/main/s/signal-desktop/signal-desktop_5.53.0_amd64.deb
-SLACKBUILD MD5SUM: 5cebe43eba48a068226d38c63c472f1e
+SLACKBUILD DOWNLOAD: https://updates.signal.org/desktop/apt/pool/main/s/signal-desktop/signal-desktop_5.54.0_amd64.deb
+SLACKBUILD MD5SUM: 850017da8b3a25fcf30614314722336f
 SLACKBUILD SHORT DESCRIPTION:  signal-desktop-bin (Signal for Desktop)
 
 SLACKBUILD NAME: signon-kwallet-extension
@@ -7953,10 +7953,10 @@ SLACKBUILD SHORT DESCRIPTION:  wp-cli (A command line interface for WordPress)
 SLACKBUILD NAME: wpebackend-fdo
 SLACKBUILD LOCATION: ./wpebackend-fdo
 SLACKBUILD FILES: README slack-desc slack-required wpebackend-fdo.SlackBuild wpebackend-fdo.info
-SLACKBUILD VERSION: 1.12.0
+SLACKBUILD VERSION: 1.12.1
 SLACKBUILD REQUIRED: libwpe
-SLACKBUILD DOWNLOAD: https://wpewebkit.org/releases/wpebackend-fdo-1.12.0.tar.xz
-SLACKBUILD MD5SUM: c43b34a4b4933bcd80068ae5776ee346
+SLACKBUILD DOWNLOAD: https://wpewebkit.org/releases/wpebackend-fdo-1.12.1.tar.xz
+SLACKBUILD MD5SUM: 494f4a5b2bd89dacef37b69534b2e1ce
 SLACKBUILD SHORT DESCRIPTION:  wpebackend-fdo (freedesktop.org backend for WPE WebKit)
 
 SLACKBUILD NAME: wpscan
@@ -8097,10 +8097,10 @@ SLACKBUILD SHORT DESCRIPTION:  yapet
 SLACKBUILD NAME: yara-python
 SLACKBUILD LOCATION: ./yara-python
 SLACKBUILD FILES: README slack-desc slack-required yara-python.SlackBuild yara-python.info
-SLACKBUILD VERSION: 4.2.0
+SLACKBUILD VERSION: 4.2.3
 SLACKBUILD REQUIRED: yara
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/y/yara-python/yara-python-4.2.0.tar.gz
-SLACKBUILD MD5SUM: af223eda0d8f8416e0add1f7bfb8612e
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/y/yara-python/yara-python-4.2.3.tar.gz
+SLACKBUILD MD5SUM: 0580fe8bb4601336f2a4a63b23cbeaa7
 SLACKBUILD SHORT DESCRIPTION:  yara-python (The Python interface for YARA)
 
 SLACKBUILD NAME: yara
