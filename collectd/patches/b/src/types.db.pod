@@ -1,0 +1,96 @@
+=encoding UTF-8
+
+=head1 NAME
+
+types.db - Data-set specifications for the system statistics collection daemon
+B<collectd>
+
+=head1 SYNOPSIS
+
+  bitrate    value:GAUGE:0:4294967295
+  counter    value:COUNTER:U:U
+  if_octets  rx:COUNTER:0:4294967295, tx:COUNTER:0:4294967295
+
+=head1 DESCRIPTION
+
+The C<types.db> file contains collectd's metric type specifications. Each line
+describes one metric type, which is called "data set" in collectd. Each line
+consists of two or more fields delimited by spaces and/or horizontal tabs.
+
+For example, the following defines two data sets, "bytes" and "total_bytes".
+
+  bytes        value:GAUGE:0:U
+  total_bytes  value:DERIVE:0:U
+
+The first field defines the name of the data set. By convention, data set names
+use lower-case alphanumeric characters and underscores (C<_>) only. Also by
+convention, if a metric makes sense both as a cumulative metric (e.g.
+C<DERIVE>) I<and> a non-cumulative metric (i.e. C<GAUGE>), the cumulative
+metric gets a C<total_> prefix. For example, C<bytes> is a C<GAUGE> and
+C<total_bytes> is a C<DERIVE>.
+
+The second and each following field defines a named metric value, called "data
+source".  New data sets with multiple data sources are strongly discouraged.
+Each field is a colon-separated tuple of the data source name, value type,
+minimum and maximum values: I<ds-name>B<:>I<ds-type>B<:>I<min>B<:>I<max>.
+
+=over 4
+
+=item
+
+I<ds-name> is, by convention, a lower-case alphanumeric string. If the data set
+contains a single data source, it is called "value" by convention. Data source
+names must be unique within a data set.
+
+=item
+
+I<ds-type> may be B<DERIVE>, B<GAUGE>, or B<COUNTER>. For historic reasons a
+type called B<ABSOLUTE> is also supported, but its use is strongly discouraged,
+and it should not be used for new metric type definitions.
+
+=item
+
+I<min> and I<max> define the range of valid values this data source. Either or
+both may be unbounded, which is specified by providing C<U> instead of a
+number. For cumulative metric values, I<min> and I<max> apply to the value's
+rate, not the raw cumulative metric value.
+
+=back
+
+=head1 FILES
+
+The location of the types.db file is defined by the B<TypesDB> configuration
+option (see L<collectd.conf(5)>). It defaults to collectd's shared data
+directory, i.E<nbsp>e. F<I<prefix>/share/collectd/>.
+
+=head1 CUSTOM TYPES
+
+If you want to specify custom types, you should do so by specifying a custom
+file in addition to the default one (see L<FILES>) above. You can do that by
+having multiple B<TypesDB> statements in your configuration file or by
+specifying more than one file in one line.
+
+For example:
+
+ TypesDB "/opt/collectd/share/collectd/types.db"
+ TypesDB "/opt/collectd/etc/types.db.custom"
+
+B<Note>: Make sure to make this file available on all systems if you're
+sending values over the network.
+
+=head1 SEE ALSO
+
+L<collectd(1)>,
+L<collectd.conf(5)>,
+L<rrdcreate(1)>
+
+=head1 AUTHOR
+
+B<collectd> has been written by Florian Forster
+E<lt>octoE<nbsp>atE<nbsp>collectd.orgE<gt>.
+
+This manpage has been written by Sebastian Harl
+E<lt>shE<nbsp>atE<nbsp>tokkee.orgE<gt>.
+
+=cut
+
