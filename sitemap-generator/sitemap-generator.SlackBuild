@@ -2,7 +2,7 @@
 #
 # Slackware build script for generator
 #
-# Copyright 2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2020-2022 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ PRGNAM=sitemap-generator
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=8.5.1
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -63,7 +63,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
 mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
-DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $CWD/$PKGNAM-$VERSION.tgz
+DESTDIR=$PKG npm install --user root --location=global --prefix $PKG/usr $CWD/$PKGNAM-$VERSION.tgz
 
 # Remove empty dir
 rmdir $PKG/usr/etc || true
@@ -83,6 +83,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}

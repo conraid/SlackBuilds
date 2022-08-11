@@ -2,7 +2,7 @@
 #
 # Slackware build script for bootlint
 #
-# Copyright 2015-2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2015-2022 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=bootlint
 VERSION=1.1.0
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -61,12 +61,16 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
 mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
-DESTDIR=$PKG npm install --user root -g --prefix $PKG/usr $CWD/$PKGNAM-$VERSION.tgz
+DESTDIR=$PKG npm install --user root --location=global --prefix $PKG/usr $CWD/$PKGNAM-$VERSION.tgz
 
 cd $PKG
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find -L . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
 
 # Remove empty dir
 rmdir $PKG/usr/etc || true
@@ -87,6 +91,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
