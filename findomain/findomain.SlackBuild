@@ -30,9 +30,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=Findomain
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=8.1.1
+SRCVERSION=8.2.1
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -105,7 +105,7 @@ CARGO_HOME=.cargo \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 cargo build --release $CARGOTARGET
-cargo install --frozen --offline --no-track --root "${PKG}/usr" --path="."
+cargo install --no-track --root "${PKG}/usr" --path="."
 
 install -Dm644 "$PKGNAM.1" -t "$PKG/usr/man/man1"
 
@@ -123,6 +123,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
