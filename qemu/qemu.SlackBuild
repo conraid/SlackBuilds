@@ -29,9 +29,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=qemu
-SRCVERSION=7.0.0
+SRCVERSION=7.1.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -130,7 +130,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-vnc \
   --enable-vnc-sasl \
   --enable-vnc-jpeg \
-  --enable-vnc-png \
   --enable-virtfs \
   --enable-curl \
   --enable-kvm \
