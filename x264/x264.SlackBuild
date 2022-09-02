@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=x264
-SRCVERSION=baee400fa9ced6f5481a728138fed6e867b0ff7f
+SRCVERSION=f7074e12d90de71f22aebd5040b8c6d31ca8f926
 VERSION=$(echo $SRCVERSION | head -c7)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -128,6 +128,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
