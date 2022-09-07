@@ -106,7 +106,7 @@ check_processor() {
 
   check=$?
 
-  egrep 'svm' /proc/cpuinfo > /dev/null
+  grep -E 'svm' /proc/cpuinfo > /dev/null
 
   if [ "$?" -eq "0" ];then
     MODULES="$MODULES kvm_amd kvm"
