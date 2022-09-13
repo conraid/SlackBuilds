@@ -31,8 +31,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=pikepdf
 PKGNAM=python-$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=d8b3d7681fc53afa18c5d33ba13d21e000c2cf84
-VERSION=$(echo $SRCVERSION | tr - _ | head -c7)
+SRCVERSION=6.0.0.post1
+VERSION=$(echo $SRCVERSION | tr - _ )
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -75,8 +75,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PRGNAM-$SRCVERSION
-#tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz # Not build without .git directory
-git clone https://github.com/pikepdf/pikepdf.git $PRGNAM-$SRCVERSION
+tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz
 cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
