@@ -34,7 +34,7 @@ PRGNAM=gimp
 PKGNAM=gimp3
 SRCVERSION=2.99.12
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -126,6 +126,7 @@ meson setup \
   -D                appdata-test=disabled \
   -D                gi-docgen=disabled \
   -D                headless-tests=disabled \
+  -D                heif=disabled \
   ..
 
 ninja
