@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=obs-studio
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=28.0.2
+SRCVERSION=28.0.3
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -71,31 +71,7 @@ mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PRGNAM-$SRCVERSION
 tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION.tar.gz
-tar xvf $CWD/$CEF_ROOT.tar.bz2
-
-cd $CEF_ROOT
-  sed -e '/tests\/cefsimple/d' \
-      -e '/tests\/gtest/d' \
-      -e '/tests\/ceftests/d' \
-      -i CMakeLists.txt
-
-  strip -v Release/*.so
-  cmake \
-    -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
-    -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
-    -DCMAKE_BUILD_TYPE=Release .
-  make libcef_dll_wrapper
-cd ..
-
 cd $PRGNAM-$SRCVERSION
-
-git clone http://github.com/obsproject/obs-amd-encoder.git plugins/enc-amf --recurse-submodules
-git clone http://github.com/obsproject/obs-websocket.git plugins/obs-websocket --recurse-submodules
-git clone http://github.com/Mixer/ftl-sdk.git  plugins/obs-outputs/ftl-sdk --recurse-submodules
-git clone http://github.com/obsproject/obs-browser.git plugins/obs-browser --recurse-submodules
-git clone http://github.com/palana/Syphon-Framework.git --recurse-submodules
-
-sed -e "s/^obs_install/#obs_install/" -i libobs/CMakeLists.txt
 
 chown -R root:root .
 find . \
@@ -125,13 +101,12 @@ cmake -Wno-dev \
   -DUNIX_STRUCTURE=1 \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DCMAKE_BUILD_TYPE=Release \
-  -DENABLE_BROWSER=ON \
+  -DENABLE_BROWSER=OFF \
   -DENABLE_VLC=OFF \
   -DENABLE_JACK=ON \
   -DENABLE_WAYLAND=OFF \
-  -DBUILD_BROWSER:BOOL=ON \
+  -DBUILD_BROWSER:BOOL=OFF \
   -DENABLE_NEW_MPEGTS_OUTPUT=OFF \
-  -DCEF_ROOT_DIR="../../$CEF_ROOT" \
   ..
 
 make
