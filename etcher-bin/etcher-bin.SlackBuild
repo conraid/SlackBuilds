@@ -28,9 +28,9 @@
 set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=balena-etcher-electron
+PRGNAM=balena-etcher
 PKGNAM=etcher-bin
-SRCVERSION=1.7.9
+SRCVERSION=1.8.13
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -54,9 +54,7 @@ if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
   exit 0
 fi
 
-if [ "$ARCH" = "i?86" ]; then
-  DEBARCH="i386"
-elif [ "$ARCH" = "x86_64" ]; then
+if [ "$ARCH" = "x86_64" ]; then
   DEBARCH="amd64"
 else
   echo "This platform is not supported"
@@ -82,6 +80,9 @@ rmdir $PKG/usr/share/doc
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
