@@ -32,7 +32,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=slpkg
-VERSION=4.3.1
+VERSION=4.3.3
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -94,8 +94,8 @@ install -Dm755 bin/slpkg $PKG/usr/sbin/slpkg
 install -Dm644 man/slpkg.1 $PKG/usr/man/man1/slpkg.1
 
 # Install config files
-install -Dm644 configs/slpkg.yml $PKG/etc/slpkg/slpkg.yml.new
-install -Dm644 configs/blacklist.yml $PKG/etc/slpkg/blacklist.yml.new
+install -Dm644 configs/slpkg.toml $PKG/etc/slpkg/slpkg.toml.new
+install -Dm644 configs/blacklist.toml $PKG/etc/slpkg/blacklist.toml.new
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
