@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=flatbuffers
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=22.11.23
+SRCVERSION=22.12.06
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -116,7 +116,7 @@ cd ..
 
 # Install python binding
 cd python
-VERSION=$VERSION python setup.py install --root="$PKG"
+VERSION=$VERSION python3 setup.py install --root="$PKG"
 cd -
 
 # Don't ship .la files:
