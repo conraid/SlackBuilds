@@ -30,9 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libopenshot
-SRCVERSION=23da61bf84534ae69635fac8fa2c4d17262baaca
+SRCVERSION=0.3.0
 VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
