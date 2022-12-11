@@ -1,14 +1,16 @@
 From: Aron Xu <aron@debian.org>
 Date: Mon, 13 Feb 2012 14:45:08 +0800
-Subject: get sev by name
+Subject: Add ability to specify destination ports by name
 
 ---
- netcat.c |    7 ++++++-
+ netcat.c | 7 ++++++-
  1 file changed, 6 insertions(+), 1 deletion(-)
 
+diff --git a/netcat.c b/netcat.c
+index 487e028..12b9abd 100644
 --- a/netcat.c
 +++ b/netcat.c
-@@ -1721,11 +1721,16 @@ strtoport(char *portstr, int udp)
+@@ -1716,11 +1716,16 @@ strtoport(char *portstr, int udp)
  void
  build_ports(char *p)
  {

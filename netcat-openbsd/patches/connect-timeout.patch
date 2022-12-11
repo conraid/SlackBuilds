@@ -1,11 +1,13 @@
 From: Aron Xu <aron@debian.org>
 Date: Mon, 13 Feb 2012 14:43:56 +0800
-Subject: connect timeout
+Subject: Fix connect() timeout
 
 ---
- netcat.c |   84 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 79 insertions(+), 5 deletions(-)
+ netcat.c | 82 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 77 insertions(+), 5 deletions(-)
 
+diff --git a/netcat.c b/netcat.c
+index 16b9ae6..487e028 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -90,6 +90,7 @@
@@ -27,17 +29,16 @@ Subject: connect timeout
  /* Command Line Options */
  int	dflag;					/* detached, no stdin */
  int	Fflag;					/* fdpass sock to stdout */
-@@ -214,6 +219,9 @@ ssize_t drainbuf(int, unsigned char *, s
+@@ -214,6 +219,8 @@ ssize_t drainbuf(int, unsigned char *, size_t *);
  ssize_t fillbuf(int, unsigned char *, size_t *);
- # endif
+ #endif
  
-+static int connect_with_timeout(int fd, const struct sockaddr *sa,
-+        socklen_t salen, int ctimeout);
++static int connect_with_timeout(int, const struct sockaddr *, socklen_t, int);
 +
  int
  main(int argc, char *argv[])
  {
-@@ -1112,18 +1120,21 @@ remote_connect(const char *host, const c
+@@ -1110,18 +1117,21 @@ remote_connect(const char *host, const char *port, struct addrinfo hints,
  			}
  		}
  
@@ -64,12 +65,12 @@ Subject: connect timeout
  		}
  
  		save_errno = errno;
-@@ -1165,6 +1176,69 @@ timeout_connect(int s, const struct sock
+@@ -1163,6 +1173,68 @@ timeout_connect(int s, const struct sockaddr *name, socklen_t namelen)
  	return ret;
  }
  
 +static int connect_with_timeout(int fd, const struct sockaddr *sa,
-+		                socklen_t salen, int ctimeout)
++    socklen_t salen, int ctimeout)
 +{
 +	int err;
 +	struct timeval tv, *tvp = NULL;
@@ -105,8 +106,7 @@ Subject: connect timeout
 +
 +		/* call select */
 +		do {
-+			err = select(fd + 1, NULL, &connect_fdset,
-+				     NULL, tvp);
++			err = select(fd + 1, NULL, &connect_fdset, NULL, tvp);
 +		} while (err < 0 && errno == EINTR);
 +
 +		/* select error */

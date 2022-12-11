@@ -1,12 +1,14 @@
 From: Guilhem Moulin <guilhem@debian.org>
 Date: Mon, 22 Oct 2018 04:50:54 +0200
-Subject: use -s/-p flags to specify listen address
+Subject: Add ability to use -s/-p flags to specify listening address
 
 ---
- nc.1     |   18 ++++++++++++++----
- netcat.c |   47 +++++++++++++++++++++++++++++++----------------
+ nc.1     | 18 ++++++++++++++----
+ netcat.c | 47 +++++++++++++++++++++++++++++++----------------
  2 files changed, 45 insertions(+), 20 deletions(-)
 
+diff --git a/nc.1 b/nc.1
+index fc52dcf..3b92227 100644
 --- a/nc.1
 +++ b/nc.1
 @@ -143,8 +143,20 @@ multiple hosts.
@@ -41,17 +43,19 @@ Subject: use -s/-p flags to specify listen address
  .Fl x .
  .It Fl T Ar keyword
  Change the IPv4 TOS/IPv6 traffic class value.
+diff --git a/netcat.c b/netcat.c
+index 979afb7..35ebca9 100644
 --- a/netcat.c
 +++ b/netcat.c
-@@ -510,27 +510,42 @@ main(int argc, char *argv[])
- # endif
+@@ -508,27 +508,42 @@ main(int argc, char *argv[])
+ #endif
  
  	/* Cruft to make sure options are clean, and used properly. */
 -	if (argc == 1 && family == AF_UNIX) {
--# if defined(IPPROTO_DCCP) && defined(SOCK_DCCP)
+-#if defined(IPPROTO_DCCP) && defined(SOCK_DCCP)
 -		if (dccpflag)
 -			errx(1, "cannot use -Z and -U");
--# endif
+-#endif
 -		host = argv[0];
 -	} else if (argc == 0 && lflag) {
 -		if (sflag)
@@ -85,10 +89,10 @@ Subject: use -s/-p flags to specify listen address
  		usage(1);
  
 +	if (family == AF_UNIX) {
-+# if defined(IPPROTO_DCCP) && defined(SOCK_DCCP)
++#if defined(IPPROTO_DCCP) && defined(SOCK_DCCP)
 +		if (dccpflag)
 +			errx(1, "cannot use -Z and -U");
-+# endif
++#endif
 +		if (uport && *uport)
 +			errx(1, "cannot use port with -U");
 +		if (!host)
@@ -99,6 +103,6 @@ Subject: use -s/-p flags to specify listen address
 +	if (lflag && zflag)
 +		errx(1, "cannot use -z and -l");
 +
- # if defined(TLS)
+ #ifdef HAVE_TLS
  	if (usetls) {
  		if (Cflag && unveil(Cflag, "r") == -1)

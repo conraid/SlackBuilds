@@ -1,38 +1,44 @@
 From: Aron Xu <aron@debian.org>
 Date: Mon, 13 Feb 2012 15:59:31 +0800
-Subject: port to linux with libsd
+Subject: Port to linux with libbsd
 
+Forwarded: not-needed
 ---
- Makefile |   15 ++++++
- nc.1     |    3 -
- netcat.c |  139 +++++++++++++++++++++++++++++++++++++++++++++------------------
- socks.c  |   48 ++++++++++-----------
- 4 files changed, 140 insertions(+), 65 deletions(-)
+ Makefile |  16 +++++++-
+ nc.1     |   3 +-
+ netcat.c | 135 ++++++++++++++++++++++++++++++++++++++++++++++-----------------
+ socks.c  |  48 +++++++++++------------
+ 4 files changed, 139 insertions(+), 63 deletions(-)
 
+diff --git a/Makefile b/Makefile
+index 5f20c40..93ca5ee 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -5,4 +5,17 @@ SRCS=	netcat.c atomicio.c socks.c
+@@ -5,4 +5,18 @@ SRCS=	netcat.c atomicio.c socks.c
  LDADD+= -ltls -lssl -lcrypto
  DPADD+=  ${LIBTLS} ${LIBSSL} ${LIBCRYPTO}
  
 -.include <bsd.prog.mk>
-+LIBS=  `pkg-config --libs libbsd` -lresolv
++PKG_CONFIG ?= pkg-config
++LIBS=  `$(PKG_CONFIG) --libs libbsd` -lresolv
 +OBJS=  $(SRCS:.c=.o)
 +CFLAGS=  -g -O2
 +LDFLAGS=  -Wl,--no-add-needed
 +
 +all: nc
 +nc: $(OBJS)
-+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) $(LIBS) -o nc
++	$(CC) $(CFLAGS) $(LDFLAGS) $^ $(LIBS) -o $@
 +
 +$(OBJS): %.o: %.c
 +	$(CC) $(CFLAGS) -c $< -o $@
 +
 +clean:
 +	rm -f $(OBJS) nc
+diff --git a/nc.1 b/nc.1
+index 0ef318e..5a2b7b1 100644
 --- a/nc.1
 +++ b/nc.1
-@@ -213,8 +213,6 @@ Proxy authentication is only supported f
+@@ -213,8 +213,6 @@ Proxy authentication is only supported for HTTP CONNECT proxies at present.
  Specify the source port
  .Nm
  should use, subject to privilege restrictions and availability.
@@ -41,7 +47,7 @@ Subject: port to linux with libsd
  .It Fl R Ar CAfile
  Load the root CA bundle for TLS certificate verification from
  .Ar CAfile ,
-@@ -273,6 +271,7 @@ For the IPv4 TOS/IPv6 traffic class valu
+@@ -273,6 +271,7 @@ For the IPv4 TOS/IPv6 traffic class value,
  may be one of
  .Cm critical ,
  .Cm inetcontrol ,
@@ -49,6 +55,8 @@ Subject: port to linux with libsd
  .Cm lowdelay ,
  .Cm netcontrol ,
  .Cm throughput ,
+diff --git a/netcat.c b/netcat.c
+index 4a26db6..45b9b85 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -32,6 +32,8 @@
@@ -123,14 +131,14 @@ Subject: port to linux with libsd
  			uflag = 1;
  			break;
  		case 'V':
-+# if defined(RT_TABLEID_MAX)
++#ifdef RT_TABLEID_MAX
  			rtableid = (int)strtonum(optarg, 0,
  			    RT_TABLEID_MAX, &errstr);
  			if (errstr)
  				errx(1, "rtable %s: %s", errstr, optarg);
-+# else
++#else
 +			errx(1, "no alternate routing table support available");
-+# endif
++#endif
  			break;
  		case 'v':
  			vflag = 1;
@@ -138,11 +146,11 @@ Subject: port to linux with libsd
  			oflag = optarg;
  			break;
  		case 'S':
-+# if defined(TCP_MD5SIG)
++#ifdef TCP_MD5SIG
  			Sflag = 1;
-+# else
++#else
 +			errx(1, "no TCP MD5 signature support available");
-+# endif
++#endif
  			break;
  		case 'T':
  			errstr = NULL;
@@ -150,11 +158,11 @@ Subject: port to linux with libsd
  	argc -= optind;
  	argv += optind;
  
-+# if defined(RT_TABLEID_MAX)
++#ifdef RT_TABLEID_MAX
  	if (rtableid >= 0)
  		if (setrtable(rtableid) == -1)
  			err(1, "setrtable");
-+# endif
++#endif
  
  	/* Cruft to make sure options are clean, and used properly. */
  	if (argc == 1 && family == AF_UNIX) {
@@ -203,17 +211,6 @@ Subject: port to linux with libsd
  	if (!lflag && kflag)
  		errx(1, "must use -l with -k");
  	if (uflag && usetls)
-@@ -458,8 +495,8 @@ main(int argc, char *argv[])
- 		} else {
- 			strlcpy(unix_dg_tmp_socket_buf, "/tmp/nc.XXXXXXXXXX",
- 			    UNIX_DG_TMP_SOCKET_SIZE);
--			if (mktemp(unix_dg_tmp_socket_buf) == NULL)
--				err(1, "mktemp");
-+			if (mkstemp(unix_dg_tmp_socket_buf) == -1)
-+				err(1, "mkstemp");
- 			unix_dg_tmp_socket = unix_dg_tmp_socket_buf;
- 		}
- 	}
 @@ -580,10 +617,6 @@ main(int argc, char *argv[])
  			if (s == -1)
  				err(1, NULL);
@@ -236,18 +233,18 @@ Subject: port to linux with libsd
  				if (vflag)
  					report_sock("Connection received",
  					    (struct sockaddr *)&z, len,
-@@ -962,8 +991,10 @@ remote_connect(const char *host, const c
+@@ -960,8 +989,10 @@ remote_connect(const char *host, const char *port, struct addrinfo hints,
  		if (sflag || pflag) {
  			struct addrinfo ahints, *ares;
  
-+# if defined (SO_BINDANY)
++#ifdef SO_BINDANY
  			/* try SO_BINDANY, but don't insist */
  			setsockopt(s, SOL_SOCKET, SO_BINDANY, &on, sizeof(on));
-+# endif
++#endif
  			memset(&ahints, 0, sizeof(struct addrinfo));
  			ahints.ai_family = res->ai_family;
  			ahints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
-@@ -1076,9 +1107,15 @@ local_listen(const char *host, const cha
+@@ -1074,9 +1105,15 @@ local_listen(const char *host, const char *port, struct addrinfo hints)
  		    res->ai_protocol)) == -1)
  			continue;
  
@@ -255,33 +252,33 @@ Subject: port to linux with libsd
 +		if (ret == -1)
 +			err(1, NULL);
 +
-+# if defined(SO_REUSEPORT)
++#ifdef SO_REUSEPORT
  		ret = setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &x, sizeof(x));
  		if (ret == -1)
  			err(1, NULL);
-+# endif
++#endif
  
  		set_common_sockopts(s, res->ai_family);
  
-@@ -1548,11 +1585,13 @@ set_common_sockopts(int s, int af)
+@@ -1545,11 +1582,13 @@ set_common_sockopts(int s, int af)
  {
  	int x = 1;
  
-+# if defined(TCP_MD5SIG)
++#ifdef TCP_MD5SIG
  	if (Sflag) {
  		if (setsockopt(s, IPPROTO_TCP, TCP_MD5SIG,
- 			&x, sizeof(x)) == -1)
+ 		    &x, sizeof(x)) == -1)
  			err(1, NULL);
  	}
-+# endif
++#endif
  	if (Dflag) {
  		if (setsockopt(s, SOL_SOCKET, SO_DEBUG,
- 			&x, sizeof(x)) == -1)
-@@ -1563,9 +1602,14 @@ set_common_sockopts(int s, int af)
+ 		    &x, sizeof(x)) == -1)
+@@ -1560,9 +1599,14 @@ set_common_sockopts(int s, int af)
  		    IP_TOS, &Tflag, sizeof(Tflag)) == -1)
  			err(1, "set IP ToS");
  
-+#if defined(IPV6_TCLASS)
++#ifdef IPV6_TCLASS
  		else if (af == AF_INET6 && setsockopt(s, IPPROTO_IPV6,
  		    IPV6_TCLASS, &Tflag, sizeof(Tflag)) == -1)
  			err(1, "set IPv6 traffic class");
@@ -292,11 +289,11 @@ Subject: port to linux with libsd
  	}
  	if (Iflag) {
  		if (setsockopt(s, SOL_SOCKET, SO_RCVBUF,
-@@ -1583,19 +1627,34 @@ set_common_sockopts(int s, int af)
+@@ -1580,19 +1624,34 @@ set_common_sockopts(int s, int af)
  		    IP_TTL, &ttl, sizeof(ttl)))
  			err(1, "set IP TTL");
  
-+#if defined(IPV6_UNICAST_HOPS)
++#ifdef IPV6_UNICAST_HOPS
  		else if (af == AF_INET6 && setsockopt(s, IPPROTO_IPV6,
  		    IPV6_UNICAST_HOPS, &ttl, sizeof(ttl)))
  			err(1, "set IPv6 unicast hops");
@@ -307,7 +304,7 @@ Subject: port to linux with libsd
  	}
  
  	if (minttl != -1) {
-+#if defined(IP_MINTTL)
++#ifdef IP_MINTTL
  		if (af == AF_INET && setsockopt(s, IPPROTO_IP,
  		    IP_MINTTL, &minttl, sizeof(minttl)))
  			err(1, "set IP min TTL");
@@ -316,7 +313,7 @@ Subject: port to linux with libsd
 +			errx(1, "can't set IP min TTL (unavailable)");
 +#endif
  
-+#if defined(IPV6_MINHOPCOUNT)
++#ifdef IPV6_MINHOPCOUNT
  		else if (af == AF_INET6 && setsockopt(s, IPPROTO_IPV6,
  		    IPV6_MINHOPCOUNT, &minttl, sizeof(minttl)))
  			err(1, "set IPv6 min hop count");
@@ -327,7 +324,7 @@ Subject: port to linux with libsd
  	}
  }
  
-@@ -1630,6 +1689,7 @@ process_tos_opt(char *s, int *val)
+@@ -1627,6 +1686,7 @@ process_tos_opt(char *s, int *val)
  		{ "cs7",		IPTOS_DSCP_CS7 },
  		{ "ef",			IPTOS_DSCP_EF },
  		{ "inetcontrol",	IPTOS_PREC_INTERNETCONTROL },
@@ -335,17 +332,17 @@ Subject: port to linux with libsd
  		{ "lowdelay",		IPTOS_LOWDELAY },
  		{ "netcontrol",		IPTOS_PREC_NETCONTROL },
  		{ "reliability",	IPTOS_RELIABILITY },
-@@ -1794,6 +1854,9 @@ report_sock(const char *msg, const struc
+@@ -1791,6 +1851,9 @@ report_sock(const char *msg, const struct sockaddr *sa, socklen_t salen,
  void
  help(void)
  {
-+# if defined(DEBIAN_VERSION)
-+        fprintf(stderr, "OpenBSD netcat (Debian patchlevel " DEBIAN_VERSION ")\n");
-+# endif
++#ifdef DEBIAN_VERSION
++	fprintf(stderr, "OpenBSD netcat (Debian patchlevel " DEBIAN_VERSION ")\n");
++#endif
  	usage(0);
  	fprintf(stderr, "\tCommand Summary:\n\
  	\t-4		Use IPv4\n\
-@@ -1836,7 +1899,7 @@ help(void)
+@@ -1833,7 +1896,7 @@ help(void)
  	\t-Z		Peer certificate file\n\
  	\t-z		Zero-I/O mode [used for scanning]\n\
  	Port numbers can be individual or ranges: lo-hi [inclusive]\n");
@@ -354,6 +351,8 @@ Subject: port to linux with libsd
  }
  
  void
+diff --git a/socks.c b/socks.c
+index 7c7448c..8db10d4 100644
 --- a/socks.c
 +++ b/socks.c
 @@ -38,7 +38,7 @@
@@ -365,7 +364,7 @@ Subject: port to linux with libsd
  #include "atomicio.h"
  
  #define SOCKS_PORT	"1080"
-@@ -217,11 +217,11 @@ socks_connect(const char *host, const ch
+@@ -217,11 +217,11 @@ socks_connect(const char *host, const char *port,
  		buf[2] = SOCKS_NOAUTH;
  		cnt = atomicio(vwrite, proxyfd, buf, 3);
  		if (cnt != 3)
@@ -379,7 +378,7 @@ Subject: port to linux with libsd
  
  		if (buf[1] == SOCKS_NOMETHOD)
  			errx(1, "authentication method negotiation failed");
-@@ -270,11 +270,11 @@ socks_connect(const char *host, const ch
+@@ -270,11 +270,11 @@ socks_connect(const char *host, const char *port,
  
  		cnt = atomicio(vwrite, proxyfd, buf, wlen);
  		if (cnt != wlen)
@@ -393,7 +392,7 @@ Subject: port to linux with libsd
  		if (buf[1] != 0) {
  			errx(1, "connection failed, SOCKSv5 error: %s",
  			    socks5_strerror(buf[1]));
-@@ -283,12 +283,12 @@ socks_connect(const char *host, const ch
+@@ -283,12 +283,12 @@ socks_connect(const char *host, const char *port,
  		case SOCKS_IPV4:
  			cnt = atomicio(read, proxyfd, buf + 4, 6);
  			if (cnt != 6)
@@ -408,7 +407,7 @@ Subject: port to linux with libsd
  			break;
  		default:
  			errx(1, "connection failed, unsupported address type");
-@@ -308,11 +308,11 @@ socks_connect(const char *host, const ch
+@@ -308,11 +308,11 @@ socks_connect(const char *host, const char *port,
  
  		cnt = atomicio(vwrite, proxyfd, buf, wlen);
  		if (cnt != wlen)
@@ -422,7 +421,7 @@ Subject: port to linux with libsd
  		if (buf[1] != 90) {
  			errx(1, "connection failed, SOCKSv4 error: %s",
  			    socks4_strerror(buf[1]));
-@@ -326,21 +326,21 @@ socks_connect(const char *host, const ch
+@@ -326,21 +326,21 @@ socks_connect(const char *host, const char *port,
  
  		/* Try to be sane about numeric IPv6 addresses */
  		if (strchr(host, ':') != NULL) {
@@ -448,7 +447,7 @@ Subject: port to linux with libsd
  
  		if (authretry > 1) {
  			char proxypass[256];
-@@ -348,20 +348,20 @@ socks_connect(const char *host, const ch
+@@ -348,20 +348,20 @@ socks_connect(const char *host, const char *port,
  
  			getproxypass(proxyuser, proxyhost,
  			    proxypass, sizeof proxypass);
@@ -474,7 +473,7 @@ Subject: port to linux with libsd
  			explicit_bzero(proxypass, sizeof proxypass);
  			explicit_bzero(buf, sizeof buf);
  		}
-@@ -371,23 +371,23 @@ socks_connect(const char *host, const ch
+@@ -371,23 +371,23 @@ socks_connect(const char *host, const char *port,
  			err(1, "write failed (%zu/2)", cnt);
  
  		/* Read status reply */

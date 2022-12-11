@@ -1,12 +1,14 @@
 From: Aron Xu <aron@debian.org>
 Date: Mon, 13 Feb 2012 15:56:51 +0800
-Subject: dccp support
+Subject: New flag '-Z' for DCCP support
 
 ---
- nc.1     |    4 ++
- netcat.c |   88 ++++++++++++++++++++++++++++++++++++++++++++++++++++++---------
- 2 files changed, 79 insertions(+), 13 deletions(-)
+ nc.1     |  4 +++-
+ netcat.c | 84 ++++++++++++++++++++++++++++++++++++++++++++++++++++++----------
+ 2 files changed, 75 insertions(+), 13 deletions(-)
 
+diff --git a/nc.1 b/nc.1
+index ff628ae..bc7c915 100644
 --- a/nc.1
 +++ b/nc.1
 @@ -33,7 +33,7 @@
@@ -18,7 +20,7 @@ Subject: dccp support
  .Op Fl I Ar length
  .Op Fl i Ar interval
  .Op Fl M Ar ttl
-@@ -288,6 +288,8 @@ An IPv6 address can be specified unambig
+@@ -288,6 +288,8 @@ An IPv6 address can be specified unambiguously by enclosing
  in square brackets.
  A proxy cannot be used with any of the options
  .Fl lsuU .
@@ -27,6 +29,8 @@ Subject: dccp support
  .It Fl z
  Only scan for listening daemons, without sending any data to them.
  Cannot be used together with
+diff --git a/netcat.c b/netcat.c
+index 029e122..ddb0c2c 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -146,6 +146,7 @@ int	rflag;					/* Random ports flag */
@@ -37,84 +41,84 @@ Subject: dccp support
  int	vflag;					/* Verbosity */
  int	xflag;					/* Socks proxy */
  int	zflag;					/* Port Scan Flag */
-@@ -224,6 +225,7 @@ ssize_t drainbuf(int, unsigned char *, s
+@@ -224,6 +225,7 @@ ssize_t drainbuf(int, unsigned char *, size_t *, int);
  ssize_t fillbuf(int, unsigned char *, size_t *);
- # endif
+ #endif
  
-+char *proto_name(int uflag, int dccpflag);
- static int connect_with_timeout(int fd, const struct sockaddr *sa,
-         socklen_t salen, int ctimeout);
++char *proto_name(int, int);
+ static int connect_with_timeout(int, const struct sockaddr *, socklen_t, int);
+ static void quit();
  
-@@ -264,7 +266,7 @@ main(int argc, char *argv[])
- # if defined(TLS)
+@@ -262,7 +264,7 @@ main(int argc, char *argv[])
+ #ifdef HAVE_TLS
  	    "46C:cDde:FH:hI:i:K:klM:m:NnO:o:P:p:q:R:rSs:T:tUuV:vW:w:X:x:Z:z"))
- # else
+ #else
 -	    "46CDdFhI:i:klM:m:NnO:P:p:q:rSs:T:tUuV:vW:w:X:x:z"))
 +	    "46CDdFhI:i:klM:m:NnO:P:p:q:rSs:T:tUuV:vW:w:X:x:Zz"))
- # endif
+ #endif
  	    != -1) {
  		switch (ch) {
-@@ -381,6 +383,13 @@ main(int argc, char *argv[])
+@@ -379,6 +381,13 @@ main(int argc, char *argv[])
  		case 'u':
  			uflag = 1;
  			break;
 +		case 'Z':
-+# if defined(IPPROTO_DCCP) && defined(SOCK_DCCP)
++#if defined(IPPROTO_DCCP) && defined(SOCK_DCCP)
 +			dccpflag = 1;
-+# else
++#else
 +			errx(1, "no DCCP support available");
-+# endif
++#endif
 +			break;
  		case 'V':
- # if defined(RT_TABLEID_MAX)
+ #ifdef RT_TABLEID_MAX
  			rtableid = (int)strtonum(optarg, 0,
-@@ -485,6 +494,10 @@ main(int argc, char *argv[])
+@@ -483,6 +492,10 @@ main(int argc, char *argv[])
  
  	/* Cruft to make sure options are clean, and used properly. */
  	if (argc == 1 && family == AF_UNIX) {
-+# if defined(IPPROTO_DCCP) && defined(SOCK_DCCP)
++#if defined(IPPROTO_DCCP) && defined(SOCK_DCCP)
 +		if (dccpflag)
 +			errx(1, "cannot use -Z and -U");
-+# endif
++#endif
  		host = argv[0];
  	} else if (argc == 0 && lflag) {
  		if (sflag)
-@@ -586,8 +599,20 @@ main(int argc, char *argv[])
+@@ -584,8 +597,20 @@ main(int argc, char *argv[])
  	if (family != AF_UNIX) {
  		memset(&hints, 0, sizeof(struct addrinfo));
  		hints.ai_family = family;
 -		hints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
 -		hints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
 +		if (uflag) {
-+		    hints.ai_socktype = SOCK_DGRAM;
-+		    hints.ai_protocol = IPPROTO_UDP;
++			hints.ai_socktype = SOCK_DGRAM;
++			hints.ai_protocol = IPPROTO_UDP;
 +		}
-+# if defined(IPPROTO_DCCP) && defined(SOCK_DCCP)
++#if defined(IPPROTO_DCCP) && defined(SOCK_DCCP)
 +		else if (dccpflag) {
-+		    hints.ai_socktype = SOCK_DCCP;
-+		    hints.ai_protocol = IPPROTO_DCCP;
++			hints.ai_socktype = SOCK_DCCP;
++			hints.ai_protocol = IPPROTO_DCCP;
 +		}
-+# endif
++#endif
 +		else {
-+		    hints.ai_socktype = SOCK_STREAM;
-+		    hints.ai_protocol = IPPROTO_TCP;
++			hints.ai_socktype = SOCK_STREAM;
++			hints.ai_protocol = IPPROTO_TCP;
 +		}
  		if (nflag)
  			hints.ai_flags |= AI_NUMERICHOST;
  	}
-@@ -595,7 +620,10 @@ main(int argc, char *argv[])
+@@ -593,7 +618,10 @@ main(int argc, char *argv[])
  	if (xflag) {
  		if (uflag)
  			errx(1, "no proxy support for UDP mode");
 -
-+# if defined(IPPROTO_DCCP) && defined(SOCK_DCCP)
++#if defined(IPPROTO_DCCP) && defined(SOCK_DCCP)
 +		if (dccpflag)
 +			errx(1, "no proxy support for DCCP mode");
-+# endif
++#endif
  		if (lflag)
  			errx(1, "no proxy support for listen");
  
-@@ -844,13 +872,14 @@ main(int argc, char *argv[])
+@@ -841,13 +869,14 @@ main(int argc, char *argv[])
  					}
  				}
  
@@ -130,7 +134,7 @@ Subject: dccp support
  				}
  
  				fprintf(stderr, "Connection to %s", host);
-@@ -864,7 +893,7 @@ main(int argc, char *argv[])
+@@ -861,7 +890,7 @@ main(int argc, char *argv[])
  					fprintf(stderr, " (%s)", ipaddr);
  
  				fprintf(stderr, " %s port [%s/%s] succeeded!\n",
@@ -139,56 +143,52 @@ Subject: dccp support
  				    sv ? sv->s_name : "*");
  			}
  			if (Fflag)
-@@ -1080,6 +1109,24 @@ unix_listen(char *path)
+@@ -1076,6 +1105,21 @@ unix_listen(char *path)
  	return s;
  }
  
 +char *proto_name(int uflag, int dccpflag) {
++	char *proto = NULL;
 +
-+    char *proto = NULL;
-+    if (uflag) {
-+	proto = "udp";
-+    }
-+# if defined(IPPROTO_DCCP) && defined(SOCK_DCCP)
-+    else if (dccpflag) {
-+	proto = "dccp";
-+    }
-+# endif
-+    else {
-+	proto = "tcp";
-+    }
++	if (uflag)
++		proto = "udp";
++#if defined(IPPROTO_DCCP) && defined(SOCK_DCCP)
++	else if (dccpflag)
++		proto = "dccp";
++#endif
++	else
++		proto = "tcp";
 +
-+    return proto;
++	return proto;
 +}
 +
  /*
   * remote_connect()
   * Returns a socket connected to a remote host. Properly binds to a local
-@@ -1111,8 +1158,21 @@ remote_connect(const char *host, const c
- # endif
+@@ -1107,8 +1151,20 @@ remote_connect(const char *host, const char *port, struct addrinfo hints,
+ #endif
  			memset(&ahints, 0, sizeof(struct addrinfo));
  			ahints.ai_family = res->ai_family;
 -			ahints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
 -			ahints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
 +			if (uflag) {
-+			    ahints.ai_socktype = SOCK_DGRAM;
-+			    ahints.ai_protocol = IPPROTO_UDP;
-+
++				ahints.ai_socktype = SOCK_DGRAM;
++				ahints.ai_protocol = IPPROTO_UDP;
 +			}
-+# if defined(IPPROTO_DCCP) && defined(SOCK_DCCP)
++#if defined(IPPROTO_DCCP) && defined(SOCK_DCCP)
 +			else if (dccpflag) {
-+			    hints.ai_socktype = SOCK_DCCP;
-+			    hints.ai_protocol = IPPROTO_DCCP;
++				hints.ai_socktype = SOCK_DCCP;
++				hints.ai_protocol = IPPROTO_DCCP;
 +			}
-+# endif
++#endif
 +			else {
-+		    	    ahints.ai_socktype = SOCK_STREAM;
-+			    ahints.ai_protocol = IPPROTO_TCP;
++				ahints.ai_socktype = SOCK_STREAM;
++				ahints.ai_protocol = IPPROTO_TCP;
 +			}
  			ahints.ai_flags = AI_PASSIVE;
  			if ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
  				errx(1, "getaddrinfo: %s", gai_strerror(error));
-@@ -1142,16 +1202,18 @@ remote_connect(const char *host, const c
+@@ -1138,16 +1194,18 @@ remote_connect(const char *host, const char *port, struct addrinfo hints,
  		    timeout)) == CONNECTION_SUCCESS)
  			break;
  
@@ -209,7 +209,7 @@ Subject: dccp support
  				    error == CONNECTION_TIMEOUT ? "timed out" : "failed");
  		}
  
-@@ -1764,7 +1826,8 @@ build_ports(char *p)
+@@ -1758,7 +1816,8 @@ build_ports(char *p)
  	int hi, lo, cp;
  	int x = 0;
  
@@ -219,7 +219,7 @@ Subject: dccp support
  	if (sv) {
  		if (asprintf(&portlist[0], "%d", ntohs(sv->s_port)) < 0)
  			err(1, "asprintf");
-@@ -2147,6 +2210,7 @@ help(void)
+@@ -2141,6 +2200,7 @@ help(void)
  	\t-w timeout	Timeout for connects and final net reads\n\
  	\t-X proto	Proxy protocol: \"4\", \"5\" (SOCKS) or \"connect\"\n\
  	\t-x addr[:port]\tSpecify proxy address and port\n\
@@ -227,7 +227,7 @@ Subject: dccp support
  	\t-z		Zero-I/O mode [used for scanning]\n\
  	Port numbers can be individual or ranges: lo-hi [inclusive]\n");
  	exit(0);
-@@ -2156,7 +2220,7 @@ void
+@@ -2150,7 +2210,7 @@ void
  usage(int ret)
  {
  	fprintf(stderr,

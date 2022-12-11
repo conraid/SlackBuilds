@@ -1,15 +1,17 @@
 From: Guilhem Moulin <guilhem@debian.org>
 Date: Mon, 22 Oct 2018 04:15:52 +0200
-Subject: destination port list
+Subject: Add ability to specify a list of destination ports
 
 ---
- nc.1     |   26 ++++++++++++++++---
- netcat.c |   86 ++++++++++++++++++++++++++++++++-------------------------------
+ nc.1     | 26 +++++++++++++++++---
+ netcat.c | 86 +++++++++++++++++++++++++++++++++-------------------------------
  2 files changed, 68 insertions(+), 44 deletions(-)
 
+diff --git a/nc.1 b/nc.1
+index 9d874e1..fc52dcf 100644
 --- a/nc.1
 +++ b/nc.1
-@@ -413,15 +413,35 @@ The
+@@ -416,15 +416,35 @@ The
  flag can be used to tell
  .Nm
  to report open ports,
@@ -48,6 +50,8 @@ Subject: destination port list
  .Pp
  Alternatively, it might be useful to know which server software
  is running, and which versions.
+diff --git a/netcat.c b/netcat.c
+index 9afdeb2..979afb7 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -191,7 +191,7 @@ int minttl = -1;
@@ -58,8 +62,8 @@ Subject: destination port list
 +void	build_ports(char **);
  void	help(void) __attribute__((noreturn));
  int	local_listen(const char *, const char *, struct addrinfo);
- # if defined(TLS)
-@@ -242,7 +242,7 @@ int
+ #ifdef HAVE_TLS
+@@ -240,7 +240,7 @@ int
  main(int argc, char *argv[])
  {
  	int ch, s = -1, ret, socksv;
@@ -68,7 +72,7 @@ Subject: destination port list
  	char ipaddr[NI_MAXHOST];
  	struct addrinfo hints;
  	struct servent *sv;
-@@ -524,10 +524,10 @@ main(int argc, char *argv[])
+@@ -522,10 +522,10 @@ main(int argc, char *argv[])
  		if (zflag)
  			errx(1, "cannot use -z and -l");
  	} else if (argc == 1 && lflag) {
@@ -81,7 +85,7 @@ Subject: destination port list
  	} else
  		usage(1);
  
-@@ -726,7 +726,7 @@ main(int argc, char *argv[])
+@@ -724,7 +724,7 @@ main(int argc, char *argv[])
  			else
  				s = unix_listen(host);
  		} else
@@ -90,7 +94,7 @@ Subject: destination port list
  		if (s < 0)
  			err(1, NULL);
  
-@@ -1835,57 +1835,61 @@ strtoport(char *portstr, int udp)
+@@ -1825,57 +1825,61 @@ strtoport(char *portstr, int udp)
   * that we should try to connect to.
   */
  void
