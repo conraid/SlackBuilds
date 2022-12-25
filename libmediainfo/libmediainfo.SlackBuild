@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=libmediainfo
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=22.09
+SRCVERSION=22.12
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -115,6 +115,8 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-static=no \
   --enable-shared=yes \
   --with-libcurl \
+  --with-libtinyxml2 \
+  --with-graphviz \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
