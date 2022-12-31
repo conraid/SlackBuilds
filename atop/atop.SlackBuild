@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=atop
-SRCVERSION=2.7.1
+SRCVERSION=2.8.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -38,7 +38,7 @@ TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="AUTHOR COPYING ChangeLog README"
+DOCFILES="COPYING ChangeLog README"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -127,12 +127,15 @@ rm -f $PKG/etc/rc.d/atopacct
 rm -f $PKG/usr/bin/atop*-$VERSION
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/SLACKWARE.README > $PKG/usr/doc/$PKGNAM-$VERSION/README.SLACKWARE # (Thanks to SBo)
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
