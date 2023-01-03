@@ -2,7 +2,7 @@
 #
 # Slackware build script for mkvtoolnix
 #
-# Copyright 2018-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2018-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=mkvtoolnix
-VERSION=72.0.0
-BUILD=${BUILD:-2}
+VERSION=73.0.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -101,8 +101,11 @@ CXXFLAGS="$SLKCFLAGS" \
   --mandir=/usr/man \
   --infodir=/usr/info \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --enable-qt=on \
   --with-boost \
+  --with-qmake=qmake-qt5 \
+  --enable-qt5 \
+  --enable-qt6=no \
+  --enable-mkvtoolnix \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
