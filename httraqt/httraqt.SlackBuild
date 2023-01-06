@@ -2,7 +2,7 @@
 #
 # Slackware build script for httraqt
 #
-# Copyright 2013-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2013-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=httraqt
-VERSION=1.4.9
-BUILD=${BUILD:-5}
+VERSION=1.4.11
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,9 +72,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM
+rm -rf $PKGNAM-$VERSION || rm -rf $PKGNAM
 tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
-cd $PKGNAM
+cd $PKGNAM-$VERSION || cd $PKGNAM
 
 chown -R root:root .
 find -L . \
@@ -82,6 +82,9 @@ find -L . \
   -exec chmod 755 {} \; -o \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
+
+# it seems to not respect the directive in cmake
+sed '/^SET(USE_QT_VERSION/s/6/5/' -i CMakeLists.txt
 
 mkdir -p build
 cd build
