@@ -2,7 +2,7 @@
 #
 # Slackware build script for heif-gimp-plugin
 #
-# Copyright 2020-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2020-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=heif-gimp-plugin
 COMMIT=d6bea529e5b21749e72da743673377640139e69a
 VERSION=$(echo $COMMIT | head -c7)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
