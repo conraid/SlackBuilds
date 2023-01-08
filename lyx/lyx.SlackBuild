@@ -2,7 +2,7 @@
 #
 # Slackware build script for LyX (http://www.lyx.org/)
 #
-# Copyright 2008-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2008-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -28,8 +28,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=lyx
-SRCVERSION=2.3.6.1
-VERSION=2.3.6.1
+SRCVERSION=2.3.7-1
+VERSION=2.3.7
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -71,9 +71,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$SRCVERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
-cd $PKGNAM-$SRCVERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.xz
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 find -L . \
@@ -125,6 +125,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 install -Dm644 lib/$PKGNAM.desktop $PKG/usr/share/applications/$PKGNAM.desktop
