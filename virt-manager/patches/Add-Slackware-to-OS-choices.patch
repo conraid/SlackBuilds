@@ -1,9 +1,9 @@
-diff -Naupr a/virtinst/install/urldetect.py b/virtinst/install/urldetect.py
---- a/virtinst/install/urldetect.py	2019-06-17 07:20:11.000000000 +0200
-+++ b/virtinst/install/urldetect.py	2019-06-17 14:15:45.572727390 +0200
-@@ -819,6 +819,41 @@ class _LibosinfoDistro(_DistroTree):
-                  self.cache.libosinfo_mediaobj.get_initrd_path())
-         ]
+diff -Nur virt-manager-2.2.0.orig/virtinst/install/urldetect.py virt-manager-2.2.0/virtinst/install/urldetect.py
+--- virt-manager-2.2.0.orig/virtinst/install/urldetect.py	2019-06-17 00:20:11.000000000 -0500
++++ virt-manager-2.2.0/virtinst/install/urldetect.py	2019-07-03 02:14:35.978571412 -0500
+@@ -466,6 +466,47 @@
+         return cache.treeinfo_family_regex(famregex)
+ 
  
 +class SlackwareDistro(_DistroTree):
 +    # slackware doesn't have installable URLs, so this is just for a
@@ -11,6 +11,10 @@ diff -Naupr a/virtinst/install/urldetect.py b/virtinst/install/urldetect.py
 +    name = "Slackware"
 +    urldistro = "slackware"
 +    os_variant = "linux"
++
++    PRETTY_NAME = "Slackware"
++    matching_distros = ["slackware"]
++    _variant_prefix = "slackware"
 +
 +    _boot_iso_paths = []
 +    _xen_kernel_paths = []
@@ -40,17 +44,8 @@ diff -Naupr a/virtinst/install/urldetect.py b/virtinst/install/urldetect.py
 +
 +        logging.debug("Regex didn't match, not a %s distro", self.name)
 +        return False
- 
- def _build_distro_list(osobj):
-     allstores = [
-diff -Naupr a/virtinst/osdict.py b/virtinst/osdict.py
---- a/virtinst/osdict.py	2019-06-17 07:20:11.000000000 +0200
-+++ b/virtinst/osdict.py	2019-06-17 14:13:33.958372796 +0200
-@@ -146,6 +146,7 @@ class _OSDB(object):
-         "rhel5": "rhel5.0",
-         "rhel6": "rhel6.0",
-         "rhel7": "rhel7.0",
-+        "slackware": "slackware14.2",
-         "ubuntuhardy": "ubuntu8.04",
-         "ubuntuintrepid": "ubuntu8.10",
-         "ubuntujaunty": "ubuntu9.04",
++
++
+ class _SuseDistro(_RHELDistro):
+     PRETTY_NAME = None
+     _suse_regex = []
