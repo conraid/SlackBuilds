@@ -2,7 +2,7 @@
 #
 # Slackware build script for scapy (http://www.secdev.org/projects/scapy/)
 #
-# Copyright 2008-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2008-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=scapy
 VERSION=2.5.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -63,6 +63,11 @@ chmod -R u+w,go+r-w,a-s .
 
 sed "s|share/man/man1|man/man1|g" -i setup.py
 python3 setup.py install --root=$PKG
+
+if [ -d $PKG/usr/man ]; then
+  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBuild
