@@ -2,7 +2,7 @@
 #
 # Slackware build script for displaycal
 #
-# Copyright 2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2022-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ PRGNAM=DisplayCAL
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=3.9.10
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -97,6 +97,10 @@ if [ -e $CWD/patches/ ]; then
     done
   fi
 fi
+
+# Fix man path
+sed 's|share/man/|man/|' -i misc/DisplayCAL.spec -i util/check-install.sh
+sed  '/man1/s/os.path.dirname(data), //' -i DisplayCAL/setup.*
 
 sed '/debian.*rules/d' -i setup.py
 
