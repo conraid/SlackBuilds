@@ -33,7 +33,7 @@ PRGNAM=aMule
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=2.3.3
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-12}
+BUILD=${BUILD:-13}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -107,6 +107,7 @@ cmake -Wno-dev \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DMAN_INSTALL_DIR=/usr/man \
+  -DCMAKE_INSTALL_MANDIR=/usr/man \
   -DSYSCONF_INSTALL_DIR=/etc \
   -DLOCALSTATEDIR=/var \
   -DHTML_INSTALL_DIR=/usr/doc/HTML \
