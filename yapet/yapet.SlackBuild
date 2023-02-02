@@ -2,7 +2,7 @@
 #
 # Slackware build script for yapet (http://www.guengel.ch/myapps/yapet)
 #
-# Copyright 2008-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2008-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=yapet
 VERSION=2.6
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -98,7 +98,7 @@ make DESTDIR=$PKG install-strip
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 if [ -d $PKG/usr/man ]; then
-  find . -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
