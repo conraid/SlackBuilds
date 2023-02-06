@@ -2,7 +2,7 @@
 #
 # Slackware build script for jack
 #
-# Copyright 2019-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2019-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=jack2
 PKGNAM=jack
-VERSION=1.9.21
+VERSION=1.9.22
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -128,6 +128,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 # Only allow execution by audio group
 chown root:audio $PKG/usr/bin/*
