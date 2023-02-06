@@ -3,7 +3,7 @@
 # Slackware build script for <prgname> (http://www.privoxy.org/)
 #
 # Copyright (c) 2007  alkos333 <me@alkos333.net>
-# Copyright 2009-2021 Corrado Franco (https://corradofranco.it)
+# Copyright 2009-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=privoxy
-VERSION=3.0.33
+VERSION=3.0.34
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -155,6 +155,9 @@ cat $CWD/files/config.tor.template > $PKG/usr/doc/$PKGNAM-$VERSION/config.tor.te
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
