@@ -2,7 +2,7 @@
 #
 # Slackware build script for webkitgtk
 #
-# Copyright 2019-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2019-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=webkitgtk
-VERSION=2.38.3
+VERSION=2.38.4
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -113,6 +113,9 @@ cmake -Wno-dev \
   -DENABLE_MINIBROWSER=ON \
   -DUSE_SOUP2=ON \
   -DENABLE_JOURNALD_LOG=OFF \
+  -DENABLE_INTROSPECTION=OFF \
+  -DUSE_JPEGXL=ON \
+  -DUSE_AVIF=ON \
   ..
 
 ninja
