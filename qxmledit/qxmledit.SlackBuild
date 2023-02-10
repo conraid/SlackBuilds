@@ -2,7 +2,7 @@
 #
 # Slackware build script for QXmlEdit
 #
-# Copyright 2014-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2014-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=qxmledit
-VERSION=0.9.17
+VERSION=0.9.18
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -103,6 +103,9 @@ cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBui
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 install -Dm644 install_scripts/environment/desktop/QXmlEdit.desktop $PKG/usr/share/applications/${PKGNAM}.desktop
