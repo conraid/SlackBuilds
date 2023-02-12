@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=AppStream
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=0.16.0
+SRCVERSION=0.16.1
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -125,6 +125,9 @@ meson setup \
   -D                strip=true \
   -D                systemd=false \
   -D                qt=true \
+  -D                docs=false \
+  -D                apidocs=false \
+  -D                install-docs=false \
   ..
 
 ninja
