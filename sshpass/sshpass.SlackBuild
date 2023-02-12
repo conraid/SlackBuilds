@@ -2,7 +2,7 @@
 #
 # Slackware build script for sshpass
 #
-# Copyright 2012-2021 Corrado Franco (https://corradofranco.it)
+# Copyright 2012-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=sshpass
-VERSION=1.09
+VERSION=1.10
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -113,6 +113,9 @@ install -Dm644 $CWD/$PKGNAM.SlackBuild $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.Sla
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
