@@ -2,7 +2,7 @@
 #
 # Slackware build script for winetricks
 #
-# Copyright 2015-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2015-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=winetricks
-VERSION=20220411
+VERSION=20230212
 BUILD=${BUILD:-1}
 ARCH=noarch
 TAG=${TAG:-cf}
@@ -82,6 +82,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 # Add a desktop file
 install -Dm744 $CWD/files/$PKGNAM.desktop $PKG/usr/share/applications/$PKGNAM.desktop
