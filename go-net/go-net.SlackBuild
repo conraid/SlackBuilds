@@ -2,7 +2,7 @@
 #
 # Slackware build script for go-net
 #
-# Copyright 2019-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2019-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=net
 PKGNAM=go-$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=2871e0cb64e47e47ba7466fad6e11562caf99563
-VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-2}
+SRCVERSION=0.7.0
+VERSION=$(echo $SRCVERSION | tr - _)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
