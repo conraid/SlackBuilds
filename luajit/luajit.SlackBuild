@@ -31,8 +31,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=LuaJIT
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-VERSION=2.0.5
-BUILD=${BUILD:-4}
+VERSION=2.1.0-beta3
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -83,6 +83,10 @@ chmod -R u+w,go+r-w,a+X-s .
 make PREFIX=/usr MULTILIB=lib${LIBDIRSUFFIX} INSTALL_MAN=/usr/man/man1 
 make DESTDIR=$PKG PREFIX=/usr MULTILIB=lib${LIBDIRSUFFIX} INSTALL_MAN=$PKG/usr/man/man1 install
 
+# dev versions of luajit don't install the symlink by default
+# https://github.com/LuaJIT/LuaJIT/blob/505e2c03de35e2718eef0d2d3660712e06dadf1f/Makefile#L139
+ln -sf luajit-2.1.0-beta3 $PKG/usr/bin/luajit
+
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
@@ -103,4 +107,4 @@ mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-${VERSION/-/\.}-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
