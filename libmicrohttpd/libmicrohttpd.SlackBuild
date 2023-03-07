@@ -2,7 +2,7 @@
 #
 # Slackware build script for libmicrohttpd
 #
-# Copyright 2014-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2014-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libmicrohttpd
-VERSION=0.9.75
+VERSION=0.9.76
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -110,7 +110,7 @@ fi
 
 if [ -d $PKG/usr/info ]; then
     rm -f $PKG/usr/info/dir
-    gzip -9 $PKG/usr/info/*.info*
+    gzip -9 $PKG/usr/info/*.info || true
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
@@ -119,6 +119,9 @@ cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBui
 
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD${TAG}.txz
