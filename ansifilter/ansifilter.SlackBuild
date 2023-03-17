@@ -2,7 +2,7 @@
 #
 # Slackware build script for ansifilter
 #
-# Copyright 2.18-2021 Corrado Franco (https://corradofranco.it)
+# Copyright 2.18-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@
 set -e
 
 PRGNAM=ansifilter
-VERSION=2.18
+VERSION=2.19
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 
@@ -101,6 +101,9 @@ cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
