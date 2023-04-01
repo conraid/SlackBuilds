@@ -2,7 +2,7 @@
 #
 # Slackware build script for libwebsockets
 #
-# Copyright 2020-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2020-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ PRGNAM=libwebsockets
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=4.3.2
 VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -119,7 +119,6 @@ cmake -Wno-dev \
   -DLWS_WITH_DISKCACHE=ON \
   -DLWS_WITH_HTTP_PROXY=ON \
   -DLWS_WITH_HTTP_BROTLI=ON \
-  -DLWS_WITH_MBEDTLS=ON \
   -DLWS_WITH_SOCKS5=ON \
   -DLWS_WITH_SQLITE3=ON \
   -DLWS_WITHOUT_BUILTIN_GETIFADDRS=ON \
