@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=qemu
 SRCVERSION=7.2.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -180,6 +180,6 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
   cat $CWD/slack-required > $PKG/install/slack-required
 fi
-echo "8"
+
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
