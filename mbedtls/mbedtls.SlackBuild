@@ -2,7 +2,7 @@
 #
 # Slackware build script for mbedtls
 #
-# Copyright 2020-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2020-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=mbedtls
-VERSION=2.28.2
+VERSION=3.4.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -97,8 +97,8 @@ if [ -e $CWD/patches ]; then
 fi
 
 # enable flags for non-embedded systems
-sed -i 's|//\(#define MBEDTLS_THREADING_C\)|\1|' include/mbedtls/config.h
-sed -i 's|//\(#define MBEDTLS_THREADING_PTHREAD\)|\1|' include/mbedtls/config.h
+sed 's|//\(#define MBEDTLS_THREADING_C\)|\1|' -i include/mbedtls/mbedtls_config.h
+sed 's|//\(#define MBEDTLS_THREADING_PTHREAD\)|\1|' -i include/mbedtls/mbedtls_config.h
 # broken in 2.25.0
 sed -i 's/thread_id, -ret/thread_id, (unsigned int)(-ret)/' programs/ssl/ssl_pthread_server.c
 sed -i 's/thread_id, ret/thread_id, (unsigned int)ret/' programs/ssl/ssl_pthread_server.c
