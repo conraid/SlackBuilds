@@ -2,7 +2,7 @@
 #
 # Slackware build script for maldet
 #
-# Copyright 2018-2021 Corrado Franco (https://corradofranco.it)
+# Copyright 2018-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,8 +31,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=linux-malware-detect
 PKGNAM=maldet
-VERSION=1.6.4
-BUILD=${BUILD:-3}
+VERSION=1.6.5
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -78,7 +78,11 @@ tar xvf $CWD/$PRGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
 cd $PRGNAM-$VERSION
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find -L . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
 
 DESTDIR=$PKG/usr/share/$PKGNAM
 
@@ -99,9 +103,9 @@ mkdir -p $PKG/var/log/$PKGNAM
 mkdir -p $PKG/etc/{cron.d,cron.daily,$PKGNAM}
 
 sed -e 's|root /usr/local/maldetect/|/usr/bin/|' cron.d.pub > $PKG/etc/cron.d/maldet_pub
-chmod 644 /etc/cron.d/maldet_pub
+chmod 644 $PKG//etc/cron.d/maldet_pub
 sed -e 's|/usr/local/maldetect|/usr/share/maldet|' cron.daily > $PKG/etc/cron.daily/maldet
-chmod 755 /etc/cron.daily/maldet
+chmod 755 $PKG//etc/cron.daily/maldet
 
 mv $DESTDIR/conf.$PKGNAM $PKG/etc/$PKGNAM/maldet.conf.new
 mv $DESTDIR/internals/internals.conf $PKG/etc/$PKGNAM/internals.conf
@@ -144,6 +148,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
