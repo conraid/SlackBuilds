@@ -2,7 +2,7 @@
 #
 # Slackware build script for cpprestsdk
 #
-# Copyright 2018-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2018-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=cpprestsdk
 VERSION=2.10.18
-BUILD=${BUILD:-8}
+BUILD=${BUILD:-9}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -92,7 +92,7 @@ fi
 
 mkdir -p build
 cd build
-cmake ../Relese -Wno-dev \
+cmake -Wno-dev \
   -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG -Wno-deprecated-copy -Wno-redundant-move " \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
@@ -100,7 +100,7 @@ cmake ../Relese -Wno-dev \
   -DBUILD_TESTS=OFF \
   -DBUILD_SAMPLES=OFF \
   -DWERROR=OFF \
-  ..
+  ../Release
 
 make
 make DESTDIR=$PKG install

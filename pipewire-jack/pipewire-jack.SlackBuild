@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=pipewire
 PKGNAM=pipewire-jack
-SRCVERSION=0.3.66
+SRCVERSION=0.3.68
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -98,6 +98,9 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
+# Add media-session:
+( cd subprojects ; tar xf $CWD/files/media-session.tar.lz )
+
 export CFLAGS="$SLKCFLAGS"
 export CXXFLAGS="$SLKCFLAGS"
 mkdir meson-build
@@ -116,6 +119,7 @@ meson setup \
   --buildtype=release \
   -Djack=disabled \
   -Dpipewire-jack=enabled \
+  -Dsession-managers=media-session \
   ..
 
 ninja

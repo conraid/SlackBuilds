@@ -2,7 +2,7 @@
 #
 # Slackware build script for device-tree-compiler
 #
-# Copyright 2018-2021 Corrado Franco (https://corradofranco.it)
+# Copyright 2018-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=dtc
 PKGNAM=device-tree-compiler
-VERSION=1.6.1
+VERSION=1.7.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -74,19 +74,59 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
+tar xvf $CWD/$PRGNAM-$VERSION.tar.xz
 cd $PRGNAM-$VERSION
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find -L . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
 
-make \
-  LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
-  CFLAGS="$SLKCFLAGS" \
-  PREFIX="/usr" \
-  LIBDIR=/usr/lib${LIBDIRSUFFIX}
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
+fi
 
-make DESTDIR=$PKG PREFIX=/usr LIBDIR=/usr/lib${LIBDIRSUFFIX} install
+export CFLAGS="$SLKCFLAGS"
+export CXXFLAGS="$SLKCFLAGS"
+mkdir meson-build
+cd meson-build
+meson setup \
+  --prefix          /usr \
+  --libdir          lib${LIBDIRSUFFIX} \
+  --libexecdir      /usr/libexec \
+  --sysconfdir      /etc \
+  --localstatedir   /var \
+  --mandir          /usr/man \
+  --infodir         /usr/info \
+  --bindir          /usr/bin \
+  --sbindir         /usr/sbin \
+  --includedir      /usr/include \
+  --datadir         /usr/share \
+  --buildtype       release \
+  --default-library shared \
+  --buildtype       plain \
+  --auto-features   enabled \
+  --wrap-mode       nodownload \
+  -D                b_lto=true \
+  -D                b_pie=true \
+  -D                python=disabled \
+  ..
+
+ninja
+DESTDIR=$PKG ninja install
+
+cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -105,6 +145,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}

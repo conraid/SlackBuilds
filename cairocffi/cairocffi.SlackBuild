@@ -2,7 +2,7 @@
 #
 # Slackware build script for cairocffi
 #
-# Copyright 2021-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2021-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cairocffi
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=1.4.0
+SRCVERSION=1.5.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -74,18 +74,10 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$SRCVERSION
-tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz
-cd $PRGNAM-$SRCVERSION
 
-chown -R root:root .
-find . \
-  \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
-  -exec chmod 755 {} \+ -o \
-  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
-  -exec chmod 644 {} \+
+CFLAGS="$SLKCFLAGS" python3 -m pip install --root=$PKG $CWD/$PKGNAM-$VERSION.tar.gz
 
-CFLAGS="$SLKCFLAGS" python3 setup.py install --root=$PKG
+chown -R root:root $PKG
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true

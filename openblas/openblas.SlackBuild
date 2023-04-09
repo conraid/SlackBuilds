@@ -2,7 +2,7 @@
 #
 # Slackware build script for openblas
 #
-# Copyright 2020-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2020-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=OpenBLAS
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-VERSION=0.3.21
+VERSION=0.3.23
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -84,67 +84,62 @@ find . \
   -exec chmod 644 {} \+
 
 # Apply patches
-if [ -e $CWD/patches ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
+if [ -e $CWD/patches/ ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
 fi
 
 #Determine the lapack version from its README:
 LAPACK=$(grep VERSION lapack-netlib/README.md |tail -n 1 |cut -d' ' -f3)
 LAPACKMAJ=${LAPACK:0:1}
 
-PARAMS="NO_STATIC=1 \
-  USE_OPENMP=1 \
-  USE_THREAD=1 \
-  USE_TLS=1 \
-  NO_LAPACK=0 \
-  BUILD_LAPACK_DEPRECATED=1 \
-  BUILD_RELAPACK=1 \
-  DYNAMIC_ARCH=1 \
-  NUM_THREADS=64 \
-  OMP_NUM_THREADS=64 \
-  MAJOR_VERSION=$LAPACKMAJ \
-  OPENBLAS_LIBRARY_DIR=/usr/lib$LIBDIRSUFFIX \
-  PREFIX=/usr"
+mkdir -p build
+cd build
+cmake -Wno-dev \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DBUILD_RELAPACK=ON \
+  -DBUILD_STATIC_LIBS=OFF \
+  -DBUILD_SHARED_LIBS=ON \
+  -DBUILD_TESTING=OFF \
+  ..
 
-make \
-  MAKE_NB_JOBS="$(($(nproc)+1))" \
-  CFLAGS="$SLKCFLAGS" \
-  $PARAMS
-
-make \
-  DESTDIR=$PKG \
-  $PARAMS \
-  install
+make
+make DESTDIR=$PKG install
+cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 # Install compatibility symlinks (Thanks to Alien Bob)
 # For BLAS:
-ln -s libopenblasp-r${VERSION}.so $PKG/usr/lib$LIBDIRSUFFIX/libblas.so
-ln -s libopenblasp-r${VERSION}.so $PKG/usr/lib$LIBDIRSUFFIX/libblas.so.${LAPACKMAJ}
-ln -s libopenblasp-r${VERSION}.so $PKG/usr/lib$LIBDIRSUFFIX/libblas.so.${LAPACK}
+ln -s libopenblas.so $PKG/usr/lib$LIBDIRSUFFIX/libblas.so
+ln -s libopenblas.so $PKG/usr/lib$LIBDIRSUFFIX/libblas.so.${LAPACKMAJ}
+ln -s libopenblas.so $PKG/usr/lib$LIBDIRSUFFIX/libblas.so.${LAPACK}
 ln -s openblas.pc $PKG/usr/lib$LIBDIRSUFFIX/pkgconfig/blas.pc
 # For CBLAS:
-ln -s libopenblasp-r${VERSION}.so $PKG/usr/lib$LIBDIRSUFFIX/libcblas.so
-ln -s libopenblasp-r${VERSION}.so $PKG/usr/lib$LIBDIRSUFFIX/libcblas.so.${LAPACKMAJ}
-ln -s libopenblasp-r${VERSION}.so $PKG/usr/lib$LIBDIRSUFFIX/libcblas.so.${LAPACK}
+ln -s libopenblas.so $PKG/usr/lib$LIBDIRSUFFIX/libcblas.so
+ln -s libopenblas.so $PKG/usr/lib$LIBDIRSUFFIX/libcblas.so.${LAPACKMAJ}
+ln -s libopenblas.so $PKG/usr/lib$LIBDIRSUFFIX/libcblas.so.${LAPACK}
 ln -s openblas.pc $PKG/usr/lib$LIBDIRSUFFIX/pkgconfig/cblas.pc
 # For LAPACK:
-ln -s libopenblasp-r${VERSION}.so $PKG/usr/lib$LIBDIRSUFFIX/liblapack.so
-ln -s libopenblasp-r${VERSION}.so $PKG/usr/lib$LIBDIRSUFFIX/liblapack.so.${LAPACKMAJ}
-ln -s libopenblasp-r${VERSION}.so $PKG/usr/lib$LIBDIRSUFFIX/liblapack.so.${LAPACK}
+ln -s libopenblas.so $PKG/usr/lib$LIBDIRSUFFIX/liblapack.so
+ln -s libopenblas.so $PKG/usr/lib$LIBDIRSUFFIX/liblapack.so.${LAPACKMAJ}
+ln -s libopenblas.so $PKG/usr/lib$LIBDIRSUFFIX/liblapack.so.${LAPACK}
 ln -s openblas.pc $PKG/usr/lib$LIBDIRSUFFIX/pkgconfig/lapack.pc
 # For LAPACKE:
-ln -s libopenblasp-r${VERSION}.so $PKG/usr/lib$LIBDIRSUFFIX/liblapacke.so
-ln -s libopenblasp-r${VERSION}.so $PKG/usr/lib$LIBDIRSUFFIX/liblapacke.so.${LAPACKMAJ}
-ln -s libopenblasp-r${VERSION}.so $PKG/usr/lib$LIBDIRSUFFIX/liblapacke.so.${LAPACK}
+ln -s libopenblas.so $PKG/usr/lib$LIBDIRSUFFIX/liblapacke.so
+ln -s libopenblas.so $PKG/usr/lib$LIBDIRSUFFIX/liblapacke.so.${LAPACKMAJ}
+ln -s libopenblas.so $PKG/usr/lib$LIBDIRSUFFIX/liblapacke.so.${LAPACK}
 ln -s openblas.pc $PKG/usr/lib$LIBDIRSUFFIX/pkgconfig/lapacke.pc
-
-# Remove empty directory:
-rmdir $PKG/usr/bin
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true

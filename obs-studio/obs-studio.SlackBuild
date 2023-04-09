@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=obs-studio
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=29.0.2
+SRCVERSION=29.1.0-beta1
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -60,7 +60,7 @@ fi
 if [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
-  if [ -f cef_binary* ]; then
+  if [ -f cef_binary*.tar.bz2 ]; then
     echo "OK CEF"
     CEF_ROOT="$(ls cef_binary* | sed 's/\.tar\.bz2//')"
   else
@@ -96,10 +96,17 @@ cd ..
 cd $PRGNAM-$SRCVERSION
 
 git clone http://github.com/obsproject/obs-amd-encoder.git plugins/enc-amf --recurse-submodules
+cd plugins/enc-amf
+git checkout 8823c23
+cd -
 git clone http://github.com/obsproject/obs-websocket.git plugins/obs-websocket --recurse-submodules
-git clone http://github.com/Mixer/ftl-sdk.git  plugins/obs-outputs/ftl-sdk --recurse-submodules
+cd plugins/obs-websocket
+git checkout 21886ad
+cd -
 git clone http://github.com/obsproject/obs-browser.git plugins/obs-browser --recurse-submodules
-git clone http://github.com/palana/Syphon-Framework.git --recurse-submodules
+cd plugins/obs-browser
+git checkout  88d8359
+cd -
 
 sed -e "s/^obs_install/#obs_install/" -i libobs/CMakeLists.txt
 

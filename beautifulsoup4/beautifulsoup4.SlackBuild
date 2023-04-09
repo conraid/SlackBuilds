@@ -30,14 +30,12 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=beautifulsoup4
-VERSION=4.11.2
+VERSION=4.12.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
-
-DOCFILES="PKG-INFO"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -72,20 +70,15 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
-cd $PKGNAM-$VERSION
 
-chown -R root:root .
-chmod -R u+w,go+r-w,a-s .
+CFLAGS="$SLKCFLAGS" python3 -m pip install --root=$PKG $CWD/$PKGNAM-$VERSION.tar.gz
 
-CFLAGS="$SLKCFLAGS" python3 setup.py install --root=$PKG
+chown -R root:root $PKG
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
