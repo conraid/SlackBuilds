@@ -2,7 +2,7 @@
 #
 # Slackware build script for luajit
 #
-# Copyright 2015-2019 Corrado Franco (https://conraid.net)
+# Copyright 2015-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,8 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=LuaJIT
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-VERSION=2.0.5
-BUILD=${BUILD:-4}
+SRCVERSION=2.1.0-beta3
+VERSION=$(echo $SRCVERSION | tr - _)
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -49,7 +50,7 @@ if [ -z ${ARCH:=""} ]; then
 fi
 
 # If the variable PRINT_PACKAGE_NAME is set, then this script will report what
-# the name of the created package would be, and then exit. This information
+# the name of the create$SRCVERSIONould be, and then exit. This information
 # could be useful to other scripts.
 if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
   echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
@@ -73,15 +74,25 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
-cd $PRGNAM-$VERSION
+rm -rf $PRGNAM-$SRCVERSION
+tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz
+cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find -L . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
 
-make PREFIX=/usr MULTILIB=lib${LIBDIRSUFFIX} INSTALL_MAN=/usr/man/man1 
+make PREFIX=/usr MULTILIB=lib${LIBDIRSUFFIX} INSTALL_MAN=/usr/man/man1
 make DESTDIR=$PKG PREFIX=/usr MULTILIB=lib${LIBDIRSUFFIX} INSTALL_MAN=$PKG/usr/man/man1 install
+
+
+# dev versions of luajit don't install the symlink by default
+# https://github.com/LuaJIT/LuaJIT/blob/505e2c03de35e2718eef0d2d3660712e06dadf1f/Makefile#L139
+# Thanks to Julian Grinblat
+ln -sf luajit-$SRCVERSION $PKG/usr/bin/luajit
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -101,6 +112,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
