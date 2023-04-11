@@ -2,7 +2,7 @@
 #
 # Slackware build script for lua (http://www.lua.org/)
 #
-# Copyright 2015-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2015-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ SRCVERSION=5.4.4
 PKGVERSION=$(echo $SRCVERSION | tr - _)
 VERSION=$(echo $SRCVERSION | cut -d- -f1)
 MAINVERSION=$(echo $VERSION | cut -d. -f-2)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -88,7 +88,7 @@ find -L . \
 sed -i "s|lib/lua|lib${LIBDIRSUFFIX}/lua|" src/luaconf.h
 
 # Apply patches
-if [ -e $CWD/patches/*.patch ]; then
+if [ -e $CWD/patches/ ]; then
   for PATCH in $CWD/patches/*.patch; do
     patch -p1 -i $PATCH
   done
@@ -110,7 +110,7 @@ INSTALL_INC="$PKG/usr/include/lua$MAINVERSION" \
 linux install
 
 # Make symlink like 5.2 and 5.1 legacy packages
-ln -sf /usr/lib/liblua.so.$VERSION $PKG/usr/lib${LIBDIRSUFFIX}/liblua${MAINVERSION}.so
+ln -sf liblua.so.$VERSION $PKG/usr/lib${LIBDIRSUFFIX}/liblua${MAINVERSION}.so
 
 # Install the pkg-config file so other apps can find LUA
 mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
@@ -140,6 +140,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$PKGVERSION/$PKGNAM.SlackBuil
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$PKGVERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
