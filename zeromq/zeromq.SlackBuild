@@ -2,7 +2,7 @@
 #
 # Slackware build script for zeromq
 #
-# Copyright 2017-2021 Corrado Franco (https://corradofranco.it)
+# Copyright 2017-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,8 +29,10 @@ set -eu
 
 cd $(dirname $0) ; CWD=$(pwd)
 
+PRGNAM=libzmq
 PKGNAM=zeromq
-VERSION=4.3.4
+SRCVERSION=1b52e19b2bd3a996a919d2b5e5632e748fff7720
+VERSION=$(echo $SRCVERSION | head -c 7)
 CPPVERSION=4.6.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -73,17 +75,32 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+rm -rf $PRGNAM-$SRCVERSION
+tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/v$SRCVERSION.tar.gz
+cd $PRGNAM-$SRCVERSION
 tar --wildcards -xf $CWD/cppzmq-$CPPVERSION.tar.gz */zmq.hpp */zmq_addon.hpp --strip=1
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find -L . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
 
-# Fix for libsodium
-sed 's/libzmq_werror="yes"/libzmq_werror="no"/' -i configure
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
+fi
 
+./autogen.sh
 LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -125,6 +142,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
