@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libfilezilla
-VERSION=0.41.1
+VERSION=0.42.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -73,7 +73,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
+tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
