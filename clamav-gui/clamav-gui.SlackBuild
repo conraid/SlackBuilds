@@ -2,7 +2,7 @@
 #
 # Slackware build script for clamav-gui
 #
-# Copyright 2015-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2015-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=ClamAV-GUI
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-VERSION=0.4.3
+VERSION=0.5.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -84,11 +84,11 @@ find -L . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
-qmake PREFIX=/usr QMAKE_CFLAGS="$SLKCFLAGS" QMAKE_CXXFLAGS="$SLKCFLAGS" -o Makefile $PKGNAM.pro
-
 # Change doc and man path
-sed -e "s|/share/doc/ClamAV-GUI/|/doc/$PKGNAM-$VERSION/|g" \
-  -e 's|/share/man/|/man/|g' -i Makefile
+sed -e "s|/share/doc/ClamAV-GUI|/doc/$PKGNAM-$VERSION|g" \
+  -e 's|/share/man/|/man/|g' -i clamav-gui.pro
+
+qmake PREFIX=/usr QMAKE_CFLAGS="$SLKCFLAGS" QMAKE_CXXFLAGS="$SLKCFLAGS" -o Makefile $PKGNAM.pro
 
 make
 make INSTALL_ROOT=$PKG install
