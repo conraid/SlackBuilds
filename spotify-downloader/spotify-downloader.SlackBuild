@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=spotdl
 PKGNAM=spotify-downloader
-VERSION=4.1.6
+VERSION=4.1.8
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -87,13 +87,16 @@ rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
-mv -v $PKG/usr/share/man $PKG/usr/man
+mv $PKG/usr/share/man $PKG/usr/man
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+mv $PKG/usr/share/doc/* $PKG/usr/doc/$PKGNAM-$VERSION
+rm -rf $PKG/usr/share/doc
+mv $PKG/usr/*.rst $PKG/usr/doc/$PKGNAM-$VERSION/
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
