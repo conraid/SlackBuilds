@@ -28,9 +28,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=filezilla
-SRCVERSION=3.63.2.1
+SRCVERSION=3.64.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,7 +72,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$SRCVERSION
-tar xvf $CWD/FileZilla_${SRCVERSION}_src.tar.bz2
+tar xvf $CWD/FileZilla_${SRCVERSION}_src.tar.xz
 cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
