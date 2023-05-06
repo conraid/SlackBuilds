@@ -32,7 +32,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=slpkg
-VERSION=4.8.1
+VERSION=4.8.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -87,15 +87,13 @@ find -L . \
 
 CFLAGS="$SLKCFLAGS" python3 setup.py install --root=$PKG
 
-# install bin script
-install -Dm755 bin/slpkg $PKG/usr/sbin/slpkg
-
 # install man file
 install -Dm644 man/slpkg.1 $PKG/usr/man/man1/slpkg.1
 
 # Install config files
 install -Dm644 configs/slpkg.toml $PKG/etc/slpkg/slpkg.toml.new
 install -Dm644 configs/blacklist.toml $PKG/etc/slpkg/blacklist.toml.new
+install -Dm644 configs/repositories.toml $PKG/etc/slpkg/repositories.toml.new
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
