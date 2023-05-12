@@ -44,9 +44,9 @@ fi
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=postgresql
-VERSION=15.2
+VERSION=15.3
 PG_VERSION=$(echo $VERSION | cut -d. -f1)
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
