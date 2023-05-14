@@ -1,0 +1,15 @@
+diff --git a/src/common/codec.h b/src/common/codec.h
+index f8bc1b4e3..f4a92c322 100644
+--- a/src/common/codec.h
++++ b/src/common/codec.h
+@@ -231,3 +231,7 @@ operator <<(std::ostream &out,
+ 
+   return out;
+ }
++
++#if FMT_VERSION >= 90000
++template <> struct fmt::formatter<codec_c> : ostream_formatter {};
++#endif  // FMT_VERSION >= 90000
+-- 
+GitLab
+
