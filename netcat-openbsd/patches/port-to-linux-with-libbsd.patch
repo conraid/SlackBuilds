@@ -56,7 +56,7 @@ index 0ef318e..5a2b7b1 100644
  .Cm netcontrol ,
  .Cm throughput ,
 diff --git a/netcat.c b/netcat.c
-index 4a26db6..45b9b85 100644
+index c8f1cdd..216fa36 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -32,6 +32,8 @@
@@ -127,7 +127,7 @@ index 4a26db6..45b9b85 100644
  
  #include "atomicio.h"
  
-@@ -270,10 +317,14 @@ main(int argc, char *argv[])
+@@ -269,10 +316,14 @@ main(int argc, char *argv[])
  			uflag = 1;
  			break;
  		case 'V':
@@ -142,7 +142,7 @@ index 4a26db6..45b9b85 100644
  			break;
  		case 'v':
  			vflag = 1;
-@@ -322,7 +373,11 @@ main(int argc, char *argv[])
+@@ -321,7 +372,11 @@ main(int argc, char *argv[])
  			oflag = optarg;
  			break;
  		case 'S':
@@ -154,7 +154,7 @@ index 4a26db6..45b9b85 100644
  			break;
  		case 'T':
  			errstr = NULL;
-@@ -347,13 +402,22 @@ main(int argc, char *argv[])
+@@ -346,13 +401,22 @@ main(int argc, char *argv[])
  	argc -= optind;
  	argv += optind;
  
@@ -177,7 +177,7 @@ index 4a26db6..45b9b85 100644
  	} else if (argc == 1 && lflag) {
  		uport = argv[0];
  	} else if (argc == 2) {
-@@ -397,33 +461,6 @@ main(int argc, char *argv[])
+@@ -396,33 +460,6 @@ main(int argc, char *argv[])
  		}
  	}
  
@@ -211,7 +211,7 @@ index 4a26db6..45b9b85 100644
  	if (!lflag && kflag)
  		errx(1, "must use -l with -k");
  	if (uflag && usetls)
-@@ -580,10 +617,6 @@ main(int argc, char *argv[])
+@@ -579,10 +616,6 @@ main(int argc, char *argv[])
  			if (s == -1)
  				err(1, NULL);
  			if (uflag && kflag) {
@@ -222,7 +222,7 @@ index 4a26db6..45b9b85 100644
  				/*
  				 * For UDP and -k, don't connect the socket,
  				 * let it receive datagrams from multiple
-@@ -610,10 +643,6 @@ main(int argc, char *argv[])
+@@ -609,10 +642,6 @@ main(int argc, char *argv[])
  				if (rv == -1)
  					err(1, "connect");
  
@@ -233,7 +233,7 @@ index 4a26db6..45b9b85 100644
  				if (vflag)
  					report_sock("Connection received",
  					    (struct sockaddr *)&z, len,
-@@ -960,8 +989,10 @@ remote_connect(const char *host, const char *port, struct addrinfo hints,
+@@ -942,8 +971,10 @@ remote_connect(const char *host, const char *port, struct addrinfo hints,
  		if (sflag || pflag) {
  			struct addrinfo ahints, *ares;
  
@@ -244,7 +244,7 @@ index 4a26db6..45b9b85 100644
  			memset(&ahints, 0, sizeof(struct addrinfo));
  			ahints.ai_family = res->ai_family;
  			ahints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
-@@ -1074,9 +1105,15 @@ local_listen(const char *host, const char *port, struct addrinfo hints)
+@@ -1056,9 +1087,15 @@ local_listen(const char *host, const char *port, struct addrinfo hints)
  		    res->ai_protocol)) == -1)
  			continue;
  
@@ -260,7 +260,7 @@ index 4a26db6..45b9b85 100644
  
  		set_common_sockopts(s, res->ai_family);
  
-@@ -1545,11 +1582,13 @@ set_common_sockopts(int s, int af)
+@@ -1557,11 +1594,13 @@ set_common_sockopts(int s, int af)
  {
  	int x = 1;
  
@@ -274,7 +274,7 @@ index 4a26db6..45b9b85 100644
  	if (Dflag) {
  		if (setsockopt(s, SOL_SOCKET, SO_DEBUG,
  		    &x, sizeof(x)) == -1)
-@@ -1560,9 +1599,14 @@ set_common_sockopts(int s, int af)
+@@ -1572,9 +1611,14 @@ set_common_sockopts(int s, int af)
  		    IP_TOS, &Tflag, sizeof(Tflag)) == -1)
  			err(1, "set IP ToS");
  
@@ -289,7 +289,7 @@ index 4a26db6..45b9b85 100644
  	}
  	if (Iflag) {
  		if (setsockopt(s, SOL_SOCKET, SO_RCVBUF,
-@@ -1580,19 +1624,34 @@ set_common_sockopts(int s, int af)
+@@ -1592,19 +1636,34 @@ set_common_sockopts(int s, int af)
  		    IP_TTL, &ttl, sizeof(ttl)))
  			err(1, "set IP TTL");
  
@@ -324,7 +324,7 @@ index 4a26db6..45b9b85 100644
  	}
  }
  
-@@ -1627,6 +1686,7 @@ process_tos_opt(char *s, int *val)
+@@ -1639,6 +1698,7 @@ process_tos_opt(char *s, int *val)
  		{ "cs7",		IPTOS_DSCP_CS7 },
  		{ "ef",			IPTOS_DSCP_EF },
  		{ "inetcontrol",	IPTOS_PREC_INTERNETCONTROL },
@@ -332,7 +332,7 @@ index 4a26db6..45b9b85 100644
  		{ "lowdelay",		IPTOS_LOWDELAY },
  		{ "netcontrol",		IPTOS_PREC_NETCONTROL },
  		{ "reliability",	IPTOS_RELIABILITY },
-@@ -1791,6 +1851,9 @@ report_sock(const char *msg, const struct sockaddr *sa, socklen_t salen,
+@@ -1803,6 +1863,9 @@ report_sock(const char *msg, const struct sockaddr *sa, socklen_t salen,
  void
  help(void)
  {
@@ -342,7 +342,7 @@ index 4a26db6..45b9b85 100644
  	usage(0);
  	fprintf(stderr, "\tCommand Summary:\n\
  	\t-4		Use IPv4\n\
-@@ -1833,7 +1896,7 @@ help(void)
+@@ -1845,7 +1908,7 @@ help(void)
  	\t-Z		Peer certificate file\n\
  	\t-z		Zero-I/O mode [used for scanning]\n\
  	Port numbers can be individual or ranges: lo-hi [inclusive]\n");

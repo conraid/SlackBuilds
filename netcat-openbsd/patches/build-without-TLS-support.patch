@@ -236,7 +236,7 @@ index 5a2b7b1..44be0d9 100644
  .Pp
  .Dl $ nc -u host.example.com 53
 diff --git a/netcat.c b/netcat.c
-index 45b9b85..16b9ae6 100644
+index 216fa36..c1df1ce 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -99,7 +99,9 @@
@@ -300,7 +300,7 @@ index 45b9b85..16b9ae6 100644
  int	timeout_connect(int, const struct sockaddr *, socklen_t);
  int	socks_connect(const char *, const char *, struct addrinfo,
  	    const char *, const char *, struct addrinfo, int, const char *);
-@@ -183,15 +195,24 @@ int	unix_connect(char *);
+@@ -184,15 +196,24 @@ int	unix_connect(char *);
  int	unix_listen(char *);
  void	set_common_sockopts(int, int);
  int	process_tos_opt(char *, int *);
@@ -325,7 +325,7 @@ index 45b9b85..16b9ae6 100644
  
  int
  main(int argc, char *argv[])
-@@ -207,8 +228,10 @@ main(int argc, char *argv[])
+@@ -207,20 +228,28 @@ main(int argc, char *argv[])
  	const char *errstr;
  	struct addrinfo proxyhints;
  	char unix_dg_tmp_socket_buf[UNIX_DG_TMP_SOCKET_SIZE];
@@ -336,10 +336,9 @@ index 45b9b85..16b9ae6 100644
  	uint32_t protocols;
  
  	ret = 1;
-@@ -216,12 +239,18 @@ main(int argc, char *argv[])
+ 	socksv = 5;
  	host = NULL;
  	uport = NULL;
- 	sv = NULL;
 +#ifdef HAVE_TLS
  	Rflag = tls_default_ca_cert_file();
 +#endif
@@ -355,7 +354,7 @@ index 45b9b85..16b9ae6 100644
  	    != -1) {
  		switch (ch) {
  		case '4':
-@@ -243,24 +272,30 @@ main(int argc, char *argv[])
+@@ -242,24 +271,30 @@ main(int argc, char *argv[])
  			else
  				errx(1, "unsupported proxy protocol");
  			break;
@@ -386,7 +385,7 @@ index 45b9b85..16b9ae6 100644
  		case 'h':
  			help();
  			break;
-@@ -269,9 +304,11 @@ main(int argc, char *argv[])
+@@ -268,9 +303,11 @@ main(int argc, char *argv[])
  			if (errstr)
  				errx(1, "interval %s: %s", errstr, optarg);
  			break;
@@ -398,7 +397,7 @@ index 45b9b85..16b9ae6 100644
  		case 'k':
  			kflag = 1;
  			break;
-@@ -300,10 +337,12 @@ main(int argc, char *argv[])
+@@ -299,10 +336,12 @@ main(int argc, char *argv[])
  		case 'p':
  			pflag = optarg;
  			break;
@@ -411,7 +410,7 @@ index 45b9b85..16b9ae6 100644
  		case 'r':
  			rflag = 1;
  			break;
-@@ -345,12 +384,14 @@ main(int argc, char *argv[])
+@@ -344,12 +383,14 @@ main(int argc, char *argv[])
  			if ((proxy = strdup(optarg)) == NULL)
  				err(1, NULL);
  			break;
@@ -426,7 +425,7 @@ index 45b9b85..16b9ae6 100644
  		case 'z':
  			zflag = 1;
  			break;
-@@ -369,9 +410,11 @@ main(int argc, char *argv[])
+@@ -368,9 +409,11 @@ main(int argc, char *argv[])
  				errx(1, "TCP send window %s: %s",
  				    errstr, optarg);
  			break;
@@ -438,7 +437,7 @@ index 45b9b85..16b9ae6 100644
  		case 'S':
  #ifdef TCP_MD5SIG
  			Sflag = 1;
-@@ -382,8 +425,10 @@ main(int argc, char *argv[])
+@@ -381,8 +424,10 @@ main(int argc, char *argv[])
  		case 'T':
  			errstr = NULL;
  			errno = 0;
@@ -449,7 +448,7 @@ index 45b9b85..16b9ae6 100644
  			if (process_tos_opt(optarg, &Tflag))
  				break;
  			if (strlen(optarg) > 1 && optarg[0] == '0' &&
-@@ -393,7 +438,11 @@ main(int argc, char *argv[])
+@@ -392,7 +437,11 @@ main(int argc, char *argv[])
  				Tflag = (int)strtonum(optarg, 0, 255,
  				    &errstr);
  			if (Tflag < 0 || Tflag > 255 || errstr || errno)
@@ -461,7 +460,7 @@ index 45b9b85..16b9ae6 100644
  			break;
  		default:
  			usage(1);
-@@ -426,6 +475,7 @@ main(int argc, char *argv[])
+@@ -425,6 +474,7 @@ main(int argc, char *argv[])
  	} else
  		usage(1);
  
@@ -469,7 +468,7 @@ index 45b9b85..16b9ae6 100644
  	if (usetls) {
  		if (Cflag && unveil(Cflag, "r") == -1)
  			err(1, "unveil %s", Cflag);
-@@ -460,15 +510,19 @@ main(int argc, char *argv[])
+@@ -459,15 +509,19 @@ main(int argc, char *argv[])
  				err(1, "unveil /");
  		}
  	}
@@ -489,7 +488,7 @@ index 45b9b85..16b9ae6 100644
  	if (Fflag && usetls)
  		errx(1, "cannot use -c and -F");
  	if (TLSopt && !usetls)
-@@ -487,6 +541,7 @@ main(int argc, char *argv[])
+@@ -486,6 +540,7 @@ main(int argc, char *argv[])
  		errx(1, "you must specify -c to use -H");
  	if (tls_expectname && !usetls)
  		errx(1, "you must specify -c to use -e");
@@ -497,7 +496,7 @@ index 45b9b85..16b9ae6 100644
  
  	/* Get name of temporary socket for unix datagram client */
  	if ((family == AF_UNIX) && uflag && !lflag) {
-@@ -553,6 +608,7 @@ main(int argc, char *argv[])
+@@ -552,6 +607,7 @@ main(int argc, char *argv[])
  			proxyhints.ai_flags |= AI_NUMERICHOST;
  	}
  
@@ -505,7 +504,7 @@ index 45b9b85..16b9ae6 100644
  	if (usetls) {
  		if ((tls_cfg = tls_config_new()) == NULL)
  			errx(1, "unable to allocate TLS config");
-@@ -589,6 +645,7 @@ main(int argc, char *argv[])
+@@ -588,6 +644,7 @@ main(int argc, char *argv[])
  		} else if (pledge("stdio inet dns", NULL) == -1)
  			err(1, "pledge");
  	}
@@ -513,7 +512,7 @@ index 45b9b85..16b9ae6 100644
  	if (lflag) {
  		ret = 0;
  
-@@ -599,6 +656,7 @@ main(int argc, char *argv[])
+@@ -598,6 +655,7 @@ main(int argc, char *argv[])
  				s = unix_listen(host);
  		}
  
@@ -521,7 +520,7 @@ index 45b9b85..16b9ae6 100644
  		if (usetls) {
  			tls_config_verify_client_optional(tls_cfg);
  			if ((tls_ctx = tls_server()) == NULL)
-@@ -607,6 +665,7 @@ main(int argc, char *argv[])
+@@ -606,6 +664,7 @@ main(int argc, char *argv[])
  				errx(1, "tls configuration failed (%s)",
  				    tls_error(tls_ctx));
  		}
@@ -529,7 +528,7 @@ index 45b9b85..16b9ae6 100644
  		/* Allow only one connection at a time, but stay alive. */
  		for (;;) {
  			if (family != AF_UNIX) {
-@@ -622,7 +681,11 @@ main(int argc, char *argv[])
+@@ -621,7 +680,11 @@ main(int argc, char *argv[])
  				 * let it receive datagrams from multiple
  				 * socket pairs.
  				 */
@@ -541,7 +540,7 @@ index 45b9b85..16b9ae6 100644
  			} else if (uflag && !kflag) {
  				/*
  				 * For UDP and not -k, we will use recvfrom()
-@@ -648,9 +711,14 @@ main(int argc, char *argv[])
+@@ -647,9 +710,14 @@ main(int argc, char *argv[])
  					    (struct sockaddr *)&z, len,
  					    family == AF_UNIX ? host : NULL);
  
@@ -556,7 +555,7 @@ index 45b9b85..16b9ae6 100644
  				int connfd;
  
  				len = sizeof(cliaddr);
-@@ -664,6 +732,7 @@ main(int argc, char *argv[])
+@@ -663,6 +731,7 @@ main(int argc, char *argv[])
  					report_sock("Connection received",
  					    (struct sockaddr *)&cliaddr, len,
  					    family == AF_UNIX ? host : NULL);
@@ -564,7 +563,7 @@ index 45b9b85..16b9ae6 100644
  				if ((usetls) &&
  				    (tls_cctx = tls_setup_server(tls_ctx, connfd, host)))
  					readwrite(connfd, tls_cctx);
-@@ -673,6 +742,10 @@ main(int argc, char *argv[])
+@@ -672,6 +741,10 @@ main(int argc, char *argv[])
  					timeout_tls(s, tls_cctx, tls_close);
  				close(connfd);
  				tls_free(tls_cctx);
@@ -575,7 +574,7 @@ index 45b9b85..16b9ae6 100644
  			}
  			if (family == AF_UNIX && uflag) {
  				if (connect(s, NULL, 0) == -1)
-@@ -687,7 +760,11 @@ main(int argc, char *argv[])
+@@ -686,7 +759,11 @@ main(int argc, char *argv[])
  
  		if ((s = unix_connect(host)) > 0) {
  			if (!zflag)
@@ -587,7 +586,7 @@ index 45b9b85..16b9ae6 100644
  			close(s);
  		} else {
  			warn("%s", host);
-@@ -707,6 +784,7 @@ main(int argc, char *argv[])
+@@ -706,6 +783,7 @@ main(int argc, char *argv[])
  		for (s = -1, i = 0; portlist[i] != NULL; i++) {
  			if (s != -1)
  				close(s);
@@ -595,7 +594,7 @@ index 45b9b85..16b9ae6 100644
  			tls_free(tls_ctx);
  			tls_ctx = NULL;
  
-@@ -717,6 +795,7 @@ main(int argc, char *argv[])
+@@ -716,6 +794,7 @@ main(int argc, char *argv[])
  					errx(1, "tls configuration failed (%s)",
  					    tls_error(tls_ctx));
  			}
@@ -603,7 +602,7 @@ index 45b9b85..16b9ae6 100644
  			if (xflag)
  				s = socks_connect(host, portlist[i], hints,
  				    proxy, proxyport, proxyhints, socksv,
-@@ -763,6 +842,7 @@ main(int argc, char *argv[])
+@@ -745,6 +824,7 @@ main(int argc, char *argv[])
  			}
  			if (Fflag)
  				fdpass(s);
@@ -611,7 +610,7 @@ index 45b9b85..16b9ae6 100644
  			else {
  				if (usetls)
  					tls_setup_client(tls_ctx, s, host);
-@@ -771,13 +851,19 @@ main(int argc, char *argv[])
+@@ -753,13 +833,19 @@ main(int argc, char *argv[])
  				if (tls_ctx)
  					timeout_tls(s, tls_ctx, tls_close);
  			}
@@ -631,7 +630,7 @@ index 45b9b85..16b9ae6 100644
  
  	return ret;
  }
-@@ -819,6 +905,7 @@ unix_bind(char *path, int flags)
+@@ -801,6 +887,7 @@ unix_bind(char *path, int flags)
  	return s;
  }
  
@@ -639,7 +638,7 @@ index 45b9b85..16b9ae6 100644
  int
  timeout_tls(int s, struct tls *tls_ctx, int (*func)(struct tls *))
  {
-@@ -906,6 +993,7 @@ tls_setup_server(struct tls *tls_ctx, int connfd, char *host)
+@@ -888,6 +975,7 @@ tls_setup_server(struct tls *tls_ctx, int connfd, char *host)
  	}
  	return NULL;
  }
@@ -647,7 +646,7 @@ index 45b9b85..16b9ae6 100644
  
  /*
   * unix_connect()
-@@ -1152,7 +1240,11 @@ local_listen(const char *host, const char *port, struct addrinfo hints)
+@@ -1134,7 +1222,11 @@ local_listen(const char *host, const char *port, struct addrinfo hints)
   * Loop that polls on the network file descriptor and stdin.
   */
  void
@@ -659,7 +658,7 @@ index 45b9b85..16b9ae6 100644
  {
  	struct pollfd pfd[4];
  	int stdin_fd = STDIN_FILENO;
-@@ -1252,12 +1344,17 @@ readwrite(int net_fd, struct tls *tls_ctx)
+@@ -1234,12 +1326,17 @@ readwrite(int net_fd, struct tls *tls_ctx)
  		/* try to read from stdin */
  		if (pfd[POLL_STDIN].revents & POLLIN && stdinbufpos < BUFSIZE) {
  			ret = fillbuf(pfd[POLL_STDIN].fd, stdinbuf,
@@ -678,7 +677,7 @@ index 45b9b85..16b9ae6 100644
  				pfd[POLL_STDIN].fd = -1;
  			/* read something - poll net out */
  			if (stdinbufpos > 0)
-@@ -1269,12 +1366,17 @@ readwrite(int net_fd, struct tls *tls_ctx)
+@@ -1251,12 +1348,17 @@ readwrite(int net_fd, struct tls *tls_ctx)
  		/* try to write to network */
  		if (pfd[POLL_NETOUT].revents & POLLOUT && stdinbufpos > 0) {
  			ret = drainbuf(pfd[POLL_NETOUT].fd, stdinbuf,
@@ -697,7 +696,7 @@ index 45b9b85..16b9ae6 100644
  				pfd[POLL_NETOUT].fd = -1;
  			/* buffer empty - remove self from polling */
  			if (stdinbufpos == 0)
-@@ -1286,12 +1388,17 @@ readwrite(int net_fd, struct tls *tls_ctx)
+@@ -1268,12 +1370,17 @@ readwrite(int net_fd, struct tls *tls_ctx)
  		/* try to read from network */
  		if (pfd[POLL_NETIN].revents & POLLIN && netinbufpos < BUFSIZE) {
  			ret = fillbuf(pfd[POLL_NETIN].fd, netinbuf,
@@ -716,7 +715,7 @@ index 45b9b85..16b9ae6 100644
  				pfd[POLL_NETIN].fd = -1;
  			/* eof on net in - remove from pfd */
  			if (ret == 0) {
-@@ -1318,12 +1425,17 @@ readwrite(int net_fd, struct tls *tls_ctx)
+@@ -1300,12 +1407,17 @@ readwrite(int net_fd, struct tls *tls_ctx)
  		/* try to write to stdout */
  		if (pfd[POLL_STDOUT].revents & POLLOUT && netinbufpos > 0) {
  			ret = drainbuf(pfd[POLL_STDOUT].fd, netinbuf,
@@ -735,7 +734,7 @@ index 45b9b85..16b9ae6 100644
  				pfd[POLL_STDOUT].fd = -1;
  			/* buffer empty - remove self from polling */
  			if (netinbufpos == 0)
-@@ -1347,21 +1459,31 @@ readwrite(int net_fd, struct tls *tls_ctx)
+@@ -1329,21 +1441,31 @@ readwrite(int net_fd, struct tls *tls_ctx)
  }
  
  ssize_t
@@ -767,7 +766,7 @@ index 45b9b85..16b9ae6 100644
  	if (n <= 0)
  		return n;
  	/* adjust buffer */
-@@ -1373,21 +1495,31 @@ drainbuf(int fd, unsigned char *buf, size_t *bufpos, struct tls *tls)
+@@ -1355,21 +1477,31 @@ drainbuf(int fd, unsigned char *buf, size_t *bufpos, struct tls *tls)
  }
  
  ssize_t
@@ -799,7 +798,7 @@ index 45b9b85..16b9ae6 100644
  	if (n <= 0)
  		return n;
  	*bufpos += n;
-@@ -1704,6 +1836,7 @@ process_tos_opt(char *s, int *val)
+@@ -1716,6 +1848,7 @@ process_tos_opt(char *s, int *val)
  	return 0;
  }
  
@@ -807,7 +806,7 @@ index 45b9b85..16b9ae6 100644
  int
  process_tls_opt(char *s, int *flags)
  {
-@@ -1817,6 +1950,7 @@ report_tls(struct tls *tls_ctx, char *host)
+@@ -1829,6 +1962,7 @@ report_tls(struct tls *tls_ctx, char *host)
  		break;
  	}
  }
@@ -815,7 +814,7 @@ index 45b9b85..16b9ae6 100644
  
  void
  report_sock(const char *msg, const struct sockaddr *sa, socklen_t salen,
-@@ -1858,17 +1992,12 @@ help(void)
+@@ -1870,17 +2004,12 @@ help(void)
  	fprintf(stderr, "\tCommand Summary:\n\
  	\t-4		Use IPv4\n\
  	\t-6		Use IPv6\n\
@@ -833,7 +832,7 @@ index 45b9b85..16b9ae6 100644
  	\t-k		Keep inbound sockets open for multiple connects\n\
  	\t-l		Listen mode, for inbound connects\n\
  	\t-M ttl		Outgoing TTL / Hop Limit\n\
-@@ -1876,14 +2005,12 @@ help(void)
+@@ -1888,14 +2017,12 @@ help(void)
  	\t-N		Shutdown the network socket after EOF on stdin\n\
  	\t-n		Suppress name/port resolutions\n\
  	\t-O length	TCP send buffer length\n\
@@ -849,7 +848,7 @@ index 45b9b85..16b9ae6 100644
  	\t-t		Answer TELNET negotiation\n\
  	\t-U		Use UNIX domain socket\n\
  	\t-u		UDP mode\n\
-@@ -1893,7 +2020,6 @@ help(void)
+@@ -1905,7 +2032,6 @@ help(void)
  	\t-w timeout	Timeout for connects and final net reads\n\
  	\t-X proto	Proxy protocol: \"4\", \"5\" (SOCKS) or \"connect\"\n\
  	\t-x addr[:port]\tSpecify proxy address and port\n\
@@ -857,7 +856,7 @@ index 45b9b85..16b9ae6 100644
  	\t-z		Zero-I/O mode [used for scanning]\n\
  	Port numbers can be individual or ranges: lo-hi [inclusive]\n");
  	exit(0);
-@@ -1903,15 +2029,11 @@ void
+@@ -1915,15 +2041,11 @@ void
  usage(int ret)
  {
  	fprintf(stderr,

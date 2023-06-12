@@ -29,7 +29,7 @@ index 3b92227..118ad09 100644
  Use UDP instead of TCP.
  Cannot be used together with
 diff --git a/netcat.c b/netcat.c
-index efc8db3..b1cb27b 100644
+index 4baa10f..ca20eef 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -98,6 +98,7 @@
@@ -45,10 +45,10 @@ index efc8db3..b1cb27b 100644
  	    const char *, const char *, struct addrinfo, int, const char *);
  int	udptest(int);
 +int	unix_setup_sockaddr(char *, struct sockaddr_un *, int *);
+ void	connection_info(const char *, const char *, const char *, const char *);
  int	unix_bind(char *, int);
  int	unix_connect(char *);
- int	unix_listen(char *);
-@@ -952,6 +954,46 @@ main(int argc, char *argv[])
+@@ -935,6 +937,46 @@ main(int argc, char *argv[])
  	return ret;
  }
  
@@ -95,7 +95,7 @@ index efc8db3..b1cb27b 100644
  /*
   * unix_bind()
   * Returns a unix socket bound to the given path
-@@ -960,24 +1002,17 @@ int
+@@ -943,24 +985,17 @@ int
  unix_bind(char *path, int flags)
  {
  	struct sockaddr_un s_un;
@@ -125,7 +125,7 @@ index efc8db3..b1cb27b 100644
  		save_errno = errno;
  		close(s);
  		errno = save_errno;
-@@ -1087,7 +1122,10 @@ int
+@@ -1070,7 +1105,10 @@ int
  unix_connect(char *path)
  {
  	struct sockaddr_un s_un;
@@ -137,7 +137,7 @@ index efc8db3..b1cb27b 100644
  
  	if (uflag) {
  		if ((s = unix_bind(unix_dg_tmp_socket, SOCK_CLOEXEC)) == -1)
-@@ -1097,16 +1135,7 @@ unix_connect(char *path)
+@@ -1080,16 +1118,7 @@ unix_connect(char *path)
  			return -1;
  	}
  

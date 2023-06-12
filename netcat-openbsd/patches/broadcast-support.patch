@@ -30,7 +30,7 @@ index bc7c915..9d874e1 100644
  Send CRLF as line-ending.  Each line feed (LF) character from the input
  data is translated into CR+LF before being written to the socket.  Line
 diff --git a/netcat.c b/netcat.c
-index ddb0c2c..ec8175b 100644
+index bd1b520..e5168ab 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -132,6 +132,7 @@
@@ -41,7 +41,7 @@ index ddb0c2c..ec8175b 100644
  int	dflag;					/* detached, no stdin */
  int	Fflag;					/* fdpass sock to stdout */
  unsigned int iflag;				/* Interval Flag */
-@@ -262,9 +263,9 @@ main(int argc, char *argv[])
+@@ -261,9 +262,9 @@ main(int argc, char *argv[])
  
  	while ((ch = getopt(argc, argv,
  #ifdef HAVE_TLS
@@ -53,7 +53,7 @@ index ddb0c2c..ec8175b 100644
  #endif
  	    != -1) {
  		switch (ch) {
-@@ -274,6 +275,13 @@ main(int argc, char *argv[])
+@@ -273,6 +274,13 @@ main(int argc, char *argv[])
  		case '6':
  			family = AF_INET6;
  			break;
@@ -67,7 +67,7 @@ index ddb0c2c..ec8175b 100644
  		case 'U':
  			family = AF_UNIX;
  			break;
-@@ -1892,6 +1900,15 @@ set_common_sockopts(int s, int af)
+@@ -1905,6 +1913,15 @@ set_common_sockopts(int s, int af)
  {
  	int x = 1;
  
@@ -83,7 +83,7 @@ index ddb0c2c..ec8175b 100644
  #ifdef TCP_MD5SIG
  	if (Sflag) {
  		if (setsockopt(s, IPPROTO_TCP, TCP_MD5SIG,
-@@ -2170,6 +2187,7 @@ help(void)
+@@ -2183,6 +2200,7 @@ help(void)
  	fprintf(stderr, "\tCommand Summary:\n\
  	\t-4		Use IPv4\n\
  	\t-6		Use IPv6\n\

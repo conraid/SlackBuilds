@@ -3,9 +3,9 @@ Date: Mon, 13 Feb 2012 15:56:51 +0800
 Subject: New flag '-Z' for DCCP support
 
 ---
- nc.1     |  4 +++-
- netcat.c | 84 ++++++++++++++++++++++++++++++++++++++++++++++++++++++----------
- 2 files changed, 75 insertions(+), 13 deletions(-)
+ nc.1     |  4 ++-
+ netcat.c | 85 +++++++++++++++++++++++++++++++++++++++++++++++++++++++---------
+ 2 files changed, 76 insertions(+), 13 deletions(-)
 
 diff --git a/nc.1 b/nc.1
 index ff628ae..bc7c915 100644
@@ -30,7 +30,7 @@ index ff628ae..bc7c915 100644
  Only scan for listening daemons, without sending any data to them.
  Cannot be used together with
 diff --git a/netcat.c b/netcat.c
-index 029e122..ddb0c2c 100644
+index 552ccb9..bd1b520 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -146,6 +146,7 @@ int	rflag;					/* Random ports flag */
@@ -41,7 +41,7 @@ index 029e122..ddb0c2c 100644
  int	vflag;					/* Verbosity */
  int	xflag;					/* Socks proxy */
  int	zflag;					/* Port Scan Flag */
-@@ -224,6 +225,7 @@ ssize_t drainbuf(int, unsigned char *, size_t *, int);
+@@ -225,6 +226,7 @@ ssize_t drainbuf(int, unsigned char *, size_t *, int);
  ssize_t fillbuf(int, unsigned char *, size_t *);
  #endif
  
@@ -49,7 +49,7 @@ index 029e122..ddb0c2c 100644
  static int connect_with_timeout(int, const struct sockaddr *, socklen_t, int);
  static void quit();
  
-@@ -262,7 +264,7 @@ main(int argc, char *argv[])
+@@ -261,7 +263,7 @@ main(int argc, char *argv[])
  #ifdef HAVE_TLS
  	    "46C:cDde:FH:hI:i:K:klM:m:NnO:o:P:p:q:R:rSs:T:tUuV:vW:w:X:x:Z:z"))
  #else
@@ -58,7 +58,7 @@ index 029e122..ddb0c2c 100644
  #endif
  	    != -1) {
  		switch (ch) {
-@@ -379,6 +381,13 @@ main(int argc, char *argv[])
+@@ -378,6 +380,13 @@ main(int argc, char *argv[])
  		case 'u':
  			uflag = 1;
  			break;
@@ -72,7 +72,7 @@ index 029e122..ddb0c2c 100644
  		case 'V':
  #ifdef RT_TABLEID_MAX
  			rtableid = (int)strtonum(optarg, 0,
-@@ -483,6 +492,10 @@ main(int argc, char *argv[])
+@@ -482,6 +491,10 @@ main(int argc, char *argv[])
  
  	/* Cruft to make sure options are clean, and used properly. */
  	if (argc == 1 && family == AF_UNIX) {
@@ -83,7 +83,7 @@ index 029e122..ddb0c2c 100644
  		host = argv[0];
  	} else if (argc == 0 && lflag) {
  		if (sflag)
-@@ -584,8 +597,20 @@ main(int argc, char *argv[])
+@@ -583,8 +596,20 @@ main(int argc, char *argv[])
  	if (family != AF_UNIX) {
  		memset(&hints, 0, sizeof(struct addrinfo));
  		hints.ai_family = family;
@@ -106,7 +106,7 @@ index 029e122..ddb0c2c 100644
  		if (nflag)
  			hints.ai_flags |= AI_NUMERICHOST;
  	}
-@@ -593,7 +618,10 @@ main(int argc, char *argv[])
+@@ -592,7 +617,10 @@ main(int argc, char *argv[])
  	if (xflag) {
  		if (uflag)
  			errx(1, "no proxy support for UDP mode");
@@ -118,32 +118,21 @@ index 029e122..ddb0c2c 100644
  		if (lflag)
  			errx(1, "no proxy support for listen");
  
-@@ -841,13 +869,14 @@ main(int argc, char *argv[])
+@@ -842,9 +870,11 @@ main(int argc, char *argv[])
+ 						continue;
  					}
  				}
- 
-+				char *proto = proto_name(uflag, dccpflag);
- 				/* Don't look up port if -n. */
- 				if (nflag)
- 					sv = NULL;
- 				else {
- 					sv = getservbyport(
- 					    ntohs(atoi(portlist[i])),
--					    uflag ? "udp" : "tcp");
-+					    proto);
- 				}
- 
- 				fprintf(stderr, "Connection to %s", host);
-@@ -861,7 +890,7 @@ main(int argc, char *argv[])
- 					fprintf(stderr, " (%s)", ipaddr);
- 
- 				fprintf(stderr, " %s port [%s/%s] succeeded!\n",
--				    portlist[i], uflag ? "udp" : "tcp",
-+				    portlist[i], proto,
- 				    sv ? sv->s_name : "*");
+-				if (print_info == 1)
++				if (print_info == 1) {
++					char *proto = proto_name(uflag, dccpflag);
+ 					connection_info(host, portlist[i],
+-					    uflag ? "udp" : "tcp", ipaddr);
++					    proto, ipaddr);
++				}
  			}
  			if (Fflag)
-@@ -1076,6 +1105,21 @@ unix_listen(char *path)
+ 				fdpass(s);
+@@ -1058,6 +1088,21 @@ unix_listen(char *path)
  	return s;
  }
  
@@ -165,7 +154,7 @@ index 029e122..ddb0c2c 100644
  /*
   * remote_connect()
   * Returns a socket connected to a remote host. Properly binds to a local
-@@ -1107,8 +1151,20 @@ remote_connect(const char *host, const char *port, struct addrinfo hints,
+@@ -1089,8 +1134,20 @@ remote_connect(const char *host, const char *port, struct addrinfo hints,
  #endif
  			memset(&ahints, 0, sizeof(struct addrinfo));
  			ahints.ai_family = res->ai_family;
@@ -188,7 +177,7 @@ index 029e122..ddb0c2c 100644
  			ahints.ai_flags = AI_PASSIVE;
  			if ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
  				errx(1, "getaddrinfo: %s", gai_strerror(error));
-@@ -1138,16 +1194,18 @@ remote_connect(const char *host, const char *port, struct addrinfo hints,
+@@ -1120,16 +1177,18 @@ remote_connect(const char *host, const char *port, struct addrinfo hints,
  		    timeout)) == CONNECTION_SUCCESS)
  			break;
  
@@ -209,7 +198,7 @@ index 029e122..ddb0c2c 100644
  				    error == CONNECTION_TIMEOUT ? "timed out" : "failed");
  		}
  
-@@ -1758,7 +1816,8 @@ build_ports(char *p)
+@@ -1740,7 +1799,8 @@ build_ports(char *p)
  	int hi, lo, cp;
  	int x = 0;
  
@@ -219,7 +208,7 @@ index 029e122..ddb0c2c 100644
  	if (sv) {
  		if (asprintf(&portlist[0], "%d", ntohs(sv->s_port)) < 0)
  			err(1, "asprintf");
-@@ -2141,6 +2200,7 @@ help(void)
+@@ -2153,6 +2213,7 @@ help(void)
  	\t-w timeout	Timeout for connects and final net reads\n\
  	\t-X proto	Proxy protocol: \"4\", \"5\" (SOCKS) or \"connect\"\n\
  	\t-x addr[:port]\tSpecify proxy address and port\n\
@@ -227,7 +216,7 @@ index 029e122..ddb0c2c 100644
  	\t-z		Zero-I/O mode [used for scanning]\n\
  	Port numbers can be individual or ranges: lo-hi [inclusive]\n");
  	exit(0);
-@@ -2150,7 +2210,7 @@ void
+@@ -2162,7 +2223,7 @@ void
  usage(int ret)
  {
  	fprintf(stderr,
