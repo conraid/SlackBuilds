@@ -28,8 +28,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=weechat
-VERSION=3.8
-BUILD=${BUILD:-3}
+VERSION=4.0.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -71,7 +71,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xjvf $CWD/$PKGNAM-$VERSION.tar.bz2
+tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
@@ -88,6 +88,9 @@ if [ -e $CWD/patches/ ]; then
   done
 fi
 
+# Fix error in cs.po file
+sed '55s/c-format/fuzzy, c-format/' -i po/cs.po
+
 mkdir -p build
 cd build
 cmake \
@@ -99,6 +102,7 @@ cmake \
   -DENABLE_PHP=OFF \
   -DENABLE_JAVASCRIPT=OFF \
   -DMANDIR=/usr/man \
+  -DENABLE_ENCHANT=ON \
   ..
 
 make
