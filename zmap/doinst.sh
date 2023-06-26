@@ -11,7 +11,7 @@ config() {
   # Otherwise, we leave the .new copy for the admin to consider...
 }
 
-config etc/zmap/blacklist.conf.new
+config etc/zmap/blocklist.conf.new
 config etc/zmap/zmap.conf.new
 
 

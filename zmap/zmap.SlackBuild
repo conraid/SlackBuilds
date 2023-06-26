@@ -2,7 +2,7 @@
 #
 # Slackware build script for zmap
 #
-# Copyright 2013-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2013-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=zmap
-VERSION=2.1.1
-BUILD=${BUILD:-14}
+VERSION=3.0.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -110,7 +110,7 @@ find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cu
 find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
 
 # Install config files
-install -Dm644 conf/blacklist.conf $PKG/etc/zmap/blacklist.conf.new
+install -Dm644 conf/blocklist.conf $PKG/etc/zmap/blocklist.conf.new
 install -Dm644 conf/zmap.conf $PKG/etc/zmap/zmap.conf.new
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
