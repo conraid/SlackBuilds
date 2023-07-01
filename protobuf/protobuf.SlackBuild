@@ -2,7 +2,7 @@
 #
 # Slackware build script for protobuf
 #
-# Copyright 2011-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2011-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=protobuf
-VERSION=21.12
+VERSION=23.3
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -84,32 +84,46 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-./autogen.sh
-LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --enable-static=no \
-  --enable-shared=yes \
-  --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
+# Clone submodules
+cd third_party
+cd googletest
+git clone https://github.com/google/googletest.git .
+git checkout 4c9a3bb
+cd ../abseil-cpp
+git clone https://github.com/abseil/abseil-cpp.git .
+git checkout c2435f8
+cd ../jsoncpp
+git clone https://github.com/open-source-parsers/jsoncpp.git .
+git checkout 9059f5c
+cd ../..
+
+sed -e 's|c++14|c++17|' -i python/setup.py
+
+mkdir -p build
+cd build
+cmake -Wno-dev \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -Dprotobuf_BUILD_SHARED_LIBS=ON \
+  ..
 
 make
-make DESTDIR=$PKG install-strip
+make DESTDIR=$PKG install
+cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+
 # Python
 if [ $BUILD_PYTHON = "YES" ]; then
   cd python
-  python3 setup.py install --cpp_implementation --root=$PKG
+    PROTOC=$TMP/$PKGNAM-$VERSION/build/protoc LD_LIBRARY_PATH=$TMP/$PKGNAM-$VERSION/build \
+    python3 setup.py install --root=$PKG
   cd -
 fi
 
