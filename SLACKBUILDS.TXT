@@ -4123,11 +4123,11 @@ SLACKBUILD SHORT DESCRIPTION:  netcat-openbsd (reads and writes data across netw
 
 SLACKBUILD NAME: netdata
 SLACKBUILD LOCATION: ./netdata
-SLACKBUILD FILES: README doinst.sh files/netdata.conf files/rc.netdata netdata.SlackBuild netdata.info slack-desc slack-required
-SLACKBUILD VERSION: 1.39.1
-SLACKBUILD REQUIRED: psycopg2
-SLACKBUILD DOWNLOAD: https://github.com/netdata/netdata/archive/refs/tags/v1.39.1.tar.gz
-SLACKBUILD MD5SUM: c13b502f6dfe9a864a9c20b1ee54728d
+SLACKBUILD FILES: README doinst.sh files/netdata.conf files/rc.netdata netdata.SlackBuild netdata.info patches/protobuf-23.patch slack-desc slack-required
+SLACKBUILD VERSION: 1.40.1
+SLACKBUILD REQUIRED: psycopg2 protobuf
+SLACKBUILD DOWNLOAD: https://github.com/netdata/netdata/archive/refs/tags/v1.40.1.tar.gz
+SLACKBUILD MD5SUM: bab50e2bcc78a6890e16563c6db7bb9e
 SLACKBUILD SHORT DESCRIPTION:  netdata (Real-time performance monitoring)
 
 SLACKBUILD NAME: nethogs
@@ -4670,15 +4670,6 @@ SLACKBUILD DOWNLOAD: https://github.com/nzjrs/osm-gps-map/releases/download/1.2.
 SLACKBUILD MD5SUM: a3c9a3f9ac9f8f1fe039a880b7cc1216
 SLACKBUILD SHORT DESCRIPTION:  osm-gps-map (gtk mapping widget)
 
-SLACKBUILD NAME: ostinato
-SLACKBUILD LOCATION: ./ostinato
-SLACKBUILD FILES: README files/remote-ext.h ostinato.SlackBuild ostinato.info slack-desc slack-required
-SLACKBUILD VERSION: 1.2.0
-SLACKBUILD REQUIRED: protobuf 
-SLACKBUILD DOWNLOAD: https://github.com/pstavirs/ostinato/archive/v1.2.0.tar.gz
-SLACKBUILD MD5SUM: 2114f928546f700060707705eba51c02
-SLACKBUILD SHORT DESCRIPTION:  ostinato (Packet/Traffic Generator and Analyzer)
-
 SLACKBUILD NAME: ostree
 SLACKBUILD LOCATION: ./ostree
 SLACKBUILD FILES: README ostree.SlackBuild ostree.info slack-desc
@@ -5203,7 +5194,7 @@ SLACKBUILD SHORT DESCRIPTION:  prompt-toolkit
 
 SLACKBUILD NAME: protobuf-c
 SLACKBUILD LOCATION: ./protobuf-c
-SLACKBUILD FILES: README patches/protobuf-c-1.3.0-no-build-tests.patch protobuf-c.SlackBuild protobuf-c.info slack-desc slack-required
+SLACKBUILD FILES: README patches/556.patch patches/protobuf-c-1.3.0-no-build-tests.patch protobuf-c.SlackBuild protobuf-c.info slack-desc slack-required
 SLACKBUILD VERSION: 1.4.1
 SLACKBUILD REQUIRED: protobuf
 SLACKBUILD DOWNLOAD: https://github.com/protobuf-c/protobuf-c/releases/download/v1.4.1/protobuf-c-1.4.1.tar.gz
@@ -5212,11 +5203,11 @@ SLACKBUILD SHORT DESCRIPTION:  protobuf-c (C bindings for Google's Protocol Buff
 
 SLACKBUILD NAME: protobuf
 SLACKBUILD LOCATION: ./protobuf
-SLACKBUILD FILES: README protobuf.SlackBuild protobuf.info slack-desc
-SLACKBUILD VERSION: 21.12
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/google/protobuf/archive/v21.12/protobuf-21.12.tar.gz
-SLACKBUILD MD5SUM: 41fe80037118f53dea3f0822aee96629
+SLACKBUILD FILES: README patches/protobuf-21.12-pep517.patch patches/soversion.patch protobuf.SlackBuild protobuf.info slack-desc slack-required
+SLACKBUILD VERSION: 23.3
+SLACKBUILD REQUIRED: python-build python-installer python-wheel
+SLACKBUILD DOWNLOAD: https://github.com/google/protobuf/archive/v23.3/protobuf-23.3.tar.gz
+SLACKBUILD MD5SUM: 23c33a07636ead3806cbf1385950a396
 SLACKBUILD SHORT DESCRIPTION:  protobuf (Google's data interchange format)
 
 SLACKBUILD NAME: psensor
