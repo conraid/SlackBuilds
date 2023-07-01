@@ -32,7 +32,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=slpkg
-VERSION=4.9.0
+VERSION=4.9.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -85,15 +85,24 @@ find -L . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
-CFLAGS="$SLKCFLAGS" python3 setup.py install --root=$PKG
+CFLAGS="$SLKCFLAGS" python3 -m build --wheel --no-isolation
+python3 -m installer --destdir "$PKG" dist/*.whl
+
+# Move executables to the /usr/sbin folder.
+mkdir -p $PKG/usr/sbin
+mv $PKG/usr/bin/slpkg $PKG/usr/sbin/slpkg
+mv $PKG/usr/bin/slpkg_new-configs $PKG/usr/sbin/slpkg_new-configs
+rm -rf $PKG/usr/bin
 
 # install man file
 install -Dm644 man/slpkg.1 $PKG/usr/man/man1/slpkg.1
 
-# Install config files
-install -Dm644 configs/slpkg.toml $PKG/etc/slpkg/slpkg.toml.new
-install -Dm644 configs/blacklist.toml $PKG/etc/slpkg/blacklist.toml.new
-install -Dm644 configs/repositories.toml $PKG/etc/slpkg/repositories.toml.new
+# Install configuration files and creating lib directory
+mkdir -p $PKG/etc/$PKGNAM
+FILES="slpkg repositories blacklist rules"
+for file in $FILES; do
+  install -Dm0644 configs/$file.toml $PKG/etc/slpkg/$file.toml.new
+done
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
