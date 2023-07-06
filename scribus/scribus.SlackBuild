@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=scribus
 VERSION=1.5.8
-BUILD=${BUILD:-22}
+BUILD=${BUILD:-23}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -107,6 +107,8 @@ cmake \
 	-DWANT_DISTROBUILD=ON \
 	-DPython3_EXECUTABLE="python3" \
   -DWANT_CPP17=ON \
+  -DLIBPODOFO_INCLUDE_DIR=/usr/include/podofo09 \
+  -DLIBPODOFO_LIBRARY=/usr/lib$LIBDIRSUFFIX/podofo09/libpodofo.so \
   ..
 
 make
