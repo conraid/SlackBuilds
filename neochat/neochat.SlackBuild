@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=neochat
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=23.04.2
+SRCVERSION=23.04.3
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -108,6 +108,7 @@ cmake -Wno-dev \
   -DMAN_INSTALL_DIR=/usr/man \
   -DSYSCONF_INSTALL_DIR=/etc \
   -DHTML_INSTALL_DIR=/usr/doc/HTML \
+  -DBUILD_TESTING=OFF \
   ..
 
 make
