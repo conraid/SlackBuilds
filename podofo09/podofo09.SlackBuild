@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=podofo
 PKGNAM=podofo09
 VERSION=0.9.8
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -113,7 +113,6 @@ cmake -Wno-dev \
   -DWANT_FONTCONFIG=1 \
   -DWANT_BOOST=1 \
   -DPODOFO_BUILD_LIB_ONLY=1 \
-  -DLIB_SUFFIX="$LIBDIRSUFFIX" \
   ..
 
 make
@@ -130,6 +129,9 @@ if [ -d $PKG/usr/man ]; then
   find  $PKG/usr/man -type f -exec gzip -9 {} \;
   for i in $( find  $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
+
+# Fix lib path
+ln -rs $PKG/usr/lib$LIBDIRSUFFIX/podofo09/libpodofo.so.0.9.8 $PKG/usr/lib$LIBDIRSUFFIX
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
