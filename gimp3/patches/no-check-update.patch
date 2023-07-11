@@ -1,8 +1,7 @@
-diff --git a/app/dialogs/about-dialog.c b/app/dialogs/about-dialog.c
-index d767d830f0..4352f021ca 100644
---- a/app/dialogs/about-dialog.c
-+++ b/app/dialogs/about-dialog.c
-@@ -163,7 +163,9 @@ about_dialog_create (GimpCoreConfig *config)
+diff -Naupr a/app/dialogs/about-dialog.c b/app/dialogs/about-dialog.c
+--- a/app/dialogs/about-dialog.c	2023-07-05 16:00:47.000000000 +0200
++++ b/app/dialogs/about-dialog.c	2023-07-10 11:58:44.123362142 +0200
+@@ -178,7 +178,9 @@ about_dialog_create (GimpCoreConfig *con
  #ifdef GIMP_UNSTABLE
            about_dialog_add_unstable_message (children->data);
  #endif /* GIMP_UNSTABLE */
