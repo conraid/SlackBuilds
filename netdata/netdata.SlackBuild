@@ -44,7 +44,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=netdata
-VERSION=1.40.1
+VERSION=1.41.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -86,9 +86,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-${VERSION}
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
-cd $PKGNAM-${VERSION}
+rm -rf $PKGNAM-v${VERSION}
+tar xvf $CWD/$PKGNAM-v$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
+cd $PKGNAM-v${VERSION}
 
 chown -R root:root .
 find -L . \
@@ -128,7 +128,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-zlib \
   --with-math \
   --with-user=netdata \
-  --disable-httpd \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
