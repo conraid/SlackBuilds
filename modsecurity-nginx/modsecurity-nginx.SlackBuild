@@ -1,0 +1,131 @@
+#!/bin/bash
+#
+# Slackware build script for ModSecurity Apache module
+#
+# Copyright 2015-2023 Corrado Franco (https://corradofranco.it)
+# All rights reserved.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version, with the following exception:
+# the text of the GPL license may be omitted.
+
+# This program is distributed in the hope that it will be useful, but
+# without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose. Compiling,
+# interpreting, executing or merely reading the text of the program
+# may result in lapses of consciousness and/or very being, up to and
+# including the end of all existence and the Universe as we know it.
+# See the GNU General Public License for more details.
+
+# You may have received a copy of the GNU General Public License along
+# with this program (most likely, a file named COPYING).  If not, see
+# <http://www.gnu.org/licenses/>.
+#
+# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+
+set -eu
+
+cd $(dirname $0) ; CWD=$(pwd)
+
+PKGNAM=modsecurity-nginx
+SRCVERSION=v1.0.3
+VERSION=$(echo $SRCVERSION | tr - _ | sed 's/^v//')
+NGINXVERSION=$(nginx -v 2>&1 | cut -d/ -f2)
+CRSVERSION=3.3.5
+BUILD=${BUILD:-1}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+PKG=$TMP/package-$PKGNAM
+OUTPUT=${OUTPUT:-/tmp}
+
+DOCFILES="AUTHORS CHANGES LICENSE README*"
+
+if [ -z ${ARCH:=""} ]; then
+  case "$( uname -m )" in
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    *) ARCH=$( uname -m ) ;;
+  esac
+fi
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  exit 0
+fi
+
+if [ "$ARCH" = "i586" ]; then
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  LIBDIRSUFFIX="64"
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+fi
+
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+rm -rf $PKGNAM-$SRCVERSION nginx-$NGINXVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz
+tar xvf $CWD/coreruleset-${CRSVERSION}.tar.gz -C $PKGNAM-$SRCVERSION
+tar xvf $CWD/nginx-$NGINXVERSION.tar.gz
+cd nginx-$NGINXVERSION
+
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
+
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  for PATCH in $CWD/patches/*.patch; do
+    patch -p1 -i $PATCH
+  done
+fi
+
+./configure \
+  --with-cc-opt="$SLKCFLAGS" \
+  --with-compat \
+  --add-dynamic-module=../$PKGNAM-$SRCVERSION
+
+make modules
+install -Dsm755 objs/ngx_http_modsecurity_module.so -t $PKG/usr/lib$LIBDIRSUFFIX/nginx/modules/
+
+cd ../$PKGNAM-$SRCVERSION
+
+# Install config file
+mkdir -p $PKG/etc/nginx/modules
+sed "s/%LIBDIRSUFFIX%/$LIBDIRSUFFIX/" $CWD/files/modsecurity.conf > $PKG/etc/nginx/modules/modsecurity.conf.new
+
+# Install Core Rule Set
+cd coreruleset-$CRSVERSION
+  mkdir -p $PKG/etc/nginx/modsec/crs/rules
+  install -m644 crs-setup.conf.example $PKG/etc/nginx/modsec/crs/crs-setup.conf.new
+  cd rules
+  rename .conf.example .conf *.conf.example
+  cd ..
+  cp -r rules $PKG/etc/nginx/modsec/crs
+cd ..
+install -Dm644 $CWD/files/modsec.conf $PKG/etc/nginx/modsec/main.conf.new
+
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -r $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBuild
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD${TAG}.txz
