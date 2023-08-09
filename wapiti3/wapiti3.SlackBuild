@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=wapiti3
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=3.1.7
+SRCVERSION=3.1.8
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -74,20 +74,10 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$SRCVERSION
-tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz
-cd $PRGNAM-$SRCVERSION
 
-chown -R root:root .
-find -L . \
-  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
-  -exec chmod 755 {} \; -o \
-  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
-  -exec chmod 644 {} \;
+CFLAGS="$SLKCFLAGS" python3 -m pip install --root=$PKG $CWD/$PRGNAM-$VERSION.tar.gz
 
-sed 's|share/man|man|g' -i setup.py
-
-CFLAGS="$SLKCFLAGS" python3 setup.py install --root=$PKG
+chown -R root:root $PKG
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
@@ -98,8 +88,6 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-mv $PKG/usr/share/doc/wapiti/* $PKG/usr/doc/$PKGNAM-$VERSION
-rm -rf $PKG/usr/share
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
