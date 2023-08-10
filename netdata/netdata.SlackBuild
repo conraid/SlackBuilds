@@ -44,7 +44,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=netdata
-VERSION=1.41.0
+VERSION=1.42.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -153,6 +153,9 @@ mkdir -p $PKG/var/{lib,log,cache}/netdata
 for CONF in $(find $PKG/etc/netdata -name "*.conf"); do
   mv $CONF $CONF.new
 done
+
+# Install cloud file
+install -Dm644 $CWD/files/cloud.conf $PKG/var/lib/netdata/cloud.d/cloud.conf.new
 
 # Install init file
 install -Dm755 $CWD/files/rc.netdata $PKG/etc/rc.d/rc.netdata.new

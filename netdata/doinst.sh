@@ -28,6 +28,8 @@ for NEW in $(find etc/netdata/ -name "*.new"); do
   config $NEW
 done
 
+config var/lib/netdata/cloud.d/cloud.conf.new
+
 # Add user and group
 # (338 uid and gid are SBo suggests https://slackbuilds.org/uid_gid.txt)
 if ! grep -q "^netdata:" etc/group; then
