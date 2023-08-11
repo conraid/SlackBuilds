@@ -344,7 +344,7 @@ SLACKBUILD NAME: aws-cli
 SLACKBUILD LOCATION: ./aws-cli
 SLACKBUILD FILES: README aws-cli.SlackBuild aws-cli.info slack-desc slack-required
 SLACKBUILD VERSION: 1.29.23
-SLACKBUILD REQUIRED: cryptography python-botocore colorama python-dateutil python-jmespath rsa python-s3transfer python-wheel ruyaml ruamel-yaml awscrt
+SLACKBUILD REQUIRED: cryptography python-botocore colorama python-dateutil python-jmespath rsa python-s3transfer  ruyaml ruamel-yaml awscrt
 SLACKBUILD DOWNLOAD: https://github.com/aws/aws-cli/archive/1.29.23/aws-cli-1.29.23.tar.gz
 SLACKBUILD MD5SUM: 7e976e61724a98994befd14f0672e862
 SLACKBUILD SHORT DESCRIPTION:  aws-cli (Universal Command Line Interface for AWS)
@@ -353,7 +353,7 @@ SLACKBUILD NAME: awscrt
 SLACKBUILD LOCATION: ./awscrt
 SLACKBUILD FILES: README awscrt.SlackBuild awscrt.info slack-desc slack-required
 SLACKBUILD VERSION: 0.17.0
-SLACKBUILD REQUIRED: python-wheel
+SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/awscrt/awscrt-0.17.0.tar.gz
 SLACKBUILD MD5SUM: 2c16a01f26bcf4e1801b08651ee658e9
 SLACKBUILD SHORT DESCRIPTION:  awscrt (Python bindings for the AWS Common Runtime)
@@ -983,7 +983,7 @@ SLACKBUILD NAME: cryptography
 SLACKBUILD LOCATION: ./cryptography
 SLACKBUILD FILES: README cryptography.SlackBuild cryptography.info slack-desc slack-required
 SLACKBUILD VERSION: 41.0.3
-SLACKBUILD REQUIRED: python-typing-extensions pyasn1 asn1crypto python-wheel python-setuptools-rust python-semantic_version
+SLACKBUILD REQUIRED: python-typing-extensions pyasn1 asn1crypto  python-setuptools-rust python-semantic_version
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/cryptography/cryptography-41.0.3.tar.gz
 SLACKBUILD MD5SUM: fbf930acd8de95780604c40c4e817a74
 SLACKBUILD SHORT DESCRIPTION:  cryptography (Python cryptography library)
@@ -1145,7 +1145,7 @@ SLACKBUILD NAME: device-tree-compiler
 SLACKBUILD LOCATION: ./device-tree-compiler
 SLACKBUILD FILES: README device-tree-compiler.SlackBuild device-tree-compiler.info patches/git.patch patches/pyscm.patch slack-desc slack-required
 SLACKBUILD VERSION: 1.7.0
-SLACKBUILD REQUIRED: valgrind python-wheel
+SLACKBUILD REQUIRED: valgrind 
 SLACKBUILD DOWNLOAD: https://mirrors.edge.kernel.org/pub/software/utils/dtc/dtc-1.7.0.tar.xz
 SLACKBUILD MD5SUM: 228576aceed3aa89f54283aa0f1eb820
 SLACKBUILD SHORT DESCRIPTION:  device-tree-compiler (Device Tree Compiler for Flat Device Trees)
@@ -1181,7 +1181,7 @@ SLACKBUILD NAME: displaycal
 SLACKBUILD LOCATION: ./displaycal
 SLACKBUILD FILES: PKGNOTE README displaycal.SlackBuild displaycal.info slack-desc slack-required
 SLACKBUILD VERSION: 3.9.11
-SLACKBUILD REQUIRED: argyllcms numpy colord-kde wxgtk python-send2trash python-wheel  pychromecast  python-casttube  python-ifaddr  python-netifaces  python-zeroconf wxpython
+SLACKBUILD REQUIRED: argyllcms numpy colord-kde wxgtk python-send2trash   pychromecast  python-casttube  python-ifaddr  python-netifaces  python-zeroconf wxpython
 SLACKBUILD DOWNLOAD: https://github.com/eoyilmaz/displaycal-py3/releases/download/3.9.11/DisplayCAL-3.9.11.tar.gz
 SLACKBUILD MD5SUM: 81628ac27d56e8162f5937df1bb0614e
 SLACKBUILD SHORT DESCRIPTION:  displaycal (DisplayCAL Modernization Project)
@@ -4503,7 +4503,7 @@ SLACKBUILD NAME: numpy
 SLACKBUILD LOCATION: ./numpy
 SLACKBUILD FILES: README numpy.SlackBuild numpy.info slack-desc slack-required
 SLACKBUILD VERSION: 1.25.2
-SLACKBUILD REQUIRED: openblas python-wheel
+SLACKBUILD REQUIRED: openblas 
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/n/numpy/numpy-1.25.2.tar.gz
 SLACKBUILD MD5SUM: cee1996a80032d47bdf1d9d17249c34e
 SLACKBUILD SHORT DESCRIPTION:  NumPy (a Python extension for scientific computing)
@@ -5223,7 +5223,7 @@ SLACKBUILD NAME: protobuf
 SLACKBUILD LOCATION: ./protobuf
 SLACKBUILD FILES: README patches/protobuf-21.12-pep517.patch patches/soversion.patch protobuf.SlackBuild protobuf.info slack-desc slack-required
 SLACKBUILD VERSION: 23.4
-SLACKBUILD REQUIRED: python-build python-installer python-wheel
+SLACKBUILD REQUIRED:   
 SLACKBUILD DOWNLOAD: https://github.com/google/protobuf/archive/v23.4/protobuf-23.4.tar.gz
 SLACKBUILD MD5SUM: 43c3e9c125e8148ac1e1b8247cb6e987
 SLACKBUILD SHORT DESCRIPTION:  protobuf (Google's data interchange format)
@@ -5498,15 +5498,6 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/botocore/botocore
 SLACKBUILD MD5SUM: e9e540d02c9d9558b59153fc952013ea
 SLACKBUILD SHORT DESCRIPTION:  python-botocore (The low-level, core functionality of boto 3)
 
-SLACKBUILD NAME: python-build
-SLACKBUILD LOCATION: ./python-build
-SLACKBUILD FILES: README python-build.SlackBuild python-build.info slack-desc slack-required
-SLACKBUILD VERSION: 0.8.0
-SLACKBUILD REQUIRED: python-pep517
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/build/build-0.8.0.tar.gz
-SLACKBUILD MD5SUM: 307632355e32c3769c99da66f92fe020
-SLACKBUILD SHORT DESCRIPTION:  python-build (A simple, correct PEP 517 build frontend)
-
 SLACKBUILD NAME: python-cachecontrol
 SLACKBUILD LOCATION: ./python-cachecontrol
 SLACKBUILD FILES: README python-cachecontrol.SlackBuild python-cachecontrol.info slack-desc slack-required
@@ -5597,15 +5588,6 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/f/filelock/filelock
 SLACKBUILD MD5SUM: d65c221c837b1a33fc87a3d4e3074331
 SLACKBUILD SHORT DESCRIPTION:  python-filelock (A platform-independent file lock for Python)
 
-SLACKBUILD NAME: python-flit-core
-SLACKBUILD LOCATION: ./python-flit-core
-SLACKBUILD FILES: README python-flit-core.SlackBuild python-flit-core.info slack-desc
-SLACKBUILD VERSION: 3.9.0
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/f/flit-core/flit_core-3.9.0.tar.gz
-SLACKBUILD MD5SUM: 3bc52f1952b9a78361114147da63c35b
-SLACKBUILD SHORT DESCRIPTION:  python-flit-core (PEP 517 build backend for packages using Flit)
-
 SLACKBUILD NAME: python-fuse
 SLACKBUILD LOCATION: ./python-fuse
 SLACKBUILD FILES: README python-fuse.SlackBuild python-fuse.info slack-desc
@@ -5686,15 +5668,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/i/imaplib2/imaplib2-3.6.tar.gz
 SLACKBUILD MD5SUM: 5682b8bd5f937a012fb80c683a172607
 SLACKBUILD SHORT DESCRIPTION:  python-imaplib2 (a threaded Python IMAP4 client)
-
-SLACKBUILD NAME: python-installer
-SLACKBUILD LOCATION: ./python-installer
-SLACKBUILD FILES: README python-installer.SlackBuild python-installer.info slack-desc
-SLACKBUILD VERSION: 0.7.0
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/i/installer/installer-0.7.0.tar.gz
-SLACKBUILD MD5SUM: d961d1105c9270049528b1167ed021bc
-SLACKBUILD SHORT DESCRIPTION:  python-installer (A library for installing Python wheels)
 
 SLACKBUILD NAME: python-jmespath
 SLACKBUILD LOCATION: ./python-jmespath
@@ -6163,15 +6136,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/w/websockets/websockets-11.0.3.tar.gz
 SLACKBUILD MD5SUM: 73ec08e793860fd4431f81d58848a174
 SLACKBUILD SHORT DESCRIPTION:  python-websockets (library for websocket)
-
-SLACKBUILD NAME: python-wheel
-SLACKBUILD LOCATION: ./python-wheel
-SLACKBUILD FILES: README python-wheel.SlackBuild python-wheel.info slack-desc
-SLACKBUILD VERSION: 0.41.1
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/w/wheel/wheel-0.41.1.tar.gz
-SLACKBUILD MD5SUM: 181cb3f4d8ed340c904a0e1c416d341d
-SLACKBUILD SHORT DESCRIPTION:  python-wheel (A built-package format for Python)
 
 SLACKBUILD NAME: python-xlib
 SLACKBUILD LOCATION: ./python-xlib
@@ -6897,7 +6861,7 @@ SLACKBUILD NAME: slpkg
 SLACKBUILD LOCATION: ./slpkg
 SLACKBUILD FILES: README doinst.sh slack-desc slack-required slpkg.SlackBuild slpkg.info
 SLACKBUILD VERSION: 4.9.2
-SLACKBUILD REQUIRED: sqlalchemy python-toml python-progress python-build pythondialog python-flit-core python-installer
+SLACKBUILD REQUIRED: sqlalchemy python-toml python-progress  pythondialog  
 SLACKBUILD DOWNLOAD: https://gitlab.com/dslackw/slpkg/-/archive/4.9.2/slpkg-4.9.2.tar.bz2
 SLACKBUILD MD5SUM: aa0df97d5a9ba5f10c143e75657916ec
 SLACKBUILD SHORT DESCRIPTION:  slpkg (Slackware Packaging Tool)
@@ -8238,7 +8202,7 @@ SLACKBUILD NAME: wxpython
 SLACKBUILD LOCATION: ./wxpython
 SLACKBUILD FILES: README slack-desc slack-required wxpython.SlackBuild wxpython.info
 SLACKBUILD VERSION: 4.2.1
-SLACKBUILD REQUIRED: python-pathlib wxgtk python-attrdict3 numpy python-wheel
+SLACKBUILD REQUIRED: python-pathlib wxgtk python-attrdict3 numpy 
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/w/wxPython/wxPython-4.2.1.tar.gz
 SLACKBUILD MD5SUM: e62c5bd836d2a9dcb6e955509715b157
 SLACKBUILD SHORT DESCRIPTION: 
