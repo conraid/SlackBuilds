@@ -1,0 +1,75 @@
+diff -Naupr a/GNUmakefile b/GNUmakefile
+--- a/GNUmakefile	2023-08-07 06:36:46.000000000 +0200
++++ b/GNUmakefile	2023-08-18 13:46:33.079197959 +0200
+@@ -175,7 +175,7 @@ CPPFLAGS=
+ 
+ INCLUDES=-Iinclude
+ 
+-all: snowball$(EXEEXT) libstemmer.a stemwords$(EXEEXT) $(C_OTHER_SOURCES) $(C_OTHER_HEADERS) $(C_OTHER_OBJECTS)
++all: snowball$(EXEEXT) libstemmer.so.0 stemwords$(EXEEXT) $(C_OTHER_SOURCES) $(C_OTHER_HEADERS) $(C_OTHER_OBJECTS)
+ 
+ algorithms.mk: libstemmer/mkalgorithms.pl libstemmer/modules.txt
+ 	libstemmer/mkalgorithms.pl algorithms.mk libstemmer/modules.txt
+@@ -183,7 +183,7 @@ algorithms.mk: libstemmer/mkalgorithms.p
+ clean:
+ 	rm -f $(COMPILER_OBJECTS) $(RUNTIME_OBJECTS) \
+ 	      $(LIBSTEMMER_OBJECTS) $(LIBSTEMMER_UTF8_OBJECTS) $(STEMWORDS_OBJECTS) snowball$(EXEEXT) \
+-	      libstemmer.a stemwords$(EXEEXT) \
++	      libstemmer.so.0 stemwords$(EXEEXT) \
+               libstemmer/modules.h \
+               libstemmer/modules_utf8.h \
+ 	      $(C_LIB_SOURCES) $(C_LIB_HEADERS) $(C_LIB_OBJECTS) \
+@@ -223,19 +223,19 @@ libstemmer/modules_utf8.h libstemmer/mki
+ 
+ libstemmer/libstemmer.o: libstemmer/modules.h $(C_LIB_HEADERS)
+ 
+-libstemmer.a: libstemmer/libstemmer.o $(RUNTIME_OBJECTS) $(C_LIB_OBJECTS)
+-	$(AR) -cru $@ $^
++libstemmer.so.0: libstemmer/libstemmer.o $(RUNTIME_OBJECTS) $(C_LIB_OBJECTS)
++	$(CC) $(CFLAGS) -shared $(LDFLAGS) -Wl,-soname,$@,-version-script,libstemmer/symbol.map -o $@ $^
+ 
+ examples/%.o: examples/%.c
+ 	$(CC) $(CFLAGS) $(INCLUDES) $(CPPFLAGS) -c -o $@ $<
+ 
+-stemwords$(EXEEXT): $(STEMWORDS_OBJECTS) libstemmer.a
++stemwords$(EXEEXT): $(STEMWORDS_OBJECTS) libstemmer.so.0
+ 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+ 
+ tests/%.o: tests/%.c
+ 	$(CC) $(CFLAGS) $(INCLUDES) $(CPPFLAGS) -c -o $@ $<
+ 
+-stemtest$(EXEEXT): $(STEMTEST_OBJECTS) libstemmer.a
++stemtest$(EXEEXT): $(STEMTEST_OBJECTS) libstemmer.so.0
+ 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+ 
+ csharp_stemwords$(EXEEXT): $(CSHARP_STEMWORDS_SOURCES) $(CSHARP_RUNTIME_SOURCES) $(CSHARP_SOURCES)
+@@ -417,13 +417,13 @@ dist_libstemmer_c: \
+ 	echo 'endif' >> $${dest}/Makefile && \
+ 	echo 'CFLAGS=-O2' >> $${dest}/Makefile && \
+ 	echo 'CPPFLAGS=-Iinclude' >> $${dest}/Makefile && \
+-	echo 'all: libstemmer.a stemwords$$(EXEEXT)' >> $${dest}/Makefile && \
+-	echo 'libstemmer.a: $$(snowball_sources:.c=.o)' >> $${dest}/Makefile && \
++	echo 'all: libstemmer.so.0 stemwords$$(EXEEXT)' >> $${dest}/Makefile && \
++	echo 'libstemmer.so.0: $$(snowball_sources:.c=.o)' >> $${dest}/Makefile && \
+ 	echo '	$$(AR) -cru $$@ $$^' >> $${dest}/Makefile && \
+-	echo 'stemwords$$(EXEEXT): examples/stemwords.o libstemmer.a' >> $${dest}/Makefile && \
++	echo 'stemwords$$(EXEEXT): examples/stemwords.o libstemmer.so.0' >> $${dest}/Makefile && \
+ 	echo '	$$(CC) $$(CFLAGS) -o $$@ $$^' >> $${dest}/Makefile && \
+ 	echo 'clean:' >> $${dest}/Makefile && \
+-	echo '	rm -f stemwords$$(EXEEXT) libstemmer.a *.o $(c_src_dir)/*.o examples/*.o runtime/*.o libstemmer/*.o' >> $${dest}/Makefile && \
++	echo '	rm -f stemwords$$(EXEEXT) libstemmer.so.0 *.o $(c_src_dir)/*.o examples/*.o runtime/*.o libstemmer/*.o' >> $${dest}/Makefile && \
+ 	(cd dist && tar zcf $${destname}$(tarball_ext) $${destname}) && \
+ 	rm -rf $${dest}
+ 
+diff -Naupr a/libstemmer/symbol.map b/libstemmer/symbol.map
+--- a/libstemmer/symbol.map	1970-01-01 01:00:00.000000000 +0100
++++ b/libstemmer/symbol.map	2023-08-18 13:47:29.344345232 +0200
+@@ -0,0 +1,8 @@
++SB_STEMMER_0 {
++    global:
++        sb_stemmer_*;
++    local:
++        *;
++};
++
++
