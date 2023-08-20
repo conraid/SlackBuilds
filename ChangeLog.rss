@@ -11,9 +11,53 @@
       <description>Corrado Franco (Conraid) Slackware current package repository.</description>
       <language>en-us</language>
       <id xmlns="http://www.w3.org/2005/Atom">urn:uuid:5f918df8-684b-11dd-bffd-0013d49950e2</id>
-      <pubDate>Sat, 19 Aug 2023 09:59:28 UTC</pubDate>
-      <lastBuildDate>Sat, 19 Aug 2023 10:00:58 UTC</lastBuildDate>
+      <pubDate>Sun, 20 Aug 2023 09:09:44 UTC</pubDate>
+      <lastBuildDate>Sun, 20 Aug 2023 10:16:27 UTC</lastBuildDate>
       <generator>gen_repos_files.sh v 1.99</generator>
+      <item>
+         <title>Sun, 20 Aug 2023 09:09:44 UTC</title>
+         <link>http://slackers.it/repository/slackware64-current/ChangeLog.txt</link>
+         <pubDate>Sun, 20 Aug 2023 09:09:44 UTC</pubDate>
+         <guid isPermaLink="false">20230820110944</guid>
+         <description>
+           <![CDATA[<pre>
+I removed LUA which is now in current.
+There would have been no need to recompile,
+but weechat crashed and I took the opportunity
+to compile all packages that depend on LUA.
+Unfortunately I couldn't get weechat to work well,
+so I'm removing it from the repository for now.
+Let me know if you know of any bugs and fixes.
+Happy Slack!
+collectd-5.12.0-x86_64-30cf.txz:  Rebuilt.
+	- Recompiled with lua in current.
+darktable-4.4.2-x86_64-2cf.txz:  Rebuilt.
+	- Recompiled with lua in current.
+graphviz-8.1.0-x86_64-3cf.txz:  Rebuilt.
+	- Recompiled with lua in current.
+john-1.9.0_jumbo_1-x86_64-8cf.txz:  Rebuilt.
+	- Recompiled with lua in current.
+lgi-0.9.2-x86_64-2cf.txz:  Rebuilt.
+	- Recompiled with lua in current.
+lighttpd-1.4.71-x86_64-2cf.txz:  Rebuilt.
+	- Recompiled with lua in current.
+lua-5.4.6-x86_64-1cf:  Removed.
+    - Now in current.
+lua-lpeg-1.1.0-x86_64-2cf.txz:  Rebuilt.
+	- Recompiled with lua in current.
+lua-mpack-1.0.10-x86_64-2cf.txz:  Rebuilt.
+	- Recompiled with lua in current.
+luarocks-3.9.2-x86_64-2cf.txz:  Rebuilt.
+	- Recompiled with lua in current.
+neomutt-20230517-x86_64-3cf.txz:  Rebuilt.
+	- Recompiled with lua in current.
+rrdtool-1.8.0-x86_64-5cf.txz:  Rebuilt.
+	- Recompiled with lua in current.
+weechat-4.0.3-x86_64-2cf.txz:  Removed.
+	- Program crashes and I haven't found a fix.
+           </pre>]]>
+         </description>
+      </item>
       <item>
          <title>Sat, 19 Aug 2023 09:59:28 UTC</title>
          <link>http://slackers.it/repository/slackware64-current/ChangeLog.txt</link>
@@ -420,26 +464,6 @@ pyserial-3.5-x86_64-1cf.txz:  Added.
 python-cachecontrol-0.13.1-x86_64-1cf.txz:  Added.
 python-filelock-3.12.2-x86_64-1cf.txz:  Added.
 python-zstandard-0.21.0-x86_64-1cf.txz:  Added.
-           </pre>]]>
-         </description>
-      </item>
-      <item>
-         <title>Wed, 26 Jul 2023 12:11:46 UTC</title>
-         <link>http://slackers.it/repository/slackware64-current/ChangeLog.txt</link>
-         <pubDate>Wed, 26 Jul 2023 12:11:46 UTC</pubDate>
-         <guid isPermaLink="false">20230726141146</guid>
-         <description>
-           <![CDATA[<pre>
-aws-cli-1.29.11-x86_64-1cf.txz:  Upgraded.
-google-api-python-client-2.95.0-x86_64-1cf.txz:  Upgraded.
-libmodsecurity-3.0.10-x86_64-1cf.txz:  Upgraded.
-modsecurity-nginx-1.0.3-x86_64-1cf.txz:  Added.
-nginx-1.25.1-x86_64-3cf.txz:  Rebuilt.
-npm-check-updates-16.10.17-x86_64-1cf.txz:  Upgraded.
-python-botocore-1.31.11-x86_64-1cf.txz:  Upgraded.
-sitespeedio-29.1.0-x86_64-1cf.txz:  Upgraded.
-teamviewer-bin-15.44.4-x86_64-1cf.txz:  Upgraded.
-telegram-bin-4.8.8-x86_64-1cf.txz:  Upgraded.
            </pre>]]>
          </description>
       </item>
