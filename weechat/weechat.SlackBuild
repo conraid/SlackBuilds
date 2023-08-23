@@ -28,8 +28,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=weechat
-VERSION=4.0.3
-BUILD=${BUILD:-3}
+VERSION=4.0.4
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -87,9 +87,6 @@ if [ -e $CWD/patches/ ]; then
     patch -p1 -i $PATCH
   done
 fi
-
-# Fix error in cs.po file
-sed '55s/c-format/fuzzy, c-format/' -i po/cs.po
 
 mkdir -p build
 cd build
