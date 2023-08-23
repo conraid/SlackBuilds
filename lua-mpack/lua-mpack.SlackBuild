@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=libmpack-lua
 PKGNAM=lua-mpack
 VERSION=1.0.10
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -103,7 +103,7 @@ install -Dsm755 mpack.so.5.3 $PKG/usr/lib${LIBDIRSUFFIX}/lua/5.3/mpack.so
 rm -rf lmpack.o
 
 # LUA 5.4
-gcc $SLKCFLAGS -DMPACK_USE_SYSTEM -I/usr/include/lua5.4 -c lmpack.c -o lmpack.o
+gcc $SLKCFLAGS -DMPACK_USE_SYSTEM -I/usr/include/lua -c lmpack.c -o lmpack.o
 gcc $SLKCFLAGS -shared -lmpack -o mpack.so.5.4 lmpack.o
 install -Dsm755 mpack.so.5.4 $PKG/usr/lib${LIBDIRSUFFIX}/lua/5.4/mpack.so
 
