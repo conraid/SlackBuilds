@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=collectd
 VERSION=5.12.0
-BUILD=${BUILD:-31}
+BUILD=${BUILD:-32}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -102,7 +102,7 @@ LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 KERNEL_CFLAGS="-I/usr/include" \
 KERNEL_DIR="/usr/src/linux" \
 LUA_LIBS="-llua -lm -ldl" \
-LUA_CFLAGS="-I/usr/include/lua5.4" \
+LUA_CFLAGS="-I/usr/include" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 LIBS="-lpthread" \
