@@ -31,8 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=LuaJIT
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=2.1.0-beta3
-VERSION=$(echo $SRCVERSION | tr - _)
+MAINVERSION=2.1
+SRCVERSION=03c31124cc3b521ef54fe398e10fa55660a5057d
+VERSION=${MAINVERSION}_$(echo $SRCVERSION | head -c7)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -50,7 +51,7 @@ if [ -z ${ARCH:=""} ]; then
 fi
 
 # If the variable PRINT_PACKAGE_NAME is set, then this script will report what
-# the name of the create$SRCVERSIONould be, and then exit. This information
+# the name of the create would be, and then exit. This information
 # could be useful to other scripts.
 if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
   echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
@@ -85,14 +86,8 @@ find -L . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
-make PREFIX=/usr MULTILIB=lib${LIBDIRSUFFIX} INSTALL_MAN=/usr/man/man1
+make PREFIX=/usr MULTILIB=lib${LIBDIRSUFFIX} INSTALL_MAN=/usr/man/man1 BUILDMODE=dynamic TARGET_CFLAGS="$SLKCFLAGS" amalg
 make DESTDIR=$PKG PREFIX=/usr MULTILIB=lib${LIBDIRSUFFIX} INSTALL_MAN=$PKG/usr/man/man1 install
-
-
-# dev versions of luajit don't install the symlink by default
-# https://github.com/LuaJIT/LuaJIT/blob/505e2c03de35e2718eef0d2d3660712e06dadf1f/Makefile#L139
-# Thanks to Julian Grinblat
-ln -sf luajit-$SRCVERSION $PKG/usr/bin/luajit
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
