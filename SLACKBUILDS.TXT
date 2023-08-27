@@ -4501,9 +4501,9 @@ SLACKBUILD SHORT DESCRIPTION:  nuttcp (TCP/UDP network testing tool)
 
 SLACKBUILD NAME: nvchecker
 SLACKBUILD LOCATION: ./nvchecker
-SLACKBUILD FILES: README nvchecker.SlackBuild nvchecker.info slack-desc slack-required
+SLACKBUILD FILES: README nvchecker.SlackBuild nvchecker.info patches/1986f2953a0e1dda8abb42b9d8847308546f4ea6.patch slack-desc slack-required
 SLACKBUILD VERSION: 2.12
-SLACKBUILD REQUIRED: python-tornado python-structlog 
+SLACKBUILD REQUIRED: python-tornado python-structlog python-packaging python-httpx python-platformdirs
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/n/nvchecker/nvchecker-2.12.tar.gz
 SLACKBUILD MD5SUM: bc70728856b4f6937f6c82b665403dc2
 SLACKBUILD SHORT DESCRIPTION:  nvchecker (New version checker for software releases)
@@ -5498,6 +5498,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/cached-property/c
 SLACKBUILD MD5SUM: 3451c63f8733ea0756ca1dd2b0c04bb8
 SLACKBUILD SHORT DESCRIPTION:  python-cached-property (decorator for caching properties in classes)
 
+SLACKBUILD NAME: python-calver
+SLACKBUILD LOCATION: ./python-calver
+SLACKBUILD FILES: README python-calver.SlackBuild python-calver.info slack-desc
+SLACKBUILD VERSION: 2022.6.26
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/calver/calver-2022.6.26.tar.gz
+SLACKBUILD MD5SUM: e1fd924b9bf953c0b28c49bdfe117d7a
+SLACKBUILD SHORT DESCRIPTION:  python-calver (Setuptools extension for CalVer package versions)
+
 SLACKBUILD NAME: python-casttube
 SLACKBUILD LOCATION: ./python-casttube
 SLACKBUILD FILES: README python-casttube.SlackBuild python-casttube.info slack-desc
@@ -5552,6 +5561,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/d/docopt/docopt-0.6
 SLACKBUILD MD5SUM: 4bc74561b37fad5d3e7d037f82a4c3b1
 SLACKBUILD SHORT DESCRIPTION:  python-docopt (command line arguments parser)
 
+SLACKBUILD NAME: python-editables
+SLACKBUILD LOCATION: ./python-editables
+SLACKBUILD FILES: README python-editables.SlackBuild python-editables.info slack-desc
+SLACKBUILD VERSION: 0.5
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/e/editables/editables-0.5.tar.gz
+SLACKBUILD MD5SUM: 520de8c3a9dc5dfb2b365d104541c9de
+SLACKBUILD SHORT DESCRIPTION:  python-editables (Python library for creating editable wheels)
+
 SLACKBUILD NAME: python-evdev
 SLACKBUILD LOCATION: ./python-evdev
 SLACKBUILD FILES: README python-evdev.SlackBuild python-evdev.info slack-desc
@@ -5596,6 +5614,33 @@ SLACKBUILD REQUIRED: python-hpack python-hyperframe
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/h/h2/h2-4.1.0.tar.gz
 SLACKBUILD MD5SUM: 4274f9619c0a43bb4ae01b6b02bf0c99
 SLACKBUILD SHORT DESCRIPTION:  python-h2 (HTTP/2 State-Machine based protocol implementation)
+
+SLACKBUILD NAME: python-hatch-fancy-pypi-readme
+SLACKBUILD LOCATION: ./python-hatch-fancy-pypi-readme
+SLACKBUILD FILES: README python-hatch-fancy-pypi-readme.SlackBuild python-hatch-fancy-pypi-readme.info slack-desc slack-required
+SLACKBUILD VERSION: 23.1.0
+SLACKBUILD REQUIRED: python-hatchling
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/h/hatch-fancy-pypi-readme/hatch_fancy_pypi_readme-23.1.0.tar.gz
+SLACKBUILD MD5SUM: 8755cce1a4a4d5e5d84992089801acbf
+SLACKBUILD SHORT DESCRIPTION:  python-hatch-fancy-pypi-readme (Fancy PyPI READMEs with Hatch)
+
+SLACKBUILD NAME: python-hatch-vcs
+SLACKBUILD LOCATION: ./python-hatch-vcs
+SLACKBUILD FILES: README python-hatch-vcs.SlackBuild python-hatch-vcs.info slack-desc slack-required
+SLACKBUILD VERSION: 0.3.0
+SLACKBUILD REQUIRED: python-hatchling
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/h/hatch_vcs/hatch_vcs-0.3.0.tar.gz
+SLACKBUILD MD5SUM: c2f2cbe6851b7b2969cb4aa24c4b9b2f
+SLACKBUILD SHORT DESCRIPTION:  python-hatch-vcs (Hatch plugin for versioning with your preferred VCS)
+
+SLACKBUILD NAME: python-hatchling
+SLACKBUILD LOCATION: ./python-hatchling
+SLACKBUILD FILES: README python-hatchling.SlackBuild python-hatchling.info slack-desc slack-required
+SLACKBUILD VERSION: 1.18.0
+SLACKBUILD REQUIRED: python-editables python-packaging python-pathspec python-pluggy python-trove-classifiers
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/h/hatchling/hatchling-1.18.0.tar.gz
+SLACKBUILD MD5SUM: 43f7203cacb6c3c178b93149b8a8151d
+SLACKBUILD SHORT DESCRIPTION:  python-hatchling (Modern, extensible Python project management)
 
 SLACKBUILD NAME: python-hpack
 SLACKBUILD LOCATION: ./python-hpack
@@ -5723,6 +5768,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/o/oauthlib/oauthlib
 SLACKBUILD MD5SUM: 2f7b898cc1af8c1409cc329e8843ea8f
 SLACKBUILD SHORT DESCRIPTION:  python-oauthlib (OAuth Implementation)
 
+SLACKBUILD NAME: python-packaging
+SLACKBUILD LOCATION: ./python-packaging
+SLACKBUILD FILES: README python-packaging.SlackBuild python-packaging.info slack-desc
+SLACKBUILD VERSION: 23.1
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/packaging/packaging-23.1.tar.gz
+SLACKBUILD MD5SUM: f7d5c39c6f92cc2dfa1293ba8f6c097c
+SLACKBUILD SHORT DESCRIPTION:  python-packaging (Core utilities for Python packages)
+
 SLACKBUILD NAME: python-pafy
 SLACKBUILD LOCATION: ./python-pafy
 SLACKBUILD FILES: README python-pafy.SlackBuild python-pafy.info slack-desc slack-required
@@ -5750,6 +5804,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pathlib2/pathlib2
 SLACKBUILD MD5SUM: a8a4d8f897e709006a4586cf2102edc6
 SLACKBUILD SHORT DESCRIPTION:  python-pathlib2 (Object-oriented filesystem paths)
 
+SLACKBUILD NAME: python-pathspec
+SLACKBUILD LOCATION: ./python-pathspec
+SLACKBUILD FILES: README python-pathspec.SlackBuild python-pathspec.info slack-desc
+SLACKBUILD VERSION: 0.11.2
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pathspec/pathspec-0.11.2.tar.gz
+SLACKBUILD MD5SUM: 92ebd6d735d261952ff99d64083eeff4
+SLACKBUILD SHORT DESCRIPTION:  python-pathspec (Library for gitignore style matching of file paths)
+
 SLACKBUILD NAME: python-pep517
 SLACKBUILD LOCATION: ./python-pep517
 SLACKBUILD FILES: README python-pep517.SlackBuild python-pep517.info slack-desc
@@ -5767,6 +5830,24 @@ SLACKBUILD REQUIRED: pybind11
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pikepdf/pikepdf-8.4.0.tar.gz
 SLACKBUILD MD5SUM: 32bc6c38c732b82fc98f7aef0c94b625
 SLACKBUILD SHORT DESCRIPTION:  python-pikepdf (Read and write PDFs with Python, powered by qpdf)
+
+SLACKBUILD NAME: python-platformdirs
+SLACKBUILD LOCATION: ./python-platformdirs
+SLACKBUILD FILES: README python-platformdirs.SlackBuild python-platformdirs.info slack-desc slack-required
+SLACKBUILD VERSION: 3.10.0
+SLACKBUILD REQUIRED: python-hatch-vcs python-typing-extensions
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/platformdirs/platformdirs-3.10.0.tar.gz
+SLACKBUILD MD5SUM: 1c1c8c05e9bc370b78e0a95103523b75
+SLACKBUILD SHORT DESCRIPTION:  python-platformdirs (determine platform-specific directories)
+
+SLACKBUILD NAME: python-pluggy
+SLACKBUILD LOCATION: ./python-pluggy
+SLACKBUILD FILES: README python-pluggy.SlackBuild python-pluggy.info slack-desc
+SLACKBUILD VERSION: 1.3.0
+SLACKBUILD REQUIRED: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pluggy/pluggy-1.3.0.tar.gz
+SLACKBUILD MD5SUM: f31aad77be2f5af8ed3864159b7fd743
+SLACKBUILD SHORT DESCRIPTION:  python-pluggy (plugin and hook calling mechanisms for python)
 
 SLACKBUILD NAME: python-polib
 SLACKBUILD LOCATION: ./python-polib
@@ -5959,9 +6040,9 @@ SLACKBUILD SHORT DESCRIPTION:  python-spotipy (Python library for the Spotify We
 
 SLACKBUILD NAME: python-structlog
 SLACKBUILD LOCATION: ./python-structlog
-SLACKBUILD FILES: README python-structlog.SlackBuild python-structlog.info slack-desc
+SLACKBUILD FILES: README python-structlog.SlackBuild python-structlog.info slack-desc slack-required
 SLACKBUILD VERSION: 23.1.0
-SLACKBUILD REQUIRED: 
+SLACKBUILD REQUIRED: python-hatchling python-hatch-vcs python-hatch-fancy-pypi-readme
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/structlog/structlog-23.1.0.tar.gz
 SLACKBUILD MD5SUM: bd2218c8799e44a90689bbdeadcab4f3
 SLACKBUILD SHORT DESCRIPTION:  python-structlog (Structured Logging for Python)
@@ -6019,6 +6100,15 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/tqdm/tqdm-4.66.1.tar.gz
 SLACKBUILD MD5SUM: 493bb11d0555d04632f7d9be5e5bbe9b
 SLACKBUILD SHORT DESCRIPTION:  python-tqdm (A Fast, Extensible Progress Bar for Python and CLI)
+
+SLACKBUILD NAME: python-trove-classifiers
+SLACKBUILD LOCATION: ./python-trove-classifiers
+SLACKBUILD FILES: README python-trove-classifiers.SlackBuild python-trove-classifiers.info slack-desc slack-required
+SLACKBUILD VERSION: 2023.8.7
+SLACKBUILD REQUIRED: python-calver
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/trove-classifiers/trove-classifiers-2023.8.7.tar.gz
+SLACKBUILD MD5SUM: 6ae148c8374d131dd18e28c22275d56a
+SLACKBUILD SHORT DESCRIPTION:  python-trove-classifiers (Canonical source for classifiers on PyPI)
 
 SLACKBUILD NAME: python-typing-extensions
 SLACKBUILD LOCATION: ./python-typing-extensions
