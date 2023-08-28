@@ -33,7 +33,7 @@ PRGNAM=jsonschema
 PKGNAM=python-$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=4.19.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -74,11 +74,19 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
+rm -rf $PRGNAM-$SRCVERSION
+tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz
+cd $PRGNAM-$SRCVERSION
 
-CFLAGS="$SLKCFLAGS" python3 -m pip install --root=$PKG $CWD/$PRGNAM-$SRCVERSION.tar.gz
+chown -R root:root .
+find . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
 
-chown -R root:root $PKG
-
+CFLAGS="$SLKCFLAGS" python3 -m build --wheel --no-isolation
+python3 -m installer --destdir "$PKG" dist/*.whl
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
