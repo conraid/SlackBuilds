@@ -1,0 +1,27 @@
+From 26224fe476ec660e44c816ca5b95d6ed08d1ad06 Mon Sep 17 00:00:00 2001
+From: Jan Beich <jbeich@FreeBSD.org>
+Date: Tue, 29 Aug 2023 00:39:12 +0200
+Subject: [PATCH] gdk-pixbuf: Chase 676aded3501f
+
+contrib/gdk-pixbuf/loader.c:212:29: error: no member named 'mode' in 'struct avifImageMirror'
+        switch (image->imir.mode) {
+                ~~~~~~~~~~~ ^
+
+This reverts commit 0f729c156d7d3fa0aea050908f345d983ba54cbb.
+---
+ contrib/gdk-pixbuf/loader.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/contrib/gdk-pixbuf/loader.c b/contrib/gdk-pixbuf/loader.c
+index 47e25a13b..868b054fb 100644
+--- a/contrib/gdk-pixbuf/loader.c
++++ b/contrib/gdk-pixbuf/loader.c
+@@ -209,7 +209,7 @@ static gboolean avif_context_try_load(struct avif_context * context, GError ** e
+     if (image->transformFlags & AVIF_TRANSFORM_IMIR) {
+         GdkPixbuf *output_mirrored = NULL;
+ 
+-        switch (image->imir.mode) {
++        switch (image->imir.axis) {
+         case 0:
+             output_mirrored = gdk_pixbuf_flip(output, FALSE);
+             break;
