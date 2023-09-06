@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=luv
 SRCVERSION=1.45.0-0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -83,6 +83,31 @@ find -L . \
   -exec chmod 755 {} \; -o \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
+
+# build per-lua versions
+# thanks to Arch
+for ver in 5.1 5.2 5.3 5.4; do
+    incdir="/usr/include/lua${ver}"
+    if [ "$ver" = "5.4" ] ; then
+      incdir="/usr/include"
+fi
+cmake -GNinja \
+      -Bbuild-lua${ver//./} \
+      -DLUA=/usr/bin/lua${ver} \
+      -DLUA_INCDIR=${incdir} \
+      -DLUADIR=/usr/share/lua/${ver} \
+      -DLIBDIR=/usr/lib$LIBDIRSUFFIX/lua/${ver} \
+      -DWITH_SHARED_LIBUV=ON \
+      -DLUA_BUILD_TYPE=System \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      "luv-${SRCVERSION//_/-}"
+ninja -C "build-lua${ver//./}"
+DESTDIR="$PKG" ninja -C "build-lua${ver//./}" install
+done
+
+# fix install directory
+# Thanks to SBo
+sed -r "s/\/lib(\"|\/)/\/lib$LIBDIRSUFFIX\1/g" -i CMakeLists.txt
 
 mkdir -p build
 cd build
