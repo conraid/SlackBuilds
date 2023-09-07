@@ -30,9 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=nomacs
-VERSION=3.17.2206
+VERSION=3.17.2285
 PLUGINVERSION=3.16
-BUILD=${BUILD:-13}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -73,9 +73,10 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM
+git clone https://github.com/nomacs/nomacs.git
+cd nomacs
+git checkout tags/$VERSION
 
 chown -R root:root .
 find -L . \
@@ -114,11 +115,10 @@ cmake -Wno-dev \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DLIB_SUFFIX=${LIBDIRSUFFIX} \
   -DENABLE_TRANSLATIONS=OFF \
-  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
   -DUSE_SYSTEM_QUAZIP=ON \
   -DENABLE_HEIF=ON \
   -DENABLE_AVIF=ON \
-  -USE_SYSTEM_LIBQPSD=ON \
+  -DENABLE_JXL=ON \
   ..
 
 make
