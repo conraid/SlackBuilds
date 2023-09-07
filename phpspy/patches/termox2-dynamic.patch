@@ -1,0 +1,12 @@
+diff -Naupr a/Makefile b/Makefile
+--- a/Makefile	2023-04-19 06:34:14.000000000 +0200
++++ b/Makefile	2023-09-07 16:11:59.160928344 +0200
+@@ -28,7 +28,7 @@ endif
+ 
+ all: phpspy
+ 
+-phpspy: $(wildcard *.c *.h) vendor/termbox2/termbox2.h
++phpspy: $(wildcard *.c *.h)
+ 	$(CC) $(phpspy_cflags) $(phpspy_includes) $(termbox_inlcudes) $(phpspy_defines) $(phpspy_sources) -o phpspy $(phpspy_ldflags) $(phpspy_libs)
+ 
+ vendor/termbox2/termbox2.h:
