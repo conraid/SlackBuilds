@@ -30,7 +30,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=spotify
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-bin
-VERSION=1.2.18.999
+SRCVERSION=1.2.20.1210.g2a8a8a57
+VERSION=$(echo $SRCVERSION | rev | cut -d. -f2- | rev)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
