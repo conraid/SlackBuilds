@@ -1,0 +1,128 @@
+nacl:
+	$(Q)echo "$(bold)$(WHAT) $@:$(normal)"
+	$(Q)cd curvetun/ && source ./nacl_build.sh ~/nacl
+	$(Q)source ~/.bashrc
+
+tarball.gz:  ; $(call GIT_ARCHIVE,gzip,gz)
+tarball.bz2: ; $(call GIT_ARCHIVE,bzip2,bz2)
+tarball.xz:  ; $(call GIT_ARCHIVE,xz,xz)
+tarball: tarball.gz tarball.bz2 tarball.xz
+
+tag:
+	$(GIT_TAG)
+
+people:
+	$(GIT_PEOPLE)
+
+log:
+	$(GIT_LOG)
+
+authors:
+	$(Q)echo "The following people, in alphabetical order, have authored" > AUTHORS
+	$(Q)echo "commits in the netsniff-ng repository:" >> AUTHORS
+	$(Q)echo "" >> AUTHORS
+	$(Q)contrib/extract-authors.sh >> AUTHORS
+	$(Q)echo >> AUTHORS
+	$(Q)cat .authors.aux >> AUTHORS
+
+announcement:
+	$(Q)echo -e "   *** BLURB HERE (general bits, optional) ***\n\n---\n" > .MAIL_MSG
+	$(Q)echo -e "netsniff-ng $(VERSION_SHORT) ($(NAME)) has been released to the public.\n" >> .MAIL_MSG
+	$(Q)echo -e "It can be fetched via Git:\n" >> .MAIL_MSG
+	$(Q)echo -e "   git clone git://github.com/netsniff-ng/netsniff-ng.git" >> .MAIL_MSG
+	$(Q)echo -e "   git checkout v$(VERSION_SHORT)\n" >> .MAIL_MSG
+	$(Q)echo -e "Or via HTTP from one of our mirrors:\n" >> .MAIL_MSG
+	$(Q)echo -e "   http://pub.netsniff-ng.org/netsniff-ng/netsniff-ng-$(VERSION_SHORT).tar.gz" >> .MAIL_MSG
+	$(Q)echo -e "   http://mirror.distanz.ch/netsniff-ng/netsniff-ng-$(VERSION_SHORT).tar.gz" >> .MAIL_MSG
+	$(Q)echo -e "   http://github.com/netsniff-ng/netsniff-ng/archive/v$(VERSION_SHORT).tar.gz\n" >> .MAIL_MSG
+	$(Q)echo -e "The release can be verified via Git (see README):\n" >> .MAIL_MSG
+	$(Q)echo -e "   git tag -v v$(VERSION_SHORT)\n" >> .MAIL_MSG
+	$(Q)echo -e "Major high-level changes since the last release ($(shell $(GIT_LAST_TAG))) are:\n" >> .MAIL_MSG
+	$(Q)echo -e "   *** BLURB HERE (specific bits) ***\n" >> .MAIL_MSG
+	$(Q)echo -e "Contributions since last release:\n" >> .MAIL_MSG
+	$(GIT_PEOPLE) >> .MAIL_MSG
+	$(Q)echo -e "\nGit changelog since last release:\n" >> .MAIL_MSG
+	$(GIT_LOG) >> .MAIL_MSG
+
+sign:
+	$(call GPG_SIGN,gz)
+	$(call GPG_SIGN,bz2)
+	$(call GPG_SIGN,xz)
+
+release: tag announcement tarball sign
+	$(Q)echo "Released $(bold)$(VERSION_SHORT)$(normal)"
+
+FIND_SOURCE_FILES = ( git ls-files '*.[hcS]' 2>/dev/null || \
+			find . \( -name .git -type d -prune \) \
+				-o \( -name '*.[hcS]' -type f -print \) )
+
+tags ctags:
+	$(Q)$(call RM,tags)
+	$(FIND_SOURCE_FILES) | xargs ctags -a
+
+cscope:
+	$(Q)$(call RM,cscope*)
+	$(FIND_SOURCE_FILES) | xargs cscope -b
+
+COV_URL = "https://scan.coverity.com/builds?project=netsniff-ng"
+# these need to be specified on the command line
+COV_EMAIL =
+COV_PASSWD =
+
+coverity:
+	$(Q)test -n "$(COV_EMAIL)" || (echo "COV_EMAIL not set" && false)
+	$(Q)test -n "$(COV_PASSWD)" || (echo "COV_PASSWD not set" && false)
+	$(Q)$(MAKE) distclean
+	$(Q)$(call RM,cov-int)
+	$(Q)$(call MKDIR,cov-int)
+	$(Q)./configure
+	$(Q)cov-build --dir cov-int $(MAKE)
+	$(Q)tar czvf netsniff-ng-coverity.tgz cov-int
+	$(Q)echo "Uploading snapshot to Coverity scanner at $(COV_URL)"
+	$(Q)curl --form project=netsniff-ng \
+		--form file=@netsniff-ng-coverity.tgz \
+		--form token=$(COV_PASSWD) \
+		--form email=$(COV_EMAIL) \
+		--form version=`$(GIT_VERSION)` \
+		--form description="netsniff-ng snapshot" $(COV_URL)
+
+help:
+	$(Q)echo "$(bold)Available tools from the toolkit:$(normal)"
+	$(Q)echo " <tool>:={$(TOOLS)}"
+	$(Q)echo "$(bold)Targets for building the toolkit:$(normal)"
+	$(Q)echo " all|toolkit                  - Build the whole toolkit"
+	$(Q)echo " allbutcurvetun               - Build all except curvetun"
+	$(Q)echo " allbutmausezahn              - Build all except mausezahn"
+	$(Q)echo " <tool>                       - Build only one of the tools"
+	$(Q)echo "$(bold)Targets for cleaning the toolkit's build files:$(normal)"
+	$(Q)echo " clean                        - Remove all build files"
+	$(Q)echo " <tool>_clean                 - Remove only one of the tool's files"
+	$(Q)echo " distclean                    - Remove all build and build config files"
+	$(Q)echo " mrproper                     - Remove all files not in source distribution"
+	$(Q)echo "$(bold)Targets for installing the toolkit:$(normal)"
+	$(Q)echo " install                      - Install the whole toolkit"
+	$(Q)echo " <tool>_install               - Install only one of the tools"
+	$(Q)echo "$(bold)Targets for removing the toolkit:$(normal)"
+	$(Q)echo " uninstall                    - Remove the whole toolkit from the system"
+	$(Q)echo " <toolname>_uninstall         - Remove only one of the tools"
+	$(Q)echo "$(bold)Hacking/development targets:$(normal)"
+	$(Q)echo " tag                          - Generate Git tag of current version"
+	$(Q)echo " tarball                      - Generate tarball of latest version"
+	$(Q)echo " release                      - Generate a new release"
+	$(Q)echo " tags                         - Generate sparse ctags"
+	$(Q)echo " cscope                       - Generate cscope files"
+	$(Q)echo "$(bold)Misc targets:$(normal)"
+	$(Q)echo " nacl                         - Execute the build_nacl script"
+	$(Q)echo " help                         - Show this help"
+	$(Q)echo "$(bold)Available parameters:$(normal)"
+	$(Q)echo " DEBUG=1                      - Enable debugging"
+	$(Q)echo " HARDENING=1                  - Enable GCC hardening of executables"
+	$(Q)echo " PREFIX=/path                 - Install path prefix"
+	$(Q)echo " DESTDIR=/path                - Alternative install destination path"
+	$(Q)echo " CC=cgcc                      - Use sparse compiler wrapper"
+	$(Q)echo " CFLAGS=\"-O2 -Wall ...\"       - Overwrite CFLAGS for compilation"
+	$(Q)echo " CPPFLAGS=\"-I <path> ...\"     - Additional CFLAGS for compilation"
+	$(Q)echo " LDFLAGS=\"-L <path> ...\"      - Additional LDFLAGS for compilation"
+	$(Q)echo " CCACHE=ccache                - Use ccache for compilation"
+	$(Q)echo " C=1                          - Check all C source files with sparse"
+	$(Q)echo " Q=                           - Show verbose garbage"

@@ -1,0 +1,4 @@
+# Targets that need extra treatment for now
+
+curvetun: LDFLAGS += -L ${CONFIG_NACL_LIB_DIR}
+mausezahn: CFLAGS = $(mausezahn-eflags)

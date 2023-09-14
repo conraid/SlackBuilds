@@ -1,0 +1,229 @@
+Currently only operating systems running on Linux kernels with the option
+CONFIG_PACKET_MMAP enabled. This feature can be found even back to the days of
+2.4 kernels. Most operating systems ship pre-compiled kernels that have this
+config option enabled and even the latest kernel versions got rid of this
+option and have this functionality already built-in. However, we recommend a
+kernel >= 2.6.31, because the TX_RING is officially integrated since then. In
+any case, if you have the possibility, consider getting the latest kernel from
+Linus' Git repository, tweak and compile it, and run this one!
+
+A note for distribution package maintainers can be found at the end of the file.
+
+What additional tools next to your build-chain are required?
+
+ - pkg-config:             all
+ - flex, bison:            bpfc, trafgen
+
+ - ccache (optional)
+ - gpg (optional)
+ - sparse (optional)
+
+What libraries are required?
+
+ - libncurses:             ifpps, flowtop
+ - libnacl or libsodium:   curvetun
+ - libnetfilter-conntrack: flowtop
+ - libnl3:                 netsniff-ng, trafgen
+ - libpcap:                mausezahn, netsniff-ng (tcpdump-like filters)
+ - liburcu:                flowtop
+ - libcli:                 mausezahn
+ - libnet:                 mausezahn
+
+The following libraries can optionally be used to provide additional
+functionality for certain tools:
+
+ - libGeoIP >=1.4.8:       astraceroute, flowtop, netsniff-ng
+ - libz:                   astraceroute, flowtop, netsniff-ng
+
+What additional tools are recommended, but not mandatory after the build?
+
+ - cpp:                    trafgen
+ - ntpd:                   curvetun
+ - gnuplot:                ifpps
+ - setcap:                 all
+
+It is common that these libraries are shipped as distribution packages
+for an easy installation. We try to keep this as minimal as possible.
+
+One-liner installation for *all* dependencies on Debian:
+
+  $ sudo apt-get install ccache flex bison libnl-3-dev \
+  libnl-genl-3-dev libnl-route-3-dev libgeoip-dev \
+  libnetfilter-conntrack-dev libncurses5-dev liburcu-dev \
+  libnacl-dev libpcap-dev zlib1g-dev libcli-dev libnet1-dev
+
+One-liner installation for *all* dependencies on Fedora:
+
+  $ sudo yum install ccache flex bison ccache libnl3-devel \
+  GeoIP-devel libnetfilter_conntrack-devel ncurses-devel \
+  userspace-rcu-devel nacl-devel libpcap-devel zlib-devel \
+  libcli-devel libnet-devel
+
+After downloading the netsniff-ng toolkit, you should change to the
+repository root directory:
+
+  $ cd netsniff-ng/
+
+The installation (deinstallation) process is fairly simple:
+
+  $ ./configure
+  $ make
+  # make install
+
+  (# make uninstall)
+
+The configure script can be influenced by setting certain command line
+options and environment variables (e.g. CC or CROSS_COMPILE). To get a list
+of all supported options and variables use:
+
+  $ ./configure --help
+
+The use of the optional libGeoIP and libz libraries can be explicitely
+disabled by using the corresponding command line option for the configure
+script:
+
+  $ ./configure --disable-geoip
+  $ ./configure --disable-zlib
+
+In order to remove all build files from the source tree:
+
+  $ make clean
+
+In any case "make help" will give you some pointers of what can be done.
+
+To bring the source tree into a pristine state, there are two options.
+The first one will remove all build and build config file, the latter will
+also remove any manually added files:
+
+  $ make distclean
+  ($ make mrproper)
+
+You can also build/install/uninstall only a particular tool, e.g.:
+
+  $ make trafgen
+  # make trafgen_install
+
+  (# make trafgen_uninstall)
+
+If you want to build all tools, but {curvetun,mausezahn} (i.e. because you
+don't need the tunneling software and the NaCl build process lasts quite long):
+
+  $ make allbutcurvetun               (allbutmausezahn)
+  # make install_allbutcurvetun       (install_allbutmausezahn)
+
+  (# make uninstall)
+
+In order to build curvetun, libnacl must be built first. A helper script
+called nacl_build.sh is there to facilitate this process. If you want to
+build NaCl in the directory ~/nacl, the script should be called this way:
+
+  $ cd curvetun
+  $ ./nacl_build.sh ~/nacl
+
+There's also an abbreviation for this by simply typing:
+
+  $ make nacl
+
+This gives an initial output such as "Building NaCl for arch amd64 on host
+fuuubar (grab a coffee, this takes a while) ...". If the automatically
+detected architecture (such as amd64) is not the one you intend to compile
+for, then edit the (cc="gcc") variable within the nacl_build.sh script to
+your cross compiler. Yes, we know, the build system of NaCl is a bit of a
+pain, so you might check for a pre-built package from your distribution in
+case you are not cross compiling.
+
+If NaCl already has been built on the target, it is quicker to use
+nacl_path.sh this way:
+
+  $ cd curvetun
+  $ ./nacl_path.sh ~/nacl/build/include/x86 ~/nacl/build/lib/x86
+
+Instead of libnacl you can also use libsodium which itself is a portable,
+cross-compilable, API compatible drop-in replacement for libnacl.
+
+In order to use libsodium you need to provide some little help when running
+the configure script, so it will be able to detect the needed header files.
+Additionally you need to configure the build to not link against libnacl
+but against libsodium.
+
+In the case libsodium was installed into /usr/local you run the netsniff-ng
+configure script this way:
+
+  $ NACL_INC_DIR=/usr/local/include/sodium NACL_LIB=sodium ./configure
+
+Alternatively you can use pkg-config for determining the include dir by
+setting the NACL_INC_DIR variable for the configure script like this:
+
+  $ NACL_INC_DIR=$(pkg-config --variable=includedir libsodium )/sodium
+
+When done, netsniff-ng's build infrastructure will read those evironment
+variables in order to get the needed paths to NaCl.
+
+If you're unsure with any make targets, check out: make help
+
+In order to run the toolkit as a normal user, set the following privilege
+separation after the build/installation:
+
+  $ sudo setcap cap_net_raw,cap_ipc_lock,cap_sys_admin,cap_net_admin=eip {toolname}
+
+For cross-compiling netsniff-ng, the process is fairly simple. Assuming you
+want to build netsniff-ng for the Microblaze architecture, update the PATH
+variable first, e.g.:
+
+  $ export PATH=<cc-tools-path>/microblazeel-unknown-linux-gnu/bin:$PATH
+
+And then, build the toolkit like this:
+
+  $ CROSS_COMPILE=microblazeel-unknown-linux-gnu- \
+    SYSROOT=<sysroot-path> ./configure
+  $ make
+
+SYSROOT should be set to the path where your cross-compiled libraries are
+stored, i.e. the path you specify as prefix when configuring the library using
+`./configure --prefix=<prefix>'.
+
+Note that some adaptations might be necessary regarding the CFLAGS, since not
+all might be supported by a different architecture. Probably the most simple
+way would be to run make CFLAGS="-O2 -Wall".
+
+For power users we have a set of zsh auto completion files, have a look at all
+file with ending *.zsh. There's also a BPF vim syntax highlighting file in the
+tree called bpf.vim.
+
+For doing a debug build of the toolkit with less optimizations and non-stripped
+symbols, do:
+
+  $ make DEBUG=1
+
+For debugging the build system, actual commands are verbosly shown if every
+make target is executed with:
+
+  $ make Q=
+
+A hardening option is also available via HARDENING=1 if needed. You can then
+build and install the toolkit into prefixed path like:
+
+  $ make PREFIX=<path-prefix-for-package>
+  $ make PREFIX=<path-prefix-for-package> install
+
+Additionally to setting the PREFIX you can set DESTDIR if you want to install
+the toolkit outside of your current root filesystem but into an alternative
+path. This is particularly useful when cross-compiling because most likely
+you want to install into a dedicated sandbox or into a mounted root filesystem
+for the target architecture and not into the build hosts root filesystem.
+
+  $ make PREFIX=<path-prefix-for-package> DESTDIR=<alternative-rootfs> install
+
+Thanks for maintaining netsniff-ng in your distribution. Further questions will
+be answered on the public mailing list.
+
+Last but not least, there is one small utility for advanced users that we have
+not integrated into the main build process. This is a minimal BPF JIT image
+disassembler for the Linux kernel. You can also find this tool in the Linux
+kernel Git tree under 'tools/net/bpf_jit_disasm.c' or within the netsniff-ng
+Git tree simply under 'bpf_jit_disasm.c'. To build it, execute:
+
+    $ gcc -Wall -O2 bpf_jit_disasm.c -o bpf_jit_disasm -lopcodes -lbfd -ldl
+
+The rest is described in the file header comment itself, i.e. how to get to the
+BPF JIT code.

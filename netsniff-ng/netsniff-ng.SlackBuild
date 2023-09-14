@@ -2,7 +2,7 @@
 #
 # Slackware build script for netsniff-ng
 #
-# Copyright 2009-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2009-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=netsniff-ng
 COMMIT=0.6.8
 VERSION=$(echo $COMMIT | tr - _)
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -98,10 +98,13 @@ fi
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS -fcommon" \
 CXXFLAGS="$SLKCFLAGS -fcommon" \
+NACL_INC_DIR=/usr/include/sodium \
+NACL_LIB=sodium \
 ./configure
 
-make PREFIX=/usr ETCDIR=/etc MAN8DIR=/usr/man/man8 DISTRO=1 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" CFLAGS_DEF+="$SLKCFLAGS"
-make PREFIX=/usr ETCDIR=/etc MAN8DIR=/usr/man/man8 DESTDIR=$PKG install
+make PREFIX=/usr MAN8DIR=/usr/man/man8 DISTRO=1 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" CFLAGS="$SLKCFLAGS"
+make PREFIX=/usr MAN8DIR=/usr/man/man8 DESTDIR=$PKG install_all
+cat $PKG/etc/$PKGNAM/trafgen_stddef.h > $PKG/etc/$PKGNAM/stddef.h
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
