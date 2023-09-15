@@ -44,9 +44,9 @@ fi
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=postgresql
-VERSION=15.3
+VERSION=16.0
 PG_VERSION=$(echo $VERSION | cut -d. -f1)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -131,8 +131,49 @@ CXXFLAGS="$SLKCFLAGS" \
 
 make
 make -C contrib
-make DESTDIR=$PKG install
+make DESTDIR=$PKG install-strip
 make DESTDIR=$PKG install-docs
+
+# 20220414 bkw: this one binary wasn't getting stripped...
+strip $PKG/usr/lib${LIBDIRSUFFIX}/$PKGNAM/$PG_VERSION/bin/pg_config
+
+# create symlinks to shared library for other programs to link against
+( cd $PKG/usr/lib${LIBDIRSUFFIX}
+  for i in $(ls $PKGNAM/$PG_VERSION/lib/lib*.so*) ; do ln -sf $i ; done
+)
+
+# create symlinks to pkg-config scripts
+( mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
+  cd $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
+  for i in $(ls ../$PKGNAM/$PG_VERSION/lib/pkgconfig/*) ; do ln -sf $i ; done
+)
+
+# Some interesting additional modules:
+#   https://www.postgresql.org/docs/14/contrib.html
+#
+# adminpack - helper extension for pgAdmin
+# pgcrypto - extension for some business applications
+# ltree, xml2 - useful extensions for developers
+# postgres_fdw - foreign-data wrapper for access to external PostgreSQL servers
+# file_fdw - foreign-data wrapper for access to data files on filesystem
+
+PG_EXTENSIONS=${PG_EXTENSIONS:-"adminpack pgcrypto ltree xml2 postgres_fdw file_fdw hstore citext"}
+
+if [ "x$PG_EXTENSIONS" = "xALL" ];then
+  cd $TMP/$PKGNAM-$VERSION/contrib
+  make all
+  make install-strip DESTDIR=$PKG
+  cd -
+else
+  for ext in $PG_EXTENSIONS; do
+    cd $TMP/$PKGNAM-$VERSION/contrib/$ext
+    make
+    make install-strip DESTDIR=$PKG
+    cd -
+  done
+fi
+
+cd $TMP/$PKGNAM-$VERSION
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -181,8 +222,14 @@ sed -e "s|%PG_VERSION%|$PG_VERSION|g" \
 
 # Install logrotate script
 mkdir -p $PKG/etc/logrotate.d
-sed -e "s|%PG_VERSION%|$PG_VERSION|g" \
+sed "s|%PG_VERSION%|$PG_VERSION|g" \
   $CWD/files/$PKGNAM.logrotate > $PKG/etc/logrotate.d/$PKGNAM.new
+
+# Install setup script
+mkdir -p $PKG/var/log/setup
+  sed -e "s%@PG_VERSION@%$PG_VERSION%" \
+  $CWD/files/setup.$PKGNAM  > $PKG/var/log/setup/setup.$PKGNAM
+chmod 755 $PKG/var/log/setup/setup.$PKGNAM
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
