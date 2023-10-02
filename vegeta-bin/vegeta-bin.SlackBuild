@@ -31,15 +31,13 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=vegeta
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-bin
-SRCVERSION=12.11.0
+SRCVERSION=12.11.1
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
-
-DOCFILES="CHANGES LICENSE README*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -73,6 +71,7 @@ mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PRGNAM-$SRCVERSION
 mkdir -p $PRGNAM-$SRCVERSION
+cd $PRGNAM-$SRCVERSION
 tar xvf $CWD/${PRGNAM}_${SRCVERSION}_linux_${ARCHTAR}.tar.gz
 
 chown -R root:root .
@@ -88,7 +87,6 @@ find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cu
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
