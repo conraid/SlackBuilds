@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=VeraCrypt
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=1.25.9
+SRCVERSION=1.26.7
 VERSION=$(echo $SRCVERSION | tr - _ | sed 's/Update//')
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
