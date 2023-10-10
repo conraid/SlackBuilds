@@ -29,12 +29,12 @@ set -eu
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=libzmq
+PRGNAM=zeromq
 PKGNAM=zeromq
-SRCVERSION=1b52e19b2bd3a996a919d2b5e5632e748fff7720
+SRCVERSION=4.3.5
 VERSION=$(echo $SRCVERSION | head -c 7)
-CPPVERSION=4.6.0
-BUILD=${BUILD:-2}
+CPPVERSION=4.10.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
