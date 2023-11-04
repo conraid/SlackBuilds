@@ -2,7 +2,7 @@
 #
 # Slackware build script for libtermkey
 #
-# Copyright 2015-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2015-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,9 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libtermkey
-COMMIT=b7fe3af141c53cce71a244282b69ea860452120a
-VERSION=$(echo $COMMIT | cut -c -7)_git
-BUILD=${BUILD:-2}
+SRCVERSION=0.22
+VERSION=$(echo $SRCVERSION | cut -c -7)_git
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -71,9 +71,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$COMMIT
-tar xvf $CWD/$PKGNAM-$COMMIT.tar.gz || tar xvf $CWD/$COMMIT.tar.gz
-cd $PKGNAM-$COMMIT
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION.tar.gz
+cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 find -L . \
