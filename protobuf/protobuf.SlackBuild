@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=protobuf
-VERSION=24.4
+VERSION=25.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -91,7 +91,7 @@ git clone https://github.com/google/googletest.git .
 git checkout 4c9a3bb
 cd ../abseil-cpp
 git clone https://github.com/abseil/abseil-cpp.git .
-git checkout c2435f8
+git checkout fb3621f
 cd ../jsoncpp
 git clone https://github.com/open-source-parsers/jsoncpp.git .
 git checkout 9059f5c
