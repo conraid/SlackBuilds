@@ -2,7 +2,7 @@
 #
 # Slackware build script for faad2 (http://www.audiocoding.com)
 #
-# Copyright 2009-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2009-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=faad2
-SRCVERSION=2.10.1
+SRCVERSION=2.11.0
 VERSION=$(echo $SRCVERSION | tr _ .)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -78,24 +78,17 @@ cd $PKGNAM-$SRCVERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-./bootstrap
-LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --enable-shared=yes \
-  --enable-static=no \
-  --with-mpeg4ip \
-  --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
+mkdir -p build
+cd build
+cmake -Wno-dev \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  ..
 
 make
 make DESTDIR=$PKG install
+cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
