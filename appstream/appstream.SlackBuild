@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=AppStream
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=1.0.0
+SRCVERSION=0.16.3
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -124,8 +124,7 @@ meson setup \
   -D                stemming=false \
   -D                strip=true \
   -D                systemd=false \
-  -D                qt=false \
-  -D                qt5=true \
+  -D                qt=true \
   -D                docs=false \
   -D                apidocs=false \
   -D                install-docs=false \
