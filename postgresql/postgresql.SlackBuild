@@ -44,9 +44,9 @@ fi
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=postgresql
-VERSION=16.0
+VERSION=16.1
 PG_VERSION=$(echo $VERSION | cut -d. -f1)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -99,7 +99,7 @@ find . \
   -exec chmod 644 {} \+
 
 # Apply patches
-if [ -e $CWD/patches/ ]; then
+if [ -e $CWD/patches/*.patch ]; then
   if [ -e $CWD/patches/series ]; then
     for PATCH in $(cat $CWD/patches/series); do
       patch -p1 -i $CWD/patches/$PATCH
