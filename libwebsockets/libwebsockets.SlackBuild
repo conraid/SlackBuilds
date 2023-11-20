@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=libwebsockets
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=4.3.2
+SRCVERSION=4.3.3
 VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
