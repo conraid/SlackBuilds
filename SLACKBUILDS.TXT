@@ -1636,15 +1636,6 @@ SLACKBUILD DOWNLOAD: https://github.com/maxmind/geoipupdate/archive/v6.0.0/geoip
 SLACKBUILD MD5SUM: 5066e124d2302e172e30e479d0308818
 SLACKBUILD SHORT DESCRIPTION:  geoipupdate (GeoIP Update Program)
 
-SLACKBUILD NAME: gi-docgen
-SLACKBUILD LOCATION: ./gi-docgen
-SLACKBUILD FILES: README gi-docgen.SlackBuild gi-docgen.info slack-desc slack-required
-SLACKBUILD VERSION: 2023.2
-SLACKBUILD REQUIRED: python-typogrify
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/g/gi-docgen/gi-docgen-2023.2.tar.gz
-SLACKBUILD MD5SUM: 9449be230cb7353f6d728213e1537577
-SLACKBUILD SHORT DESCRIPTION:  gi-docgen (Documentation tool for GObject-based libraries)
-
 SLACKBUILD NAME: gif2apng
 SLACKBUILD LOCATION: ./gif2apng
 SLACKBUILD FILES: README gif2apng.SlackBuild gif2apng.info slack-desc
@@ -3045,7 +3036,7 @@ SLACKBUILD NAME: libgusb
 SLACKBUILD LOCATION: ./libgusb
 SLACKBUILD FILES: README libgusb.SlackBuild libgusb.info slack-desc slack-required
 SLACKBUILD VERSION: 0.4.2
-SLACKBUILD REQUIRED: gi-docgen
+SLACKBUILD REQUIRED: 
 SLACKBUILD DOWNLOAD: https://people.freedesktop.org/~hughsient/releases/libgusb-0.4.2.tar.xz
 SLACKBUILD MD5SUM: 32367173c06f1837e9cb943e778764cd
 SLACKBUILD SHORT DESCRIPTION:  libgusb (Glib Wrapper)
@@ -6065,15 +6056,6 @@ SLACKBUILD DOWNLOAD: https://github.com/nphilipp/python-slip/releases/download/p
 SLACKBUILD MD5SUM: 28ae5f93853466c44ec96706ba2a1eb4
 SLACKBUILD SHORT DESCRIPTION:  python-slip (convenience, extension and workaround code)
 
-SLACKBUILD NAME: python-smartypants
-SLACKBUILD LOCATION: ./python-smartypants
-SLACKBUILD FILES: README python-smartypants.SlackBuild python-smartypants.info slack-desc
-SLACKBUILD VERSION: 2.0.1
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://github.com/leohemsted/smartypants.py/archive/refs/tags/v2.0.1.tar.gz
-SLACKBUILD MD5SUM: 27957540f4718e892039b2ed208c78f3
-SLACKBUILD SHORT DESCRIPTION:  python-smartypants (Python with the SmartyPants)
-
 SLACKBUILD NAME: python-sniffio
 SLACKBUILD LOCATION: ./python-sniffio
 SLACKBUILD FILES: README python-sniffio.SlackBuild python-sniffio.info slack-desc
@@ -6137,15 +6119,6 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/tld/tld-0.13.tar.
 SLACKBUILD MD5SUM: 6e43346e0188919bdd9eca2653d9c56b
 SLACKBUILD SHORT DESCRIPTION:  python-tld
 
-SLACKBUILD NAME: python-toml
-SLACKBUILD LOCATION: ./python-toml
-SLACKBUILD FILES: README python-toml.SlackBuild python-toml.info slack-desc
-SLACKBUILD VERSION: 0.10.2
-SLACKBUILD REQUIRED: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/toml/toml-0.10.2.tar.gz
-SLACKBUILD MD5SUM: 59bce5d8d67e858735ec3f399ec90253
-SLACKBUILD SHORT DESCRIPTION:  python-toml (Python lib for TOML )
-
 SLACKBUILD NAME: python-tornado
 SLACKBUILD LOCATION: ./python-tornado
 SLACKBUILD FILES: README python-tornado.SlackBuild python-tornado.info slack-desc
@@ -6181,15 +6154,6 @@ SLACKBUILD REQUIRED:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/typing-extensions/typing_extensions-4.8.0.tar.gz
 SLACKBUILD MD5SUM: 74bafe841fbd1c27324afdeb099babdf
 SLACKBUILD SHORT DESCRIPTION:  python-typing-extensions (Type Hints for Python)
-
-SLACKBUILD NAME: python-typogrify
-SLACKBUILD LOCATION: ./python-typogrify
-SLACKBUILD FILES: README python-typogrify.SlackBuild python-typogrify.info slack-desc slack-required
-SLACKBUILD VERSION: 2.0.7
-SLACKBUILD REQUIRED: python-smartypants
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/typogrify/typogrify-2.0.7.tar.gz
-SLACKBUILD MD5SUM: 63f38f80531996f187d2894cc497ba08
-SLACKBUILD SHORT DESCRIPTION:  python-typogrify (filters to make caring about typography on the web)
 
 SLACKBUILD NAME: python-ua-parser
 SLACKBUILD LOCATION: ./python-ua-parser
@@ -6987,7 +6951,7 @@ SLACKBUILD NAME: slpkg
 SLACKBUILD LOCATION: ./slpkg
 SLACKBUILD FILES: README doinst.sh slack-desc slack-required slpkg.SlackBuild slpkg.info
 SLACKBUILD VERSION: 4.9.2
-SLACKBUILD REQUIRED: sqlalchemy python-toml python-progress  pythondialog  
+SLACKBUILD REQUIRED: sqlalchemy  python-progress  pythondialog  
 SLACKBUILD DOWNLOAD: https://gitlab.com/dslackw/slpkg/-/archive/4.9.2/slpkg-4.9.2.tar.bz2
 SLACKBUILD MD5SUM: aa0df97d5a9ba5f10c143e75657916ec
 SLACKBUILD SHORT DESCRIPTION:  slpkg (Slackware Packaging Tool)
@@ -8175,7 +8139,7 @@ SLACKBUILD NAME: webkitgtk
 SLACKBUILD LOCATION: ./webkitgtk
 SLACKBUILD FILES: README patches/unhide-deprecated-api.patch slack-desc slack-required webkitgtk.SlackBuild webkitgtk.info
 SLACKBUILD VERSION: 2.42.2
-SLACKBUILD REQUIRED: bubblewrap xdg-dbus-proxy libwpe wpebackend-fdo libmanette gi-docgen libjxl libavif unifdef
+SLACKBUILD REQUIRED: bubblewrap xdg-dbus-proxy libwpe wpebackend-fdo libmanette  libjxl libavif unifdef
 SLACKBUILD DOWNLOAD: https://www.webkitgtk.org/releases/webkitgtk-2.42.2.tar.xz
 SLACKBUILD MD5SUM: 9288e270dacc332b563ac4ef001cf316
 SLACKBUILD SHORT DESCRIPTION:  webkitgtk (Web content rendering)
