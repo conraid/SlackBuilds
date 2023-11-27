@@ -1,0 +1,34 @@
+From 8ea22b5e92bf46add0b20059f6e39a938858ff97 Mon Sep 17 00:00:00 2001
+From: Paul Cornett <paulcor@users.noreply.github.com>
+Date: Thu, 23 Nov 2023 15:12:08 -0800
+Subject: [PATCH] Avoid crash with GTK3 if console program is using a GUI wxApp
+ class
+
+See #24081
+---
+ src/gtk/settings.cpp | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/src/gtk/settings.cpp b/src/gtk/settings.cpp
+index e60747493772..563ab5eeaaeb 100644
+--- a/src/gtk/settings.cpp
++++ b/src/gtk/settings.cpp
+@@ -13,7 +13,6 @@
+ #include "wx/settings.h"
+ 
+ #ifndef WX_PRECOMP
+-    #include "wx/app.h"
+     #include "wx/toplevel.h"
+     #include "wx/module.h"
+ #endif
+@@ -1227,8 +1226,8 @@ bool wxSystemSettingsModule::OnInit()
+ 
+     m_proxy = nullptr;
+ 
+-    wxAppConsole* app = wxAppConsole::GetInstance();
+-    if (!app || !app->IsGUI())
++    // If this is not a GUI app
++    if (!g_type_class_peek(GTK_TYPE_WIDGET))
+         return true;
+ 
+     // GTK_THEME environment variable overrides other settings
