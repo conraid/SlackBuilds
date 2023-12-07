@@ -1,0 +1,39 @@
+--- a/bihourly.sh
++++ b/bihourly.sh
+@@ -3,11 +3,13 @@
+ #
+ #  bihourly arpwatch job
+ #
+-PATH=${PATH}:/usr/local/sbin
+-export PATH
+-#
+-cd /usr/local/arpwatch
+-#
++
++. /etc/conf.d/arpwatch
++
++ARPWATCH_REPORT_EMAIL=
++
++cd /usr/share/arpwatch
++
+ list="`cat list`"
+ cname="`cat cname`"
+ temp1=/tmp/bihourly.1.$$
+@@ -26,7 +28,7 @@
+ 
+ alist=""
+ for r in ${list}; do \
+-	./arpfetch ${r} ${cname} > ${r} 2> ${temp1}
++	arpfetch ${r} ${cname} > ${r} 2> ${temp1}
+ 	if [ -s ${temp1} ]; then
+ 		echo "arpfetch ${r} errors:"
+ 		xr=${d}/${r}.$$
+@@ -44,7 +46,7 @@
+ sed -e '/arpsnmp: suppressed DECnet flip flop/d' ${temp1} > ${temp2}
+ if [ -s ${temp2} ]; then
+ 	mail -s "`hostname` arpwatch report" \
+-	    arpwatch-reports@noname.lbl.gov < ${temp2}
++	    $ARPWATCH_REPORT_EMAIL < ${temp2}
+ fi
+ rm -f ${temp1} ${temp2}
+ 
