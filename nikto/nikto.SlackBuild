@@ -2,7 +2,7 @@
 #
 # Slackware build script for nikto
 #
-# Copyright 2017-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2017-2023 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,10 +30,10 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=nikto
-COMMIT="f6d99d0f3c78a270bb63da2836d8d498b41c6b31"
+COMMIT=2.5.0
 SRCVERSION=$COMMIT
 VERSION=$(echo $COMMIT | head -c7)_git
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
