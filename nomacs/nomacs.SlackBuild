@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=nomacs
 VERSION=3.17.2287
 PLUGINVERSION=3.16
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -73,10 +73,16 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM
+
+rm -rf nomacs
 git clone https://github.com/nomacs/nomacs.git
-cd nomacs
-git checkout tags/$VERSION
+
+rm -rf $PKGNAM-$VERSION
+#tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
+
+mv nomacs nomacs-$VERSION
+
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 find -L . \
@@ -114,7 +120,6 @@ cmake -Wno-dev \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DLIB_SUFFIX=${LIBDIRSUFFIX} \
-  -DENABLE_TRANSLATIONS=OFF \
   -DUSE_SYSTEM_QUAZIP=ON \
   -DENABLE_HEIF=ON \
   -DENABLE_AVIF=ON \
