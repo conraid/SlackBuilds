@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=mongo-c-driver
-VERSION=1.24.4
-BUILD=${BUILD:-2}
+VERSION=1.25.2
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -83,6 +83,9 @@ find -L . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
+export GIT_DISCOVERY_ACROSS_FILESYSTEM=1
+# Thanks to SBo
+#
 mkdir -p build
 cd build
 cmake -Wno-dev \
@@ -91,6 +94,7 @@ cmake -Wno-dev \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DENABLE_STATIC=OFF \
   -DENABLE_TESTS=OFF \
+  -DBUILD_VERSION=$VERSION \
   ..
 
 make
