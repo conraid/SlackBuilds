@@ -1,0 +1,26 @@
+From c6a75e21d9b2d8d8aefdc84a1f7e1462e21f7059 Mon Sep 17 00:00:00 2001
+From: Jan Tojnar <jtojnar@gmail.com>
+Date: Mon, 11 Dec 2023 00:05:36 +0100
+Subject: [PATCH] Fix build with libxml 2.12
+
+libxml 2.12.0 reorganized headers so xmlFree is no longer available in scope.
+Include the proper header that contains it.
+---
+ src/object/uri.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/object/uri.h b/src/object/uri.h
+index 381adec58cf..d5b211fe2b2 100644
+--- a/src/object/uri.h
++++ b/src/object/uri.h
+@@ -13,6 +13,7 @@
+ #define INKSCAPE_URI_H
+ 
+ #include <libxml/uri.h>
++#include <libxml/xmlmemory.h>
+ #include <memory>
+ #include <string>
+ 
+-- 
+GitLab
+
