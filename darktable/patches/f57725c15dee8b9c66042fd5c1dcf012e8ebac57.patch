@@ -1,0 +1,27 @@
+From f57725c15dee8b9c66042fd5c1dcf012e8ebac57 Mon Sep 17 00:00:00 2001
+From: Roman Lebedev <lebedev.ri@gmail.com>
+Date: Sat, 18 Nov 2023 22:17:09 +0300
+Subject: [PATCH] Attempt to fix XSD validation w/ libxml2 2.12.0
+
+Validation for `CFA2` variant of CFA encoding is rather partial anyways,
+but it isn't even legal to try to match the same element as different XSD types...
+---
+ data/cameras.xsd | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/src/external/rawspeed/data/cameras.xsd b/src/external/rawspeed/data/cameras.xsd
+index 837db6e78..7a456f070 100644
+--- a/src/external/rawspeed/data/cameras.xsd
++++ b/src/external/rawspeed/data/cameras.xsd
+@@ -194,10 +194,7 @@
+   </xs:simpleType>
+   <xs:complexType name="CFA2Type">
+     <xs:sequence>
+-      <xs:choice>
+-        <xs:element type="ColorRowType" name="ColorRow" minOccurs="2" maxOccurs="2"/>
+-        <xs:element type="ColorRowType" name="ColorRow" minOccurs="6" maxOccurs="6"/>
+-      </xs:choice>
++      <xs:element type="ColorRowType" name="ColorRow" minOccurs="2" maxOccurs="6"/>
+     </xs:sequence>
+     <xs:attribute type="CFA2TypeWidthType" name="width" use="required"/>
+     <xs:attribute type="CFA2TypeHeightType" name="height" use="required"/>
