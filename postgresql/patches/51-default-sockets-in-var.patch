@@ -1,0 +1,20 @@
+Author: Martin Pitt <mpitt@debian.org>
+Description: Put server Unix sockets into /var/run/postgresql/ by default
+Forwarded: No, Debian specific configuration with postgresql-common
+
+Using /tmp for sockets allows everyone to spoof a PostgreSQL server. Thus use
+/var/run/postgresql/ for "system" clusters which run as 'postgres' (user
+clusters will still use /tmp). Since system cluster are by far the common case,
+set it as default.
+
+--- a/src/include/pg_config_manual.h
++++ b/src/include/pg_config_manual.h
+@@ -206,7 +206,7 @@
+  * support them yet.
+  */
+ #ifndef WIN32
+-#define DEFAULT_PGSOCKET_DIR  "/tmp"
++#define DEFAULT_PGSOCKET_DIR  "/var/run/postgresql"
+ #else
+ #define DEFAULT_PGSOCKET_DIR ""
+ #endif

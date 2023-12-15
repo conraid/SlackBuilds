@@ -46,7 +46,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=postgresql
 VERSION=16.1
 PG_VERSION=$(echo $VERSION | cut -d. -f1)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -112,7 +112,7 @@ if [ -e $CWD/patches/*.patch ]; then
 fi
 
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS" \
+CFLAGS="$SLKCFLAGS -I/usr/include/libxml2" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr/lib${LIBDIRSUFFIX}/$PKGNAM/$PG_VERSION \
@@ -125,8 +125,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
   --datadir=/usr/share/$PKGNAM-$PG_VERSION \
   --with-system-tzdata=/usr/share/zoneinfo \
-  --with-libxml \
-  --with-libxslt \
   --with-openssl \
   --with-perl \
   --with-python \
@@ -136,9 +134,10 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-thread-safety \
   --with-gssapi \
   --with-pam \
-  --with-llvm \
   --with-lz4 \
   --with-ssl=openssl \
+  --with-libxml \
+  --with-libxslt \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
