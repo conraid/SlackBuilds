@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=virtiofsd
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=1.8.0
+SRCVERSION=1.9.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -124,7 +124,7 @@ cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 # Install qemu file
-install -Dm644 50-qemu-virtiofsd.json -t "$PKG/usr/share/qemu/vhost-user/"
+install -Dm644 $CWD/files/50-qemu-virtiofsd.json -t "$PKG/usr/share/qemu/vhost-user/"
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
