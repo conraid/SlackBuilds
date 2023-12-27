@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=percona-toolkit
-VERSION=3.5.6
+VERSION=3.5.7
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -38,6 +38,14 @@ PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="COPYING ChangeLog INSTALL MANIFEST *.md"
+
+if ! command -v go &> /dev/null; then
+  if [ -f "/etc/profile.d/go.sh" ]; then
+   source /etc/profile.d/go.sh
+  else
+   echo "go not present"
+  fi
+fi
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
