@@ -2,7 +2,7 @@
 #
 # Slackware build script for lshw (http://ezix.org/project/wiki/HardwareLiSter)
 #
-# Copyright 2008-2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2008-2024 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=lshw
-VERSION=B.02.19.2
+VERSION=B.02.20
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -104,6 +104,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 # Add a desktop file
