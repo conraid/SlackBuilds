@@ -1,0 +1,140 @@
+'\" t
+.\"     Title: firewalld.lockdown-whitelist
+.\"    Author: Thomas Woerner <twoerner@redhat.com>
+.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
+.\"      Date: 
+.\"    Manual: firewalld.lockdown-whitelist
+.\"    Source: firewalld 2.1.0
+.\"  Language: English
+.\"
+.TH "FIREWALLD\&.LOCKDOWN" "5" "" "firewalld 2.1.0" "firewalld.lockdown-whitelist"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+firewalld.lockdown-whitelist \- firewalld lockdown whitelist configuration file
+.SH "SYNOPSIS"
+.PP
+.nf
+        \fI/usr/etc/firewalld/lockdown\-whitelist\&.xml\fR
+      
+.fi
+.sp
+.SH "DESCRIPTION"
+.PP
+The firewalld lockdown\-whitelist configuration file contains the selinux contexts, commands, users and user ids that are white\-listed when firewalld lockdown feature is enabled (see
+\fBfirewalld.conf\fR(5)
+and
+\fBfirewall-cmd\fR(1))\&.
+.PP
+This example configuration file shows the structure of an lockdown\-whitelist file:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+<?xml version="1\&.0" encoding="utf\-8"?>
+<whitelist>
+  <selinux context="\fIselinuxcontext\fR"/>
+  <command name="\fIcommandline\fR[*]"/>
+  <user {name="\fIusername\fR|id="\fIuserid\fR"}/>
+</whitelist>
+      
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.SH "OPTIONS"
+.PP
+The config can contain these tags and attributes\&. Some of them are mandatory, others optional\&.
+.SS "whitelist"
+.PP
+The mandatory whitelist start and end tag defines the lockdown\-whitelist\&. This tag can only be used once in a lockdown\-whitelist configuration file\&. There are no attributes for this\&.
+.SS "selinux"
+.PP
+Is an optional empty\-element tag and can be used several times to have more than one selinux contexts entries\&. A selinux entry has exactly one attribute:
+.PP
+context="\fIstring\fR"
+.RS 4
+The context is the security (SELinux) context of a running application or service\&.
+.sp
+To get the context of a running application use
+\fBps \-e \-\-context\fR
+and search for the application that should be white\-listed\&.
+.sp
+Warning: If the context of an application is unconfined, then this will open access for more than the desired application\&.
+.RE
+.SS "command"
+.PP
+Is an optional empty\-element tag and can be used several times to have more than one command entry\&. A command entry has exactly one attribute:
+.PP
+name="\fIstring\fR"
+.RS 4
+The command
+\fIstring\fR
+is a complete command line including path and also attributes\&.
+.sp
+If a command entry ends with an asterisk \*(Aq*\*(Aq, then all command lines starting with the command will match\&. If the \*(Aq*\*(Aq is not there the absolute command inclusive arguments must match\&.
+.sp
+Commands for user root and others is not always the same, the used path depends on the use of the
+\fBPATH\fR
+environment variable\&.
+.RE
+.SS "user"
+.PP
+Is an optional empty\-element tag and can be used several times to white\-list more than one user\&. A user entry has exactly one attribute of these:
+.PP
+name="\fIstring\fR"
+.RS 4
+The user with the name
+\fIstring\fR
+will be white\-listed\&.
+.RE
+.PP
+id="\fIinteger\fR"
+.RS 4
+The user with the id
+\fIuserid\fR
+will be white\-listed\&.
+.RE
+.SH "SEE ALSO"
+\fBfirewall-applet\fR(1), \fBfirewalld\fR(1), \fBfirewall-cmd\fR(1), \fBfirewall-config\fR(1), \fBfirewalld.conf\fR(5), \fBfirewalld.direct\fR(5), \fBfirewalld.dbus\fR(5), \fBfirewalld.icmptype\fR(5), \fBfirewalld.lockdown-whitelist\fR(5), \fBfirewall-offline-cmd\fR(1), \fBfirewalld.richlanguage\fR(5), \fBfirewalld.service\fR(5), \fBfirewalld.zone\fR(5), \fBfirewalld.zones\fR(5), \fBfirewalld.policy\fR(5), \fBfirewalld.policies\fR(5), \fBfirewalld.ipset\fR(5), \fBfirewalld.helper\fR(5)
+.SH "NOTES"
+.PP
+firewalld home page:
+.RS 4
+\m[blue]\fB\%http://firewalld.org\fR\m[]
+.RE
+.SH "AUTHORS"
+.PP
+\fBThomas Woerner\fR <\&twoerner@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBJiri Popelka\fR <\&jpopelka@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBEric Garver\fR <\&eric@garver\&.life\&>
+.RS 4
+Developer
+.RE

@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
+[
+<!ENTITY authors SYSTEM "authors.xml">
+<!ENTITY seealso SYSTEM "seealso.xml">
+<!ENTITY notes SYSTEM "notes.xml">
+]>
+
+<!--
+  SPDX-License-Identifier: GPL-2.0-or-later
+
+  This file is part of firewalld.
+
+  Copyright (C) 2010-2013 Red Hat, Inc.
+
+  Authors:
+  Thomas Woerner <twoerner@redhat.com>
+-->
+
+<refentry id="firewalld.direct">
+
+  <refentryinfo>
+    <title>firewalld.direct</title>
+    <productname>firewalld</productname>
+    &authors;
+  </refentryinfo>
+
+  <refmeta>
+    <refentrytitle>firewalld.direct</refentrytitle>
+    <manvolnum>5</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+    <refname>firewalld.direct</refname>
+    <refpurpose>firewalld direct configuration file</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <para>
+      <programlisting>
+<filename><config.sysconfdir/>/firewalld/direct.xml</filename>
+      </programlisting>
+    </para>
+  </refsynopsisdiv>
+
+  <refsect1 id="deprecated">
+    <title>deprecated</title>
+
+    <para>
+        The direct interface has been deprecated. It will be removed in a future
+        release. It is superseded by policies, see <citerefentry><refentrytitle>firewalld.policies</refentrytitle><manvolnum>5</manvolnum></citerefentry>.
+    </para>
+  </refsect1>
+
+  <refsect1 id="description">
+    <title>Description</title>
+
+    <para>
+     Direct configuration gives a more direct access to the firewall. It requires user to know basic ip(6)tables/ebtables concepts, i.e. <literal>table</literal> (filter/mangle/nat/...), <literal>chain</literal> (INPUT/OUTPUT/FORWARD/...), <literal>commands</literal> (-A/-D/-I/...), <literal>parameters</literal> (-p/-s/-d/-j/...) and <literal>targets</literal> (ACCEPT/DROP/REJECT/...).
+     Direct configuration should be used only as a last resort when it's not possible to use <citerefentry><refentrytitle>firewalld.zone</refentrytitle><manvolnum>5</manvolnum></citerefentry>.
+     See also <literal>Direct Options</literal> in <citerefentry><refentrytitle>firewall-cmd</refentrytitle><manvolnum>1</manvolnum></citerefentry>.
+    </para>
+
+    <para>
+      A firewalld direct configuration file contains information about permanent direct chains, rules and passthrough ...
+    </para>
+
+    <para>
+       This is the structure of a direct configuration file:
+
+      <programlisting>
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;direct&gt;
+  [ &lt;chain ipv="<literal>ipv4</literal>|<literal>ipv6</literal>|<literal>eb</literal>" table="<replaceable>table</replaceable>" chain="<replaceable>chain</replaceable>"/&gt; ]
+  [ &lt;rule ipv="<literal>ipv4</literal>|<literal>ipv6</literal>|<literal>eb</literal>" table="<replaceable>table</replaceable>" chain="<replaceable>chain</replaceable>" priority="<replaceable>priority</replaceable>"&gt; args &lt;/rule&gt; ]
+  [ &lt;passthrough ipv="<literal>ipv4</literal>|<literal>ipv6</literal>|<literal>eb</literal>"&gt; args &lt;/passthrough&gt; ]
+&lt;/direct&gt;
+      </programlisting>
+    </para>
+
+    <refsect2 id="direct">
+      <title>direct</title>
+      <para>
+	The mandatory direct start and end tag defines the direct. This tag can only be used once in a direct configuration file. There are no attributes for direct.
+      </para>
+    </refsect2>
+
+    <refsect2 id="chain">
+      <title>chain</title>
+      <para>
+	Is an optional empty-element tag and can be used several times. It can be used to define names for additional chains. A chain entry has exactly three attributes:
+      </para>
+      <variablelist>
+	<varlistentry>
+	  <term>ipv="<literal>ipv4</literal>|<literal>ipv6</literal>|<literal>eb</literal>"</term>
+          <listitem>
+	    <para>
+              The IP family where the chain will be created. This can be either <literal>ipv4</literal>, <literal>ipv6</literal> or <literal>eb</literal>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>table="<replaceable>table</replaceable>"</term>
+          <listitem>
+	    <para>
+              The table name where the chain will be created.
+	      This can be one of the tables that can be used for iptables, ip6tables or ebtables.
+	      For the possible values, see TABLES section in the iptables, ip6tables or ebtables man pages.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>chain="<replaceable>chain</replaceable>"</term>
+          <listitem>
+	    <para>
+              The name of the chain, that will be created. Please make sure that there is no other chain with this name already.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+      </variablelist>
+
+      <para>
+	Please remember to add a rule or passthrough rule with an <option>--jump</option> or <option>--goto</option> option to connect the chain to another one.
+      </para>
+    </refsect2>
+
+    <refsect2 id="rule">
+      <title>rule</title>
+      <para>
+	Is an optional element tag and can be used several times. It can be used to add rules to a built-in or added chain. A rule entry has exactly four attributes:
+      </para>
+      <variablelist>
+	<varlistentry>
+	  <term>ipv="<literal>ipv4</literal>|<literal>ipv6</literal>|<literal>eb</literal>"</term>
+          <listitem>
+	    <para>
+              The IP family where the rule will be added. This can be either <literal>ipv4</literal>, <literal>ipv6</literal> or <literal>eb</literal>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>table="<replaceable>table</replaceable>"</term>
+          <listitem>
+	    <para>
+              The table name where the rule will be added.
+	      This can be one of the tables that can be used for iptables, ip6tables or ebtables.
+	      For the possible values, see TABLES section in the iptables, ip6tables or ebtables man pages.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>chain="<replaceable>chain</replaceable>"</term>
+          <listitem>
+	    <para>
+              The name of the chain where the rule will be added. This can be either a built-in chain or a chain that has been created with the chain tag.
+              If the chain name is a built-in chain, then the rule will be added to <replaceable>chain</replaceable>_direct, else the supplied chain name is used. <replaceable>chain</replaceable>_direct is created internally for all built-in chains to make sure that the added rules do not conflict with the rules created by firewalld.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>priority="<replaceable>priority</replaceable>"</term>
+          <listitem>
+	    <para>
+	      The priority is used to order rules. Priority 0 means add rule on top of the chain, with a higher priority the rule will be added further down. Rules with the same priority are on the same level and the order of these rules is not fixed and may change. If you want to make sure that a rule will be added after another one, use a low priority for the first and a higher for the following.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <para>
+	The <replaceable>args</replaceable> can be any arguments of iptables or ip6tables, that do not conflict with the table or chain attributes.
+      </para>
+    </refsect2>
+
+    <refsect2 id="passthrough">
+      <title>passthrough</title>
+      <para>
+	Is an optional element tag and can be used several times. It can be used to add rules to a built-in or added chain. A rule entry has exactly one attribute:
+      </para>
+      <variablelist>
+	<varlistentry>
+	  <term>ipv="<literal>ipv4</literal>|<literal>ipv6</literal>|<literal>eb</literal>"</term>
+          <listitem>
+	    <para>
+              The IP family where the passthrough rule will be added. This can be either <literal>ipv4</literal>, <literal>ipv6</literal> or <literal>eb</literal>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <para>
+	The <replaceable>args</replaceable> can be any arguments of iptables or ip6tables.
+      </para>
+
+      <para>
+	The passthrough rule will be added to the chain directly. There is no mechanism like for the direct <option>rule</option> above. The user of the passthrough rule has to make sure that there will be no conflict with the rules created by firewalld.
+      </para>
+    </refsect2>
+
+  </refsect1>
+
+  <refsect1 id="caveats">
+    <title>Caveats</title>
+
+    <para>
+        Depending on the value of <literal>FirewallBackend</literal> (see <citerefentry><refentrytitle>firewalld.conf</refentrytitle><manvolnum>5</manvolnum></citerefentry>) direct rules behave differently in some scenarios.
+    </para>
+    <refsect2 id="Packet accept/drop precedence">
+        <title>Packet accept/drop precedence</title>
+        <para>
+            Due to implementation details of netfilter inside the kernel, if <literal>FirewallBackend=nftables</literal> is used direct rules that <literal>ACCEPT</literal> packets don't actually cause the packets to be immediately accepted by the system. Those packets are still be subject to firewalld's nftables ruleset. This basically means there are two independent firewalls and packets must be accepted by both (iptables and nftables). As an aside, this scenario also occurs inside of nftables (again due to netfilter) if there are multiple chains attached to the same hook - it's not as simple as iptables vs nftables.
+        </para>
+        <para>
+            There are a handful of options to workaround the <literal>ACCEPT</literal> issue:
+        </para>
+        <orderedlist>
+            <listitem><para>Rich Rules</para>
+            <para>
+                If a rich rule can be used, then they should always be preferred over direct rules. Rich Rules will be converted to the enabled <literal>FirewallBackend</literal>. See <citerefentry><refentrytitle>firewalld.richlanguage</refentrytitle><manvolnum>5</manvolnum></citerefentry>.
+            </para>
+            </listitem>
+            <listitem><para>Blanket Accept</para>
+            <para>
+                Users can add an explicit accept to the nftables ruleset. This can be done by adding the interface or source to the <literal>trusted</literal> zone.
+            </para>
+            <para>
+                This strategy is often employed by things that perform their own filtering such as: libvirt, podman, docker.
+            </para>
+            <para>
+                <emphasis role="bold">Warning</emphasis>: This means firewalld will do no filtering on these packets. It must all be done via direct rules or out-of-band iptables rules.
+            </para>
+            </listitem>
+            <listitem><para>Selective Accept</para>
+            <para>
+                Alternatively, enable only the relevant service, port, address, or otherwise in the appropriate zone.
+            </para>
+            </listitem>
+            <listitem><para>Revert to the iptables backend</para>
+            <para>
+                A last resort is to revert to the iptables backend by setting <literal>FirewallBackend=iptables</literal>. Users should be aware that firewalld development focuses on the nftables backend.
+            </para>
+            </listitem>
+        </orderedlist>
+
+        <para>
+            For direct rules that <literal>DROP</literal> packets the packets are immediately dropped regardless of the value of <literal>FirewallBackend</literal>. As such, there is no special consideration needed.
+        </para>
+
+        <para>
+            Firewalld guarantees the above ACCEPT/DROP behavior by registering nftables hooks with a lower precedence than iptables hooks.
+        </para>
+    </refsect2>
+
+    <refsect2 id="Direct interface precedence">
+        <title>Direct interface precedence</title>
+        <para>
+            With <literal>FirewallBackend=iptables</literal> firewalld's top-level internal rules apply before direct rules are executed. This includes rules to accept existing connections. In the past this has surprised users. As an example, if a user adds a direct rule to drop traffic on destination port 22 existing SSH sessions would continue to function, but new connections would be denied.
+        </para>
+        <para>
+            With <literal>FirewallBackend=nftables</literal> direct rules were deliberately given a higher precedence than all other firewalld rules. This includes rules to accept existing connections.
+        </para>
+    </refsect2>
+  </refsect1>
+
+  <refsect1 id="example">
+    <title>Example</title>
+
+    <para>
+      Denylisting of the networks 192.168.1.0/24 and 192.168.5.0/24 with logging and dropping early in the raw table:
+
+      <programlisting>
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;direct&gt;
+  &lt;chain ipv="ipv4" table="raw" chain="denylist"/&gt;
+  &lt;rule ipv="ipv4" table="raw" chain="PREROUTING" priority="0"&gt;-s 192.168.1.0/24 -j denylist&lt;/rule&gt;
+  &lt;rule ipv="ipv4" table="raw" chain="PREROUTING" priority="1"&gt;-s 192.168.5.0/24 -j denylist&lt;/rule&gt;
+  &lt;rule ipv="ipv4" table="raw" chain="denylist" priority="0"&gt;-m limit --limit 1/min -j LOG --log-prefix "denylisted: "&lt;/rule&gt;
+  &lt;rule ipv="ipv4" table="raw" chain="denylist" priority="1"&gt;-j DROP&lt;/rule&gt;
+&lt;/direct&gt;
+      </programlisting>
+
+    </para>
+  </refsect1>
+
+
+  &seealso;
+
+  &notes;
+
+</refentry>

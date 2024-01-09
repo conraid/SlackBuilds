@@ -1,0 +1,59 @@
+FWD_START_TEST([firewalld.conf])
+AT_KEYWORDS(dbus)
+
+IF_HOST_SUPPORTS_NFT_FIB([
+   EXPECTED_IPV6_RPFILTER_VALUE=yes
+], [
+   EXPECTED_IPV6_RPFILTER_VALUE=no
+])
+
+IF_HOST_SUPPORTS_NFT_RULE_INDEX([
+    EXPECTED_INDIVIDUAL_CALLS_VALUE=no
+], [
+    EXPECTED_INDIVIDUAL_CALLS_VALUE=yes
+])
+
+dnl Verify defaults over dbus. Should be inline with default firewalld.conf.
+DBUS_GETALL([config], [config], 0, [dnl
+string "AllowZoneDrifting" : variant string "no"
+string "AutomaticHelpers" : variant string "no"
+string "CleanupModulesOnExit" : variant string "no"
+string "CleanupOnExit" : variant string "yes"
+string "DefaultZone" : variant string "public"
+string "FirewallBackend" : variant string "nftables"
+string "FlushAllOnReload" : variant string "yes"
+string "IPv6_rpfilter" : variant string m4_escape(["${EXPECTED_IPV6_RPFILTER_VALUE}"])
+string "IndividualCalls" : variant string m4_escape(["${EXPECTED_INDIVIDUAL_CALLS_VALUE}"])
+string "Lockdown" : variant string "no"
+string "LogDenied" : variant string "off"
+string "MinimalMark" : variant int32 100
+string "NftablesCounters" : variant string "no"
+string "NftablesFlowtable" : variant string "off"
+string "RFC3964_IPv4" : variant string "yes"
+])
+
+m4_define([_helper], [
+DBUS_SET([config], [config], [string:"$1" $2], 0, ignore)
+DBUS_GET([config], [config], [string:"$1"], 0, [dnl
+$3
+])
+])
+
+dnl Test individual Set/Get
+_helper([MinimalMark], [int32:1234], [variant int32 100])
+_helper([AutomaticHelpers], [string:"yes"], [variant string "no"])
+_helper([Lockdown], [string:"yes"], [variant string "yes"])
+_helper([LogDenied], [string:"all"], [variant string "all"])
+_helper([IPv6_rpfilter], [string:"yes"], [variant string "yes"])
+_helper([IndividualCalls], [string:"yes"], [variant string "yes"])
+_helper([FirewallBackend], [string:"iptables"], [variant string "iptables"])
+_helper([FlushAllOnReload], [string:"no"], [variant string "no"])
+_helper([CleanupModulesOnExit], [string:"yes"], [variant string "yes"])
+_helper([CleanupOnExit], [string:"no"], [variant string "no"])
+_helper([RFC3964_IPv4], [string:"no"], [variant string "no"])
+_helper([AllowZoneDrifting], [string:"yes"], [variant string "no"])
+_helper([NftablesCounters], [string:"yes"], [variant string "yes"])
+dnl Note: DefaultZone is RO
+m4_undefine([_helper])
+
+FWD_END_TEST

@@ -1,0 +1,239 @@
+'\" t
+.\"     Title: firewalld.zones
+.\"    Author: Thomas Woerner <twoerner@redhat.com>
+.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
+.\"      Date: 
+.\"    Manual: firewalld.zones
+.\"    Source: firewalld 2.1.0
+.\"  Language: English
+.\"
+.TH "FIREWALLD\&.ZONES" "5" "" "firewalld 2.1.0" "firewalld.zones"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+firewalld.zones \- firewalld zones
+.SH "DESCRIPTION"
+.SS "What is a zone?"
+.PP
+A network zone defines the level of trust for network connections\&. This is a one to many relation, which means that a connection can only be part of one zone, but a zone can be used for many network connections\&.
+.PP
+The zone defines the firewall features that are enabled in this zone:
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIntra Zone Forwarding\fR
+.RS 4
+.PP
+Allows packets received by a zone to be forwarded to other interfaces or sources within the same zone, even if the zone\*(Aqs target is not
+\fIACCEPT\fR\&.
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBPredefined services\fR
+.RS 4
+.PP
+A service is a combination of port and/or protocol entries\&. Optionally netfilter helper modules can be added and also a IPv4 and IPv6 destination address\&.
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBPorts and protocols\fR
+.RS 4
+.PP
+Definition of
+\fItcp\fR,
+\fIudp\fR,
+\fIsctp\fR
+or
+\fIdccp\fR
+ports, where ports can be a single port or a port range\&.
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBICMP blocks\fR
+.RS 4
+.PP
+Blocks selected Internet Control Message Protocol (ICMP) messages\&. These messages are either information requests or created as a reply to information requests or in error conditions\&.
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBICMP block inversion\fR
+.RS 4
+.PP
+Changes how ICMP messages are handled\&. When enabled, all ICMP message types are blocked,
+\fIexcept\fR
+for those in the ICMP block list\&.
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBMasquerading\fR
+.RS 4
+.PP
+The addresses of a private network are mapped to and hidden behind a public IP address\&. This is a form of address translation\&.
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBForward ports\fR
+.RS 4
+.PP
+A forward port is either mapped to the same port on another host or to another port on the same host or to another port on another host\&.
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBRich language rules\fR
+.RS 4
+.PP
+The rich language extends the elements (service, port, icmp\-block, masquerade, forward\-port and source\-port) with additional source and destination addresses, logging, actions and limits for logs and actions\&. It can also be used for host or network white and black listing (for more information, please have a look at
+\fBfirewalld.richlanguage\fR(5))\&.
+.RE
+.PP
+For more information on the zone file format, please have a look at
+\fBfirewalld.zone\fR(5)\&.
+.SS "Which zones are available?"
+.PP
+Here are the zones provided by firewalld sorted according to the default trust level of the zones from untrusted to trusted:
+.PP
+drop
+.RS 4
+Any incoming network packets are dropped, there is no reply\&. Only outgoing network connections are possible\&.
+.RE
+.PP
+block
+.RS 4
+Any incoming network connections are rejected with an
+\fIicmp\-host\-prohibited\fR
+message for IPv4 and
+\fIicmp6\-adm\-prohibited\fR
+for IPv6\&. Only network connections initiated within this system are possible\&.
+.RE
+.PP
+public
+.RS 4
+For use in public areas\&. You do not trust the other computers on networks to not harm your computer\&. Only selected incoming connections are accepted\&.
+.RE
+.PP
+external
+.RS 4
+For use on external networks with masquerading enabled especially for routers\&. You do not trust the other computers on networks to not harm your computer\&. Only selected incoming connections are accepted\&.
+.RE
+.PP
+dmz
+.RS 4
+For computers in your demilitarized zone that are publicly\-accessible with limited access to your internal network\&. Only selected incoming connections are accepted\&.
+.RE
+.PP
+work
+.RS 4
+For use in work areas\&. You mostly trust the other computers on networks to not harm your computer\&. Only selected incoming connections are accepted\&.
+.RE
+.PP
+home
+.RS 4
+For use in home areas\&. You mostly trust the other computers on networks to not harm your computer\&. Only selected incoming connections are accepted\&.
+.RE
+.PP
+internal
+.RS 4
+For use on internal networks\&. You mostly trust the other computers on the networks to not harm your computer\&. Only selected incoming connections are accepted\&.
+.RE
+.PP
+trusted
+.RS 4
+All network connections are accepted\&.
+.RE
+.SS "Which zone should be used?"
+.PP
+A public WIFI network connection for example should be mainly untrusted, a wired home network connection should be fairly trusted\&. Select the zone that best matches the network you are using\&.
+.SS "How to configure or add zones?"
+.PP
+To configure or add zones you can either use one of the firewalld interfaces to handle and change the configuration: These are the graphical configuration tool firewall\-config, the command line tool
+\fBfirewall\-cmd\fR
+or the D\-Bus interface\&. Or you can create or copy a zone file in one of the configuration directories\&.
+\fI/usr/lib/firewalld/zones\fR
+is used for default and fallback configurations and
+\fI/usr/etc/firewalld/zones\fR
+is used for user created and customized configuration files\&.
+.SS "How to set or change a zone for a connection?"
+.PP
+The zone is stored into the ifcfg of the connection with
+\fBZONE=\fR
+option\&. If the option is missing or empty, the default zone set in firewalld is used\&.
+.PP
+If the connection is controlled by NetworkManager, you can also use
+\fBnm\-connection\-editor\fR
+to change the zone\&.
+.PP
+For the addition or change of interfaces that are not under control of NetworkManager: firewalld tries to change the ZONE setting in the ifcfg file, if an ifcfg file exists that is using the interface\&.
+.PP
+Only for the removal of interfaces that are not under control of NetworkManager: firewalld is not trying to change the ZONE setting in the ifcfg file\&. This is needed to make sure that an ifdown of the interface will not result in a reset of the zone setting to the default zone\&. Only the zone binding is then removed in firewalld then\&.
+.SH "SEE ALSO"
+\fBfirewall-applet\fR(1), \fBfirewalld\fR(1), \fBfirewall-cmd\fR(1), \fBfirewall-config\fR(1), \fBfirewalld.conf\fR(5), \fBfirewalld.direct\fR(5), \fBfirewalld.dbus\fR(5), \fBfirewalld.icmptype\fR(5), \fBfirewalld.lockdown-whitelist\fR(5), \fBfirewall-offline-cmd\fR(1), \fBfirewalld.richlanguage\fR(5), \fBfirewalld.service\fR(5), \fBfirewalld.zone\fR(5), \fBfirewalld.zones\fR(5), \fBfirewalld.policy\fR(5), \fBfirewalld.policies\fR(5), \fBfirewalld.ipset\fR(5), \fBfirewalld.helper\fR(5)
+.SH "NOTES"
+.PP
+firewalld home page:
+.RS 4
+\m[blue]\fB\%http://firewalld.org\fR\m[]
+.RE
+.SH "AUTHORS"
+.PP
+\fBThomas Woerner\fR <\&twoerner@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBJiri Popelka\fR <\&jpopelka@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBEric Garver\fR <\&eric@garver\&.life\&>
+.RS 4
+Developer
+.RE

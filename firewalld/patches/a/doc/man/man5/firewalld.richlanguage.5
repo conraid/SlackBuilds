@@ -1,0 +1,664 @@
+'\" t
+.\"     Title: firewalld.richlanguage
+.\"    Author: Thomas Woerner <twoerner@redhat.com>
+.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
+.\"      Date: 
+.\"    Manual: firewalld.richlanguage
+.\"    Source: firewalld 2.1.0
+.\"  Language: English
+.\"
+.TH "FIREWALLD\&.RICHLANG" "5" "" "firewalld 2.1.0" "firewalld.richlanguage"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+firewalld.richlanguage \- Rich Language Documentation
+.SH "DESCRIPTION"
+.PP
+With the rich language more complex firewall rules can be created in an easy to understand way\&. The language uses keywords with values and is an abstract representation of ip*tables rules\&.
+.PP
+The rich language extends the current zone elements (service, port, icmp\-block, icmp\-type, masquerade, forward\-port and source\-port) with additional source and destination addresses, logging, actions and limits for logs and actions\&.
+.PP
+This page describes the rich language used in the command line client and D\-Bus interface\&. For information about the rich language representation used in the zone configuration files, please have a look at
+\fBfirewalld.zone\fR(5)\&.
+.PP
+A rule is part of a zone\&. One zone can contain several rules\&. If some rules interact/contradict, the first rule that matches "wins"\&.
+.PP
+\fBGeneral rule structure\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+rule
+  [source]
+  [destination]
+  service|port|protocol|icmp\-block|icmp\-type|masquerade|forward\-port|source\-port
+  [log|nflog]
+  [audit]
+  [accept|reject|drop|mark]
+      
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+The complete rule is provided as a single line string\&. A destination is allowed here as long as it does not conflict with the destination of a service\&.
+.PP
+\fBRule structure for source black or white listing\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+rule
+  source
+  [log|nflog]
+  [audit]
+  accept|reject|drop|mark
+      
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+This is used to grant or limit access from a source to this machine or machines that are reachable by this machine\&. A destination is not allowed here\&.
+.PP
+\fBImportant information about element options:\fR
+Options for elements in a rule need to be added exactly after the element\&. If the option is placed somewhere else it might be used for another element as far as it matches the options of the other element or will result in a rule error\&.
+.SS "Rule"
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+rule [family="ipv4|ipv6"] [priority="priority"]
+	  
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+If the rule family is provided, it can be either "ipv4" or "ipv6", which limits the rule to IPv4 or IPv6\&. If the rule family is not provided, the rule will be added for IPv4 and IPv6\&. If source or destination addresses are used in a rule, then the rule family need to be provided\&. This is also the case for port/packet forwarding\&.
+.PP
+If the rule priority is provided, it can be in the range of \-32768 to 32767 where lower values have higher precedence\&. Rich rules are sorted by priority\&. Ordering for rules with the same priority value is undefined\&. A negative priority value will be executed before other firewalld primitives\&. A positive priority value will be executed after other firewalld primitives\&. A priority value of 0 will place the rule in a chain based on the action as per the "Information about logging and actions" below\&.
+.SS "Source"
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+source [not] address="address[/mask]"|mac="mac\-address"|ipset="ipset"
+	  
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+With the source address the origin of a connection attempt can be limited to the source address\&. An address is either a single IP address, or a network IP address, a MAC address or an IPSet\&. The address has to match the rule family (IPv4/IPv6)\&. Subnet mask is expressed in either dot\-decimal (/x\&.x\&.x\&.x) or prefix (/x) notations for IPv4, and in prefix notation (/x) for IPv6 network addresses\&. It is possible to invert the sense of an address by adding
+\fBnot\fR
+before
+\fBaddress\fR\&. All but the specified address will match then\&.
+.SS "Destination"
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+destination [not] address="address[/mask]"|ipset="ipset"
+	
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+With the destination address the target can be limited to the destination address\&. The destination address is using the same syntax as the source address\&.
+.PP
+The use of source and destination addresses is optional and the use of a destination addresses is not possible with all elements\&. This depends on the use of destination addresses for example in service entries\&.
+.SS "Service"
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+service name="service name"
+	
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+The service
+\fIservice name\fR
+will be added to the rule\&. The service name is one of the firewalld provided services\&. To get a list of the supported services, use
+\fBfirewall\-cmd \-\-get\-services\fR\&.
+.PP
+If a service provides a destination address, it will conflict with a destination address in the rule and will result in an error\&. The services using destination addresses internally are mostly services using multicast\&.
+.SS "Port"
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+port port="port value" protocol="tcp|udp|sctp|dccp"
+	
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+The port
+\fIport value\fR
+can either be a single port number
+\fIportid\fR
+or a port range
+\fIportid\fR\-\fIportid\fR\&. The protocol can either be
+\fItcp\fR,
+\fIudp\fR,
+\fIsctp\fR
+or
+\fIdccp\fR\&.
+.SS "Protocol"
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+protocol value="protocol value"
+	
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+The protocol value can be either a protocol id number or a protocol name\&. For allowed protocol entries, please have a look at
+\fI/etc/protocols\fR\&.
+.SS "Tcp\-Mss\-Clamp"
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+tcp\-mss\-clamp="value=pmtu|value=number >= 536|None"
+        
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+The tcp\-mss\-clamp sets the maximum segment size in the rule\&.
+.PP
+The tcp\-mss\-clamp has an optional attribute value can be either be set to "pmtu" or a number greater than or equal to 536\&. If attribute value is not present then the maximum segment size is automatically set to "pmtu"\&.
+.SS "ICMP\-Block"
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+icmp\-block name="icmptype name"
+	
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+The icmptype is the one of the icmp types firewalld supports\&. To get a listing of supported icmp types:
+\fBfirewall\-cmd \-\-get\-icmptypes\fR
+.PP
+It is not allowed to specify an action here\&. icmp\-block uses the action reject internally\&.
+.SS "Masquerade"
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+masquerade
+	
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+Turn on masquerading in the rule\&. A source and also a destination address can be provided to limit masquerading to this area\&.
+.PP
+It is not allowed to specify an action here\&.
+.PP
+\fINote:\fR
+IP forwarding will be implicitly enabled\&.
+.SS "ICMP\-Type"
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+icmp\-type name="icmptype name"
+	
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+The icmptype is the one of the icmp types firewalld supports\&. To get a listing of supported icmp types:
+\fBfirewall\-cmd \-\-get\-icmptypes\fR
+.SS "Forward\-Port"
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+forward\-port port="port value" protocol="tcp|udp|sctp|dccp" to\-port="port value" to\-addr="address"
+	
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+Forward port/packets from local port value with protocol "tcp" or "udp" to either another port locally or to another machine or to another port on another machine\&.
+.PP
+The port value can either be a single port number or a port range
+\fIportid\-portid\fR\&. The
+\fBto\-addr\fR
+is an IP address\&. The protocol can either be
+\fItcp\fR,
+\fIudp\fR,
+\fIsctp\fR
+or
+\fIdccp\fR\&.
+.PP
+It is not allowed to specify an action here\&. forward\-port uses the action accept internally\&.
+.PP
+\fINote:\fR
+IP forwarding will be implicitly enabled if
+\fBto\-addr\fR
+is specified\&.
+.SS "Source\-Port"
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+source\-port port="port value" protocol="tcp|udp|sctp|dccp"
+	
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+The source\-port
+\fIport value\fR
+can either be a single port number
+\fIportid\fR
+or a port range
+\fIportid\fR\-\fIportid\fR\&. The protocol can either be
+\fItcp\fR,
+\fIudp\fR,
+\fIsctp\fR
+or
+\fIdccp\fR\&.
+.SS "Log"
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+log [prefix="prefix text"] [level="log level"] [limit value="rate/duration"]
+	
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+Log new connection attempts to the rule with kernel logging for example in syslog\&. You can define a prefix text with a maximum length of 127 characters that will be added to the log message as a prefix\&. Log level can be one of "\fBemerg\fR", "\fBalert\fR", "\fBcrit\fR", "\fBerror\fR", "\fBwarning\fR", "\fBnotice\fR", "\fBinfo\fR" or "\fBdebug\fR", where default (i\&.e\&. if there\*(Aqs no one specified) is "\fBwarning\fR"\&. See
+\fBsyslog\fR(3)
+for description of levels\&. See Limit section for description of
+\fBlimit\fR
+tag\&.
+.PP
+\fINote:\fR
+The iptables backend truncates prefix to 29 characters\&.
+.SS "NFLog"
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+nflog [group="group id"] [prefix="prefix text"] [queue\-size="threshold"] [limit value="rate/duration"]
+	
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+Log new connection attempts to the rule using kernel logging to pass the packets through a \*(Aqnetlink\*(Aq socket to users or applications monitoring the multicast
+\fBgroup\fR\&. The minimum and default value for
+\fBgroup\fR
+is 0, maximum value is 65535\&. See NETLINK_NETFILTER in
+\fBnetlink\fR(7)
+man page and NFLOG in both
+\fBiptables-extensions\fR(8)
+and
+\fBnft\fR(8)
+man pages for a more detailed description\&.
+.PP
+You can define a prefix text with a maximum length of 127 characters that will be added to the log message as a prefix\&. The
+\fBqueue\-size\fR
+option can be set to increase the queue threshold which can help limit context switching\&. The default value for
+\fBqueue\-size\fR
+is 1, maximum value is 65535\&. See
+\fBiptables-extensions\fR(8)
+and
+\fBnft\fR(8)
+for more details\&.
+.PP
+See Limit section for description of
+\fBlimit\fR
+tag\&.
+.PP
+\fINote:\fR
+The iptables backend truncates prefix to 63 characters\&.
+.SS "Audit"
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+audit [limit value="rate/duration"]
+	
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+Audit provides an alternative way for logging using audit records sent to the service auditd\&. Audit type will be discovered from the rule action automatically\&. Use of audit is optional\&. See Limit section for description of
+\fBlimit\fR
+tag\&.
+.SS "Action"
+.PP
+An action can be one of
+\fBaccept\fR,
+\fBreject\fR,
+\fBdrop\fR
+or
+\fBmark\fR\&.
+.PP
+The rule can either contain an element or also a source only\&. If the rule contains an element, then new connection matching the element will be handled with the action\&. If the rule does not contain an element, then everything from the source address will be handled with the action\&.
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+accept [limit value="rate/duration"]
+	
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+reject [type="reject type"] [limit value="rate/duration"]
+	
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+drop [limit value="rate/duration"]
+	
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+mark set="mark[/mask]" [limit value="rate/duration"]
+	
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+With
+\fBaccept\fR
+all new connection attempts will be granted\&. With
+\fBreject\fR
+they will not be accepted and their source will get a reject ICMP(v6) message\&. The reject type can be set to specify appropriate ICMP(v6) error message\&. For valid reject types see
+\fB\-\-reject\-with type\fR
+in
+\fBiptables-extensions\fR(8)
+man page\&. Because reject types are different for IPv4 and IPv6 you have to specify rule family when using reject type\&. With
+\fBdrop\fR
+all packets will be dropped immediately, there is no information sent to the source\&. With
+\fBmark\fR
+all packets will be marked in the
+\fBPREROUTING\fR
+chain in the
+\fBmangle\fR
+table with the mark and mask combination\&. See Limit section for description of
+\fBlimit\fR
+tag\&.
+.SS "Limit"
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+limit value="rate/duration"
+	
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+It is possible to limit Log, NFLog, Audit and Action\&. A rule using this tag will match until this limit is reached\&. The rate is a natural positive number [1, \&.\&.] The duration is of "s", "m", "h", "d"\&. "s" means seconds, "m" minutes, "h" hours and "d" days\&. Maximum limit value is "2/d", which means at maximum two matches per day\&.
+.SS "Information about logging and actions"
+.PP
+Logging can be done with the log, nflog and audit actions\&. A new chain is added to all zones: zone_log\&. This will be jumped into before the deny chain to be able to have a proper ordering\&.
+.PP
+The rules or parts of them are placed in separate chains according to the priority and action of the rule:
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+\fIzone\fR_pre
+\fIzone\fR_log
+\fIzone\fR_deny
+\fIzone\fR_allow
+\fIzone\fR_post
+	
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+When
+\fIpriority < 0\fR, the rich rule will be placed in the
+\fIzone\fR_pre chain\&.
+.PP
+When
+\fIpriority == 0\fR
+Then all logging rules will be placed in the
+\fIzone\fR_log chain\&. All reject and drop rules will be placed in the
+\fIzone\fR_deny chain, which will be walked after the log chain\&. All accept rules will be placed in the
+\fIzone\fR_allow chain, which will be walked after the deny chain\&. If a rule contains log and also deny or allow actions, the parts are placed in the matching chains\&.
+.PP
+When
+\fIpriority > 0\fR, the rich rule will be placed in the
+\fIzone\fR_post chain\&.
+.SH "EXAMPLES"
+.PP
+These are examples of how to specify rich language rules\&. This format (i\&.e\&. one string that specifies whole rule) uses for example
+\fBfirewall\-cmd \-\-add\-rich\-rule\fR
+(see
+\fBfirewall-cmd\fR(1)) as well as D\-Bus interface\&.
+.SS "Example 1"
+.PP
+Enable new IPv4 and IPv6 connections for protocol \*(Aqah\*(Aq
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+rule protocol value="ah" accept
+	
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.SS "Example 2"
+.PP
+Allow new IPv4 and IPv6 connections for service ftp and log 1 per minute using audit
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+rule service name="ftp" log limit value="1/m" audit accept
+	
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.SS "Example 3"
+.PP
+Allow new IPv4 connections from address 192\&.168\&.0\&.0/24 for service tftp and log 1 per minutes using syslog
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+rule family="ipv4" source address="192\&.168\&.0\&.0/24" service name="tftp" log prefix="tftp" level="info" limit value="1/m" accept
+	
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.SS "Example 4"
+.PP
+New IPv6 connections from 1:2:3:4:6:: to service radius are all rejected and logged at a rate of 3 per minute\&. New IPv6 connections from other sources are accepted\&.
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+rule family="ipv6" source address="1:2:3:4:6::" service name="radius" log prefix="dns" level="info" limit value="3/m" reject
+rule family="ipv6" service name="radius" accept
+	
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.SS "Example 5"
+.PP
+Forward IPv6 port/packets receiving from 1:2:3:4:6:: on port 4011 with protocol tcp to 1::2:3:4:7 on port 4012
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+rule family="ipv6" source address="1:2:3:4:6::" forward\-port to\-addr="1::2:3:4:7" to\-port="4012" protocol="tcp" port="4011"
+	
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.SS "Example 6"
+.PP
+White\-list source address to allow all connections from 192\&.168\&.2\&.2
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+rule family="ipv4" source address="192\&.168\&.2\&.2" accept
+	
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.SS "Example 7"
+.PP
+Black\-list source address to reject all connections from 192\&.168\&.2\&.3
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+rule family="ipv4" source address="192\&.168\&.2\&.3" reject type="icmp\-admin\-prohibited"
+	
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.SS "Example 8"
+.PP
+Black\-list source address to drop all connections from 192\&.168\&.2\&.4
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+rule family="ipv4" source address="192\&.168\&.2\&.4" drop
+	
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.SH "SEE ALSO"
+\fBfirewall-applet\fR(1), \fBfirewalld\fR(1), \fBfirewall-cmd\fR(1), \fBfirewall-config\fR(1), \fBfirewalld.conf\fR(5), \fBfirewalld.direct\fR(5), \fBfirewalld.dbus\fR(5), \fBfirewalld.icmptype\fR(5), \fBfirewalld.lockdown-whitelist\fR(5), \fBfirewall-offline-cmd\fR(1), \fBfirewalld.richlanguage\fR(5), \fBfirewalld.service\fR(5), \fBfirewalld.zone\fR(5), \fBfirewalld.zones\fR(5), \fBfirewalld.policy\fR(5), \fBfirewalld.policies\fR(5), \fBfirewalld.ipset\fR(5), \fBfirewalld.helper\fR(5)
+.SH "NOTES"
+.PP
+firewalld home page:
+.RS 4
+\m[blue]\fB\%http://firewalld.org\fR\m[]
+.RE
+.SH "AUTHORS"
+.PP
+\fBThomas Woerner\fR <\&twoerner@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBJiri Popelka\fR <\&jpopelka@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBEric Garver\fR <\&eric@garver\&.life\&>
+.RS 4
+Developer
+.RE

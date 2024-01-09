@@ -1,0 +1,2610 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
+[
+<!ENTITY authors SYSTEM "authors.xml">
+<!ENTITY seealso SYSTEM "seealso.xml">
+<!ENTITY notes SYSTEM "notes.xml">
+]>
+
+<!--
+  SPDX-License-Identifier: GPL-2.0-or-later
+
+  This file is part of firewalld.
+
+  Copyright (C) 2010-2013 Red Hat, Inc.
+
+  Authors:
+  Thomas Woerner <twoerner@redhat.com>
+-->
+
+<refentry id="firewall-offline-cmd">
+
+  <refentryinfo>
+    <title>firewall-offline-cmd</title>
+    <productname>firewalld</productname>
+    &authors;
+  </refentryinfo>
+
+  <refmeta>
+    <refentrytitle>firewall-offline-cmd</refentrytitle>
+    <manvolnum>1</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+    <refname>firewall-offline-cmd</refname>
+    <refpurpose>firewalld offline command line client</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>firewall-offline-cmd</command> <arg choice="opt" rep="repeat">OPTIONS</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1 id="description">
+    <title>Description</title>
+    <para>
+      firewall-offline-cmd is an offline command line client of the firewalld daemon. It should be used only if the firewalld service is not running. For example to migrate from system-config-firewall/lokkit or in the install environment to configure firewall settings with kickstart.
+    </para>
+    <para>
+      Some lokkit options can not be automatically converted for firewalld, they will result in an error or warning message. This tool tries to convert as much as possible, but there are limitations for example with custom rules, modules and masquerading.
+    </para>
+    <para>
+      Check the firewall configuration after using this tool.
+    </para>
+  </refsect1>
+
+  <refsect1 id="options">
+    <title>Options</title>
+    <para>
+      If no options are given, configuration from <command>/etc/sysconfig/system-config-firewall</command> will be migrated.
+    </para>
+
+    <para>
+      Sequence options are the options that can be specified multiple times, the exit code is 0 if there is at least one item that succeeded. The <literal>ALREADY_ENABLED</literal> (11), <literal>NOT_ENABLED</literal> (12) and also <literal>ZONE_ALREADY_SET</literal> (16) errors are treated as succeeded.
+      If there are issues while parsing the items, then these are treated as warnings and will not change the result as long as there is a succeeded one.
+      Without any succeeded item, the exit code will depend on the error codes. If there is exactly one error code, then this is used. If there are more than one then <literal>UNKNOWN_ERROR</literal> (254) will be used.
+    </para>
+
+    <para>
+      The following options are supported:
+    </para>
+
+    <refsect2 id="general_options">
+      <title>General Options</title>
+      <variablelist>
+	<varlistentry>
+          <term><option>-h</option></term>
+          <term><option>--help</option></term>
+          <listitem>
+	    <para>
+	      Prints a short help text and exits.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+          <term><option>-V</option></term>
+          <term><option>--version</option></term>
+          <listitem>
+	    <para>
+	      Prints the version string of firewalld and exits.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+          <term><option>-q</option></term>
+          <term><option>--quiet</option></term>
+          <listitem>
+	    <para>
+	      Do not print status messages.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+    <varlistentry>
+      <term><option>--default-config</option></term>
+      <listitem>
+        <para>
+          Path to firewalld default configuration. This usually defaults to
+          <filename class="directory">/usr/lib/firewalld</filename>.
+        </para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term><option>--system-config</option></term>
+      <listitem>
+        <para>
+          Path to firewalld system (user) configuration. This usually defaults
+          to <filename class="directory">/etc/firewalld</filename>.
+        </para>
+      </listitem>
+    </varlistentry>
+
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="status_options">
+      <title>Status Options</title>
+      <variablelist>
+	<varlistentry>
+	  <term><option>--enabled</option></term>
+	  <listitem>
+	    <para>
+	      Enable the firewall. This option is a default option and will activate the firewall if not already enabled as long as the option <option>--disabled</option> is not given.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--disabled</option></term>
+	  <listitem>
+	    <para>
+	      Disable the firewall by disabling the firewalld service.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+    <varlistentry>
+      <term><option>--check-config</option></term>
+      <listitem>
+        <para>
+          Run checks on the permanent (default and system) configuration. This
+          includes XML validity and semantics.
+        </para>
+        <para>
+          This is may be used with <option>--system-config</option> to check
+          the validity of handwritten configuration files before copying them
+          to the standard location.
+        </para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term><option>--reset-to-defaults</option></term>
+      <listitem>
+        <para>
+          Reset configuration to firewalld's default configuration
+        </para>
+      </listitem>
+    </varlistentry>
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="lokkit_options">
+      <title>Lokkit Compatibility Options</title>
+      <para>
+        These options are nearly identical to the options of <command>lokkit</command>.
+      </para>
+      <variablelist>
+	<varlistentry>
+          <term><option>--migrate-system-config-firewall=<replaceable>file</replaceable></option></term>
+          <listitem>
+	    <para>
+	      Migrate system-config-firewall configuration from the given file. No further
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><option>--addmodule</option>=<replaceable>module</replaceable></term>
+	  <listitem>
+	    <para>
+	      This option will result in a warning message and will be ignored.
+	    </para>
+	    <para>
+	      Handling of netfilter helpers has been merged into services completely. Adding or removing netfilter helpers outside of services is therefore not needed anymore. For more information on handling netfilter helpers in services, please have a look at <citerefentry><refentrytitle>firewalld.zone</refentrytitle><manvolnum>5</manvolnum></citerefentry>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--removemodule</option></term>
+	  <listitem>
+	    <para>
+	      This option will result in a warning message and will be ignored.
+	    </para>
+	    <para>
+	      Handling of netfilter helpers has been merged into services completely. Adding or removing netfilter helpers outside of services is therefore not needed anymore. For more information on handling netfilter helpers in services, please have a look at <citerefentry><refentrytitle>firewalld.zone</refentrytitle><manvolnum>5</manvolnum></citerefentry>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+          <term><option>--remove-service</option>=<replaceable>service</replaceable></term>
+          <listitem>
+	    <para>
+	      Remove a service from the default zone. This option can be specified multiple times.
+	    </para>
+	    <para>
+	      The service is one of the firewalld provided services. To get a list of the supported services, use <command>firewall-cmd --get-services</command>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+          <term><option>-s</option> <replaceable>service</replaceable></term>
+          <term><option>--service</option>=<replaceable>service</replaceable></term>
+          <listitem>
+	    <para>
+	      Add a service to the default zone. This option can be specified multiple times.
+	    </para>
+	    <para>
+	      The service is one of the firewalld provided services. To get a list of the supported services, use <command>firewall-cmd --get-services</command>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+          <term><option>-p</option> <replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>:<replaceable>protocol</replaceable></term>
+          <term><option>--port</option>=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>:<replaceable>protocol</replaceable></term>
+          <listitem>
+	    <para>
+	      Add the port to the default zone. This option can be specified multiple times.
+	    </para>
+	    <para>
+	      The port can either be a single port number or a port range <replaceable>portid</replaceable>-<replaceable>portid</replaceable>. The protocol can either be <literal>tcp</literal>, <literal>udp</literal>, <literal>sctp</literal> or <literal>dccp</literal>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+          <term><option>-t</option> <replaceable>interface</replaceable></term>
+          <term><option>--trust</option>=<replaceable>interface</replaceable></term>
+          <listitem>
+	    <para>
+	      This option will result in a warning message.
+	    </para>
+	    <para>
+	      Mark an interface as trusted. This option can be specified multiple times. The interface will be bound to the trusted zone.
+	    </para>
+	    <para>
+	      If the interface is used in a NetworkManager managed connection or if there is an ifcfg file for this interface, the zone will be changed to the zone defined in the configuration as soon as it gets activated. To change the zone of a connection use <command>nm-connection-editor</command> and set the zone to trusted, for an ifcfg file, use an editor and add "ZONE=trusted". If the zone is not defined in the ifcfg file, the firewalld default zone will be used.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+          <term><option>-m</option> <replaceable>interface</replaceable></term>
+          <term><option>--masq</option>=<replaceable>interface</replaceable></term>
+          <listitem>
+	    <para>
+	      This option will result in a warning message.
+	    </para>
+	    <para>
+	      Masquerading will be enabled in the default zone. The interface argument will be ignored. This is for <emphasis>IPv4</emphasis> only.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+          <term><option>--custom-rules</option>=<optional><replaceable>type</replaceable>:</optional><optional><replaceable>table</replaceable>:</optional><replaceable>filename</replaceable></term>
+          <listitem>
+	    <para>
+	      This option will result in a warning message and will be ignored.
+	    </para>
+	    <para>
+	      Custom rule files are not supported by firewalld.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+          <term><option>--forward-port</option>=if=<replaceable>interface</replaceable>:port=<replaceable>port</replaceable>:proto=<replaceable>protocol</replaceable><optional>:toport=<replaceable>destination port</replaceable>:</optional><optional>:toaddr=<replaceable>destination address</replaceable></optional></term>
+          <listitem>
+	    <para>
+	      This option will result in a warning message.
+	    </para>
+	    <para>
+	      Add the <emphasis>IPv4</emphasis> forward port in the default zone. This option can be specified multiple times.
+	    </para>
+	    <para>
+	      The port can either be a single port number <replaceable>portid</replaceable> or a port range <replaceable>portid</replaceable>-<replaceable>portid</replaceable>. The protocol can either be <literal>tcp</literal>, <literal>udp</literal>, <literal>sctp</literal> or <literal>dccp</literal>. The destination address is an IP address.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+          <term><option>--block-icmp</option>=<replaceable>icmptype</replaceable></term>
+          <listitem>
+	    <para>
+	      This option will result in a warning message.
+	    </para>
+	    <para>
+	      Add an ICMP block for <replaceable>icmptype</replaceable> in the default zone. This option can be specified multiple times.
+	    </para>
+	    <para>
+	      The <replaceable>icmptype</replaceable> is the one of the icmp types firewalld supports. To get a listing of supported icmp types: <command>firewall-cmd --get-icmptypes</command>
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="log_denied_options">
+      <title>Log Denied Options</title>
+      <variablelist>
+	<varlistentry>
+	  <term><option>--get-log-denied</option></term>
+	  <listitem>
+	    <para>
+	      Print the log denied setting.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--set-log-denied</option>=<replaceable>value</replaceable></term>
+	  <listitem>
+	    <para>
+	      Add logging rules right before reject and drop rules in the INPUT, FORWARD and OUTPUT chains for the default rules and also final reject and drop rules in zones for the configured link-layer packet type. The possible values are: <replaceable>all</replaceable>, <replaceable>unicast</replaceable>, <replaceable>broadcast</replaceable>, <replaceable>multicast</replaceable> and <replaceable>off</replaceable>. The default setting is <replaceable>off</replaceable>, which disables the logging.
+	    </para>
+	    <para>
+	      This is a runtime and permanent change and will also reload the firewall to be able to add the logging rules.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="zone_options">
+      <title>Zone Options</title>
+      <variablelist>
+	<varlistentry>
+	  <term><option>--get-default-zone</option></term>
+	  <listitem>
+	    <para>
+	      Print default zone for connections and interfaces.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--set-default-zone</option>=<replaceable>zone</replaceable></term>
+	  <listitem>
+	    <para>
+	      Set default zone for connections and interfaces where no zone has been selected. Setting the default zone changes the zone for the connections or interfaces, that are using the default zone.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--get-zones</option></term>
+	  <listitem>
+	    <para>
+	      Print predefined zones as a space separated list.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--get-services</option></term>
+	  <listitem>
+	    <para>
+	      Print predefined services as a space separated list.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--get-icmptypes</option></term>
+	  <listitem>
+	    <para>
+	      Print predefined icmptypes as a space separated list.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--get-zone-of-interface</option>=<replaceable>interface</replaceable></term>
+	  <listitem>
+	    <para>
+	      Print the name of the zone the <replaceable>interface</replaceable> is bound to or <emphasis>no zone</emphasis>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--get-zone-of-source</option>=<replaceable>source</replaceable><optional>/<replaceable>mask</replaceable></optional>|<replaceable>MAC</replaceable>|ipset:<replaceable>ipset</replaceable></term>
+	  <listitem>
+	    <para>
+	      Print the name of the zone the source is bound to or <emphasis>no zone</emphasis>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--info-zone=<replaceable>zone</replaceable></option></term>
+	  <listitem>
+	    <para>
+	      Print information about the zone <replaceable>zone</replaceable>. The output format is:
+	      <programlisting>
+<replaceable>zone</replaceable>
+  interfaces: <replaceable>interface1</replaceable> ..
+  sources: <replaceable>source1</replaceable> ..
+  services: <replaceable>service1</replaceable> ..
+  ports: <replaceable>port1</replaceable> ..
+  protocols: <replaceable>protocol1</replaceable> ..
+  forward-ports:
+        <replaceable>forward-port1</replaceable>
+        ..
+  source-ports: <replaceable>source-port1</replaceable> ..
+  icmp-blocks: <replaceable>icmp-type1</replaceable> ..
+  rich rules:
+        <replaceable>rich-rule1</replaceable>
+        ..
+              </programlisting>
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--list-all-zones</option></term>
+	  <listitem>
+	    <para>
+	      List everything added for or enabled in all zones. The output format is:
+	      <programlisting>
+<replaceable>zone1</replaceable>
+  interfaces: <replaceable>interface1</replaceable> ..
+  sources: <replaceable>source1</replaceable> ..
+  services: <replaceable>service1</replaceable> ..
+  ports: <replaceable>port1</replaceable> ..
+  protocols: <replaceable>protocol1</replaceable> ..
+  forward-ports:
+        <replaceable>forward-port1</replaceable>
+        ..
+  source-ports: <replaceable>source-port1</replaceable> ..
+  icmp-blocks: <replaceable>icmp-type1</replaceable> ..
+  rich rules:
+        <replaceable>rich-rule1</replaceable>
+        ..
+..
+              </programlisting>
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+          <term><option>--new-zone</option>=<replaceable>zone</replaceable></term>
+          <listitem>
+            <para>
+              Add a new permanent zone.
+            </para>
+            <para>
+              Zone names must be alphanumeric and may additionally include characters: '_' and '-'.
+            </para>
+          </listitem>
+	</varlistentry>
+
+	<varlistentry>
+          <term><option>--new-zone-from-file</option>=<replaceable>filename</replaceable> <optional><option>--name</option>=<replaceable>zone</replaceable></optional></term>
+          <listitem>
+            <para>
+              Add a new permanent zone from a prepared zone file with an optional name override.
+            </para>
+          </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><option>--path-zone=<replaceable>zone</replaceable></option></term>
+	  <listitem>
+	    <para>
+	      Print path of the zone configuration file.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+          <term><option>--delete-zone</option>=<replaceable>zone</replaceable></term>
+          <listitem>
+            <para>
+              Delete an existing permanent zone.
+            </para>
+          </listitem>
+	</varlistentry>
+
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="policy_options">
+      <title>Policy Options</title>
+      <variablelist>
+        <varlistentry>
+          <term><option>--get-policies</option></term>
+          <listitem>
+            <para>
+              Print predefined policies as a space separated list.
+            </para>
+          </listitem>
+        </varlistentry>
+
+      <varlistentry>
+        <term><option>--info-policy</option>=<replaceable>policy</replaceable></term>
+        <listitem>
+          <para>
+            Print information about the policy <replaceable>policy</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>--list-all-policies</option></term>
+        <listitem>
+          <para>
+            List everything added for or enabled in all policies.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>--new-policy</option>=<replaceable>policy</replaceable></term>
+        <listitem>
+          <para>
+            Add a new permanent policy.
+          </para>
+          <para>
+            Policy names must be alphanumeric and may additionally include characters: '_' and '-'.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+         <term><option>--new-policy-from-file</option>=<replaceable>filename</replaceable> <optional><option>--name</option>=<replaceable>policy</replaceable></optional></term>
+         <listitem>
+           <para>
+             Add a new permanent policy from a prepared policy file with an optional name override.
+           </para>
+         </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>--path-policy</option>=<replaceable>policy</replaceable></term>
+        <listitem>
+          <para>
+            Print path of the policy configuration file.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>--delete-policy</option>=<replaceable>policy</replaceable></term>
+        <listitem>
+          <para>
+            Delete an existing permanent policy.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>--load-policy-defaults</option>=<replaceable>policy</replaceable></term>
+        <listitem>
+          <para>
+            Load the shipped defaults for a policy. Only applies to policies
+            shipped with firewalld. Does not apply to user defined policies.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="options_to_adapt_and_query_zones_and_policies">
+      <title>Options to Adapt and Query Zones and Policies</title>
+      <para>
+        Options in this section affect only one particular zone or policy. If used with <option>--zone</option>=<replaceable>zone</replaceable> or <option>--policy</option>=<replaceable>policy</replaceable> option, they affect the specified zone or policy. If both options are omitted, they affect default zone (see <option>--get-default-zone</option>).
+      </para>
+      <variablelist>
+
+      <!-- list-all -->
+      <varlistentry>
+        <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--list-all</option></term>
+        <listitem>
+          <para>
+            List everything added or enabled.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <!-- target -->
+      <varlistentry>
+        <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--get-target</option></term>
+        <listitem>
+          <para>
+            Get the target.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--set-target</option>=<replaceable>target</replaceable></term>
+        <listitem>
+          <para>
+            Set the target.
+          </para>
+          <para>
+            For zones <replaceable>target</replaceable> is one of: <literal>default</literal>, <literal>ACCEPT</literal>, <literal>DROP</literal>, <literal>REJECT</literal>
+          </para>
+          <para>
+            For policies <replaceable>target</replaceable> is one of: <literal>CONTINUE</literal>, <literal>ACCEPT</literal>, <literal>DROP</literal>, <literal>REJECT</literal>
+          </para>
+          <para>
+            <literal>default</literal> is similar to <literal>REJECT</literal>, but it implicitly allows ICMP packets.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <!-- description/short -->
+      <varlistentry>
+        <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--set-description</option>=<replaceable>description</replaceable></term>
+        <listitem>
+          <para>
+            Set description.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--get-description</option></term>
+        <listitem>
+          <para>
+            Print description.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--set-short</option>=<replaceable>description</replaceable></term>
+        <listitem>
+          <para>
+            Set short description.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--get-short</option></term>
+        <listitem>
+          <para>
+            Print short description.
+          </para>
+        </listitem>
+      </varlistentry>
+
+	<!-- list/add/remove/query service -->
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--list-services</option></term>
+	  <listitem>
+	    <para>
+	      List services added as a space separated list.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--add-service</option>=<replaceable>service</replaceable></term>
+	  <listitem>
+	    <para>
+	      Add a service. This option can be specified multiple times.
+	    </para>
+	    <para>
+	      The service is one of the firewalld provided services. To get a list of the supported services, use <command>firewall-cmd --get-services</command>.
+	    </para>
+            <para>
+              <emphasis role="bold">Note</emphasis>: Some services define connection tracking helpers.
+              Helpers that may operate in client mode (e.g. tftp) must be added to an
+              outbound policy instead of a zone to take effect for clients. Otherwise
+              the helper will not be applied to the outbound traffic. The related
+              traffic, as defined by the connection tracking helper, on the return
+              path (ingress) will be allowed by the stateful firewall rules.
+            </para>
+            <para>
+              An example of an outbound policy for connection tracking helpers:
+              <programlisting>
+# firewall-cmd --new-policy clientConntrack
+# firewall-cmd --policy clientConntrack --add-ingress-zone HOST
+# firewall-cmd --policy clientConntrack --add-egress-zone ANY
+# firewall-cmd --policy clientConntrack --add-service tftp
+              </programlisting>
+            </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--remove-service-from-zone</option>=<replaceable>service</replaceable></term>
+	  <listitem>
+	    <para>
+	      Remove a service from <replaceable>zone</replaceable>. This option can be specified multiple times. If zone is omitted, default zone will be used.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+      <varlistentry>
+        <term><optional><option>--policy</option>=<replaceable>policy</replaceable></optional>  <option>--remove-service-from-policy</option>=<replaceable>service</replaceable></term>
+        <listitem>
+          <para>
+            Remove a service from <replaceable>policy</replaceable>. This option can be specified multiple times.
+          </para>
+        </listitem>
+      </varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--query-service</option>=<replaceable>service</replaceable></term>
+	  <listitem>
+	    <para>
+	      Return whether <replaceable>service</replaceable> has been added. Returns 0 if true, 1 otherwise.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<!-- list/add/remove/query port -->
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--list-ports</option></term>
+	  <listitem>
+	    <para>
+	      List ports added as a space separated list. A port is of the form <replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>/<replaceable>protocol</replaceable>, it can be either a port and protocol pair or a port range with a protocol.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--add-port</option>=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>/<replaceable>protocol</replaceable></term>
+	  <listitem>
+	    <para>
+	      Add the port. This option can be specified multiple times.
+	    </para>
+	    <para>
+	      The port can either be a single port number or a port range <replaceable>portid</replaceable>-<replaceable>portid</replaceable>. The protocol can either be <literal>tcp</literal>, <literal>udp</literal>, <literal>sctp</literal> or <literal>dccp</literal>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--remove-port</option>=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>/<replaceable>protocol</replaceable></term>
+	  <listitem>
+	    <para>
+	      Remove the port. This option can be specified multiple times.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--query-port</option>=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>/<replaceable>protocol</replaceable></term>
+	  <listitem>
+	    <para>
+	      Return whether the port has been added. Returns 0 if true, 1 otherwise.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<!-- list/add/remove/query protocol -->
+
+       <varlistentry>
+         <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--list-protocols</option></term>
+         <listitem>
+           <para>
+             List protocols added as a space separated list.
+           </para>
+         </listitem>
+       </varlistentry>
+
+       <varlistentry>
+         <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--add-protocol</option>=<replaceable>protocol</replaceable></term>
+         <listitem>
+           <para>
+             Add the protocol. This option can be specified multiple times.
+             <replaceable>timeval</replaceable> is either a number (of seconds) or number followed by one of characters <literal>s</literal> (seconds), <literal>m</literal> (minutes), <literal>h</literal> (hours), for example <literal>20m</literal> or <literal>1h</literal>.
+           </para>
+           <para>
+             The protocol can be any protocol supported by the system. Please have a look at <filename>/etc/protocols</filename> for supported protocols.
+           </para>
+         </listitem>
+       </varlistentry>
+
+       <varlistentry>
+         <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--remove-protocol</option>=<replaceable>protocol</replaceable></term>
+         <listitem>
+           <para>
+             Remove the protocol. This option can be specified multiple times.
+           </para>
+         </listitem>
+       </varlistentry>
+
+       <varlistentry>
+         <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--query-protocol</option>=<replaceable>protocol</replaceable></term>
+         <listitem>
+           <para>
+             Return whether the protocol has been added. Returns 0 if true, 1 otherwise.
+           </para>
+         </listitem>
+       </varlistentry>
+
+	<!-- list/add/remove/query icmp-block -->
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--list-icmp-blocks</option></term>
+	  <listitem>
+	    <para>
+	      List Internet Control Message Protocol (ICMP) type blocks added as a space separated list.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--add-icmp-block</option>=<replaceable>icmptype</replaceable></term>
+	  <listitem>
+	    <para>
+	      Add an ICMP block for <replaceable>icmptype</replaceable>. This option can be specified multiple times.
+	    </para>
+	    <para>
+	      The <replaceable>icmptype</replaceable> is the one of the icmp types firewalld supports. To get a listing of supported icmp types: <command>firewall-cmd --get-icmptypes</command>
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--remove-icmp-block</option>=<replaceable>icmptype</replaceable></term>
+	  <listitem>
+	    <para>
+	      Remove the ICMP block for <replaceable>icmptype</replaceable>. This option can be specified multiple times.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--query-icmp-block</option>=<replaceable>icmptype</replaceable></term>
+	  <listitem>
+	    <para>
+	      Return whether an ICMP block for <replaceable>icmptype</replaceable> has been added. Returns 0 if true, 1 otherwise.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<!-- list/add/remove/query forward-port -->
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--list-forward-ports</option></term>
+	  <listitem>
+	    <para>
+	      List <emphasis>IPv4</emphasis> forward ports added as a space separated list.
+	    </para>
+	    <para>
+	      For <emphasis>IPv6</emphasis> forward ports, please use the rich language.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--add-forward-port</option>=port=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>:proto=<replaceable>protocol</replaceable><optional>:toport=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional></optional><optional>:toaddr=<replaceable>address</replaceable><optional>/<replaceable>mask</replaceable></optional></optional></term>
+	  <listitem>
+	    <para>
+	      Add the <emphasis>IPv4</emphasis> forward port. This option can be specified multiple times.
+	    </para>
+	    <para>
+	      The port can either be a single port number <replaceable>portid</replaceable> or a port range <replaceable>portid</replaceable>-<replaceable>portid</replaceable>. The protocol can either be <literal>tcp</literal>, <literal>udp</literal>, <literal>sctp</literal> or <literal>dccp</literal>. The destination address is a simple IP address.
+	    </para>
+	    <para>
+	      For <emphasis>IPv6</emphasis> forward ports, please use the rich language.
+	    </para>
+	    <para>
+	      <emphasis>Note:</emphasis> IP forwarding will be implicitly enabled if <option>toaddr</option> is specified.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--remove-forward-port</option>=port=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>:proto=<replaceable>protocol</replaceable><optional>:toport=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional></optional><optional>:toaddr=<replaceable>address</replaceable><optional>/<replaceable>mask</replaceable></optional></optional></term>
+	  <listitem>
+	    <para>
+	      Remove the <emphasis>IPv4</emphasis> forward port. This option can be specified multiple times.
+	    </para>
+	    <para>
+	      For <emphasis>IPv6</emphasis> forward ports, please use the rich language.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--query-forward-port</option>=port=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>:proto=<replaceable>protocol</replaceable><optional>:toport=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional></optional><optional>:toaddr=<replaceable>address</replaceable><optional>/<replaceable>mask</replaceable></optional></optional></term>
+	  <listitem>
+	    <para>
+	      Return whether the <emphasis>IPv4</emphasis> forward port has been added. Returns 0 if true, 1 otherwise.
+	    </para>
+	    <para>
+	      For <emphasis>IPv6</emphasis> forward ports, please use the rich language.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<!-- list/add/remove/query source port -->
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--list-source-ports</option></term>
+	  <listitem>
+	    <para>
+	      List source ports added  as a space separated list. A port is of the form <replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>/<replaceable>protocol</replaceable>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--add-source-port</option>=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>/<replaceable>protocol</replaceable></term>
+	  <listitem>
+	    <para>
+	      Add the source port. This option can be specified multiple times.
+	    </para>
+	    <para>
+	      The port can either be a single port number or a port range <replaceable>portid</replaceable>-<replaceable>portid</replaceable>. The protocol can either be <literal>tcp</literal>, <literal>udp</literal>, <literal>sctp</literal> or <literal>dccp</literal>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--remove-source-port</option>=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>/<replaceable>protocol</replaceable></term>
+	  <listitem>
+	    <para>
+	      Remove the source port. This option can be specified multiple times.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--query-source-port</option>=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>/<replaceable>protocol</replaceable></term>
+	  <listitem>
+	    <para>
+	      Return whether the source port has been added. Returns 0 if true, 1 otherwise.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<!-- add/remove/query masquerade -->
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--add-masquerade</option></term>
+	  <listitem>
+	    <para>
+	      Enable <emphasis>IPv4</emphasis> masquerade. Masquerading is useful if the machine is a router and machines connected over an interface in another zone should be able to use the first connection.
+	    </para>
+	    <para>
+	      For <emphasis>IPv6</emphasis> masquerading, please use the rich language.
+	    </para>
+	    <para>
+	      <emphasis>Note:</emphasis> IP forwarding will be implicitly enabled.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--remove-masquerade</option></term>
+	  <listitem>
+	    <para>
+	      Disable <emphasis>IPv4</emphasis> masquerade.
+	    </para>
+	    <para>
+	      For <emphasis>IPv6</emphasis> masquerading, please use the rich language.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--query-masquerade</option></term>
+	  <listitem>
+	    <para>
+	      Return whether <emphasis>IPv4</emphasis> masquerading has been enabled. Returns 0 if true, 1 otherwise.
+	    </para>
+	    <para>
+	      For <emphasis>IPv6</emphasis> masquerading, please use the rich language.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<!-- list/add/remove/query rich rule -->
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--list-rich-rules</option></term>
+	  <listitem>
+	    <para>
+	      List rich language rules added as a newline separated list.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--add-rich-rule</option>='<replaceable>rule</replaceable>'</term>
+	  <listitem>
+	    <para>
+	      Add rich language rule '<replaceable>rule</replaceable>'. This option can be specified multiple times.
+	    </para>
+	    <para>
+	      For the rich language rule syntax, please have a look at <citerefentry><refentrytitle>firewalld.richlanguage</refentrytitle><manvolnum>5</manvolnum></citerefentry>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--remove-rich-rule</option>='<replaceable>rule</replaceable>'</term>
+	  <listitem>
+	    <para>
+	      Remove rich language rule '<replaceable>rule</replaceable>'. This option can be specified multiple times.
+	    </para>
+	    <para>
+	      For the rich language rule syntax, please have a look at <citerefentry><refentrytitle>firewalld.richlanguage</refentrytitle><manvolnum>5</manvolnum></citerefentry>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <optional><option>--policy</option>=<replaceable>policy</replaceable></optional> <option>--query-rich-rule</option>='<replaceable>rule</replaceable>'</term>
+	  <listitem>
+	    <para>
+	      Return whether a rich language rule '<replaceable>rule</replaceable>' has been added. Returns 0 if true, 1 otherwise.
+	    </para>
+	    <para>
+	      For the rich language rule syntax, please have a look at <citerefentry><refentrytitle>firewalld.richlanguage</refentrytitle><manvolnum>5</manvolnum></citerefentry>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="options_to_adapt_and_query_zones">
+      <title>Options to Adapt and Query Zones</title>
+      <para>
+        Options in this section affect only one particular zone. If used with <option>--zone</option>=<replaceable>zone</replaceable> option, they affect the specified zone. If the option is omitted, they affect the default zone (see <option>--get-default-zone</option>).
+      </para>
+      <variablelist>
+
+      <!-- add/remove/query icmp-block-inversion -->
+      <varlistentry>
+        <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--add-icmp-block-inversion</option></term>
+        <listitem>
+          <para>
+            Enable ICMP block inversion.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--remove-icmp-block-inversion</option></term>
+        <listitem>
+          <para>
+            Disable ICMP block inversion.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--query-icmp-block-inversion</option></term>
+        <listitem>
+          <para>
+            Return whether ICMP block inversion is enabled. Returns 0 if true, 1 otherwise.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <!-- add/remove/query forward -->
+      <varlistentry>
+        <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--add-forward</option></term>
+        <listitem>
+          <para>
+            Enable intra zone forwarding.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--remove-forward</option></term>
+        <listitem>
+          <para>
+            Disable intra zone forwarding.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--query-forward</option></term>
+        <listitem>
+          <para>
+            Return whether intra zone forwarding is enabled. Returns 0 if true, 1 otherwise.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <!-- set/get priority -->
+      <varlistentry>
+        <term> <optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--get-priority</option></term>
+        <listitem>
+          <para>
+	    Get the priority of the zone.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--set-priority</option></term>
+        <listitem>
+          <para>
+            Set the zone's priority for packet classification. This will set
+            both the ingress and egress priority.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--get-ingress-priority</option></term>
+        <listitem>
+          <para>
+	    Get the ingress priority of the zone.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--set-ingress-priority</option></term>
+        <listitem>
+          <para>
+            Set the zone's ingress priority for packet classification.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--get-egress-priority</option></term>
+        <listitem>
+          <para>
+	    Get the egress priority of the zone.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--set-egress-priority</option></term>
+        <listitem>
+          <para>
+            Set the zone's egress priority for packet classification.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="options_to_adapt_and_query_policies">
+      <title>Options to Adapt and Query Policies</title>
+      <para>
+        Options in this section affect only one particular policy. It's required to specify <option>--policy</option>=<replaceable>policy</replaceable> with these options.
+      </para>
+      <variablelist>
+
+      <!-- priority -->
+      <varlistentry>
+        <term><option>--policy</option>=<replaceable>policy</replaceable> <option>--get-priority</option></term>
+        <listitem>
+          <para>
+            Get the priority.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>--policy</option>=<replaceable>policy</replaceable> <option>--set-priority</option><replaceable>priority</replaceable></term>
+        <listitem>
+          <para>
+            Set the priority. The priority determines the relative ordering of
+            policies. This is an integer value between -32768 and 32767
+            where -1 is the default value for new policies and 0 is reserved for
+            internal use.
+          </para>
+          <para>
+             If a priority is &lt; 0, then the policy's rules will execute before all rules in all zones.
+          </para>
+          <para>
+             If a priority is &gt; 0, then the policy's rules will execute after all rules in all zones.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <!-- list/add/remove/query ingress zones -->
+      <varlistentry>
+        <term><option>--policy</option>=<replaceable>policy</replaceable> <option>--list-ingress-zones</option></term>
+        <listitem>
+          <para>
+            List ingress zones added as a space separated list.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>--policy</option>=<replaceable>policy</replaceable> <option>--add-ingress-zone</option>=<replaceable>zone</replaceable></term>
+        <listitem>
+          <para>
+            Add an ingress zone. This option can be specified multiple times.
+          </para>
+          <para>
+            The ingress zone is one of the firewalld provided zones or one of
+            the pseudo-zones: HOST, ANY.
+          </para>
+          <para>
+            HOST is used for traffic originating from the host machine, i.e. the
+            host running firewalld.
+          </para>
+          <para>
+            ANY is used for traffic originating from any zone. This can be
+            thought of as a wild card for zones. However it does not include
+            traffic originating from the host machine - use HOST for that.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>--policy</option>=<replaceable>policy</replaceable>  <option>--remove-ingress-zone</option>=<replaceable>zone</replaceable></term>
+        <listitem>
+          <para>
+            Remove an ingress zone. This option can be specified multiple times.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>--policy</option>=<replaceable>policy</replaceable> <option>--query-ingress-zone</option>=<replaceable>zone</replaceable></term>
+        <listitem>
+          <para>
+            Return whether <replaceable>zone</replaceable> has been added. Returns 0 if true, 1 otherwise.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <!-- list/add/remove/query egress zones -->
+      <varlistentry>
+        <term><option>--policy</option>=<replaceable>policy</replaceable> <option>--list-egress-zones</option></term>
+        <listitem>
+          <para>
+            List egress zones added as a space separated list.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>--policy</option>=<replaceable>policy</replaceable> <option>--add-egress-zone</option>=<replaceable>zone</replaceable></term>
+        <listitem>
+          <para>
+            Add an egress zone. This option can be specified multiple times.
+          </para>
+          <para>
+            The egress zone is one of the firewalld provided zones or one of
+            the pseudo-zones: HOST, ANY.
+          </para>
+          <para>
+            For clarification on HOST and ANY see option <option>--add-ingress-zone</option>.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>--policy</option>=<replaceable>policy</replaceable>  <option>--remove-egress-zone</option>=<replaceable>zone</replaceable></term>
+        <listitem>
+          <para>
+            Remove an egress zone. This option can be specified multiple times.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>--policy</option>=<replaceable>policy</replaceable> <option>--query-egress-zone</option>=<replaceable>zone</replaceable></term>
+        <listitem>
+          <para>
+            Return whether <replaceable>zone</replaceable> has been added. Returns 0 if true, 1 otherwise.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="options_to_handle_bindings_of_interfaces">
+      <title>Options to Handle Bindings of Interfaces</title>
+      <para>
+	Binding an interface to a zone means that this zone settings are used to restrict traffic via the interface.
+      </para>
+      <para>
+	Options in this section affect only one particular zone. If used with <option>--zone</option>=<replaceable>zone</replaceable> option, they affect the zone <replaceable>zone</replaceable>. If the option is omitted, they affect default zone (see <option>--get-default-zone</option>).
+      </para>
+      <para>
+	For a list of predefined zones use <command>firewall-cmd --get-zones</command>.
+      </para>
+      <para>
+	An interface name is a string up to 16 characters long, that may not contain <option>' '</option>, <option>'/'</option>, <option>'!'</option> and <option>'*'</option>.
+      </para>
+      <variablelist>
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--list-interfaces</option></term>
+	  <listitem>
+	    <para>
+	      List interfaces that are bound to zone <replaceable>zone</replaceable> as a space separated list. If zone is omitted, default zone will be used.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--add-interface</option>=<replaceable>interface</replaceable></term>
+	  <listitem>
+	    <para>
+	      Bind interface <replaceable>interface</replaceable> to zone <replaceable>zone</replaceable>. If zone is omitted, default zone will be used.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--change-interface</option>=<replaceable>interface</replaceable></term>
+	  <listitem>
+	    <para>
+	      Change zone the interface <replaceable>interface</replaceable> is bound to to zone <replaceable>zone</replaceable>. If zone is omitted, default zone will be used. If old and new zone are the same, the call will be ignored without an error. If the interface has not been bound to a zone before, it will behave like <option>--add-interface</option>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--query-interface</option>=<replaceable>interface</replaceable></term>
+	  <listitem>
+	    <para>
+	      Query whether interface <replaceable>interface</replaceable> is bound to zone <replaceable>zone</replaceable>. Returns 0 if true, 1 otherwise.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--remove-interface</option>=<replaceable>interface</replaceable></term>
+	  <listitem>
+	    <para>
+	      Remove binding of interface <replaceable>interface</replaceable> from zone <replaceable>zone</replaceable>. If zone is omitted, default zone will be used.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="options_to_handle_bindings_of_sources">
+      <title>Options to Handle Bindings of Sources</title>
+      <para>
+	Binding a source to a zone means that this zone settings will be used to restrict traffic from this source.
+      </para>
+      <para>
+	A source address or address range is either an IP address or a network IP address with a mask for IPv4 or IPv6 or a MAC address or an ipset with the ipset: prefix. For IPv4, the mask can be a network mask or a plain number. For IPv6 the mask is a plain number. The use of host names is not supported.
+      </para>
+      <para>
+	Options in this section affect only one particular zone. If used with <option>--zone</option>=<replaceable>zone</replaceable> option, they affect the zone <replaceable>zone</replaceable>. If the option is omitted, they affect default zone (see <option>--get-default-zone</option>).
+      </para>
+      <para>
+	For a list of predefined zones use <command>firewall-cmd --get-zones</command>.
+      </para>
+      <variablelist>
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--list-sources</option></term>
+	  <listitem>
+	    <para>
+	      List sources that are bound to zone <replaceable>zone</replaceable> as a space separated list. If zone is omitted, default zone will be used.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--add-source</option>=<replaceable>source</replaceable><optional>/<replaceable>mask</replaceable></optional>|<replaceable>MAC</replaceable>|ipset:<replaceable>ipset</replaceable></term>
+	  <listitem>
+	    <para>
+	      Bind the source to zone <replaceable>zone</replaceable>. If zone is omitted, default zone will be used.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--change-source</option>=<replaceable>source</replaceable><optional>/<replaceable>mask</replaceable></optional>|<replaceable>MAC</replaceable>|ipset:<replaceable>ipset</replaceable></term>
+	  <listitem>
+	    <para>
+	      Change zone the source is bound to to zone <replaceable>zone</replaceable>. If zone is omitted, default zone will be used. If old and new zone are the same, the call will be ignored without an error. If the source has not been bound to a zone before, it will behave like <option>--add-source</option>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--query-source</option>=<replaceable>source</replaceable><optional>/<replaceable>mask</replaceable></optional>|<replaceable>MAC</replaceable>|ipset:<replaceable>ipset</replaceable></term>
+	  <listitem>
+	    <para>
+	      Query whether the source is bound to the zone <replaceable>zone</replaceable>. Returns 0 if true, 1 otherwise.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><optional><option>--zone</option>=<replaceable>zone</replaceable></optional> <option>--remove-source</option>=<replaceable>source</replaceable><optional>/<replaceable>mask</replaceable></optional>|<replaceable>MAC</replaceable>|ipset:<replaceable>ipset</replaceable></term>
+	  <listitem>
+	    <para>
+	      Remove binding of the source from zone <replaceable>zone</replaceable>. If zone is omitted, default zone will be used.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="ipset_options">
+      <title>IPSet Options</title>
+      <variablelist>
+	<varlistentry>
+          <term><option>--new-ipset</option>=<replaceable>ipset</replaceable> <option>--type</option>=<replaceable>ipset type</replaceable> <optional><option>--option</option>=<replaceable>ipset option</replaceable><optional>=<replaceable>value</replaceable></optional></optional></term>
+          <listitem>
+            <para>
+              Add a new permanent ipset with specifying the type and optional options.
+            </para>
+            <para>
+              ipset names must be alphanumeric and may additionally include characters: '_' and '-'.
+            </para>
+          </listitem>
+	</varlistentry>
+	<varlistentry>
+          <term><option>--new-ipset-from-file</option>=<replaceable>filename</replaceable> <optional><option>--name</option>=<replaceable>ipset</replaceable></optional></term>
+          <listitem>
+            <para>
+	      Add a new permanent ipset from a prepared ipset file with an optional name override.
+            </para>
+          </listitem>
+	</varlistentry>
+	<varlistentry>
+          <term><option>--delete-ipset</option>=<replaceable>ipset</replaceable></term>
+          <listitem>
+            <para>
+              Delete an existing permanent ipset.
+            </para>
+          </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><option>--info-ipset=<replaceable>ipset</replaceable></option></term>
+	  <listitem>
+	    <para>
+	      Print information about the ipset <replaceable>ipset</replaceable>. The output format is:
+	      <programlisting>
+<replaceable>ipset</replaceable>
+  type: <replaceable>type</replaceable>
+  options: <replaceable>option1[=value1]</replaceable> ..
+  entries: <replaceable>entry1</replaceable> ..
+              </programlisting>
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><option>--get-ipsets</option></term>
+	  <listitem>
+	    <para>
+	      Print predefined ipsets as a space separated list.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+         <term><option>--ipset</option>=<replaceable>ipset</replaceable> <option>--add-entry</option>=<replaceable>entry</replaceable></term>
+         <listitem>
+           <para>
+             Add a new entry to the ipset.
+           </para>
+         </listitem>
+       </varlistentry>
+
+	<varlistentry>
+         <term><option>--ipset</option>=<replaceable>ipset</replaceable> <option>--remove-entry</option>=<replaceable>entry</replaceable></term>
+         <listitem>
+           <para>
+             Remove an entry from the ipset.
+           </para>
+         </listitem>
+       </varlistentry>
+
+	<varlistentry>
+         <term><option>--ipset</option>=<replaceable>ipset</replaceable> <option>--query-entry</option>=<replaceable>entry</replaceable></term>
+         <listitem>
+           <para>
+	     Return whether the entry has been added to an ipset. Returns 0 if true, 1 otherwise.
+           </para>
+         </listitem>
+       </varlistentry>
+
+	<varlistentry>
+         <term><option>--ipset</option>=<replaceable>ipset</replaceable> <option>--get-entries</option></term>
+         <listitem>
+           <para>
+             List all entries of the ipset.
+           </para>
+         </listitem>
+       </varlistentry>
+
+	<varlistentry>
+         <term><option>--ipset</option>=<replaceable>ipset</replaceable> <option>--add-entries-from-file</option>=<replaceable>filename</replaceable></term>
+         <listitem>
+           <para>
+             Add a new entries to the ipset from the file. For all entries that are listed in the file but already in the ipset, a warning will be printed.
+           </para>
+           <para>
+	     The file should contain an entry per line. Lines starting with an hash or semicolon are ignored. Also empty lines.
+           </para>
+         </listitem>
+       </varlistentry>
+
+	<varlistentry>
+         <term><option>--ipset</option>=<replaceable>ipset</replaceable> <option>--remove-entries-from-file</option>=<replaceable>filename</replaceable></term>
+         <listitem>
+           <para>
+             Remove existing entries from the ipset from the file. For all entries that are listed in the file but not in the ipset, a warning will be printed.
+           </para>
+           <para>
+	     The file should contain an entry per line. Lines starting with an hash or semicolon are ignored. Also empty lines.
+           </para>
+         </listitem>
+       </varlistentry>
+
+       <varlistentry>
+         <term><option>--ipset</option>=<replaceable>ipset</replaceable> <option>--set-description</option>=<replaceable>description</replaceable></term>
+         <listitem>
+           <para>
+             Set new description to ipset
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--ipset</option>=<replaceable>ipset</replaceable> <option>--get-description</option></term>
+         <listitem>
+           <para>
+             Print description for ipset
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--ipset</option>=<replaceable>ipset</replaceable> <option>--set-short</option>=<replaceable>description</replaceable></term>
+         <listitem>
+           <para>
+             Set new short description to ipset
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--ipset</option>=<replaceable>ipset</replaceable> <option>--get-short</option></term>
+         <listitem>
+           <para>
+             Print short description for ipset
+           </para>
+         </listitem>
+       </varlistentry>
+	<varlistentry>
+	  <term><option>--path-ipset=<replaceable>ipset</replaceable></option></term>
+	  <listitem>
+	    <para>
+	      Print path of the ipset configuration file.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="service_options">
+      <title>Service Options</title>
+      <variablelist>
+	<varlistentry>
+	  <term><option>--info-service=<replaceable>service</replaceable></option></term>
+	  <listitem>
+	    <para>
+	      Print information about the service <replaceable>service</replaceable>. The output format is:
+	      <programlisting>
+<replaceable>service</replaceable>
+  ports: <replaceable>port1</replaceable> ..
+  protocols: <replaceable>protocol1</replaceable> ..
+  source-ports: <replaceable>source-port1</replaceable> ..
+  helpers: <replaceable>helper1</replaceable> ..
+  destination: <replaceable>ipv1</replaceable>:<replaceable>address1</replaceable> ..
+              </programlisting>
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+       <varlistentry>
+         <term><option>--new-service</option>=<replaceable>service</replaceable></term>
+         <listitem>
+           <para>
+             Add a new permanent service.
+           </para>
+           <para>
+             Service names must be alphanumeric and may additionally include characters: '_' and '-'.
+           </para>
+         </listitem>
+       </varlistentry>
+
+       <varlistentry>
+         <term><option>--new-service-from-file</option>=<replaceable>filename</replaceable> <optional><option>--name</option>=<replaceable>service</replaceable></optional></term>
+         <listitem>
+           <para>
+              Add a new permanent service from a prepared service file with an optional name override.
+           </para>
+         </listitem>
+       </varlistentry>
+
+       <varlistentry>
+         <term><option>--delete-service</option>=<replaceable>service</replaceable></term>
+         <listitem>
+           <para>
+             Delete an existing permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+	<varlistentry>
+	  <term><option>--path-service=<replaceable>service</replaceable></option></term>
+	  <listitem>
+	    <para>
+	      Print path of the service configuration file.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--set-description</option>=<replaceable>description</replaceable></term>
+         <listitem>
+           <para>
+             Set new description to service
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--get-description</option></term>
+         <listitem>
+           <para>
+             Print description for service
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--set-short</option>=<replaceable>description</replaceable></term>
+         <listitem>
+           <para>
+             Set short description to service
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--get-short</option></term>
+         <listitem>
+           <para>
+             Print short description for service
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--add-port</option>=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>/<replaceable>protocol</replaceable></term>
+         <listitem>
+           <para>
+             Add a new port to the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--remove-port</option>=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>/<replaceable>protocol</replaceable></term>
+         <listitem>
+           <para>
+             Remove a port from the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--query-port</option>=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>/<replaceable>protocol</replaceable></term>
+         <listitem>
+           <para>
+             Return whether the port has been added to the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--get-ports</option></term>
+         <listitem>
+           <para>
+             List ports added to the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--add-protocol</option>=<replaceable>protocol</replaceable></term>
+         <listitem>
+           <para>
+             Add a new protocol to the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--remove-protocol</option>=<replaceable>protocol</replaceable></term>
+         <listitem>
+           <para>
+             Remove a protocol from the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--query-protocol</option>=<replaceable>protocol</replaceable></term>
+         <listitem>
+           <para>
+             Return whether the protocol has been added to the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--get-protocols</option></term>
+         <listitem>
+           <para>
+             List protocols added to the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--add-source-port</option>=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>/<replaceable>protocol</replaceable></term>
+         <listitem>
+           <para>
+             Add a new source port to the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--remove-source-port</option>=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>/<replaceable>protocol</replaceable></term>
+         <listitem>
+           <para>
+             Remove a source port from the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--query-source-port</option>=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>/<replaceable>protocol</replaceable></term>
+         <listitem>
+           <para>
+             Return whether the source port has been added to the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--get-source-ports</option></term>
+         <listitem>
+           <para>
+             List source ports added to the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--add-helper</option>=<replaceable>helper</replaceable></term>
+         <listitem>
+           <para>
+             Add a new helper to the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--remove-helper</option>=<replaceable>helper</replaceable></term>
+         <listitem>
+           <para>
+             Remove a helper from the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--query-helper</option>=<replaceable>helper</replaceable></term>
+         <listitem>
+           <para>
+             Return whether the helper has been added to the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--get-service-helpers</option></term>
+         <listitem>
+           <para>
+             List helpers added to the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--set-destination</option>=<replaceable>ipv</replaceable>:<replaceable>address</replaceable><optional>/<replaceable>mask</replaceable></optional></term>
+         <listitem>
+           <para>
+             Set destination for ipv to address[/mask] in the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--remove-destination</option>=<replaceable>ipv</replaceable></term>
+         <listitem>
+           <para>
+             Remove the destination for ipv from the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--query-destination</option>=<replaceable>ipv</replaceable>:<replaceable>address</replaceable><optional>/<replaceable>mask</replaceable></optional></term>
+         <listitem>
+           <para>
+             Return whether the destination ipv to address[/mask] has been set in the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--get-destinations</option></term>
+         <listitem>
+           <para>
+             List destinations added to the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--add-include</option>=<replaceable>service</replaceable></term>
+         <listitem>
+           <para>
+             Add a new include to the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--remove-include</option>=<replaceable>service</replaceable></term>
+         <listitem>
+           <para>
+             Remove a include from the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--query-include</option>=<replaceable>service</replaceable></term>
+         <listitem>
+           <para>
+             Return whether the include has been added to the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--service</option>=<replaceable>service</replaceable> <option>--get-includes</option></term>
+         <listitem>
+           <para>
+             List includes added to the permanent service.
+           </para>
+         </listitem>
+       </varlistentry>
+     </variablelist>
+    </refsect2>
+
+    <refsect2 id="helper_options">
+      <title>Helper Options</title>
+      <para>
+	Options in this section affect only one particular helper.
+      </para>
+      <variablelist>
+	<varlistentry>
+	  <term><option>--info-helper=<replaceable>helper</replaceable></option></term>
+	  <listitem>
+	    <para>
+	      Print information about the helper <replaceable>helper</replaceable>. The output format is:
+	      <programlisting>
+<replaceable>helper</replaceable>
+  family: <replaceable>family</replaceable>
+  module: <replaceable>module</replaceable>
+  ports: <replaceable>port1</replaceable> ..
+              </programlisting>
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+      <para>
+	The following options are only usable in the permanent configuration.
+      </para>
+      <variablelist>
+       <varlistentry>
+         <term><option>--new-helper</option>=<replaceable>helper</replaceable> <option>--module</option>=<replaceable>nf_conntrack_module</replaceable> <optional><option>--family</option>=<literal>ipv4</literal>|<literal>ipv6</literal></optional></term>
+         <listitem>
+           <para>
+             Add a new permanent helper with module and optionally family defined.
+           </para>
+           <para>
+             Helper names must be alphanumeric and may additionally include characters: '-'.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--new-helper-from-file</option>=<replaceable>filename</replaceable> <optional><option>--name</option>=<replaceable>helper</replaceable></optional></term>
+         <listitem>
+           <para>
+              Add a new permanent helper from a prepared helper file with an optional name override.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--delete-helper</option>=<replaceable>helper</replaceable></term>
+         <listitem>
+           <para>
+             Delete an existing permanent helper.
+           </para>
+         </listitem>
+       </varlistentry>
+	<varlistentry>
+          <term><option>--load-helper-defaults</option>=<replaceable>helper</replaceable></term>
+          <listitem>
+            <para>
+              Load helper default settings or report NO_DEFAULTS error.
+            </para>
+          </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><option>--path-helper=<replaceable>helper</replaceable></option></term>
+	  <listitem>
+	    <para>
+	      Print path of the helper configuration file.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--get-helpers</option></term>
+	  <listitem>
+	    <para>
+	      Print predefined helpers as a space separated list.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+       <varlistentry>
+         <term><option>--helper</option>=<replaceable>helper</replaceable> <option>--set-description</option>=<replaceable>description</replaceable></term>
+         <listitem>
+           <para>
+             Set new description to helper
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--helper</option>=<replaceable>helper</replaceable> <option>--get-description</option></term>
+         <listitem>
+           <para>
+             Print description for helper
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--helper</option>=<replaceable>helper</replaceable> <option>--set-short</option>=<replaceable>description</replaceable></term>
+         <listitem>
+           <para>
+             Set short description to helper
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--helper</option>=<replaceable>helper</replaceable> <option>--get-short</option></term>
+         <listitem>
+           <para>
+             Print short description for helper
+           </para>
+         </listitem>
+       </varlistentry>
+
+       <varlistentry>
+         <term><option>--helper</option>=<replaceable>helper</replaceable> <option>--add-port</option>=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>/<replaceable>protocol</replaceable></term>
+         <listitem>
+           <para>
+             Add a new port to the permanent helper.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--helper</option>=<replaceable>helper</replaceable> <option>--remove-port</option>=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>/<replaceable>protocol</replaceable></term>
+         <listitem>
+           <para>
+             Remove a port from the permanent helper.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--helper</option>=<replaceable>helper</replaceable> <option>--query-port</option>=<replaceable>portid</replaceable><optional>-<replaceable>portid</replaceable></optional>/<replaceable>protocol</replaceable></term>
+         <listitem>
+           <para>
+             Return whether the port has been added to the permanent helper.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--helper</option>=<replaceable>helper</replaceable> <option>--get-ports</option></term>
+         <listitem>
+           <para>
+             List ports added to the permanent helper.
+           </para>
+         </listitem>
+       </varlistentry>
+
+       <varlistentry>
+         <term><option>--helper</option>=<replaceable>helper</replaceable> <option>--set-module</option>=<replaceable>description</replaceable></term>
+         <listitem>
+           <para>
+             Set module description for helper
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--helper</option>=<replaceable>helper</replaceable> <option>--get-module</option></term>
+         <listitem>
+           <para>
+             Print module description for helper
+           </para>
+         </listitem>
+       </varlistentry>
+
+       <varlistentry>
+         <term><option>--helper</option>=<replaceable>helper</replaceable> <option>--set-family</option>=<replaceable>description</replaceable></term>
+         <listitem>
+           <para>
+             Set family description for helper
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--helper</option>=<replaceable>helper</replaceable> <option>--get-family</option></term>
+         <listitem>
+           <para>
+             Print family description of helper
+           </para>
+         </listitem>
+       </varlistentry>
+     </variablelist>
+    </refsect2>
+
+    <refsect2 id="icmptype_options">
+      <title>Internet Control Message Protocol (ICMP) type Options</title>
+      <variablelist>
+	<varlistentry>
+	  <term><option>--info-icmptype=<replaceable>icmptype</replaceable></option></term>
+	  <listitem>
+	    <para>
+	      Print information about the icmptype <replaceable>icmptype</replaceable>. The output format is:
+	      <programlisting>
+<replaceable>icmptype</replaceable>
+  destination: <replaceable>ipv1</replaceable> ..
+              </programlisting>
+	    </para>
+	  </listitem>
+	</varlistentry>
+       <varlistentry>
+         <term><option>--new-icmptype</option>=<replaceable>icmptype</replaceable></term>
+         <listitem>
+           <para>
+             Add a new permanent icmptype.
+           </para>
+           <para>
+             ICMP type names must be alphanumeric and may additionally include characters: '_' and '-'.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--new-icmptype-from-file</option>=<replaceable>filename</replaceable> <optional><option>--name</option>=<replaceable>icmptype</replaceable></optional></term>
+         <listitem>
+           <para>
+	     Add a new permanent icmptype from a prepared icmptype file with an optional name override.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--delete-icmptype</option>=<replaceable>icmptype</replaceable></term>
+         <listitem>
+           <para>
+             Delete an existing permanent icmptype.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term> <option>--icmptype</option>=<replaceable>icmptype</replaceable> <option>--set-description</option>=<replaceable>description</replaceable></term>
+         <listitem>
+           <para>
+             Set new description to icmptype
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term> <option>--icmptype</option>=<replaceable>icmptype</replaceable> <option>--get-description</option></term>
+         <listitem>
+           <para>
+             Print description for icmptype
+           </para>
+         </listitem>
+       </varlistentry>
+
+       <varlistentry>
+         <term> <option>--icmptype</option>=<replaceable>icmptype</replaceable> <option>--set-short</option>=<replaceable>description</replaceable></term>
+         <listitem>
+           <para>
+             Set short description to icmptype
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term> <option>--icmptype</option>=<replaceable>icmptype</replaceable> <option>--get-short</option></term>
+         <listitem>
+           <para>
+             Print short description for icmptype
+           </para>
+         </listitem>
+       </varlistentry>
+
+       <varlistentry>
+         <term><option>--icmptype</option>=<replaceable>icmptype</replaceable> <option>--add-destination</option>=<replaceable>ipv</replaceable></term>
+         <listitem>
+           <para>
+             Enable destination for ipv in permanent icmptype. ipv is one of <literal>ipv4</literal> or <literal>ipv6</literal>.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--icmptype</option>=<replaceable>icmptype</replaceable> <option>--remove-destination</option>=<replaceable>ipv</replaceable></term>
+         <listitem>
+           <para>
+             Disable destination for ipv in permanent icmptype. ipv is one of <literal>ipv4</literal> or <literal>ipv6</literal>.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--icmptype</option>=<replaceable>icmptype</replaceable> <option>--query-destination</option>=<replaceable>ipv</replaceable></term>
+         <listitem>
+           <para>
+             Return whether destination for ipv is enabled in permanent icmptype. ipv is one of <literal>ipv4</literal> or <literal>ipv6</literal>.
+           </para>
+         </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term><option>--icmptype</option>=<replaceable>icmptype</replaceable> <option>--get-destinations</option></term>
+         <listitem>
+           <para>
+              List destinations in permanent icmptype.
+           </para>
+         </listitem>
+       </varlistentry>
+	<varlistentry>
+	  <term><option>--path-icmptype=<replaceable>icmptype</replaceable></option></term>
+	  <listitem>
+	    <para>
+	      Print path of the icmptype configuration file.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="direct_options">
+      <title>Direct Options</title>
+
+      <refsect3>
+        <title>DEPRECATED</title>
+
+        <para>
+          The direct interface has been deprecated. It will be removed in a future
+          release. It is superseded by policies, see
+          <citerefentry><refentrytitle>firewalld.policies</refentrytitle><manvolnum>5</manvolnum></citerefentry>.
+        </para>
+      </refsect3>
+
+      <para>
+	The direct options give a more direct access to the firewall. These options require user to know basic iptables concepts, i.e. <literal>table</literal> (filter/mangle/nat/...), <literal>chain</literal> (INPUT/OUTPUT/FORWARD/...), <literal>commands</literal> (-A/-D/-I/...), <literal>parameters</literal> (-p/-s/-d/-j/...) and <literal>targets</literal> (ACCEPT/DROP/REJECT/...).
+      </para>
+      <para>
+	Direct options should be used only as a last resort when it's not possible to use for example <option>--add-service</option>=<replaceable>service</replaceable> or <option>--add-rich-rule</option>='<replaceable>rule</replaceable>'.
+      </para>
+      <para>
+        <emphasis role="bold">Warning</emphasis>: Direct rules behavior is different depending on the value of <literal>FirewallBackend</literal>. See <literal>CAVEATS</literal> in <citerefentry><refentrytitle>firewalld.direct</refentrytitle><manvolnum>5</manvolnum></citerefentry>.
+      </para>
+      <para>
+	The first argument of each option has to be <literal>ipv4</literal> or <literal>ipv6</literal> or <literal>eb</literal>. With <literal>ipv4</literal> it will be for IPv4 (<citerefentry><refentrytitle>iptables</refentrytitle><manvolnum>8</manvolnum></citerefentry>), with <literal>ipv6</literal> for IPv6 (<citerefentry><refentrytitle>ip6tables</refentrytitle><manvolnum>8</manvolnum></citerefentry>) and with <literal>eb</literal> for ethernet bridges (<citerefentry><refentrytitle>ebtables</refentrytitle><manvolnum>8</manvolnum></citerefentry>).
+      </para>
+      <variablelist>
+
+	<!-- direct chain -->
+
+	<varlistentry>
+	  <term><option>--direct</option> <option>--get-all-chains</option></term>
+	  <listitem>
+	    <para>
+	      Get all chains added to all tables.
+	    </para>
+	    <para>
+	      This option concerns only chains previously added with <option>--direct --add-chain</option>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--direct</option> <option>--get-chains</option> { <literal>ipv4</literal> | <literal>ipv6</literal> | <literal>eb</literal> } <replaceable>table</replaceable></term>
+	  <listitem>
+	    <para>
+	      Get all chains added to table <replaceable>table</replaceable> as a space separated list.
+	    </para>
+	    <para>
+	      This option concerns only chains previously added with <option>--direct --add-chain</option>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--direct</option> <option>--add-chain</option> { <literal>ipv4</literal> | <literal>ipv6</literal> | <literal>eb</literal> } <replaceable>table</replaceable> <replaceable>chain</replaceable></term>
+	  <listitem>
+	    <para>
+	      Add a new chain with name <replaceable>chain</replaceable> to table <replaceable>table</replaceable>.
+	    </para>
+	    <para>
+	      There already exist basic chains to use with direct options, for example <literal>INPUT_direct</literal> chain (see <literal>iptables-save | grep direct</literal> output for all of them).
+	      These chains are jumped into before chains for zones, i.e. every rule put into <literal>INPUT_direct</literal> will be checked before rules in zones.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--direct</option> <option>--remove-chain</option> { <literal>ipv4</literal> | <literal>ipv6</literal> | <literal>eb</literal> } <replaceable>table</replaceable> <replaceable>chain</replaceable></term>
+	  <listitem>
+	    <para>
+	      Remove the chain with name <replaceable>chain</replaceable> from table <replaceable>table</replaceable>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--direct</option> <option>--query-chain</option> { <literal>ipv4</literal> | <literal>ipv6</literal> | <literal>eb</literal> } <replaceable>table</replaceable> <replaceable>chain</replaceable></term>
+	  <listitem>
+	    <para>
+	      Return whether a chain with name <replaceable>chain</replaceable> exists in table <replaceable>table</replaceable>. Returns 0 if true, 1 otherwise.
+	    </para>
+	    <para>
+	      This option concerns only chains previously added with <option>--direct --add-chain</option>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<!-- direct rule -->
+
+	<varlistentry>
+	  <term><option>--direct</option> <option>--get-all-rules</option></term>
+	  <listitem>
+	    <para>
+	      Get all rules added to all chains in all tables as a newline separated list of the priority and arguments.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--direct</option> <option>--get-rules</option> { <literal>ipv4</literal> | <literal>ipv6</literal> | <literal>eb</literal> } <replaceable>table</replaceable> <replaceable>chain</replaceable></term>
+	  <listitem>
+	    <para>
+	      Get all rules added to chain <replaceable>chain</replaceable> in table <replaceable>table</replaceable> as a newline separated list of the priority and arguments.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--direct</option> <option>--add-rule</option> { <literal>ipv4</literal> | <literal>ipv6</literal> | <literal>eb</literal> } <replaceable>table</replaceable> <replaceable>chain</replaceable> <replaceable>priority</replaceable> <replaceable>args</replaceable></term>
+	  <listitem>
+	    <para>
+	      Add a rule with the arguments <replaceable>args</replaceable> to chain <replaceable>chain</replaceable> in table <replaceable>table</replaceable> with priority <replaceable>priority</replaceable>.
+	    </para>
+	    <para>
+	      The <replaceable>priority</replaceable> is used to order rules. Priority 0 means add rule on top of the chain, with a higher priority the rule will be added further down. Rules with the same priority are on the same level and the order of these rules is not fixed and may change. If you want to make sure that a rule will be added after another one, use a low priority for the first and a higher for the following.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--direct</option> <option>--remove-rule</option> { <literal>ipv4</literal> | <literal>ipv6</literal> | <literal>eb</literal> } <replaceable>table</replaceable> <replaceable>chain</replaceable> <replaceable>priority</replaceable> <replaceable>args</replaceable></term>
+	  <listitem>
+	    <para>
+	      Remove a rule with <replaceable>priority</replaceable> and the arguments <replaceable>args</replaceable> from chain <replaceable>chain</replaceable> in table <replaceable>table</replaceable>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--direct</option> <option>--remove-rules</option> { <literal>ipv4</literal> | <literal>ipv6</literal> | <literal>eb</literal> } <replaceable>table</replaceable> <replaceable>chain</replaceable></term>
+	  <listitem>
+	    <para>
+	      Remove all rules in the chain with name <replaceable>chain</replaceable> exists in table <replaceable>table</replaceable>.
+	    </para>
+	    <para>
+	      This option concerns only rules previously added with <option>--direct --add-rule</option> in this chain.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--direct</option> <option>--query-rule</option> { <literal>ipv4</literal> | <literal>ipv6</literal> | <literal>eb</literal> } <replaceable>table</replaceable> <replaceable>chain</replaceable> <replaceable>priority</replaceable> <replaceable>args</replaceable></term>
+	  <listitem>
+	    <para>
+	      Return whether a rule with <replaceable>priority</replaceable> and the arguments <replaceable>args</replaceable> exists in chain <replaceable>chain</replaceable> in table <replaceable>table</replaceable>. Returns 0 if true, 1 otherwise.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<!-- direct permanent passthrough -->
+
+	<varlistentry>
+	  <term><option>--direct</option> <option>--get-all-passthroughs</option></term>
+	  <listitem>
+	    <para>
+	      Get all permanent passthrough as a newline separated list of the ipv value and arguments.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--direct</option> <option>--get-passthroughs</option> { <literal>ipv4</literal> | <literal>ipv6</literal> | <literal>eb</literal> } </term>
+	  <listitem>
+	    <para>
+	      Get all permanent passthrough rules for the ipv value as a newline separated list of the priority and arguments.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--direct</option> <option>--add-passthrough</option> { <literal>ipv4</literal> | <literal>ipv6</literal> | <literal>eb</literal> } <replaceable>args</replaceable></term>
+	  <listitem>
+	    <para>
+	      Add a permanent passthrough rule with the arguments <replaceable>args</replaceable> for the ipv value.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--direct</option> <option>--remove-passthrough</option> { <literal>ipv4</literal> | <literal>ipv6</literal> | <literal>eb</literal> } <replaceable>args</replaceable></term>
+	  <listitem>
+	    <para>
+	      Remove a permanent passthrough rule with the arguments <replaceable>args</replaceable> for the ipv value.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--direct</option> <option>--query-passthrough</option> { <literal>ipv4</literal> | <literal>ipv6</literal> | <literal>eb</literal> } <replaceable>args</replaceable></term>
+	  <listitem>
+	    <para>
+	      Return whether a permanent passthrough rule with the arguments <replaceable>args</replaceable> exists for the ipv value. Returns 0 if true, 1 otherwise.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="lockdown_options">
+      <title>Lockdown Options</title>
+      <para>
+	Local applications or services are able to change the firewall configuration if they are running as root (example: libvirt) or are authenticated using PolicyKit. With this feature administrators can lock the firewall configuration so that only applications on lockdown whitelist are able to request firewall changes.
+      </para>
+      <para>
+	The lockdown access check limits D-Bus methods that are changing firewall rules. Query, list and get methods are not limited.
+      </para>
+      <para>
+	The lockdown feature is a very light version of user and application policies for firewalld and is turned off by default.
+      </para>
+      <variablelist>
+	<varlistentry>
+	  <term><option>--lockdown-on</option></term>
+	  <listitem>
+	    <para>
+	      Enable lockdown. Be careful - if firewall-cmd is not on lockdown whitelist when you enable lockdown you won't be able to disable it again with firewall-cmd, you would need to edit firewalld.conf.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--lockdown-off</option></term>
+	  <listitem>
+	    <para>
+	      Disable lockdown.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--query-lockdown</option></term>
+	  <listitem>
+	    <para>
+	      Query whether lockdown is enabled. Returns 0 if lockdown is enabled, 1 otherwise.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="lockdown_whitelist_options">
+      <title>Lockdown Whitelist Options</title>
+      <para>
+	The lockdown whitelist can contain <replaceable>commands</replaceable>, <replaceable>contexts</replaceable>, <replaceable>users</replaceable> and <replaceable>user ids</replaceable>.
+      </para>
+      <para>
+	If a command entry on the whitelist ends with an asterisk '*', then all command lines starting with the command will match. If the '*' is not there the absolute command inclusive arguments must match.
+      </para>
+      <para>
+	Commands for user root and others is not always the same. Example: As root <command>/bin/firewall-cmd</command> is used, as a normal user <command>/usr/bin/firewall-cmd</command> is be used on Fedora.
+      </para>
+      <para>
+	The context is the security (SELinux) context of a running application or service. To get the context of a running application use <command>ps -e --context</command>.
+      </para>
+      <para>
+	<emphasis role="bold">Warning:</emphasis> If the context is unconfined, then this will open access for more than the desired application.
+      </para>
+      <para>
+	The lockdown whitelist entries are checked in the following order:
+	<simplelist columns="1">
+	  <member>1. <replaceable>context</replaceable></member>
+	  <member>2. <replaceable>uid</replaceable></member>
+	  <member>3. <replaceable>user</replaceable></member>
+	  <member>4. <replaceable>command</replaceable></member>
+	</simplelist>
+      </para>
+      <variablelist>
+	<varlistentry>
+	  <term><option>--list-lockdown-whitelist-commands</option></term>
+	  <listitem>
+	    <para>
+	      List all command lines that are on the whitelist.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--add-lockdown-whitelist-command</option>=<replaceable>command</replaceable></term>
+	  <listitem>
+	    <para>
+	      Add the <replaceable>command</replaceable> to the whitelist.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--remove-lockdown-whitelist-command</option>=<replaceable>command</replaceable></term>
+	  <listitem>
+	    <para>
+	      Remove the <replaceable>command</replaceable> from the whitelist.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--query-lockdown-whitelist-command</option>=<replaceable>command</replaceable></term>
+	  <listitem>
+	    <para>
+	      Query whether the <replaceable>command</replaceable> is on the whitelist. Returns 0 if true, 1 otherwise.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--list-lockdown-whitelist-contexts</option></term>
+	  <listitem>
+	    <para>
+	      List all contexts that are on the whitelist.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--add-lockdown-whitelist-context</option>=<replaceable>context</replaceable></term>
+	  <listitem>
+	    <para>
+	      Add the context <replaceable>context</replaceable> to the whitelist.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--remove-lockdown-whitelist-context</option>=<replaceable>context</replaceable></term>
+	  <listitem>
+	    <para>
+	      Remove the <replaceable>context</replaceable> from the whitelist.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--query-lockdown-whitelist-context</option>=<replaceable>context</replaceable></term>
+	  <listitem>
+	    <para>
+	      Query whether the <replaceable>context</replaceable> is on the whitelist. Returns 0 if true, 1 otherwise.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--list-lockdown-whitelist-uids</option></term>
+	  <listitem>
+	    <para>
+	      List all user ids that are on the whitelist.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--add-lockdown-whitelist-uid</option>=<replaceable>uid</replaceable></term>
+	  <listitem>
+	    <para>
+	      Add the user id <replaceable>uid</replaceable> to the whitelist.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--remove-lockdown-whitelist-uid</option>=<replaceable>uid</replaceable></term>
+	  <listitem>
+	    <para>
+	      Remove the user id <replaceable>uid</replaceable> from the whitelist.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--query-lockdown-whitelist-uid</option>=<replaceable>uid</replaceable></term>
+	  <listitem>
+	    <para>
+	      Query whether the user id <replaceable>uid</replaceable> is on the whitelist. Returns 0 if true, 1 otherwise.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--list-lockdown-whitelist-users</option></term>
+	  <listitem>
+	    <para>
+	      List all user names that are on the whitelist.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--add-lockdown-whitelist-user</option>=<replaceable>user</replaceable></term>
+	  <listitem>
+	    <para>
+	      Add the user name <replaceable>user</replaceable> to the whitelist.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--remove-lockdown-whitelist-user</option>=<replaceable>user</replaceable></term>
+	  <listitem>
+	    <para>
+	      Remove the user name <replaceable>user</replaceable> from the whitelist.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--query-lockdown-whitelist-user</option>=<replaceable>user</replaceable></term>
+	  <listitem>
+	    <para>
+	      Query whether the user name <replaceable>user</replaceable> is on the whitelist. Returns 0 if true, 1 otherwise.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="polkit_options">
+      <title>Policy Options</title>
+      <variablelist>
+	<varlistentry>
+          <term><option>--policy-server</option></term>
+          <listitem>
+	    <para>
+	      Change Polkit actions to 'server'  (more restricted)
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+          <term><option>--policy-desktop</option></term>
+          <listitem>
+	    <para>
+	      Change Polkit actions to 'desktop'  (less restricted)
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+
+  </refsect1>
+
+  &seealso;
+
+  &notes;
+
+</refentry>

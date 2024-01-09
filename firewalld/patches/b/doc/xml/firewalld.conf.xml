@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
+[
+<!ENTITY authors SYSTEM "authors.xml">
+<!ENTITY seealso SYSTEM "seealso.xml">
+<!ENTITY notes SYSTEM "notes.xml">
+]>
+
+<!--
+  SPDX-License-Identifier: GPL-2.0-or-later
+
+  This file is part of firewalld.
+
+  Copyright (C) 2010-2013 Red Hat, Inc.
+
+  Authors:
+  Thomas Woerner <twoerner@redhat.com>
+-->
+
+<refentry id="firewalld.conf">
+
+  <refentryinfo>
+    <title>firewalld.conf</title>
+    <productname>firewalld</productname>
+    &authors;
+  </refentryinfo>
+
+  <refmeta>
+    <refentrytitle>firewalld.conf</refentrytitle>
+    <manvolnum>5</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+    <refname>firewalld.conf</refname>
+    <refpurpose>firewalld configuration file</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <para>
+      <programlisting>
+<filename><config.sysconfdir/>/firewalld/firewalld.conf</filename>
+      </programlisting>
+    </para>
+  </refsynopsisdiv>
+
+  <refsect1 id="description">
+    <title>Description</title>
+
+    <para>
+      firewalld.conf is loaded by firewalld during the initialization process. The file contains the basic configuration options for firewalld.
+    </para>
+
+  </refsect1>
+
+  <refsect1 id="options">
+    <title>Options</title>
+
+    <para>
+      These are the options that can be set in the config file:
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term><option>DefaultZone</option></term>
+        <listitem>
+	  <para>
+	    This sets the default zone for connections or interfaces if the zone is not selected or specified by NetworkManager, initscripts or command line tool. The default zone is public.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><option>MinimalMark</option></term>
+        <listitem>
+	  <para>
+        Deprecated. This option is ignored and no longer used. Marks are no longer used internally.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>CleanupModulesOnExit</option></term>
+        <listitem>
+          <para>
+            Setting this option to yes or true unloads all firewall-related
+            kernel modules when firewalld is stopped. The default value is no
+            or false.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><option>CleanupOnExit</option></term>
+        <listitem>
+	  <para>
+            If firewalld stops, it cleans up all firewall rules. Setting this option to no or false leaves the current firewall rules untouched. The default value is yes or true.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><option>Lockdown</option></term>
+        <listitem>
+	  <para>
+	    If this option is enabled, firewall changes with the D-Bus interface will be limited to applications that are listed in the lockdown whitelist (see <citerefentry><refentrytitle>firewalld.lockdown-whitelist</refentrytitle><manvolnum>5</manvolnum></citerefentry>). The default value is no or false.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><option>IPv6_rpfilter</option></term>
+        <listitem>
+	  <para>
+	    If this option is enabled (it is by default), reverse path filter test on a packet for IPv6 is performed.
+	    If a reply to the packet would be sent via the same interface that the packet arrived on, the packet will match and be accepted, otherwise dropped.
+            For IPv4 the rp_filter is controlled using sysctl.
+	  </para>
+      <para>
+        <emphasis role="bold">Note</emphasis>: This feature has a performance
+        impact. In most cases the impact is not enough to cause a noticeable
+        difference. It requires route lookups and its execution occurs before
+        the established connections fast path. As such it can have a
+        significant performance impact if there is a lot of traffic. It's
+        enabled by default for security, but can be disabled if performance is
+        a concern.
+      </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><option>IndividualCalls</option></term>
+        <listitem>
+	  <para>
+	    If this option is disabled (it is by default), combined -restore calls are used and not individual calls to apply changes to the firewall. The use of individual calls increases the time that is needed to apply changes and to start the daemon, but is good for debugging as error messages are more specific.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><option>LogDenied</option></term>
+        <listitem>
+	  <para>
+	    Add logging rules right before reject and drop rules in the INPUT, FORWARD and OUTPUT chains for the default rules and also final reject and drop rules in zones for the configured link-layer packet type. The possible values are: <replaceable>all</replaceable>, <replaceable>unicast</replaceable>, <replaceable>broadcast</replaceable>, <replaceable>multicast</replaceable> and <replaceable>off</replaceable>. The default setting is <replaceable>off</replaceable>, which disables the logging.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><option>AutomaticHelpers</option></term>
+        <listitem>
+	  <para>
+        Deprecated. This option is ignored and no longer used.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+        <varlistentry>
+            <term><option>FirewallBackend</option></term>
+            <listitem>
+                <para>
+                Selects the firewall backend implementation. Possible values
+                are; <replaceable>nftables</replaceable> (default), or
+                <replaceable>iptables</replaceable>. This applies to all
+                firewalld primitives. The only exception is direct and
+                passthrough rules which always use the traditional iptables,
+                ip6tables, and ebtables backends.
+                </para>
+                <para>
+                  <emphasis role="bold">Note</emphasis>: The iptables backend
+                  is deprecated. It will be removed in a future release.
+                </para>
+	        </listitem>
+        </varlistentry>
+
+        <varlistentry>
+            <term><option>FlushAllOnReload</option></term>
+            <listitem>
+                <para>
+                Flush all runtime rules on a reload. In previous releases some
+                runtime configuration was retained during a reload, namely;
+                interface to zone assignment, and direct rules. This was
+                confusing to users. To get the old behavior set this to "no".
+                Defaults to "yes".
+                </para>
+            </listitem>
+        </varlistentry>
+
+        <varlistentry>
+            <term><option>ReloadPolicy</option></term>
+            <listitem>
+                <para>
+                    The policy during reload. By default, all traffic except
+                    established connections is dropped while reloading the
+                    firewall rules. This can be overridden for INPUT, FORWARD
+                    and OUTPUT. The accepted values are "DROP", "REJECT" and
+                    "ACCEPT", which then applies to all tables. Alternatively,
+                    the policy can be specified per table, like
+                    "INPUT:REJECT,FORWARD:DROP,OUTPUT:ACCEPT".
+                    Defaults to "INPUT:DROP,FORWARD:DROP,OUTPUT:DROP".
+                </para>
+            </listitem>
+        </varlistentry>
+
+        <varlistentry>
+            <term><option>RFC3964_IPv4</option></term>
+            <listitem>
+                <para>
+                As per RFC 3964, filter IPv6 traffic with 6to4 destination
+                addresses that correspond to IPv4 addresses that should not
+                be routed over the public internet.
+                Defaults to "yes".
+                </para>
+            </listitem>
+        </varlistentry>
+
+        <varlistentry>
+            <term><option>AllowZoneDrifting</option></term>
+            <listitem>
+                <para>
+                  Deprecated. This option is ignored and no longer used.
+                </para>
+            </listitem>
+        </varlistentry>
+
+        <varlistentry>
+            <term><option>NftablesFlowtable</option></term>
+            <listitem>
+                <para>
+                  This may improve forwarded traffic throughput by enabling
+                  nftables flowtable. It is a software fastpath and avoids
+                  calling nftables rule evaluation for data packets. Its
+                  value is a space separate list of interfaces.
+                  Example value "eth0 eth1".
+                  Defaults to "off".
+                </para>
+            </listitem>
+        </varlistentry>
+
+        <varlistentry>
+            <term><option>NftablesCounters</option></term>
+            <listitem>
+                <para>
+                  If set to yes, add a counter to every nftables rule. This is
+                  useful for debugging and comes with a small performance cost.
+                  Defaults to "no".
+                </para>
+            </listitem>
+        </varlistentry>
+
+    </variablelist>
+
+  </refsect1>
+
+  &seealso;
+
+  &notes;
+
+</refentry>

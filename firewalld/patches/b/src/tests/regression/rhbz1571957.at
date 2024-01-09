@@ -1,0 +1,12 @@
+FWD_START_TEST([set-log-denied w/ ICMP block inversion])
+AT_KEYWORDS(log_denied rhbz1571957 icmp)
+
+FWD_CHECK([-q --permanent --zone=public --add-icmp-block-inversion])
+FWD_RELOAD
+FWD_CHECK([-q --set-log-denied=all])
+AT_CHECK([sed -i 's/^IndividualCalls.*/IndividualCalls=yes/' ./firewalld.conf])
+FWD_RELOAD
+FWD_CHECK([-q --set-log-denied=broadcast])
+FWD_RELOAD
+
+FWD_END_TEST

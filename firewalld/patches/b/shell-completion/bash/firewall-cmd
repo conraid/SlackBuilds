@@ -1,0 +1,297 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# Copyright (C) 2013 Red Hat, Inc.
+#
+# Authors:
+# Jiri Popelka <jpopelka@redhat.com>
+
+# bash completion for firewall-cmd
+
+# TODO: find a way how to get the following options from firewall-cmd
+
+OPTIONS_LOCKDOWN="--add-lockdown-whitelist-command= --remove-lockdown-whitelist-command= \
+       --query-lockdown-whitelist-command= --list-lockdown-whitelist-commands \
+       --add-lockdown-whitelist-context= --remove-lockdown-whitelist-context= \
+       --query-lockdown-whitelist-context= --list-lockdown-whitelist-contexts \
+       --add-lockdown-whitelist-uid= --remove-lockdown-whitelist-uid= \
+       --query-lockdown-whitelist-uid= --list-lockdown-whitelist-uids  \
+       --add-lockdown-whitelist-user= --remove-lockdown-whitelist-user= \
+       --query-lockdown-whitelist-user= --list-lockdown-whitelist-users"
+
+# can be used as standalone or with --permanent
+OPTIONS_CONFIG="--get-zones --get-policies --get-services --get-icmptypes --get-helpers \
+                ${OPTIONS_LOCKDOWN} --list-all-zones --list-all-policies \
+                --info-zone= --info-policy= --info-service= --info-icmptype= \
+                --info-ipset= --info-helper="
+
+OPTIONS_ZONE_INTERFACES_SOURCES="\
+            --add-interface= --remove-interface= --query-interface= \
+            --list-interfaces --change-interface= \
+            --add-source= --remove-source= --query-source= \
+            --change-source= --list-sources"
+
+OPTIONS_ZONE_POLICY_ACTION="--list-all \
+                       --list-services \
+                       --add-service= --remove-service= --query-service= \
+                       --list-ports \
+                       --add-port= --remove-port= --query-port= \
+                       --list-protocols \
+                       --add-protocol= --remove-protocol= --query-protocol= \
+                       --list-source-ports \
+                       --add-source-port= --remove-source-port= --query-source-port= \
+                       --list-icmp-blocks \
+                       --add-icmp-block= --remove-icmp-block= --query-icmp-block= \
+                       --list-forward-ports \
+                       --add-forward-port= --remove-forward-port= --query-forward-port= \
+                       --add-masquerade --remove-masquerade --query-masquerade \
+                       --list-rich-rules \
+                       --add-rich-rule= --remove-rich-rule= --query-rich-rule="
+
+OPTIONS_ZONE_ADAPT_QUERY="--add-icmp-block-inversion --remove-icmp-block-inversion \
+                    --query-icmp-block-inversion \
+                    --add-forward --remove-forward --query-forward"
+
+OPTIONS_POLICY_ADAPT_QUERY="--list-ingress-zones \
+                            --add-ingress-zone= --remove-ingress-zone= --query-ingress-zone= \
+                            --list-egress-zones \
+                            --add-egress-zone= --remove-egress-zone= --query-egress-zone="
+
+OPTIONS_ZONE_POLICY_PERMANENT="--get-description --set-description= \
+                                    --get-short --set-short= \
+                                    --get-target --set-target="
+
+OPTIONS_POLICY_PERMANENT="--get-priority --set-priority="
+
+OPTIONS_IPSET_ACTION_ACTION="--add-entry= --remove-entry= --query-entry= --add-entries-from-file= --remove-entries-from-file"
+
+OPTIONS_IPSET_ADAPT_QUERY="--list-entries"
+
+# can be used with/without preceding --zone=<zone>
+OPTIONS_ZONE="${OPTIONS_ZONE_INTERFACES_SOURCES} \
+              ${OPTIONS_ZONE_POLICY_ACTION} \
+              ${OPTIONS_ZONE_ADAPT_QUERY}"
+
+# can be used with preceding --policy=<policy>
+OPTIONS_POLICY="${OPTIONS_ZONE_POLICY_ACTION} \
+                ${OPTIONS_POLICY_ADAPT_QUERY}"
+
+OPTIONS_IPSET="${OPTIONS_IPSET_ACTION_ACTION} ${OPTIONS_IPSET_ADAPT_QUERY}"
+
+OPTIONS_PERMANENT_ONLY="--new-icmptype= --new-icmptype-from-file= --delete-icmptype= \
+                        --new-service= --new-service-from-file= --delete-service= \
+                        --new-zone= --new-zone-from-file= --delete-zone= \
+                        --load-zone-defaults= \
+                        --new-policy= --new-policy-from-file= --delete-policy= \
+                        --load-policy-defaults= \
+                        --new-ipset= --new-helper-from-file= --delete-ipset= \
+                        --new-helper= --new-helper-from-file= --delete-helper= \
+                        --path-zone= --path-policy= --path-service= --path-icmptype= \
+                        --path-ipset= --path-helper="
+
+OPTIONS_NEW_IPSET="--type= --option="
+
+OPTIONS_NEW_HELPER="--module= --family="
+
+OPTIONS_HELPER=""
+
+# can be used after --permanent
+OPTIONS_PERMANENT="${OPTIONS_CONFIG} \
+                   ${OPTIONS_PERMANENT_ONLY} \
+                   --zone= ${OPTIONS_ZONE} \
+                   --policy= ${OPTIONS_POLICY_PERMANENT} \
+                   ${OPTIONS_ZONE_POLICY_PERMANENT}"
+
+OPTIONS_DIRECT="--passthrough \
+        --add-chain --remove-chain --query-chain --get-chains --get-all-chains \
+        --add-rule --remove-rule  --remove-rules --query-rule  --get-rules  --get-all-rules \
+        --add-passthrough --remove-passthrough \
+        --query-passthrough --get-passthroughs --get-all-passthroughs"
+
+# these all can be used as a "first" option
+OPTIONS_GENERAL="--help --version \
+                 --state --reload --complete-reload \
+                 --runtime-to-permanent --check-config --reset-to-defaults \
+                 --panic-on --panic-off --query-panic \
+                 --get-log-denied --set-log-denied= --get-ipset-types \
+                 --lockdown-on --lockdown-off --query-lockdown \
+                 --get-default-zone --set-default-zone= --get-active-zones \
+                 --get-zone-of-interface= --get-zone-of-interface= \
+                 ${OPTIONS_CONFIG} \
+                 --zone= ${OPTIONS_ZONE} \
+                 --policy= \
+                 --permanent --direct"
+
+_firewall_cmd()
+{
+    local cur prev words cword split
+    _init_completion -s || return
+
+    case $prev in
+    --*-entries-from-file|--new-*-from-file)
+        _filedir
+        return
+        ;;
+    --new-ipset*)
+        if [[ "$cur" == -* ]]; then
+            COMPREPLY=( $( compgen -W "${OPTIONS_NEW_IPSET}" -- "$cur") )
+        fi
+        ;;
+    --new-helper*)
+        if [[ "$cur" == -* ]]; then
+            COMPREPLY=( $( compgen -W "${OPTIONS_NEW_HELPER}" -- "$cur") )
+        fi
+        ;;
+    --new-*)
+        ;;
+    --zone|--set-default-zone|--info-zone|--path-zone|--load-zone-defaults|--delete-zone)
+        if [[ ${words[@]} == *--permanent* ]]; then
+          COMPREPLY=( $( compgen -W '`firewall-cmd --permanent --get-zones`' -- "$cur" ) )
+        else
+          COMPREPLY=( $( compgen -W '`firewall-cmd --get-zones`' -- "$cur" ) )
+        fi
+        ;;
+    --add-ingress-zone|--remove-ingress-zone|--query-ingress-zone|\
+    --add-egress-zone|--remove-egress-zone|--query-egress-zone)
+        if [[ ${words[@]} == *--permanent* ]]; then
+          COMPREPLY=( $( compgen -W '`firewall-cmd --permanent --get-zones` HOST ANY' -- "$cur" ) )
+        else
+          COMPREPLY=( $( compgen -W '`firewall-cmd --get-zones` HOST ANY' -- "$cur" ) )
+        fi
+        ;;
+    --policy|--info-policy|--path-policy|--load-policy-defaults|--delete-policy)
+        if [[ ${words[@]} == *--permanent* ]]; then
+          COMPREPLY=( $( compgen -W '`firewall-cmd --permanent --get-policies`' -- "$cur" ) )
+        else
+          COMPREPLY=( $( compgen -W '`firewall-cmd --get-policies`' -- "$cur" ) )
+        fi
+        ;;
+    --zone=*)
+        if [[ ${words[@]} == *--permanent* ]]; then
+            COMPREPLY=( $( compgen -W "${OPTIONS_ZONE} ${OPTIONS_ZONE_POLICY_PERMANENT}" -- "$cur" ) )
+        else
+            COMPREPLY=( $( compgen -W "${OPTIONS_ZONE}" -- "$cur" ) )
+        fi
+        ;;
+    --policy=*)
+        if [[ ${words[@]} == *--permanent* ]]; then
+            COMPREPLY=( $( compgen -W "${OPTIONS_POLICY} ${OPTIONS_POLICY_PERMANENT} ${OPTIONS_ZONE_POLICY_PERMANENT}" -- "$cur" ) )
+        else
+            COMPREPLY=( $( compgen -W "${OPTIONS_POLICY}" -- "$cur" ) )
+        fi
+        ;;
+    --ipset=*)
+        COMPREPLY=( $( compgen -W "${OPTIONS_IPSET}" -- "$cur" ) )
+        ;;
+    --*-ipset)
+        if [[ ${words[@]} == *--permanent* ]]; then
+          COMPREPLY=( $( compgen -W '`firewall-cmd --permanent --get-ipsets`' -- "$cur" ) )
+        else
+          COMPREPLY=( $( compgen -W '`firewall-cmd --get-ipsets`' -- "$cur" ) )
+        fi
+        ;;
+    --*-service)
+        if [[ ${words[@]} == *--permanent* ]]; then
+          COMPREPLY=( $( compgen -W '`firewall-cmd --permanent --get-services`' -- "$cur" ) )
+        else
+          COMPREPLY=( $( compgen -W '`firewall-cmd --get-services`' -- "$cur" ) )
+        fi
+        ;;
+    --helper|--info-helper|--path-helper)
+        if [[ ${words[@]} == *--permanent* ]]; then
+          COMPREPLY=( $( compgen -W '`firewall-cmd --permanent --get-helpers`' -- "$cur" ) )
+        else
+          COMPREPLY=( $( compgen -W '`firewall-cmd --get-helpers`' -- "$cur" ) )
+        fi
+        ;;
+    --helper=*)
+        COMPREPLY=( $( compgen -W "${OPTIONS_HELPER}" -- "$cur" ) )
+        ;;
+    --*-icmp-block|--info-icmptype|--path-icmptype)
+        if [[ ${words[@]} == *--permanent* ]]; then
+          COMPREPLY=( $( compgen -W '`firewall-cmd --permanent --get-icmptypes`' -- "$cur" ) )
+        else
+          COMPREPLY=( $( compgen -W '`firewall-cmd --get-icmptypes`' -- "$cur" ) )
+        fi
+        ;;
+    --list-services|--add-service=*|--remove-service=*|--query-service=*|\
+    --list-ports|--add-port=*|--remove-port=*|--query-port=*|\
+    --list-source-ports|--add-source-port=*|--remove-source-port=*|--query-source-port=*|\
+    --list-protocols|--add-protocol=*|--remove-protocol=*|--query-protocol=*|\
+    --list-icmp-blocks|--add-icmp-block=*|--remove-icmp-block=*|--query-icmp-block=*|\
+    --list-forward-ports|--add-forward-port=*|--remove-forward-port=*|--query-forward-port=*|\
+    --list-interfaces|--add-interface=*|--remove-interface=*|--query-interface=*|\
+    --list-sources|--add-source=*|--remove-source=*|--query-source=*|\
+    --add-ingress-zone=*|--remove-ingress-zone=*|\
+    --add-egress-zone=*|--remove-egress-zone=*|\
+    --add-forward|--remove-forward|--query-forward|\
+    --add-masquerade|--remove-masquerade|--query-masquerade|--list-all|\
+    --get-description|--get-short|--set-description=*|--set-short=*)
+        opts=""
+        # --add and --remove can be used multiple times
+        if [[ ( ${prev} == --add-* ) || ( ${prev} == --remove-* ) ]]; then
+          [[ ${prev} == *=* ]] && opts="${prev%=*}=" || opts="${prev}"
+        fi
+        if [[ ! ${words[@]} == *--permanent* ]]; then
+          opts="${opts} --permanent"
+          [[ ${prev} == --add-* ]] && opts="${opts} --timeout="
+        fi
+        [[ ! ${words[@]} == *--zone=* ]] && opts="${opts} --zone="
+        if [ -n "${opts}" ]; then
+            COMPREPLY=( $( compgen -W "${opts}" -- "$cur" ) )
+        fi
+
+        ;;
+    --*-interface)
+        _available_interfaces
+        ;;
+    --permanent)
+        [[ ${words[@]} == *--direct* ]] && opts="${OPTIONS_DIRECT}" || opts="${OPTIONS_PERMANENT} --direct"
+        COMPREPLY=( $( compgen -W "${opts}" -- "$cur" ) )
+        ;;
+    --direct)
+        [[ ${words[@]} == *--permanent* ]] && opts="${OPTIONS_DIRECT}" || opts="${OPTIONS_DIRECT} --permanent"
+        COMPREPLY=( $( compgen -W "${opts}" -- "$cur" ) )
+        ;;
+    --*-rich-rule)
+        # to not be matched with --*-rule below
+        return 0
+        ;;
+    --passthrough|--*-chain|--get-chains|--*-rule|--get-rules|--remove-rules)
+        COMPREPLY=( $( compgen -W 'ipv4 ipv6 eb' -- "$cur" ) )
+        ;;
+    --add-protocol|--remove-protocol|--query-protocol)
+        COMPREPLY=( $( compgen -W '`getent protocols | cut -d " " -f 1`' -- "$cur" ) )
+        ;;
+    --set-target)
+        if [[ ${words[@]} == *--policy=* ]]; then
+            COMPREPLY=( $( compgen -W 'CONTINUE ACCEPT DROP REJECT' -- "$cur" ) )
+        else
+            COMPREPLY=( $( compgen -W 'default ACCEPT DROP REJECT' -- "$cur" ) )
+        fi
+        ;;
+    --set-log-denied)
+        COMPREPLY=( $( compgen -W 'all unicast broadcast multicast off' -- "$cur" ) )
+        ;;
+    ipv4|ipv6|eb)
+        if [[ ${words[@]} == *--passthrough* ]]; then
+            return 0
+        else
+            COMPREPLY=( $( compgen -W 'nat filter mangle' -- "$cur" ) )
+        fi
+        ;;
+    *)
+        if [[ "$cur" == -* ]]; then
+            if [[ ${words[@]} == *--new-ipset* ]]; then
+                COMPREPLY=( $( compgen -W "${OPTIONS_NEW_IPSET}" -- "$cur") )
+            else
+                COMPREPLY=( $( compgen -W "${OPTIONS_GENERAL}" -- "$cur") )
+            fi
+        fi
+        ;;
+    esac
+
+    # do not append a space to words that end with =
+    [[ $COMPREPLY == *= ]] && compopt -o nospace
+
+} &&
+complete -F _firewall_cmd firewall-cmd

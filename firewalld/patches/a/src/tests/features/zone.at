@@ -1,0 +1,252 @@
+FWD_START_TEST([zone - target])
+AT_KEYWORDS(zone)
+
+FWD_CHECK([--permanent --new-zone=foobar], 0, [ignore])
+
+FWD_CHECK([--permanent --zone=foobar --set-target=default], 0, [ignore])
+FWD_CHECK([--permanent --zone=foobar --set-target=ACCEPT], 0, [ignore])
+FWD_CHECK([--permanent --zone=foobar --set-target=DROP], 0, [ignore])
+FWD_CHECK([--permanent --zone=foobar --set-target=%%REJECT%%], 0, [ignore])
+FWD_CHECK([--permanent --zone=foobar --set-target=CONTINUE], 110, [ignore], [ignore])
+FWD_CHECK([--permanent --zone=foobar --set-target=DENY], 110, [ignore], [ignore])
+
+FWD_CHECK([--permanent --zone=foobar --set-target=ACCEPT], 0, [ignore])
+FWD_CHECK([--permanent --zone=foobar --add-interface foobar0], 0, [ignore])
+FWD_RELOAD
+NFT_LIST_RULES([inet], [filter_IN_foobar], 0, [dnl
+    table inet firewalld {
+        chain filter_IN_foobar {
+            jump filter_IN_foobar_pre
+            jump filter_IN_foobar_log
+            jump filter_IN_foobar_deny
+            jump filter_IN_foobar_allow
+            jump filter_IN_foobar_post
+        }
+    }
+])
+NFT_LIST_RULES([inet], [filter_INPUT_POLICIES], 0, [dnl
+    table inet firewalld {
+        chain filter_INPUT_POLICIES {
+            iifname "foobar0" jump filter_IN_policy_allow-host-ipv6
+            iifname "foobar0" jump filter_IN_foobar
+            iifname "foobar0" accept
+            jump filter_IN_policy_allow-host-ipv6
+            jump filter_IN_public
+            reject with icmpx admin-prohibited
+        }
+    }
+])
+IPTABLES_LIST_RULES([filter], [IN_foobar], 0, [dnl
+    IN_foobar_pre 0 -- 0.0.0.0/0 0.0.0.0/0
+    IN_foobar_log 0 -- 0.0.0.0/0 0.0.0.0/0
+    IN_foobar_deny 0 -- 0.0.0.0/0 0.0.0.0/0
+    IN_foobar_allow 0 -- 0.0.0.0/0 0.0.0.0/0
+    IN_foobar_post 0 -- 0.0.0.0/0 0.0.0.0/0
+])
+IPTABLES_LIST_RULES([filter], [INPUT_POLICIES], 0, [dnl
+    IN_allow-host-ipv6 0 -- 0.0.0.0/0 0.0.0.0/0
+    IN_foobar 0 -- 0.0.0.0/0 0.0.0.0/0
+    ACCEPT 0 -- 0.0.0.0/0 0.0.0.0/0
+    IN_allow-host-ipv6 0 -- 0.0.0.0/0 0.0.0.0/0
+    IN_public 0 -- 0.0.0.0/0 0.0.0.0/0
+    REJECT 0 -- 0.0.0.0/0 0.0.0.0/0 reject-with icmp-port-unreachable
+])
+IP6TABLES_LIST_RULES([filter], [IN_foobar], 0, [dnl
+    IN_foobar_pre 0 -- ::/0 ::/0
+    IN_foobar_log 0 -- ::/0 ::/0
+    IN_foobar_deny 0 -- ::/0 ::/0
+    IN_foobar_allow 0 -- ::/0 ::/0
+    IN_foobar_post 0 -- ::/0 ::/0
+])
+IP6TABLES_LIST_RULES([filter], [INPUT_POLICIES], 0, [dnl
+    IN_allow-host-ipv6 0 -- ::/0 ::/0
+    IN_foobar 0 -- ::/0 ::/0
+    ACCEPT 0 -- ::/0 ::/0
+    IN_allow-host-ipv6 0 -- ::/0 ::/0
+    IN_public 0 -- ::/0 ::/0
+    REJECT 0 -- ::/0 ::/0 reject-with icmp6-port-unreachable
+])
+
+dnl ingress zone with target ACCEPT should still allow the forwarded traffic
+NFT_LIST_RULES([inet], [filter_FWD_foobar], 0, [dnl
+    table inet firewalld {
+        chain filter_FWD_foobar {
+            jump filter_FWD_foobar_pre
+            jump filter_FWD_foobar_log
+            jump filter_FWD_foobar_deny
+            jump filter_FWD_foobar_allow
+            jump filter_FWD_foobar_post
+        }
+    }
+])
+NFT_LIST_RULES([inet], [filter_FORWARD_POLICIES], 0, [dnl
+    table inet firewalld {
+        chain filter_FORWARD_POLICIES {
+            iifname "foobar0" oifname "foobar0" jump filter_FWD_foobar
+            iifname "foobar0" oifname "foobar0" accept
+            iifname "foobar0" jump filter_FWD_foobar
+            iifname "foobar0" accept
+            oifname "foobar0" jump filter_FWD_public
+            oifname "foobar0" reject with icmpx admin-prohibited
+            jump filter_FWD_public
+            reject with icmpx admin-prohibited
+        }
+    }
+])
+IPTABLES_LIST_RULES([filter], [FWD_foobar], 0, [dnl
+    FWD_foobar_pre 0 -- 0.0.0.0/0 0.0.0.0/0
+    FWD_foobar_log 0 -- 0.0.0.0/0 0.0.0.0/0
+    FWD_foobar_deny 0 -- 0.0.0.0/0 0.0.0.0/0
+    FWD_foobar_allow 0 -- 0.0.0.0/0 0.0.0.0/0
+    FWD_foobar_post 0 -- 0.0.0.0/0 0.0.0.0/0
+])
+IPTABLES_LIST_RULES([filter], [FORWARD_POLICIES], 0, [dnl
+    FWD_foobar 0 -- 0.0.0.0/0 0.0.0.0/0
+    ACCEPT 0 -- 0.0.0.0/0 0.0.0.0/0
+    FWD_foobar 0 -- 0.0.0.0/0 0.0.0.0/0
+    ACCEPT 0 -- 0.0.0.0/0 0.0.0.0/0
+    FWD_public 0 -- 0.0.0.0/0 0.0.0.0/0
+    REJECT 0 -- 0.0.0.0/0 0.0.0.0/0 reject-with icmp-port-unreachable
+    FWD_public 0 -- 0.0.0.0/0 0.0.0.0/0
+    REJECT 0 -- 0.0.0.0/0 0.0.0.0/0 reject-with icmp-port-unreachable
+])
+IP6TABLES_LIST_RULES([filter], [FWD_foobar], 0, [dnl
+    FWD_foobar_pre 0 -- ::/0 ::/0
+    FWD_foobar_log 0 -- ::/0 ::/0
+    FWD_foobar_deny 0 -- ::/0 ::/0
+    FWD_foobar_allow 0 -- ::/0 ::/0
+    FWD_foobar_post 0 -- ::/0 ::/0
+])
+IP6TABLES_LIST_RULES([filter], [FORWARD_POLICIES], 0, [dnl
+    FWD_foobar 0 -- ::/0 ::/0
+    ACCEPT 0 -- ::/0 ::/0
+    FWD_foobar 0 -- ::/0 ::/0
+    ACCEPT 0 -- ::/0 ::/0
+    FWD_public 0 -- ::/0 ::/0
+    REJECT 0 -- ::/0 ::/0 reject-with icmp6-port-unreachable
+    FWD_public 0 -- ::/0 ::/0
+    REJECT 0 -- ::/0 ::/0 reject-with icmp6-port-unreachable
+])
+
+dnl same thing, but with target == default
+dnl
+FWD_CHECK([--permanent --zone=foobar --set-target=default], 0, [ignore])
+FWD_RELOAD
+NFT_LIST_RULES([inet], [filter_IN_foobar], 0, [dnl
+    table inet firewalld {
+        chain filter_IN_foobar {
+            jump filter_IN_foobar_pre
+            jump filter_IN_foobar_log
+            jump filter_IN_foobar_deny
+            jump filter_IN_foobar_allow
+            jump filter_IN_foobar_post
+            meta l4proto { icmp, ipv6-icmp } accept
+        }
+    }
+])
+NFT_LIST_RULES([inet], [filter_INPUT_POLICIES], 0, [dnl
+    table inet firewalld {
+        chain filter_INPUT_POLICIES {
+            iifname "foobar0" jump filter_IN_policy_allow-host-ipv6
+            iifname "foobar0" jump filter_IN_foobar
+            iifname "foobar0" reject with icmpx admin-prohibited
+            jump filter_IN_policy_allow-host-ipv6
+            jump filter_IN_public
+            reject with icmpx admin-prohibited
+        }
+    }
+])
+IPTABLES_LIST_RULES([filter], [IN_foobar], 0, [dnl
+    IN_foobar_pre 0 -- 0.0.0.0/0 0.0.0.0/0
+    IN_foobar_log 0 -- 0.0.0.0/0 0.0.0.0/0
+    IN_foobar_deny 0 -- 0.0.0.0/0 0.0.0.0/0
+    IN_foobar_allow 0 -- 0.0.0.0/0 0.0.0.0/0
+    IN_foobar_post 0 -- 0.0.0.0/0 0.0.0.0/0
+    ACCEPT 1 -- 0.0.0.0/0 0.0.0.0/0
+])
+IPTABLES_LIST_RULES([filter], [INPUT_POLICIES], 0, [dnl
+    IN_allow-host-ipv6 0 -- 0.0.0.0/0 0.0.0.0/0
+    IN_foobar 0 -- 0.0.0.0/0 0.0.0.0/0
+    REJECT 0 -- 0.0.0.0/0 0.0.0.0/0 reject-with icmp-port-unreachable
+    IN_allow-host-ipv6 0 -- 0.0.0.0/0 0.0.0.0/0
+    IN_public 0 -- 0.0.0.0/0 0.0.0.0/0
+    REJECT 0 -- 0.0.0.0/0 0.0.0.0/0 reject-with icmp-port-unreachable
+])
+IP6TABLES_LIST_RULES([filter], [IN_foobar], 0, [dnl
+    IN_foobar_pre 0 -- ::/0 ::/0
+    IN_foobar_log 0 -- ::/0 ::/0
+    IN_foobar_deny 0 -- ::/0 ::/0
+    IN_foobar_allow 0 -- ::/0 ::/0
+    IN_foobar_post 0 -- ::/0 ::/0
+    ACCEPT 58 -- ::/0 ::/0
+])
+IP6TABLES_LIST_RULES([filter], [INPUT_POLICIES], 0, [dnl
+    IN_allow-host-ipv6 0 -- ::/0 ::/0
+    IN_foobar 0 -- ::/0 ::/0
+    REJECT 0 -- ::/0 ::/0 reject-with icmp6-port-unreachable
+    IN_allow-host-ipv6 0 -- ::/0 ::/0
+    IN_public 0 -- ::/0 ::/0
+    REJECT 0 -- ::/0 ::/0 reject-with icmp6-port-unreachable
+])
+
+NFT_LIST_RULES([inet], [filter_FWD_foobar], 0, [dnl
+    table inet firewalld {
+        chain filter_FWD_foobar {
+            jump filter_FWD_foobar_pre
+            jump filter_FWD_foobar_log
+            jump filter_FWD_foobar_deny
+            jump filter_FWD_foobar_allow
+            jump filter_FWD_foobar_post
+        }
+    }
+])
+NFT_LIST_RULES([inet], [filter_FORWARD_POLICIES], 0, [dnl
+    table inet firewalld {
+        chain filter_FORWARD_POLICIES {
+            iifname "foobar0" oifname "foobar0" jump filter_FWD_foobar
+            iifname "foobar0" oifname "foobar0" reject with icmpx admin-prohibited
+            iifname "foobar0" jump filter_FWD_foobar
+            iifname "foobar0" reject with icmpx admin-prohibited
+            oifname "foobar0" jump filter_FWD_public
+            oifname "foobar0" reject with icmpx admin-prohibited
+            jump filter_FWD_public
+            reject with icmpx admin-prohibited
+        }
+    }
+])
+IPTABLES_LIST_RULES([filter], [FWD_foobar], 0, [dnl
+    FWD_foobar_pre 0 -- 0.0.0.0/0 0.0.0.0/0
+    FWD_foobar_log 0 -- 0.0.0.0/0 0.0.0.0/0
+    FWD_foobar_deny 0 -- 0.0.0.0/0 0.0.0.0/0
+    FWD_foobar_allow 0 -- 0.0.0.0/0 0.0.0.0/0
+    FWD_foobar_post 0 -- 0.0.0.0/0 0.0.0.0/0
+])
+IPTABLES_LIST_RULES([filter], [FORWARD_POLICIES], 0, [dnl
+    FWD_foobar 0 -- 0.0.0.0/0 0.0.0.0/0
+    REJECT 0 -- 0.0.0.0/0 0.0.0.0/0 reject-with icmp-port-unreachable
+    FWD_foobar 0 -- 0.0.0.0/0 0.0.0.0/0
+    REJECT 0 -- 0.0.0.0/0 0.0.0.0/0 reject-with icmp-port-unreachable
+    FWD_public 0 -- 0.0.0.0/0 0.0.0.0/0
+    REJECT 0 -- 0.0.0.0/0 0.0.0.0/0 reject-with icmp-port-unreachable
+    FWD_public 0 -- 0.0.0.0/0 0.0.0.0/0
+    REJECT 0 -- 0.0.0.0/0 0.0.0.0/0 reject-with icmp-port-unreachable
+])
+IP6TABLES_LIST_RULES([filter], [FWD_foobar], 0, [dnl
+    FWD_foobar_pre 0 -- ::/0 ::/0
+    FWD_foobar_log 0 -- ::/0 ::/0
+    FWD_foobar_deny 0 -- ::/0 ::/0
+    FWD_foobar_allow 0 -- ::/0 ::/0
+    FWD_foobar_post 0 -- ::/0 ::/0
+])
+IP6TABLES_LIST_RULES([filter], [FORWARD_POLICIES], 0, [dnl
+    FWD_foobar 0 -- ::/0 ::/0
+    REJECT 0 -- ::/0 ::/0 reject-with icmp6-port-unreachable
+    FWD_foobar 0 -- ::/0 ::/0
+    REJECT 0 -- ::/0 ::/0 reject-with icmp6-port-unreachable
+    FWD_public 0 -- ::/0 ::/0
+    REJECT 0 -- ::/0 ::/0 reject-with icmp6-port-unreachable
+    FWD_public 0 -- ::/0 ::/0
+    REJECT 0 -- ::/0 ::/0 reject-with icmp6-port-unreachable
+])
+
+FWD_END_TEST([ignore])

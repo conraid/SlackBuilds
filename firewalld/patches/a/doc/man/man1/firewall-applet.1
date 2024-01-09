@@ -1,0 +1,249 @@
+'\" t
+.\"     Title: firewall-applet
+.\"    Author: Thomas Woerner <twoerner@redhat.com>
+.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
+.\"      Date: 
+.\"    Manual: firewall-applet
+.\"    Source: firewalld 2.1.0
+.\"  Language: English
+.\"
+.TH "FIREWALL\-APPLET" "1" "" "firewalld 2.1.0" "firewall-applet"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+firewall-applet \- firewalld applet
+.SH "SYNOPSIS"
+.HP \w'\fBfirewall\-applet\fR\ 'u
+\fBfirewall\-applet\fR [OPTIONS...]
+.SH "DESCRIPTION"
+.PP
+firewall\-applet is a tray applet for firewalld\&.
+.SH "OPTIONS"
+.PP
+\fBfirewall\-applet\fR
+does not support any special options\&.
+.PP
+The following options are supported:
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Prints a short help text and exits\&.
+.RE
+.SH "QSETTINGS"
+.PP
+\fBfirewall\-applet\fR
+has additional settings to adapt the look and feel\&. QSettings is used and stores them in
+\fI~/\&.config/firewall/applet\&.conf\fR\&. The file is automatically reloaded if it has been changed and the new settings will immediately be effective\&.
+.PP
+There is also the global config file
+\fI/etc/firewall/applet\&.conf\fR, which contains the default values\&. The settings in this file will be overloaded by settings in the user settings file\&.
+.PP
+Here is an example
+\fIapplet\&.conf\fR
+file:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+[General]
+notifications=true
+show\-inactive=true
+      
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+The following settings are supported:
+.PP
+\fBnotifications\fR
+.RS 4
+The applet shows notifications if enabled\&. This setting can be enabled also in the applet with the "Enable Notifications" checkbox in the right mouse menu\&.
+.sp
+This setting defaults to
+\fBfalse\fR\&.
+.sp
+If notifications are shown for these actions if enabled:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Connection to firewalld established
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Connection to firewalld lost
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Firewall has been reloaded
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Default zone has been changed
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Panic mode has been enabled or disabled
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Activation, deactivation or change of zones bound to interfaces
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Activation, deactivation or change of zones bound to sources addresses
+.RE
+.sp
+.RE
+.PP
+\fBshow\-inactive\fR
+.RS 4
+Show applet also if firewalld is not running\&. If firewalld has been stopped or is not running the applet will be hidden and not visible in the applet tray\&. Enable this setting to see the applet all the time for example to be sure that the firewall is active\&.
+.sp
+This setting defaults to
+\fBfalse\fR\&.
+.RE
+.PP
+\fBshields\-up\fR
+.RS 4
+The shields\-up zone name to be used if shields\-up is enabled\&.
+.sp
+This setting defaults to \*(Aq\fBblock\fR\*(Aq\&.
+.RE
+.PP
+\fBshields\-down\fR
+.RS 4
+The shields\-down zone name to be used if shields\-up has been deactivated again\&.
+.sp
+This setting defaults to \*(Aq\fBpublic\fR\*(Aq\&.
+.RE
+.PP
+\fBblink\fR
+.RS 4
+If enabled, the applet icon blinks in these cases:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Connection to firewalld lost
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Panic mode has been enabled or disabled
+.RE
+.sp
+This setting defaults to
+\fBfalse\fR\&.
+.RE
+.PP
+\fBblink\-count\fR
+.RS 4
+The number of blinks if
+\fBblink\fR
+is enabled\&.
+.sp
+This setting defaults to
+\fB5\fR\&.
+.RE
+.SH "SEE ALSO"
+\fBfirewall-applet\fR(1), \fBfirewalld\fR(1), \fBfirewall-cmd\fR(1), \fBfirewall-config\fR(1), \fBfirewalld.conf\fR(5), \fBfirewalld.direct\fR(5), \fBfirewalld.dbus\fR(5), \fBfirewalld.icmptype\fR(5), \fBfirewalld.lockdown-whitelist\fR(5), \fBfirewall-offline-cmd\fR(1), \fBfirewalld.richlanguage\fR(5), \fBfirewalld.service\fR(5), \fBfirewalld.zone\fR(5), \fBfirewalld.zones\fR(5), \fBfirewalld.policy\fR(5), \fBfirewalld.policies\fR(5), \fBfirewalld.ipset\fR(5), \fBfirewalld.helper\fR(5)
+.SH "NOTES"
+.PP
+firewalld home page:
+.RS 4
+\m[blue]\fB\%http://firewalld.org\fR\m[]
+.RE
+.SH "AUTHORS"
+.PP
+\fBThomas Woerner\fR <\&twoerner@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBJiri Popelka\fR <\&jpopelka@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBEric Garver\fR <\&eric@garver\&.life\&>
+.RS 4
+Developer
+.RE

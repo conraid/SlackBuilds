@@ -1,0 +1,141 @@
+'\" t
+.\"     Title: firewalld.helper
+.\"    Author: Thomas Woerner <twoerner@redhat.com>
+.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
+.\"      Date: 
+.\"    Manual: firewalld.helper
+.\"    Source: firewalld 2.1.0
+.\"  Language: English
+.\"
+.TH "FIREWALLD\&.HELPER" "5" "" "firewalld 2.1.0" "firewalld.helper"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+firewalld.helper \- firewalld helper configuration files
+.SH "SYNOPSIS"
+.PP
+.nf
+\fI/usr/etc/firewalld/helpers/helper\&.xml\fR
+\fI/usr/lib/firewalld/helpers/helper\&.xml\fR
+      
+.fi
+.sp
+.SH "DESCRIPTION"
+.PP
+A firewalld helper configuration file provides the information of a helper entry for firewalld\&. The most important configuration options are ports, family and module\&.
+.PP
+This example configuration file shows the structure of a helper configuration file:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+<?xml version="1\&.0" encoding="utf\-8"?>
+<helper module="\fInf_conntrack_module\fR" [family="\fIipv4\fR|\fIipv6\fR"]>
+  <short>\fIshort\fR</short>
+  <description>\fIdescription\fR</description>
+  <port \fIportid\fR[\-\fIportid\fR]" protocol="\fItcp\fR|\fIudp\fR|\fIsctp\fR|\fIdccp\fR"/>
+</helper>
+      
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.SH "OPTIONS"
+.PP
+The config can contain these tags and attributes\&. Some of them are mandatory, others optional\&.
+.SS "helper"
+.PP
+The mandatory helper start and end tag defines the helper\&. This tag can only be used once in a helper configuration file\&. There is one mandatory and also optional attributes for helper:
+.PP
+module="\fIstring\fR"
+.RS 4
+The mandatory module of the helper\&. This is one of the netfilter conntrack helper modules\&. The name starts with
+\fInf_conntrack_\fR\&.
+.RE
+.PP
+family="\fIipv4\fR|\fIipv6\fR"
+.RS 4
+The optional family of the helper\&. This can be one of these ipv types:
+\fIipv4\fR
+or
+\fIipv6\fR\&. If the family is not specified, then the helper is usable for
+\fIIPv4\fR
+and
+\fIIPv6\fR\&.
+.RE
+.PP
+version="\fIstring\fR"
+.RS 4
+To give the helper a version\&.
+.RE
+.SS "short"
+.PP
+Is an optional start and end tag and is used to give a helper a more readable name\&.
+.SS "description"
+.PP
+Is an optional start and end tag to have a description for a helper\&.
+.SS "port"
+.PP
+Is an mandatory empty\-element tag and can be used several times to have more than one port entry\&. All attributes of a port entry are mandatory:
+.PP
+port="\fIstring\fR"
+.RS 4
+The port
+\fIstring\fR
+can be a single port number or a port range
+\fIportid\fR\-\fIportid\fR
+or also empty to match a protocol only\&.
+.RE
+.PP
+protocol="\fIstring\fR"
+.RS 4
+The protocol value can either be
+\fBtcp\fR,
+\fBudp\fR,
+\fBsctp\fR
+or
+\fBdccp\fR\&.
+.RE
+.SH "SEE ALSO"
+\fBfirewall-applet\fR(1), \fBfirewalld\fR(1), \fBfirewall-cmd\fR(1), \fBfirewall-config\fR(1), \fBfirewalld.conf\fR(5), \fBfirewalld.direct\fR(5), \fBfirewalld.dbus\fR(5), \fBfirewalld.icmptype\fR(5), \fBfirewalld.lockdown-whitelist\fR(5), \fBfirewall-offline-cmd\fR(1), \fBfirewalld.richlanguage\fR(5), \fBfirewalld.service\fR(5), \fBfirewalld.zone\fR(5), \fBfirewalld.zones\fR(5), \fBfirewalld.policy\fR(5), \fBfirewalld.policies\fR(5), \fBfirewalld.ipset\fR(5), \fBfirewalld.helper\fR(5)
+.SH "NOTES"
+.PP
+firewalld home page:
+.RS 4
+\m[blue]\fB\%http://firewalld.org\fR\m[]
+.RE
+.SH "AUTHORS"
+.PP
+\fBThomas Woerner\fR <\&twoerner@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBJiri Popelka\fR <\&jpopelka@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBEric Garver\fR <\&eric@garver\&.life\&>
+.RS 4
+Developer
+.RE

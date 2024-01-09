@@ -1,0 +1,115 @@
+'\" t
+.\"     Title: firewalld.icmptype
+.\"    Author: Thomas Woerner <twoerner@redhat.com>
+.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
+.\"      Date: 
+.\"    Manual: firewalld.icmptype
+.\"    Source: firewalld 2.1.0
+.\"  Language: English
+.\"
+.TH "FIREWALLD\&.ICMPTYPE" "5" "" "firewalld 2.1.0" "firewalld.icmptype"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+firewalld.icmptype \- firewalld icmptype configuration files
+.SH "SYNOPSIS"
+.PP
+.nf
+\fI/usr/etc/firewalld/icmptypes/icmptype\&.xml\fR
+\fI/usr/lib/firewalld/icmptypes/icmptype\&.xml\fR
+      
+.fi
+.sp
+.SH "DESCRIPTION"
+.PP
+A firewalld icmptype configuration file provides the information for an Internet Control Message Protocol (ICMP) type for firewalld\&.
+.PP
+This example configuration file shows the structure of an icmptype configuration file:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+<?xml version="1\&.0" encoding="utf\-8"?>
+<icmptype>
+  <short>\fIMy Icmptype\fR</short>
+  <description>\fIdescription\fR</description>
+  <destination ipv4="\fIyes\fR" ipv6="\fIyes\fR"/>
+</icmptype>
+      
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.SH "OPTIONS"
+.PP
+The config can contain these tags and attributes\&. Some of them are mandatory, others optional\&.
+.SS "icmptype"
+.PP
+The mandatory icmptype start and end tag defines the icmptype\&. This tag can only be used once in an icmptype configuration file\&. This tag has optional attributes:
+.PP
+version="\fIstring\fR"
+.RS 4
+To give the icmptype a version\&.
+.RE
+.SS "short"
+.PP
+Is an optional start and end tag and is used to give an icmptype a more readable name\&.
+.SS "description"
+.PP
+Is an optional start and end tag to have a description for a icmptype\&.
+.SS "destination"
+.PP
+Is an optional empty\-element tag and can be used only once\&. The destination tag specifies if an icmptype entry is available for IPv4 and/or IPv6\&. The default is IPv4 and IPv6, where this tag can be missing\&.
+.PP
+ipv4="\fIbool\fR"
+.RS 4
+Describes if the icmptype is available for IPv4\&.
+.RE
+.PP
+ipv6="\fIbool\fR"
+.RS 4
+Describes if the icmptype is available for IPv6\&.
+.RE
+.SH "SEE ALSO"
+\fBfirewall-applet\fR(1), \fBfirewalld\fR(1), \fBfirewall-cmd\fR(1), \fBfirewall-config\fR(1), \fBfirewalld.conf\fR(5), \fBfirewalld.direct\fR(5), \fBfirewalld.dbus\fR(5), \fBfirewalld.icmptype\fR(5), \fBfirewalld.lockdown-whitelist\fR(5), \fBfirewall-offline-cmd\fR(1), \fBfirewalld.richlanguage\fR(5), \fBfirewalld.service\fR(5), \fBfirewalld.zone\fR(5), \fBfirewalld.zones\fR(5), \fBfirewalld.policy\fR(5), \fBfirewalld.policies\fR(5), \fBfirewalld.ipset\fR(5), \fBfirewalld.helper\fR(5)
+.SH "NOTES"
+.PP
+firewalld home page:
+.RS 4
+\m[blue]\fB\%http://firewalld.org\fR\m[]
+.RE
+.SH "AUTHORS"
+.PP
+\fBThomas Woerner\fR <\&twoerner@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBJiri Popelka\fR <\&jpopelka@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBEric Garver\fR <\&eric@garver\&.life\&>
+.RS 4
+Developer
+.RE

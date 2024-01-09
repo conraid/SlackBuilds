@@ -1,0 +1,200 @@
+'\" t
+.\"     Title: firewalld
+.\"    Author: Thomas Woerner <twoerner@redhat.com>
+.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
+.\"      Date: 
+.\"    Manual: firewalld
+.\"    Source: firewalld 2.1.0
+.\"  Language: English
+.\"
+.TH "FIREWALLD" "1" "" "firewalld 2.1.0" "firewalld"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+firewalld \- Dynamic Firewall Manager
+.SH "SYNOPSIS"
+.HP \w'\fBfirewalld\ \fR\fB[OPTIONS...]\fR\ 'u
+\fBfirewalld \fR\fB[OPTIONS...]\fR
+.SH "DESCRIPTION"
+.PP
+firewalld provides a dynamically managed firewall with support for network/firewall zones to define the trust level of network connections or interfaces\&. It has support for IPv4, IPv6 firewall settings and for ethernet bridges and has a separation of runtime and permanent configuration options\&. It also supports an interface for services or applications to add firewall rules directly\&.
+.SH "OPTIONS"
+.PP
+These are the command line options of firewalld:
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Prints a short help text and exits\&.
+.RE
+.PP
+\fB\-\-default\-config\fR
+.RS 4
+Path to firewalld default configuration\&. This usually defaults to
+\fI/usr/lib/firewalld\fR\&.
+.RE
+.PP
+\fB\-\-debug\fR[=\fIlevel\fR]
+.RS 4
+Set the debug level for firewalld to
+\fIlevel\fR\&. The range of the debug level is 1 (lowest level) to 10 (highest level)\&. The debug output will be written to the firewalld log file specified by \-\-log\-file\&.
+.RE
+.PP
+\fB\-\-debug\-gc\fR
+.RS 4
+Print garbage collector leak information\&. The collector runs every 10 seconds and if there are leaks, it prints information about the leaks\&.
+.RE
+.PP
+\fB\-\-log\-target\fR
+.RS 4
+Define the output target to which log messages are written\&. In mixed mode, Firewalld writes info\-level log messages to syslog\&. Debug messages are written to a file (see the \-\-log\-file parameter)\&. Info messages also go to stdout and stderr\&. The syslog, file or console modes write all messages to the one configured target only\&.
+.RE
+.PP
+\fB\-\-log\-file\fR
+.RS 4
+Define the file where debug messages are written to\&. The default file is
+\fI/var/log/firewalld\fR\&.
+.RE
+.PP
+\fB\-\-nofork\fR
+.RS 4
+Turn off daemon forking\&. Force firewalld to run as a foreground process instead of as a daemon in the background\&.
+.RE
+.PP
+\fB\-\-nopid\fR
+.RS 4
+Disable writing pid file\&. By default the program will write a pid file\&. If the program is invoked with this option it will not check for an existing server process\&.
+.RE
+.PP
+\fB\-\-system\-config\fR
+.RS 4
+Path to firewalld system (user) configuration\&. This usually defaults to
+\fI/etc/firewalld\fR\&.
+.RE
+.SH "CONCEPTS"
+.PP
+firewalld has a D\-Bus interface for firewall configuration of services and applications\&. It also has a command line client for the user\&. Services or applications already using D\-Bus can request changes to the firewall with the D\-Bus interface directly\&. For more information on the firewalld D\-Bus interface, please have a look at
+\fBfirewalld.dbus\fR(5)\&.
+.PP
+firewalld provides support for zones, predefined services and ICMP types and has a separation of runtime and permanent configuration options\&. Permanent configuration is loaded from XML files in
+\fI/usr/lib/firewalld\fR
+(\fB\-\-default\-config\fR) or
+\fI/etc/firewalld\fR
+(\fB\-\-system\-config\fR) (see
+the section called \(lqDIRECTORIES\(rq)\&.
+.PP
+If NetworkManager is not in use and firewalld gets started after the network is already up, the connections and manually created interfaces are not bound to the zone specified in the ifcfg file\&. The interfaces will automatically be handled by the default zone\&. firewalld will also not get notified about network device renames\&. All this also applies to interfaces that are not controlled by NetworkManager if
+\fINM_CONTROLLED=no\fR
+is set\&.
+.PP
+You can add these interfaces to a zone with
+\fBfirewall\-cmd [\-\-permanent] \-\-zone=\fR\fB\fIzone\fR\fR\fB \-\-add\-interface=\fR\fB\fIinterface\fR\fR\&. If there is a /etc/sysconfig/network\-scripts/ifcfg\-\fIinterface\fR
+file, firewalld tries to change the ZONE=\fIzone\fR
+setting in this file\&.
+.PP
+If firewalld gets reloaded, it will restore the interface bindings that were in place before reloading to keep interface bindings stable in the case of NetworkManager uncontrolled interfaces\&. This mechanism is not possible in the case of a firewalld service restart\&.
+.PP
+It is essential to keep the ZONE= setting in the ifcfg file consistent to the binding in firewalld in the case of NetworkManager uncontrolled interfaces\&.
+.SS "Zones"
+.PP
+A network or firewall zone defines the trust level of the interface used for a connection\&. There are several pre\-defined zones provided by firewalld\&. Zone configuration options and generic information about zones are described in
+\fBfirewalld.zone\fR(5)
+.SS "Services"
+.PP
+A service can be a list of local ports, protocols and destinations and additionally also a list of firewall helper modules automatically loaded if a service is enabled\&. Service configuration options and generic information about services are described in
+\fBfirewalld.service\fR(5)\&. The use of predefined services makes it easier for the user to enable and disable access to a service\&.
+.SS "ICMP types"
+.PP
+The Internet Control Message Protocol (ICMP) is used to exchange information and also error messages in the Internet Protocol (IP)\&. ICMP types can be used in firewalld to limit the exchange of these messages\&. For more information, please have a look at
+\fBfirewalld.icmptype\fR(5)\&.
+.SS "Runtime configuration"
+.PP
+Runtime configuration is the actual active configuration and is not permanent\&. After reload/restart of the service or a system reboot, runtime settings will be gone if they haven\*(Aqt been also in permanent configuration\&.
+.SS "Permanent configuration"
+.PP
+The permanent configuration is stored in config files and will be loaded and become new runtime configuration with every machine boot or service reload/restart\&.
+.SS "Direct interface"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBDEPRECATED\fR
+.RS 4
+.PP
+The direct interface has been deprecated\&. It will be removed in a future release\&. It is superseded by policies, see
+\fBfirewalld.policies\fR(5)\&.
+.RE
+.PP
+The direct interface is mainly used by services or applications to add specific firewall rules\&. It requires basic knowledge of ip(6)tables concepts (tables, chains, commands, parameters, targets)\&.
+.SH "DIRECTORIES"
+.PP
+firewalld supports two configuration directories:
+.SS "Default/Fallback configuration in \fI/usr/lib/firewalld\fR (\-\-default\-config)"
+.PP
+This directory contains the default and fallback configuration provided by firewalld for icmptypes, services and zones\&. The files provided with the firewalld package should not get changed and the changes are gone with an update of the firewalld package\&. Additional
+\fBicmptypes\fR,
+\fBservices\fR
+and
+\fBzones\fR
+can be provided with packages or by creating files\&.
+.SS "System configuration settings in \fI/etc/firewalld\fR (\-\-system\-config)"
+.PP
+The system or user configuration stored here is either created by the system administrator or by customization with the configuration interface of firewalld or by hand\&. The files will overload the default configuration files\&.
+.PP
+To manually change settings of pre\-defined icmptypes, zones or services, copy the file from the default configuration directory to the corresponding directory in the system configuration directory and change it accordingly\&.
+.PP
+For more information on icmptypes, please have a look at the
+\fBfirewalld.icmptype\fR(5)
+man page, for services at
+\fBfirewalld.service\fR(5)
+and for zones at
+\fBfirewalld.zone\fR(5)\&.
+.SH "SIGNALS"
+.PP
+Currently only SIGHUP is supported\&.
+.SS "SIGHUP"
+.PP
+Reloads the complete firewall configuration\&. You can also use
+\fBfirewall\-cmd \-\-reload\fR\&. All runtime configuration settings will be restored\&. Permanent configuration will change according to options defined in the configuration files\&.
+.SH "SEE ALSO"
+\fBfirewall-applet\fR(1), \fBfirewalld\fR(1), \fBfirewall-cmd\fR(1), \fBfirewall-config\fR(1), \fBfirewalld.conf\fR(5), \fBfirewalld.direct\fR(5), \fBfirewalld.dbus\fR(5), \fBfirewalld.icmptype\fR(5), \fBfirewalld.lockdown-whitelist\fR(5), \fBfirewall-offline-cmd\fR(1), \fBfirewalld.richlanguage\fR(5), \fBfirewalld.service\fR(5), \fBfirewalld.zone\fR(5), \fBfirewalld.zones\fR(5), \fBfirewalld.policy\fR(5), \fBfirewalld.policies\fR(5), \fBfirewalld.ipset\fR(5), \fBfirewalld.helper\fR(5)
+.SH "NOTES"
+.PP
+firewalld home page:
+.RS 4
+\m[blue]\fB\%http://firewalld.org\fR\m[]
+.RE
+.SH "AUTHORS"
+.PP
+\fBThomas Woerner\fR <\&twoerner@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBJiri Popelka\fR <\&jpopelka@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBEric Garver\fR <\&eric@garver\&.life\&>
+.RS 4
+Developer
+.RE

@@ -1,0 +1,6346 @@
+'\" t
+.\"     Title: firewalld.dbus
+.\"    Author: Thomas Woerner <twoerner@redhat.com>
+.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
+.\"      Date: 
+.\"    Manual: firewalld.dbus
+.\"    Source: firewalld 2.1.0
+.\"  Language: English
+.\"
+.TH "FIREWALLD\&.DBUS" "5" "" "firewalld 2.1.0" "firewalld.dbus"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+firewalld.dbus \- firewalld D\-Bus interface description
+.SH "OBJECT PATHS"
+.PP
+This is the basic firewalld object path structure\&. The used interfaces are explained below in
+the section called \(lqINTERFACES\(rq\&.
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+/org/fedoraproject/FirewallD1
+  Interfaces
+    org\&.fedoraproject\&.FirewallD1
+    org\&.fedoraproject\&.FirewallD1\&.direct (deprecated)
+    org\&.fedoraproject\&.FirewallD1\&.ipset
+    org\&.fedoraproject\&.FirewallD1\&.policies
+    org\&.fedoraproject\&.FirewallD1\&.zone
+    org\&.freedesktop\&.DBus\&.Introspectable
+    org\&.freedesktop\&.DBus\&.Properties
+
+/org/fedoraproject/FirewallD1/config
+  Interfaces
+    org\&.fedoraproject\&.FirewallD1\&.config
+    org\&.fedoraproject\&.FirewallD1\&.config\&.direct (deprecated)
+    org\&.fedoraproject\&.FirewallD1\&.config\&.policies
+    org\&.freedesktop\&.DBus\&.Introspectable
+    org\&.freedesktop\&.DBus\&.Properties
+
+/org/fedoraproject/FirewallD1/config/zone/i
+  Interfaces
+    org\&.fedoraproject\&.FirewallD1\&.config\&.zone
+    org\&.freedesktop\&.DBus\&.Introspectable
+    org\&.freedesktop\&.DBus\&.Properties
+
+/org/fedoraproject/FirewallD1/config/service/i
+  Interfaces:
+    org\&.fedoraproject\&.FirewallD1\&.config\&.service
+    org\&.freedesktop\&.DBus\&.Introspectable
+    org\&.freedesktop\&.DBus\&.Properties
+
+/org/fedoraproject/FirewallD1/config/ipset/i
+  Interfaces
+    org\&.fedoraproject\&.FirewallD1\&.config\&.ipset
+    org\&.freedesktop\&.DBus\&.Introspectable
+    org\&.freedesktop\&.DBus\&.Properties
+
+/org/fedoraproject/FirewallD1/config/icmptype/i
+  Interfaces
+    org\&.fedoraproject\&.FirewallD1\&.config\&.icmptype
+    org\&.freedesktop\&.DBus\&.Introspectable
+    org\&.freedesktop\&.DBus\&.Properties
+      
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.SH "INTERFACES"
+.PP
+.SS "org\&.fedoraproject\&.FirewallD1"
+.PP
+This interface contains general runtime operations, like: reloading, panic mode, default zone handling, getting services and icmp types and their settings\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBMethods\fR
+.RS 4
+.PP
+authorizeAll() → Nothing
+.RS 4
+Initiate authorization for the complete firewalld D\-Bus interface\&. This method it mostly useful for configuration applications\&.
+.RE
+.PP
+completeReload() → Nothing
+.RS 4
+Reload firewall completely, even netfilter kernel modules\&. This will most likely terminate active connections, because state information is lost\&. This option should only be used in case of severe firewall problems\&. For example if there are state information problems that no connection can be established with correct firewall rules\&.
+.RE
+.PP
+disablePanicMode() → Nothing
+.RS 4
+.PP
+resetToDefaults() → Nothing
+.RS 4
+Reset firewall to its default configuration, then reload firewall\&. This effects both runtime and permanent configuration\&.
+.RE
+Disable panic mode\&. After disabling panic mode established connections might work again, if panic mode was enabled for a short period of time\&.
+.sp
+Possible errors: NOT_ENABLED, COMMAND_FAILED
+.RE
+.PP
+enablePanicMode() → Nothing
+.RS 4
+Enable panic mode\&. All incoming and outgoing packets are dropped, active connections will expire\&. Enable this only if there are serious problems with your network environment\&.
+.sp
+Possible errors: ALREADY_ENABLED, COMMAND_FAILED
+.RE
+.PP
+getAutomaticHelpers() → s
+.RS 4
+Deprecated\&. This always returns "no"\&.
+.RE
+.PP
+getDefaultZone() → s
+.RS 4
+Return default zone\&.
+.RE
+.PP
+getHelperSettings(s: \fIhelper\fR) → (sssssa(ss))
+.RS 4
+Return runtime settings of given
+\fIhelper\fR\&. For getting permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.helper\&.Methods\&.getSettings\&. Settings are in format:
+\fIversion\fR,
+\fIname\fR,
+\fIdescription\fR,
+\fIfamily\fR,
+\fImodule\fR
+and array of
+\fIports\fR\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIhelper\fR tag in \fBfirewalld.helper\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.helper\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.helper\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIfamily (s)\fR: see \fIfamily\fR tag in \fBfirewalld.helper\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fImodule (s)\fR: see \fImodule\fR tag in \fBfirewalld.helper\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIports (a(ss))\fR: array of port and protocol pairs\&. See \fIport\fR tag in \fBfirewalld.helper\fR(5)\&.
+.RS 4
+.RE
+.sp
+Possible errors: INVALID_HELPER
+.RE
+.PP
+getHelpers() → as
+.RS 4
+Return array of helper names (s) in runtime configuration\&. For permanent configuration see
+org\&.fedoraproject\&.FirewallD1\&.config\&.Methods\&.listHelpers\&.
+.RE
+.PP
+getIcmpTypeSettings(s: \fIicmptype\fR) → (sssas)
+.RS 4
+Return runtime settings of given
+\fIicmptype\fR\&. For getting permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.icmptype\&.Methods\&.getSettings\&. Settings are in format:
+\fIversion\fR,
+\fIname\fR,
+\fIdescription\fR, array of
+\fIdestinations\fR\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIicmptype\fR tag in \fBfirewalld.icmptype\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.icmptype\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.icmptype\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdestinations (as)\fR: array, either empty or containing strings \*(Aqipv4\*(Aq or \*(Aqipv6\*(Aq, see \fIdestination\fR tag in \fBfirewalld.icmptype\fR(5)\&.
+.RS 4
+.RE
+.sp
+Possible errors: INVALID_ICMPTYPE
+.RE
+.PP
+getLogDenied() → s
+.RS 4
+Returns the LogDenied value\&. If LogDenied is enabled, then logging rules are added right before reject and drop rules in the INPUT, FORWARD and OUTPUT chains for the default rules and also final reject and drop rules in zones\&. Possible values are:
+\fIall\fR,
+\fIunicast\fR,
+\fIbroadcast\fR,
+\fImulticast\fR
+and
+\fIoff\fR\&. The default value is
+\fIoff\fR
+.RE
+.PP
+getServiceSettings(s: \fIservice\fR) → (sssa(ss)asa{ss}asa(ss))
+.RS 4
+This function is deprecated, use
+org\&.fedoraproject\&.FirewallD1\&.Methods\&.getServiceSettings2
+instead\&.
+.RE
+.PP
+getServiceSettings2(s: \fIservice\fR) → s{sv}
+.RS 4
+Return runtime settings of given
+\fIservice\fR\&. For getting permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.service\&.Methods\&.getSettings2\&. Settings are a dictionary indexed by keywords\&. For the type of each value see below\&. If the value is empty it may be omitted\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIservice\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIports (a(ss))\fR: array of port and protocol pairs\&. See \fIport\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fImodule names (as)\fR: array of kernel netfilter helpers, see \fImodule\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdestinations (a{ss})\fR: dictionary of {IP family : IP address} where \*(AqIP family\*(Aq key can be either \*(Aqipv4\*(Aq or \*(Aqipv6\*(Aq\&. See \fIdestination\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIprotocols (as)\fR: array of protocols, see \fIprotocol\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIsource_ports (a(ss))\fR: array of port and protocol pairs\&. See \fIsource\-port\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIincludes (as)\fR: array of service includes, see \fIinclude\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIhelpers (as)\fR: array of service helpers, see \fIhelper\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.sp
+Possible errors: INVALID_SERVICE
+.RE
+.PP
+getZoneSettings(s: \fIzone\fR) → (sssbsasa(ss)asba(ssss)asasasasa(ss)b)
+.RS 4
+This function is deprecated, use
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.getZoneSettings2
+instead\&.
+.RE
+.PP
+listIcmpTypes() → as
+.RS 4
+Return array of names (s) of icmp types in runtime configuration\&. For permanent configuration see
+org\&.fedoraproject\&.FirewallD1\&.config\&.Methods\&.listIcmpTypes\&.
+.RE
+.PP
+listServices() → as
+.RS 4
+Return array of service names (s) in runtime configuration\&. For permanent configuration see
+org\&.fedoraproject\&.FirewallD1\&.config\&.Methods\&.listServices\&.
+.RE
+.PP
+queryPanicMode() → b
+.RS 4
+Return true if panic mode is enabled, false otherwise\&. In panic mode all incoming and outgoing packets are dropped\&.
+.RE
+.PP
+reload() → Nothing
+.RS 4
+Reload firewall rules and keep state information\&. Current permanent configuration will become new runtime configuration, i\&.e\&. all runtime only changes done until reload are lost with reload if they have not been also in permanent configuration\&.
+.RE
+.PP
+runtimeToPermanent() → Nothing
+.RS 4
+Make runtime settings permanent\&. Replaces permanent settings with runtime settings for zones, services, icmptypes, direct (deprecated) and policies (lockdown whitelist)\&.
+.sp
+Possible errors: RT_TO_PERM_FAILED
+.RE
+.PP
+checkPermanentConfig() → Nothing
+.RS 4
+Run checks on the permanent configuration\&. This is most useful if changes were made manually to configuration files\&.
+.sp
+Possible errors: any
+.RE
+.PP
+setDefaultZone(s: \fIzone\fR) → Nothing
+.RS 4
+Set default zone for connections and interfaces where no zone has been selected to
+\fIzone\fR\&. Setting the default zone changes the zone for the connections or interfaces, that are using the default zone\&. This is a runtime and permanent change\&.
+.sp
+Possible errors: ZONE_ALREADY_SET, COMMAND_FAILED
+.RE
+.PP
+setLogDenied(s: \fIvalue\fR) → Nothing
+.RS 4
+Set LogDenied value to
+\fIvalue\fR\&. If LogDenied is enabled, then logging rules are added right before reject and drop rules in the INPUT, FORWARD and OUTPUT chains for the default rules and also final reject and drop rules in zones\&. Possible values are:
+\fIall\fR,
+\fIunicast\fR,
+\fIbroadcast\fR,
+\fImulticast\fR
+and
+\fIoff\fR\&. The default value is
+\fIoff\fR
+This is a runtime and permanent change\&.
+.sp
+Possible errors: ALREADY_SET, INVALID_VALUE
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSignals\fR
+.RS 4
+.PP
+DefaultZoneChanged(s: \fIzone\fR)
+.RS 4
+Emitted when default zone has been changed to
+\fIzone\fR\&.
+.RE
+.PP
+LogDeniedChanged(s: \fIvalue\fR)
+.RS 4
+Emitted when LogDenied value has been changed\&.
+.RE
+.PP
+PanicModeDisabled()
+.RS 4
+Emitted when panic mode has been deactivated\&.
+.RE
+.PP
+PanicModeEnabled()
+.RS 4
+Emitted when panic mode has been activated\&.
+.RE
+.PP
+Reloaded()
+.RS 4
+Emitted when firewalld has been reloaded\&. Also emitted for a complete reload\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBProperties\fR
+.RS 4
+.PP
+\fIBRIDGE\fR \- b \- (ro)
+.RS 4
+Indicates whether the firewall has ethernet bridge support\&.
+.RE
+.PP
+\fIIPSet\fR \- b \- (ro)
+.RS 4
+Indicates whether the firewall has IPSet support\&.
+.RE
+.PP
+\fIIPSetTypes\fR \- as \- (ro)
+.RS 4
+The supported IPSet types by ipset and firewalld\&.
+.RE
+.PP
+\fIIPv4\fR \- b \- (ro)
+.RS 4
+Indicates whether the firewall has IPv4 support\&.
+.RE
+.PP
+\fIIPv4ICMPTypes\fR \- as \- (ro)
+.RS 4
+The list of supported IPv4 ICMP types\&.
+.RE
+.PP
+\fIIPv6\fR \- b \- (ro)
+.RS 4
+Indicates whether the firewall has IPv6 support\&.
+.RE
+.PP
+\fIIPv6_rpfilter\fR \- b \- (ro)
+.RS 4
+Indicates whether the reverse path filter test on a packet for IPv6 is enabled\&. If a reply to the packet would be sent via the same interface that the packet arrived on, the packet will match and be accepted, otherwise dropped\&.
+.RE
+.PP
+\fIIPv6ICMPTypes\fR \- as \- (ro)
+.RS 4
+The list of supported IPv6 ICMP types\&.
+.RE
+.PP
+\fInf_conntrach_helper_setting\fR \- b \- (ro)
+.RS 4
+Deprecated\&. Always False\&.
+.RE
+.PP
+\fInf_conntrack_helpers\fR \- a{sas} \- (ro)
+.RS 4
+Deprecated\&. Always returns an empty dictionary\&.
+.RE
+.PP
+\fInf_nat_helpers\fR \- a{sas} \- (ro)
+.RS 4
+Deprecated\&. Always returns an empty dictionary\&.
+.RE
+.PP
+\fIinterface_version\fR \- s \- (ro)
+.RS 4
+firewalld D\-Bus interface version string\&.
+.RE
+.PP
+\fIstate\fR \- s \- (ro)
+.RS 4
+firewalld state\&. This can be either
+\fIINIT\fR,
+\fIFAILED\fR, or
+\fIRUNNING\fR\&. In
+\fIINIT\fR
+state, firewalld is starting up and initializing\&. In
+\fIFAILED\fR
+state, firewalld completely started but experienced a failure\&.
+.RE
+.PP
+\fIversion\fR \- s \- (ro)
+.RS 4
+firewalld version string\&.
+.RE
+.RE
+.SS "org\&.fedoraproject\&.FirewallD1\&.ipset"
+.PP
+Operations in this interface allows one to get, add, remove and query runtime ipset settings\&. For permanent configuration see
+org\&.fedoraproject\&.FirewallD1\&.config\&.ipset
+interface\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBMethods\fR
+.RS 4
+.PP
+addEntry(s: ipset, s: entry) → as
+.RS 4
+Add a new
+\fIentry\fR
+to
+\fIipset\fR\&. The entry must match the type of the ipset\&. If the ipset is using the timeout option, it is not possible to see the entries, as they are timing out automatically in the kernel\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.ipset\&.Methods\&.addEntry\&.
+.sp
+Possible errors: INVALID_IPSET, IPSET_WITH_TIMEOUT
+.RE
+.PP
+getEntries(s: ipset) → Nothing
+.RS 4
+Get all entries added to the
+\fIipset\fR\&. If the ipset is using the timeout option, it is not possible to see the entries, as they are timing out automatically in the kernel\&. Return value is a array of
+\fIentry\fR\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.ipset\&.Methods\&.getEntries\&.
+.sp
+Possible errors: INVALID_IPSET, IPSET_WITH_TIMEOUT
+.RE
+.PP
+getIPSetSettings(s: ipset) → (ssssa{ss}as)
+.RS 4
+Return runtime settings of given
+\fIipset\fR\&. For getting permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.ipset\&.Methods\&.getSettings\&. Settings are in format:
+\fIversion\fR,
+\fIname\fR,
+\fIdescription\fR,
+\fItype\fR, dictionary of
+\fIoptions\fR
+and array of
+\fIentries\fR\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIipset\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fItype (s)\fR: see \fItype\fR attribute of \fIipset\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIoptions (a{ss})\fR: dictionary of {option : value} \&. See \fIoptions\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIentries (as)\fR: array of entries, see \fIentry\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.sp
+Possible errors: INVALID_IPSET
+.RE
+.PP
+getIPSets() → as
+.RS 4
+Return array of ipset names (s) in runtime configuration\&. For permanent configuration see
+org\&.fedoraproject\&.FirewallD1\&.config\&.Methods\&.listIPSets\&.
+.RE
+.PP
+queryEntry(s: ipset, s: entry) → b
+.RS 4
+Return whether
+\fIentry\fR
+has been added to
+\fIipset\fR\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.ipset\&.Methods\&.queryEntry\&.
+.sp
+Possible errors: INVALID_IPSET
+.RE
+.PP
+queryIPSet(s: ipset) → b
+.RS 4
+Return whether
+\fIipset\fR
+is defined in runtime configuration\&.
+.RE
+.PP
+removeEntry(s: ipset, s: entry) → as
+.RS 4
+Removes an
+\fIentry\fR
+from
+\fIipset\fR\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.ipset\&.Methods\&.removeEntry\&.
+.sp
+Possible errors: INVALID_IPSET, IPSET_WITH_TIMEOUT
+.RE
+.PP
+setEntries(as: entries) → Nothing
+.RS 4
+Permanently set list of entries to
+\fIentries\fR\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.ipset\&.Methods\&.setEntries\&. See
+\fIentry\fR
+tag in
+\fBfirewalld.ipset\fR(5)\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSignals\fR
+.RS 4
+.PP
+EntryAdded(s: ipset, s: entry)
+.RS 4
+Emitted when
+\fIentry\fR
+has been added to
+\fIipset\fR\&.
+.RE
+.PP
+EntryRemoved(s: ipset, s: entry)
+.RS 4
+Emitted when
+\fIentry\fR
+has been removed from
+\fIipset\fR\&.
+.RE
+.RE
+.SS "org\&.fedoraproject\&.FirewallD1\&.direct"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBDEPRECATED\fR
+.RS 4
+.PP
+The direct interface has been deprecated\&. It will be removed in a future release\&. It is superseded by policies, see
+\fBfirewalld.policies\fR(5)\&.
+.RE
+.PP
+This interface enables more direct access to the firewall\&. It enables runtime manipulation with chains and rules\&. For permanent configuration see
+org\&.fedoraproject\&.FirewallD1\&.config\&.direct
+interface\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBMethods\fR
+.RS 4
+.PP
+addChain(s: ipv, s: table, s: chain) → Nothing
+.RS 4
+Add a new
+\fIchain\fR
+to
+\fItable\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. Make sure there\*(Aqs no other chain with this name already\&. There already exist basic chains to use with direct methods, for example
+\fIINPUT_direct\fR
+chain\&. These chains are jumped into before chains for zones, i\&.e\&. every rule put into
+\fIINPUT_direct\fR
+will be checked before rules in zones\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.direct\&.Methods\&.addChain\&.
+.sp
+Possible errors: INVALID_IPV, INVALID_TABLE, ALREADY_ENABLED, COMMAND_FAILED
+.RE
+.PP
+addPassthrough(s: ipv, as: args) → Nothing
+.RS 4
+Add a tracked passthrough rule with the arguments
+\fIargs\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. Valid commands in args are only
+\fI\-A/\-\-append\fR,
+\fI\-I/\-\-insert\fR
+and
+\fI\-N/\-\-new\-chain\fR\&. This method is (unlike passthrough method) tracked, i\&.e\&. firewalld remembers it\&. It\*(Aqs useful with
+org\&.fedoraproject\&.FirewallD1\&.Methods\&.runtimeToPermanent
+For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.direct\&.Methods\&.addPassthrough\&.
+.sp
+Possible errors: INVALID_IPV, ALREADY_ENABLED, COMMAND_FAILED
+.RE
+.PP
+addRule(s: ipv, s: table, s: chain, i: priority, as: args) → Nothing
+.RS 4
+Add a rule with the arguments
+\fIargs\fR
+to
+\fIchain\fR
+in
+\fItable\fR
+with
+\fIpriority\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. The priority is used to order rules\&. Priority 0 means add rule on top of the chain, with a higher priority the rule will be added further down\&. Rules with the same priority are on the same level and the order of these rules is not fixed and may change\&. If you want to make sure that a rule will be added after another one, use a low priority for the first and a higher for the following\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.direct\&.Methods\&.addRule\&.
+.sp
+Possible errors: INVALID_IPV, INVALID_TABLE, ALREADY_ENABLED, COMMAND_FAILED
+.RE
+.PP
+getAllChains() → a(sss)
+.RS 4
+Get all chains added to all tables in format: ipv, table, chain\&. This concerns only chains previously added with
+addChain\&. Return value is a array of (\fIipv\fR,
+\fItable\fR,
+\fIchain\fR)\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.direct\&.Methods\&.getAllChains\&.
+.PP
+\fIipv (s)\fR: either \fIipv4\fR (iptables) or \fIipv6\fR (ip6tables) or \fIeb\fR (ebtables)\&.
+.RS 4
+.RE
+.PP
+\fItable (s)\fR: one of \fIfilter\fR, \fImangle\fR, \fInat\fR, \fIraw\fR, \fIsecurity\fR
+.RS 4
+.RE
+.PP
+\fIchain (s)\fR: name of a chain\&.
+.RS 4
+.RE
+.sp
+.RE
+.PP
+getAllPassthroughs() → a(sas)
+.RS 4
+Get all tracked passthrough rules added in all ipv types in format: ipv, rule\&. This concerns only rules previously added with
+addPassthrough\&. Return value is a array of (\fIipv\fR, array of
+\fIarguments\fR)\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.direct\&.Methods\&.getAllPassthroughs\&.
+.PP
+\fIipv (s)\fR: either \fIipv4\fR (iptables) or \fIipv6\fR (ip6tables) or \fIeb\fR (ebtables)\&.
+.RS 4
+.RE
+.PP
+\fIarguments (as)\fR: array of commands, parameters and other iptables/ip6tables/ebtables command line options\&.
+.RS 4
+.RE
+.sp
+.RE
+.PP
+getAllRules() → a(sssias)
+.RS 4
+Get all rules added to all chains in all tables in format: ipv, table, chain, priority, rule\&. This concerns only rules previously added with
+addRule\&. Return value is a array of (\fIipv\fR,
+\fItable\fR,
+\fIchain\fR,
+\fIpriority\fR, array of
+\fIarguments\fR)\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.direct\&.Methods\&.getAllRules\&.
+.PP
+\fIipv (s)\fR: either \fIipv4\fR (iptables) or \fIipv6\fR (ip6tables) or \fIeb\fR (ebtables)\&.
+.RS 4
+.RE
+.PP
+\fItable (s)\fR: one of \fIfilter\fR, \fImangle\fR, \fInat\fR, \fIraw\fR, \fIsecurity\fR
+.RS 4
+.RE
+.PP
+\fIchain (s)\fR: name of a chain\&.
+.RS 4
+.RE
+.PP
+\fIpriority (i)\fR: used to order rules\&.
+.RS 4
+.RE
+.PP
+\fIarguments (as)\fR: array of commands, parameters and other iptables/ip6tables/ebtables command line options\&.
+.RS 4
+.RE
+.sp
+.RE
+.PP
+getChains(s: ipv, s: table) → as
+.RS 4
+Return an array of chains (s) added to
+\fItable\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. This concerns only chains previously added with
+addChain\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.direct\&.Methods\&.getChains\&.
+.sp
+Possible errors: INVALID_IPV, INVALID_TABLE
+.RE
+.PP
+getPassthroughs(s: ipv) → aas
+.RS 4
+Get tracked passthrough rules added in either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. This concerns only rules previously added with
+addPassthrough\&. Return value is a array of (array of
+\fIarguments\fR)\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.direct\&.Methods\&.getPassthroughs\&.
+.PP
+\fIarguments (as)\fR: array of commands, parameters and other iptables/ip6tables/ebtables command line options\&.
+.RS 4
+.RE
+.sp
+.RE
+.PP
+getRules(s: ipv, s: table, s: chain) → a(ias)
+.RS 4
+Get all rules added to
+\fIchain\fR
+in
+\fItable\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. This concerns only rules previously added with
+addRule\&. Return value is a array of (\fIpriority\fR, array of
+\fIarguments\fR)\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.direct\&.Methods\&.getRules\&.
+.PP
+\fIpriority (i)\fR: used to order rules\&.
+.RS 4
+.RE
+.PP
+\fIarguments (as)\fR: array of commands, parameters and other iptables/ip6tables/ebtables command line options\&.
+.RS 4
+.RE
+.sp
+Possible errors: INVALID_IPV, INVALID_TABLE
+.RE
+.PP
+passthrough(s: ipv, as: args) → s
+.RS 4
+Pass a command through to the firewall\&.
+\fIipv\fR
+can be either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&.
+\fIargs\fR
+can be all
+\fBiptables\fR,
+\fBip6tables\fR
+and
+\fBebtables\fR
+command line arguments\&.
+\fIargs\fR
+can be all iptables, ip6tables and ebtables command line arguments\&. This command is untracked, which means that firewalld is not able to provide information about this command later on\&.
+.sp
+Possible errors: COMMAND_FAILED
+.RE
+.PP
+queryChain(s: ipv, s: table, s: chain) → b
+.RS 4
+Return whether a
+\fIchain\fR
+exists in
+\fItable\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. This concerns only chains previously added with
+addChain\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.direct\&.Methods\&.queryChain\&.
+.sp
+Possible errors: INVALID_IPV, INVALID_TABLE
+.RE
+.PP
+queryPassthrough(s: ipv, as: args) → b
+.RS 4
+Return whether a tracked passthrough rule with the arguments
+\fIargs\fR
+exists for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. This concerns only rules previously added with
+addPassthrough\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.direct\&.Methods\&.queryPassthrough\&.
+.sp
+Possible errors: INVALID_IPV
+.RE
+.PP
+queryRule(s: ipv, s: table, s: chain, i: priority, as: args) → b
+.RS 4
+Return whether a rule with
+\fIpriority\fR
+and the arguments
+\fIargs\fR
+exists in
+\fIchain\fR
+in
+\fItable\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. This concerns only rules previously added with
+addRule\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.direct\&.Methods\&.queryRule\&.
+.sp
+Possible errors: INVALID_IPV, INVALID_TABLE
+.RE
+.PP
+removeAllPassthroughs() → Nothing
+.RS 4
+Remove all passthrough rules previously added with
+addPassthrough\&.
+.RE
+.PP
+removeChain(s: ipv, s: table, s: chain) → Nothing
+.RS 4
+Remove a
+\fIchain\fR
+from
+\fItable\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. Only chains previously added with
+addChain
+can be removed this way\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.direct\&.Methods\&.removeChain\&.
+.sp
+Possible errors: INVALID_IPV, INVALID_TABLE, NOT_ENABLED, COMMAND_FAILED
+.RE
+.PP
+removePassthrough(s: ipv, as: args) → Nothing
+.RS 4
+Remove a tracked passthrough rule with arguments
+\fIargs\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. Only rules previously added with
+addPassthrough
+can be removed this way\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.direct\&.Methods\&.removePassthrough\&.
+.sp
+Possible errors: INVALID_IPV, NOT_ENABLED, COMMAND_FAILED
+.RE
+.PP
+removeRule(s: ipv, s: table, s: chain, i: priority, as: args) → Nothing
+.RS 4
+Remove a rule with
+\fIpriority\fR
+and arguments
+\fIargs\fR
+from
+\fIchain\fR
+in
+\fItable\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. Only rules previously added with
+addRule
+can be removed this way\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.direct\&.Methods\&.removeRule\&.
+.sp
+Possible errors: INVALID_IPV, INVALID_TABLE, NOT_ENABLED, COMMAND_FAILED
+.RE
+.PP
+removeRules(s: ipv, s: table, s: chain) → Nothing
+.RS 4
+Remove all rules from
+\fIchain\fR
+in
+\fItable\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. This concerns only rules previously added with
+addRule\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.direct\&.Methods\&.removeRules\&.
+.sp
+Possible errors: INVALID_IPV, INVALID_TABLE
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSignals\fR
+.RS 4
+.PP
+ChainAdded(s: ipv, s: table, s: chain)
+.RS 4
+Emitted when
+\fIchain\fR
+has been added into
+\fItable\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&.
+.RE
+.PP
+ChainRemoved(s: ipv, s: table, s: chain)
+.RS 4
+Emitted when
+\fIchain\fR
+has been removed from
+\fItable\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&.
+.RE
+.PP
+PassthroughAdded(s: ipv, as: args)
+.RS 4
+Emitted when a tracked passthrough rule with
+\fIargs\fR
+has been added for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&.
+.RE
+.PP
+PassthroughRemoved(s: ipv, as: args)
+.RS 4
+Emitted when a tracked passthrough rule with
+\fIargs\fR
+has been removed for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&.
+.RE
+.PP
+RuleAdded(s: ipv, s: table, s: chain, i: priority, as: args)
+.RS 4
+Emitted when a rule with
+\fIargs\fR
+has been added to
+\fIchain\fR
+in
+\fItable\fR
+with
+\fIpriority\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&.
+.RE
+.PP
+RuleRemoved(s: ipv, s: table, s: chain, i: priority, as: args)
+.RS 4
+Emitted when a rule with
+\fIargs\fR
+has been removed from
+\fIchain\fR
+in
+\fItable\fR
+with
+\fIpriority\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&.
+.RE
+.RE
+.SS "org\&.fedoraproject\&.FirewallD1\&.policies"
+.PP
+Enables firewalld to be able to lock down configuration changes from local applications\&. Local applications or services are able to change the firewall configuration if they are running as root (example: libvirt)\&. With these operations administrator can lock the firewall configuration so that either none or only applications that are in the whitelist are able to request firewall changes\&. For permanent configuration see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policies
+interface\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBMethods\fR
+.RS 4
+.PP
+addLockdownWhitelistCommand(s: command) → Nothing
+.RS 4
+Add
+\fIcommand\fR
+to whitelist\&. See
+\fIcommand\fR
+option in
+\fBfirewalld.lockdown-whitelist\fR(5)\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policies\&.Methods\&.addLockdownWhitelistCommand\&.
+.sp
+Possible errors: ALREADY_ENABLED, INVALID_COMMAND
+.RE
+.PP
+addLockdownWhitelistContext(s: context) → Nothing
+.RS 4
+Add
+\fIcontext\fR
+to whitelist\&. See
+\fIselinux\fR
+option in
+\fBfirewalld.lockdown-whitelist\fR(5)\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policies\&.Methods\&.addLockdownWhitelistContext\&.
+.sp
+Possible errors: ALREADY_ENABLED, INVALID_COMMAND
+.RE
+.PP
+addLockdownWhitelistUid(i: uid) → Nothing
+.RS 4
+Add user id
+\fIuid\fR
+to whitelist\&. See
+\fIuser\fR
+option in
+\fBfirewalld.lockdown-whitelist\fR(5)\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policies\&.Methods\&.addLockdownWhitelistUid\&.
+.sp
+Possible errors: ALREADY_ENABLED, INVALID_COMMAND
+.RE
+.PP
+addLockdownWhitelistUser(s: user) → Nothing
+.RS 4
+Add
+\fIuser\fR
+name to whitelist\&. See
+\fIuser\fR
+option in
+\fBfirewalld.lockdown-whitelist\fR(5)\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policies\&.Methods\&.addLockdownWhitelistUser\&.
+.sp
+Possible errors: ALREADY_ENABLED, INVALID_COMMAND
+.RE
+.PP
+disableLockdown() → Nothing
+.RS 4
+Disable lockdown\&. This is a runtime and permanent change\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+enableLockdown() → Nothing
+.RS 4
+Enable lockdown\&. Be careful \- if the calling application/user is not on lockdown whitelist when you enable lockdown you won\*(Aqt be able to disable it again with the application, you would need to edit firewalld\&.conf\&. This is a runtime and permanent change\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+getLockdownWhitelistCommands() → as
+.RS 4
+List all command lines (s) that are on whitelist\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policies\&.Methods\&.getLockdownWhitelistCommands\&.
+.RE
+.PP
+getLockdownWhitelistContexts() → as
+.RS 4
+List all contexts (s) that are on whitelist\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policies\&.Methods\&.getLockdownWhitelistContexts\&.
+.RE
+.PP
+getLockdownWhitelistUids() → ai
+.RS 4
+List all user ids (i) that are on whitelist\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policies\&.Methods\&.getLockdownWhitelistUids\&.
+.RE
+.PP
+getLockdownWhitelistUsers() → as
+.RS 4
+List all users (s) that are on whitelist\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policies\&.Methods\&.getLockdownWhitelistUsers\&.
+.RE
+.PP
+queryLockdown() → b
+.RS 4
+Query whether lockdown is enabled\&.
+.RE
+.PP
+queryLockdownWhitelistCommand(s: command) → b
+.RS 4
+Query whether
+\fIcommand\fR
+is on whitelist\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policies\&.Methods\&.queryLockdownWhitelistCommand\&.
+.RE
+.PP
+queryLockdownWhitelistContext(s: context) → b
+.RS 4
+Query whether
+\fIcontext\fR
+is on whitelist\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policies\&.Methods\&.queryLockdownWhitelistContext\&.
+.RE
+.PP
+queryLockdownWhitelistUid(i: uid) → b
+.RS 4
+Query whether user id
+\fIuid\fR
+is on whitelist\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policies\&.Methods\&.queryLockdownWhitelistUid\&.
+.RE
+.PP
+queryLockdownWhitelistUser(s: user) → b
+.RS 4
+Query whether
+\fIuser\fR
+is on whitelist\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policies\&.Methods\&.queryLockdownWhitelistUser\&.
+.RE
+.PP
+removeLockdownWhitelistCommand(s: command) → Nothing
+.RS 4
+Remove
+\fIcommand\fR
+from whitelist\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policies\&.Methods\&.removeLockdownWhitelistCommand\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removeLockdownWhitelistContext(s: context) → Nothing
+.RS 4
+Remove
+\fIcontext\fR
+from whitelist\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policies\&.Methods\&.removeLockdownWhitelistContext\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removeLockdownWhitelistUid(i: uid) → Nothing
+.RS 4
+Remove user id
+\fIuid\fR
+from whitelist\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policies\&.Methods\&.removeLockdownWhitelistUid\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removeLockdownWhitelistUser(s: user) → Nothing
+.RS 4
+Remove
+\fIuser\fR
+from whitelist\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policies\&.Methods\&.removeLockdownWhitelistUser\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSignals\fR
+.RS 4
+.PP
+LockdownDisabled()
+.RS 4
+Emitted when lockdown has been disabled\&.
+.RE
+.PP
+LockdownEnabled()
+.RS 4
+Emitted when lockdown has been enabled\&.
+.RE
+.PP
+LockdownWhitelistCommandAdded(s: command)
+.RS 4
+Emitted when
+\fIcommand\fR
+has been added to whitelist\&.
+.RE
+.PP
+LockdownWhitelistCommandRemoved(s: command)
+.RS 4
+Emitted when
+\fIcommand\fR
+has been removed from whitelist\&.
+.RE
+.PP
+LockdownWhitelistContextAdded(s: context)
+.RS 4
+Emitted when
+\fIcontext\fR
+has been added to whitelist\&.
+.RE
+.PP
+LockdownWhitelistContextRemoved(s: context)
+.RS 4
+Emitted when
+\fIcontext\fR
+has been removed from whitelist\&.
+.RE
+.PP
+LockdownWhitelistUidAdded(i: uid)
+.RS 4
+Emitted when user id
+\fIuid\fR
+has been added to whitelist\&.
+.RE
+.PP
+LockdownWhitelistUidRemoved(i: uid)
+.RS 4
+Emitted when user id
+\fIuid\fR
+has been removed from whitelist\&.
+.RE
+.PP
+LockdownWhitelistUserAdded(s: user)
+.RS 4
+Emitted when
+\fIuser\fR
+has been added to whitelist\&.
+.RE
+.PP
+LockdownWhitelistUserRemoved(s: user)
+.RS 4
+Emitted when
+\fIuser\fR
+has been removed from whitelist\&.
+.RE
+.RE
+.SS "org\&.fedoraproject\&.FirewallD1\&.zone"
+.PP
+Operations in this interface allows one to get, add, remove and query runtime zone\*(Aqs settings\&. For permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone
+interface\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBMethods\fR
+.RS 4
+.PP
+getZoneSettings2(s: \fIzone\fR) → a{sv}
+.RS 4
+Return runtime settings of given
+\fIzone\fR\&. For getting permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.getSettings2\&. Settings are a dictionary indexed by keywords\&. For the type of each value see below\&. If the value is empty it may be omitted\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIzone\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fItarget (s)\fR: see \fItarget\fR attribute of \fIzone\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIservices (as)\fR: array of service names, see \fIservice\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIports (a(ss))\fR: array of port and protocol pairs\&. See \fIport\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIicmp_blocks (as)\fR: array of icmp\-blocks\&. See \fIicmp\-block\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fImasquerade (b)\fR: see \fImasquerade\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIforward_ports (a(ssss))\fR: array of (port, protocol, to\-port, to\-addr)\&. See \fIforward\-port\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIinterfaces (as)\fR: array of interfaces\&. See \fIinterface\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIsources (as)\fR: array of source addresses\&. See \fIsource\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIrules_str (as)\fR: array of rich\-language rules\&. See \fIrule\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIprotocols (as)\fR: array of protocols, see \fIprotocol\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIsource_ports (a(ss))\fR: array of port and protocol pairs\&. See \fIsource\-port\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIicmp_block_inversion (b)\fR: see \fIicmp\-block\-inversion\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIforward (b)\fR: see \fIforward\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIingress\-priority (i)\fR: see \fIingress\-priority\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIegress\-priority (i)\fR: see \fIegress\-priority\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.sp
+Possible errors: INVALID_ZONE
+.RE
+.PP
+setZoneSettings2(s: \fIzone\fR, a{sv}: \fIsettings\fR, i: \fItimeout\fR)
+.RS 4
+Set runtime settings of given
+\fIzone\fR\&. For setting permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.update2\&. Settings are a dictionary indexed by keywords\&. For the type of each value see below\&. To zero a value pass an empty string or list\&.
+.PP
+\fIservices (as)\fR: array of service names, see \fIservice\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIports (a(ss))\fR: array of port and protocol pairs\&. See \fIport\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIicmp_blocks (as)\fR: array of icmp\-blocks\&. See \fIicmp\-block\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fImasquerade (b)\fR: see \fImasquerade\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIforward_ports (a(ssss))\fR: array of (port, protocol, to\-port, to\-addr)\&. See \fIforward\-port\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIinterfaces (as)\fR: array of interfaces\&. See \fIinterface\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIsources (as)\fR: array of source addresses\&. See \fIsource\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIrules_str (as)\fR: array of rich\-language rules\&. See \fIrule\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIprotocols (as)\fR: array of protocols, see \fIprotocol\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIsource_ports (a(ss))\fR: array of port and protocol pairs\&. See \fIsource\-port\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIicmp_block_inversion (b)\fR: see \fIicmp\-block\-inversion\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIforward (b)\fR: see \fIforward\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.sp
+Possible errors: INVALID_ZONE
+.RE
+.PP
+addForwardPort(s: zone, s: port, s: protocol, s: toport, s: toaddr, i: timeout) → s
+.RS 4
+Add the IPv4 forward port into
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. The port can either be a single port number
+\fIportid\fR
+or a port range
+\fIportid\fR\-\fIportid\fR\&. The protocol can either be
+\fItcp\fR
+or
+\fIudp\fR\&. The destination address is a simple IP address\&. If
+\fItimeout\fR
+is non\-zero, the operation will be active only for the amount of seconds\&. For permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.addForwardPort\&.
+.sp
+Returns name of zone to which the forward port was added\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_PORT, MISSING_PROTOCOL, INVALID_PROTOCOL, INVALID_ADDR, INVALID_FORWARD, ALREADY_ENABLED, INVALID_COMMAND
+.RE
+.PP
+addIcmpBlock(s: zone, s: icmp, i: timeout) → s
+.RS 4
+Add an ICMP block
+\fIicmp\fR
+into
+\fIzone\fR\&. The
+\fIicmp\fR
+is the one of the icmp types firewalld supports\&. To get a listing of supported icmp types use
+org\&.fedoraproject\&.FirewallD1\&.Methods\&.listIcmpTypes
+If
+\fIzone\fR
+is empty, use default zone\&. If
+\fItimeout\fR
+is non\-zero, the operation will be active only for the amount of seconds\&. For permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.addIcmpBlock\&.
+.sp
+Returns name of zone to which the ICMP block was added\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_ICMPTYPE, ALREADY_ENABLED, INVALID_COMMAND
+.RE
+.PP
+addIcmpBlockInversion(s: zone) → s
+.RS 4
+Add ICMP block inversion to
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.addIcmpBlockInversion\&.
+.sp
+Returns name of zone to which the ICMP block inversion was added\&.
+.sp
+Possible errors: INVALID_ZONE, ALREADY_ENABLED, INVALID_COMMAND
+.RE
+.PP
+addInterface(s: zone, s: interface) → s
+.RS 4
+Bind
+\fIinterface\fR
+with
+\fIzone\fR\&. From now on all traffic going through the
+\fIinterface\fR
+will respect the
+\fIzone\fR\*(Aqs settings\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.addInterface\&.
+.sp
+Returns name of zone to which the interface was bound\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_INTERFACE, ALREADY_ENABLED, INVALID_COMMAND
+.RE
+.PP
+addMasquerade(s: zone, i: timeout) → s
+.RS 4
+Enable masquerade in
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. If
+\fItimeout\fR
+is non\-zero, masquerading will be active for the amount of seconds\&. For permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.addMasquerade\&.
+.sp
+Returns name of zone in which the masquerade was enabled\&.
+.sp
+Possible errors: INVALID_ZONE, ALREADY_ENABLED, INVALID_COMMAND
+.RE
+.PP
+addPort(s: zone, s: port, s: protocol, i: timeout) → s
+.RS 4
+Add port into
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. The port can either be a single port number or a port range
+\fIportid\fR\-\fIportid\fR\&. The protocol can either be
+\fItcp\fR
+or
+\fIudp\fR\&. If
+\fItimeout\fR
+is non\-zero, the operation will be active only for the amount of seconds\&. For permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.addPort\&.
+.sp
+Returns name of zone to which the port was added\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_PORT, MISSING_PROTOCOL, INVALID_PROTOCOL, ALREADY_ENABLED, INVALID_COMMAND
+.RE
+.PP
+addProtocol(s: zone, s: protocol, i: timeout) → s
+.RS 4
+Add protocol into
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. The protocol can be any protocol supported by the system\&. Please have a look at
+\fI/etc/protocols\fR
+for supported protocols\&. If
+\fItimeout\fR
+is non\-zero, the operation will be active only for the amount of seconds\&. For permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.addProtocol\&.
+.sp
+Returns name of zone to which the protocol was added\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_PROTOCOL, ALREADY_ENABLED, INVALID_COMMAND
+.RE
+.PP
+addRichRule(s: zone, s: rule, i: timeout) → s
+.RS 4
+Add rich language
+\fIrule\fR
+into
+\fIzone\fR\&. For the rich language rule syntax, please have a look at
+\fBfirewalld.direct\fR(5)\&. If
+\fIzone\fR
+is empty, use default zone\&. If
+\fItimeout\fR
+is non\-zero, the operation will be active only for the amount of seconds\&. For permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.addRichRule\&.
+.sp
+Returns name of zone to which the rich language rule was added\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_RULE, ALREADY_ENABLED, INVALID_COMMAND
+.RE
+.PP
+addService(s: zone, s: service, i: timeout) → s
+.RS 4
+Add
+\fIservice\fR
+into
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. If
+\fItimeout\fR
+is non\-zero, the operation will be active only for the amount of seconds\&. To get a list of supported services, use
+org\&.fedoraproject\&.FirewallD1\&.Methods\&.listServices\&. For permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.addService\&.
+.sp
+Returns name of zone to which the service was added\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_SERVICE, ALREADY_ENABLED, INVALID_COMMAND
+.RE
+.PP
+addSource(s: zone, s: source) → s
+.RS 4
+Bind
+\fIsource\fR
+with
+\fIzone\fR\&. From now on all traffic going from this
+\fIsource\fR
+will respect the
+\fIzone\fR\*(Aqs settings\&. A source address or address range is either an IP address or a network IP address with a mask for IPv4 or IPv6\&. For IPv4, the mask can be a network mask or a plain number\&. For IPv6 the mask is a plain number\&. Use of host names is not supported\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.addSource\&.
+.sp
+Returns name of zone to which the source was bound\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_ADDR, ALREADY_ENABLED, INVALID_COMMAND
+.RE
+.PP
+addSourcePort(s: zone, s: port, s: protocol, i: timeout) → s
+.RS 4
+Add source port into
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. The port can either be a single port number or a port range
+\fIportid\fR\-\fIportid\fR\&. The protocol can either be
+\fItcp\fR
+or
+\fIudp\fR\&. If
+\fItimeout\fR
+is non\-zero, the operation will be active only for the amount of seconds\&. For permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.addSourcePort\&.
+.sp
+Returns name of zone to which the port was added\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_PORT, MISSING_PROTOCOL, INVALID_PROTOCOL, ALREADY_ENABLED, INVALID_COMMAND
+.RE
+.PP
+changeZone(s: zone, s: interface) → s
+.RS 4
+This function is deprecated, use
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.changeZoneOfInterface
+instead\&.
+.RE
+.PP
+changeZoneOfInterface(s: zone, s: interface) → s
+.RS 4
+Change a zone an
+\fIinterface\fR
+is bound to to
+\fIzone\fR\&. It\*(Aqs basically removeInterface(\fIinterface\fR) followed by addInterface(\fIzone\fR,
+\fIinterface\fR)\&. If
+\fIinterface\fR
+has not been bound to a zone before, it behaves like
+addInterface\&. If
+\fIzone\fR
+is empty, use default zone\&.
+.sp
+Returns name of zone to which the interface was bound\&.
+.sp
+Possible errors: INVALID_ZONE, ZONE_ALREADY_SET, ZONE_CONFLICT
+.RE
+.PP
+changeZoneOfSource(s: zone, s: source) → s
+.RS 4
+Change a zone an
+\fIsource\fR
+is bound to to
+\fIzone\fR\&. It\*(Aqs basically removeSource(\fIsource\fR) followed by addSource(\fIzone\fR,
+\fIsource\fR)\&. If
+\fIsource\fR
+has not been bound to a zone before, it behaves like
+addSource\&. If
+\fIzone\fR
+is empty, use default zone\&.
+.sp
+Returns name of zone to which the source was bound\&.
+.sp
+Possible errors: INVALID_ZONE, ZONE_ALREADY_SET, ZONE_CONFLICT
+.RE
+.PP
+getActiveZones() → a{sa{sas}}
+.RS 4
+Return dictionary of currently active zones altogether with interfaces and sources used in these zones\&. Active zones are zones, that have a binding to an interface or source\&.
+.sp
+Return value is a dictionary where keys are zone names (s) and values are again dictionaries where keys are either \*(Aqinterfaces\*(Aq or \*(Aqsources\*(Aq and values are arrays of interface names (s) or sources (s)\&.
+.RE
+.PP
+getForwardPorts(s: zone) → aas
+.RS 4
+Return array of IPv4 forward ports previously added into
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For getting permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.getForwardPorts\&.
+.sp
+Return value is array of 4\-tuples, where each 4\-tuple consists of (port, protocol, to\-port, to\-addr)\&. to\-addr might be empty in case of local forwarding\&.
+.sp
+Possible errors: INVALID_ZONE
+.RE
+.PP
+getIcmpBlocks(s: zone) → as
+.RS 4
+Return array of ICMP type (s) blocks previously added into
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For getting permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.getIcmpBlocks\&.
+.sp
+Possible errors: INVALID_ZONE
+.RE
+.PP
+getIcmpBlockInversion(s: zone) → b
+.RS 4
+Return whether ICMP block inversion was previously added to
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For getting permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.getIcmpBlockInversion\&.
+.sp
+Possible errors: INVALID_ZONE
+.RE
+.PP
+getInterfaces(s: zone) → as
+.RS 4
+Return array of interfaces (s) previously bound with
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For getting permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.getInterfaces\&.
+.sp
+Possible errors: INVALID_ZONE
+.RE
+.PP
+getPorts(s: zone) → aas
+.RS 4
+Return array of ports (2\-tuple of port and protocol) previously enabled in
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For getting permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.getPorts\&.
+.sp
+Possible errors: INVALID_ZONE
+.RE
+.PP
+getProtocols(s: zone) → as
+.RS 4
+Return array of protocols (s) previously enabled in
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For getting permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.getProtocols\&.
+.sp
+Possible errors: INVALID_ZONE
+.RE
+.PP
+getRichRules(s: zone) → as
+.RS 4
+Return array of rich language rules (s) previously added into
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For getting permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.getRichRules\&.
+.sp
+Possible errors: INVALID_ZONE
+.RE
+.PP
+getServices(s: zone) → as
+.RS 4
+Return array of services (s) previously enabled in
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For getting permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.getServices\&.
+.sp
+Possible errors: INVALID_ZONE
+.RE
+.PP
+getSourcePorts(s: zone) → aas
+.RS 4
+Return array of source ports (2\-tuple of port and protocol) previously enabled in
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For getting permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.getSourcePorts\&.
+.sp
+Possible errors: INVALID_ZONE
+.RE
+.PP
+getSources(s: zone) → as
+.RS 4
+Return array of sources (s) previously bound with
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For getting permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.getSources\&.
+.sp
+Possible errors: INVALID_ZONE
+.RE
+.PP
+getZoneOfInterface(s: interface) → s
+.RS 4
+Return name (s) of zone the
+\fIinterface\fR
+is bound to or empty string\&.
+.RE
+.PP
+getZoneOfSource(s: source) → s
+.RS 4
+Return name (s) of zone the
+\fIsource\fR
+is bound to or empty string\&.
+.RE
+.PP
+getZones() → as
+.RS 4
+Return array of names (s) of predefined zones known to current runtime environment\&. For list of zones known to permanent environment see
+org\&.fedoraproject\&.FirewallD1\&.config\&.Methods\&.listZones\&. The lists (of zones known to runtime and permanent environment) will contain same zones in most cases, but might differ for example if
+org\&.fedoraproject\&.FirewallD1\&.config\&.Methods\&.addZone
+has been called recently, but firewalld has not been reloaded since then\&.
+.RE
+.PP
+isImmutable(s: zone) → b
+.RS 4
+Deprecated\&.
+.RE
+.PP
+queryForwardPort(s: zone, s: port, s: protocol, s: toport, s: toaddr) → b
+.RS 4
+Return whether the IPv4 forward port (\fIport\fR,
+\fIprotocol\fR,
+\fItoport\fR,
+\fItoaddr\fR) has been added into
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.queryForwardPort\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_PORT, MISSING_PROTOCOL, INVALID_PROTOCOL, INVALID_ADDR, INVALID_FORWARD
+.RE
+.PP
+queryIcmpBlock(s: zone, s: icmp) → b
+.RS 4
+Return whether an ICMP block for
+\fIicmp\fR
+has been added into
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.queryIcmpBlock\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_ICMPTYPE
+.RE
+.PP
+queryIcmpBlockInversion(s: zone) → b
+.RS 4
+Return whether ICMP block inversion has been added to
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.queryIcmpBlockInversion\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_ICMPTYPE
+.RE
+.PP
+queryInterface(s: zone, s: interface) → b
+.RS 4
+Query whether
+\fIinterface\fR
+has been bound to
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.queryInterface\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_INTERFACE
+.RE
+.PP
+queryMasquerade(s: zone) → b
+.RS 4
+Return whether masquerading has been enabled in
+\fIzone\fR
+If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.queryMasquerade\&.
+.sp
+Possible errors: INVALID_ZONE
+.RE
+.PP
+queryPort(s: zone, s: port, s: protocol) → b
+.RS 4
+Return whether
+\fIport\fR/\fIprotocol\fR
+has been added in
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.queryPort\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_PORT, MISSING_PROTOCOL, INVALID_PROTOCOL
+.RE
+.PP
+queryProtocol(s: zone, s: protocol) → b
+.RS 4
+Return whether
+\fIprotocol\fR
+has been added in
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.queryProtocol\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_PROTOCOL
+.RE
+.PP
+queryRichRule(s: zone, s: rule) → b
+.RS 4
+Return whether rich rule
+\fIrule\fR
+has been added in
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.queryRichRule\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_RULE
+.RE
+.PP
+queryService(s: zone, s: service) → b
+.RS 4
+Return whether
+\fIservice\fR
+has been added for
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.queryService\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_SERVICE
+.RE
+.PP
+querySource(s: zone, s: source) → b
+.RS 4
+Query whether
+\fIsource\fRhas been bound to
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.querySource\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_ADDR
+.RE
+.PP
+querySourcePort(s: zone, s: port, s: protocol) → b
+.RS 4
+Return whether
+\fIport\fR/\fIprotocol\fR
+has been added in
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.querySourcePort\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_PORT, MISSING_PROTOCOL, INVALID_PROTOCOL
+.RE
+.PP
+removeForwardPort(s: zone, s: port, s: protocol, s: toport, s: toaddr) → s
+.RS 4
+Remove IPv4 forward port ((\fIport\fR,
+\fIprotocol\fR,
+\fItoport\fR,
+\fItoaddr\fR)) from
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.removeForwardPort\&.
+.sp
+Returns name of zone from which the forward port was removed\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_PORT, MISSING_PROTOCOL, INVALID_PROTOCOL, INVALID_ADDR, INVALID_FORWARD, NOT_ENABLED, INVALID_COMMAND
+.RE
+.PP
+removeIcmpBlock(s: zone, s: icmp) → s
+.RS 4
+Remove ICMP block
+\fIicmp\fR
+from
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.removeIcmpBlock\&.
+.sp
+Returns name of zone from which the ICMP block was removed\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_ICMPTYPE, NOT_ENABLED, INVALID_COMMAND
+.RE
+.PP
+removeIcmpBlockInversion(s: zone) → s
+.RS 4
+Remove ICMP block inversion from
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.removeIcmpBlockInversion\&.
+.sp
+Returns name of zone from which the ICMP block inversion was removed\&.
+.sp
+Possible errors: INVALID_ZONE, NOT_ENABLED, INVALID_COMMAND
+.RE
+.PP
+removeInterface(s: zone, s: interface) → s
+.RS 4
+Remove binding of
+\fIinterface\fR
+from
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, the interface will be removed from zone it belongs to\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.removeInterface\&.
+.sp
+Returns name of zone from which the
+\fIinterface\fR
+was removed\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_INTERFACE, NOT_ENABLED, INVALID_COMMAND
+.RE
+.PP
+removeMasquerade(s: zone) → s
+.RS 4
+Disable masquerade for
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.removeMasquerade\&.
+.sp
+Returns name of zone for which the masquerade was disabled\&.
+.sp
+Possible errors: INVALID_ZONE, NOT_ENABLED, INVALID_COMMAND
+.RE
+.PP
+removePort(s: zone, s: port, s: protocol) → s
+.RS 4
+Remove
+\fIport\fR/\fIprotocol\fR
+from
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.removePort\&.
+.sp
+Returns name of zone from which the port was removed\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_PORT, MISSING_PROTOCOL, INVALID_PROTOCOL, NOT_ENABLED, INVALID_COMMAND
+.RE
+.PP
+removeProtocol(s: zone, s: protocol) → s
+.RS 4
+Remove protocol from
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.removeProtocol\&.
+.sp
+Returns name of zone from which the protocol was removed\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_PROTOCOL, NOT_ENABLED, INVALID_COMMAND
+.RE
+.PP
+removeRichRule(s: zone, s: rule) → s
+.RS 4
+Remove rich language
+\fIrule\fR
+from
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.removeRichRule\&.
+.sp
+Returns name of zone from which the rich language rule was removed\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_RULE, NOT_ENABLED, INVALID_COMMAND
+.RE
+.PP
+removeService(s: zone, s: service) → s
+.RS 4
+Remove
+\fIservice\fR
+from
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.removeService\&.
+.sp
+Returns name of zone from which the service was removed\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_SERVICE, NOT_ENABLED, INVALID_COMMAND
+.RE
+.PP
+removeSource(s: zone, s: source) → s
+.RS 4
+Remove binding of
+\fIsource\fR
+from
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, the source will be removed from zone it belongs to\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.removeSource\&.
+.sp
+Returns name of zone from which the
+\fIsource\fR
+was removed\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_ADDR, NOT_ENABLED, INVALID_COMMAND
+.RE
+.PP
+removeSourcePort(s: zone, s: port, s: protocol) → s
+.RS 4
+Remove
+\fIport\fR/\fIprotocol\fR
+from
+\fIzone\fR\&. If
+\fIzone\fR
+is empty, use default zone\&. For permanent operation see
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.removeSourcePort\&.
+.sp
+Returns name of zone from which the source port was removed\&.
+.sp
+Possible errors: INVALID_ZONE, INVALID_PORT, MISSING_PROTOCOL, INVALID_PROTOCOL, NOT_ENABLED, INVALID_COMMAND
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSignals\fR
+.RS 4
+.PP
+ForwardPortAdded(s: zone, s: port, s: protocol, s: toport, s: toaddr, i: timeout)
+.RS 4
+Emitted when forward port has been added to
+\fIzone\fR
+with
+\fItimeout\fR\&.
+.RE
+.PP
+ForwardPortRemoved(s: zone, s: port, s: protocol, s: toport, s: toaddr)
+.RS 4
+Emitted when forward port has been removed from
+\fIzone\fR\&.
+.RE
+.PP
+IcmpBlockAdded(s: zone, s: icmp, i: timeout)
+.RS 4
+Emitted when ICMP block for
+\fIicmp\fR
+has been added to
+\fIzone\fR
+with
+\fItimeout\fR\&.
+.RE
+.PP
+IcmpBlockInversionAdded(s: zone)
+.RS 4
+Emitted when ICMP block inversion has been added to
+\fIzone\fR\&.
+.RE
+.PP
+IcmpBlockInversionRemoved(s: zone)
+.RS 4
+Emitted when ICMP block inversion has been removed from
+\fIzone\fR\&.
+.RE
+.PP
+IcmpBlockRemoved(s: zone, s: icmp)
+.RS 4
+Emitted when ICMP block for
+\fIicmp\fR
+has been removed from
+\fIzone\fR\&.
+.RE
+.PP
+InterfaceAdded(s: zone, s: interface)
+.RS 4
+Emitted when
+\fIinterface\fR
+has been added to
+\fIzone\fR\&.
+.RE
+.PP
+InterfaceRemoved(s: zone, s: interface)
+.RS 4
+Emitted when
+\fIinterface\fR
+has been removed from
+\fIzone\fR\&.
+.RE
+.PP
+MasqueradeAdded(s: zone, i: timeout)
+.RS 4
+Emitted when masquerade has been enabled for
+\fIzone\fR\&.
+.RE
+.PP
+MasqueradeRemoved(s: zone)
+.RS 4
+Emitted when masquerade has been disabled for
+\fIzone\fR\&.
+.RE
+.PP
+PortAdded(s: zone, s: port, s: protocol, i: timeout)
+.RS 4
+Emitted when
+\fIport\fR/\fIprotocol\fR
+has been added to
+\fIzone\fR
+with
+\fItimeout\fR\&.
+.RE
+.PP
+PortRemoved(s: zone, s: port, s: protocol)
+.RS 4
+Emitted when
+\fIport\fR/\fIprotocol\fR
+has been removed from
+\fIzone\fR\&.
+.RE
+.PP
+ProtocolAdded(s: zone, s: protocol, i: timeout)
+.RS 4
+Emitted when
+\fIprotocol\fR
+has been added to
+\fIzone\fR
+with
+\fItimeout\fR\&.
+.RE
+.PP
+ProtocolRemoved(s: zone, s: protocol)
+.RS 4
+Emitted when
+\fIprotocol\fR
+has been removed from
+\fIzone\fR\&.
+.RE
+.PP
+RichRuleAdded(s: zone, s: rule, i: timeout)
+.RS 4
+Emitted when rich language
+\fIrule\fR
+has been added to
+\fIzone\fR
+with
+\fItimeout\fR\&.
+.RE
+.PP
+RichRuleRemoved(s: zone, s: rule)
+.RS 4
+Emitted when rich language
+\fIrule\fR
+has been removed from
+\fIzone\fR\&.
+.RE
+.PP
+ServiceAdded(s: zone, s: service, i: timeout)
+.RS 4
+Emitted when
+\fIservice\fR
+has been added to
+\fIzone\fR
+with
+\fItimeout\fR\&.
+.RE
+.PP
+ServiceRemoved(s: zone, s: service)
+.RS 4
+Emitted when
+\fIservice\fR
+has been removed from
+\fIzone\fR\&.
+.RE
+.PP
+SourceAdded(s: zone, s: source)
+.RS 4
+Emitted when
+\fIsource\fR
+has been added to
+\fIzone\fR\&.
+.RE
+.PP
+SourcePortAdded(s: zone, s: port, s: protocol, i: timeout)
+.RS 4
+Emitted when
+\fIsource\-port\fR/\fIprotocol\fR
+has been added to
+\fIzone\fR
+with
+\fItimeout\fR\&.
+.RE
+.PP
+SourcePortRemoved(s: zone, s: port, s: protocol)
+.RS 4
+Emitted when
+\fIsource\-port\fR/\fIprotocol\fR
+has been removed from
+\fIzone\fR\&.
+.RE
+.PP
+SourceRemoved(s: zone, s: source)
+.RS 4
+Emitted when
+\fIsource\fR
+has been removed from
+\fIzone\fR\&.
+.RE
+.PP
+ZoneChanged(s: zone, s: interface)
+.RS 4
+Deprecated
+.RE
+.PP
+ZoneOfInterfaceChanged(s: zone, s: interface)
+.RS 4
+Emitted when a zone an
+\fIinterface\fR
+is part of has been changed to
+\fIzone\fR\&.
+.RE
+.PP
+ZoneOfSourceChanged(s: zone, s: source)
+.RS 4
+Emitted when a zone an
+\fIsource\fR
+is part of has been changed to
+\fIzone\fR\&.
+.RE
+.PP
+ZoneUpdated2(s: zone, a{sv}: settings)
+.RS 4
+Emitted when a zone\*(Aqs settings are updated via
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.setZoneSettings2
+.RE
+.RE
+.SS "org\&.fedoraproject\&.FirewallD1\&.policy"
+.PP
+Operations in this interface allows one to get, add, remove and query runtime policy settings\&. For permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policy
+interface\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBMethods\fR
+.RS 4
+.PP
+getActivePolicies() → a{sa{sas}}
+.RS 4
+Return dictionary of currently active policies altogether with ingress zones and egress zones used in these policies\&. Active policies are policies, that have a binding to an active ingress zone and an active egress zone\&.
+.sp
+Return value is a dictionary where keys are policy names (s) and values are again dictionaries where keys are either \*(Aqingress_zones\*(Aq or \*(Aqegress_zones\*(Aq and values are arrays of zone names (s)\&.
+.RE
+.PP
+getPolicies() → as
+.RS 4
+Return array of names (s) of predefined policies known to current runtime environment\&. For list of policies known to permanent environment see
+org\&.fedoraproject\&.FirewallD1\&.config\&.Methods\&.listPolicies\&. The lists (of policies known to runtime and permanent environment) will contain same policies in most cases, but might differ for example if
+org\&.fedoraproject\&.FirewallD1\&.config\&.Methods\&.addPolicy
+has been called recently, but firewalld has not been reloaded since then\&.
+.RE
+.PP
+getPolicySettings(s: \fIpolicy\fR) → a{sv}
+.RS 4
+Return runtime settings of given
+\fIpolicy\fR\&. For getting permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policy\&.Methods\&.getSettings\&. Settings are a dictionary indexed by keywords\&. For possible keywords see
+org\&.fedoraproject\&.FirewallD1\&.config\&.Methods\&.addPolicy\&. If the value is empty it may be omitted\&.
+.sp
+Possible errors: INVALID_POLICY
+.RE
+.PP
+setPolicySettings(s: \fIpolicy\fR, a{sv}: \fIsettings\fR, i: \fItimeout\fR)
+.RS 4
+Set runtime settings of given
+\fIpolicy\fR\&. For setting permanent settings see
+org\&.fedoraproject\&.FirewallD1\&.config\&.policy\&.Methods\&.update\&. Settings are a dictionary indexed by keywords\&. For possible keywords see
+org\&.fedoraproject\&.FirewallD1\&.config\&.Methods\&.addPolicy\&. To zero a value pass an empty string or list\&. Some keywords are not available to modify in the runtime:
+\fIdescription\fR,
+\fIname\fR,
+\fIpriority\fR,
+\fItarget\fR,
+\fIversion\fR\&.
+.sp
+Possible errors: INVALID_POLICY
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSignals\fR
+.RS 4
+.PP
+ForwardPortAdded(s: policy, a{sv}: settings)
+.RS 4
+Emitted when a policy\*(Aqs settings are updated via
+org\&.fedoraproject\&.FirewallD1\&.policy\&.Methods\&.setPolicySettings
+.RE
+.RE
+.SS "org\&.fedoraproject\&.FirewallD1\&.config"
+.PP
+Allows one to permanently add, remove and query zones, services and icmp types\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBMethods\fR
+.RS 4
+.PP
+addIPSet(s: ipset, (ssssa{ss}as): settings) → o
+.RS 4
+Add
+\fIipset\fR
+with given
+\fIsettings\fR
+into permanent configuration\&. Settings are in format:
+\fIversion\fR,
+\fIname\fR,
+\fIdescription\fR,
+\fItype\fR, dictionary of
+\fIoptions\fR
+and array of
+\fIentries\fR\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIipset\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fItype (s)\fR: see \fItype\fR attribute of \fIipset\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIoptions (a{ss})\fR: dictionary of {option : value} \&. See \fIoptions\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIentries (as)\fR: array of entries, see \fIentry\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.sp
+Possible errors: NAME_CONFLICT, INVALID_NAME, INVALID_TYPE
+.RE
+.PP
+addIcmpType(s: icmptype, (sssas): settings) → o
+.RS 4
+Add
+\fIicmptype\fR
+with given
+\fIsettings\fR
+into permanent configuration\&. Settings are in format:
+\fIversion\fR,
+\fIname\fR,
+\fIdescription\fR, array of
+\fIdestinations\fR\&. Returns object path of the new icmp type\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIicmptype\fR tag in \fBfirewalld.icmptype\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.icmptype\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.icmptype\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdestinations (as)\fR: array, either empty or containing strings \*(Aqipv4\*(Aq or \*(Aqipv6\*(Aq, see \fIdestination\fR tag in \fBfirewalld.icmptype\fR(5)\&.
+.RS 4
+.RE
+.sp
+Possible errors: NAME_CONFLICT, INVALID_NAME, INVALID_TYPE
+.RE
+.PP
+addService(s: service, (sssa(ss)asa{ss}asa(ss)): settings) → o
+.RS 4
+This function is deprecated, use
+org\&.fedoraproject\&.FirewallD1\&.config\&.Methods\&.addService2
+instead\&.
+.RE
+.PP
+addService2s: service, a{sv}: settings) → o
+.RS 4
+Add
+\fIservice\fR
+with given
+\fIsettings\fR
+into permanent configuration\&. Settings are a dictionary indexed by keywords\&. For the type of each value see below\&. To zero a value pass an empty string or list\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIservice\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIports (a(ss))\fR: array of port and protocol pairs\&. See \fIport\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fImodule names (as)\fR: array of kernel netfilter helpers, see \fImodule\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdestinations (a{ss})\fR: dictionary of {IP family : IP address} where \*(AqIP family\*(Aq key can be either \*(Aqipv4\*(Aq or \*(Aqipv6\*(Aq\&. See \fIdestination\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIprotocols (as)\fR: array of protocols, see \fIprotocol\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIsource_ports (a(ss))\fR: array of port and protocol pairs\&. See \fIsource\-port\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIincludes (as)\fR: array of service includes, see \fIinclude\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIhelpers (as)\fR: array of service helpers, see \fIhelper\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.sp
+Possible errors: NAME_CONFLICT, INVALID_NAME, INVALID_TYPE
+.RE
+.PP
+addZone(s: zone, (sssbsasa(ss)asba(ssss)asasasasa(ss)b): settings) → o
+.RS 4
+This function is deprecated, use
+org\&.fedoraproject\&.FirewallD1\&.config\&.Methods\&.addZone2
+instead\&.
+.RE
+.PP
+addZone2(s: zone, a{sv}: settings) → o
+.RS 4
+Add
+\fIzone\fR
+with given
+\fIsettings\fR
+into permanent configuration\&. Settings are a dictionary indexed by keywords\&. For the type of each value see below\&. To zero a value pass an empty string or list\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIzone\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fItarget (s)\fR: see \fItarget\fR attribute of \fIzone\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIservices (as)\fR: array of service names, see \fIservice\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIports (a(ss))\fR: array of port and protocol pairs\&. See \fIport\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIicmp_blocks (as)\fR: array of icmp\-blocks\&. See \fIicmp\-block\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fImasquerade (b)\fR: see \fImasquerade\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIforward_ports (a(ssss))\fR: array of (port, protocol, to\-port, to\-addr)\&. See \fIforward\-port\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIinterfaces (as)\fR: array of interfaces\&. See \fIinterface\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIsources (as)\fR: array of source addresses\&. See \fIsource\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIrules_str (as)\fR: array of rich\-language rules\&. See \fIrule\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIprotocols (as)\fR: array of protocols, see \fIprotocol\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIsource_ports (a(ss))\fR: array of port and protocol pairs\&. See \fIsource\-port\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIicmp_block_inversion (b)\fR: see \fIicmp\-block\-inversion\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIforward (b)\fR: see \fIforward\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIingress_priority (i)\fR: see \fIingress\-priority\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIegress_priority (i)\fR: see \fIegress\-priority\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.sp
+Possible errors: NAME_CONFLICT, INVALID_NAME, INVALID_TYPE
+.RE
+.PP
+addPolicy(s: policy, a{sv}: settings) → o
+.RS 4
+Add
+\fIpolicy\fR
+with given
+\fIsettings\fR
+into permanent configuration\&. Settings are a dictionary indexed by keywords\&. For the type of each value see below\&. If a keyword is omitted the default value will be used\&.
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.policy\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIegress_zones as\fR: array of zone names\&. See \fIegress\-zone\fR tag in \fBfirewalld.policy\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIforward_ports (a(ssss))\fR: array of (port, protocol, to\-port, to\-addr)\&. See \fIforward\-port\fR tag in \fBfirewalld.policy\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIicmp_blocks (as)\fR: array of icmp\-blocks\&. See \fIicmp\-block\fR tag in \fBfirewalld.policy\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIingress_zones as\fR: array of zone names\&. See \fIingress\-zone\fR tag in \fBfirewalld.policy\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fImasquerade (b)\fR: see \fImasquerade\fR tag in \fBfirewalld.policy\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIports (a(ss))\fR: array of port and protocol pairs\&. See \fIport\fR tag in \fBfirewalld.policy\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIpriority (i)\fR: see \fIpriority\fR tag in \fBfirewalld.policy\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIprotocols (as)\fR: array of protocols, see \fIprotocol\fR tag in \fBfirewalld.policy\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIrich_rules (as)\fR: array of rich\-language rules\&. See \fIrule\fR tag in \fBfirewalld.policy\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIservices (as)\fR: array of service names, see \fIservice\fR tag in \fBfirewalld.policy\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIshort (s)\fR: see \fIshort\fR tag in \fBfirewalld.policy\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIsource_ports (a(ss))\fR: array of port and protocol pairs\&. See \fIsource\-port\fR tag in \fBfirewalld.policy\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fItarget (s)\fR: see \fItarget\fR attribute of \fIpolicy\fR tag in \fBfirewalld.policy\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIpolicy\fR tag in \fBfirewalld.policy\fR(5)\&.
+.RS 4
+.RE
+.sp
+Possible errors: NAME_CONFLICT, INVALID_NAME, INVALID_TYPE
+.RE
+.PP
+getHelperByName(s: helper) → o
+.RS 4
+Return object path (permanent configuration) of
+\fIhelper\fR
+with given name\&.
+.sp
+Possible errors: INVALID_HELPER
+.RE
+.PP
+getHelperNames() → as
+.RS 4
+Return list of
+\fIhelper\fR
+names (permanent configuration)\&.
+.RE
+.PP
+getIPSetByName(s: ipset) → o
+.RS 4
+Return object path (permanent configuration) of
+\fIipset\fR
+with given name\&.
+.sp
+Possible errors: INVALID_IPSET
+.RE
+.PP
+getIPSetNames() → as
+.RS 4
+Return list of
+\fIipset\fR
+names (permanent configuration)\&.
+.RE
+.PP
+getIcmpTypeByName(s: icmptype) → o
+.RS 4
+Return object path (permanent configuration) of
+\fIicmptype\fR
+with given name\&.
+.sp
+Possible errors: INVALID_ICMPTYPE
+.RE
+.PP
+getIcmpTypeNames() → as
+.RS 4
+Return list of
+\fIicmptype\fR
+names (permanent configuration)\&.
+.RE
+.PP
+getServiceByName(s: service) → o
+.RS 4
+Return object path (permanent configuration) of
+\fIservice\fR
+with given name\&.
+.sp
+Possible errors: INVALID_SERVICE
+.RE
+.PP
+getServiceNames() → as
+.RS 4
+Return list of
+\fIservice\fR
+names (permanent configuration)\&.
+.RE
+.PP
+getZoneByName(s: zone) → o
+.RS 4
+Return object path (permanent configuration) of
+\fIzone\fR
+with given name\&.
+.sp
+Possible errors: INVALID_ZONE
+.RE
+.PP
+getZoneNames() → as
+.RS 4
+Return list of
+\fIzone\fR
+names (permanent configuration) of\&.
+.RE
+.PP
+getZoneOfInterface(s: iface) → s
+.RS 4
+Return name of zone the
+\fIiface\fR
+is bound to or empty string\&.
+.RE
+.PP
+getZoneOfSource(s: source) → s
+.RS 4
+Return name of zone the
+\fIsource\fR
+is bound to or empty string\&.
+.RE
+.PP
+getPolicyByName(s: policy) → o
+.RS 4
+Return object path (permanent configuration) of
+\fIpolicy\fR
+with given name\&.
+.sp
+Possible errors: INVALID_POLICY
+.RE
+.PP
+getPolicyNames() → as
+.RS 4
+Return list of
+\fIpolicy\fR
+names (permanent configuration)\&.
+.RE
+.PP
+listHelpers() → ao
+.RS 4
+Return array of object paths (o) of
+helper
+in permanent configuration\&. For runtime configuration see
+org\&.fedoraproject\&.FirewallD1\&.Methods\&.getHelpers\&.
+.RE
+.PP
+listIPSets() → ao
+.RS 4
+Return array of object paths (o) of
+ipset
+in permanent configuration\&. For runtime configuration see
+org\&.fedoraproject\&.FirewallD1\&.ipset\&.Methods\&.getIPSets\&.
+.RE
+.PP
+listIcmpTypes() → ao
+.RS 4
+Return array of object paths (o) of
+icmp types
+in permanent configuration\&. For runtime configuration see
+org\&.fedoraproject\&.FirewallD1\&.Methods\&.listIcmpTypes\&.
+.RE
+.PP
+listServices() → ao
+.RS 4
+Return array of objects paths (o) of
+services
+in permanent configuration\&. For runtime configuration see
+org\&.fedoraproject\&.FirewallD1\&.Methods\&.listServices\&.
+.RE
+.PP
+listZones() → ao
+.RS 4
+List object paths of zones known to permanent environment\&. For list of zones known to runtime environment see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.getZones\&. The lists (of zones known to runtime and permanent environment) will contain same zones in most cases, but might differ for example if
+org\&.fedoraproject\&.FirewallD1\&.config\&.Methods\&.addZone
+has been called recently, but firewalld has not been reloaded since then\&.
+.RE
+.PP
+listPolicies() → ao
+.RS 4
+List object paths of policies known to permanent environment\&. For list of policies known to runtime environment see
+org\&.fedoraproject\&.FirewallD1\&.policy\&.Methods\&.getPolicies\&. The lists (of policies known to runtime and permanent environment) will contain same policies in most cases, but might differ for example if
+org\&.fedoraproject\&.FirewallD1\&.config\&.Methods\&.addPolicy
+has been called recently, but firewalld has not been reloaded since then\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSignals\fR
+.RS 4
+.PP
+HelperAdded(s: helper)
+.RS 4
+Emitted when
+\fIhelper\fR
+has been added\&.
+.RE
+.PP
+IPSetAdded(s: ipset)
+.RS 4
+Emitted when
+\fIipset\fR
+has been added\&.
+.RE
+.PP
+IcmpTypeAdded(s: icmptype)
+.RS 4
+Emitted when
+\fIicmptype\fR
+has been added\&.
+.RE
+.PP
+ServiceAdded(s: service)
+.RS 4
+Emitted when
+\fIservice\fR
+has been added\&.
+.RE
+.PP
+ZoneAdded(s: zone)
+.RS 4
+Emitted when
+\fIzone\fR
+has been added\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBProperties\fR
+.RS 4
+.PP
+\fIAllowZoneDrifting\fR \- s \- (rw)
+.RS 4
+Deprecated\&. Getting this value always returns "no"\&. Setting this value is ignored\&.
+.RE
+.PP
+AutomaticHelpers \- s \- (rw)
+.RS 4
+Deprecated\&. Getting this value always returns "no"\&. Setting this value is ignored\&.
+.RE
+.PP
+CleanupModulesOnExit \- s \- (rw)
+.RS 4
+Setting this option to yes or true unloads all firewall\-related kernel modules when firewalld is stopped\&.
+.RE
+.PP
+CleanupOnExit \- s \- (rw)
+.RS 4
+If firewalld stops, it cleans up all firewall rules\&. Setting this option to no or false leaves the current firewall rules untouched\&.
+.RE
+.PP
+DefaultZone \- s \- (ro)
+.RS 4
+Default zone for connections or interfaces if the zone is not selected or specified by NetworkManager, initscripts or command line tool\&.
+.RE
+.PP
+FirewallBackend \- s \- (rw)
+.RS 4
+Selects the firewalld backend for all rules except the direct interface\&. Valid options are; nftables, iptables\&. Default in nftables\&.
+.sp
+\fBNote\fR: The iptables backend is deprecated\&. It will be removed in a future release\&.
+.RE
+.PP
+FlushAllOnReload \- s \- (rw)
+.RS 4
+Flush all runtime rules on a reload\&. Valid options are; yes, no\&.
+.RE
+.PP
+\fIIPv6_rpfilter\fR \- s \- (rw)
+.RS 4
+Indicates whether the reverse path filter test on a packet for IPv6 is enabled\&. If a reply to the packet would be sent via the same interface that the packet arrived on, the packet will match and be accepted, otherwise dropped\&.
+.RE
+.PP
+\fIIndividualCalls\fR \- s \- (ro)
+.RS 4
+Indicates whether individual calls combined \-restore calls are used\&. If enabled, this increases the time that is needed to apply changes and to start the daemon, but is good for debugging\&.
+.RE
+.PP
+Lockdown \- s \- (rw)
+.RS 4
+If this property is enabled, firewall changes with the D\-Bus interface will be limited to applications that are listed in the lockdown whitelist\&.
+.RE
+.PP
+LogDenied \- s \- (rw)
+.RS 4
+If LogDenied is enabled, then logging rules are added right before reject and drop rules in the INPUT, FORWARD and OUTPUT chains for the default rules and also final reject and drop rules in zones\&. Possible values are:
+\fIall\fR,
+\fIunicast\fR,
+\fIbroadcast\fR,
+\fImulticast\fR
+and
+\fIoff\fR\&.
+.RE
+.PP
+MinimalMark \- i \- (rw)
+.RS 4
+Deprecated\&. This option is ignored and no longer used\&. Marks are no longer used internally\&.
+.RE
+.PP
+RFC3964_IPv4 \- s \- (rw)
+.RS 4
+As per RFC 3964, filter IPv6 traffic with 6to4 destination addresses that correspond to IPv4 addresses that should not be routed over the public internet\&. Valid options are; yes, no\&.
+.RE
+.PP
+NftablesFlowtable \- s \- (rw)
+.RS 4
+This may improve forwarded traffic throughput by enabling nftables flowtable\&. It is a software fastpath and avoids calling nftables rule evaluation for data packets\&. Its value is a space separate list of interfaces\&.
+.RE
+.PP
+NftablesCounters \- s \- (rw)
+.RS 4
+If set to yes, add a counter to every nftables rule\&. This is useful for debugging and comes with a small performance cost\&.
+.RE
+.RE
+.SS "org\&.fedoraproject\&.FirewallD1\&.config\&.direct"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBDEPRECATED\fR
+.RS 4
+.PP
+The direct interface has been deprecated\&. It will be removed in a future release\&. It is superseded by policies, see
+\fBfirewalld.policies\fR(5)\&.
+.RE
+.PP
+Interface for permanent direct configuration, see also
+\fBfirewalld.direct\fR(5)\&. For runtime direct configuration see
+org\&.fedoraproject\&.FirewallD1\&.direct
+interface\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBMethods\fR
+.RS 4
+.PP
+addChain(s: ipv, s: table, s: chain) → Nothing
+.RS 4
+Add a new
+\fIchain\fR
+to
+\fItable\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. Make sure there\*(Aqs no other chain with this name already\&. There already exist basic chains to use with direct methods, for example
+\fIINPUT_direct\fR
+chain\&. These chains are jumped into before chains for zones, i\&.e\&. every rule put into
+\fIINPUT_direct\fR
+will be checked before rules in zones\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.direct\&.Methods\&.addChain\&.
+.sp
+Possible errors: INVALID_IPV, INVALID_TABLE, ALREADY_ENABLED
+.RE
+.PP
+addPassthrough(s: ipv, as: args) → Nothing
+.RS 4
+Add a passthrough rule with the arguments
+\fIargs\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.direct\&.Methods\&.addPassthrough\&.
+.sp
+Possible errors: INVALID_IPV, ALREADY_ENABLED
+.RE
+.PP
+addRule(s: ipv, s: table, s: chain, i: priority, as: args) → Nothing
+.RS 4
+Add a rule with the arguments
+\fIargs\fR
+to
+\fIchain\fR
+in
+\fItable\fR
+with
+\fIpriority\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. The priority is used to order rules\&. Priority 0 means add rule on top of the chain, with a higher priority the rule will be added further down\&. Rules with the same priority are on the same level and the order of these rules is not fixed and may change\&. If you want to make sure that a rule will be added after another one, use a low priority for the first and a higher for the following\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.direct\&.Methods\&.addRule\&.
+.sp
+Possible errors: INVALID_IPV, INVALID_TABLE, ALREADY_ENABLED
+.RE
+.PP
+getAllChains() → a(sss)
+.RS 4
+Get all chains added to all tables in format: ipv, table, chain\&. This concerns only chains previously added with
+addChain\&. Return value is a array of (\fIipv\fR,
+\fItable\fR,
+\fIchain\fR)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.direct\&.Methods\&.getAllChains\&.
+.PP
+\fIipv (s)\fR: either \fIipv4\fR (iptables) or \fIipv6\fR (ip6tables) or \fIeb\fR (ebtables)\&.
+.RS 4
+.RE
+.PP
+\fItable (s)\fR: one of \fIfilter\fR, \fImangle\fR, \fInat\fR, \fIraw\fR, \fIsecurity\fR
+.RS 4
+.RE
+.PP
+\fIchain (s)\fR: name of a chain\&.
+.RS 4
+.RE
+.sp
+.RE
+.PP
+getAllPassthroughs() → a(sas)
+.RS 4
+Get all passthrough rules added in all ipv types in format: ipv, rule\&. This concerns only rules previously added with
+addPassthrough\&. Return value is a array of (\fIipv\fR, array of
+\fIarguments\fR)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.direct\&.Methods\&.getAllPassthroughs\&.
+.PP
+\fIipv (s)\fR: either \fIipv4\fR (iptables) or \fIipv6\fR (ip6tables) or \fIeb\fR (ebtables)\&.
+.RS 4
+.RE
+.PP
+\fIarguments (as)\fR: array of commands, parameters and other iptables/ip6tables/ebtables command line options\&.
+.RS 4
+.RE
+.sp
+.RE
+.PP
+getAllRules() → a(sssias)
+.RS 4
+Get all rules added to all chains in all tables in format: ipv, table, chain, priority, rule\&. This concerns only rules previously added with
+addRule\&. Return value is a array of (\fIipv\fR,
+\fItable\fR,
+\fIchain\fR,
+\fIpriority\fR, array of
+\fIarguments\fR)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.direct\&.Methods\&.getAllRules\&.
+.PP
+\fIipv (s)\fR: either \fIipv4\fR (iptables) or \fIipv6\fR (ip6tables) or \fIeb\fR (ebtables)\&.
+.RS 4
+.RE
+.PP
+\fItable (s)\fR: one of \fIfilter\fR, \fImangle\fR, \fInat\fR, \fIraw\fR, \fIsecurity\fR
+.RS 4
+.RE
+.PP
+\fIchain (s)\fR: name of a chain\&.
+.RS 4
+.RE
+.PP
+\fIpriority (i)\fR: used to order rules\&.
+.RS 4
+.RE
+.PP
+\fIarguments (as)\fR: array of commands, parameters and other iptables/ip6tables/ebtables command line options\&.
+.RS 4
+.RE
+.sp
+.RE
+.PP
+getChains(s: ipv, s: table) → as
+.RS 4
+Return an array of chains (s) added to
+\fItable\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. This concerns only chains previously added with
+addChain\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.direct\&.Methods\&.getChains\&.
+.sp
+Possible errors: INVALID_IPV, INVALID_TABLE
+.RE
+.PP
+getPassthroughs(s: ipv) → aas
+.RS 4
+Get tracked passthrough rules added in either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. This concerns only rules previously added with
+addPassthrough\&. Return value is a array of (array of
+\fIarguments\fR)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.direct\&.Methods\&.getPassthroughs\&.
+.PP
+\fIarguments (as)\fR: array of commands, parameters and other iptables/ip6tables/ebtables command line options\&.
+.RS 4
+.RE
+.sp
+.RE
+.PP
+getRules(s: ipv, s: table, s: chain) → a(ias)
+.RS 4
+Get all rules added to
+\fIchain\fR
+in
+\fItable\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. This concerns only rules previously added with
+addRule\&. Return value is a array of (\fIpriority\fR, array of
+\fIarguments\fR)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.direct\&.Methods\&.getRules\&.
+.PP
+\fIpriority (i)\fR: used to order rules\&.
+.RS 4
+.RE
+.PP
+\fIarguments (as)\fR: array of commands, parameters and other iptables/ip6tables/ebtables command line options\&.
+.RS 4
+.RE
+.sp
+Possible errors: INVALID_IPV, INVALID_TABLE
+.RE
+.PP
+getSettings() → (a(sss)a(sssias)a(sas))
+.RS 4
+Get settings of permanent direct configuration in format: array of
+\fIchains\fR, array of
+\fIrules\fR, array of
+\fIpassthroughs\fR\&.
+.PP
+\fIchains (a(sss))\fR: array of (\fIipv\fR, \fItable\fR, \fIchain\fR), see \*(Aqchain\*(Aq in \fBfirewalld.direct\fR(5)\&.
+.RS 4
+.RE
+\&.
+                  .PP
+\fIrules (a(sssias))\fR: array of (\fIipv\fR, \fItable\fR, \fIchain\fR, \fIpriority\fR, array of \fIarguments\fR), see \*(Aqrule\*(Aq in \fBfirewalld.direct\fR(5)\&.
+.RS 4
+.RE
+\&.
+                  .PP
+\fIpassthroughs (a(sas))\fR: array of (\fIipv\fR, array of \fIarguments\fR), see passthrough in \fBfirewalld.direct\fR(5)\&.
+.RS 4
+.RE
+\&.
+                .sp
+.RE
+.PP
+queryChain(s: ipv, s: table, s: chain) → b
+.RS 4
+Return whether a
+\fIchain\fR
+exists in
+\fItable\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. This concerns only chains previously added with
+addChain\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.direct\&.Methods\&.queryChain\&.
+.sp
+Possible errors: INVALID_IPV, INVALID_TABLE
+.RE
+.PP
+queryPassthrough(s: ipv, as: args) → b
+.RS 4
+Return whether a tracked passthrough rule with the arguments
+\fIargs\fR
+exists for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. This concerns only rules previously added with
+addPassthrough\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.direct\&.Methods\&.queryPassthrough\&.
+.sp
+Possible errors: INVALID_IPV
+.RE
+.PP
+queryRule(s: ipv, s: table, s: chain, i: priority, as: args) → b
+.RS 4
+Return whether a rule with
+\fIpriority\fR
+and the arguments
+\fIargs\fR
+exists in
+\fIchain\fR
+in
+\fItable\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. This concerns only rules previously added with
+addRule\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.direct\&.Methods\&.queryRule\&.
+.sp
+Possible errors: INVALID_IPV, INVALID_TABLE
+.RE
+.PP
+removeChain(s: ipv, s: table, s: chain) → Nothing
+.RS 4
+Remove a
+\fIchain\fR
+from
+\fItable\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. Only chains previously added with
+addChain
+can be removed this way\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.direct\&.Methods\&.removeChain\&.
+.sp
+Possible errors: INVALID_IPV, INVALID_TABLE, NOT_ENABLED
+.RE
+.PP
+removePassthrough(s: ipv, as: args) → Nothing
+.RS 4
+Remove a passthrough rule with arguments
+\fIargs\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. Only rules previously added with
+addPassthrough
+can be removed this way\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.direct\&.Methods\&.removePassthrough\&.
+.sp
+Possible errors: INVALID_IPV, NOT_ENABLED
+.RE
+.PP
+removeRule(s: ipv, s: table, s: chain, i: priority, as: args) → Nothing
+.RS 4
+Remove a rule with
+\fIpriority\fR
+and arguments
+\fIargs\fR
+from
+\fIchain\fR
+in
+\fItable\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. Only rules previously added with
+addRule
+can be removed this way\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.direct\&.Methods\&.removeRule\&.
+.sp
+Possible errors: INVALID_IPV, INVALID_TABLE, NOT_ENABLED
+.RE
+.PP
+removeRules(s: ipv, s: table, s: chain) → Nothing
+.RS 4
+Remove all rules from
+\fIchain\fR
+in
+\fItable\fR
+for
+\fIipv\fR
+being either
+\fIipv4\fR
+(iptables) or
+\fIipv6\fR
+(ip6tables) or
+\fIeb\fR
+(ebtables)\&. This concerns only rules previously added with
+addRule\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.direct\&.Methods\&.removeRules\&.
+.sp
+Possible errors: INVALID_IPV, INVALID_TABLE
+.RE
+.PP
+update((a(sss)a(sssias)a(sas)): settings) → Nothing
+.RS 4
+Update permanent direct configuration with given
+\fIsettings\fR\&. Settings are in format: array of
+\fIchains\fR, array of
+\fIrules\fR, array of
+\fIpassthroughs\fR\&.
+.PP
+\fIchains (a(sss))\fR: array of (\fIipv\fR, \fItable\fR, \fIchain\fR), see \*(Aqchain\*(Aq in \fBfirewalld.direct\fR(5)\&.
+.RS 4
+.RE
+\&.
+                  .PP
+\fIrules (a(sssias))\fR: array of (\fIipv\fR, \fItable\fR, \fIchain\fR, \fIpriority\fR, array of \fIarguments\fR), see \*(Aqrule\*(Aq in \fBfirewalld.direct\fR(5)\&.
+.RS 4
+.RE
+\&.
+                  .PP
+\fIpassthroughs (a(sas))\fR: array of (\fIipv\fR, array of \fIarguments\fR), see passthrough in \fBfirewalld.direct\fR(5)\&.
+.RS 4
+.RE
+\&.
+                .sp
+Possible errors: INVALID_TYPE
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSignals\fR
+.RS 4
+.PP
+Updated()
+.RS 4
+Emitted when configuration has been updated\&.
+.RE
+.RE
+.SS "org\&.fedoraproject\&.FirewallD1\&.config\&.policies"
+.PP
+Interface for permanent lockdown\-whitelist configuration, see also
+\fBfirewalld.lockdown-whitelist\fR(5)\&. For runtime configuration see
+org\&.fedoraproject\&.FirewallD1\&.policies
+interface\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBMethods\fR
+.RS 4
+.PP
+addLockdownWhitelistCommand(s: command) → Nothing
+.RS 4
+Add
+\fIcommand\fR
+to whitelist\&. See
+\fIcommand\fR
+option in
+\fBfirewalld.lockdown-whitelist\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.policies\&.Methods\&.addLockdownWhitelistCommand\&.
+.sp
+Possible errors: ALREADY_ENABLED, INVALID_TYPE
+.RE
+.PP
+addLockdownWhitelistContext(s: context) → Nothing
+.RS 4
+Add
+\fIcontext\fR
+to whitelist\&. See
+\fIselinux\fR
+option in
+\fBfirewalld.lockdown-whitelist\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.policies\&.Methods\&.addLockdownWhitelistContext\&.
+.sp
+Possible errors: ALREADY_ENABLED, INVALID_TYPE
+.RE
+.PP
+addLockdownWhitelistUid(i: uid) → Nothing
+.RS 4
+Add user id
+\fIuid\fR
+to whitelist\&. See
+\fIuser\fR
+option in
+\fBfirewalld.lockdown-whitelist\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.policies\&.Methods\&.addLockdownWhitelistUid\&.
+.sp
+Possible errors: ALREADY_ENABLED, INVALID_TYPE
+.RE
+.PP
+addLockdownWhitelistUser(s: user) → Nothing
+.RS 4
+Add
+\fIuser\fR
+name to whitelist\&. See
+\fIuser\fR
+option in
+\fBfirewalld.lockdown-whitelist\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.policies\&.Methods\&.addLockdownWhitelistUser\&.
+.sp
+Possible errors: ALREADY_ENABLED, INVALID_TYPE
+.RE
+.PP
+getLockdownWhitelist() → (asasasai)
+.RS 4
+Get settings of permanent lockdown\-whitelist configuration in format:
+\fIcommands\fR,
+\fIselinux contexts\fR,
+\fIusers\fR,
+\fIuids\fR
+.PP
+\fIcommands (as)\fR: see \fIcommand\fR option in \fBfirewalld.lockdown-whitelist\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIselinux contexts (as)\fR: see \fIselinux\fR option in \fBfirewalld.lockdown-whitelist\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIusers (as)\fR: see \fIname\fR attribute of \fIuser\fR option in \fBfirewalld.lockdown-whitelist\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIuids (ai)\fR: see \fIid\fR attribute of \fIuser\fR option in \fBfirewalld.lockdown-whitelist\fR(5)\&.
+.RS 4
+.RE
+.sp
+.RE
+.PP
+getLockdownWhitelistCommands() → as
+.RS 4
+List all command lines (s) that are on whitelist\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.policies\&.Methods\&.getLockdownWhitelistCommands\&.
+.RE
+.PP
+getLockdownWhitelistContexts() → as
+.RS 4
+List all contexts (s) that are on whitelist\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.policies\&.Methods\&.getLockdownWhitelistContexts\&.
+.RE
+.PP
+getLockdownWhitelistUids() → ai
+.RS 4
+List all user ids (i) that are on whitelist\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.policies\&.Methods\&.getLockdownWhitelistUids\&.
+.RE
+.PP
+getLockdownWhitelistUsers() → as
+.RS 4
+List all users (s) that are on whitelist\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.policies\&.Methods\&.getLockdownWhitelistUsers\&.
+.RE
+.PP
+queryLockdownWhitelistCommand(s: command) → b
+.RS 4
+Query whether
+\fIcommand\fR
+is on whitelist\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.policies\&.Methods\&.queryLockdownWhitelistCommand\&.
+.RE
+.PP
+queryLockdownWhitelistContext(s: context) → b
+.RS 4
+Query whether
+\fIcontext\fR
+is on whitelist\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.policies\&.Methods\&.queryLockdownWhitelistContext\&.
+.RE
+.PP
+queryLockdownWhitelistUid(i: uid) → b
+.RS 4
+Query whether user id
+\fIuid\fR
+is on whitelist\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.policies\&.Methods\&.queryLockdownWhitelistUid\&.
+.RE
+.PP
+queryLockdownWhitelistUser(s: user) → b
+.RS 4
+Query whether
+\fIuser\fR
+is on whitelist\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.policies\&.Methods\&.queryLockdownWhitelistUser\&.
+.RE
+.PP
+removeLockdownWhitelistCommand(s: command) → Nothing
+.RS 4
+Remove
+\fIcommand\fR
+from whitelist\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.policies\&.Methods\&.removeLockdownWhitelistCommand\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removeLockdownWhitelistContext(s: context) → Nothing
+.RS 4
+Remove
+\fIcontext\fR
+from whitelist\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.policies\&.Methods\&.removeLockdownWhitelistContext\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removeLockdownWhitelistUid(i: uid) → Nothing
+.RS 4
+Remove user id
+\fIuid\fR
+from whitelist\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.policies\&.Methods\&.removeLockdownWhitelistUid\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removeLockdownWhitelistUser(s: user) → Nothing
+.RS 4
+Remove
+\fIuser\fR
+from whitelist\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.policies\&.Methods\&.removeLockdownWhitelistUser\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+setLockdownWhitelist((asasasai): settings) → Nothing
+.RS 4
+Set permanent lockdown\-whitelist configuration to
+\fIsettings\fR\&. Settings are in format:
+\fIcommands\fR,
+\fIselinux contexts\fR,
+\fIusers\fR,
+\fIuids\fR
+.PP
+\fIcommands (as)\fR: see \fIcommand\fR option in \fBfirewalld.lockdown-whitelist\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIselinux contexts (as)\fR: see \fIselinux\fR option in \fBfirewalld.lockdown-whitelist\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIusers (as)\fR: see \fIname\fR attribute of \fIuser\fR option in \fBfirewalld.lockdown-whitelist\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIuids (ai)\fR: see \fIid\fR attribute of \fIuser\fR option in \fBfirewalld.lockdown-whitelist\fR(5)\&.
+.RS 4
+.RE
+.sp
+Possible errors: INVALID_TYPE
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSignals\fR
+.RS 4
+.PP
+LockdownWhitelistUpdated()
+.RS 4
+Emitted when permanent lockdown\-whitelist configuration has been updated\&.
+.RE
+.RE
+.SS "org\&.fedoraproject\&.FirewallD1\&.config\&.ipset"
+.PP
+Interface for permanent ipset configuration, see also
+\fBfirewalld.ipset\fR(5)\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBMethods\fR
+.RS 4
+.PP
+addEntry(s: entry) → Nothing
+.RS 4
+Permanently add
+\fIentry\fR
+to list of entries of ipset\&. See
+\fIentry\fR
+tag in
+\fBfirewalld.ipset\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.ipset\&.Methods\&.addEntry\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+addOption(s: key, s: value) → Nothing
+.RS 4
+Permanently add (\fIkey\fR,
+\fIvalue\fR) to the ipset\&. See
+\fIoption\fR
+tag in
+\fBfirewalld.ipset\fR(5)\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+getDescription() → s
+.RS 4
+Get description of ipset\&. See
+\fIdescription\fR
+tag in
+\fBfirewalld.ipset\fR(5)\&.
+.RE
+.PP
+getEntries() → as
+.RS 4
+Get list of entries added to ipset\&. See
+\fIentry\fR
+tag in
+\fBfirewalld.ipset\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.ipset\&.Methods\&.getEntries\&.
+.sp
+Possible errors: IPSET_WITH_TIMEOUT
+.RE
+.PP
+getOptions() → a{ss}
+.RS 4
+Get dictionary of
+\fIoptions\fR
+set for ipset\&. See
+\fIoption\fR
+tag in
+\fBfirewalld.ipset\fR(5)\&.
+.RE
+.PP
+getSettings() → (ssssa{ss}as)
+.RS 4
+Return permanent settings of the ipset\&. For getting runtime settings see
+org\&.fedoraproject\&.FirewallD1\&.ipset\&.Methods\&.getIPSetSettings\&. Settings are in format:
+\fIversion\fR,
+\fIname\fR,
+\fIdescription\fR,
+\fItype\fR, dictionary of
+\fIoptions\fR
+and array of
+\fIentries\fR\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIipset\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fItype (s)\fR: see \fItype\fR attribute of \fIipset\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIoptions (a{ss})\fR: dictionary of {option : value} \&. See \fIoptions\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIentries (as)\fR: array of entries, see \fIentry\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.sp
+.RE
+.PP
+getShort() → s
+.RS 4
+Get name of ipset\&. See
+\fIshort\fR
+tag in
+\fBfirewalld.ipset\fR(5)\&.
+.RE
+.PP
+getType() → s
+.RS 4
+Get type of ipset\&. See
+\fItype\fR
+attribute of
+\fIipset\fR
+tag in
+\fBfirewalld.ipset\fR(5)\&.
+.RE
+.PP
+getVersion() → s
+.RS 4
+Get version of ipset\&. See
+\fIversion\fR
+attribute of
+\fIipset\fR
+tag in
+\fBfirewalld.ipset\fR(5)\&.
+.RE
+.PP
+loadDefaults() → Nothing
+.RS 4
+Load default settings for built\-in ipset\&.
+.sp
+Possible errors: NO_DEFAULTS
+.RE
+.PP
+queryEntry(s: entry) → b
+.RS 4
+Return whether
+\fIentry\fR
+has been added to
+\fIipset\fR\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.ipset\&.Methods\&.queryEntry\&.
+.RE
+.PP
+queryOption(s: key, s: value) → b
+.RS 4
+Return whether (\fIkey\fR,
+\fIvalue\fR) has been added to options of the
+\fIipset\fR\&.
+.RE
+.PP
+remove() → Nothing
+.RS 4
+Remove not built\-in ipset\&.
+.sp
+Possible errors: BUILTIN_IPSET
+.RE
+.PP
+removeEntry(s: entry) → Nothing
+.RS 4
+Permanently remove
+\fIentry\fR
+from ipset\&. See
+\fIentry\fR
+tag in
+\fBfirewalld.ipset\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.ipset\&.Methods\&.removeEntry\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removeOption(s: key) → Nothing
+.RS 4
+Permanently remove
+\fIkey\fR
+from the ipset\&. See
+\fIoption\fR
+tag in
+\fBfirewalld.ipset\fR(5)\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+rename(s: name) → Nothing
+.RS 4
+Rename not built\-in ipset to
+\fIname\fR\&.
+.sp
+Possible errors: BUILTIN_IPSET
+.RE
+.PP
+setDescription(s: description) → Nothing
+.RS 4
+Permanently set description of ipset to
+\fIdescription\fR\&. See
+\fIdescription\fR
+tag in
+\fBfirewalld.ipset\fR(5)\&.
+.RE
+.PP
+setEntries(as: entries) → Nothing
+.RS 4
+Permanently set list of entries to
+\fIentries\fR\&. See
+\fIentry\fR
+tag in
+\fBfirewalld.ipset\fR(5)\&.
+.RE
+.PP
+setOptions(a{ss}: options) → Nothing
+.RS 4
+Permanently set dict of options to
+\fIoptions\fR\&. See
+\fIoption\fR
+tag in
+\fBfirewalld.ipset\fR(5)\&.
+.RE
+.PP
+setShort(s: short) → Nothing
+.RS 4
+Permanently set name of ipset to
+\fIshort\fR\&. See
+\fIshort\fR
+tag in
+\fBfirewalld.ipset\fR(5)\&.
+.RE
+.PP
+setType(s: ipset_type) → Nothing
+.RS 4
+Permanently set type of ipset to
+\fIipset_type\fR\&. See
+\fItype\fR
+attribute of
+\fIipset\fR
+tag in
+\fBfirewalld.ipset\fR(5)\&.
+.RE
+.PP
+setVersion(s: version) → Nothing
+.RS 4
+Permanently set version of ipset to
+\fIversion\fR\&. See
+\fIversion\fR
+attribute of
+\fIipset\fR
+tag in
+\fBfirewalld.ipset\fR(5)\&.
+.RE
+.PP
+update((ssssa{ss}as): settings) → Nothing
+.RS 4
+Update settings of ipset to
+\fIsettings\fR\&. Settings are in format:
+\fIversion\fR,
+\fIname\fR,
+\fIdescription\fR,
+\fItype\fR, dictionary of
+\fIoptions\fR
+and array of
+\fIentries\fR\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIipset\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fItype (s)\fR: see \fItype\fR attribute of \fIipset\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIoptions (a{ss})\fR: dictionary of {option : value} \&. See \fIoptions\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIentries (as)\fR: array of entries, see \fIentry\fR tag in \fBfirewalld.ipset\fR(5)\&.
+.RS 4
+.RE
+.sp
+Possible errors: INVALID_TYPE
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSignals\fR
+.RS 4
+.PP
+Removed(s: name)
+.RS 4
+Emitted when ipset with
+\fIname\fR
+has been removed\&.
+.RE
+.PP
+Renamed(s: name)
+.RS 4
+Emitted when ipset has been renamed to
+\fIname\fR\&.
+.RE
+.PP
+Updated(s: name)
+.RS 4
+Emitted when ipset with
+\fIname\fR
+has been updated\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBProperties\fR
+.RS 4
+.PP
+builtin \- b \- (ro)
+.RS 4
+True if ipset is build\-in, false else\&.
+.RE
+.PP
+default \- b \- (ro)
+.RS 4
+True if build\-in ipset has default settings\&. False if it has been modified\&. Always False for not build\-in ipsets\&.
+.RE
+.PP
+filename \- s \- (ro)
+.RS 4
+Name (including \&.xml extension) of file where the configuration is stored\&.
+.RE
+.PP
+name \- s \- (ro)
+.RS 4
+Name of ipset\&.
+.RE
+.PP
+path \- s \- (ro)
+.RS 4
+Path to directory where the ipset configuration is stored\&. Should be either /usr/lib/firewalld/ipsets or /etc/firewalld/ipsets\&.
+.RE
+.RE
+.SS "org\&.fedoraproject\&.FirewallD1\&.config\&.zone"
+.PP
+Interface for permanent zone configuration, see also
+\fBfirewalld.zone\fR(5)\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBMethods\fR
+.RS 4
+.PP
+addForwardPort(s: port, s: protocol, s: toport, s: toaddr) → Nothing
+.RS 4
+Permanently add (\fIport\fR,
+\fIprotocol\fR,
+\fItoport\fR,
+\fItoaddr\fR) to list of forward ports of zone\&. See
+\fIforward\-port\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.addForwardPort\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+addIcmpBlock(s: icmptype) → Nothing
+.RS 4
+Permanently add
+\fIicmptype\fR
+to list of icmp types blocked in zone\&. See
+\fIicmp\-block\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.addIcmpBlock\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+addIcmpBlock(s: icmptype) → Nothing
+.RS 4
+Permanently add icmp block inversion to zone\&. See
+\fIicmp\-block\-inversion\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.addIcmpBlockInversion\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+addInterface(s: interface) → Nothing
+.RS 4
+Permanently add
+\fIinterface\fR
+to list of interfaces bound to zone\&. See
+\fIinterface\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.addInterface\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+addMasquerade() → Nothing
+.RS 4
+Permanently enable masquerading in zone\&. See
+\fImasquerade\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.addMasquerade\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+addPort(s: port, s: protocol) → Nothing
+.RS 4
+Permanently add (\fIport\fR,
+\fIprotocol\fR) to list of ports of zone\&. See
+\fIport\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.addPort\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+addProtocol(s: protocol) → Nothing
+.RS 4
+Permanently add protocol into
+\fIzone\fR\&. The protocol can be any protocol supported by the system\&. Please have a look at
+\fI/etc/protocols\fR
+for supported protocols\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.addProtocol\&.
+.sp
+Possible errors: INVALID_PROTOCOL, ALREADY_ENABLED
+.RE
+.PP
+addRichRule(s: rule) → Nothing
+.RS 4
+Permanently add
+\fIrule\fR
+to list of rich\-language rules in zone\&. See
+\fIrule\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.addRichRule\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+addService(s: service) → Nothing
+.RS 4
+Permanently add
+\fIservice\fR
+to list of services used in zone\&. See
+\fIservice\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.addService\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+addSource(s: source) → Nothing
+.RS 4
+Permanently add
+\fIsource\fR
+to list of source addresses bound to zone\&. See
+\fIsource\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.addSource\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+addSourcePort(s: port, s: protocol) → Nothing
+.RS 4
+Permanently add (\fIport\fR,
+\fIprotocol\fR) to list of source ports of zone\&. See
+\fIsource\-port\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.addSourcePort\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+getDescription() → s
+.RS 4
+Get description of zone\&. See
+\fIdescription\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+getForwardPorts() → a(ssss)
+.RS 4
+Get list of (\fIport\fR,
+\fIprotocol\fR,
+\fItoport\fR,
+\fItoaddr\fR) defined in zone\&. See
+\fIforward\-port\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.getForwardPorts\&.
+.RE
+.PP
+getIcmpBlockInversion() → b
+.RS 4
+Get icmp block inversion flag of zone\&. See
+\fIicmp\-block\-inversion\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+getIcmpBlocks() → as
+.RS 4
+Get list of icmp type names blocked in zone\&. See
+\fIicmp\-block\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.getIcmpBlocks\&.
+.RE
+.PP
+getInterfaces() → as
+.RS 4
+Get list of interfaces bound to zone\&. See
+\fIinterface\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.getInterfaces\&.
+.RE
+.PP
+getMasquerade() → b
+.RS 4
+Return whether
+\fImasquerade\fR
+is enabled in zone\&. This is the same as queryMasquerade() method\&. See
+\fImasquerade\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+getPorts() → a(ss)
+.RS 4
+Get list of (\fIport\fR,
+\fIprotocol\fR) defined in zone\&. See
+\fIport\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.getPorts\&.
+.RE
+.PP
+getProtocols() → as
+.RS 4
+Return array of protocols (s) previously enabled in
+\fIzone\fR\&. For getting runtime settings see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.getProtocols\&.
+.RE
+.PP
+getRichRules() → as
+.RS 4
+Get list of rich\-language rules in zone\&. See
+\fIrule\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.getRichRules\&.
+.RE
+.PP
+getServices() → as
+.RS 4
+Get list of service names used in zone\&. See
+\fIservice\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.getServices\&.
+.RE
+.PP
+getSettings() → (sssbsasa(ss)asba(ssss)asasasasa(ss)b)
+.RS 4
+This function is deprecated, use
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.getSettings2
+instead\&.
+.RE
+.PP
+getSettings2() → a{sv}
+.RS 4
+Return permanent settings of given
+\fIzone\fR\&. For getting runtime settings see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.getZoneSettings2\&. Settings are a dictionary indexed by keywords\&. For the type of each value see below\&. If the value is empty it may be omitted\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIzone\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fItarget (s)\fR: see \fItarget\fR attribute of \fIzone\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIservices (as)\fR: array of service names, see \fIservice\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIports (a(ss))\fR: array of port and protocol pairs\&. See \fIport\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIicmp_blocks (as)\fR: array of icmp\-blocks\&. See \fIicmp\-block\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fImasquerade (b)\fR: see \fImasquerade\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIforward_ports (a(ssss))\fR: array of (port, protocol, to\-port, to\-addr)\&. See \fIforward\-port\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIinterfaces (as)\fR: array of interfaces\&. See \fIinterface\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIsources (as)\fR: array of source addresses\&. See \fIsource\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIrules_str (as)\fR: array of rich\-language rules\&. See \fIrule\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIprotocols (as)\fR: array of protocols, see \fIprotocol\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIsource_ports (a(ss))\fR: array of port and protocol pairs\&. See \fIsource\-port\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIicmp_block_inversion (b)\fR: see \fIicmp\-block\-inversion\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIforward (b)\fR: see \fIforward\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIingress_priority (i)\fR: see \fIingress\-priority\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIegress_priority (i)\fR: see \fIegress\-priority\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.sp
+.RE
+.PP
+getShort() → s
+.RS 4
+Get name of zone\&. See
+\fIshort\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+getSourcePorts() → a(ss)
+.RS 4
+Get list of (\fIport\fR,
+\fIprotocol\fR) defined in zone\&. See
+\fIsource\-port\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.getSourcePorts\&.
+.RE
+.PP
+getSources() → as
+.RS 4
+Get list of source addresses bound to zone\&. See
+\fIsource\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.getSources\&.
+.RE
+.PP
+getTarget() → s
+.RS 4
+Get target of zone\&. See
+\fItarget\fR
+attribute of
+\fIzone\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+getVersion() → s
+.RS 4
+Get version of zone\&. See
+\fIversion\fR
+attribute of
+\fIzone\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+loadDefaults() → Nothing
+.RS 4
+Load default settings for built\-in zone\&.
+.sp
+Possible errors: NO_DEFAULTS
+.RE
+.PP
+queryForwardPort(s: port, s: protocol, s: toport, s: toaddr) → b
+.RS 4
+Return whether (\fIport\fR,
+\fIprotocol\fR,
+\fItoport\fR,
+\fItoaddr\fR) is in list of forward ports of zone\&. See
+\fIforward\-port\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.queryForwardPort\&.
+.RE
+.PP
+queryIcmpBlock(s: icmptype) → b
+.RS 4
+Return whether
+\fIicmptype\fR
+is in list of icmp types blocked in zone\&. See
+\fIicmp\-block\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.queryIcmpBlock\&.
+.RE
+.PP
+queryIcmpBlockInversion() → b
+.RS 4
+Return whether
+\fIicmp block inversion\fR
+is in enabled in zone\&. See
+\fIicmp\-block\-inversion\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.queryIcmpBlockInversion\&.
+.RE
+.PP
+queryInterface(s: interface) → b
+.RS 4
+Return whether
+\fIinterface\fR
+is in list of interfaces bound to zone\&. See
+\fIinterface\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.queryInterface\&.
+.RE
+.PP
+queryMasquerade() → b
+.RS 4
+Return whether
+\fImasquerade\fR
+is enabled in zone\&. This is the same as getMasquerade() method\&. See
+\fImasquerade\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.queryMasquerade\&.
+.RE
+.PP
+queryPort(s: port, s: protocol) → b
+.RS 4
+Return whether (\fIport\fR,
+\fIprotocol\fR) is in list of ports of zone\&. See
+\fIport\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.queryPort\&.
+.RE
+.PP
+queryProtocol(s: protocol) → b
+.RS 4
+Return whether
+\fIprotocol\fR
+has been added in
+\fIzone\fR\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.queryProtocol\&.
+.sp
+Possible errors: INVALID_PROTOCOL
+.RE
+.PP
+queryRichRule(s: rule) → b
+.RS 4
+Return whether
+\fIrule\fR
+is in list of rich\-language rules in zone\&. See
+\fIrule\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.queryRichRule\&.
+.RE
+.PP
+queryService(s: service) → b
+.RS 4
+Return whether
+\fIservice\fR
+is in list of services used in zone\&. See
+\fIservice\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.queryService\&.
+.RE
+.PP
+querySource(s: source) → b
+.RS 4
+Return whether
+\fIsource\fR
+is in list of source addresses bound to zone\&. See
+\fIsource\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.querySource\&.
+.RE
+.PP
+querySourcePort(s: port, s: protocol) → b
+.RS 4
+Return whether (\fIport\fR,
+\fIprotocol\fR) is in list of source ports of zone\&. See
+\fIsource\-port\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.querySourcePort\&.
+.RE
+.PP
+remove() → Nothing
+.RS 4
+Remove not built\-in zone\&.
+.sp
+Possible errors: BUILTIN_ZONE
+.RE
+.PP
+removeForwardPort(s: port, s: protocol, s: toport, s: toaddr) → Nothing
+.RS 4
+Permanently remove (\fIport\fR,
+\fIprotocol\fR,
+\fItoport\fR,
+\fItoaddr\fR) from list of forward ports of zone\&. See
+\fIforward\-port\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.removeForwardPort\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removeIcmpBlock(s: icmptype) → Nothing
+.RS 4
+Permanently remove
+\fIicmptype\fR
+from list of icmp types blocked in zone\&. See
+\fIicmp\-block\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.removeIcmpBlock\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removeIcmpBlockInversion() → Nothing
+.RS 4
+Permanently remove
+\fIicmp block inversion\fR
+from the zone\&. See
+\fIicmp\-block\-inversion\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.removeIcmpBlockInversion\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removeInterface(s: interface) → Nothing
+.RS 4
+Permanently remove
+\fIinterface\fR
+from list of interfaces bound to zone\&. See
+\fIinterface\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.removeInterface\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removeMasquerade() → Nothing
+.RS 4
+Permanently disable masquerading in zone\&. See
+\fImasquerade\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.removeMasquerade\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removePort(s: port, s: protocol) → Nothing
+.RS 4
+Permanently remove (\fIport\fR,
+\fIprotocol\fR) from list of ports of zone\&. See
+\fIport\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.removePort\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removeProtocol(s: protocol) → Nothing
+.RS 4
+Permanently remove protocol from
+\fIzone\fR\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.removeProtocol\&.
+.sp
+Possible errors: INVALID_PROTOCOL, NOT_ENABLED
+.RE
+.PP
+removeRichRule(s: rule) → Nothing
+.RS 4
+Permanently remove
+\fIrule\fR
+from list of rich\-language rules in zone\&. See
+\fIrule\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.removeRichRule\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removeService(s: service) → Nothing
+.RS 4
+Permanently remove
+\fIservice\fR
+from list of services used in zone\&. See
+\fIservice\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.removeService\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removeSource(s: source) → Nothing
+.RS 4
+Permanently remove
+\fIsource\fR
+from list of source addresses bound to zone\&. See
+\fIsource\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.removeSource\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removeSourcePort(s: port, s: protocol) → Nothing
+.RS 4
+Permanently remove (\fIport\fR,
+\fIprotocol\fR) from list of source ports of zone\&. See
+\fIsource\-port\fR
+tag in
+\fBfirewalld.zone\fR(5)\&. For runtime operation see
+org\&.fedoraproject\&.FirewallD1\&.zone\&.Methods\&.removeSourcePort\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+rename(s: name) → Nothing
+.RS 4
+Rename not built\-in zone to
+\fIname\fR\&.
+.sp
+Possible errors: BUILTIN_ZONE
+.RE
+.PP
+setDescription(s: description) → Nothing
+.RS 4
+Permanently set description of zone to
+\fIdescription\fR\&. See
+\fIdescription\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+setForwardPorts(a(ssss): ports) → Nothing
+.RS 4
+Permanently set forward ports of zone to list of (\fIport\fR,
+\fIprotocol\fR,
+\fItoport\fR,
+\fItoaddr\fR)\&. See
+\fIforward\-port\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+setIcmpBlockInversion(b: flag) → Nothing
+.RS 4
+Permanently set icmp block inversion flag of zone to
+\fIflag\fR\&. See
+\fIicmp\-block\-inversion\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+setIcmpBlocks(as: icmptypes) → Nothing
+.RS 4
+Permanently set list of icmp types blocked in zone to
+\fIicmptypes\fR\&. See
+\fIicmp\-block\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+setInterfaces(as: interfaces) → Nothing
+.RS 4
+Permanently set list of interfaces bound to zone to
+\fIinterfaces\fR\&. See
+\fIinterface\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+setMasquerade(b: masquerade) → Nothing
+.RS 4
+Permanently set masquerading in zone to
+\fImasquerade\fR\&. See
+\fImasquerade\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+setPorts(a(ss): ports) → Nothing
+.RS 4
+Permanently set ports of zone to list of (\fIport\fR,
+\fIprotocol\fR)\&. See
+\fIport\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+setProtocols(as: protocols) → Nothing
+.RS 4
+Permanently set list of protocols used in zone to
+\fIprotocols\fR\&. See
+\fIprotocol\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+setRichRules(as: rules) → Nothing
+.RS 4
+Permanently set list of rich\-language rules to
+\fIrules\fR\&. See
+\fIrule\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+setServices(as: services) → Nothing
+.RS 4
+Permanently set list of services used in zone to
+\fIservices\fR\&. See
+\fIservice\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+setShort(s: short) → Nothing
+.RS 4
+Permanently set name of zone to
+\fIshort\fR\&. See
+\fIshort\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+setSourcePorts(a(ss): ports) → Nothing
+.RS 4
+Permanently set source\-ports of zone to list of (\fIport\fR,
+\fIprotocol\fR)\&. See
+\fIsource\-port\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+setSources(as: sources) → Nothing
+.RS 4
+Permanently set list of source addresses bound to zone to
+\fIsources\fR\&. See
+\fIsource\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+setTarget(s: target) → Nothing
+.RS 4
+Permanently set target of zone to
+\fItarget\fR\&. See
+\fItarget\fR
+attribute of
+\fIzone\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+setVersion(s: version) → Nothing
+.RS 4
+Permanently set version of zone to
+\fIversion\fR\&. See
+\fIversion\fR
+attribute of
+\fIzone\fR
+tag in
+\fBfirewalld.zone\fR(5)\&.
+.RE
+.PP
+update((sssbsasa(ss)asba(ssss)asasasasa(ss)b): settings) → Nothing
+.RS 4
+This function is deprecated, use
+org\&.fedoraproject\&.FirewallD1\&.config\&.zone\&.Methods\&.update2
+instead\&.
+.RE
+.PP
+update2(a{sv}: settings) → Nothing
+.RS 4
+Update settings of zone to
+\fIsettings\fR\&. Settings are a dictionary indexed by keywords\&. For the type of each value see below\&. To zero a value pass an empty string or list\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIzone\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fItarget (s)\fR: see \fItarget\fR attribute of \fIzone\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIservices (as)\fR: array of service names, see \fIservice\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIports (a(ss))\fR: array of port and protocol pairs\&. See \fIport\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIicmp_blocks (as)\fR: array of icmp\-blocks\&. See \fIicmp\-block\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fImasquerade (b)\fR: see \fImasquerade\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIforward_ports (a(ssss))\fR: array of (port, protocol, to\-port, to\-addr)\&. See \fIforward\-port\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIinterfaces (as)\fR: array of interfaces\&. See \fIinterface\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIsources (as)\fR: array of source addresses\&. See \fIsource\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIrules_str (as)\fR: array of rich\-language rules\&. See \fIrule\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIprotocols (as)\fR: array of protocols, see \fIprotocol\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIsource_ports (a(ss))\fR: array of port and protocol pairs\&. See \fIsource\-port\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIicmp_block_inversion (b)\fR: see \fIicmp\-block\-inversion\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIforward (b)\fR: see \fIforward\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIingress_priority (i)\fR: see \fIingress\-priority\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIegress_priority (i)\fR: see \fIegress\-priority\fR tag in \fBfirewalld.zone\fR(5)\&.
+.RS 4
+.RE
+.sp
+Possible errors: INVALID_TYPE
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSignals\fR
+.RS 4
+.PP
+Removed(s: name)
+.RS 4
+Emitted when zone with
+\fIname\fR
+has been removed\&.
+.RE
+.PP
+Renamed(s: name)
+.RS 4
+Emitted when zone has been renamed to
+\fIname\fR\&.
+.RE
+.PP
+Updated(s: name)
+.RS 4
+Emitted when zone with
+\fIname\fR
+has been updated\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBProperties\fR
+.RS 4
+.PP
+builtin \- b \- (ro)
+.RS 4
+True if zone is build\-in, false else\&.
+.RE
+.PP
+default \- b \- (ro)
+.RS 4
+True if build\-in zone has default settings\&. False if it has been modified\&. Always False for not build\-in zones\&.
+.RE
+.PP
+filename \- s \- (ro)
+.RS 4
+Name (including \&.xml extension) of file where the configuration is stored\&.
+.RE
+.PP
+name \- s \- (ro)
+.RS 4
+Name of zone\&.
+.RE
+.PP
+path \- s \- (ro)
+.RS 4
+Path to directory where the zone configuration is stored\&. Should be either /usr/lib/firewalld/zones or /etc/firewalld/zones\&.
+.RE
+.RE
+.SS "org\&.fedoraproject\&.FirewallD1\&.config\&.policy"
+.PP
+Interface for permanent policy configuration, see also
+\fBfirewalld.policy\fR(5)\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBMethods\fR
+.RS 4
+.PP
+getSettings() → a{sv}
+.RS 4
+Return permanent settings of given
+\fIpolicy\fR\&. For getting runtime settings see
+org\&.fedoraproject\&.FirewallD1\&.policy\&.Methods\&.getPolicySettings\&. Settings are a dictionary indexed by keywords\&. For possible keywords see
+org\&.fedoraproject\&.FirewallD1\&.config\&.Methods\&.addPolicy\&.
+.RE
+.PP
+loadDefaults() → Nothing
+.RS 4
+Load default settings for built\-in policy\&.
+.sp
+Possible errors: NO_DEFAULTS
+.RE
+.PP
+remove() → Nothing
+.RS 4
+Remove not built\-in policy\&.
+.sp
+Possible errors: BUILTIN_POLICY
+.RE
+.PP
+rename(s: name) → Nothing
+.RS 4
+Rename not built\-in policy to
+\fIname\fR\&.
+.sp
+Possible errors: BUILTIN_POLICY
+.RE
+.PP
+update(a{sv}: settings) → Nothing
+.RS 4
+Update settings of policy to
+\fIsettings\fR\&. Settings are a dictionary indexed by keywords\&. For possible keywords see
+org\&.fedoraproject\&.FirewallD1\&.config\&.Methods\&.addPolicy\&. To zero a value pass an empty string or list\&.
+.sp
+Possible errors: INVALID_TYPE
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSignals\fR
+.RS 4
+.PP
+Removed(s: name)
+.RS 4
+Emitted when policy with
+\fIname\fR
+has been removed\&.
+.RE
+.PP
+Renamed(s: name)
+.RS 4
+Emitted when policy has been renamed to
+\fIname\fR\&.
+.RE
+.PP
+Updated(s: name)
+.RS 4
+Emitted when policy with
+\fIname\fR
+has been updated\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBProperties\fR
+.RS 4
+.PP
+builtin \- b \- (ro)
+.RS 4
+True if policy is build\-in, false else\&.
+.RE
+.PP
+default \- b \- (ro)
+.RS 4
+True if build\-in policy has default settings\&. False if it has been modified\&. Always False for not build\-in policies\&.
+.RE
+.PP
+filename \- s \- (ro)
+.RS 4
+Name (including \&.xml extension) of file where the configuration is stored\&.
+.RE
+.PP
+name \- s \- (ro)
+.RS 4
+Name of policy\&.
+.RE
+.PP
+path \- s \- (ro)
+.RS 4
+Path to directory where the policy configuration is stored\&. Should be either /usr/lib/firewalld/policies or /etc/firewalld/policies\&.
+.RE
+.RE
+.SS "org\&.fedoraproject\&.FirewallD1\&.config\&.service"
+.PP
+Interface for permanent service configuration, see also
+\fBfirewalld.service\fR(5)\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBMethods\fR
+.RS 4
+.PP
+addModule(s: module) → Nothing
+.RS 4
+This method is deprecated\&. Please use "helpers" in the update2() method\&.
+.RE
+.PP
+addPort(s: port, s: protocol) → Nothing
+.RS 4
+Permanently add (\fIport\fR,
+\fIprotocol\fR) to list of ports in service\&. See
+\fIport\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+addProtocol(s: protocol) → Nothing
+.RS 4
+Permanently add protocol into
+\fIzone\fR\&. The protocol can be any protocol supported by the system\&. Please have a look at
+\fI/etc/protocols\fR
+for supported protocols\&. See
+\fIprotocol\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.sp
+Possible errors: INVALID_PROTOCOL, ALREADY_ENABLED
+.RE
+.PP
+addSourcePort(s: port, s: protocol) → Nothing
+.RS 4
+Permanently add (\fIport\fR,
+\fIprotocol\fR) to list of source ports in service\&. See
+\fIsource\-port\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+getDescription() → s
+.RS 4
+Get description of service\&. See
+\fIdescription\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.RE
+.PP
+getDestination(s: family) → s
+.RS 4
+Get destination for IP family being either \*(Aqipv4\*(Aq or \*(Aqipv6\*(Aq\&. See
+\fIdestination\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+getDestinations() → a{ss}
+.RS 4
+Get list of destinations\&. Return value is a dictionary of {IP family : IP address} where \*(AqIP family\*(Aq key can be either \*(Aqipv4\*(Aq or \*(Aqipv6\*(Aq\&. See
+\fIdestination\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.RE
+.PP
+getModules() → as
+.RS 4
+This method is deprecated\&. Please use "helpers" in the getSettings2() method\&.
+.RE
+.PP
+getPorts() → a(ss)
+.RS 4
+Get list of (\fIport\fR,
+\fIprotocol\fR) defined in service\&. See
+\fIport\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.RE
+.PP
+getProtocols() → as
+.RS 4
+Return array of protocols (s) defined in
+\fIservice\fR\&. See
+\fIprotocol\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.RE
+.PP
+getSettings() → (sssa(ss)asa{ss}asa(ss))
+.RS 4
+This function is deprecated, use
+org\&.fedoraproject\&.FirewallD1\&.config\&.service\&.Methods\&.getSettings2
+instead\&.
+.RE
+.PP
+getSettings2(s: \fIservice\fR) → s{sv}
+.RS 4
+Return runtime settings of given
+\fIservice\fR\&. For getting runtime settings see
+org\&.fedoraproject\&.FirewallD1\&.Methods\&.getServiceSettings2\&. Settings are a dictionary indexed by keywords\&. For the type of each value see below\&. If the value is empty it may be omitted\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIservice\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIports (a(ss))\fR: array of port and protocol pairs\&. See \fIport\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fImodule names (as)\fR: array of kernel netfilter helpers, see \fImodule\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdestinations (a{ss})\fR: dictionary of {IP family : IP address} where \*(AqIP family\*(Aq key can be either \*(Aqipv4\*(Aq or \*(Aqipv6\*(Aq\&. See \fIdestination\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIprotocols (as)\fR: array of protocols, see \fIprotocol\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIsource_ports (a(ss))\fR: array of port and protocol pairs\&. See \fIsource\-port\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIincludes (as)\fR: array of service includes, see \fIinclude\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIhelpers (as)\fR: array of service helpers, see \fIhelper\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.sp
+.RE
+.PP
+getShort() → s
+.RS 4
+Get name of service\&. See
+\fIshort\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.RE
+.PP
+getSourcePorts() → a(ss)
+.RS 4
+Get list of (\fIport\fR,
+\fIprotocol\fR) defined in service\&. See
+\fIsource\-port\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.RE
+.PP
+getVersion() → s
+.RS 4
+Get version of service\&. See
+\fIversion\fR
+attribute of
+\fIservice\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.RE
+.PP
+loadDefaults() → Nothing
+.RS 4
+Load default settings for built\-in service\&.
+.sp
+Possible errors: NO_DEFAULTS
+.RE
+.PP
+queryDestination(s: family, s: address) → b
+.RS 4
+Return whether a
+\fIdestination\fR
+is in dictionary of destinations of this service\&. destination is in format: (\fIIP family\fR,
+\fIIP address\fR) where
+\fIIP family\fR
+can be either \*(Aqipv4\*(Aq or \*(Aqipv6\*(Aq\&. See
+\fIdestination\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.RE
+.PP
+queryModule(s: module) → b
+.RS 4
+This method is deprecated\&. Please use "helpers" in the getSettings2() method\&.
+.RE
+.PP
+queryPort(s: port, s: protocol) → b
+.RS 4
+Return whether (\fIport\fR,
+\fIprotocol\fR) is in list of ports in service\&. See
+\fIport\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.RE
+.PP
+queryProtocol(s: protocol) → b
+.RS 4
+Return whether
+\fIprotocol\fR
+is in list of protocols in service\&. See
+\fIprotocol\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.RE
+.PP
+querySourcePort(s: port, s: protocol) → b
+.RS 4
+Return whether (\fIport\fR,
+\fIprotocol\fR) is in list of source ports in service\&. See
+\fIsource\-port\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.RE
+.PP
+remove() → Nothing
+.RS 4
+Remove not built\-in service\&.
+.sp
+Possible errors: BUILTIN_SERVICE
+.RE
+.PP
+removeDestination(s: family) → Nothing
+.RS 4
+Permanently remove a destination with
+\fIfamily\fR
+(\*(Aqipv4\*(Aq or \*(Aqipv6\*(Aq) from service\&. See
+\fIdestination\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removeModule(s: module) → Nothing
+.RS 4
+This method is deprecated\&. Please use "helpers" in the update2() method\&.
+.RE
+.PP
+removePort(s: port, s: protocol) → Nothing
+.RS 4
+Permanently remove (\fIport\fR,
+\fIprotocol\fR) from list of ports in service\&. See
+\fIport\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removeProtocol(s: protocol) → Nothing
+.RS 4
+Permanently remove
+\fIprotocol\fR
+from list of protocols in service\&. See
+\fIprotocol\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+removeSourcePort(s: port, s: protocol) → Nothing
+.RS 4
+Permanently remove (\fIport\fR,
+\fIprotocol\fR) from list of source ports in service\&. See
+\fIsource\-port\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+rename(s: name) → Nothing
+.RS 4
+Rename not built\-in service to
+\fIname\fR\&.
+.sp
+Possible errors: BUILTIN_SERVICE
+.RE
+.PP
+setDescription(s: description) → Nothing
+.RS 4
+Permanently set description of service to
+\fIdescription\fR\&. See
+\fIdescription\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.RE
+.PP
+setDestination(s: family, s: address) → Nothing
+.RS 4
+Permanently set a destination address\&. destination is in format: (\fIIP family\fR,
+\fIIP address\fR) where
+\fIIP family\fR
+can be either \*(Aqipv4\*(Aq or \*(Aqipv6\*(Aq\&. See
+\fIdestination\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+setDestinations(a{ss}: destinations) → Nothing
+.RS 4
+Permanently set destinations of service to
+\fIdestinations\fR, which is a dictionary of {IP family : IP address} where \*(AqIP family\*(Aq key can be either \*(Aqipv4\*(Aq or \*(Aqipv6\*(Aq\&. See
+\fIdestination\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.RE
+.PP
+setModules(as: modules) → Nothing
+.RS 4
+This method is deprecated\&. Please use "helpers" in the update2() method\&.
+.RE
+.PP
+setPorts(a(ss): ports) → Nothing
+.RS 4
+Permanently set ports of service to list of (\fIport\fR,
+\fIprotocol\fR)\&. See
+\fIport\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.RE
+.PP
+setProtocols(as: protocols) → Nothing
+.RS 4
+Permanently set protocols of service to list of
+\fIprotocols\fR\&. See
+\fIprotocol\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.RE
+.PP
+setShort(s: short) → Nothing
+.RS 4
+Permanently set name of service to
+\fIshort\fR\&. See
+\fIshort\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.RE
+.PP
+setSourcePorts(a(ss): ports) → Nothing
+.RS 4
+Permanently set source\-ports of service to list of (\fIport\fR,
+\fIprotocol\fR)\&. See
+\fIsource\-port\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.RE
+.PP
+setVersion(s: version) → Nothing
+.RS 4
+Permanently set version of service to
+\fIversion\fR\&. See
+\fIversion\fR
+attribute of
+\fIservice\fR
+tag in
+\fBfirewalld.service\fR(5)\&.
+.RE
+.PP
+update((sssa(ss)asa{ss}asa(ss)): settings) → Nothing
+.RS 4
+This function is deprecated, use
+org\&.fedoraproject\&.FirewallD1\&.config\&.service\&.Methods\&.update2
+instead\&.
+.RE
+.PP
+update2a{sv}: settings) → Nothing
+.RS 4
+Update settings of service to
+\fIsettings\fR\&. Settings are a dictionary indexed by keywords\&. For the type of each value see below\&. To zero a value pass an empty string or list\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIservice\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIports (a(ss))\fR: array of port and protocol pairs\&. See \fIport\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fImodule names (as)\fR: array of kernel netfilter helpers, see \fImodule\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdestinations (a{ss})\fR: dictionary of {IP family : IP address} where \*(AqIP family\*(Aq key can be either \*(Aqipv4\*(Aq or \*(Aqipv6\*(Aq\&. See \fIdestination\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIprotocols (as)\fR: array of protocols, see \fIprotocol\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIsource_ports (a(ss))\fR: array of port and protocol pairs\&. See \fIsource\-port\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIincludes (as)\fR: array of service includes, see \fIinclude\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIhelpers (as)\fR: array of service helpers, see \fIhelper\fR tag in \fBfirewalld.service\fR(5)\&.
+.RS 4
+.RE
+.sp
+Possible errors: INVALID_TYPE
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSignals\fR
+.RS 4
+.PP
+Removed(s: name)
+.RS 4
+Emitted when service with
+\fIname\fR
+has been removed\&.
+.RE
+.PP
+Renamed(s: name)
+.RS 4
+Emitted when service has been renamed to
+\fIname\fR\&.
+.RE
+.PP
+Updated(s: name)
+.RS 4
+Emitted when service with
+\fIname\fR
+has been updated\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBProperties\fR
+.RS 4
+.PP
+builtin \- b \- (ro)
+.RS 4
+True if service is build\-in, false else\&.
+.RE
+.PP
+default \- b \- (ro)
+.RS 4
+True if build\-in service has default settings\&. False if it has been modified\&. Always False for not build\-in services\&.
+.RE
+.PP
+filename \- s \- (ro)
+.RS 4
+Name (including \&.xml extension) of file where the configuration is stored\&.
+.RE
+.PP
+name \- s \- (ro)
+.RS 4
+Name of service\&.
+.RE
+.PP
+path \- s \- (ro)
+.RS 4
+Path to directory where the configuration is stored\&. Should be either /usr/lib/firewalld/services or /etc/firewalld/services\&.
+.RE
+.RE
+.SS "org\&.fedoraproject\&.FirewallD1\&.config\&.helper"
+.PP
+Interface for permanent helper configuration, see also
+\fBfirewalld.helper\fR(5)\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBMethods\fR
+.RS 4
+.PP
+addPort(s: port, s: protocol) → Nothing
+.RS 4
+Permanently add (\fIport\fR,
+\fIprotocol\fR) to list of ports in helper\&. See
+\fIport\fR
+tag in
+\fBfirewalld.helper\fR(5)\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+getDescription() → s
+.RS 4
+Get description of helper\&. See
+\fIdescription\fR
+tag in
+\fBfirewalld.helper\fR(5)\&.
+.RE
+.PP
+getFamily() → s
+.RS 4
+Get family being \*(Aqipv4\*(Aq, \*(Aqipv6\*(Aq or empty for both\&. See
+\fIfamily\fR
+tag in
+\fBfirewalld.helper\fR(5)\&.
+.RE
+.PP
+getModule() → s
+.RS 4
+Get modules (netfilter kernel helpers) used in helper\&. See
+\fImodule\fR
+tag in
+\fBfirewalld.helper\fR(5)\&.
+.RE
+.PP
+getPorts() → a(ss)
+.RS 4
+Get list of (\fIport\fR,
+\fIprotocol\fR) defined in helper\&. See
+\fIport\fR
+tag in
+\fBfirewalld.helper\fR(5)\&.
+.RE
+.PP
+getSettings() → (sssssa(ss))
+.RS 4
+Return permanent settings of a
+\fIhelper\fR\&. For getting runtime settings see
+org\&.fedoraproject\&.FirewallD1\&.Methods\&.getHelperSettings\&. Settings are in format:
+\fIversion\fR,
+\fIname\fR,
+\fIdescription\fR,
+\fIfamily\fR,
+\fImodule\fR, array of
+\fIports\fR
+(port, protocol)\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIhelper\fR tag in \fBfirewalld.helper\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.helper\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.helper\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIfamily (s)\fR: see \fIfamily\fR tag in \fBfirewalld.helper\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fImodule (s)\fR: see \fImodule\fR tag in \fBfirewalld.helper\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIports (a(ss))\fR: array of port and protocol pairs\&. See \fIport\fR tag in \fBfirewalld.helper\fR(5)\&.
+.RS 4
+.RE
+.sp
+.RE
+.PP
+getShort() → s
+.RS 4
+Get name of helper\&. See
+\fIshort\fR
+tag in
+\fBfirewalld.helper\fR(5)\&.
+.RE
+.PP
+getVersion() → s
+.RS 4
+Get version of helper\&. See
+\fIversion\fR
+attribute of
+\fIhelper\fR
+tag in
+\fBfirewalld.helper\fR(5)\&.
+.RE
+.PP
+loadDefaults() → Nothing
+.RS 4
+Load default settings for built\-in helper\&.
+.sp
+Possible errors: NO_DEFAULTS
+.RE
+.PP
+queryFamily(s: module) → b
+.RS 4
+Return whether
+\fIfamily\fR
+is set for helper\&. See
+\fIfamily\fR
+tag in
+\fBfirewalld.helper\fR(5)\&.
+.RE
+.PP
+queryModule(s: module) → b
+.RS 4
+Return whether
+\fImodule\fR
+(netfilter kernel helpers) is used in helper\&. See
+\fImodule\fR
+tag in
+\fBfirewalld.helper\fR(5)\&.
+.RE
+.PP
+queryPort(s: port, s: protocol) → b
+.RS 4
+Return whether (\fIport\fR,
+\fIprotocol\fR) is in list of ports in helper\&. See
+\fIport\fR
+tag in
+\fBfirewalld.helper\fR(5)\&.
+.RE
+.PP
+remove() → Nothing
+.RS 4
+Remove not built\-in helper\&.
+.sp
+Possible errors: BUILTIN_HELPER
+.RE
+.PP
+removePort(s: port, s: protocol) → Nothing
+.RS 4
+Permanently remove (\fIport\fR,
+\fIprotocol\fR) from list of ports in helper\&. See
+\fIport\fR
+tag in
+\fBfirewalld.helper\fR(5)\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+rename(s: name) → Nothing
+.RS 4
+Rename not built\-in helper to
+\fIname\fR\&.
+.sp
+Possible errors: BUILTIN_HELPER
+.RE
+.PP
+setDescription(s: description) → Nothing
+.RS 4
+Permanently set description of helper to
+\fIdescription\fR\&. See
+\fIdescription\fR
+tag in
+\fBfirewalld.helper\fR(5)\&.
+.RE
+.PP
+setFamily(s: family) → Nothing
+.RS 4
+Permanently set family of helper to
+\fIfamily\fR\&. See
+\fIfamily\fR
+tag in
+\fBfirewalld.helper\fR(5)\&.
+.RE
+.PP
+setModule(s: module) → Nothing
+.RS 4
+Permanently set module of helper to
+\fIdescription\fR\&. See
+\fImodule\fR
+tag in
+\fBfirewalld.helper\fR(5)\&.
+.RE
+.PP
+setPorts(a(ss): ports) → Nothing
+.RS 4
+Permanently set ports of helper to list of (\fIport\fR,
+\fIprotocol\fR)\&. See
+\fIport\fR
+tag in
+\fBfirewalld.helper\fR(5)\&.
+.RE
+.PP
+setShort(s: short) → Nothing
+.RS 4
+Permanently set name of helper to
+\fIshort\fR\&. See
+\fIshort\fR
+tag in
+\fBfirewalld.helper\fR(5)\&.
+.RE
+.PP
+setVersion(s: version) → Nothing
+.RS 4
+Permanently set version of helper to
+\fIversion\fR\&. See
+\fIversion\fR
+attribute of
+\fIhelper\fR
+tag in
+\fBfirewalld.helper\fR(5)\&.
+.RE
+.PP
+update((sssssa(ss)): settings) → Nothing
+.RS 4
+Update settings of helper to
+\fIsettings\fR\&. Settings are in format:
+\fIversion\fR,
+\fIname\fR,
+\fIdescription\fR,
+\fIfamily\fR,
+\fImodule\fR
+and array of
+\fIports\fR\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIhelper\fR tag in \fBfirewalld.helper\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.helper\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.helper\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIfamily (s)\fR: see \fIfamily\fR tag in \fBfirewalld.helper\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fImodule (s)\fR: see \fImodule\fR tag in \fBfirewalld.helper\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIports (a(ss))\fR: array of port and protocol pairs\&. See \fIport\fR tag in \fBfirewalld.helper\fR(5)\&.
+.RS 4
+.RE
+.sp
+Possible errors: INVALID_HELPER
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSignals\fR
+.RS 4
+.PP
+Removed(s: name)
+.RS 4
+Emitted when helper with
+\fIname\fR
+has been removed\&.
+.RE
+.PP
+Renamed(s: name)
+.RS 4
+Emitted when helper has been renamed to
+\fIname\fR\&.
+.RE
+.PP
+Updated(s: name)
+.RS 4
+Emitted when helper with
+\fIname\fR
+has been updated\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBProperties\fR
+.RS 4
+.PP
+builtin \- b \- (ro)
+.RS 4
+True if helper is build\-in, false else\&.
+.RE
+.PP
+default \- b \- (ro)
+.RS 4
+True if build\-in helper has default settings\&. False if it has been modified\&. Always False for not build\-in helpers\&.
+.RE
+.PP
+filename \- s \- (ro)
+.RS 4
+Name (including \&.xml extension) of file where the configuration is stored\&.
+.RE
+.PP
+name \- s \- (ro)
+.RS 4
+Name of helper\&.
+.RE
+.PP
+path \- s \- (ro)
+.RS 4
+Path to directory where the configuration is stored\&. Should be either /usr/lib/firewalld/helpers or /etc/firewalld/helpers\&.
+.RE
+.RE
+.SS "org\&.fedoraproject\&.FirewallD1\&.config\&.icmptype"
+.PP
+Interface for permanent icmp type configuration, see also
+\fBfirewalld.icmptype\fR(5)\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBMethods\fR
+.RS 4
+.PP
+addDestination(s: destination) → Nothing
+.RS 4
+Permanently add a
+\fIdestination\fR
+(\*(Aqipv4\*(Aq or \*(Aqipv6\*(Aq) to list of destinations of this icmp type\&. See
+\fIdestination\fR
+tag in
+\fBfirewalld.icmptype\fR(5)\&.
+.sp
+Possible errors: ALREADY_ENABLED
+.RE
+.PP
+getDescription() → s
+.RS 4
+Get description of icmp type\&. See
+\fIdescription\fR
+tag in
+\fBfirewalld.icmptype\fR(5)\&.
+.RE
+.PP
+getDestinations() → as
+.RS 4
+Get list of destinations\&. See
+\fIdestination\fR
+tag in
+\fBfirewalld.icmptype\fR(5)\&.
+.RE
+.PP
+getSettings() → (sssas)
+.RS 4
+Return permanent settings of
+\fIicmp type\fR\&. For getting runtime settings see
+org\&.fedoraproject\&.FirewallD1\&.Methods\&.getIcmpTypeSettings\&. Settings are in format:
+\fIversion\fR,
+\fIname\fR,
+\fIdescription\fR, array of
+\fIdestinations\fR\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIicmptype\fR tag in \fBfirewalld.icmptype\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.icmptype\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.icmptype\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdestinations (as)\fR: array, either empty or containing strings \*(Aqipv4\*(Aq and/or \*(Aqipv6\*(Aq, see destination tag in \fBfirewalld.icmptype\fR(5)\&.
+.RS 4
+.RE
+.sp
+.RE
+.PP
+getShort() → s
+.RS 4
+Get name of icmp type\&. See
+\fIshort\fR
+tag in
+\fBfirewalld.icmptype\fR(5)\&.
+.RE
+.PP
+getVersion() → s
+.RS 4
+Get version of icmp type\&. See
+\fIversion\fR
+attribute of
+\fIicmptype\fR
+tag in
+\fBfirewalld.icmptype\fR(5)\&.
+.RE
+.PP
+loadDefaults() → Nothing
+.RS 4
+Load default settings for built\-in icmp type\&.
+.sp
+Possible errors: NO_DEFAULTS
+.RE
+.PP
+queryDestination(s: destination) → b
+.RS 4
+Return whether a
+\fIdestination\fR
+(\*(Aqipv4\*(Aq or \*(Aqipv6\*(Aq) is in list of destinations of this icmp type\&. See
+\fIdestination\fR
+tag in
+\fBfirewalld.icmptype\fR(5)\&.
+.RE
+.PP
+remove() → Nothing
+.RS 4
+Remove not built\-in icmp type\&.
+.sp
+Possible errors: BUILTIN_ICMPTYPE
+.RE
+.PP
+removeDestination(s: destination) → Nothing
+.RS 4
+Permanently remove a
+\fIdestination\fR
+(\*(Aqipv4\*(Aq or \*(Aqipv6\*(Aq) from list of destinations of this icmp type\&. See
+\fIdestination\fR
+tag in
+\fBfirewalld.icmptype\fR(5)\&.
+.sp
+Possible errors: NOT_ENABLED
+.RE
+.PP
+rename(s: name) → Nothing
+.RS 4
+Rename not built\-in icmp type to
+\fIname\fR\&.
+.sp
+Possible errors: BUILTIN_ICMPTYPE
+.RE
+.PP
+setDescription(s: description) → Nothing
+.RS 4
+Permanently set description of icmp type to
+\fIdescription\fR\&. See
+\fIdescription\fR
+tag in
+\fBfirewalld.icmptype\fR(5)\&.
+.RE
+.PP
+setDestinations(as: destinations) → Nothing
+.RS 4
+Permanently set destinations of icmp type to
+\fIdestinations\fR, which is array, either empty or containing strings \*(Aqipv4\*(Aq and/or \*(Aqipv6\*(Aq\&. See
+\fIdestination\fR
+tag in
+\fBfirewalld.icmptype\fR(5)\&.
+.RE
+.PP
+setShort(s: short) → Nothing
+.RS 4
+Permanently set name of icmp type to
+\fIshort\fR\&. See
+\fIshort\fR
+tag in
+\fBfirewalld.icmptype\fR(5)\&.
+.RE
+.PP
+setVersion(s: version) → Nothing
+.RS 4
+Permanently set version of icmp type to
+\fIversion\fR\&. See
+\fIversion\fR
+attribute of
+\fIicmptype\fR
+tag in
+\fBfirewalld.icmptype\fR(5)\&.
+.RE
+.PP
+update((sssas): settings) → Nothing
+.RS 4
+Update permanent settings of icmp type to
+\fIsettings\fR\&. Settings are in format:
+\fIversion\fR,
+\fIname\fR,
+\fIdescription\fR, array of
+\fIdestinations\fR\&.
+.PP
+\fIversion (s)\fR: see \fIversion\fR attribute of \fIicmptype\fR tag in \fBfirewalld.icmptype\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIname (s)\fR: see \fIshort\fR tag in \fBfirewalld.icmptype\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdescription (s)\fR: see \fIdescription\fR tag in \fBfirewalld.icmptype\fR(5)\&.
+.RS 4
+.RE
+.PP
+\fIdestinations (as)\fR: array, either empty or containing strings \*(Aqipv4\*(Aq and/or \*(Aqipv6\*(Aq, see destination tag in \fBfirewalld.icmptype\fR(5)\&.
+.RS 4
+.RE
+.sp
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSignals\fR
+.RS 4
+.PP
+Removed(s: name)
+.RS 4
+Emitted when icmp type with
+\fIname\fR
+has been removed\&.
+.RE
+.PP
+Renamed(s: name)
+.RS 4
+Emitted when icmp type has been renamed to
+\fIname\fR\&.
+.RE
+.PP
+Updated(s: name)
+.RS 4
+Emitted when icmp type with
+\fIname\fR
+has been updated\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBProperties\fR
+.RS 4
+.PP
+builtin \- b \- (ro)
+.RS 4
+True if icmptype is build\-in, false else\&.
+.RE
+.PP
+default \- b \- (ro)
+.RS 4
+True if build\-in icmp type has default settings\&. False if it has been modified\&. Always False for not build\-in zones\&.
+.RE
+.PP
+filename \- s \- (ro)
+.RS 4
+Name (including \&.xml extension) of file where the configuration is stored\&.
+.RE
+.PP
+name \- s \- (ro)
+.RS 4
+Name of icmp type\&.
+.RE
+.PP
+path \- s \- (ro)
+.RS 4
+Path to directory where the icmp type configuration is stored\&. Should be either /usr/lib/firewalld/icmptypes or /etc/firewalld/icmptypes\&.
+.RE
+.RE
+.SH "SEE ALSO"
+\fBfirewall-applet\fR(1), \fBfirewalld\fR(1), \fBfirewall-cmd\fR(1), \fBfirewall-config\fR(1), \fBfirewalld.conf\fR(5), \fBfirewalld.direct\fR(5), \fBfirewalld.dbus\fR(5), \fBfirewalld.icmptype\fR(5), \fBfirewalld.lockdown-whitelist\fR(5), \fBfirewall-offline-cmd\fR(1), \fBfirewalld.richlanguage\fR(5), \fBfirewalld.service\fR(5), \fBfirewalld.zone\fR(5), \fBfirewalld.zones\fR(5), \fBfirewalld.policy\fR(5), \fBfirewalld.policies\fR(5), \fBfirewalld.ipset\fR(5), \fBfirewalld.helper\fR(5)
+.SH "NOTES"
+.PP
+firewalld home page:
+.RS 4
+\m[blue]\fB\%http://firewalld.org\fR\m[]
+.RE
+.SH "AUTHORS"
+.PP
+\fBThomas Woerner\fR <\&twoerner@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBJiri Popelka\fR <\&jpopelka@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBEric Garver\fR <\&eric@garver\&.life\&>
+.RS 4
+Developer
+.RE

@@ -1,0 +1,163 @@
+'\" t
+.\"     Title: firewalld.conf
+.\"    Author: Thomas Woerner <twoerner@redhat.com>
+.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
+.\"      Date: 
+.\"    Manual: firewalld.conf
+.\"    Source: firewalld 2.1.0
+.\"  Language: English
+.\"
+.TH "FIREWALLD\&.CONF" "5" "" "firewalld 2.1.0" "firewalld.conf"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+firewalld.conf \- firewalld configuration file
+.SH "SYNOPSIS"
+.PP
+.nf
+\fI/usr/etc/firewalld/firewalld\&.conf\fR
+      
+.fi
+.sp
+.SH "DESCRIPTION"
+.PP
+firewalld\&.conf is loaded by firewalld during the initialization process\&. The file contains the basic configuration options for firewalld\&.
+.SH "OPTIONS"
+.PP
+These are the options that can be set in the config file:
+.PP
+\fBDefaultZone\fR
+.RS 4
+This sets the default zone for connections or interfaces if the zone is not selected or specified by NetworkManager, initscripts or command line tool\&. The default zone is public\&.
+.RE
+.PP
+\fBMinimalMark\fR
+.RS 4
+Deprecated\&. This option is ignored and no longer used\&. Marks are no longer used internally\&.
+.RE
+.PP
+\fBCleanupModulesOnExit\fR
+.RS 4
+Setting this option to yes or true unloads all firewall\-related kernel modules when firewalld is stopped\&. The default value is no or false\&.
+.RE
+.PP
+\fBCleanupOnExit\fR
+.RS 4
+If firewalld stops, it cleans up all firewall rules\&. Setting this option to no or false leaves the current firewall rules untouched\&. The default value is yes or true\&.
+.RE
+.PP
+\fBLockdown\fR
+.RS 4
+If this option is enabled, firewall changes with the D\-Bus interface will be limited to applications that are listed in the lockdown whitelist (see
+\fBfirewalld.lockdown-whitelist\fR(5))\&. The default value is no or false\&.
+.RE
+.PP
+\fBIPv6_rpfilter\fR
+.RS 4
+If this option is enabled (it is by default), reverse path filter test on a packet for IPv6 is performed\&. If a reply to the packet would be sent via the same interface that the packet arrived on, the packet will match and be accepted, otherwise dropped\&. For IPv4 the rp_filter is controlled using sysctl\&.
+.sp
+\fBNote\fR: This feature has a performance impact\&. In most cases the impact is not enough to cause a noticeable difference\&. It requires route lookups and its execution occurs before the established connections fast path\&. As such it can have a significant performance impact if there is a lot of traffic\&. It\*(Aqs enabled by default for security, but can be disabled if performance is a concern\&.
+.RE
+.PP
+\fBIndividualCalls\fR
+.RS 4
+If this option is disabled (it is by default), combined \-restore calls are used and not individual calls to apply changes to the firewall\&. The use of individual calls increases the time that is needed to apply changes and to start the daemon, but is good for debugging as error messages are more specific\&.
+.RE
+.PP
+\fBLogDenied\fR
+.RS 4
+Add logging rules right before reject and drop rules in the INPUT, FORWARD and OUTPUT chains for the default rules and also final reject and drop rules in zones for the configured link\-layer packet type\&. The possible values are:
+\fIall\fR,
+\fIunicast\fR,
+\fIbroadcast\fR,
+\fImulticast\fR
+and
+\fIoff\fR\&. The default setting is
+\fIoff\fR, which disables the logging\&.
+.RE
+.PP
+\fBAutomaticHelpers\fR
+.RS 4
+Deprecated\&. This option is ignored and no longer used\&.
+.RE
+.PP
+\fBFirewallBackend\fR
+.RS 4
+Selects the firewall backend implementation\&. Possible values are;
+\fInftables\fR
+(default), or
+\fIiptables\fR\&. This applies to all firewalld primitives\&. The only exception is direct and passthrough rules which always use the traditional iptables, ip6tables, and ebtables backends\&.
+.sp
+\fBNote\fR: The iptables backend is deprecated\&. It will be removed in a future release\&.
+.RE
+.PP
+\fBFlushAllOnReload\fR
+.RS 4
+Flush all runtime rules on a reload\&. In previous releases some runtime configuration was retained during a reload, namely; interface to zone assignment, and direct rules\&. This was confusing to users\&. To get the old behavior set this to "no"\&. Defaults to "yes"\&.
+.RE
+.PP
+\fBReloadPolicy\fR
+.RS 4
+The policy during reload\&. By default, all traffic except established connections is dropped while reloading the firewall rules\&. This can be overridden for INPUT, FORWARD and OUTPUT\&. The accepted values are "DROP", "REJECT" and "ACCEPT", which then applies to all tables\&. Alternatively, the policy can be specified per table, like "INPUT:REJECT,FORWARD:DROP,OUTPUT:ACCEPT"\&. Defaults to "INPUT:DROP,FORWARD:DROP,OUTPUT:DROP"\&.
+.RE
+.PP
+\fBRFC3964_IPv4\fR
+.RS 4
+As per RFC 3964, filter IPv6 traffic with 6to4 destination addresses that correspond to IPv4 addresses that should not be routed over the public internet\&. Defaults to "yes"\&.
+.RE
+.PP
+\fBAllowZoneDrifting\fR
+.RS 4
+Deprecated\&. This option is ignored and no longer used\&.
+.RE
+.PP
+\fBNftablesFlowtable\fR
+.RS 4
+This may improve forwarded traffic throughput by enabling nftables flowtable\&. It is a software fastpath and avoids calling nftables rule evaluation for data packets\&. Its value is a space separate list of interfaces\&. Example value "eth0 eth1"\&. Defaults to "off"\&.
+.RE
+.PP
+\fBNftablesCounters\fR
+.RS 4
+If set to yes, add a counter to every nftables rule\&. This is useful for debugging and comes with a small performance cost\&. Defaults to "no"\&.
+.RE
+.SH "SEE ALSO"
+\fBfirewall-applet\fR(1), \fBfirewalld\fR(1), \fBfirewall-cmd\fR(1), \fBfirewall-config\fR(1), \fBfirewalld.conf\fR(5), \fBfirewalld.direct\fR(5), \fBfirewalld.dbus\fR(5), \fBfirewalld.icmptype\fR(5), \fBfirewalld.lockdown-whitelist\fR(5), \fBfirewall-offline-cmd\fR(1), \fBfirewalld.richlanguage\fR(5), \fBfirewalld.service\fR(5), \fBfirewalld.zone\fR(5), \fBfirewalld.zones\fR(5), \fBfirewalld.policy\fR(5), \fBfirewalld.policies\fR(5), \fBfirewalld.ipset\fR(5), \fBfirewalld.helper\fR(5)
+.SH "NOTES"
+.PP
+firewalld home page:
+.RS 4
+\m[blue]\fB\%http://firewalld.org\fR\m[]
+.RE
+.SH "AUTHORS"
+.PP
+\fBThomas Woerner\fR <\&twoerner@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBJiri Popelka\fR <\&jpopelka@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBEric Garver\fR <\&eric@garver\&.life\&>
+.RS 4
+Developer
+.RE

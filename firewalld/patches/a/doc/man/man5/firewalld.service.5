@@ -1,0 +1,204 @@
+'\" t
+.\"     Title: firewalld.service
+.\"    Author: Thomas Woerner <twoerner@redhat.com>
+.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
+.\"      Date: 
+.\"    Manual: firewalld.service
+.\"    Source: firewalld 2.1.0
+.\"  Language: English
+.\"
+.TH "FIREWALLD\&.SERVICE" "5" "" "firewalld 2.1.0" "firewalld.service"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+firewalld.service \- firewalld service configuration files
+.SH "SYNOPSIS"
+.PP
+.nf
+\fI/usr/etc/firewalld/services/service\&.xml\fR
+\fI/usr/lib/firewalld/services/service\&.xml\fR
+      
+.fi
+.sp
+.SH "DESCRIPTION"
+.PP
+A firewalld service configuration file provides the information of a service entry for firewalld\&. The most important configuration options are ports, modules and destination addresses\&.
+.PP
+This example configuration file shows the structure of a service configuration file:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+<?xml version="1\&.0" encoding="utf\-8"?>
+<service>
+  <short>\fIMy Service\fR</short>
+  <description>\fIdescription\fR</description>
+  <port port="\fI137\fR" protocol="\fItcp\fR"/>
+  <protocol value="\fIigmp\fR"/>
+  <module name="\fInf_conntrack_netbios_ns\fR"/>
+  <destination ipv4="\fI224\&.0\&.0\&.251\fR" ipv6="\fIff02::fb\fR"/>
+  <include service="\fIssdp\fR"/>
+  <helper name="\fIftp\fR"/>
+</service>
+      
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.SH "OPTIONS"
+.PP
+The config can contain these tags and attributes\&. Some of them are mandatory, others optional\&.
+.SS "service"
+.PP
+The mandatory service start and end tag defines the service\&. This tag can only be used once in a service configuration file\&. There are optional attributes for services:
+.PP
+version="\fIstring\fR"
+.RS 4
+To give the service a version\&.
+.RE
+.SS "short"
+.PP
+Is an optional start and end tag and is used to give an service a more readable name\&.
+.SS "description"
+.PP
+Is an optional start and end tag to have a description for a service\&.
+.SS "port"
+.PP
+Is an optional empty\-element tag and can be used several times to have more than one port entry\&. All attributes of a port entry are mandatory:
+.PP
+port="\fIstring\fR"
+.RS 4
+The port
+\fIstring\fR
+can be a single port number or a port range
+\fIportid\fR\-\fIportid\fR
+or also empty to match a protocol only\&.
+.RE
+.PP
+protocol="\fIstring\fR"
+.RS 4
+The protocol value can either be
+\fItcp\fR,
+\fIudp\fR,
+\fIsctp\fR
+or
+\fIdccp\fR\&.
+.RE
+.PP
+For compatibility with older firewalld versions, it is possible to add protocols with the port option where the port is empty\&. With the addition of native protocol support in the service, this it not needed anymore\&. These entries will automatically be converted to protocols\&. With the next modification of the service file, the enries will be listed as protocols\&.
+.SS "protocol"
+.PP
+Is an optional empty\-element tag and can be used several times to have more than one protocol entry\&. A protocol entry has exactly one attribute:
+.PP
+value="\fIstring\fR"
+.RS 4
+The protocol can be any protocol supported by the system\&. Please have a look at
+\fI/etc/protocols\fR
+for supported protocols\&.
+.RE
+.SS "source\-port"
+.PP
+Is an optional empty\-element tag and can be used several times to have more than one source port entry\&. All attributes of a source port entry are mandatory:
+.PP
+port="\fIstring\fR"
+.RS 4
+The port
+\fIstring\fR
+can be a single port number or a port range
+\fIportid\fR\-\fIportid\fR\&.
+.RE
+.PP
+protocol="\fIstring\fR"
+.RS 4
+The protocol value can either be
+\fItcp\fR,
+\fIudp\fR,
+\fIsctp\fR
+or
+\fIdccp\fR\&.
+.RE
+.SS "module"
+.PP
+This element is deprecated\&. Please use helper described below in
+the section called \(lqhelper\(rq\&.
+.SS "destination"
+.PP
+Is an optional empty\-element tag and can be used only once\&. The destination specifies the destination network as a network IP address (optional with /mask), or a plain IP address\&. The use of hostnames is not recommended, because these will only be resolved at service activation and transmitted to the kernel\&. For more information in this element, please have a look at
+\fB\-\-destination\fR
+in
+\fBiptables\fR(8)
+and
+\fBip6tables\fR(8)\&.
+.PP
+ipv4="\fIaddress\fR[/\fImask\fR]"
+.RS 4
+The IPv4 destination address with optional mask\&.
+.RE
+.PP
+ipv6="\fIaddress\fR[/\fImask\fR]"
+.RS 4
+The IPv6 destination address with optional mask\&.
+.RE
+.SS "include"
+.PP
+Is an optional empty\-element tag and can be used several times to have more than one include entry\&. An include entry has exactly one attribute:
+.PP
+service="\fIstring\fR"
+.RS 4
+The include can be any service supported by firewalld\&.
+.sp
+\fBWarning:\fRFirewalld will only check that the included
+\fIservice\fR
+is a valid service if it\*(Aqs applied to a zone\&.
+.RE
+.SS "helper"
+.PP
+Is an optional empty\-element tag and can be used several times to have more than one helper entry\&. An helper entry has exactly one attribute:
+.PP
+name="\fIstring\fR"
+.RS 4
+The helper can be any helper supported by firewalld\&.
+.RE
+.SH "SEE ALSO"
+\fBfirewall-applet\fR(1), \fBfirewalld\fR(1), \fBfirewall-cmd\fR(1), \fBfirewall-config\fR(1), \fBfirewalld.conf\fR(5), \fBfirewalld.direct\fR(5), \fBfirewalld.dbus\fR(5), \fBfirewalld.icmptype\fR(5), \fBfirewalld.lockdown-whitelist\fR(5), \fBfirewall-offline-cmd\fR(1), \fBfirewalld.richlanguage\fR(5), \fBfirewalld.service\fR(5), \fBfirewalld.zone\fR(5), \fBfirewalld.zones\fR(5), \fBfirewalld.policy\fR(5), \fBfirewalld.policies\fR(5), \fBfirewalld.ipset\fR(5), \fBfirewalld.helper\fR(5)
+.SH "NOTES"
+.PP
+firewalld home page:
+.RS 4
+\m[blue]\fB\%http://firewalld.org\fR\m[]
+.RE
+.SH "AUTHORS"
+.PP
+\fBThomas Woerner\fR <\&twoerner@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBJiri Popelka\fR <\&jpopelka@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBEric Garver\fR <\&eric@garver\&.life\&>
+.RS 4
+Developer
+.RE

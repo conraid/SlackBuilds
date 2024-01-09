@@ -1,0 +1,12 @@
+FWD_START_TEST([GRE proto helper])
+AT_KEYWORDS(helper gh323)
+
+CHECK_MODULE_PROTO_GRE
+
+FWD_CHECK([-q --add-protocol=gre])
+FWD_CHECK([-q --remove-protocol=gre])
+
+FWD_CHECK([-q --add-service=gre])
+AT_CHECK([lsmod | grep nf_conntrack_proto_gre], 0, ignore)
+
+FWD_END_TEST

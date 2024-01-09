@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
+[
+<!ENTITY authors SYSTEM "authors.xml">
+<!ENTITY seealso SYSTEM "seealso.xml">
+<!ENTITY notes SYSTEM "notes.xml">
+]>
+
+<!--
+  SPDX-License-Identifier: GPL-2.0-or-later
+
+  This file is part of firewalld.
+
+  Copyright (C) 2010-2013 Red Hat, Inc.
+
+  Authors:
+  Thomas Woerner <twoerner@redhat.com>
+-->
+
+<refentry id="firewalld.service">
+
+  <refentryinfo>
+    <title>firewalld.service</title>
+    <productname>firewalld</productname>
+    &authors;
+  </refentryinfo>
+
+  <refmeta>
+    <refentrytitle>firewalld.service</refentrytitle>
+    <manvolnum>5</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+    <refname>firewalld.service</refname>
+    <refpurpose>firewalld service configuration files</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <para>
+      <programlisting>
+<filename><config.sysconfdir/>/firewalld/services/service.xml</filename>
+<filename><config.prefix/>/lib/firewalld/services/service.xml</filename>
+      </programlisting>
+    </para>
+  </refsynopsisdiv>
+
+  <refsect1 id="description">
+    <title>Description</title>
+
+    <para>
+      A firewalld service configuration file provides the information of a service entry for firewalld. The most important configuration options are ports, modules and destination addresses.
+    </para>
+
+    <para>
+      This example configuration file shows the structure of a service configuration file:
+
+      <programlisting>
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;service&gt;
+  &lt;short&gt;<replaceable>My Service</replaceable>&lt;/short&gt;
+  &lt;description&gt;<replaceable>description</replaceable>&lt;/description&gt;
+  &lt;port port="<replaceable>137</replaceable>" protocol="<replaceable>tcp</replaceable>"/&gt;
+  &lt;protocol value="<replaceable>igmp</replaceable>"/&gt;
+  &lt;module name="<replaceable>nf_conntrack_netbios_ns</replaceable>"/&gt;
+  &lt;destination ipv4="<replaceable>224.0.0.251</replaceable>" ipv6="<replaceable>ff02::fb</replaceable>"/&gt;
+  &lt;include service="<replaceable>ssdp</replaceable>"/&gt;
+  &lt;helper name="<replaceable>ftp</replaceable>"/&gt;
+&lt;/service&gt;
+      </programlisting>
+    </para>
+  </refsect1>
+
+  <refsect1 id="options">
+    <title>Options</title>
+    <para>
+      The config can contain these tags and attributes. Some of them are mandatory, others optional.
+    </para>
+
+    <refsect2 id="options_service">
+      <title>service</title>
+      <para>
+	The mandatory service start and end tag defines the service. This tag can only be used once in a service configuration file. There are optional attributes for services:
+      </para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>version="<replaceable>string</replaceable>"</term>
+          <listitem>
+	    <para>
+              To give the service a version.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="options_short">
+      <title>short</title>
+      <para>
+        Is an optional start and end tag and is used to give an service a more readable name.
+      </para>
+    </refsect2>
+
+    <refsect2 id="options_description">
+      <title>description</title>
+      <para>
+        Is an optional start and end tag to have a description for a service.
+      </para>
+    </refsect2>
+
+    <refsect2 id="options_port">
+      <title>port</title>
+      <para>
+	Is an optional empty-element tag and can be used several times to have more than one port entry. All attributes of a port entry are mandatory:
+      </para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>port="<replaceable>string</replaceable>"</term>
+          <listitem>
+	    <para>
+	      The port <replaceable>string</replaceable> can be a single port number or a port range <replaceable>portid</replaceable>-<replaceable>portid</replaceable> or also empty to match a protocol only.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>protocol="<replaceable>string</replaceable>"</term>
+          <listitem>
+	    <para>
+              The protocol value can either be <literal>tcp</literal>, <literal>udp</literal>, <literal>sctp</literal> or <literal>dccp</literal>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <para>
+	For compatibility with older firewalld versions, it is possible to add protocols with the port option where the port is empty. With the addition of native protocol support in the service, this it not needed anymore. These entries will automatically be converted to protocols. With the next modification of the service file, the enries will be listed as protocols.
+      </para>
+    </refsect2>
+
+    <refsect2 id="options_protocol">
+      <title>protocol</title>
+      <para>
+	Is an optional empty-element tag and can be used several times to have more than one protocol entry. A protocol entry has exactly one attribute:
+      </para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>value="<replaceable>string</replaceable>"</term>
+          <listitem>
+	    <para>
+	      The protocol can be any protocol supported by the system. Please have a look at <filename>/etc/protocols</filename> for supported protocols.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="options_source_port">
+      <title>source-port</title>
+      <para>
+	Is an optional empty-element tag and can be used several times to have more than one source port entry. All attributes of a source port entry are mandatory:
+      </para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>port="<replaceable>string</replaceable>"</term>
+          <listitem>
+	    <para>
+	      The port <replaceable>string</replaceable> can be a single port number or a port range <replaceable>portid</replaceable>-<replaceable>portid</replaceable>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>protocol="<replaceable>string</replaceable>"</term>
+          <listitem>
+	    <para>
+              The protocol value can either be <literal>tcp</literal>, <literal>udp</literal>, <literal>sctp</literal> or <literal>dccp</literal>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="options_module">
+      <title>module</title>
+      <para>
+        This element is deprecated. Please use helper described below in <xref linkend="options_helper"/>.
+      </para>
+    </refsect2>
+
+    <refsect2 id="options_destination">
+      <title>destination</title>
+      <para>
+	Is an optional empty-element tag and can be used only once. The destination specifies the destination network as a network IP address (optional with /mask), or a plain IP address. The use of hostnames is not recommended, because these will only be resolved at service activation and transmitted to the kernel. For more information in this element, please have a look at <option>--destination</option> in <citerefentry><refentrytitle>iptables</refentrytitle><manvolnum>8</manvolnum></citerefentry> and <citerefentry><refentrytitle>ip6tables</refentrytitle><manvolnum>8</manvolnum></citerefentry>.
+      </para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>ipv4="<replaceable>address</replaceable>[/<replaceable>mask</replaceable>]"</term>
+          <listitem>
+	    <para>
+              The IPv4 destination address with optional mask.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>ipv6="<replaceable>address</replaceable>[/<replaceable>mask</replaceable>]"</term>
+          <listitem>
+	    <para>
+              The IPv6 destination address with optional mask.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="options_include">
+      <title>include</title>
+      <para>
+        Is an optional empty-element tag and can be used several times to have more than one include entry. An include entry has exactly one attribute:
+      </para>
+
+      <variablelist>
+      <varlistentry>
+      <term>service="<replaceable>string</replaceable>"</term>
+      <listitem>
+        <para>
+          The include can be any service supported by firewalld.
+        </para>
+        <para>
+          <emphasis role="bold">Warning:</emphasis>Firewalld will only check that the included <emphasis>service</emphasis> is a valid service if it's applied to a zone.
+        </para>
+      </listitem>
+      </varlistentry>
+      </variablelist>
+    </refsect2>
+
+    <refsect2 id="options_helper">
+      <title>helper</title>
+      <para>
+        Is an optional empty-element tag and can be used several times to have more than one helper entry. An helper entry has exactly one attribute:
+      </para>
+
+      <variablelist>
+      <varlistentry>
+      <term>name="<replaceable>string</replaceable>"</term>
+      <listitem>
+        <para>
+          The helper can be any helper supported by firewalld.
+        </para>
+      </listitem>
+      </varlistentry>
+      </variablelist>
+    </refsect2>
+
+  </refsect1>
+
+  &seealso;
+
+  &notes;
+
+</refentry>

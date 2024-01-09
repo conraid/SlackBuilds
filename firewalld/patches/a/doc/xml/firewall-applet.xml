@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
+[
+<!ENTITY authors SYSTEM "authors.xml">
+<!ENTITY seealso SYSTEM "seealso.xml">
+<!ENTITY notes SYSTEM "notes.xml">
+]>
+
+<!--
+  SPDX-License-Identifier: GPL-2.0-or-later
+
+  This file is part of firewalld.
+
+  Copyright (C) 2010-2015 Red Hat, Inc.
+
+  Authors:
+  Thomas Woerner <twoerner@redhat.com>
+-->
+
+<refentry id="firewall-applet">
+
+  <refentryinfo>
+    <title>firewall-applet</title>
+    <productname>firewalld</productname>
+    &authors;
+  </refentryinfo>
+
+  <refmeta>
+    <refentrytitle>firewall-applet</refentrytitle>
+    <manvolnum>1</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+    <refname>firewall-applet</refname>
+    <refpurpose>firewalld applet</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>firewall-applet</command> <arg choice="opt" rep="repeat">OPTIONS</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1 id="description">
+    <title>Description</title>
+    <para>
+      firewall-applet is a tray applet for firewalld.
+    </para>
+  </refsect1>
+
+  <refsect1 id="options">
+    <title>Options</title>
+    <para>
+      <command>firewall-applet</command> does not support any special options.
+    </para>
+    <para>
+      The following options are supported:
+    </para>
+
+    <variablelist>
+      <varlistentry>
+        <term><option>-h</option></term>
+        <term><option>--help</option></term>
+        <listitem>
+	  <para>
+	    Prints a short help text and exits.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </refsect1>
+
+  <refsect1 id="qsettings">
+    <title>QSettings</title>
+    <para>
+      <command>firewall-applet</command> has additional settings to adapt the look and feel. QSettings is used and stores them in <filename class="directory">~/.config/firewall/applet.conf</filename>. The file is automatically reloaded if it has been changed and the new settings will immediately be effective.
+    </para>
+    <para>
+      There is also the global config file <filename class="directory">/etc/firewall/applet.conf</filename>, which contains the default values. The settings in this file will be overloaded by settings in the user settings file.
+    </para>
+    <para>
+      Here is an example <filename class="directory">applet.conf</filename> file:
+      <programlisting>
+[General]
+notifications=true
+show-inactive=true
+      </programlisting>
+    </para>
+    <para>
+      The following settings are supported:
+    </para>
+
+    <variablelist>
+      <varlistentry>
+        <term><option>notifications</option></term>
+        <listitem>
+	  <para>
+	    The applet shows notifications if enabled. This setting can be enabled also in the applet with the "Enable Notifications" checkbox in the right mouse menu.
+	  </para>
+	  <para>
+	    This setting defaults to <option>false</option>.
+	  </para>
+	  <para>
+	    If notifications are shown for these actions if enabled:
+
+	    <itemizedlist>
+	      <listitem>
+		<para>Connection to firewalld established</para>
+	      </listitem>
+	      <listitem>
+		<para>Connection to firewalld lost</para>
+	      </listitem>
+	      <listitem>
+		<para>Firewall has been reloaded</para>
+	      </listitem>
+	      <listitem>
+		<para>Default zone has been changed</para>
+	      </listitem>
+	      <listitem>
+		<para>Panic mode has been enabled or disabled</para>
+	      </listitem>
+	      <listitem>
+		<para>Activation, deactivation or change of zones bound to interfaces</para>
+	      </listitem>
+	      <listitem>
+		<para>Activation, deactivation or change of zones bound to sources addresses</para>
+	      </listitem>
+	    </itemizedlist>
+
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>show-inactive</option></term>
+        <listitem>
+	  <para>
+	    Show applet also if firewalld is not running. If firewalld has been stopped or is not running the applet will be hidden and not visible in the applet tray. Enable this setting to see the applet all the time for example to be sure that the firewall is active.
+	  </para>
+	  <para>
+	    This setting defaults to <option>false</option>.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>shields-up</option></term>
+        <listitem>
+         <para>
+           The shields-up zone name to be used if shields-up is enabled.
+         </para>
+         <para>
+           This setting defaults to '<option>block</option>'.
+         </para>
+       </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>shields-down</option></term>
+        <listitem>
+         <para>
+           The shields-down zone name to be used if shields-up has been deactivated again.
+         </para>
+         <para>
+           This setting defaults to '<option>public</option>'.
+         </para>
+       </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>blink</option></term>
+        <listitem>
+	  <para>
+	    If enabled, the applet icon blinks in these cases:
+
+	    <itemizedlist>
+	      <listitem>
+		<para>Connection to firewalld lost</para>
+	      </listitem>
+	      <listitem>
+		<para>Panic mode has been enabled or disabled</para>
+	      </listitem>
+	    </itemizedlist>
+	  </para>
+	  <para>
+	    This setting defaults to <option>false</option>.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>blink-count</option></term>
+        <listitem>
+	  <para>
+	    The number of blinks if <option>blink</option> is enabled.
+	  </para>
+	  <para>
+	    This setting defaults to <option>5</option>.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+    </variablelist>
+
+  </refsect1>
+
+
+  &seealso;
+
+  &notes;
+
+</refentry>

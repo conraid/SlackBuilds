@@ -1,0 +1,404 @@
+'\" t
+.\"     Title: firewalld.zone
+.\"    Author: Thomas Woerner <twoerner@redhat.com>
+.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
+.\"      Date: 
+.\"    Manual: firewalld.zone
+.\"    Source: firewalld 2.1.0
+.\"  Language: English
+.\"
+.TH "FIREWALLD\&.ZONE" "5" "" "firewalld 2.1.0" "firewalld.zone"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+firewalld.zone \- firewalld zone configuration files
+.SH "SYNOPSIS"
+.PP
+\fI/usr/etc/firewalld/zones/zone\&.xml\fR
+.PP
+\fI/usr/lib/firewalld/zones/zone\&.xml\fR
+.SH "DESCRIPTION"
+.PP
+A firewalld zone configuration file contains the information for a zone\&. These are the zone description, services, ports, protocols, icmp\-blocks, masquerade, forward\-ports, intra\-zone forwarding and rich language rules in an XML file format\&. The file name has to be
+\fIzone_name\fR\&.xml where length of
+\fIzone_name\fR
+is currently limited to 17 chars\&.
+.PP
+This is the structure of a zone configuration file:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+<?xml version="1\&.0" encoding="utf\-8"?>
+<zone [version="\fIversionstring\fR"] [target="\fIACCEPT\fR|\fI%%REJECT%%\fR|\fIDROP\fR"] [ingress\-priority="\fIpriority\fR"] [egress\-priority="\fIpriority\fR"]>
+    [ <interface name="\fIstring\fR"/> ]
+    [ <source address="\fIaddress\fR[/\fImask\fR]"|mac="\fIMAC\fR"|ipset="\fIipset\fR"/> ]
+    [ <icmp\-block\-inversion/> ]
+    [ <forward/> ]
+
+    
+
+
+
+    [ <short>\fIshort description\fR</short> ]
+    [ <description>\fIdescription\fR</description> ]
+    [ <service name="\fIstring\fR"/> ]
+    [ <port port="\fIportid\fR[\-\fIportid\fR]" protocol="\fItcp\fR|\fIudp\fR|\fIsctp\fR|\fIdccp\fR"/> ]
+    [ <protocol value="\fIprotocol\fR"/> ]
+    [ <icmp\-block name="\fIstring\fR"/> ]
+    [ <masquerade/> ]
+    [ <forward\-port port="\fIportid\fR[\-\fIportid\fR]" protocol="\fItcp\fR|\fIudp\fR|\fIsctp\fR|\fIdccp\fR" [to\-port="\fIportid\fR[\-\fIportid\fR]"] [to\-addr="\fIIP address\fR"]/> ]
+    [ <source\-port port="\fIportid\fR[\-\fIportid\fR]" protocol="\fItcp\fR|\fIudp\fR|\fIsctp\fR|\fIdccp\fR"/> ]
+    [
+        <rule [family="\fIipv4\fR|\fIipv6\fR"] [priority="\fIpriority\fR"]>
+            [ <source address="\fIaddress\fR[/\fImask\fR]"|mac="\fIMAC\fR"|ipset="\fIipset\fR" [invert="\fITrue\fR"]/> ]
+            [ <destination address="\fIaddress\fR[/\fImask\fR]"|ipset="\fIipset\fR" [invert="\fITrue\fR"]/> ]
+            [
+                <service name="\fIstring\fR"/> |
+                <port port="\fIportid\fR[\-\fIportid\fR]" protocol="\fItcp\fR|\fIudp\fR|\fIsctp\fR|\fIdccp\fR"/> |
+                <protocol value="\fIprotocol\fR"/> |
+                <icmp\-block name="\fIicmptype\fR"/> |
+                <icmp\-type name="\fIicmptype\fR"/> |
+                <masquerade/> |
+                <forward\-port port="\fIportid\fR[\-\fIportid\fR]" protocol="\fItcp\fR|\fIudp\fR|\fIsctp\fR|\fIdccp\fR" [to\-port="\fIportid\fR[\-\fIportid\fR]"] [to\-addr="\fIaddress\fR"]/>
+            ]
+            [
+                <log [prefix="\fIprefix text\fR"] [level="\fIemerg\fR|\fIalert\fR|\fIcrit\fR|\fIerr\fR|\fIwarn\fR|\fInotice\fR|\fIinfo\fR|\fIdebug\fR"]> [<limit value="\fIrate\fR/\fIduration\fR"/>] </log> |
+                <nflog [group="\fIgroup id\fR"] [prefix="\fIprefix text\fR"] [queue\-size="\fIthreshold\fR"]> [<limit value="\fIrate\fR/\fIduration\fR"/>] </nflog>
+            ]
+            [ <audit> [<limit value="\fIrate\fR/\fIduration\fR"/>] </audit> ]
+            [
+                <accept> [<limit value="\fIrate\fR/\fIduration\fR"/>] </accept> |
+                <reject [type="\fIrejecttype\fR"]> [<limit value="\fIrate\fR/\fIduration\fR"/>] </reject> |
+                <drop> [<limit value="\fIrate\fR/\fIduration\fR"/>] </drop> |
+                <mark set="\fImark\fR[/\fImask\fR]"> [<limit value="\fIrate\fR/\fIduration\fR"/>] </mark>
+            ]
+        </rule>
+    ]
+
+
+</zone>
+        
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+The config can contain these tags and attributes\&. Some of them are mandatory, others optional\&.
+.SS "zone"
+.PP
+The mandatory zone start and end tag defines the zone\&. This tag can only be used once in a zone configuration file\&. There are optional attributes for zones:
+.PP
+version="\fIstring\fR"
+.RS 4
+To give the zone a version\&.
+.RE
+.PP
+target="\fIACCEPT\fR|\fI%%REJECT%%\fR|\fIDROP\fR"
+.RS 4
+Can be used to accept, reject or drop every packet that doesn\*(Aqt match any rule (port, service, etc\&.)\&. The
+\fIACCEPT\fR
+target is used in
+\fItrusted\fR
+zone to accept every packet not matching any rule\&. The
+\fI%%REJECT%%\fR
+target is used in
+\fIblock\fR
+zone to reject (with default firewalld reject type) every packet not matching any rule\&. The
+\fIDROP\fR
+target is used in
+\fIdrop\fR
+zone to drop every packet not matching any rule\&. If the target is not specified, every packet not matching any rule will be rejected\&.
+.RE
+.PP
+ingress\-priority="\fIpriority\fR"
+.RS 4
+Ingress priority for classifying traffic into a zone\&. A zone with a lower priority value will be considered before a zone with a higher priority value\&. This allows custom ordering of zone dispatch\&.
+.RE
+.PP
+egress\-priority="\fIpriority\fR"
+.RS 4
+Same as ingress\-priority, but for egress classification\&.
+.RE
+.SS "interface"
+.PP
+Is an optional empty\-element tag and can be used several times\&. It can be used to bind an interface to a zone\&. You don\*(Aqt need this for NetworkManager\-managed interfaces, because NetworkManager binds interfaces to zones automatically\&. See also \*(AqHow to set or change a zone for a connection?\*(Aq in
+\fBfirewalld.zones\fR(5)\&. You can use it as a fallback mechanism for interfaces that can\*(Aqt be managed via NetworkManager\&. An interface entry has exactly one attribute:
+.PP
+name="\fIstring\fR"
+.RS 4
+The name of the interface to be bound to the zone\&.
+.RE
+.SS "source"
+.PP
+Is an optional empty\-element tag and can be used several times\&. It can be used to bind a source address, address range, a MAC address or an ipset to a zone\&. A source entry has exactly one of these attributes:
+.PP
+address="\fIaddress\fR[/\fImask\fR]"
+.RS 4
+The source is either an IP address or a network IP address with a mask for IPv4 or IPv6\&. The network family (IPv4/IPv6) will be automatically discovered\&. For IPv4, the mask can be a network mask or a plain number\&. For IPv6 the mask is a plain number\&. The use of host names is not supported\&.
+.RE
+.PP
+mac="\fIMAC\fR"
+.RS 4
+The source is a MAC address\&. It must be of the form XX:XX:XX:XX:XX:XX\&.
+.RE
+.PP
+ipset="\fIipset\fR"
+.RS 4
+The source is an ipset\&.
+.RE
+.SS "icmp\-block\-inversion"
+.PP
+Is an optional empty\-element tag and can be used only once in a zone configuration\&. This flag inverts the icmp block handling\&. Only enabled ICMP types are accepted and all others are rejected in the zone\&.
+.SS "forward"
+.PP
+Is an optional empty\-element tag and can be used only once in a zone configuration\&. This flag enables intra\-zone forwarding\&. When enabled, packets will be forwarded between interfaces or sources within a zone, even if the zone\*(Aqs target is not set to
+\fIACCEPT\fR\&.
+.SS "short"
+.PP
+Is an optional start and end tag and is used to give a more readable name\&.
+.SS "description"
+.PP
+Is an optional start and end tag to have a description\&.
+.SS "service"
+.PP
+Is an optional empty\-element tag and can be used several times to have more than one service entry enabled\&. A service entry has exactly one attribute:
+.PP
+name="\fIstring\fR"
+.RS 4
+The name of the service to be enabled\&. To get a list of valid service names
+\fBfirewall\-cmd \-\-get\-services\fR
+can be used\&.
+.RE
+.SS "port"
+.PP
+Is an optional empty\-element tag and can be used several times to have more than one port entry\&. All attributes of a port entry are mandatory:
+.PP
+port="\fIportid\fR[\-\fIportid\fR]"
+.RS 4
+The port can either be a single port number
+\fIportid\fR
+or a port range
+\fIportid\fR\-\fIportid\fR\&.
+.RE
+.PP
+protocol="\fItcp\fR|\fIudp\fR|\fIsctp\fR|\fIdccp\fR"
+.RS 4
+The protocol can either be
+\fItcp\fR,
+\fIudp\fR,
+\fIsctp\fR
+or
+\fIdccp\fR\&.
+.RE
+.SS "protocol"
+.PP
+Is an optional empty\-element tag and can be used several times to have more than one protocol entry\&. All protocol has exactly one attribute:
+.PP
+value="\fIstring\fR"
+.RS 4
+The protocol can be any protocol supported by the system\&. Please have a look at
+\fI/etc/protocols\fR
+for supported protocols\&.
+.RE
+.SS "icmp\-block"
+.PP
+Is an optional empty\-element tag and can be used several times to have more than one icmp\-block entry\&. Each icmp\-block tag has exactly one mandatory attribute:
+.PP
+name="\fIstring\fR"
+.RS 4
+The name of the Internet Control Message Protocol (ICMP) type to be blocked\&. To get a list of valid ICMP types
+\fBfirewall\-cmd \-\-get\-icmptypes\fR
+can be used\&.
+.RE
+.SS "masquerade"
+.PP
+Is an optional empty\-element tag\&. It can be used only once\&. If it\*(Aqs present masquerading is enabled\&.
+.SS "forward\-port"
+.PP
+Is an optional empty\-element tag and can be used several times to have more than one port or packet forward entry\&. There are mandatory and also optional attributes for forward ports:
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBMandatory attributes:\fR
+.RS 4
+.PP
+The local port and protocol to be forwarded\&.
+.PP
+port="\fIportid\fR[\-\fIportid\fR]"
+.RS 4
+The port can either be a single port number
+\fIportid\fR
+or a port range
+\fIportid\fR\-\fIportid\fR\&.
+.RE
+.PP
+protocol="\fItcp\fR|\fIudp\fR|\fIsctp\fR|\fIdccp\fR"
+.RS 4
+The protocol can either be
+\fItcp\fR,
+\fIudp\fR,
+\fIsctp\fR
+or
+\fIdccp\fR\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBOptional attributes:\fR
+.RS 4
+.PP
+The destination of the forward\&. For local forwarding add
+\fBto\-port\fR
+only\&. For remote forwarding add
+\fBto\-addr\fR
+and use
+\fBto\-port\fR
+optionally if the destination port on the destination machine should be different\&.
+.PP
+to\-port="\fIportid\fR[\-\fIportid\fR]"
+.RS 4
+The destination port or port range to forward to\&. If omitted, the value of the port= attribute will be used altogether with the to\-addr attribute\&.
+.RE
+.PP
+to\-addr="\fIaddress\fR"
+.RS 4
+The destination IP address either for IPv4 or IPv6\&.
+.RE
+.RE
+.SS "source\-port"
+.PP
+Is an optional empty\-element tag and can be used several times to have more than one source port entry\&. All attributes of a source port entry are mandatory:
+.PP
+port="\fIportid\fR[\-\fIportid\fR]"
+.RS 4
+The port can either be a single port number
+\fIportid\fR
+or a port range
+\fIportid\fR\-\fIportid\fR\&.
+.RE
+.PP
+protocol="\fItcp\fR|\fIudp\fR|\fIsctp\fR|\fIdccp\fR"
+.RS 4
+The protocol can either be
+\fItcp\fR,
+\fIudp\fR,
+\fIsctp\fR
+or
+\fIdccp\fR\&.
+.RE
+.SS "rule"
+.PP
+Is an optional element tag and can be used several times to have more than one rich language rule entry\&.
+.PP
+The general rule structure:
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+<rule [family="\fIipv4\fR|\fIipv6\fR"] [priority="\fIpriority\fR"]>
+    [ <source address="\fIaddress\fR[/\fImask\fR]"|mac="\fIMAC\fR"|ipset="\fIipset\fR" [invert="\fITrue\fR"]/> ]
+    [ <destination address="\fIaddress\fR[/\fImask\fR]"|ipset="\fIipset\fR" [invert="\fITrue\fR"]/> ]
+    [
+        <service name="\fIstring\fR"/> |
+        <port port="\fIportid\fR[\-\fIportid\fR]" protocol="\fItcp\fR|\fIudp\fR|\fIsctp\fR|\fIdccp\fR"/> |
+        <protocol value="\fIprotocol\fR"/> |
+        <icmp\-block name="\fIicmptype\fR"/> |
+        <icmp\-type name="\fIicmptype\fR"/> |
+        <masquerade/> |
+        <forward\-port port="\fIportid\fR[\-\fIportid\fR]" protocol="\fItcp\fR|\fIudp\fR|\fIsctp\fR|\fIdccp\fR" [to\-port="\fIportid\fR[\-\fIportid\fR]"] [to\-addr="\fIaddress\fR"]/> |
+        <source\-port port="\fIportid\fR[\-\fIportid\fR]" protocol="\fItcp\fR|\fIudp\fR|\fIsctp\fR|\fIdccp\fR"/> |
+    ]
+    [
+        <log [prefix="\fIprefix text\fR"] [level="\fIemerg\fR|\fIalert\fR|\fIcrit\fR|\fIerr\fR|\fIwarn\fR|\fInotice\fR|\fIinfo\fR|\fIdebug\fR"]> [<limit value="\fIrate\fR/\fIduration\fR"/>] </log> |
+        <nflog [group="\fIgroup id\fR"] [prefix="\fIprefix text\fR"] [queue\-size="\fIthreshold\fR"]> [<limit value="\fIrate\fR/\fIduration\fR"/>] </nflog>
+    ]
+    [ <audit> [<limit value="\fIrate\fR/\fIduration\fR"/>] </audit> ]
+    [
+        <accept> [<limit value="\fIrate\fR/\fIduration\fR"/>] </accept> |
+        <reject [type="\fIrejecttype\fR"]> [<limit value="\fIrate\fR/\fIduration\fR"/>] </reject> |
+        <drop> [<limit value="\fIrate\fR/\fIduration\fR"/>] </drop> |
+        <mark set="\fImark\fR[/\fImask\fR]"> [<limit value="\fIrate\fR/\fIduration\fR"/>] </mark>
+    ]
+</rule>
+        
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+Rule structure for source black or white listing:
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+<rule [family="\fIipv4\fR|\fIipv6\fR"] [priority="\fIpriority\fR"]>
+    <source address="\fIaddress\fR[/\fImask\fR]"|mac="\fIMAC\fR"|ipset="\fIipset\fR" [invert="\fITrue\fR"]/>
+    [
+        <log [prefix="\fIprefix text\fR"] [level="\fIemerg\fR|\fIalert\fR|\fIcrit\fR|\fIerr\fR|\fIwarn\fR|\fInotice\fR|\fIinfo\fR|\fIdebug\fR"]> [<limit value="\fIrate\fR/\fIduration\fR"/>] </log> |
+        <nflog [group="\fIgroup id\fR"] [prefix="\fIprefix text\fR"] [queue\-size="\fIthreshold\fR"]> [<limit value="\fIrate\fR/\fIduration\fR"/>] </nflog>
+    ]
+    [ <audit> [<limit value="\fIrate\fR/\fIduration\fR"/>] </audit> ]
+    <accept> [<limit value="\fIrate\fR/\fIduration\fR"/>] </accept> |
+    <reject [type="\fIrejecttype\fR"]> [<limit value="\fIrate\fR/\fIduration\fR"/>] </reject> |
+    <drop> [<limit value="\fIrate\fR/\fIduration\fR"/>] </drop>
+</rule>
+        
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+For a full description on rich language rules, please have a look at
+\fBfirewalld.richlanguage\fR(5)\&.
+.SH "SEE ALSO"
+\fBfirewall-applet\fR(1), \fBfirewalld\fR(1), \fBfirewall-cmd\fR(1), \fBfirewall-config\fR(1), \fBfirewalld.conf\fR(5), \fBfirewalld.direct\fR(5), \fBfirewalld.dbus\fR(5), \fBfirewalld.icmptype\fR(5), \fBfirewalld.lockdown-whitelist\fR(5), \fBfirewall-offline-cmd\fR(1), \fBfirewalld.richlanguage\fR(5), \fBfirewalld.service\fR(5), \fBfirewalld.zone\fR(5), \fBfirewalld.zones\fR(5), \fBfirewalld.policy\fR(5), \fBfirewalld.policies\fR(5), \fBfirewalld.ipset\fR(5), \fBfirewalld.helper\fR(5)
+.SH "NOTES"
+.PP
+firewalld home page:
+.RS 4
+\m[blue]\fB\%http://firewalld.org\fR\m[]
+.RE
+.SH "AUTHORS"
+.PP
+\fBThomas Woerner\fR <\&twoerner@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBJiri Popelka\fR <\&jpopelka@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBEric Garver\fR <\&eric@garver\&.life\&>
+.RS 4
+Developer
+.RE

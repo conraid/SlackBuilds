@@ -1,0 +1,304 @@
+'\" t
+.\"     Title: firewalld.direct
+.\"    Author: Thomas Woerner <twoerner@redhat.com>
+.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
+.\"      Date: 
+.\"    Manual: firewalld.direct
+.\"    Source: firewalld 2.1.0
+.\"  Language: English
+.\"
+.TH "FIREWALLD\&.DIRECT" "5" "" "firewalld 2.1.0" "firewalld.direct"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+firewalld.direct \- firewalld direct configuration file
+.SH "SYNOPSIS"
+.PP
+.nf
+\fI/usr/etc/firewalld/direct\&.xml\fR
+      
+.fi
+.sp
+.SH "DEPRECATED"
+.PP
+The direct interface has been deprecated\&. It will be removed in a future release\&. It is superseded by policies, see
+\fBfirewalld.policies\fR(5)\&.
+.SH "DESCRIPTION"
+.PP
+Direct configuration gives a more direct access to the firewall\&. It requires user to know basic ip(6)tables/ebtables concepts, i\&.e\&.
+\fItable\fR
+(filter/mangle/nat/\&.\&.\&.),
+\fIchain\fR
+(INPUT/OUTPUT/FORWARD/\&.\&.\&.),
+\fIcommands\fR
+(\-A/\-D/\-I/\&.\&.\&.),
+\fIparameters\fR
+(\-p/\-s/\-d/\-j/\&.\&.\&.) and
+\fItargets\fR
+(ACCEPT/DROP/REJECT/\&.\&.\&.)\&. Direct configuration should be used only as a last resort when it\*(Aqs not possible to use
+\fBfirewalld.zone\fR(5)\&. See also
+\fIDirect Options\fR
+in
+\fBfirewall-cmd\fR(1)\&.
+.PP
+A firewalld direct configuration file contains information about permanent direct chains, rules and passthrough \&.\&.\&.
+.PP
+This is the structure of a direct configuration file:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+<?xml version="1\&.0" encoding="utf\-8"?>
+<direct>
+  [ <chain ipv="\fIipv4\fR|\fIipv6\fR|\fIeb\fR" table="\fItable\fR" chain="\fIchain\fR"/> ]
+  [ <rule ipv="\fIipv4\fR|\fIipv6\fR|\fIeb\fR" table="\fItable\fR" chain="\fIchain\fR" priority="\fIpriority\fR"> args </rule> ]
+  [ <passthrough ipv="\fIipv4\fR|\fIipv6\fR|\fIeb\fR"> args </passthrough> ]
+</direct>
+      
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.SS "direct"
+.PP
+The mandatory direct start and end tag defines the direct\&. This tag can only be used once in a direct configuration file\&. There are no attributes for direct\&.
+.SS "chain"
+.PP
+Is an optional empty\-element tag and can be used several times\&. It can be used to define names for additional chains\&. A chain entry has exactly three attributes:
+.PP
+ipv="\fIipv4\fR|\fIipv6\fR|\fIeb\fR"
+.RS 4
+The IP family where the chain will be created\&. This can be either
+\fIipv4\fR,
+\fIipv6\fR
+or
+\fIeb\fR\&.
+.RE
+.PP
+table="\fItable\fR"
+.RS 4
+The table name where the chain will be created\&. This can be one of the tables that can be used for iptables, ip6tables or ebtables\&. For the possible values, see TABLES section in the iptables, ip6tables or ebtables man pages\&.
+.RE
+.PP
+chain="\fIchain\fR"
+.RS 4
+The name of the chain, that will be created\&. Please make sure that there is no other chain with this name already\&.
+.RE
+.PP
+Please remember to add a rule or passthrough rule with an
+\fB\-\-jump\fR
+or
+\fB\-\-goto\fR
+option to connect the chain to another one\&.
+.SS "rule"
+.PP
+Is an optional element tag and can be used several times\&. It can be used to add rules to a built\-in or added chain\&. A rule entry has exactly four attributes:
+.PP
+ipv="\fIipv4\fR|\fIipv6\fR|\fIeb\fR"
+.RS 4
+The IP family where the rule will be added\&. This can be either
+\fIipv4\fR,
+\fIipv6\fR
+or
+\fIeb\fR\&.
+.RE
+.PP
+table="\fItable\fR"
+.RS 4
+The table name where the rule will be added\&. This can be one of the tables that can be used for iptables, ip6tables or ebtables\&. For the possible values, see TABLES section in the iptables, ip6tables or ebtables man pages\&.
+.RE
+.PP
+chain="\fIchain\fR"
+.RS 4
+The name of the chain where the rule will be added\&. This can be either a built\-in chain or a chain that has been created with the chain tag\&. If the chain name is a built\-in chain, then the rule will be added to
+\fIchain\fR_direct, else the supplied chain name is used\&.
+\fIchain\fR_direct is created internally for all built\-in chains to make sure that the added rules do not conflict with the rules created by firewalld\&.
+.RE
+.PP
+priority="\fIpriority\fR"
+.RS 4
+The priority is used to order rules\&. Priority 0 means add rule on top of the chain, with a higher priority the rule will be added further down\&. Rules with the same priority are on the same level and the order of these rules is not fixed and may change\&. If you want to make sure that a rule will be added after another one, use a low priority for the first and a higher for the following\&.
+.RE
+.PP
+The
+\fIargs\fR
+can be any arguments of iptables or ip6tables, that do not conflict with the table or chain attributes\&.
+.SS "passthrough"
+.PP
+Is an optional element tag and can be used several times\&. It can be used to add rules to a built\-in or added chain\&. A rule entry has exactly one attribute:
+.PP
+ipv="\fIipv4\fR|\fIipv6\fR|\fIeb\fR"
+.RS 4
+The IP family where the passthrough rule will be added\&. This can be either
+\fIipv4\fR,
+\fIipv6\fR
+or
+\fIeb\fR\&.
+.RE
+.PP
+The
+\fIargs\fR
+can be any arguments of iptables or ip6tables\&.
+.PP
+The passthrough rule will be added to the chain directly\&. There is no mechanism like for the direct
+\fBrule\fR
+above\&. The user of the passthrough rule has to make sure that there will be no conflict with the rules created by firewalld\&.
+.SH "CAVEATS"
+.PP
+Depending on the value of
+\fIFirewallBackend\fR
+(see
+\fBfirewalld.conf\fR(5)) direct rules behave differently in some scenarios\&.
+.SS "Packet accept/drop precedence"
+.PP
+Due to implementation details of netfilter inside the kernel, if
+\fIFirewallBackend=nftables\fR
+is used direct rules that
+\fIACCEPT\fR
+packets don\*(Aqt actually cause the packets to be immediately accepted by the system\&. Those packets are still be subject to firewalld\*(Aqs nftables ruleset\&. This basically means there are two independent firewalls and packets must be accepted by both (iptables and nftables)\&. As an aside, this scenario also occurs inside of nftables (again due to netfilter) if there are multiple chains attached to the same hook \- it\*(Aqs not as simple as iptables vs nftables\&.
+.PP
+There are a handful of options to workaround the
+\fIACCEPT\fR
+issue:
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 1.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  1." 4.2
+.\}
+Rich Rules
+.sp
+If a rich rule can be used, then they should always be preferred over direct rules\&. Rich Rules will be converted to the enabled
+\fIFirewallBackend\fR\&. See
+\fBfirewalld.richlanguage\fR(5)\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 2.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  2." 4.2
+.\}
+Blanket Accept
+.sp
+Users can add an explicit accept to the nftables ruleset\&. This can be done by adding the interface or source to the
+\fItrusted\fR
+zone\&.
+.sp
+This strategy is often employed by things that perform their own filtering such as: libvirt, podman, docker\&.
+.sp
+\fBWarning\fR: This means firewalld will do no filtering on these packets\&. It must all be done via direct rules or out\-of\-band iptables rules\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 3.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  3." 4.2
+.\}
+Selective Accept
+.sp
+Alternatively, enable only the relevant service, port, address, or otherwise in the appropriate zone\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 4.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  4." 4.2
+.\}
+Revert to the iptables backend
+.sp
+A last resort is to revert to the iptables backend by setting
+\fIFirewallBackend=iptables\fR\&. Users should be aware that firewalld development focuses on the nftables backend\&.
+.RE
+.PP
+For direct rules that
+\fIDROP\fR
+packets the packets are immediately dropped regardless of the value of
+\fIFirewallBackend\fR\&. As such, there is no special consideration needed\&.
+.PP
+Firewalld guarantees the above ACCEPT/DROP behavior by registering nftables hooks with a lower precedence than iptables hooks\&.
+.SS "Direct interface precedence"
+.PP
+With
+\fIFirewallBackend=iptables\fR
+firewalld\*(Aqs top\-level internal rules apply before direct rules are executed\&. This includes rules to accept existing connections\&. In the past this has surprised users\&. As an example, if a user adds a direct rule to drop traffic on destination port 22 existing SSH sessions would continue to function, but new connections would be denied\&.
+.PP
+With
+\fIFirewallBackend=nftables\fR
+direct rules were deliberately given a higher precedence than all other firewalld rules\&. This includes rules to accept existing connections\&.
+.SH "EXAMPLE"
+.PP
+Denylisting of the networks 192\&.168\&.1\&.0/24 and 192\&.168\&.5\&.0/24 with logging and dropping early in the raw table:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+<?xml version="1\&.0" encoding="utf\-8"?>
+<direct>
+  <chain ipv="ipv4" table="raw" chain="denylist"/>
+  <rule ipv="ipv4" table="raw" chain="PREROUTING" priority="0">\-s 192\&.168\&.1\&.0/24 \-j denylist</rule>
+  <rule ipv="ipv4" table="raw" chain="PREROUTING" priority="1">\-s 192\&.168\&.5\&.0/24 \-j denylist</rule>
+  <rule ipv="ipv4" table="raw" chain="denylist" priority="0">\-m limit \-\-limit 1/min \-j LOG \-\-log\-prefix "denylisted: "</rule>
+  <rule ipv="ipv4" table="raw" chain="denylist" priority="1">\-j DROP</rule>
+</direct>
+      
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.SH "SEE ALSO"
+\fBfirewall-applet\fR(1), \fBfirewalld\fR(1), \fBfirewall-cmd\fR(1), \fBfirewall-config\fR(1), \fBfirewalld.conf\fR(5), \fBfirewalld.direct\fR(5), \fBfirewalld.dbus\fR(5), \fBfirewalld.icmptype\fR(5), \fBfirewalld.lockdown-whitelist\fR(5), \fBfirewall-offline-cmd\fR(1), \fBfirewalld.richlanguage\fR(5), \fBfirewalld.service\fR(5), \fBfirewalld.zone\fR(5), \fBfirewalld.zones\fR(5), \fBfirewalld.policy\fR(5), \fBfirewalld.policies\fR(5), \fBfirewalld.ipset\fR(5), \fBfirewalld.helper\fR(5)
+.SH "NOTES"
+.PP
+firewalld home page:
+.RS 4
+\m[blue]\fB\%http://firewalld.org\fR\m[]
+.RE
+.SH "AUTHORS"
+.PP
+\fBThomas Woerner\fR <\&twoerner@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBJiri Popelka\fR <\&jpopelka@redhat\&.com\&>
+.RS 4
+Developer
+.RE
+.PP
+\fBEric Garver\fR <\&eric@garver\&.life\&>
+.RS 4
+Developer
+.RE
