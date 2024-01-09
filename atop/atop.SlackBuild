@@ -2,7 +2,7 @@
 #
 # Slackware build script for atop
 #
-# Copyright 2014-2023 Corrado Franco (https://corradofranco.it)
+# Copyright 2014-2024 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=atop
-SRCVERSION=2.9.0
+SRCVERSION=2.10.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -96,7 +96,7 @@ sed -e 's|exit 0|exit 1|' \
     -e 's|/usr/share/atop/atop.daily\&|/etc/cron.daily/atop \&|g' \
     -i atop.init
 
-make CFLAGS="$SLKCFLAGS"
+make PKGFLAGS="$SLKCFLAGS"
 make DESTDIR=$PKG sysvinstall
 
 # Don't ship .la files:

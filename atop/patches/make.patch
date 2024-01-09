@@ -1,7 +1,11 @@
 diff -Naupr a/Makefile b/Makefile
---- a/Makefile	2021-12-18 12:04:24.000000000 +0100
-+++ b/Makefile	2021-12-19 10:00:52.641456145 +0100
-@@ -6,15 +6,14 @@ DESTDIR  =
+--- a/Makefile	2024-01-04 11:06:28.000000000 +0100
++++ b/Makefile	2024-01-09 11:51:56.861915210 +0100
+@@ -3,24 +3,24 @@
+ # Gerlof Langeveld - gerlof.langeveld@atoptool.nl
+ #
+ DESTDIR  =
++PKGFLAGS =
  
  BINPATH  = /usr/bin
  SBINPATH = /usr/sbin
@@ -22,7 +26,14 @@ diff -Naupr a/Makefile b/Makefile
  ROTPATH  = /etc/logrotate.d
  PMPATH1  = /usr/lib/pm-utils/sleep.d
  PMPATH2  = /usr/lib64/pm-utils/sleep.d
-@@ -92,18 +91,15 @@ install:	genericinstall
+ PMPATHD  = /usr/lib/systemd/system-sleep
+ 
+-CFLAGS  += -O2 -I. -Wall $(shell pkg-config --cflags glib-2.0)  -Wno-stringop-truncation -Wmissing-prototypes -Wmissing-declarations -Wformat-security # -DNOPERFEVENT   # -DHTTPSTATS
++CFLAGS  += $(PKGFLAGS) -O2 -I. -Wall $(shell pkg-config --cflags glib-2.0)  -Wno-stringop-truncation -Wmissing-prototypes -Wmissing-declarations -Wformat-security # -DNOPERFEVENT   # -DHTTPSTATS
+ LDFLAGS  = $(shell pkg-config --libs glib-2.0)
+ OBJMOD0  = version.o
+ OBJMOD1  = various.o  deviate.o   procdbase.o
+@@ -96,18 +96,15 @@ install:	genericinstall
  sysvinstall:	genericinstall
  		if [ ! -d $(DESTDIR)$(INIPATH) ]; 			\
  		then	mkdir -p  $(DESTDIR)$(INIPATH);	fi
