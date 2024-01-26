@@ -102,7 +102,7 @@ stop(){
 
 reload(){
 	test -f /etc/audit/auditd.conf  || exit 6
-	printf "Reloading configuration: "	
+	printf "Reloading configuration: "
 	killproc $prog -HUP
 	RETVAL=$?
 	echo
@@ -110,7 +110,7 @@ reload(){
 }
 
 rotate(){
-	printf "Rotating logs: "	
+	printf "Rotating logs: "
 	killproc $prog -USR1
 	RETVAL=$?
 	echo
@@ -118,7 +118,7 @@ rotate(){
 }
 
 resume(){
-	printf "Resuming logging: "	
+	printf "Resuming logging: "
 	killproc $prog -USR2
 	RETVAL=$?
 	echo
@@ -133,7 +133,7 @@ restart(){
 
 state(){
 	state_file="/var/run/auditd.state"
-	printf "Getting auditd internal state: "	
+	printf "Getting auditd internal state: "
 	killproc $prog -CONT
 	RETVAL=$?
 	printf "\n"

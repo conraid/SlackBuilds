@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=audit
 VERSION=4.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -132,19 +132,6 @@ fi
 # Move init file
 mkdir -p $PKG/etc/rc.d
 cat $CWD/files/rc.auditd > $PKG/etc/rc.d/rc.auditd.new
-
-# Use #!/bin/bash for init scripts
-sed 's;#!/bin/sh;#!/bin/bash;g' -i $PKG/etc/rc.d/*.new
-
-# Rename config file
-for CONF in $(find $PKG/etc -name "*.rules" -o -name "*.conf"); do
-  mv $CONF $CONF.new
-done
-
-# Change sbin dir in config file
-for NEW in $(find $PKG/etc -name "*.new"); do
-  sed -i 's|/sbin|/usr/sbin|g' $NEW
-done
 
 # Make log dir
 mkdir -p $PKG/var/log/audit
