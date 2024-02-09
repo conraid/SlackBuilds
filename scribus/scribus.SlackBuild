@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=scribus
-VERSION=1.5.8
-BUILD=${BUILD:-33}
+VERSION=1.6.1
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -93,22 +93,22 @@ fi
 mkdir -p build
 cd build
 cmake \
-  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
-  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_INSTALL_PREFIX=/usr \
-  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
-  -DDOCDIR=/usr/doc/$PKGNAM-$VERSION \
-  -DCMAKE_INSTALL_MANDIR=/usr/man \
   -Wno-dev \
-  -DHAVE_PYTHON=ON \
-	-DWANT_DISTROBUILD=ON \
-	-DPython3_EXECUTABLE="python3" \
-  -DWANT_CPP17=ON \
-  -DLIBPODOFO_INCLUDE_DIR=/usr/include/podofo09 \
-  -DLIBPODOFO_LIBRARY=/usr/lib$LIBDIRSUFFIX/podofo09/libpodofo.so \
+  -D CMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
+  -D CMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
+  -D CMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
+  -D CMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
+  -D CMAKE_SKIP_RPATH=On \
+  -D CMAKE_BUILD_TYPE=Release \
+  -D CMAKE_INSTALL_PREFIX=/usr \
+  -D LIB_SUFFIX=${LIBDIRSUFFIX} \
+  -D DOCDIR=/usr/doc/$PKGNAM-$VERSION/ \
+  -D CMAKE_INSTALL_MANDIR=/usr/man \
+  -D HAVE_PYTHON=ON \
+	-D WANT_DISTROBUILD=ON \
+	-D Python3_EXECUTABLE="python3" \
+  -D WANT_CPP17=ON \
+  -D WITH_PODOFO=On \
   ..
 
 make
@@ -124,8 +124,6 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-mv $PKG/usr/share/doc/scribus/* $PKG/usr/doc/$PKGNAM-$VERSION/
-rm -rf $PKG/usr/share/doc
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
