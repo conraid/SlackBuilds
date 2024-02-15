@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cli
 PKGNAM=github-cli
-SRCVERSION=2.43.1
+SRCVERSION=2.44.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -105,7 +105,7 @@ export CGO_CFLAGS="${SLKCFLAGS}"
 export CGO_CXXFLAGS="${SLKCFLAGS}"
 export GO_LDFLAGS="-s -w"
 export CGO_ENABLED=0
-export GOFLAGS="-buildmode=pie -trimpath -mod=readonly -modcacherw -ldflags=-linkmode=external"
+export GOFLAGS="-buildmode=pie -trimpath -mod=readonly -modcacherw" #-ldflags=-linkmode=external"
 export GOPATH="$TMP/$PRGNAM/$SRCVERSION"
 
 make GH_VERSION="v$VERSION" bin/gh manpages
