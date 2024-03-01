@@ -2,7 +2,7 @@
 #
 # Slackware build script for appstream
 #
-# Copyright 2022-2023 Corrado Franco (https://corradofranco.it)
+# Copyright 2022-2024 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=AppStream
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=1.0.1
+SRCVERSION=1.0.2
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -124,8 +124,6 @@ meson setup \
   -D                stemming=false \
   -D                strip=true \
   -D                systemd=false \
-  -D                qt=false \
-  -D                qt5=true \
   -D                docs=false \
   -D                apidocs=false \
   -D                install-docs=false \
