@@ -2,7 +2,7 @@
 #
 # Slackware build script for python-zstandard
 #
-# Copyright 2023 Corrado Franco (https://corradofranco.it)
+# Copyright 2023-2024 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=zstandard
 PKGNAM=python-$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=0.21.0
+SRCVERSION=0.22.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -84,6 +84,8 @@ find .\
   -exec chmod 755 {} \; -o \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
+
+sed -e 's/setuptools==/setuptools>=/' -e 's/wheel==/wheel>=/' -i pyproject.toml
 
 CFLAGS="$SLKCFLAGS" python3 -m build --wheel --no-isolation
 python3 -m installer --destdir "$PKG" dist/*.whl
