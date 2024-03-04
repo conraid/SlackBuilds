@@ -2,7 +2,7 @@
 #
 # Slackware build script for nomacs
 #
-# Copyright 2013-2023 Corrado Franco (https://corradofranco.it)
+# Copyright 2013-2024 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,9 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=nomacs
-VERSION=3.17.2287
+VERSION=3.17.2295
 PLUGINVERSION=3.17.2285
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -120,6 +120,7 @@ cmake -Wno-dev \
   -DENABLE_HEIF=ON \
   -DENABLE_AVIF=ON \
   -DENABLE_JXL=ON \
+  -DQT_VERSION_MAJOR=5 \
   ..
 
 make
