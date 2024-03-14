@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=sslh
-VERSION=1.23.1
+VERSION=2.1.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -82,12 +82,31 @@ chmod -R u+w,go+r-w,a-s .
 # Fix slackware path in manpage
 sed 's|/init.d/sslh|/rc.d/rc.sslh|' -i sslh.pod
 
-make LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" CFLAGS="$SLKCFLAGS"
+# Fix MANDIR
+sed 's|share/man|man|' -i Makefile.in
+
+LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+  --prefix=/usr \
+  --libdir=/usr/lib$LIBDIRSUFFIX \
+  --sysconfdir=/etc \
+  --localstatedir=/var \
+  --mandir=/usr/man \
+  --infodir=/usr/info \
+  --docdir=/usr/doc/$PKGNAM-$VERSION \
+  --host=$ARCH-slackware-linux \
+  --build=$ARCH-slackware-linux
+
+make
+make DESTDIR=$PKG install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
+
 install -Dsm755 sslh-fork $PKG/usr/sbin/sslh-fork
 install -Dsm755 sslh-select $PKG/usr/sbin/sslh-select
-ln -s sslh-fork $PKG/usr/sbin/sslh
-
-install -Dm644 sslh.8.gz $PKG/usr/man/man8/sslh.8.gz
 
 # Install init file
 install -Dm755 $CWD/rc.sslh $PKG/etc/rc.d/rc.sslh.new
