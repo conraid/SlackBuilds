@@ -2,7 +2,7 @@
 #
 # Slackware build script for go-md2man
 #
-# Copyright 2019-2023 Corrado Franco (https://corradofranco.it)
+# Copyright 2019-2024 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=go-md2man
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=2.0.3
+SRCVERSION=2.0.4
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -103,7 +103,7 @@ export PATH="${GOROOT}/bin:${PATH}"
 export CGO_CPPFLAGS="${SLKCFLAGS}"
 export CGO_CFLAGS="${SLKCFLAGS}"
 export CGO_CXXFLAGS="${SLKCFLAGS}"
-export GOFLAGS="-buildmode=pie -trimpath -mod=vendor"
+export GOFLAGS="-buildmode=pie -trimpath"
 
 make
 ./bin/go-md2man  -in=go-md2man.1.md -out=go-md2man.1
