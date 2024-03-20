@@ -2,7 +2,7 @@
 #
 # Slackware build script for vde2
 #
-# Copyright 2015-2023 Corrado Franco (https://corradofranco.it)
+# Copyright 2015-2024 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,9 +29,10 @@ set -eu
 
 cd $(dirname $0) ; CWD=$(pwd)
 
+PRGNAM=vde-2
 PKGNAM=vde2
-VERSION=2.3.2
-BUILD=${BUILD:-10}
+VERSION=2.3.3
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,9 +73,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
-cd $PKGNAM-$VERSION
+rm -rf $PRGNAM-$VERSION
+tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
+cd $PRGNAM-$VERSION
 
 chown -R root:root .
 find -L . \
@@ -90,6 +91,7 @@ if [ -e $CWD/patches/ ]; then
   done
 fi
 
+autoreconf -fiv
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
