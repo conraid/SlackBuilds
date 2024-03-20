@@ -2,7 +2,7 @@
 #
 # Slackware build script for ecryptfs-utils (https://launchpad.net/ecryptfs)
 #
-# Copyright 2008-2023 Corrado Franco (https://corradofranco.it)
+# Copyright 2008-2024 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,13 +23,13 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 
-set -e 
+set -e
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=ecryptfs-utils
 VERSION=111
-BUILD=${BUILD:-8}
+BUILD=${BUILD:-9}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -102,6 +102,7 @@ CFLAGS="$SLKCFLAGS -D_FILE_OFFSET_BITS=64" \
   --enable-docs \
   --enable-static=no \
   --enable-shared=yes \
+  --disable-pywrap \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
@@ -123,7 +124,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
   cat $CWD/slack-required > $PKG/install/slack-required
