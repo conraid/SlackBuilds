@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=qbittorrent
-VERSION=4.6.3
-BUILD=${BUILD:-2}
+VERSION=4.6.4
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -111,6 +111,7 @@ cmake -Wno-dev \
   -DGUI=ON \
   -DWEBUI=OFF \
   -DSYSTEMD=OFF \
+  -DQT6=ON \
   ..
 
 make
