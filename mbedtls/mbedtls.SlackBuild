@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=mbedtls
-VERSION=3.5.2
+VERSION=3.6.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -72,9 +72,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$PKGNAM-$VERSION.tar.gz
-cd $PKGNAM-$PKGNAM-$VERSION
+rm -rf $PKGNAM-$VERSION
+tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
+cd $PKGNAM-$VERSION
 
 chown -R root:root .
 find -L . \
@@ -95,16 +95,6 @@ if [ -e $CWD/patches ]; then
     done
   fi
 fi
-
-# enable flags for non-embedded systems
-sed 's|//\(#define MBEDTLS_THREADING_C\)|\1|' -i include/mbedtls/mbedtls_config.h
-sed 's|//\(#define MBEDTLS_THREADING_PTHREAD\)|\1|' -i include/mbedtls/mbedtls_config.h
-# broken in 2.25.0
-sed -i 's/thread_id, -ret/thread_id, (unsigned int)(-ret)/' programs/ssl/ssl_pthread_server.c
-sed -i 's/thread_id, ret/thread_id, (unsigned int)ret/' programs/ssl/ssl_pthread_server.c
-sed -i 's/ -ret );/ (unsigned int)(-ret) );/' programs/ssl/ssl_pthread_server.c
-sed -i 's/ -ret, error_buf/ (unsigned int)(-ret), error_buf/' programs/ssl/ssl_pthread_server.c
-sed -i 's/04x\\n", ret /04x\\n", (unsigned int)ret /' programs/ssl/ssl_pthread_server.c
 
 mkdir -p build
 cd build
