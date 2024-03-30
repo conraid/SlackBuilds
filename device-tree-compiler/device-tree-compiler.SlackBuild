@@ -2,7 +2,7 @@
 #
 # Slackware build script for device-tree-compiler
 #
-# Copyright 2018-2023 Corrado Franco (https://corradofranco.it)
+# Copyright 2018-2024 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=dtc
 PKGNAM=device-tree-compiler
 VERSION=1.7.0
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -96,6 +96,8 @@ if [ -e $CWD/patches/ ]; then
     done
   fi
 fi
+
+sed "s/@VERSION@/$VERSION/" -i setup.py
 
 export CFLAGS="$SLKCFLAGS"
 export CXXFLAGS="$SLKCFLAGS"
