@@ -2,7 +2,7 @@
 #
 # Slackware build script for nvchecker
 #
-# Copyright 2019-2023 Corrado Franco (https://corradofranco.it)
+# Copyright 2019-2024 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=nvchecker
 VERSION=2.13.1
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -53,20 +53,6 @@ fi
 if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
   echo "$PKGNAM-$VERSION-$ARCH-$BUILD.txz "
   exit 0
-fi
-
-if [ "$ARCH" = "i586" ]; then
-  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
-  LIBDIRSUFFIX=""
-elif [ "$ARCH" = "i686" ]; then
-  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
-  LIBDIRSUFFIX=""
-elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
-  LIBDIRSUFFIX="64"
-else
-  SLKCFLAGS="-O2"
-  LIBDIRSUFFIX=""
 fi
 
 rm -rf $PKG
@@ -96,7 +82,7 @@ if [ -e $CWD/patches/ ]; then
   fi
 fi
 
-CFLAGS="$SLKCFLAGS" python3 -m build --wheel --no-isolation
+unshare -n python3 -m build --wheel --no-isolation
 make -C docs man
 python3 -m installer --destdir "$PKG" dist/*.whl
 
