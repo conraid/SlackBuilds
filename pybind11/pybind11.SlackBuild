@@ -33,7 +33,7 @@ PRGNAM=pybind11
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=2.12.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -100,7 +100,7 @@ fi
 
 mkdir -p build
 
-CFLAGS="$SLKCFLAGS" python3 -m build --wheel --no-isolation
+unshare -n python3 -m build --wheel --no-isolation
 
 (
   cd build
@@ -121,7 +121,6 @@ python3 -m installer --destdir "$PKG" dist/*.whl
   cd build
   make install DESTDIR=$PKG
 )
-
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
