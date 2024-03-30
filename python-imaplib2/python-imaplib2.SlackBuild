@@ -2,7 +2,7 @@
 #
 # Slackware build script for python-imaplib2
 #
-# Copyright 2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2022-2024 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ PRGNAM=imaplib2
 PKGNAM=python-$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=3.6
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -57,19 +57,6 @@ if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
   exit 0
 fi
 
-if [ "$ARCH" = "i586" ]; then
-  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
-  LIBDIRSUFFIX=""
-elif [ "$ARCH" = "i686" ]; then
-  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
-  LIBDIRSUFFIX=""
-elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
-  LIBDIRSUFFIX="64"
-else
-  SLKCFLAGS="-O2"
-  LIBDIRSUFFIX=""
-fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
@@ -85,7 +72,8 @@ find -L . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
-CFLAGS="$SLKCFLAGS" python3 setup.py install --root=$PKG
+unshare -n python3 -m build --wheel --no-isolation
+python3 -m installer --destdir "$PKG" dist/*.whl
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
@@ -101,6 +89,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
