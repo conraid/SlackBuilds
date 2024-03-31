@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=apngasm
 SRCVERSION=3.1.10
 VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-9}
+BUILD=${BUILD:-10}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -91,6 +91,7 @@ cmake -Wno-dev \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DBoost_NO_BOOST_CMAKE=ON \
+  -DLIB_INSTALL_DIR=lib$LIBDIRSUFFIX \
   ..
 
 make
