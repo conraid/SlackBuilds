@@ -44,8 +44,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=netdata
-VERSION=1.44.3
-BUILD=${BUILD:-6}
+VERSION=1.45.1
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -110,29 +110,23 @@ if [ -e $CWD/patches/ ]; then
   fi
 fi
 
-# protobuf 23 requires c++17
-sed -e 's|\# AX_CXX_COMPILE_STDCXX(17, noext, optional)|AX_CXX_COMPILE_STDCXX(17, noext, optional)|' -i configure.ac
-
-autoreconf -ivf
-LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib$LIBDIRSUFFIX \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --infodir=/usr/info \
-  --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --with-zlib \
-  --with-math \
-  --with-user=netdata \
-  --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
+mkdir -p build
+cd build
+cmake -Wno-dev \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/ \
+	-DENABLE_PLUGIN_GO=OFF \
+  -DENABLE_PLUGIN_SYSTEMD_JOURNAL=OFF \
+  -DENABLE_PLUGIN_XENSTAT=OFF \
+  -DENABLE_PLUGIN_EBPF=OFF \
+  -DENABLE_BUNDLED_PROTOBUF=ON \
+  ..
 
 make
 make DESTDIR=$PKG install
+cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -144,7 +138,6 @@ if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
-
 
 # Make utility dir
 mkdir -p $PKG/var/{lib,log,cache}/netdata
