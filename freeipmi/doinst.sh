@@ -11,11 +11,8 @@ config() {
   # Otherwise, we leave the .new copy for the admin to consider...
 }
 
-for NEW in etc/freeipmi/*.new; do
-  config $NEW
-done
-
-for NEW in etc/rc.d/*.new; do
+for i in $(find etc -type f)
+do
   config $NEW
 done
 
