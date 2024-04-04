@@ -11,8 +11,10 @@ config() {
   # Otherwise, we leave the .new copy for the admin to consider...
 }
 
-for i in $(find etc -type f)
-do
+for NEW in etc/freeipmi/*.new; do
   config $NEW
 done
-
+config etc/rc.d/rc.bmc-watchdog.new
+config etc/rc.d/rc.ipmidetectd.new
+config etc/rc.d/rc.ipmiseld.new
+config etc/sysconfig/bmc-watchdog.new
