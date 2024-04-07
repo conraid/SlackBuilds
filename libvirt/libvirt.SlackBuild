@@ -34,13 +34,16 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libvirt
 VERSION=10.2.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="AUTHORS ChangeLog COPYING* INSTALL README NEWS TODO"
+
+audit="dis" ; if pkg-config --exists audit ; then audit="en" ; fi
+libiscsi="dis" ; if pkg-config --exists libiscsi ; then libiscsi="en" ; fi
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -122,9 +125,12 @@ meson setup \
   -D                qemu_group=users \
   -D                qemu_user=root \
   -D                runstatedir=/run \
+  -D                audit=${audit}abled \
+  -D                libiscsi=${libiscsi}abled \
+  -D                init_script=none \
   ..
 
- ninja
+ninja
 DESTDIR=$PKG ninja install
 cd ..
 
@@ -134,8 +140,11 @@ rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 # We don't have augeas
 rm -fr $PKG/usr/share/augeas
 
+# this tree is recreated when starting the daemon
+rm -fR $PKG/var/run
+
 # Add an rc.libvirt to start/stop/restart the daemon
-install -Dm755 $CWD/rc.libvirt $PKG/etc/rc.d/rc.libvirt.new
+install -Dm755 $CWD/files/rc.libvirt $PKG/etc/rc.d/rc.libvirt.new
 
 # We use "users" as our virtualization group, fix auth permissions, and
 # consider the fact that by default we got no certs
@@ -148,6 +157,14 @@ sed -e 's|^\#unix_sock_group\ =\ "libvirt"|unix_sock_group = "users"|' \
 
 # still, we use users as our virtualization group
 sed -e 's|^\#group\ =\ "root"|group = "users"|' -i $PKG/etc/libvirt/qemu.conf
+
+# disable seccomp support or else VMs won't start with new libvirt/qemu combo
+# 20220212 bkw: this file doesn't exist if qemu wasn't installed. and
+# since qemu isn't in REQUIRES, it's optional, so the build shouldn't fail.
+if [ -e $PKG/etc/libvirt/qemu.conf ]; then
+  sed -i  "s|^\#seccomp_sandbox = 1|seccomp_sandbox = 0|" \
+    $PKG/etc/libvirt/qemu.conf
+fi
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true

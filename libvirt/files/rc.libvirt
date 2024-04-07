@@ -1,0 +1,256 @@
+#!/usr/bin/bash
+# Init script for libvirtd on Slackware
+# Written by Matteo Bernardini <ponce@slackbuilds.org>
+#
+# Note that a dnsmasq daemon is started by libvirtd itself to serve
+# its virtual network, and possibly can conflict with a dnsmasq
+# already running on the system, see
+# http://wiki.libvirt.org/page/Libvirtd_and_dnsmasq
+# Note also that the tun, vhost_net and kvm related modules are
+# automatically loaded at start and removed at stop: edit the
+# script if this behaviour conflicts with anything else running
+# on your setup
+
+VIRSH=/usr/bin/virsh
+MODULES="tun vhost_net"
+TIMEOUT=${TIMEOUT:-300}
+LIBVIRTD_PIDFILE="/var/run/libvirt/libvirtd.pid"
+LIBVIRTD_OPTS=${LIBVIRT_OPTS:-" -f /etc/libvirt/libvirtd.conf -p $LIBVIRTD_PIDFILE "}
+VIRTLOGD_PIDFILE="/var/run/libvirt/virtlogd.pid"
+VIRTLOGD_OPTS=${VIRTLOGD_OPTS:-" -f /etc/libvirt/virtlogd.conf -p $VIRTLOGD_PIDFILE "}
+VIRTLOCKD_PIDFILE="/var/run/libvirt/virtlockd.pid"
+VIRTLOCKD_OPTS=${VIRTLOCKD_OPTS:-" -f /etc/libvirt/virtlockd.conf -p $VIRTLOCKD_PIDFILE "}
+
+guests_reboot() {
+
+  for machine in $($VIRSH list --name --state-running | grep -v ^$) ; do
+    $VIRSH reboot $machine
+  done
+
+}
+
+guests_shutdown() {
+
+  for machine in $($VIRSH list --name --state-running | grep -v ^$) ; do
+    $VIRSH shutdown $machine &
+  done
+
+  sleep 2
+
+  echo -n "Waiting for guests to finish shutting down..."
+
+  count=0
+
+  while [ $($VIRSH list --name --state-running | grep -v ^$ | wc -l) -gt "0" ]; do
+    if [ "$count" -ge "$TIMEOUT" ];then
+      break
+    fi
+    echo -n "."
+    count=$(expr $count + 1)
+    sleep 1
+  done
+
+  echo ""
+
+  if [ $($VIRSH list --name --state-running | grep -v ^$ | wc -l) -gt "0" ];then
+
+    echo -n "The following guests are still running after $TIMEOUT seconds; destroying them: "
+    for machine in $($VIRSH list --name --state-running | grep -v ^$) ; do
+      $VIRSH destroy $machine
+      echo -n "$machine "
+    done
+
+    sleep 2
+  else
+    # add back the seconds we waited before starting the count
+    count=$(expr $count + 2)
+    echo "Shutdown of guests took $count seconds..."
+  fi
+
+}
+
+
+guests_managedsave() {
+  # apply managedsave on running  and paused machines (as we can't distinguish between
+  # the two states while managedsave is being applied, so won't know when to finish waiting)
+
+  for machine in $($VIRSH list --name | grep -v ^$) ; do
+    $VIRSH managedsave $machine &
+  done
+
+  sleep 2
+
+  echo -n "Waiting for managedsave to finish on all guests..."
+
+  count=0
+
+  while [ $($VIRSH list --name | grep -v ^$ | wc -l) -gt "0" ]; do
+    if [ "$count" -ge "$TIMEOUT" ];then
+      break
+    fi
+    echo -n "."
+    count=$(expr $count + 1)
+    sleep 1
+  done
+
+  echo ""
+
+  if [ $($VIRSH list --name | grep -v ^$ | wc -l) -gt "0" ];then
+
+    echo -n "Following guests are still running after $TIMEOUT seconds, destroying them: "
+    for machine in $($VIRSH list --name | grep -v ^$) ; do
+      $VIRSH destroy $machine
+      echo -n "$machine "
+    done
+
+    sleep 2
+  else
+    # add back the seconds we waited before starting the count
+    count=$(expr $count + 2)
+    echo "Guests managed save took $count seconds..."
+  fi
+}
+
+check_processor() {
+
+  egrep 'vmx' /proc/cpuinfo > /dev/null
+
+  if [ "$?" -eq "0" ];then
+    MODULES="$MODULES kvm_intel kvm"
+  fi
+
+  check=$?
+
+  egrep 'svm' /proc/cpuinfo > /dev/null
+
+  if [ "$?" -eq "0" ];then
+    MODULES="$MODULES kvm_amd kvm"
+  fi
+
+  check=$(expr $check + $?)
+
+  if [ $check -eq "2" ];then
+    echo "Your system does not support KVM!"
+  fi
+
+}
+
+start_libvirtd() {
+  if [ -f $LIBVIRTD_PIDFILE ];then
+    echo "libvirt is already running..."
+    exit 1
+  fi
+  echo "Starting libvirtd:  /usr/sbin/libvirtd -d "
+  mkdir -p $(dirname $LIBVIRTD_PIDFILE) /run/libvirt/{lockd,lxc,network,qemu/swtpm}
+  check_processor
+  /sbin/modprobe -a $MODULES
+  /usr/sbin/libvirtd -d -l $LIBVIRTD_OPTS
+}
+
+stop_libvirtd() {
+  if [ ! -f $LIBVIRTD_PIDFILE ];then
+    echo "libvirt is not running..."
+    exit 2
+  fi
+  guests_managedsave
+  check_processor
+  echo "Stopping libvirtd..."
+  for network in $($VIRSH net-list --name); do
+    $VIRSH net-destroy "$network"
+  done
+  kill -TERM $(cat $LIBVIRTD_PIDFILE)
+  sleep 3
+  /sbin/modprobe -ra $MODULES 2>/dev/null
+}
+
+start_virtlogd() {
+  if [ -f $VIRTLOGD_PIDFILE ];then
+    echo "virtlogd is already running..."
+    exit 1
+  fi
+  echo "Starting virtlogd:  /usr/sbin/virtlogd -d "
+  mkdir -p $(dirname $VIRTLOGD_PIDFILE)
+  /usr/sbin/virtlogd -d $VIRTLOGD_OPTS
+}
+
+stop_virtlogd() {
+  if [ ! -f $VIRTLOGD_PIDFILE ];then
+    echo "virtlogd is not running..."
+    exit 2
+  fi
+  echo "Stopping virtlogd..."
+  kill -TERM $(cat $VIRTLOGD_PIDFILE)
+  sleep 1
+}
+
+start_virtlockd() {
+  if [ -f $VIRTLOCKD_PIDFILE ];then
+    echo "virtlockd is already running..."
+    exit 1
+  fi
+  echo "Starting virtlockd:  /usr/sbin/virtlockd -d "
+  mkdir -p $(dirname $VIRTLOCKD_PIDFILE)
+  /usr/sbin/virtlockd -d $VIRTLOCKD_OPTS
+}
+
+stop_virtlockd() {
+  if [ ! -f $VIRTLOCKD_PIDFILE ];then
+    echo "virtlockd is not running..."
+    exit 2
+  fi
+  echo "Stopping virtlockd..."
+  kill -TERM $(cat $VIRTLOCKD_PIDFILE)
+  sleep 1
+}
+
+soft_restart() {
+  echo "Soft-restarting libvirt..."
+  if [ ! -f $LIBVIRTD_PIDFILE ];then
+    echo "libvirt is not running..."
+    exit 2
+  fi
+  echo "Stopping libvirtd..."
+  kill -TERM $(cat $LIBVIRTD_PIDFILE)
+  sleep 3
+  stop_virtlogd
+  stop_virtlockd
+  sleep 1
+  start_virtlockd
+  start_virtlogd
+  start_libvirtd
+}
+
+case $1 in
+start)
+  start_virtlockd
+  start_virtlogd
+  start_libvirtd
+  ;;
+stop)
+  stop_libvirtd
+  stop_virtlogd
+  stop_virtlockd
+  ;;
+restart)
+  stop_libvirtd
+  stop_virtlogd
+  stop_virtlockd
+  sleep 2
+  start_virtlockd
+  start_virtlogd
+  start_libvirtd
+  ;;
+soft_restart)
+  soft_restart
+  ;;
+guests_shutdown)
+  guests_shutdown
+  ;;
+guests_reboot)
+  guests_reboot
+  ;;
+*)
+  echo "Usage: $0 (start|stop|restart|soft_restart|guests_shutdown|guests_reboot)"
+  ;;
+esac
+
