@@ -10,7 +10,7 @@ config() {
   fi
   # Otherwise, we leave the .new copy for the admin to consider...
 }
-config etc/openmpi/openmpi-default-hostfile.new
-config etc/openmpi/openmpi-mca-params.conf.new
-config etc/openmpi/openmpi-totalview.tcl.new
-config etc/openmpi/pmix-mca-params.conf.new
+
+for NEW in etc/openmpi/*.new; do
+  config $NEW
+done
