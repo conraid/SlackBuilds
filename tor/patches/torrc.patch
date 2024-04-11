@@ -1,0 +1,32 @@
+diff -Naupr a/src/config/torrc.sample.in b/src/config/torrc.sample.in
+--- a/src/config/torrc.sample.in	2024-04-10 19:06:37.000000000 +0200
++++ b/src/config/torrc.sample.in	2024-04-11 14:31:13.013250978 +0200
+@@ -39,18 +39,25 @@
+ ## Send every possible message to @LOCALSTATEDIR@/log/tor/debug.log
+ #Log debug file @LOCALSTATEDIR@/log/tor/debug.log
+ ## Use the system log instead of Tor's logfiles
+-#Log notice syslog
++Log notice syslog
+ ## To send all messages to stderr:
+ #Log debug stderr
+ 
+ ## Uncomment this to start the process in the background... or use
+ ## --runasdaemon 1 on the command line. This is ignored on Windows;
+ ## see the FAQ entry if you want Tor to run as an NT service.
+-#RunAsDaemon 1
++RunAsDaemon 1
+ 
+ ## The directory for keeping all the keys/etc. By default, we store
+ ## things in $HOME/.tor on Unix, and in Application Data\tor on Windows.
+-#DataDirectory @LOCALSTATEDIR@/lib/tor
++DataDirectory @LOCALSTATEDIR@/lib/tor
++
++## On startup, setuid to this user and setgid to their primary group.
++User tor
++
++## On startup, write our PID to /var/run/tor/tor.pid.
++## On clean shutdown, remove /var/run/tor/tor.pid.
++PidFile @LOCALSTATEDIR@/run/tor/tor.pid
+ 
+ ## The port on which Tor will listen for local connections from Tor
+ ## controller applications, as documented in control-spec.txt.

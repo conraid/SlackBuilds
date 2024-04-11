@@ -2,7 +2,7 @@
 #
 # Slackware build script for tor http://www.torproject.org
 #
-# Copyright 2009-2023 Corrado Franco (https://corradofranco.it)
+# Copyright 2009-2024 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=tor
-VERSION=0.4.8.10
+VERSION=0.4.8.11
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -97,6 +97,19 @@ find -L . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
+fi
+
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -110,6 +123,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
   --with-tor-user=tor \
   --with-tor-group=tor \
+  --enable-gpl \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
@@ -123,7 +137,7 @@ rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 mkdir -p $PKG/var/{run,log,lib}/tor
 chown tor:tor $PKG/var/{run,log,lib}/tor
 chmod 0700 $PKG/var/lib/tor
-rename .sample .new $PKG/etc/tor/torrc.sample
+cat $PKG/etc/tor/torrc.sample > $PKG/etc/tor/torrc.new
 mkdir -p $PKG/etc/logrotate.d
 sed -e "s/_tor/tor/" \
   -e "s/_tor/tor/" \
