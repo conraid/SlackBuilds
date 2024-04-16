@@ -49,7 +49,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=lighttpd
-VERSION=1.4.75
+VERSION=1.4.76
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -109,35 +109,47 @@ if [ -e $CWD/patches ]; then
   done
 fi
 
-LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib$LIBDIRSUFFIX \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --infodir=/usr/info \
-  --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --enable-static=no \
-  --enable-shared=yes \
-	--with-mysql \
-  --with-ldap \
-  --with-attr \
-	--with-openssl \
-	--with-gdbm \
-	--with-lua \
-  --with-zlib \
-  --with-bzip2 \
-  --with-libxml \
-  --with-memcached \
-  --with-geoip \
-  --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
+export CFLAGS="$SLKCFLAGS"
+export CXXFLAGS="$SLKCFLAGS"
+mkdir meson-build
+cd meson-build
+meson setup \
+  --prefix          /usr \
+  --libdir          lib${LIBDIRSUFFIX} \
+  --libexecdir      /usr/libexec \
+  --sysconfdir      /etc \
+  --localstatedir   /var \
+  --mandir          /usr/man \
+  --infodir         /usr/info \
+  --bindir          /usr/bin \
+  --sbindir         /usr/sbin \
+  --includedir      /usr/include \
+  --datadir         /usr/share \
+  --buildtype       release \
+  --default-library shared \
+  --buildtype       plain \
+  --auto-features   enabled \
+  --wrap-mode       nodownload \
+  -D                b_lto=true \
+  -D                b_pie=true \
+  -D                with_brotli=enabled \
+  -D                with_bzip=enabled \
+  -D                with_krb5=enabled \
+  -D                with_ldap=enabled \
+	-D                with_lua=true \
+	-D                with_maxminddb=enabled \
+	-D                with_mysql=enabled \
+	-D                with_openssl=true \
+	-D                with_webdav_props=enabled \
+	-D                with_webdav_locks=enabled \
+  -D                with_nettle=false \
+  -D                with_pcre=pcre2 \
+  -D                with_xattr=true \
+  ..
 
-make
-make DESTDIR=$PKG install
+ninja
+DESTDIR=$PKG ninja install
+cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
