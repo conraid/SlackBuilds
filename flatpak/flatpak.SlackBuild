@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=flatpak
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=1.15.6
+SRCVERSION=1.15.8
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -126,6 +126,7 @@ meson setup \
   -D                systemd=disabled \
   -D                malcontent=disabled \
   -D                tests=false \
+  -D                system_fusermount=fusermount3 \
   ..
 
 ninja
