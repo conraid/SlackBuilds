@@ -29,9 +29,10 @@ set -eu
 
 cd $(dirname $0) ; CWD=$(pwd)
 
+PRGNAM=trash_cli
 PKGNAM=trash-cli
-VERSION=0.23.11.10
-BUILD=${BUILD:-2}
+VERSION=0.24.4.17
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -59,9 +60,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+rm -rf $PRGNAM-$VERSION
+tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
+cd $PRGNAM-$VERSION
 
 chown -R root:root .
 find -L . \
