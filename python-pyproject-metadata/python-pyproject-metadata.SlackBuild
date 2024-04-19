@@ -29,11 +29,11 @@ set -eu
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=pyproject-metadata
-PKGNAM=python-$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=0.7.1
+PRGNAM=pyproject_metadata
+PKGNAM=python-$(echo $PRGNAM | tr A-Z a-z | tr _ -)
+SRCVERSION=0.8.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
