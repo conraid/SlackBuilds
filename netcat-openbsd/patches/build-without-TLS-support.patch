@@ -236,7 +236,7 @@ index 5a2b7b1..44be0d9 100644
  .Pp
  .Dl $ nc -u host.example.com 53
 diff --git a/netcat.c b/netcat.c
-index 216fa36..c1df1ce 100644
+index 161ade1..8a59300 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -99,7 +99,9 @@
@@ -734,7 +734,7 @@ index 216fa36..c1df1ce 100644
  				pfd[POLL_STDOUT].fd = -1;
  			/* buffer empty - remove self from polling */
  			if (netinbufpos == 0)
-@@ -1329,21 +1441,31 @@ readwrite(int net_fd, struct tls *tls_ctx)
+@@ -1329,7 +1441,11 @@ readwrite(int net_fd, struct tls *tls_ctx)
  }
  
  ssize_t
@@ -746,6 +746,9 @@ index 216fa36..c1df1ce 100644
  {
  	ssize_t n;
  	ssize_t adjust;
+@@ -1337,16 +1453,22 @@ drainbuf(int fd, unsigned char *buf, size_t *bufpos, struct tls *tls)
+ 	if (fd == -1)
+ 		return -1;
  
 +#ifdef HAVE_TLS
  	if (tls) {
@@ -766,7 +769,7 @@ index 216fa36..c1df1ce 100644
  	if (n <= 0)
  		return n;
  	/* adjust buffer */
-@@ -1355,21 +1477,31 @@ drainbuf(int fd, unsigned char *buf, size_t *bufpos, struct tls *tls)
+@@ -1358,7 +1480,11 @@ drainbuf(int fd, unsigned char *buf, size_t *bufpos, struct tls *tls)
  }
  
  ssize_t
@@ -778,6 +781,9 @@ index 216fa36..c1df1ce 100644
  {
  	size_t num = BUFSIZE - *bufpos;
  	ssize_t n;
+@@ -1366,16 +1492,22 @@ fillbuf(int fd, unsigned char *buf, size_t *bufpos, struct tls *tls)
+ 	if (fd == -1)
+ 		return -1;
  
 +#ifdef HAVE_TLS
  	if (tls) {
@@ -798,7 +804,7 @@ index 216fa36..c1df1ce 100644
  	if (n <= 0)
  		return n;
  	*bufpos += n;
-@@ -1716,6 +1848,7 @@ process_tos_opt(char *s, int *val)
+@@ -1722,6 +1854,7 @@ process_tos_opt(char *s, int *val)
  	return 0;
  }
  
@@ -806,7 +812,7 @@ index 216fa36..c1df1ce 100644
  int
  process_tls_opt(char *s, int *flags)
  {
-@@ -1829,6 +1962,7 @@ report_tls(struct tls *tls_ctx, char *host)
+@@ -1835,6 +1968,7 @@ report_tls(struct tls *tls_ctx, char *host)
  		break;
  	}
  }
@@ -814,7 +820,7 @@ index 216fa36..c1df1ce 100644
  
  void
  report_sock(const char *msg, const struct sockaddr *sa, socklen_t salen,
-@@ -1870,17 +2004,12 @@ help(void)
+@@ -1876,17 +2010,12 @@ help(void)
  	fprintf(stderr, "\tCommand Summary:\n\
  	\t-4		Use IPv4\n\
  	\t-6		Use IPv6\n\
@@ -832,7 +838,7 @@ index 216fa36..c1df1ce 100644
  	\t-k		Keep inbound sockets open for multiple connects\n\
  	\t-l		Listen mode, for inbound connects\n\
  	\t-M ttl		Outgoing TTL / Hop Limit\n\
-@@ -1888,14 +2017,12 @@ help(void)
+@@ -1894,14 +2023,12 @@ help(void)
  	\t-N		Shutdown the network socket after EOF on stdin\n\
  	\t-n		Suppress name/port resolutions\n\
  	\t-O length	TCP send buffer length\n\
@@ -848,7 +854,7 @@ index 216fa36..c1df1ce 100644
  	\t-t		Answer TELNET negotiation\n\
  	\t-U		Use UNIX domain socket\n\
  	\t-u		UDP mode\n\
-@@ -1905,7 +2032,6 @@ help(void)
+@@ -1911,7 +2038,6 @@ help(void)
  	\t-w timeout	Timeout for connects and final net reads\n\
  	\t-X proto	Proxy protocol: \"4\", \"5\" (SOCKS) or \"connect\"\n\
  	\t-x addr[:port]\tSpecify proxy address and port\n\
@@ -856,7 +862,7 @@ index 216fa36..c1df1ce 100644
  	\t-z		Zero-I/O mode [used for scanning]\n\
  	Port numbers can be individual or ranges: lo-hi [inclusive]\n");
  	exit(0);
-@@ -1915,15 +2041,11 @@ void
+@@ -1921,15 +2047,11 @@ void
  usage(int ret)
  {
  	fprintf(stderr,

@@ -7,7 +7,7 @@ Subject: Fix TCP MD5SIG for client connections
  1 file changed, 26 insertions(+), 8 deletions(-)
 
 diff --git a/netcat.c b/netcat.c
-index 661d750..f1702a5 100644
+index d2cfcd6..b452a20 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -46,6 +46,9 @@
@@ -69,7 +69,7 @@ index 661d750..f1702a5 100644
  
  		if (bind(s, (struct sockaddr *)res->ai_addr,
  		    res->ai_addrlen) == 0)
-@@ -1908,9 +1917,10 @@ connection_info(const char *host, const char *port, const char *proto,
+@@ -1914,9 +1923,10 @@ connection_info(const char *host, const char *port, const char *proto,
  }
  
  void
@@ -81,7 +81,7 @@ index 661d750..f1702a5 100644
  
  #ifdef SO_BROADCAST
  	if (bflag) {
-@@ -1921,10 +1931,18 @@ set_common_sockopts(int s, int af)
+@@ -1927,10 +1937,18 @@ set_common_sockopts(int s, int af)
  			err(1, NULL);
  	}
  #endif

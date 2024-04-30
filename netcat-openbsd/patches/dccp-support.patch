@@ -30,7 +30,7 @@ index ff628ae..bc7c915 100644
  Only scan for listening daemons, without sending any data to them.
  Cannot be used together with
 diff --git a/netcat.c b/netcat.c
-index 552ccb9..bd1b520 100644
+index 9fcf86d..3dc868a 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -146,6 +146,7 @@ int	rflag;					/* Random ports flag */
@@ -198,7 +198,7 @@ index 552ccb9..bd1b520 100644
  				    error == CONNECTION_TIMEOUT ? "timed out" : "failed");
  		}
  
-@@ -1740,7 +1799,8 @@ build_ports(char *p)
+@@ -1746,7 +1805,8 @@ build_ports(char *p)
  	int hi, lo, cp;
  	int x = 0;
  
@@ -208,7 +208,7 @@ index 552ccb9..bd1b520 100644
  	if (sv) {
  		if (asprintf(&portlist[0], "%d", ntohs(sv->s_port)) < 0)
  			err(1, "asprintf");
-@@ -2153,6 +2213,7 @@ help(void)
+@@ -2159,6 +2219,7 @@ help(void)
  	\t-w timeout	Timeout for connects and final net reads\n\
  	\t-X proto	Proxy protocol: \"4\", \"5\" (SOCKS) or \"connect\"\n\
  	\t-x addr[:port]\tSpecify proxy address and port\n\
@@ -216,7 +216,7 @@ index 552ccb9..bd1b520 100644
  	\t-z		Zero-I/O mode [used for scanning]\n\
  	Port numbers can be individual or ranges: lo-hi [inclusive]\n");
  	exit(0);
-@@ -2162,7 +2223,7 @@ void
+@@ -2168,7 +2229,7 @@ void
  usage(int ret)
  {
  	fprintf(stderr,

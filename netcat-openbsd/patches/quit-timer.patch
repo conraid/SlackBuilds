@@ -36,7 +36,7 @@ index a45e184..ff628ae 100644
  Choose source and/or destination ports randomly
  instead of sequentially within a range or in the order that the system
 diff --git a/netcat.c b/netcat.c
-index f743e10..d92b2f5 100644
+index 1162425..2752ee9 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -139,6 +139,7 @@ int	Nflag;					/* shutdown() network socket */
@@ -129,7 +129,7 @@ index f743e10..d92b2f5 100644
  		}
  		/* net in gone and queue empty? */
  		if (pfd[POLL_NETIN].fd == -1 && netinbufpos == 0) {
-@@ -2104,6 +2132,7 @@ help(void)
+@@ -2110,6 +2138,7 @@ help(void)
  	\t-O length	TCP send buffer length\n\
  	\t-P proxyuser\tUsername for proxy authentication\n\
  	\t-p port\t	Specify local port for remote connects\n\
@@ -137,7 +137,7 @@ index f743e10..d92b2f5 100644
  	\t-r		Randomize remote ports\n\
  	\t-S		Enable the TCP MD5 signature option\n\
  	\t-s sourceaddr	Local source address\n\
-@@ -2128,10 +2157,18 @@ usage(int ret)
+@@ -2134,10 +2163,18 @@ usage(int ret)
  	fprintf(stderr,
  	    "usage: nc [-46CDdFhklNnrStUuvz] [-I length] [-i interval] [-M ttl]\n"
  	    "\t  [-m minttl] [-O length] [-P proxy_username] [-p source_port]\n"

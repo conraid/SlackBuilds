@@ -56,7 +56,7 @@ index 0ef318e..5a2b7b1 100644
  .Cm netcontrol ,
  .Cm throughput ,
 diff --git a/netcat.c b/netcat.c
-index c8f1cdd..216fa36 100644
+index 54ddd0f..161ade1 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -32,6 +32,8 @@
@@ -260,7 +260,7 @@ index c8f1cdd..216fa36 100644
  
  		set_common_sockopts(s, res->ai_family);
  
-@@ -1557,11 +1594,13 @@ set_common_sockopts(int s, int af)
+@@ -1563,11 +1600,13 @@ set_common_sockopts(int s, int af)
  {
  	int x = 1;
  
@@ -274,7 +274,7 @@ index c8f1cdd..216fa36 100644
  	if (Dflag) {
  		if (setsockopt(s, SOL_SOCKET, SO_DEBUG,
  		    &x, sizeof(x)) == -1)
-@@ -1572,9 +1611,14 @@ set_common_sockopts(int s, int af)
+@@ -1578,9 +1617,14 @@ set_common_sockopts(int s, int af)
  		    IP_TOS, &Tflag, sizeof(Tflag)) == -1)
  			err(1, "set IP ToS");
  
@@ -289,7 +289,7 @@ index c8f1cdd..216fa36 100644
  	}
  	if (Iflag) {
  		if (setsockopt(s, SOL_SOCKET, SO_RCVBUF,
-@@ -1592,19 +1636,34 @@ set_common_sockopts(int s, int af)
+@@ -1598,19 +1642,34 @@ set_common_sockopts(int s, int af)
  		    IP_TTL, &ttl, sizeof(ttl)))
  			err(1, "set IP TTL");
  
@@ -324,7 +324,7 @@ index c8f1cdd..216fa36 100644
  	}
  }
  
-@@ -1639,6 +1698,7 @@ process_tos_opt(char *s, int *val)
+@@ -1645,6 +1704,7 @@ process_tos_opt(char *s, int *val)
  		{ "cs7",		IPTOS_DSCP_CS7 },
  		{ "ef",			IPTOS_DSCP_EF },
  		{ "inetcontrol",	IPTOS_PREC_INTERNETCONTROL },
@@ -332,7 +332,7 @@ index c8f1cdd..216fa36 100644
  		{ "lowdelay",		IPTOS_LOWDELAY },
  		{ "netcontrol",		IPTOS_PREC_NETCONTROL },
  		{ "reliability",	IPTOS_RELIABILITY },
-@@ -1803,6 +1863,9 @@ report_sock(const char *msg, const struct sockaddr *sa, socklen_t salen,
+@@ -1809,6 +1869,9 @@ report_sock(const char *msg, const struct sockaddr *sa, socklen_t salen,
  void
  help(void)
  {
@@ -342,7 +342,7 @@ index c8f1cdd..216fa36 100644
  	usage(0);
  	fprintf(stderr, "\tCommand Summary:\n\
  	\t-4		Use IPv4\n\
-@@ -1845,7 +1908,7 @@ help(void)
+@@ -1851,7 +1914,7 @@ help(void)
  	\t-Z		Peer certificate file\n\
  	\t-z		Zero-I/O mode [used for scanning]\n\
  	Port numbers can be individual or ranges: lo-hi [inclusive]\n");
