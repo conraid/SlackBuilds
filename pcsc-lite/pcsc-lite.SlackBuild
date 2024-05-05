@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=pcsc-lite
-VERSION=2.1.0
+VERSION=2.2.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -73,7 +73,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
+tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
@@ -83,6 +83,7 @@ find . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \+
 
+./bootstrap
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
@@ -120,7 +121,6 @@ sed 's|@confdir@|/etc/reader.conf.d|g' -i $PKG/usr/man/man5/reader.conf.5
 sed -e 's|@sysconfdir_exp@/init.d/pcscd|/etc/rc.d/rc.pcscd|g' \
   -e 's|@sysconfdir_exp@|/etc/reader.conf.d|g' -i $PKG/usr/man/man8/pcscd.8
 
-install -Dm0644 doc/formaticc.1 $PKG/usr/man/man1/
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec gzip -9 {} \;
   for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
