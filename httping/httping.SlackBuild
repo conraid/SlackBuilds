@@ -28,7 +28,7 @@ set -eu
 PRGNAM=HTTPing
 PKGNAM=httping
 VERSION=3.6
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 cd $(dirname $0) ; CWD=$(pwd)
 TMP=${TMP:-/tmp/pkg}
@@ -81,6 +81,19 @@ find -L . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
+fi
+
 mkdir -p build
 cd build
 cmake -Wno-dev \
@@ -92,11 +105,16 @@ cmake -Wno-dev \
   -DCMAKE_INSTALL_MANDIR=/usr/man/man1/ \
   ..
 
-make
+cmake --build .
 
-install -Dm755 httping -t $PKG/usr/bin/
+DESTDIR="${PKG}" cmake --install .
 cd ..
-install -Dm644 httping.1 -t -$PKG/usr/man/man1/
+
+# Removing local. Because in my opinion they can't go to /usr/share/locale/*.mo
+# and putting them in the correct directory doesn't seem to catch the translation.
+# So I am removing the two translations for now.
+rm -rf $PKG/usr/share
+
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la

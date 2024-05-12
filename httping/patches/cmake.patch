@@ -1,0 +1,45 @@
+diff -Naupr a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2024-05-08 08:54:44.000000000 +0200
++++ b/CMakeLists.txt	2024-05-12 15:49:58.637827802 +0200
+@@ -8,28 +8,9 @@ add_definitions(-DVERSION=\"${VERSION}\"
+ 
+ add_definitions(-DLOCALEDIR=\"/usr/share/locale\")
+ 
+-add_executable(
+-	httping
+-	colors.c
+-	cookies.c
+-	error.c
+-	fft.c
+-	gen.c
+-	help.c
+-	http.c
+-	io.c
+-	kalman.c
+-	main.c
+-	mssl.c
+-	nc.c
+-	res.c
+-	socks5.c
+-	tcp.c
+-	utils.c
+-)
+-
+-set(CMAKE_BUILD_TYPE Debug)
++set(SOURCES  colors.c cookies.c error.c fft.c gen.c help.c http.c io.c kalman.c main.c mssl.c nc.c res.c socks5.c tcp.c utils.c)
+ 
++add_executable(httping ${SOURCES})
+ target_link_libraries(httping m)
+ 
+ include(FindPkgConfig)
+@@ -63,3 +44,10 @@ execute_process (
+ 
+ configure_file(config.h.in config.h)
+ target_include_directories(httping PUBLIC "${PROJECT_BINARY_DIR}")
++
++include(GNUInstallDirs)
++install(TARGETS httping DESTINATION bin)
++install(FILES README.md LICENSE plot-json.py DESTINATION ${CMAKE_INSTALL_DOCDIR})
++install(FILES httping.1 DESTINATION ${CMAKE_INSTALL_MANDIR})
++install(FILES ${CMAKE_CURRENT_BINARY_DIR}/nl.mo DESTINATION ${CMAKE_INSTALL_LOCALEDIR})
++install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ru.mo DESTINATION ${CMAKE_INSTALL_LOCALEDIR})
