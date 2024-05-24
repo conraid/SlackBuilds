@@ -28,8 +28,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=inkscape
-VERSION=1.3.2
-BUILD=${BUILD:-10}
+SRCVERSION=f36b2119539f2da57ff705487ea46c26b6ab99b3
+VERSION=$(echo $SRCVERSION | head -c7)
+BUILD=${BUILD:-11}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -70,9 +71,30 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-${VERSION}*
-tar xvf $CWD/$PKGNAM-${VERSION}*.tar.xz
-cd $PKGNAM-${VERSION}*
+rm -rf $PKGNAM-$SRCVERSION
+tar -xvf $CWD/$PKGNAM-$SRCVERSION.tar.bz2
+cd $PKGNAM-$SRCVERSION
+
+cd src/3rdparty
+    git clone https://gitlab.com/inkscape/lib2geom 2geom
+    cd 2geom
+        git reset --hard 5957e323
+    cd -
+    git clone https://gitlab.com/inkscape/libcroco
+    cd libcroco
+        git reset --hard b9e4b47f
+    cd -
+cd ../..
+cd share
+    git clone https://gitlab.com/inkscape/extensions.git
+    cd extensions
+    git reset --hard e9bc0b45
+    cd -
+    git clone https://gitlab.com/inkscape/themes.git
+    cd themes
+        git reset --hard 2fc6ece1
+    cd -
+cd ..
 
 chown -R root:root .
 find -L . \
@@ -80,31 +102,6 @@ find -L . \
   -exec chmod 755 {} \; -o \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
-
-# Apply patches
-if [ -e $CWD/patches ]; then
-  if [ -e $CWD/patches/series ]; then
-    for PATCH in $(cat $CWD/patches/series); do
-      patch -p1 -i $CWD/patches/$PATCH
-    done
-  else
-    for PATCH in $CWD/patches/*.patch; do
-      patch -p1 -i $PATCH
-    done
-  fi
-fi
-
-# strip invalid tag
-sed -i /url/d org.inkscape.Inkscape.appdata.xml.in
-
-# https://bugs.launchpad.net/inkscape/+bug/314381
-# a couple of files have executable bits set,
-# despite not being executable
-find . -name '*.cpp' | xargs chmod -x
-find . -name '*.h' | xargs chmod -x
-
-# Fix end of line encodings
-dos2unix -k -q share/extensions/*.py
 
 mkdir -p build
 cd build
