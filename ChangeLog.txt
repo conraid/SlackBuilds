@@ -1,3 +1,22 @@
+Fri May 24 12:04:13 UTC 2024
+I recompiled the packages that have poppler-24.05.0 dependency.
+Unfortunately inkscape and scribus give error and I can't find the patch.
+Even the ones for archlinux don't seem to work here.
+Inkscape I then compiled the git version.
+Scribus gives error there too, in the lib2geom libraries, with this error:
+bezier-utils.cpp:378:23: error:
+    return type of 'int Geom::Point::operator==(const Geom::Point&)' is not 'bool'
+        if (bezier[1] != bezier[0]) {
+I tried a few patches (arch & gentoo) but it doesn't work.
+If you have any patches or ideas please let me know. Thanks.
+gimp3-2.99.18-x86_64-4cf.txz:  Rebuilt.
+graphviz-11.0.0-x86_64-2cf.txz:  Rebuilt.
+inkscape-f36b211-x86_64-11cf.txz:  Rebuilt.
+pdf2svg-0.2.3-x86_64-16cf.txz:  Rebuilt.
+pdfgrep-2.2.0-x86_64-3cf.txz:  Rebuilt.
+photoqt-4.5-x86_64-2cf.txz:  Rebuilt.
+tellico-3.5.4-x86_64-3cf.txz:  Rebuilt.
++--------------------------+
 Tue May 21 14:21:33 UTC 2024
 aws-cli-1.32.109-x86_64-1cf.txz:  Upgraded.
 browsertime-22.1.0-x86_64-1cf.txz:  Upgraded.
