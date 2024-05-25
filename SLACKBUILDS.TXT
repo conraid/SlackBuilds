@@ -4123,9 +4123,9 @@ SLACKBUILD SHORT DESCRIPTION:  neovim-remote (Support --remote and friends for N
 
 SLACKBUILD NAME: neovim
 SLACKBUILD LOCATION: ./neovim
-SLACKBUILD FILES: README neovim.SlackBuild neovim.info slack-desc slack-required
+SLACKBUILD FILES: README files/LuaJIT-75e92777988017fe47c5eb290998021bbf972d1f.tar.gz files/getsources.sh files/lua-compat-5.3-0.13.tar.gz files/luv-1.48.0-2.tar.gz files/tree-sitter-bash-0.21.0.tar.gz files/tree-sitter-c-0.21.0.tar.gz files/tree-sitter-lua-0.1.0.tar.gz files/tree-sitter-markdown-0.2.3.tar.gz files/tree-sitter-python-0.21.0.tar.gz files/tree-sitter-query-0.3.0.tar.gz files/tree-sitter-vim-0.4.0.tar.gz files/tree-sitter-vimdoc-2.5.1.tar.gz neovim.SlackBuild neovim.info slack-desc slack-required
 SLACKBUILD VERSION: 0.10.0
-SLACKBUILD REQUIRES: libvterm lua-lpeg lua-mpack luajit msgpack-c unibilium luv
+SLACKBUILD REQUIRES: libvterm lua-lpeg lua-mpack luajit msgpack-c unibilium luv tree-sitter-bash tree-sitter-c tree-sitter-javascript tree-sitter-lua tree-sitter-markdown tree-sitter-python tree-sitter-query tree-sitter-ruby tree-sitter-vim tree-sitter-vimdoc shellcheck-bin stylua
 SLACKBUILD DOWNLOAD: https://github.com/neovim/neovim/archive/v0.10.0/neovim-0.10.0.tar.gz
 SLACKBUILD MD5SUM: b5ad54391b6a1a30930c1ab392d506ec
 SLACKBUILD SHORT DESCRIPTION:  neovim (Vim-fork focused on extensibility and agility.)
@@ -7406,6 +7406,15 @@ SLACKBUILD DOWNLOAD: https://registry.npmjs.org/stylelint/-/stylelint-16.6.0.tgz
 SLACKBUILD MD5SUM: bf132d57a1e8fd76057838285735897e
 SLACKBUILD SHORT DESCRIPTION:  stylelint (css linter)
 
+SLACKBUILD NAME: stylua
+SLACKBUILD LOCATION: ./stylua
+SLACKBUILD FILES: README slack-desc stylua.SlackBuild stylua.info
+SLACKBUILD VERSION: 0.20.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/JohnnyMorganz/StyLua/archive/v0.20.0/StyLua-0.20.0.tar.gz
+SLACKBUILD MD5SUM: 60cb4fa3eb74249e16a557d8b82f4073
+SLACKBUILD SHORT DESCRIPTION:  stylua (Code formatter for Lua)
+
 SLACKBUILD NAME: subfinder
 SLACKBUILD LOCATION: ./subfinder
 SLACKBUILD FILES: README slack-desc slack-required subfinder.SlackBuild subfinder.info
@@ -7693,6 +7702,96 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/trash-cli/trash_cli-0.24.4.17.tar.gz
 SLACKBUILD MD5SUM: 78e81643e52070e142143b9ab4ba1cac
 SLACKBUILD SHORT DESCRIPTION:  trash-cli (command line interface to the FreeDesktop.org trash)
+
+SLACKBUILD NAME: tree-sitter-bash
+SLACKBUILD LOCATION: ./tree-sitter-bash
+SLACKBUILD FILES: README slack-desc tree-sitter-bash.SlackBuild tree-sitter-bash.info
+SLACKBUILD VERSION: 0.21.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/tree-sitter/tree-sitter-bash/archive/v0.21.0/tree-sitter-bash-0.21.0.tar.gz
+SLACKBUILD MD5SUM: 3afd19bcf08cfbc16a8d0ab8d6b59967
+SLACKBUILD SHORT DESCRIPTION:  tree-sitter-bash (Bash grammar for tree-sitter)
+
+SLACKBUILD NAME: tree-sitter-c
+SLACKBUILD LOCATION: ./tree-sitter-c
+SLACKBUILD FILES: README slack-desc tree-sitter-c.SlackBuild tree-sitter-c.info
+SLACKBUILD VERSION: 0.21.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/tree-sitter/tree-sitter-c/archive/v0.21.0/tree-sitter-c-0.21.0.tar.gz
+SLACKBUILD MD5SUM: 88647250b19636fe4d1a99456674d69a
+SLACKBUILD SHORT DESCRIPTION:  tree-sitter-c (C grammar for tree-sitter)
+
+SLACKBUILD NAME: tree-sitter-javascript
+SLACKBUILD LOCATION: ./tree-sitter-javascript
+SLACKBUILD FILES: README slack-desc tree-sitter-javascript.SlackBuild tree-sitter-javascript.info
+SLACKBUILD VERSION: 0.21.3
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/tree-sitter/tree-sitter-javascript/archive/v0.21.3/tree-sitter-javascript-0.21.3.tar.gz
+SLACKBUILD MD5SUM: ab3329d2702cd89b0bb2e728ac0db846
+SLACKBUILD SHORT DESCRIPTION:  tree-sitter-javascript (Javascript grammar for tree-sitter)
+
+SLACKBUILD NAME: tree-sitter-lua
+SLACKBUILD LOCATION: ./tree-sitter-lua
+SLACKBUILD FILES: README slack-desc tree-sitter-lua.SlackBuild tree-sitter-lua.info
+SLACKBUILD VERSION: 0.1.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/tree-sitter-grammars/tree-sitter-lua/archive/v0.1.0/tree-sitter-lua-0.1.0.tar.gz
+SLACKBUILD MD5SUM: 14eff66b003bb77623f111fe3528f224
+SLACKBUILD SHORT DESCRIPTION:  tree-sitter-lua (Lua grammar for tree-sitter)
+
+SLACKBUILD NAME: tree-sitter-markdown
+SLACKBUILD LOCATION: ./tree-sitter-markdown
+SLACKBUILD FILES: README slack-desc tree-sitter-markdown.SlackBuild tree-sitter-markdown.info
+SLACKBUILD VERSION: 0.2.3
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/tree-sitter-grammars/tree-sitter-markdown/archive/v0.2.3/tree-sitter-markdown-0.2.3.tar.gz
+SLACKBUILD MD5SUM: b6ea171a2c434992d9ddb965361513c2
+SLACKBUILD SHORT DESCRIPTION:  tree-sitter-markdown (Markdown grammar for tree-sitter)
+
+SLACKBUILD NAME: tree-sitter-python
+SLACKBUILD LOCATION: ./tree-sitter-python
+SLACKBUILD FILES: README slack-desc tree-sitter-python.SlackBuild tree-sitter-python.info
+SLACKBUILD VERSION: 0.21.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/tree-sitter/tree-sitter-python/archive/v0.21.0/tree-sitter-python-0.21.0.tar.gz
+SLACKBUILD MD5SUM: 229538336d4d052c301ea63cd33c8486
+SLACKBUILD SHORT DESCRIPTION:  tree-sitter-python (Python grammar for tree-sitter)
+
+SLACKBUILD NAME: tree-sitter-query
+SLACKBUILD LOCATION: ./tree-sitter-query
+SLACKBUILD FILES: README slack-desc tree-sitter-query.SlackBuild tree-sitter-query.info
+SLACKBUILD VERSION: 0.3.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/tree-sitter-grammars/tree-sitter-query/archive/v0.3.0/tree-sitter-query-0.3.0.tar.gz
+SLACKBUILD MD5SUM: f50c1885b101d392b106dac75bb0536e
+SLACKBUILD SHORT DESCRIPTION:  tree-sitter-query (TS query grammar for tree-sitter)
+
+SLACKBUILD NAME: tree-sitter-ruby
+SLACKBUILD LOCATION: ./tree-sitter-ruby
+SLACKBUILD FILES: README slack-desc tree-sitter-ruby.SlackBuild tree-sitter-ruby.info
+SLACKBUILD VERSION: 0.20.1
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/tree-sitter/tree-sitter-ruby/archive/v0.20.1/tree-sitter-vim-0.20.1.tar.gz
+SLACKBUILD MD5SUM: e71fd2096b024f07839bafbd82e2635e
+SLACKBUILD SHORT DESCRIPTION:  tree-sitter-ruby (Ruby grammar for tree-sitter)
+
+SLACKBUILD NAME: tree-sitter-vim
+SLACKBUILD LOCATION: ./tree-sitter-vim
+SLACKBUILD FILES: README slack-desc tree-sitter-vim.SlackBuild tree-sitter-vim.info
+SLACKBUILD VERSION: 0.4.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/neovim/tree-sitter-vim/archive/v0.4.0/tree-sitter-vim-0.4.0.tar.gz
+SLACKBUILD MD5SUM: 8f3d1c3319673e20b83da6c23962dc45
+SLACKBUILD SHORT DESCRIPTION:  tree-sitter-vim (Vimscript grammar for tree-sitter)
+
+SLACKBUILD NAME: tree-sitter-vimdoc
+SLACKBUILD LOCATION: ./tree-sitter-vimdoc
+SLACKBUILD FILES: README slack-desc tree-sitter-vimdoc.SlackBuild tree-sitter-vimdoc.info
+SLACKBUILD VERSION: 2.5.1
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/neovim/tree-sitter-vimdoc/archive/v2.5.1/tree-sitter-vimdoc-2.5.1.tar.gz
+SLACKBUILD MD5SUM: 74b91692ada89a1e5904bc4d5f60943f
+SLACKBUILD SHORT DESCRIPTION:  tree-sitter-vimdoc (Tree-sitter parser for Vim help files)
 
 SLACKBUILD NAME: trimage
 SLACKBUILD LOCATION: ./trimage
@@ -8426,10 +8525,10 @@ SLACKBUILD SHORT DESCRIPTION:  yara-python (The Python interface for YARA)
 SLACKBUILD NAME: yara
 SLACKBUILD LOCATION: ./yara
 SLACKBUILD FILES: README slack-desc yara.SlackBuild yara.info
-SLACKBUILD VERSION: 4.5.0
+SLACKBUILD VERSION: 4.5.1
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/VirusTotal/yara/archive/v4.5.0/yara-4.5.0.tar.gz
-SLACKBUILD MD5SUM: 562c2045a9ed058cc1f5a0099e565213
+SLACKBUILD DOWNLOAD: https://github.com/VirusTotal/yara/archive/v4.5.1/yara-4.5.1.tar.gz
+SLACKBUILD MD5SUM: 775cdefb63df9c96e79cb3a30489146b
 SLACKBUILD SHORT DESCRIPTION:  yara (The pattern matching swiss knife)
 
 SLACKBUILD NAME: yarn
