@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=neovim
 VERSION=0.10.0
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -100,7 +100,7 @@ mkdir build
 cd build
 cmake \
   -GNinja \
-  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DCMAKE_INSTALL_MANDIR=man \
@@ -124,6 +124,10 @@ fi
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
+
+# Tree-sitter grammars are packaged separately and installed into /usr/lib*/tree_sitter.
+# thanks to arch
+ln -s /usr/lib$LIBDIRSUFFIX/tree_sitter $PKG/usr/share/nvim/runtime/parser
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
