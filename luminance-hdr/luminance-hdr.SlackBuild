@@ -33,7 +33,7 @@ PRGNAM=luminance-hdr
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=2.6.1.1
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-17}
+BUILD=${BUILD:-18}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -101,15 +101,23 @@ fi
 # Fix Eigen3 find cmake
 sed '/Eigen3/d' -i CMakeLists.txt
 
+# Workround build failure with gcc-g++-4.9.3 and beyond (mangling bug?)
+# (fails to link libmvec: "undefined reference to `_ZGVbN4vv_powf'" etc)
+# Thanks to Sbo
+export CXX=clang++
+
+# 20220320 bkw: for some reason, the -latomic is needed on 32-bit x86.
+# it does no harm on x86_64
+# Thanks to SBo
+
 mkdir -p build
 cd build
 cmake \
   -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
-  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -std=c++17" \
+  -DCMAKE_CXX_LINK_FLAGS="-latomic" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DBoost_USE_STATIC_LIBS=OFF \
-  -DBoost_NO_BOOST_CMAKE=ON \
   -DEIGEN3_INCLUDE_DIR=/usr/include/eigen3 \
   ..
 
