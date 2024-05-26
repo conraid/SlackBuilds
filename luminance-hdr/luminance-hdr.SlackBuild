@@ -33,7 +33,7 @@ PRGNAM=luminance-hdr
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=2.6.1.1
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-18}
+BUILD=${BUILD:-19}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -106,6 +106,14 @@ sed '/Eigen3/d' -i CMakeLists.txt
 # Thanks to Sbo
 export CXX=clang++
 
+# Fix for boost >= 1.85.0
+sed -i \
+  '/constants\/constants/i #include <boost/numeric/conversion/bounds.hpp>' \
+  src/Libpfs/manip/resize.hxx
+
+# Set CXX14
+sed -e 's|CMAKE_CXX_STANDARD 11|CMAKE_CXX_STANDARD 14|g' -i build_files/Modules/CompilerSettings.cmake
+
 # 20220320 bkw: for some reason, the -latomic is needed on 32-bit x86.
 # it does no harm on x86_64
 # Thanks to SBo
@@ -114,7 +122,7 @@ mkdir -p build
 cd build
 cmake \
   -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
-  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -std=c++17" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -std=c++14 -DNDEBUG" \
   -DCMAKE_CXX_LINK_FLAGS="-latomic" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
