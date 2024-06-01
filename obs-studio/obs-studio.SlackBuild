@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=obs-studio
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=30.0.2
+SRCVERSION=30.1.2
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -101,8 +101,8 @@ fi
 mkdir -p build
 cd build
 cmake -Wno-dev \
-  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
+  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS -Wno-error=calloc-transposed-args" \
+  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -Wno-error=stringop-overflow" \
   -DUNIX_STRUCTURE=1 \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DCMAKE_BUILD_TYPE=Release \
@@ -113,7 +113,7 @@ cmake -Wno-dev \
   -DBUILD_BROWSER:BOOL=OFF \
   -DENABLE_VST=ON \
   -DENABLE_LIBFDK=ON \
-  -DENABLE_NEW_MPEGTS_OUTPUT=ON \
+  -DENABLE_NEW_MPEGTS_OUTPUT=On \
   -DENABLE_WEBRTC=OFF \
   -DENABLE_AJA=OFF \
   -DOBS_VERSION_OVERRIDE="$VERSION" \
