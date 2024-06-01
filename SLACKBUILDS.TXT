@@ -1343,7 +1343,7 @@ SLACKBUILD NAME: ettercap
 SLACKBUILD LOCATION: ./ettercap
 SLACKBUILD FILES: README doinst.sh ettercap.SlackBuild ettercap.info patches/40534662043b7d831d1f6c70448afa9d374a9b63.patch patches/cmake-hardbuzz.patch slack-desc slack-required
 SLACKBUILD VERSION: 0.8.3.1
-SLACKBUILD REQUIRES: libbsd libnet luajit geoip
+SLACKBUILD REQUIRES: libbsd libnet geoip
 SLACKBUILD DOWNLOAD: https://github.com/Ettercap/ettercap/releases/download/v0.8.3.1/ettercap-0.8.3.1.tar.gz
 SLACKBUILD MD5SUM: aec144118be53679f906843ff3054ee0
 SLACKBUILD SHORT DESCRIPTION:  ettercap (Program for sniff and monitoring the network)
@@ -1721,7 +1721,7 @@ SLACKBUILD NAME: gimp3
 SLACKBUILD LOCATION: ./gimp3
 SLACKBUILD FILES: PKGNOTE README doinst.sh files/gimp-128.png files/gimp-16.png files/gimp-22.png files/gimp-24.png files/gimp-32.png files/gimp-48.png files/gimp-devel-logo.png files/gimp3.desktop gimp3.SlackBuild gimp3.info patches/no-check-update.patch slack-desc slack-required
 SLACKBUILD VERSION: 2.99.18
-SLACKBUILD REQUIRES: libheif webkitgtk appstream-glib libjxl lgi luajit
+SLACKBUILD REQUIRES: libheif webkitgtk appstream-glib libjxl lgi
 SLACKBUILD DOWNLOAD: https://download.gimp.org/gimp/v2.99/gimp-2.99.18.tar.xz
 SLACKBUILD MD5SUM: b41bdef78a08849bb4ffaef2a3c45d42
 SLACKBUILD SHORT DESCRIPTION:  gimp3 (The GNU Image Manipulation Program)
@@ -3671,15 +3671,6 @@ SLACKBUILD DOWNLOAD: http://www.lua.org/ftp/lua-5.3.6.tar.gz
 SLACKBUILD MD5SUM: 83f23dbd5230140a3770d5f54076948d
 SLACKBUILD SHORT DESCRIPTION:  Lua 5.3.* (powerful,fast,light-weight,embeddable scripting language)
 
-SLACKBUILD NAME: luajit
-SLACKBUILD LOCATION: ./luajit
-SLACKBUILD FILES: README luajit.SlackBuild luajit.info slack-desc
-SLACKBUILD VERSION: 93e87998b24021b94de8d1c8db244444c46fb6e9
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/LuaJIT/LuaJIT/archive/93e87998b24021b94de8d1c8db244444c46fb6e9/LuaJIT-93e87998b24021b94de8d1c8db244444c46fb6e9.tar.gz
-SLACKBUILD MD5SUM: 3531da1dae5ca23c1973f469d5c7ce83
-SLACKBUILD SHORT DESCRIPTION:  luajit (Just-In-Time Compiler for Lua)
-
 SLACKBUILD NAME: luarocks
 SLACKBUILD LOCATION: ./luarocks
 SLACKBUILD FILES: README luarocks.SlackBuild luarocks.info slack-desc slack-required
@@ -3711,7 +3702,7 @@ SLACKBUILD NAME: luv
 SLACKBUILD LOCATION: ./luv
 SLACKBUILD FILES: README luv.SlackBuild luv.info slack-desc slack-required
 SLACKBUILD VERSION: 1.48.0-2
-SLACKBUILD REQUIRES: luajit lua51 lua52 lua53
+SLACKBUILD REQUIRES:  lua51 lua52 lua53
 SLACKBUILD DOWNLOAD: https://github.com/luvit/luv/releases/download/1.48.0-2/luv-1.48.0-2.tar.gz
 SLACKBUILD MD5SUM: ca2bffa55ff8b89fda9a93f1c9dfdc89
 SLACKBUILD SHORT DESCRIPTION:  luv (Bare libuv bindings for lua)
@@ -4134,7 +4125,7 @@ SLACKBUILD NAME: neovim
 SLACKBUILD LOCATION: ./neovim
 SLACKBUILD FILES: README files/LuaJIT-75e92777988017fe47c5eb290998021bbf972d1f.tar.gz files/getsources.sh files/lua-compat-5.3-0.13.tar.gz files/luv-1.48.0-2.tar.gz files/tree-sitter-bash-0.21.0.tar.gz files/tree-sitter-c-0.21.0.tar.gz files/tree-sitter-lua-0.1.0.tar.gz files/tree-sitter-markdown-0.2.3.tar.gz files/tree-sitter-python-0.21.0.tar.gz files/tree-sitter-query-0.3.0.tar.gz files/tree-sitter-vim-0.4.0.tar.gz files/tree-sitter-vimdoc-2.5.1.tar.gz neovim.SlackBuild neovim.info slack-desc slack-required
 SLACKBUILD VERSION: 0.10.0
-SLACKBUILD REQUIRES: libvterm lua-lpeg lua-mpack luajit msgpack-c unibilium luv tree-sitter-bash tree-sitter-c tree-sitter-javascript tree-sitter-lua tree-sitter-markdown tree-sitter-python tree-sitter-query tree-sitter-ruby tree-sitter-vim tree-sitter-vimdoc shellcheck-bin stylua
+SLACKBUILD REQUIRES: libvterm lua-lpeg lua-mpack msgpack-c unibilium luv tree-sitter-bash tree-sitter-c tree-sitter-javascript tree-sitter-lua tree-sitter-markdown tree-sitter-python tree-sitter-query tree-sitter-ruby tree-sitter-vim tree-sitter-vimdoc shellcheck-bin stylua
 SLACKBUILD DOWNLOAD: https://github.com/neovim/neovim/archive/v0.10.0/neovim-0.10.0.tar.gz
 SLACKBUILD MD5SUM: b5ad54391b6a1a30930c1ab392d506ec
 SLACKBUILD SHORT DESCRIPTION:  neovim (Vim-fork focused on extensibility and agility.)
@@ -4582,11 +4573,11 @@ SLACKBUILD SHORT DESCRIPTION:  oauth2client (OAuth 2.0 Python library)
 
 SLACKBUILD NAME: obs-studio
 SLACKBUILD LOCATION: ./obs-studio
-SLACKBUILD FILES: README obs-studio.SlackBuild obs-studio.info patches/ffmpeg-6.1a.patch patches/ffmpeg-6.1b.patch patches/ffmpeg-6.1c.patch patches/ffmpeg-6.1d.patch patches/fix_python_binary_loading.patch patches/ignore_unused_submodules.patch slack-desc slack-required
-SLACKBUILD VERSION: 30.0.2
-SLACKBUILD REQUIRES: luajit jack x264 mbedtls ntv2 libfdk-aac srt librist nlohmann-json websocketpp asio onevpl
-SLACKBUILD DOWNLOAD: https://github.com/obsproject/obs-studio/archive/30.0.2/obs-studio-30.0.2.tar.gz
-SLACKBUILD MD5SUM: 143181a6ff673326ca68533e2bcb4352
+SLACKBUILD FILES: README obs-studio.SlackBuild obs-studio.info patches/0001-obs-ffmpeg-Fix-incompatible-pointer-types-with-FFmpe.patch patches/fix_python_binary_loading.patch patches/ignore_unused_submodules.patch slack-desc slack-required
+SLACKBUILD VERSION: 30.1.2
+SLACKBUILD REQUIRES: jack x264 mbedtls ntv2 libfdk-aac srt librist nlohmann-json websocketpp asio onevpl
+SLACKBUILD DOWNLOAD: https://github.com/obsproject/obs-studio/archive/30.1.2/obs-studio-30.1.2.tar.gz
+SLACKBUILD MD5SUM: 892c15fc3e4bb7fe9ef90f49f5bc6cdf
 SLACKBUILD SHORT DESCRIPTION:  obs-studio (Open Broadcaster Software)
 
 SLACKBUILD NAME: offlineimap3
@@ -7500,7 +7491,7 @@ SLACKBUILD NAME: suricata
 SLACKBUILD LOCATION: ./suricata
 SLACKBUILD FILES: README doinst.sh rc.suricata slack-desc slack-required suricata.SlackBuild suricata.info
 SLACKBUILD VERSION: 7.0.5
-SLACKBUILD REQUIRES: hiredis libnet luajit libhtp libmaxminddb
+SLACKBUILD REQUIRES: hiredis libnet libhtp libmaxminddb
 SLACKBUILD DOWNLOAD: https://www.openinfosecfoundation.org/download/suricata-7.0.5.tar.gz
 SLACKBUILD MD5SUM: 3321123e81847aa256251d9620122fc5
 SLACKBUILD SHORT DESCRIPTION:  suricata (Network Security Monitoring)
