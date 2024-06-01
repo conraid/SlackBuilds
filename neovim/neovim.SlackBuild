@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=neovim
 VERSION=0.10.0
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -104,6 +104,8 @@ cmake \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DCMAKE_INSTALL_MANDIR=man \
+  -DLUAJIT_INCLUDE_DIR=/usr/include/luajit-2.0/ \
+  -DCOMPILE_LUA=OFF \
   ..
 
 ninja
