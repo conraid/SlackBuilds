@@ -18,13 +18,17 @@ perms() {
   if [ -e $OLD ]; then
     cp -a $OLD $NEW.incoming
     cat $NEW > $NEW.incoming
-    mv $NEW.incoming $NEW
+    mv $NEW.incoming $NEnetdataW
   fi
   config $NEW
 }
 
 perms etc/rc.d/rc.netdata.new
 for NEW in $(find etc/netdata/ -name "*.new"); do
+  config $NEW
+done
+
+for NEW in $(find usr/lib/netdata -name "*.new"); do
   config $NEW
 done
 

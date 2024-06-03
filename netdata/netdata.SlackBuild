@@ -45,13 +45,13 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=netdata
 VERSION=1.45.5
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="COPYING ChangeLog LICENSE* README*"
+DOCFILES="*.md LICENSE*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -110,6 +110,12 @@ if [ -e $CWD/patches/ ]; then
   fi
 fi
 
+sed "s/CMAKE_CXX_STANDARD 14/CMAKE_CXX_STANDARD 17/" -i CMakeLists.txt
+
+# libbpf sources for eBPF.plugin
+CFLAGS="${SLKCFLAGS} -fPIC" packaging/bundle-libbpf.sh ../netdata-v${VERSION} other
+CFLAGS="${SLKCFLAGS} -fPIC" packaging/bundle-ebpf-co-re.sh ../netdata-v${VERSION}
+
 mkdir -p build
 cd build
 cmake -Wno-dev \
@@ -117,11 +123,11 @@ cmake -Wno-dev \
   -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/ \
-	-DENABLE_PLUGIN_GO=OFF \
+  -DENABLE_PLUGIN_GO=OFF \
   -DENABLE_PLUGIN_SYSTEMD_JOURNAL=OFF \
   -DENABLE_PLUGIN_XENSTAT=OFF \
-  -DENABLE_PLUGIN_EBPF=OFF \
-  -DENABLE_BUNDLED_PROTOBUF=ON \
+  -DENABLE_PLUGIN_EBPF=ON \
+  -DENABLE_BUNDLED_PROTOBUF=OFF \
   ..
 
 make
@@ -160,8 +166,16 @@ install -Dm644 $CWD/files/netdata.conf $PKG/etc/netdata/netdata.conf.new
 chown -R netdata:netdata $PKG/var/lib/netdata
 chown -R netdata:netdata $PKG/var/log/netdata
 chown -R netdata:netdata $PKG/var/cache/netdata
-chown -R netdata:netdata $PKG/usr/share/netdata/web
+chown -R root:netdata $PKG/usr/share/netdata/web
 chown -R netdata:netdata $PKG/etc/netdata
+chown -R root:netdata $PKG/usr/libexec/netdata/plugins.d
+chmod 0750 $PKG/usr/libexec/netdata/plugins.d/*.sh
+chmod 0750 $PKG/var/cache/netdata
+chmod 0750 $PKG/var/lib/netdata
+chmod 4750 $PKG/usr/libexec/netdata/plugins.d/*.plugin
+
+# Rename conf files
+for FILE in $(find -name "*.conf"); do mv $FILE $FILE.new; done
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
@@ -173,6 +187,11 @@ if [ -e $CWD/slack-required ]; then
   cat $CWD/slack-required > $PKG/install/slack-required
 fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
+
+# Remove files for other initsystems
+# Thanks to arch
+rm -rf $PKG/usr/lib/netdata/system
+rm -rf $PKG/var/run
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
