@@ -101,7 +101,7 @@ fi
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 make -C src
-make -C src DESTDIR=$PKG install
+make -C src DESTDIR=$PKG install install_uapi_headers
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
