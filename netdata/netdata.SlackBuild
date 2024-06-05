@@ -45,7 +45,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=netdata
 VERSION=1.45.5
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -116,6 +116,9 @@ sed "s/CMAKE_CXX_STANDARD 14/CMAKE_CXX_STANDARD 17/" -i CMakeLists.txt
 CFLAGS="${SLKCFLAGS} -fPIC" packaging/bundle-libbpf.sh ../netdata-v${VERSION} other
 CFLAGS="${SLKCFLAGS} -fPIC" packaging/bundle-ebpf-co-re.sh ../netdata-v${VERSION}
 
+# Set go path
+export PATH="/usr/lib64/go/bin:${PATH}"
+
 mkdir -p build
 cd build
 cmake -Wno-dev \
@@ -123,7 +126,7 @@ cmake -Wno-dev \
   -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/ \
-  -DENABLE_PLUGIN_GO=OFF \
+  -DENABLE_PLUGIN_GO=ON \
   -DENABLE_PLUGIN_SYSTEMD_JOURNAL=OFF \
   -DENABLE_PLUGIN_XENSTAT=OFF \
   -DENABLE_PLUGIN_EBPF=ON \

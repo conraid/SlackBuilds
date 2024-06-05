@@ -1,17 +1,27 @@
 #!/bin/bash
-#
+
 set -e
 
 PIDFILE=/var/run/netdata.pid
+LOCKFILE=/var/lock/subsys/netdata
 
-service_start() {
-	echo "Starting real-time performance monitoring" "netdata"
-	/usr/sbin/netdata -P $PIDFILE
+service_start()
+{
+	echo "Starting netdata..."
+	if [ -e "$LOCKFILE" ]; then
+		echo "netdata server already running!"
+		echo "Please remove $LOCKFILE"
+	else
+		/usr/sbin/netdata -P $PIDFILE &
+		touch $LOCKFILE
+	fi
 }
 
-service_stop() {
-	echo "Stopping real-time performance monitoring" "netdata"
-  kill -9 $( cat $PIDFILE )
+service_stop()
+{
+	echo "Stopping netdata..."
+    kill -9 $( cat $PIDFILE ) > /dev/null 2>&1
+	rm -f $LOCKFILE
 }
 
 case "$1" in

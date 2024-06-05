@@ -49,3 +49,25 @@ if ! grep -q "^netdata:" etc/passwd; then
     chroot . useradd -d /var/cache/netdata -s /bin/false -g netdata netdata &>/dev/null
   fi
 fi
+
+if [ -x /usr/libexec/netdata/plugins.d/apps.plugin ] ; then
+setcap cap_dac_read_search,cap_sys_ptrace+ep "usr/libexec/netdata/plugins.d/apps.plugin"
+fi
+if [ -x /usr/libexec/netdata/plugins.d/debugfs.plugin ] ; then
+setcap cap_dac_read_search+ep "usr/libexec/netdata/plugins.d/debugfs.plugin"
+fi
+if [ -x /usr/libexec/netdata/plugins.d/go.d.plugin ] ; then
+setcap cap_dac_read_search,cap_net_admin,cap_net_raw+eip "usr/libexec/netdata/plugins.d/go.d.plugin"
+fi
+if [ -x /usr/libexec/netdata/plugins.d/logs-management.plugin ] ; then
+setcap cap_dac_read_search,cap_syslog+ep "usr/libexec/netdata/plugins.d/logs-management.plugin"
+fi
+if [ -x /usr/libexec/netdata/plugins.d/network-viewer.plugin ] ; then
+setcap cap_sys_admin,cap_sys_ptrace,cap_dac_read_search+ep "usr/libexec/netdata/plugins.d/network-viewer.plugin"
+fi
+if [ -x /usr/libexec/netdata/plugins.d/perd.plugin ] ; then
+setcap cap_perfmon,cap_sys_admin+ep "usr/libexec/netdata/plugins.d/perf.plugin"
+fi
+if [ -x /usr/libexec/netdata/plugins.d/slabinfo.plugin ] ; then
+setcap cap_dac_read_search+ep "usr/libexec/netdata/plugins.d/slabinfo.plugin"
+fi
