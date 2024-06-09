@@ -45,7 +45,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=netdata
 VERSION=1.45.6
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -113,11 +113,11 @@ fi
 sed "s/CMAKE_CXX_STANDARD 14/CMAKE_CXX_STANDARD 17/" -i CMakeLists.txt
 
 # libbpf sources for eBPF.plugin
-CFLAGS="${SLKCFLAGS} -fPIC" packaging/bundle-libbpf.sh ../netdata-v${VERSION} other
-CFLAGS="${SLKCFLAGS} -fPIC" packaging/bundle-ebpf-co-re.sh ../netdata-v${VERSION}
+CFLAGS="${SLKCFLAGS} -fPIC" packaging/bundle-libbpf.sh . other
+CFLAGS="${SLKCFLAGS} -fPIC" packaging/bundle-ebpf-co-re.sh .
 
-# Set go path
-export PATH="/usr/lib64/go/bin:${PATH}"
+# Set path for GO
+export PATH="/usr/lib$LIBDIRSUFFIX/go/bin:${PATH}"
 
 mkdir -p build
 cd build
@@ -156,14 +156,12 @@ for CONF in $(find $PKG/etc/netdata -name "*.conf"); do
   mv $CONF $CONF.new
 done
 
-# Install cloud file
-install -Dm644 $CWD/files/cloud.conf $PKG/var/lib/netdata/cloud.d/cloud.conf.new
-
 # Install init file
 install -Dm755 $CWD/files/rc.netdata $PKG/etc/rc.d/rc.netdata.new
 
-# Install conf file
-install -Dm644 $CWD/files/netdata.conf $PKG/etc/netdata/netdata.conf.new
+# Install conf files
+install -Dm644 system/netdata.conf $PKG/etc/netdata/netdata.conf.new
+install -Dm644 system/netdata-updater.conf $PKG/etc/netdata/netdata-updater.conf.new
 
 # Change permissions
 chown -R netdata:netdata $PKG/var/lib/netdata
