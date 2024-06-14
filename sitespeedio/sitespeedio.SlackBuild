@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=sitespeed.io
 PKGNAM=sitespeedio
-VERSION=34.1.2
+VERSION=34.2.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -61,15 +61,8 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
-cd $TMP
-rm -rf $PKGNAM-$VERSION
-mkdir $PKGNAM-$VERSION
-cd $PKGNAM-$VERSION
-tar xf $CWD/$PRGNAM-$VERSION.tgz
-tar czf $PRGNAM-$VERSION.tgz package
-
 mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
-DESTDIR=$PKG npm install --user root --location=global --prefix $PKG/usr $PRGNAM-$VERSION.tgz
+DESTDIR=$PKG npm install --user root --location=global --prefix $PKG/usr $CWD/$PRGNAM-$VERSION.tgz
 
 # Remove empty dir
 rmdir $PKG/usr/etc || true
