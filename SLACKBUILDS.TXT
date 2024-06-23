@@ -1667,7 +1667,7 @@ SLACKBUILD NAME: gimagereader
 SLACKBUILD LOCATION: ./gimagereader
 SLACKBUILD FILES: README doinst.sh gimagereader.SlackBuild gimagereader.info patches/e72d657a408dc6b77c48c086feede31e08700b4c.patch patches/openmp.patch slack-desc slack-required
 SLACKBUILD VERSION: 3.4.2
-SLACKBUILD REQUIRES: tesseract podofo qtspell
+SLACKBUILD REQUIRES: tesseract podofo qtspell quazip6
 SLACKBUILD DOWNLOAD: https://github.com/manisandro/gImageReader/releases/download/v3.4.2/gimagereader-3.4.2.tar.xz
 SLACKBUILD MD5SUM: 67b333fce0d22e1c8a5b8ad6c4dbc809
 SLACKBUILD SHORT DESCRIPTION:  gimagereader (A Gtk/Qt front-end to tesseract-ocr)
@@ -2125,10 +2125,10 @@ SLACKBUILD SHORT DESCRIPTION:  gulp (The streaming build system)
 SLACKBUILD NAME: handbrake
 SLACKBUILD LOCATION: ./handbrake
 SLACKBUILD FILES: README doinst.sh handbrake.SlackBuild handbrake.info slack-desc slack-required
-SLACKBUILD VERSION: 1.8.0
+SLACKBUILD VERSION: 1.8.1
 SLACKBUILD REQUIRES: numactl x264 x265
-SLACKBUILD DOWNLOAD: https://github.com/HandBrake/HandBrake/releases/download/1.8.0/HandBrake-1.8.0-source.tar.bz2
-SLACKBUILD MD5SUM: d411209b76aeff9f5ce018249313486d
+SLACKBUILD DOWNLOAD: https://github.com/HandBrake/HandBrake/releases/download/1.8.1/HandBrake-1.8.1-source.tar.bz2
+SLACKBUILD MD5SUM: f2b32ca051e6c974cfddf5ddc948ef3a
 SLACKBUILD SHORT DESCRIPTION:  handbrake (Multithreaded video transcoder)
 
 SLACKBUILD NAME: hardening-check
@@ -5609,10 +5609,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-fasteners (A python package that provides 
 SLACKBUILD NAME: python-filelock
 SLACKBUILD LOCATION: ./python-filelock
 SLACKBUILD FILES: README python-filelock.SlackBuild python-filelock.info slack-desc slack-required
-SLACKBUILD VERSION: 3.15.3
+SLACKBUILD VERSION: 3.15.4
 SLACKBUILD REQUIRES: python-hatch-vcs
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/f/filelock/filelock-3.15.3.tar.gz
-SLACKBUILD MD5SUM: b885d31122ea8906eb173397fedc7c6e
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/f/filelock/filelock-3.15.4.tar.gz
+SLACKBUILD MD5SUM: 98c7e744e8453b67344f66525da56c12
 SLACKBUILD SHORT DESCRIPTION:  python-filelock (A platform-independent file lock for Python)
 
 SLACKBUILD NAME: python-fuse
@@ -6415,6 +6415,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://github.com/manisandro/qtspell/archive/1.0.1/qtspell-1.0.1.tar.gz
 SLACKBUILD MD5SUM: 3c6dda0a8b85e160b60c9fc7c00eddee
 SLACKBUILD SHORT DESCRIPTION:  qtspell (Spell checking for Qt text widgets)
+
+SLACKBUILD NAME: quazip6
+SLACKBUILD LOCATION: ./quazip6
+SLACKBUILD FILES: README quazip6.SlackBuild quazip6.info slack-desc
+SLACKBUILD VERSION: 1.4
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/stachenov/quazip/archive/v1.4/quazip-1.4.tar.gz
+SLACKBUILD MD5SUM: f861638a19acaece2aaea11f7ec3b812
+SLACKBUILD SHORT DESCRIPTION:  quazip (C++ wrapper for Minizip)
 
 SLACKBUILD NAME: quickemu
 SLACKBUILD LOCATION: ./quickemu
@@ -7957,11 +7966,11 @@ SLACKBUILD SHORT DESCRIPTION:  uni-algo (Unicode Algorithms Implementation for C
 
 SLACKBUILD NAME: uni2ascii
 SLACKBUILD LOCATION: ./uni2ascii
-SLACKBUILD FILES: README slack-desc uni2ascii.SlackBuild uni2ascii.info
-SLACKBUILD VERSION: 4.18
+SLACKBUILD FILES: README patches/string.patch slack-desc uni2ascii.SlackBuild uni2ascii.info
+SLACKBUILD VERSION: 4.20
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: http://billposer.org/Software/Downloads/uni2ascii-4.18.tar.bz2
-SLACKBUILD MD5SUM: a1b1df74cccd1fa997bad79c8c4ced68
+SLACKBUILD DOWNLOAD: http://billposer.org/Software/Downloads/uni2ascii-4.20.tar.bz2
+SLACKBUILD MD5SUM: db8c907d6b2c1d71a465cfd4d0f7b4ab
 SLACKBUILD SHORT DESCRIPTION:  uni2ascii (convert UTF-8 into 7-bit ASCII and vice versa)
 
 SLACKBUILD NAME: unibilium
@@ -8102,10 +8111,10 @@ SLACKBUILD SHORT DESCRIPTION:  uuid (OSSP Universally Unique Identifier)
 SLACKBUILD NAME: valentina-studio-bin
 SLACKBUILD LOCATION: ./valentina-studio-bin
 SLACKBUILD FILES: README doinst.sh slack-desc valentina-studio-bin.SlackBuild valentina-studio-bin.info
-SLACKBUILD VERSION: 14.0
+SLACKBUILD VERSION: 14.1.1
 SLACKBUILD REQUIRES: 
 SLACKBUILD DOWNLOAD: https://www.valentina-db.com/en/all-downloads/vstudio/current/vstudio_x64_lin_deb?format=raw
-SLACKBUILD MD5SUM: 9acec7de383330c66de25bea477c42e0
+SLACKBUILD MD5SUM: 66d16e3c1c67a1e3b7466ffaca2655f3
 SLACKBUILD SHORT DESCRIPTION:  valentina-studio-bin (DB Management Tool)
 
 SLACKBUILD NAME: varnish
@@ -8309,10 +8318,10 @@ SLACKBUILD SHORT DESCRIPTION:  websocketpp (C++ websocket client/server library)
 SLACKBUILD NAME: weechat
 SLACKBUILD LOCATION: ./weechat
 SLACKBUILD FILES: README slack-desc slack-required weechat.SlackBuild weechat.info
-SLACKBUILD VERSION: 4.3.2
+SLACKBUILD VERSION: 4.3.3
 SLACKBUILD REQUIRES: cjson
-SLACKBUILD DOWNLOAD: https://weechat.org/files/src/weechat-4.3.2.tar.xz
-SLACKBUILD MD5SUM: fea30ea7f8e2742dafa710237700a79e
+SLACKBUILD DOWNLOAD: https://weechat.org/files/src/weechat-4.3.3.tar.xz
+SLACKBUILD MD5SUM: 26cb0fec1169527a36496cf807e861c6
 SLACKBUILD SHORT DESCRIPTION:  WeeChat (fast, light & extensible chat client)
 
 SLACKBUILD NAME: whatweb
