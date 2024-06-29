@@ -1,0 +1,12 @@
+diff -Naupr a/wscript b/wscript
+--- a/wscript	2023-06-07 03:31:16.000000000 +0200
++++ b/wscript	2024-06-29 12:14:59.440953166 +0200
+@@ -40,8 +40,6 @@ def options(opt):
+ 
+     opt.add_option('--debug', dest='debug', action='store_true', default=False,
+                    help='Turn on debugger-related compile options.')
+-    opt.add_option('--python', dest='python', default='', action='store',
+-                   help='Full path to the Python executable to use.')
+     opt.add_option('--wx_config', dest='wx_config', default='wx-config', action='store',
+                    help='Full path to the wx-config script to be used for this build.')
+     opt.add_option('--no_magic', dest='no_magic', action='store_true', default=False,
