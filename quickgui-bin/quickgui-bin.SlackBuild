@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=quickgui
 PKGNAM=quickgui-bin
-SRCVERSION=1.2.8
+SRCVERSION=1.2.9
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -56,7 +56,6 @@ fi
 
 if [ "$ARCH" = "x86_64" ]; then
   LIBDIRSUFFIX="64"
-  DEBARCH="amd64"
 else
   echo "This platform is not supported"
   exit 1
@@ -68,7 +67,7 @@ cd $TMP
 rm -rf $PRGNAM-$SRCVERSION
 mkdir -p $PRGNAM-$SRCVERSION
 cd $PRGNAM-$SRCVERSION
-ar -x $CWD/${PRGNAM}_${VERSION}-1_lunar1.0_$DEBARCH.deb 
+ar -x $CWD/$PRGNAM-$VERSION*.deb
 tar xvf data.tar.zst -C $PKG
 cd $PKG
 
@@ -79,10 +78,8 @@ find . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
-# Change for Slackware
-rm -rf $PKG/usr/share/doc # Removed debian changelog
-mv $PKG/usr/quickgui $PKG/usr/share/quickgui # in slackware prefer /usr/share/
-rm $PKG/usr/bin/* # Ricreate simbolyc link
+# Make symlink
+mkdir -p $PKG/usr/bin
 ln -s /usr/share/quickgui/quickgui $PKG/usr/bin/quickgui
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
