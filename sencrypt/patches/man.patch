@@ -1,0 +1,109 @@
+diff -Naupr a/Makefile b/Makefile
+--- a/Makefile	2019-08-20 12:00:12.000000000 +0200
++++ b/Makefile	2024-06-30 14:22:58.192497675 +0200
+@@ -46,33 +46,11 @@ PAX :=		pax
+ GZIP :=		gzip
+ SED :=		sed
+ XSLTPROC :=	xsltproc
+-DOCBOOK5_MANPAGES_STYLESHEET =	http://docbook.sourceforge.net/release/xsl-ns/current/manpages/docbook.xsl
+-DOCBOOK5_MANPAGES_FLAGS =	--stringparam man.authors.section.enabled 0 \
+-				--stringparam man.copyright.section.enabled 0
+-
+-define generate-manpage-rule =
+-$(addsuffix .%,$(basename $1)): $(addsuffix .%.xml,$(basename $(firstword $1))) docbook-update-source-data.xsl
+-	$$(XSLTPROC) \
+-	    --xinclude \
+-	    --stringparam package $$(PACKAGE) \
+-	    --stringparam version $$(VERSION) \
+-	    docbook-update-source-data.xsl $$< | \
+-	    $$(XSLTPROC) \
+-	    --xinclude \
+-	    --output $(firstword $1) \
+-	    $$(DOCBOOK5_MANPAGES_FLAGS) \
+-	    $$(DOCBOOK5_MANPAGES_STYLESHEET) \
+-	    -
+-	for alias in $(wordlist 2,$(words $1),$1); do \
+-	    ln -sf $(notdir $(firstword $1)) $$$$alias; \
+-	done
+-endef
+ 
+ DESTDIR ?=
+ prefix ?=	/usr/local
+ bindir ?=	$(prefix)/bin
+ datadir ?=	$(prefix)/share
+-mandir ?=	$(datadir)/man
+ 
+ OS_NAME :=	$(shell uname -s)
+ OS_RELEASE :=	$(shell uname -r)
+@@ -91,13 +69,11 @@ endif
+ 
+ OBJS =		sencrypt.o
+ 
+-MANPAGES =	$(PACKAGE).1 $(DECRYPT_ALIAS).1
+-
+ .DEFAULT_TARGET = all
+ 
+ .PHONY: all clean clobber dist install
+ 
+-all: $(PACKAGE) $(OBJS) $(MANPAGES)
++all: $(PACKAGE) $(OBJS)
+ 
+ $(PACKAGE): XCPPFLAGS =		-D_XOPEN_SOURCE=600 -DOPENSSL_LOAD_CONF
+ $(PACKAGE): XCFLAGS :=	$(shell getconf LFS_CFLAGS)
+@@ -115,8 +91,6 @@ endif
+ $(PACKAGE): $(OBJS)
+ 	$(LINK.o) $^ $(LDLIBS) -o $@
+ 
+-$(eval $(call generate-manpage-rule,$(MANPAGES)))
+-
+ %.o: %.c
+ 	$(MAKEDEPEND.c) $< | $(SED) -f deps.sed >$*.d
+ 	$(COMPILE.c) -o $@ $<
+@@ -124,18 +98,9 @@ $(eval $(call generate-manpage-rule,$(MA
+ install:
+ 	$(INSTALL.exec) $(PACKAGE) "$(DESTDIR)$(bindir)/$(PACKAGE)"
+ 	ln -sf $(PACKAGE) "$(DESTDIR)$(bindir)/$(DECRYPT_ALIAS)"
+-	for manpage in $(MANPAGES); do \
+-	    if [ -L $${manpage} ]; then \
+-	        $(INSTALL.link) $${manpage} \
+-	            "$(DESTDIR)$(mandir)/man$${manpage##*.}/$${manpage##*/}"; \
+-	    else \
+-	        $(INSTALL.data) $${manpage} \
+-	            "$(DESTDIR)$(mandir)/man$${manpage##*.}/$${manpage##*/}"; \
+-	    fi \
+-	done
+ 
+ clean:
+-	rm -f $(PACKAGE) $(OBJS) $(MANPAGES)
++	rm -f $(PACKAGE) $(OBJS)
+ 
+ clobber: clean
+ 	rm -f $(patsubst %.o,%.d,$(OBJS))
+diff -Naupr a/docbook-update-source-data.xsl b/docbook-update-source-data.xsl
+--- a/docbook-update-source-data.xsl	2019-08-20 12:00:12.000000000 +0200
++++ b/docbook-update-source-data.xsl	2024-06-30 14:21:27.821921449 +0200
+@@ -1,9 +1,9 @@
+ <?xml version="1.0"?>
+ <xsl:stylesheet
+   version="1.0"
+-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+-  xmlns:db="http://docbook.org/ns/docbook"
+-  xmlns="http://docbook.org/ns/docbook"
++  xmlns:xsl="https://www.w3.org/1999/XSL/Transform"
++  xmlns:db="https://docbook.org/ns/docbook"
++  xmlns="https://docbook.org/ns/docbook"
+   exclude-result-prefixes="xsl db">
+ 
+   <xsl:param name="package" select="''" />
+diff -Naupr a/sencrypt.1.xml b/sencrypt.1.xml
+--- a/sencrypt.1.xml	2019-08-20 12:00:12.000000000 +0200
++++ b/sencrypt.1.xml	2024-06-30 14:19:28.008807524 +0200
+@@ -23,7 +23,7 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF
+ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ 
+ -->
+-<refentry xmlns="http://docbook.org/ns/docbook" xml:lang="en">
++<refentry xmlns="https://docbook.org/ns/docbook" xml:lang="en">
+   <info>
+     <author>
+       <personname>
