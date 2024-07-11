@@ -29,15 +29,16 @@ set -eu
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PKGNAM=google-api-python-client
-VERSION=2.136.0
+PRGNAM=google_api_python_client
+PKGNAM=$(echo $PRGNAM | tr _ -)
+VERSION=2.137.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="LICENSE *.md *.rst"
+DOCFILES="LICENSE *.md"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -58,9 +59,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+rm -rf $PRGNAM-$VERSION
+tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
+cd $PRGNAM-$VERSION
 
 chown -R root:root .
 find . \
