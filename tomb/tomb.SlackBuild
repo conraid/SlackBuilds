@@ -2,7 +2,7 @@
 #
 # Slackware build script for tomb
 #
-# Copyright 2015-2023 Corrado Franco (https://corradofranco.it)
+# Copyright 2015-2024 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,9 +29,9 @@ set -eu
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=Tomb
-PKGNAM=tomb
-VERSION=2.10
+PRGNAM=tomb
+PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
+VERSION=2.11
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
