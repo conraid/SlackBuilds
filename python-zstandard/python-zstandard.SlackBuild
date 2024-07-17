@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=zstandard
 PKGNAM=python-$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=0.22.0
+SRCVERSION=0.23.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -71,10 +71,11 @@ find .\
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
-sed -e 's/setuptools==/setuptools>=/' -e 's/wheel==/wheel>=/' -i pyproject.toml
-
-unshare -n python3 -m build --wheel --no-isolation
-python3 -m installer --destdir "$PKG" dist/*.whl
+# setuptools-69.0.0 stops handling --config-settings=--build-option so we go back to compile with “python setup.py”.
+#unshare -n python3 -m build --wheel --no-isolation
+#python3 -m installer --destdir "$PKG" dist/*.whl
+python3 setup.py build_ext
+python3 setup.py install --root="$PKG"
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
