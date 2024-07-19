@@ -2,7 +2,7 @@
 #
 # Slackware build script for hashcat
 #
-# Copyright 2017-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2017-2024 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=hashcat
 VERSION=6.2.6
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -108,7 +108,7 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 # Install bash completion
-install -Dm644 extra/tab_completion/hashcat.sh $PKG/etc/bash_completion.d/$PKGNAM
+install -Dm644 extra/tab_completion/hashcat.sh $PKG/usr/share/bash-completion/completions/$PKGNAM
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
