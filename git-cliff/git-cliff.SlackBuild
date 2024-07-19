@@ -33,7 +33,7 @@ PRGNAM=git-cliff
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=2.4.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -113,7 +113,7 @@ OUT_DIR=man/ "target/$CARGOTARGET/release/$PKGNAM-mangen"
 #cargo install --frozen --offline --no-track --root "$PKG/usr" --path="."
 
 install -Dm 755 "target/$CARGOTARGET/release/$PKGNAM" -t "$PKG/usr/bin"
-install -Dm 644 "completions/$PKGNAM.bash" "$PKG/etc/bash_completion.d/$PKGNAM"
+install -Dm 644 "completions/$PKGNAM.bash" "$PKG/usr/share/bash-completion/completions/$PKGNAM"
 install -Dm 644 "completions/_$PKGNAM" -t "$PKG/usr/share/zsh/site-functions"
 install -Dm 644 "man/$PKGNAM.1" -t "$PKG/usr/man/man1"
 
