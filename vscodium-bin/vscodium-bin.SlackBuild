@@ -32,7 +32,7 @@ SRCNAM=VSCodium
 PRGNAM=codium
 PKGNAM=vscodium-bin
 VERSION=1.91.1.24193
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -87,7 +87,7 @@ install -Dm644 $PKG/usr/share/$PRGNAM/resources/app/resources/linux/code.png -t 
 ln -s /usr/share/$PRGNAM/bin/$PRGNAM $PKG/usr/bin/$PRGNAM
 
 # Install bash completion
-install -Dm644 resources/completions/bash/$PRGNAM $PKG/etc/bash_completion.d/$PRGNAM
+install -Dm644 resources/completions/bash/$PRGNAM $PKG/usr/share/bash-completion/completions/$PRGNAM
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp resources/app/LICENSE.txt $PKG/usr/doc/$PKGNAM-$VERSION
