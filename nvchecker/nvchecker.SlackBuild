@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=nvchecker
 VERSION=2.15.1
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -82,6 +82,13 @@ if [ -e $CWD/patches/ ]; then
   fi
 fi
 
+# I hate invalid version message in warning log.
+# In my opinion the order “info” and “warning” should be reversed,
+# but if they decided that way...
+# meanwhile removed those too many messages from the “info” level,
+# which I like to see because it shows me which packages have undergone the change.
+sed '/invalid version/s/warning/debug/' -i nvchecker_source/pypi.py
+
 unshare -n python3 -m build --wheel --no-isolation
 make -C docs man
 python3 -m installer --destdir "$PKG" dist/*.whl
@@ -90,7 +97,7 @@ find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cu
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 # bash completion scripts & man
-install -Dm644 scripts/nvtake.bash_completion "$PKG"/etc/bash_completion.d/nvtake
+install -Dm644 scripts/nvtake.bash_completion "$PKG"/usr/share/bash-completion/completions/nvtake
 install -Dm644 docs/_build/man/nvchecker.1 -t "$PKG"/usr/man/man1/
 
 if [ -d $PKG/usr/man ]; then
