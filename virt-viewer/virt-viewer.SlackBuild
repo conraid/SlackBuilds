@@ -2,7 +2,7 @@
 #
 # Slackware build script for virt-viewer
 #
-# Copyright 2019-2023 Corrado Franco (https://corradofranco.it)
+# Copyright 2019-2024 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=virt-viewer
 VERSION=11.0
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -126,7 +126,7 @@ meson setup \
   -D                ovirt=enabled \
   -D                vte=enabled \
   -D                bash_completion=enabled \
-  -D                bash_completion_dir=/etc/bash_completion.d \
+  -D                bash_completion_dir=/usr/share/bash-completion/completions \
   ..
 
 ninja
