@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=rclone
 VERSION=1.67.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -104,7 +104,7 @@ go build -v --ldflags "-s -X github.com/rclone/rclone/fs.Version=$VERSION"
 ./rclone genautocomplete bash rclone.bash_completion
 ./rclone genautocomplete zsh rclone.zsh_completion
 install -Dsm755 rclone $PKG/usr/bin/rclone
-install -Dm644 rclone.bash_completion $PKG/etc/bash_completion.d/rclone
+install -Dm644 rclone.bash_completion $PKG/usr/share/bash-completion/completions/rclone
 install -Dm644 rclone.zsh_completion $PKG/usr/share/zsh/site-functions/_rclone
 install -Dm644 rclone.1 $PKG/usr/man/man1/rclone.1
 
