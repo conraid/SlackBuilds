@@ -34,7 +34,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=lynis
 VERSION=3.1.1
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -78,7 +78,7 @@ install -Dm644 lynis.8 $PKG/usr/man/man8/lynis.8
 gzip -9 $PKG/usr/man/man8/lynis.8
 
 # Install bash completion file
-install -Dm644 extras/bash_completion.d/lynis $PKG/etc/bash_completion.d/lynis
+install -Dm644 extras/bash_completion.d/lynis $PKG/usr/share/bash-completion/completions/lynis
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
