@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=wp-cli
 VERSION=2.10.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -75,7 +75,7 @@ mkdir -p $PKG $OUTPUT
 install -Dm755 $CWD/$PKGNAM-$VERSION.phar $PKG/usr/bin/wp
 
 # Install bash completion
-install -Dm644 $CWD/files/wp-completion.bash $PKG/etc/bash_completion.d/wp
+install -Dm644 $CWD/files/wp-completion.bash $PKG/usr/share/bash-completion/completions/wp
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $CWD/files/ $PKG/usr/doc/$PKGNAM-$VERSION || true
