@@ -25,12 +25,3 @@ perms() {
 
 
 perms etc/rc.d/rc.auditd.new
-for NEW in etc/audit/plugins.d/*.new; do
-  config $NEW
-done
-config etc/audit/zos-remote.conf.new
-config etc/audit/audisp-remote.conf.new
-config etc/audit/audit-stop.rules.new
-config etc/audit/auditd.conf.new
-config etc/sysconfig/auditd
-config etc/libaudit.conf.new
