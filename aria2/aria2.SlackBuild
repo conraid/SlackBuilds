@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=aria2
 VERSION=1.37.0
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -97,7 +97,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-shared=yes \
   --with-ca-bundle=/etc/ssl/certs/ca-certificates.crt \
   --with-libuv \
-  --with-bashcompletiondir=/etc/bash_completion.d \
+  --with-bashcompletiondir=/usr/share/bash-completion/completions \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
