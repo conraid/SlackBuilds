@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=qemu
 SRCVERSION=9.0.2
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -154,6 +154,9 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-plugins \
   --enable-slirp \
   --enable-tpm \
+  --enable-avx2 \
+  --enable-avx512bw \
+  --enable-avx512f \
   --audio-drv-list="alsa,sdl,pa,jack" \
   $targets
 
