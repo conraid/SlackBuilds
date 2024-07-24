@@ -2,7 +2,7 @@
 #
 # Slackware build script for libasecnsp11
 #
-# Copyright 2014-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2014-2024 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libasecnsp11
 VERSION=1
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-7}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -39,7 +39,7 @@ OUTPUT=${OUTPUT:-/tmp}
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-      i?86) ARCH=i586 ;;
+      i?86) ARCH=i686 ;;
     x86_64) ARCH=x86_64 ;;
          *) exit 1 ;;
   esac
