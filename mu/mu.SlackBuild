@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=mu
-VERSION=1.12.5
-BUILD=${BUILD:-2}
+VERSION=1.12.6
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -55,14 +55,11 @@ if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
   exit 0
 fi
 
-if [ "$ARCH" = "i586" ]; then
-  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
-  LIBDIRSUFFIX=""
-elif [ "$ARCH" = "i686" ]; then
-  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+if [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=pentium4 -mtune=generic"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -95,38 +92,24 @@ fi
 sed 's|share/info|info|' \
   -i meson.build \
   -i guile/meson.build \
-  -i mu4e/meson.build 
+  -i mu4e/meson.build
 
-export CFLAGS="$SLKCFLAGS"
-export CXXFLAGS="$SLKCFLAGS"
-mkdir build
-cd build
-meson setup \
-  --prefix          /usr \
-  --libdir          lib${LIBDIRSUFFIX} \
-  --libexecdir      /usr/libexec \
-  --sysconfdir      /etc \
-  --localstatedir   /var \
-  --mandir          /usr/man \
-  --infodir         /usr/info \
-  --bindir          /usr/bin \
-  --sbindir         /usr/sbin \
-  --includedir      /usr/include \
-  --datadir         /usr/share \
-  --buildtype       release \
-  --default-library shared \
-  --buildtype       plain \
-  --auto-features   enabled \
-  --wrap-mode       nodownload \
-  -D                b_lto=true \
-  -D                b_pie=true \
-  -D                guile=enabled \
-  -D                readline=enabled \
-  ..
 
-ninja
-DESTDIR=$PKG ninja install
-cd ..
+LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./autogen.sh \
+  --prefix=/usr \
+  --libdir=/usr/lib$LIBDIRSUFFIX \
+  --sysconfdir=/etc \
+  --localstatedir=/var \
+  --mandir=/usr/man \
+  --infodir=/usr/info \
+  --buildtype=release \
+  --default-library=shared
+
+make
+make DESTDIR=$PKG install
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
