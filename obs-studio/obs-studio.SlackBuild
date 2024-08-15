@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=obs-studio
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=30.1.2
+SRCVERSION=30.2.2
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -57,14 +57,11 @@ if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
   exit 0
 fi
 
-if [ "$ARCH" = "i586" ]; then
-  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
-  LIBDIRSUFFIX=""
-elif [ "$ARCH" = "i686" ]; then
-  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+if [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=pentium4 -mtune=generic"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -77,6 +74,10 @@ cd $TMP
 rm -rf $PRGNAM-$SRCVERSION
 tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION.tar.gz
 cd $PRGNAM-$SRCVERSION
+
+# nv-codec-headers are kept back at version n12.1.14.0 due to OBS not supporting any newer version
+wget https://github.com/FFmpeg/nv-codec-headers/releases/download/n12.1.14.0/nv-codec-headers-12.1.14.0.tar.gz
+tar xvf nv-codec-headers-12.1.14.0.tar.gz
 
 chown -R root:root .
 find -L . \
@@ -117,6 +118,7 @@ cmake -Wno-dev \
   -DENABLE_WEBRTC=OFF \
   -DENABLE_AJA=OFF \
   -DOBS_VERSION_OVERRIDE="$VERSION" \
+  -DFFnvcodec_INCLUDE_DIR="$TMP/$PRGNAM-$SRCVERSION/nv-codec-headers-12.1.14.0/include/" \
   ..
 
 make
