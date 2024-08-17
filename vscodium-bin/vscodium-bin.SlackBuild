@@ -31,8 +31,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 SRCNAM=VSCodium
 PRGNAM=codium
 PKGNAM=vscodium-bin
-VERSION=1.91.1.24193
-BUILD=${BUILD:-2}
+VERSION=1.92.2.24228
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -55,7 +55,7 @@ if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
 fi
 
 if [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
   ARCHTAR="x64"
 else
