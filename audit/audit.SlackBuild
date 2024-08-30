@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=audit
-VERSION=4.0.2
-BUILD=${BUILD:-1}
+VERSION=4.0.1
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -105,10 +105,13 @@ CXXFLAGS="$SLKCFLAGS -fcommon" \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
   --enable-static=no \
   --enable-shared=yes \
-  --with-python3 \
+  --with-python3=yes \
   --with-libwrap \
   --with-libcap-ng=yes \
   --enable-gssapi-krb5=yes \
+  --enable-systemd=no \
+  --with-libcap-ng=yes \
+  --with-io_uring=yes \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
