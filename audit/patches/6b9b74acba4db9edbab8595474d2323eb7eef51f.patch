@@ -1,0 +1,198 @@
+From 6b9b74acba4db9edbab8595474d2323eb7eef51f Mon Sep 17 00:00:00 2001
+From: Steve Grubb <ausearch.1@gmail.com>
+Date: Tue, 3 Sep 2024 17:46:00 -0400
+Subject: [PATCH] Try to solve Issue #390
+
+See the issue for details. Shor story is that there is some kind of
+collision between the two generated flag_tabs.h file. No idea what's
+causing it, but the file being deleted was only for RHEL 4 so it is
+no longer needed. Deleting it should end the collision.
+---
+ auparse/Makefile.am | 20 +++----------------
+ auparse/flagtab.h   | 33 -------------------------------
+ auparse/interpret.c | 47 +--------------------------------------------
+ auparse/typetab.h   |  2 +-
+ 4 files changed, 5 insertions(+), 97 deletions(-)
+ delete mode 100644 auparse/flagtab.h
+
+diff --git a/auparse/Makefile.am b/auparse/Makefile.am
+index 28805ed4f..80a13824d 100644
+--- a/auparse/Makefile.am
++++ b/auparse/Makefile.am
+@@ -1,5 +1,5 @@
+ # Makefile.am -- 
+-# Copyright 2006-08,2011-18 Red Hat Inc.
++# Copyright 2006-08,2011-18,2024 Red Hat Inc.
+ # All Rights Reserved.
+ #
+ # This library is free software; you can redistribute it and/or
+@@ -56,7 +56,7 @@ message.c:
+ 
+ BUILT_SOURCES = accesstabs.h captabs.h clocktabs.h clone-flagtabs.h \
+ 	epoll_ctls.h famtabs.h fcntl-cmdtabs.h fsconfigs.h \
+-	flagtabs.h icmptypetabs.h ipctabs.h ipccmdtabs.h\
++	icmptypetabs.h ipctabs.h ipccmdtabs.h\
+ 	ioctlreqtabs.h ipoptnametabs.h ip6optnametabs.h \
+ 	mmaptabs.h mounttabs.h nfprototabs.h open-flagtabs.h \
+ 	persontabs.h prctl_opttabs.h pktoptnametabs.h \
+@@ -72,7 +72,7 @@ BUILT_SOURCES = accesstabs.h captabs.h clocktabs.h clone-flagtabs.h \
+ noinst_PROGRAMS = gen_accesstabs_h gen_captabs_h gen_clock_h \
+ 	gen_clone-flagtabs_h \
+ 	gen_epoll_ctls_h gen_famtabs_h gen_fcntl-cmdtabs_h \
+-	gen_flagtabs_h gen_fsconfigs_h gen_ioctlreqtabs_h \
++	gen_fsconfigs_h gen_ioctlreqtabs_h \
+ 	gen_icmptypetabs_h gen_ipctabs_h gen_ipccmdtabs_h\
+ 	gen_ipoptnametabs_h gen_ip6optnametabs_h gen_nfprototabs_h \
+ 	gen_mmaptabs_h gen_mounttabs_h \
+@@ -167,20 +167,6 @@ gen_famtabs_h$(BUILD_EXEEXT): LDFLAGS=$(LDFLAGS_FOR_BUILD)
+ famtabs.h: gen_famtabs_h Makefile
+ 	./gen_famtabs_h --i2s fam > $@
+ 
+-gen_flagtabs_h_SOURCES = ../lib/gen_tables.c ../lib/gen_tables.h flagtab.h
+-# ../auparse/ is used to avoid using ../lib/flagtab.h
+-gen_flagtabs_h_CFLAGS = '-DTABLE_H="../auparse/flagtab.h"'
+-$(gen_flagtabs_h_OBJECTS): CC=$(CC_FOR_BUILD)
+-$(gen_flagtabs_h_OBJECTS): CFLAGS=$(CFLAGS_FOR_BUILD)
+-$(gen_flagtabs_h_OBJECTS): CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
+-$(gen_flagtabs_h_OBJECTS): LDFLAGS=$(LDFLAGS_FOR_BUILD)
+-gen_flagtabs_h$(BUILD_EXEEXT): CC=$(CC_FOR_BUILD)
+-gen_flagtabs_h$(BUILD_EXEEXT): CFLAGS=$(CFLAGS_FOR_BUILD)
+-gen_flagtabs_h$(BUILD_EXEEXT): CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
+-gen_flagtabs_h$(BUILD_EXEEXT): LDFLAGS=$(LDFLAGS_FOR_BUILD)
+-flagtabs.h: gen_flagtabs_h Makefile
+-	./gen_flagtabs_h --i2s-transtab flag > $@
+-
+ gen_fcntl_cmdtabs_h_SOURCES = ../lib/gen_tables.c ../lib/gen_tables.h \
+ 	fcntl-cmdtab.h
+ gen_fcntl_cmdtabs_h_CFLAGS = '-DTABLE_H="fcntl-cmdtab.h"'
+diff --git a/auparse/flagtab.h b/auparse/flagtab.h
+deleted file mode 100644
+index 7e1146d61..000000000
+--- a/auparse/flagtab.h
++++ /dev/null
+@@ -1,33 +0,0 @@
+-/* flagtab.h --
+- * Copyright 2007,2012 Red Hat Inc., Durham, North Carolina.
+- * All Rights Reserved.
+- *
+- * This library is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU Lesser General Public
+- * License as published by the Free Software Foundation; either
+- * version 2.1 of the License, or (at your option) any later version.
+- *
+- * This library is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * Lesser General Public License for more details.
+- *
+- * You should have received a copy of the GNU Lesser General Public
+- * License along with this library; if not, write to the Free Software
+- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+- *
+- * Authors:
+- *      Steve Grubb <sgrubb@redhat.com>
+- * Location: these are only for the RHEL4 kernel
+- */
+-
+-_S(0x0001,	"follow"	)
+-_S(0x0002,	"directory"	)
+-_S(0x0004,	"continue"	)
+-_S(0x0010,	"parent"	)
+-_S(0x0020,	"noalt"		)
+-_S(0x0040,	"atomic"	)
+-_S(0x0100,	"open"		)
+-_S(0x0200,	"create"	)
+-_S(0x0400,	"access"	)
+-
+diff --git a/auparse/interpret.c b/auparse/interpret.c
+index fe372864b..dd91d524c 100644
+--- a/auparse/interpret.c
++++ b/auparse/interpret.c
+@@ -94,7 +94,6 @@
+ #include "epoll_ctls.h"
+ #include "famtabs.h"
+ #include "fcntl-cmdtabs.h"
+-#include "flagtabs.h"
+ #include "fsconfigs.h"
+ #include "ipctabs.h"
+ #include "ipccmdtabs.h"
+@@ -1369,44 +1368,6 @@ static const char *print_sockaddr(const char *val)
+ 	return out;
+ }
+ 
+-/* This is only used in the RHEL4 kernel */
+-static const char *print_flags(const char *val)
+-{
+-        int flags, cnt = 0;
+-	size_t i;
+-	char *out, buf[sizeof(flag_strings)+FLAG_NUM_ENTRIES+1];
+-
+-        errno = 0;
+-        flags = strtoul(val, NULL, 16);
+-        if (errno) {
+-		if (asprintf(&out, "conversion error(%s)", val) < 0)
+-			out = NULL;
+-                return out;
+-        }
+-        if (flags == 0) {
+-		if (asprintf(&out, "none") < 0)
+-			out = NULL;
+-                return out;
+-        }
+-	buf[0] = 0;
+-        for (i=0; i<FLAG_NUM_ENTRIES; i++) {
+-                if (flag_table[i].value & flags) {
+-                        if (!cnt) {
+-                                strcat(buf,
+-				       flag_strings + flag_table[i].offset);
+-                                cnt++;
+-                        } else {
+-                                strcat(buf, ",");
+-                                strcat(buf,
+-				       flag_strings + flag_table[i].offset);
+-			}
+-                }
+-        }
+-	if (buf[0] == 0)
+-		snprintf(buf, sizeof(buf), "0x%s", val);
+-	return strdup(buf);
+-}
+-
+ static const char *print_promiscuous(const char *val)
+ {
+         int ival;
+@@ -3228,10 +3189,7 @@ int auparse_interp_adjust_type(int rtype, const char *name, const char *val)
+ 			type = AUPARSE_TYPE_ESCAPED;
+ 		else
+ 			type = AUPARSE_TYPE_UNCLASSIFIED;
+-	} else if (rtype == AUDIT_PATH && *name =='f' &&
+-			strcmp(name, "flags") == 0)
+-		type = AUPARSE_TYPE_FLAGS;
+-	else if (rtype == AUDIT_MQ_OPEN && strcmp(name, "mode") == 0)
++	} else if (rtype == AUDIT_MQ_OPEN && strcmp(name, "mode") == 0)
+ 		type = AUPARSE_TYPE_MODE_SHORT;
+ 	else if (rtype == AUDIT_CRYPTO_KEY_USER && strcmp(name, "fp") == 0)
+ 		type = AUPARSE_TYPE_UNCLASSIFIED;
+@@ -3330,9 +3288,6 @@ char *auparse_do_interpretation(int type, const idata *id,
+ 		case AUPARSE_TYPE_SOCKADDR:
+ 			out = print_sockaddr(id->val);
+ 			break;
+-		case AUPARSE_TYPE_FLAGS:
+-			out = print_flags(id->val);
+-			break;
+ 		case AUPARSE_TYPE_PROMISC:
+ 			out = print_promiscuous(id->val);
+ 			break;
+diff --git a/auparse/typetab.h b/auparse/typetab.h
+index b944f6e75..34a74b089 100644
+--- a/auparse/typetab.h
++++ b/auparse/typetab.h
+@@ -73,7 +73,7 @@ _S(AUPARSE_TYPE_PERM,		"perm"		)
+ _S(AUPARSE_TYPE_PERM,		"perm_mask"	)
+ _S(AUPARSE_TYPE_MODE,		"mode"		)
+ _S(AUPARSE_TYPE_SOCKADDR,	"saddr"		)
+-//_S(AUPARSE_TYPE_FLAGS,		"flags"		)
++//_S(AUPARSE_TYPE_FLAGS,		"flags"		) deprecated - RHEL4
+ _S(AUPARSE_TYPE_PROMISC,	"prom"		)
+ _S(AUPARSE_TYPE_PROMISC,	"old_prom"	)
+ _S(AUPARSE_TYPE_CAPABILITY,	"capability"	)
