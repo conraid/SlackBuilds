@@ -30,9 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=x264
-SRCVERSION=4613ac3c15fd75cebc4b9f65b7fb95e70a3acce1
+SRCVERSION=da14df5535fd46776fb1c9da3130973295c87aca
 VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
