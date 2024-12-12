@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=bettercap
-VERSION=2.33.0
+VERSION=2.40.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -81,8 +81,21 @@ find -L . \
   -exec chmod 755 {} \; -o \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
-cd ..
 
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
+fi
+
+cd ..
 mkdir -p go/src/github.com/bettercap
 ln -rTsf $TMP/$PKGNAM/$PKGNAM-$VERSION go/src/github.com/bettercap/bettercap
 
