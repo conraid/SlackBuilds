@@ -44,8 +44,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=netdata
-VERSION=1.47.0
-BUILD=${BUILD:-2}
+VERSION=2.0.3
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -108,7 +108,6 @@ if [ -e $CWD/patches/ ]; then
 fi
 
 sed "s/CMAKE_CXX_STANDARD 14/CMAKE_CXX_STANDARD 17/" -i CMakeLists.txt
-
 
 mkdir -p build
 cd build
