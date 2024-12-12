@@ -1,0 +1,37 @@
+From 5196832c25fded0a1eb746b7206efec1569f315c Mon Sep 17 00:00:00 2001
+From: Maxime Gervais <gervais.maxime@gmail.com>
+Date: Wed, 13 Nov 2024 11:02:10 +0100
+Subject: [PATCH] Replace old gvPluginList function signature
+
+Signed-off-by: Maxime Gervais <gervais.maxime@gmail.com>
+---
+ Source/MediaInfo/Export/Export_Graph.cpp           | 2 +-
+ Source/MediaInfo/Export/Export_Graph_gvc_Include.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Source/MediaInfo/Export/Export_Graph.cpp b/Source/MediaInfo/Export/Export_Graph.cpp
+index 01fe30aa8..1145ccebf 100644
+--- a/Source/MediaInfo/Export/Export_Graph.cpp
++++ b/Source/MediaInfo/Export/Export_Graph.cpp
+@@ -130,7 +130,7 @@ Ztring Dot2Svg(const Ztring& Dot)
+         return ToReturn;
+ 
+     int Renderers_Size=0;
+-    char** Renderers=gvPluginList(Context, "render", &Renderers_Size, NULL);
++    char** Renderers=gvPluginList(Context, "render", &Renderers_Size);
+     for (int Pos=0; Pos<Renderers_Size; Pos++) {
+         if (!strcmp(Renderers[Pos], "cairo"))
+             Cairo=true;
+diff --git a/Source/MediaInfo/Export/Export_Graph_gvc_Include.h b/Source/MediaInfo/Export/Export_Graph_gvc_Include.h
+index 576100f85..87ce0e41b 100644
+--- a/Source/MediaInfo/Export/Export_Graph_gvc_Include.h
++++ b/Source/MediaInfo/Export/Export_Graph_gvc_Include.h
+@@ -107,7 +107,7 @@ extern "C"
+ // Interface
+ typedef GVC_t* (*gvc_Module_gvContext)(); static gvc_Module_gvContext gvContext=NULL;
+ typedef int (*gvc_Module_gvFreeContext)(GVC_t*); static gvc_Module_gvFreeContext gvFreeContext=NULL;
+-typedef char** (*gvc_Module_gvPluginList)(GVC_t*, const char*, int*, const char*); static gvc_Module_gvPluginList gvPluginList=NULL;
++typedef char** (*gvc_Module_gvPluginList)(GVC_t*, const char*, int*); static gvc_Module_gvPluginList gvPluginList=NULL;
+ typedef int (*gvc_Module_gvLayout)(GVC_t*, graph_t*, const char*); static gvc_Module_gvLayout gvLayout=NULL;
+ typedef int (*gvc_Module_gvFreeLayout)(GVC_t*, graph_t*); static gvc_Module_gvFreeLayout gvFreeLayout=NULL;
+ typedef int (*gvc_Module_gvRenderData)(GVC_t*, graph_t*, const char*, char**, unsigned int*); static gvc_Module_gvRenderData gvRenderData=NULL;
