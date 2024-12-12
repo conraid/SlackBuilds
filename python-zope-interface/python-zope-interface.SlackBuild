@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=zope.interface
 PKGNAM=python-$(echo $PRGNAM | tr A-Z a-z | tr _ - | tr . -)
-SRCVERSION=7.0.3
+SRCVERSION=7.2
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -71,7 +71,7 @@ find . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
-unshare -n python3 -m build --wheel --no-isolation
+unshare -n python3 -m build --wheel --no-isolation --skip-dependency-check
 python3 -m installer --destdir "$PKG" dist/*.whl
 
 
