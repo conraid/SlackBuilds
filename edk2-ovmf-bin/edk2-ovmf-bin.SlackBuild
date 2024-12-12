@@ -31,8 +31,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=edk2-ovmf
 PKGNAM=$(echo $PRGNAM)-bin
-VERSION=20240813
-FEDVER="-1.fc40"
+VERSION=20241117
+FEDVER="fc40"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -55,8 +55,8 @@ cd $TMP
 rm -rf $PRGNAM-$VERSION
 mkdir $PRGNAM-$VERSION
 cd $PRGNAM-$VERSION
-rpm2cpio $CWD/$PRGNAM-${VERSION}${FEDVER}.noarch.rpm | cpio -idmv
-rpm2cpio $CWD/$PRGNAM-ia32-${VERSION}${FEDVER}.noarch.rpm | cpio -idmv
+rpm2cpio $CWD/$PRGNAM-${VERSION}-*.${FEDVER}.noarch.rpm | cpio -idmv
+rpm2cpio $CWD/$PRGNAM-ia32-${VERSION}-*.${FEDVER}.noarch.rpm | cpio -idmv
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
