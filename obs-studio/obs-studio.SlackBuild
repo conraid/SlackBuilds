@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=obs-studio
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=30.2.2
+SRCVERSION=31.0.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -102,8 +102,8 @@ fi
 mkdir -p build
 cd build
 cmake -Wno-dev \
-  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS -Wno-error=calloc-transposed-args" \
-  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -Wno-error=stringop-overflow" \
+  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS -Wno-error=calloc-transposed-args -Wno-error=deprecated-declarations" \
+  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -Wno-error=stringop-overflow -Wno-error=deprecated-declarations" \
   -DUNIX_STRUCTURE=1 \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DCMAKE_BUILD_TYPE=Release \
