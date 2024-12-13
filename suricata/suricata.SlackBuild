@@ -114,7 +114,8 @@ CXXFLAGS="$SLKCFLAGS -Wno-error" \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
-make
+make || true
+make # If we give the make command again after an error in documentation generation, the compilation is successful. Mysteries.
 make DESTDIR=$PKG install
 make DESTDIR=$PKG install-conf
 
