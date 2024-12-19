@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=libyuv
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=3a0ad00ed34afe3a43eb742579d53e9e7c597ae3
+SRCVERSION=e01109dd9bddb8809d03dd38da1fdea539a8f244
 VERSION=$(echo $SRCVERSION | tr - _ | head -c7)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -128,7 +128,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
+  cat $CWD/slack-required > $PKG/install/slack-required > $PKG/usr/doc/$PKGNAM-$VERSION/slack-required
 fi
 
 cd $PKG
