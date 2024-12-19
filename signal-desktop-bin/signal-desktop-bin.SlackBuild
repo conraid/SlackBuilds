@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=signal-desktop
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-bin
-SRCVERSION=7.36.0
+SRCVERSION=7.36.1
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -82,7 +82,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
+  cat $CWD/slack-required > $PKG/install/slack-required > $PKG/usr/doc/$PKGNAM-$VERSION/slack-required
 fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
