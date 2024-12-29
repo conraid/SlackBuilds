@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gimp
 PKGNAM=gimp3
-SRCVERSION=3.0.0-RC1
+SRCVERSION=3.0.0-RC2
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -165,7 +165,7 @@ fi
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
+  cat $CWD/slack-required > $PKG/install/slack-required > $PKG/usr/doc/$PKGNAM-$VERSION/slack-required
 fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
