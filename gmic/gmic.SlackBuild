@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=gmic
-SRCVERSION=3.4.3
+SRCVERSION=3.5.0
 VERSION=$SRCVERSION
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -110,7 +110,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
+  cat $CWD/slack-required > $PKG/install/slack-required > $PKG/usr/doc/$PKGNAM-$VERSION/slack-required
 fi
 
 # Remove empty dir
