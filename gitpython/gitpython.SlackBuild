@@ -2,7 +2,7 @@
 #
 # Slackware build script for gitpython
 #
-# Copyright 2017-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2017-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,10 +29,10 @@ set -eu
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=GitPython
+PRGNAM=gitpython
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-VERSION=3.1.43
-BUILD=${BUILD:-2}
+VERSION=3.1.44
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -93,7 +93,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
+  cat $CWD/slack-required > $PKG/install/slack-required > $PKG/usr/doc/$PKGNAM-$VERSION/slack-required
 fi
 
 cd $PKG
