@@ -2,7 +2,7 @@
 #
 # Slackware build script for sirikali
 #
-# Copyright 2017-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2017-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=SiriKali
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-VERSION=1.7.2
+VERSION=1.8.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -117,7 +117,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 mkdir -p $PKG/install 
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
+  cat $CWD/slack-required > $PKG/install/slack-required > $PKG/usr/doc/$PKGNAM-$VERSION/slack-required
 fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
