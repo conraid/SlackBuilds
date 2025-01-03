@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Slackware build script for qemu
-# Copyright 2015-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2015-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=qemu
 SRCVERSION=9.2.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -152,6 +152,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-tpm \
   --enable-avx2 \
   --enable-avx512bw \
+  --enable-gtk-clipboard \
   --audio-drv-list="alsa,sdl,pa,jack" \
   $targets
 
