@@ -2,7 +2,7 @@
 #
 # Slackware build script for scribus
 #
-# Copyright 2011-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2011-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=scribus
-VERSION=r26443
+SRCVERSION=1.6.2
+VERSION=1.6.3_svn
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -67,9 +68,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.xz
+cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
@@ -103,7 +104,6 @@ cmake \
   -D CMAKE_INSTALL_MANDIR=/usr/man \
   -D HAVE_PYTHON=ON \
   -D WANT_DISTROBUILD=ON \
-  -D WANT_CPP20=1 \
   -D WITH_PODOFO=ON \
   ..
 
@@ -125,7 +125,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
+  cat $CWD/slack-required > $PKG/install/slack-required > $PKG/usr/doc/$PKGNAM-$VERSION/slack-required
 fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
