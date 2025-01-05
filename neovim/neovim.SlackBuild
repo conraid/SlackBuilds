@@ -2,7 +2,7 @@
 #
 # Slackware build script for neovim
 #
-# Copyright 2015-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2015-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=neovim
 VERSION=0.10.3
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -130,7 +130,7 @@ ln -s /usr/lib$LIBDIRSUFFIX/tree_sitter $PKG/usr/share/nvim/runtime/parser
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required > $PKG/usr/doc/$PKGNAM-$VERSION/slack-required
+  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
 fi
 
 install -Dm644 runtime/nvim.desktop $PKG/usr/share/applications/nvim.desktop
