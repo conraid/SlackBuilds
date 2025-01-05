@@ -2,7 +2,7 @@
 #
 # Slackware build script for php_memcached
 #
-# Copyright 2009-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2009-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ PRGNAM=memcached
 PKGNAM=php-$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=3.3.0
 VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -113,7 +113,7 @@ grep "^.\?memcached" memcached.ini | sed 's/igbinary/php/' >> $PKG/etc/php.d/mem
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required > $PKG/usr/doc/$PKGNAM-$VERSION/slack-required
+  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
 fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
