@@ -33,7 +33,7 @@ PRGNAM=helix
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-editor
 SRCVERSION=25.01
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -117,7 +117,7 @@ find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r st
 # Make launcher script
 mkdir -p $PKG/usr/bin
 cat > $PKG/usr/bin/hx << EOF
-#!/bin/sh
+#!/bin/bash
 HELIX_RUNTIME=/usr/lib/helix/runtime exec /usr/share/helix/hx "\$@"
 EOF
 chmod +x $PKG/usr/bin/hx
