@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Update the desktop database:
 if [ -x /usr/bin/update-desktop-database ]; then
