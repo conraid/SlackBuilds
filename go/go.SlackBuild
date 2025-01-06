@@ -33,7 +33,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=go
 VERSION=1.23.4
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -127,7 +127,7 @@ seten GOROOT ${GOROOT_FINAL}
 setenv PATH \${GOROOT}/bin:\${PATH}
 EOF
 cat > $PKG/etc/profile.d/go.sh << EOF
-#!/bin/sh
+#!/bin/bash
 export GOROOT="${GOROOT_FINAL}"
 export PATH="\${GOROOT}/bin:\${PATH}"
 EOF
@@ -143,7 +143,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
+  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
 fi
 
 cd $PKG
