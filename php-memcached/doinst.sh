@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 config() {
   NEW="$1"
