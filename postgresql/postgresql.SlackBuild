@@ -3,7 +3,7 @@
 # Slackware build script for postgresql
 #
 # Copyright 2007-2015 Adis Nezirovic <adis_at_linux.org.ba>
-# Copyright 2016-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2016-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=postgresql
 VERSION=17.2
 PG_VERSION=$(echo $VERSION | cut -d. -f1)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -243,7 +243,7 @@ chmod 755 $PKG/var/log/setup/setup.$PKGNAM
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
+  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
 fi
 sed -e "s|%LIBDIRSUFFIX%|${LIBDIRSUFFIX}|g" \
     -e "s|%PG_VERSION%|$PG_VERSION|g" \
