@@ -3491,6 +3491,15 @@ SLACKBUILD DOWNLOAD: https://github.com/tstack/lnav/archive/v0.12.3/lnav-0.12.3.
 SLACKBUILD MD5SUM: 2c281d8cf1f058a39c4b38bab32b9265
 SLACKBUILD SHORT DESCRIPTION:  lnav (Logfile Navigator)
 
+SLACKBUILD NAME: logwatch
+SLACKBUILD LOCATION: ./logwatch
+SLACKBUILD FILES: README doinst.sh files/cron.conf files/maillog.conf files/messages.conf files/secure.conf logwatch.SlackBuild logwatch.info slack-desc slack-required
+SLACKBUILD VERSION: 7.12
+SLACKBUILD REQUIRES: perl-html-parser
+SLACKBUILD DOWNLOAD: https://downloads.sourceforge.net/logwatch/logwatch-7.12.tar.gz
+SLACKBUILD MD5SUM: a235030fcfb90b833b2852524a7fff1f
+SLACKBUILD SHORT DESCRIPTION:  logwatch (log analysis system)
+
 SLACKBUILD NAME: lsb-release
 SLACKBUILD LOCATION: ./lsb-release
 SLACKBUILD FILES: README files/lsb-release.etc lsb-release.SlackBuild lsb-release.info slack-desc
@@ -4751,6 +4760,24 @@ SLACKBUILD DOWNLOAD: https://downloads.percona.com/downloads/percona-toolkit/3.7
 SLACKBUILD MD5SUM: 1284dfc54bdf17481f4de79cb5e799eb
 SLACKBUILD SHORT DESCRIPTION:  percona-toolkit (Command-line tools for MySQL and system tasks)
 
+SLACKBUILD NAME: perl-b-cow
+SLACKBUILD LOCATION: ./perl-b-cow
+SLACKBUILD FILES: README perl-b-cow.SlackBuild perl-b-cow.info slack-desc
+SLACKBUILD VERSION: 0.007
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://cpan.metacpan.org/authors/id/A/AT/ATOOMIC/B-COW-0.007.tar.gz
+SLACKBUILD MD5SUM: 
+SLACKBUILD SHORT DESCRIPTION:  perl-b-cow (additional B helpers to check COW status)
+
+SLACKBUILD NAME: perl-clone
+SLACKBUILD LOCATION: ./perl-clone
+SLACKBUILD FILES: README perl-clone.SlackBuild perl-clone.info slack-desc slack-required
+SLACKBUILD VERSION: 0.47
+SLACKBUILD REQUIRES: perl-b-cow
+SLACKBUILD DOWNLOAD: https://cpan.metacpan.org/authors/id/A/AT/ATOOMIC/Clone-0.47.tar.gz
+SLACKBUILD MD5SUM: 62ff032a4df0c4abb74f76adf519361e
+SLACKBUILD SHORT DESCRIPTION:  perl-clone (Recursively copy Perl datatypes)
+
 SLACKBUILD NAME: perl-digest-md4
 SLACKBUILD LOCATION: ./perl-digest-md4
 SLACKBUILD FILES: README perl-digest-md4.SlackBuild perl-digest-md4.info slack-desc
@@ -4759,6 +4786,96 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://cpan.metacpan.org/authors/id/M/MI/MIKEM/DigestMD4/Digest-MD4-1.9.tar.gz
 SLACKBUILD MD5SUM: 7d3818b5da96fc876424caebcebf88f4
 SLACKBUILD SHORT DESCRIPTION:  perl-digest-md4 (Perl interface to the MD4 Algorithm)
+
+SLACKBUILD NAME: perl-encode-locale
+SLACKBUILD LOCATION: ./perl-encode-locale
+SLACKBUILD FILES: README perl-encode-locale.SlackBuild perl-encode-locale.info slack-desc
+SLACKBUILD VERSION: 1.05
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://cpan.metacpan.org/authors/id/G/GA/GAAS/Encode-Locale-1.05.tar.gz
+SLACKBUILD MD5SUM: fcfdb8e4ee34bcf62aed429b4a23db27
+SLACKBUILD SHORT DESCRIPTION:  perl-encode-locale (Determine the locale encoding)
+
+SLACKBUILD NAME: perl-html-parser
+SLACKBUILD LOCATION: ./perl-html-parser
+SLACKBUILD FILES: README perl-html-parser.SlackBuild perl-html-parser.info slack-desc slack-required
+SLACKBUILD VERSION: 3.83
+SLACKBUILD REQUIRES: perl-html-tagset perl-http-message
+SLACKBUILD DOWNLOAD: https://cpan.metacpan.org/authors/id/O/OA/OALDERS/HTML-Parser-3.83.tar.gz
+SLACKBUILD MD5SUM: 17a4c886024bfad1cffcbe6b46cda128
+SLACKBUILD SHORT DESCRIPTION:  perl-html-parser (perl html parser module collection)
+
+SLACKBUILD NAME: perl-html-tagset
+SLACKBUILD LOCATION: ./perl-html-tagset
+SLACKBUILD FILES: README perl-html-tagset.SlackBuild perl-html-tagset.info slack-desc
+SLACKBUILD VERSION: 3.24
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://cpan.metacpan.org/authors/id/P/PE/PETDANCE/HTML-Tagset-3.24.tar.gz
+SLACKBUILD MD5SUM: f8db8974f5e7fe7df2a58263a7b00552
+SLACKBUILD SHORT DESCRIPTION:  perl-html-tagset (perl html data tables module)
+
+SLACKBUILD NAME: perl-http-date
+SLACKBUILD LOCATION: ./perl-http-date
+SLACKBUILD FILES: README perl-http-date.SlackBuild perl-http-date.info slack-desc
+SLACKBUILD VERSION: 6.06
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://cpan.metacpan.org/authors/id/O/OA/OALDERS/HTTP-Date-6.06.tar.gz
+SLACKBUILD MD5SUM: 60462359bfeb1e6d14602508cfd07885
+SLACKBUILD SHORT DESCRIPTION:  perl-http-date (date conversion routines)
+
+SLACKBUILD NAME: perl-http-message
+SLACKBUILD LOCATION: ./perl-http-message
+SLACKBUILD FILES: README perl-http-message.SlackBuild perl-http-message.info slack-desc slack-required
+SLACKBUILD VERSION: 7.00
+SLACKBUILD REQUIRES: perl-clone perl-io-html perl-test-needs perl-try-tiny perl-encode-locale perl-http-date perl-lwp-mediatypes
+SLACKBUILD DOWNLOAD: https://cpan.metacpan.org/authors/id/O/OA/OALDERS/HTTP-Message-7.00.tar.gz
+SLACKBUILD MD5SUM: 01b29ce55d79a774420bc768bb905354
+SLACKBUILD SHORT DESCRIPTION:  perl-http-message (HTTP style message base class)
+
+SLACKBUILD NAME: perl-io-html
+SLACKBUILD LOCATION: ./perl-io-html
+SLACKBUILD FILES: README perl-io-html.SlackBuild perl-io-html.info slack-desc
+SLACKBUILD VERSION: 1.004
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://cpan.metacpan.org/authors/id/C/CJ/CJM/IO-HTML-1.004.tar.gz
+SLACKBUILD MD5SUM: 04bbe363686fd19bfb4cc0ed775e3d03
+SLACKBUILD SHORT DESCRIPTION:  perl-io-html (Open an HTML file with automatic charset detection)
+
+SLACKBUILD NAME: perl-lwp-mediatypes
+SLACKBUILD LOCATION: ./perl-lwp-mediatypes
+SLACKBUILD FILES: README perl-lwp-mediatypes.SlackBuild perl-lwp-mediatypes.info slack-desc slack-required
+SLACKBUILD VERSION: 6.04
+SLACKBUILD REQUIRES: perl-test-fatal 
+SLACKBUILD DOWNLOAD: https://cpan.metacpan.org/authors/id/O/OA/OALDERS/LWP-MediaTypes-6.04.tar.gz
+SLACKBUILD MD5SUM: 84b799a90c0d2ce52897a7cb4c0478d0
+SLACKBUILD SHORT DESCRIPTION:  perl-lwp-mediatypes (guess media type for file/URL)
+
+SLACKBUILD NAME: perl-test-fatal
+SLACKBUILD LOCATION: ./perl-test-fatal
+SLACKBUILD FILES: README perl-test-fatal.SlackBuild perl-test-fatal.info slack-desc slack-required
+SLACKBUILD VERSION: 0.017
+SLACKBUILD REQUIRES: perl-try-tiny
+SLACKBUILD DOWNLOAD: https://cpan.metacpan.org/authors/id/R/RJ/RJBS/Test-Fatal-0.017.tar.gz
+SLACKBUILD MD5SUM: 2f160c31e1848536e3b82112d573bb76
+SLACKBUILD SHORT DESCRIPTION:  perl-test-fatal (Helpers for testing code with exceptions)
+
+SLACKBUILD NAME: perl-test-needs
+SLACKBUILD LOCATION: ./perl-test-needs
+SLACKBUILD FILES: README perl-test-needs.SlackBuild perl-test-needs.info slack-desc
+SLACKBUILD VERSION: 0.002010
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://cpan.metacpan.org/authors/id/H/HA/HAARG/Test-Needs-0.002010.tar.gz
+SLACKBUILD MD5SUM: 2b3d10946001561297624e7668f09c26
+SLACKBUILD SHORT DESCRIPTION:  perl-test-needs (Perl module with test functions and features)
+
+SLACKBUILD NAME: perl-try-tiny
+SLACKBUILD LOCATION: ./perl-try-tiny
+SLACKBUILD FILES: README perl-try-tiny.SlackBuild perl-try-tiny.info slack-desc
+SLACKBUILD VERSION: 0.32
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://cpan.metacpan.org/authors/id/E/ET/ETHER/Try-Tiny-0.32.tar.gz
+SLACKBUILD MD5SUM: 
+SLACKBUILD SHORT DESCRIPTION:  perl-try-tiny (Minimal try/catch with proper localization of $@)
 
 SLACKBUILD NAME: phan
 SLACKBUILD LOCATION: ./phan
@@ -6923,10 +7040,10 @@ SLACKBUILD SHORT DESCRIPTION:  sipcalc (console based ip subnet calculator)
 SLACKBUILD NAME: sirikali
 SLACKBUILD LOCATION: ./sirikali
 SLACKBUILD FILES: README doinst.sh sirikali.SlackBuild sirikali.info slack-desc slack-required
-SLACKBUILD VERSION: 1.8.0
+SLACKBUILD VERSION: 1.8.1
 SLACKBUILD REQUIRES: ecryptfs-simple encfs securefs
-SLACKBUILD DOWNLOAD: https://github.com/mhogomchungu/sirikali/releases/download/1.8.0/SiriKali-1.8.0.tar.xz
-SLACKBUILD MD5SUM: 1adae1f358ca31c34bc1426c4d921407
+SLACKBUILD DOWNLOAD: https://github.com/mhogomchungu/sirikali/releases/download/1.8.1/SiriKali-1.8.1.tar.xz
+SLACKBUILD MD5SUM: 56fedebf9731ff03c4ed359a5f92f956
 SLACKBUILD SHORT DESCRIPTION:  sirikali (GUI front-end for some encrypted filesystems)
 
 SLACKBUILD NAME: sitemap-generator-cli
