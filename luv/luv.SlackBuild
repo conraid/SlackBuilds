@@ -2,7 +2,7 @@
 #
 # Slackware build script for luv
 #
-# Copyright 2019-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2019-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,9 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=luv
-SRCVERSION=1.48.0-2
-VERSION=1.48.0
-BUILD=${BUILD:-3}
+SRCVERSION=1.50.0-0
+VERSION=$(echo $SRCVERSION | cut -d '-' -f 1 | sed 's/^v//')
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -56,14 +56,11 @@ if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
   exit 0
 fi
 
-if [ "$ARCH" = "i586" ]; then
-  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
-  LIBDIRSUFFIX=""
-elif [ "$ARCH" = "i686" ]; then
-  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+if [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=pentium4 -mtune=generic"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -73,9 +70,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$SRCVERSION
-tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz
-cd $PKGNAM-$SRCVERSION
+rm -rf $PKGNAM-v$SRCVERSION
+tar xvf $CWD/$PKGNAM-v$SRCVERSION.tar.gz
+cd $PKGNAM-v$SRCVERSION
 
 chown -R root:root .
 find -L . \
@@ -90,8 +87,9 @@ for ver in 5.1 5.2 5.3 5.4; do
     incdir="/usr/include/lua${ver}"
     if [ "$ver" = "5.4" ] ; then
       incdir="/usr/include"
-fi
-cmake -GNinja \
+    fi
+
+    cmake -GNinja \
       -Bbuild-lua${ver//./} \
       -DLUA=/usr/bin/lua${ver} \
       -DLUA_INCDIR=${incdir} \
@@ -101,29 +99,28 @@ cmake -GNinja \
       -DLUA_BUILD_TYPE=System \
       -DCMAKE_INSTALL_PREFIX=/usr \
       "luv-${SRCVERSION//_/-}"
-ninja -C "build-lua${ver//./}"
-DESTDIR="$PKG" ninja -C "build-lua${ver//./}" install
+
+    ninja -C "build-lua${ver//./}"
+    DESTDIR="$PKG" ninja -C "build-lua${ver//./}" install
 done
 
-# fix install directory
-# Thanks to SBo
-sed -r "s/\/lib(\"|\/)/\/lib$LIBDIRSUFFIX\1/g" -i CMakeLists.txt
+# Fix install directory. Thanks to SBo.
+sed -i -r "s/\/lib(\"|\/)/\/lib$LIBDIRSUFFIX\1/g" CMakeLists.txt
 
 mkdir -p build
-cd build
 cmake -Wno-dev \
+  -GNinja \
+  -Bbuild \
   -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DWITH_SHARED_LIBUV=ON \
   -DLUA_BUILD_TYPE=System \
   -DBUILD_MODULE=OFF \
-  -DBUILD_SHARED_LIBS=ON \
-  ..
+  -DBUILD_SHARED_LIBS=ON
 
-make
-make DESTDIR=$PKG install
-cd ..
+ninja -C "build"
+DESTDIR="${PKG}" ninja -C "build" install
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -143,7 +140,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
+  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
 fi
 
 cd $PKG
