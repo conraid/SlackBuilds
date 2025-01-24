@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=libyuv
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=cce895081624f3f660db8eba4839d604ed1e6059
+SRCVERSION=67f3f17d9ab187516d9375d3822b9b635cf12ca2
 VERSION=$(echo $SRCVERSION | tr - _ | head -c7)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
