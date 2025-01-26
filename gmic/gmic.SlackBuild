@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=gmic
 SRCVERSION=3.5.0
 VERSION=$SRCVERSION
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -92,7 +92,7 @@ sed -e "/^LIB/s/lib/lib$LIBDIRSUFFIX/" \
     -e "s|share/doc/gmic|doc/gmic-$VERSION|g" \
     -e 's|/share/man|/man|g' -i Makefile
 
-make -j1 CFLAGS="$SLKCFLAGS" lib libc cli_shared gimp_shared gmic_qt_shared zart
+make -j1 CFLAGS="$SLKCFLAGS" lib cli_shared gmic_qt_shared zart libc #gimp_shared not compile
 make install DESTDIR=$PKG
 
 cd ..
