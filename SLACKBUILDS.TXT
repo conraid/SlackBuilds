@@ -783,9 +783,9 @@ SLACKBUILD SHORT DESCRIPTION:  clamav-gui (Front-End for ClamAV)
 
 SLACKBUILD NAME: clamav
 SLACKBUILD LOCATION: ./clamav
-SLACKBUILD FILES: PKGNOTE README clamav.SlackBuild clamav.info doinst.sh files/clamd.conf files/freshclam.conf files/logrotate.clamav files/rc.clamav slack-desc
+SLACKBUILD FILES: PKGNOTE README clamav.SlackBuild clamav.info doinst.sh files/clamd.conf files/freshclam.conf files/logrotate.clamav files/rc.clamav slack-desc slack-required
 SLACKBUILD VERSION: 1.4.2
-SLACKBUILD REQUIRES: 
+SLACKBUILD REQUIRES: libmspack
 SLACKBUILD DOWNLOAD: http://www.clamav.net/downloads/production/clamav-1.4.2.tar.gz
 SLACKBUILD MD5SUM: 94b1c8a660139139e0c501a0e360f649
 SLACKBUILD SHORT DESCRIPTION:  clamav (open source antivirus engine)
@@ -1351,10 +1351,10 @@ SLACKBUILD SHORT DESCRIPTION:  exempi (XMP SDK )
 SLACKBUILD NAME: exiftool
 SLACKBUILD LOCATION: ./exiftool
 SLACKBUILD FILES: README exiftool.SlackBuild exiftool.info slack-desc
-SLACKBUILD VERSION: 13.15
+SLACKBUILD VERSION: 13.16
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://exiftool.org/Image-ExifTool-13.15.tar.gz
-SLACKBUILD MD5SUM: 83054cea64ca2748e21914152d891800
+SLACKBUILD DOWNLOAD: https://exiftool.org/Image-ExifTool-13.16.tar.gz
+SLACKBUILD MD5SUM: 690c675cf9464e7ed5c622bcc9327386
 SLACKBUILD SHORT DESCRIPTION:  exiftool (read, write, and edit EXIF and other meta information)
 
 SLACKBUILD NAME: exploitdb
@@ -3112,6 +3112,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: http://libmpeg2.sourceforge.net/files/libmpeg2-0.5.1.tar.gz
 SLACKBUILD MD5SUM: 0f92c7454e58379b4a5a378485bbd8ef
 SLACKBUILD SHORT DESCRIPTION:  Libmpeg2 (Free MPEG-2 video stream decoder)
+
+SLACKBUILD NAME: libmspack
+SLACKBUILD LOCATION: ./libmspack
+SLACKBUILD FILES: README libmspack.SlackBuild libmspack.info slack-desc
+SLACKBUILD VERSION: 0.11alpha
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://www.cabextract.org.uk/libmspack/libmspack-0.11alpha.tar.gz
+SLACKBUILD MD5SUM: 3e770746e8eebba9ac4ce965e69dd107
+SLACKBUILD SHORT DESCRIPTION:  libmspack (A library for some loosely related MS compression formats)
 
 SLACKBUILD NAME: libmspub
 SLACKBUILD LOCATION: ./libmspub
@@ -5609,10 +5618,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-docopt (command line arguments parser)
 SLACKBUILD NAME: python-evdev
 SLACKBUILD LOCATION: ./python-evdev
 SLACKBUILD FILES: README python-evdev.SlackBuild python-evdev.info slack-desc
-SLACKBUILD VERSION: 1.7.1
+SLACKBUILD VERSION: 1.8.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/e/evdev/evdev-1.7.1.tar.gz
-SLACKBUILD MD5SUM: c20a623d2d05fd87c1f46d736ee9c3cc
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/e/evdev/evdev-1.8.0.tar.gz
+SLACKBUILD MD5SUM: a38ac9e2297940430bb27cea41be964e
 SLACKBUILD SHORT DESCRIPTION:  python-evdev (Python input event library)
 
 SLACKBUILD NAME: python-fasteners
@@ -6950,10 +6959,10 @@ SLACKBUILD SHORT DESCRIPTION:  Shorewall6 (An IPv6 iptables-based firewall for L
 SLACKBUILD NAME: shotcut
 SLACKBUILD LOCATION: ./shotcut
 SLACKBUILD FILES: README doinst.sh shotcut.SlackBuild shotcut.info slack-desc slack-required
-SLACKBUILD VERSION: 25.01.03
+SLACKBUILD VERSION: 25.01.25
 SLACKBUILD REQUIRES: ladspa_sdk swh-plugins
-SLACKBUILD DOWNLOAD: https://github.com/mltframework/shotcut/archive/v25.01.03/shotcut-25.01.03.tar.gz
-SLACKBUILD MD5SUM: 6b931d7c1e0ca76decd11628597bf0e1
+SLACKBUILD DOWNLOAD: https://github.com/mltframework/shotcut/archive/v25.01.25/shotcut-25.01.25.tar.gz
+SLACKBUILD MD5SUM: 4ed0a6a2ca929279a6e5d65d8e32f528
 SLACKBUILD SHORT DESCRIPTION:  shotcut (Cross-platform Qt based Video Editor)
 
 SLACKBUILD NAME: shtool
@@ -7562,10 +7571,10 @@ SLACKBUILD SHORT DESCRIPTION:  stylelint-config-standard (The standard config fo
 SLACKBUILD NAME: stylelint
 SLACKBUILD LOCATION: ./stylelint
 SLACKBUILD FILES: README slack-desc stylelint.SlackBuild stylelint.info
-SLACKBUILD VERSION: 16.13.2
+SLACKBUILD VERSION: 16.14.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/stylelint/-/stylelint-16.13.2.tgz
-SLACKBUILD MD5SUM: ad9212bafb9e624f801afae895361a82
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/stylelint/-/stylelint-16.14.0.tgz
+SLACKBUILD MD5SUM: 685693a237a16fe227fffc83432bf255
 SLACKBUILD SHORT DESCRIPTION:  stylelint (css linter)
 
 SLACKBUILD NAME: stylua
@@ -8567,15 +8576,6 @@ SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/wput/wput-0.6.2.tgz
 SLACKBUILD MD5SUM: a14c4c13d91d04d6119bdc977e8a8bdf
 SLACKBUILD SHORT DESCRIPTION:  wput (utility for putting files using the FTP protocol)
 
-SLACKBUILD NAME: wxgtk
-SLACKBUILD LOCATION: ./wxgtk
-SLACKBUILD FILES: README slack-desc slack-required wxgtk.SlackBuild wxgtk.info
-SLACKBUILD VERSION: 3.2.6
-SLACKBUILD REQUIRES: webkit2gtk4.1
-SLACKBUILD DOWNLOAD: https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.6/wxWidgets-3.2.6.tar.bz2
-SLACKBUILD MD5SUM: 41d54fffc953936bb92ae45d81ded60c
-SLACKBUILD SHORT DESCRIPTION:  wxgtk (cross-platform GUI toolkit)
-
 SLACKBUILD NAME: wxpython
 SLACKBUILD LOCATION: ./wxpython
 SLACKBUILD FILES: README slack-desc slack-required wxpython.SlackBuild wxpython.info
@@ -8584,6 +8584,15 @@ SLACKBUILD REQUIRES: wxgtk python-attrdict3 numpy python-sip waf
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/w/wxPython/wxPython-4.2.2.tar.gz
 SLACKBUILD MD5SUM: 962fdea7ec4f93b59d17783d03eecf3a
 SLACKBUILD SHORT DESCRIPTION: 
+
+SLACKBUILD NAME: wxwidgets
+SLACKBUILD LOCATION: ./wxwidgets
+SLACKBUILD FILES: README slack-desc slack-required wxwidgets.SlackBuild wxwidgets.info
+SLACKBUILD VERSION: 3.2.6
+SLACKBUILD REQUIRES: webkit2gtk4.1 libmspack
+SLACKBUILD DOWNLOAD: https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.6/wxWidgets-3.2.6.tar.bz2
+SLACKBUILD MD5SUM: 41d54fffc953936bb92ae45d81ded60c
+SLACKBUILD SHORT DESCRIPTION:  wxwidgets (cross-platform GUI toolkit)
 
 SLACKBUILD NAME: x11vnc
 SLACKBUILD LOCATION: ./x11vnc
@@ -8750,10 +8759,10 @@ SLACKBUILD SHORT DESCRIPTION:  youtube-dl (YouTube video download utility)
 SLACKBUILD NAME: yt-dlp
 SLACKBUILD LOCATION: ./yt-dlp
 SLACKBUILD FILES: README slack-desc slack-required yt-dlp.SlackBuild yt-dlp.info
-SLACKBUILD VERSION: 2025.1.15
+SLACKBUILD VERSION: 2025.1.26
 SLACKBUILD REQUIRES: mutagen pycryptodomex python-websockets
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/y/yt-dlp/yt_dlp-2025.1.15.tar.gz
-SLACKBUILD MD5SUM: 4ba8adb43c0e229855993d42f4163457
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/y/yt-dlp/yt_dlp-2025.1.26.tar.gz
+SLACKBUILD MD5SUM: 25a8df86991116148561b1e50caaedb9
 SLACKBUILD SHORT DESCRIPTION:  yt-dlp (youtube downloader)
 
 SLACKBUILD NAME: zeromq

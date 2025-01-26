@@ -11,9 +11,40 @@
       <description>Corrado Franco (Conraid) Slackware current package repository.</description>
       <language>en-us</language>
       <id xmlns="http://www.w3.org/2005/Atom">urn:uuid:5f918df8-684b-11dd-bffd-0013d49950e2</id>
-      <pubDate>Sat, 25 Jan 2025 13:15:03 UTC</pubDate>
-      <lastBuildDate>Sat, 25 Jan 2025 13:22:17 UTC</lastBuildDate>
+      <pubDate>Sun, 26 Jan 2025 12:56:06 UTC</pubDate>
+      <lastBuildDate>Sun, 26 Jan 2025 13:06:13 UTC</lastBuildDate>
       <generator>gen_repos_files.sh v 1.99</generator>
+      <item>
+         <title>Sun, 26 Jan 2025 12:56:06 UTC</title>
+         <link>http://slackers.it/repository/slackware64-current/ChangeLog.txt</link>
+         <pubDate>Sun, 26 Jan 2025 12:56:06 UTC</pubDate>
+         <guid isPermaLink="false">20250126135606</guid>
+         <description>
+           <![CDATA[<pre>
+I compiled wxWidgets with gtk3 and qt5, just as Alien Bob also did,
+so I renamed the package from wxgtk to wxwidgets.
+wx-gtk2 is not used by any package so much.
+Actually wx-qt5 is not used at the moment either,
+but it can always be useful to some of you.
+While I was at it I added support for Microsoft compression formats, via libmspack.
+I also wanted to compile wx-gtk4, but it gives error.
+I still used autotools because cmake does not install locales
+and does not handle libsuffix well.
+clamav-1.4.2-x86_64-2cf.txz:  Rebuilt.
+    - I used the external library libmspack.
+exiftool-13.16-x86_64-1cf.txz:  Upgraded.
+libmspack-0.11alpha-x86_64-1cf.txz:  Added.
+python-evdev-1.8.0-x86_64-1cf.txz:  Upgraded.
+shotcut-25.01.25-x86_64-1cf.txz:  Upgraded.
+stylelint-16.14.0-x86_64-1cf.txz:  Upgraded.
+wxgtk-3.2.6-x86_64-1cf.txz:  Removed.
+    - Renamed in wxwidgets.
+wxwidgets-3.2.6-x86_64-1cf.txz:  Added.
+    - Support wx-gtk3 and wx-qt5.
+yt-dlp-2025.1.26-x86_64-1cf.txz:  Upgraded.
+           </pre>]]>
+         </description>
+      </item>
       <item>
          <title>Sat, 25 Jan 2025 13:15:03 UTC</title>
          <link>http://slackers.it/repository/slackware64-current/ChangeLog.txt</link>
@@ -379,50 +410,6 @@ bleachbit-4.6.2-x86_64-1cf.txz:  Upgraded.
 cargo-c-0.10.8-x86_64-1cf.txz:  Upgraded.
 pkgdiff-1.8-x86_64-1cf.txz:  Upgraded.
 python-poetry-core-2.0.1-x86_64-1cf.txz:  Upgraded.
-           </pre>]]>
-         </description>
-      </item>
-      <item>
-         <title>Sat, 11 Jan 2025 20:25:26 UTC</title>
-         <link>http://slackers.it/repository/slackware64-current/ChangeLog.txt</link>
-         <pubDate>Sat, 11 Jan 2025 20:25:26 UTC</pubDate>
-         <guid isPermaLink="false">20250111212526</guid>
-         <description>
-           <![CDATA[<pre>
-aws-cli-1.36.38-x86_64-1cf.txz:  Upgraded.
-bup-0.33.7-x86_64-1cf.txz:  Upgraded.
-darktable-5.0.0-x86_64-3cf.txz:  Rebuilt.
-	- Recompiled against icu4c-76.1
-dwdiff-2.1.4-x86_64-8cf.txz:  Rebuilt.
-	- Recompiled against icu4c-76.1
-libcdr-0.1.8-x86_64-2cf.txz:  Rebuilt.
-	- Recompiled against icu4c-76.1
-libmaxminddb-1.12.2-x86_64-1cf.txz:  Upgraded.
-libmspub-0.1.4-x86_64-2cf.txz:  Rebuilt.
-	- Recompiled against icu4c-76.1
-libqxp-0.0.2-x86_64-2cf.txz:  Rebuilt.
-	- Recompiled against icu4c-76.1
-libzmf-0.0.2-x86_64-2cf.txz:  Rebuilt.
-	- Recompiled against icu4c-76.1
-mkvtoolnix-88.0-x86_64-2cf.txz:  Rebuilt.
-	- Recompiled against fmt-11.1.1.
-monit-5.34.4-x86_64-1cf.txz:  Upgraded.
-poedit-3.5.2-x86_64-3cf.txz:  Rebuilt.
-	- Recompiled against icu4c-76.1
-postgresql-17.2-x86_64-2cf.txz:  Rebuilt.
-	- Recompiled against icu4c-76.1
-pugixml-1.15-x86_64-1cf.txz:  Upgraded.
-python-botocore-1.35.97-x86_64-1cf.txz:  Upgraded.
-scribus-1.6.3-x86_64-2cf.txz:  Rebuilt.
-	- Recompiled against icu4c-76.1
-subtitlecomposer-0.8.1-x86_64-3cf.txz:  Rebuilt.
-	- Recompiled against icu4c-76.1
-tesseract-5.5.0-x86_64-2cf.txz:  Rebuilt.
-	- Recompiled against icu4c-76.1
-webkit2gtk4.0-2.46.4-x86_64-2cf.txz:  Rebuilt.
-	- Recompiled against icu4c-76.1
-webkit2gtk4.1-2.46.4-x86_64-2cf.txz:  Rebuilt.
-	- Recompiled against icu4c-76.1
            </pre>]]>
          </description>
       </item>

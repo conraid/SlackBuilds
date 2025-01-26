@@ -1,3 +1,26 @@
+Sun Jan 26 12:56:06 UTC 2025
+I compiled wxWidgets with gtk3 and qt5, just as Alien Bob also did,
+so I renamed the package from wxgtk to wxwidgets.
+wx-gtk2 is not used by any package so much.
+Actually wx-qt5 is not used at the moment either,
+but it can always be useful to some of you.
+While I was at it I added support for Microsoft compression formats, via libmspack.
+I also wanted to compile wx-gtk4, but it gives error.
+I still used autotools because cmake does not install locales
+and does not handle libsuffix well.
+clamav-1.4.2-x86_64-2cf.txz:  Rebuilt.
+    - I used the external library libmspack.
+exiftool-13.16-x86_64-1cf.txz:  Upgraded.
+libmspack-0.11alpha-x86_64-1cf.txz:  Added.
+python-evdev-1.8.0-x86_64-1cf.txz:  Upgraded.
+shotcut-25.01.25-x86_64-1cf.txz:  Upgraded.
+stylelint-16.14.0-x86_64-1cf.txz:  Upgraded.
+wxgtk-3.2.6-x86_64-1cf.txz:  Removed.
+    - Renamed in wxwidgets.
+wxwidgets-3.2.6-x86_64-1cf.txz:  Added.
+    - Support wx-gtk3 and wx-qt5.
+yt-dlp-2025.1.26-x86_64-1cf.txz:  Upgraded.
++--------------------------+
 Sat Jan 25 13:15:03 UTC 2025
 aws-cli-1.37.6-x86_64-1cf.txz:  Upgraded.
 awscrt-0.23.7-x86_64-1cf.txz:  Upgraded.
