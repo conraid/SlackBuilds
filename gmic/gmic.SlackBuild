@@ -30,9 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=gmic
-SRCVERSION=3.5.0
+SRCVERSION=3.5.1
 VERSION=$SRCVERSION
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -88,12 +88,13 @@ fi
 
 cd src
 # Fix path
-sed -e "/^LIB/s/lib/lib$LIBDIRSUFFIX/" \
-    -e "s|share/doc/gmic|doc/gmic-$VERSION|g" \
-    -e 's|/share/man|/man|g' -i Makefile
+sed -e "s|\$(SHARE)/doc/gmic|\$(PREFIX)doc/gmic-$VERSION|g" \
+    -e 's|$(SHARE)/man|$(PREFIX)/man|' \
+    -e 's|gimptool-2.0|gimptool-3.0|' \
+    -i Makefile
 
-make -j1 CFLAGS="$SLKCFLAGS" lib cli_shared gmic_qt_shared zart libc #gimp_shared not compile
-make install DESTDIR=$PKG
+make -j1 LIB=lib$LIBDIRSUFFIX CFLAGS="$SLKCFLAGS" lib libc cli_shared gmic_qt_shared zart_shared gimp_shared
+make DESTDIR=$PKG LIB=lib$LIBDIRSUFFIX install
 
 cd ..
 
