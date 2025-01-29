@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=aws-cli
 PKGNAM=aws-cli
-SRCVERSION=1.37.7
+SRCVERSION=1.37.8
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -39,7 +39,7 @@ TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="LICENSE *.md *.rst"
+DOCFILES="LICENSE* *.txt *.md *.rst"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
