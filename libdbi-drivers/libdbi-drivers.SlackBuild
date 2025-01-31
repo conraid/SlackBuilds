@@ -2,7 +2,7 @@
 #
 # Slackware build script for libdbi-drivers (http://libdbi.sourceforge.net/)
 #
-# Copyright 2009-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2009-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libdbi-drivers
 VERSION=0.9.0
-BUILD=${BUILD:-11}
+BUILD=${BUILD:-12}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -53,14 +53,11 @@ if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
   exit 0
 fi
 
-if [ "$ARCH" = "i586" ]; then
-  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
-  LIBDIRSUFFIX=""
-elif [ "$ARCH" = "i686" ]; then
-  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+if [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=pentium4 -mtune=generic"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -78,7 +75,7 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS" \
+CFLAGS="$SLKCFLAGS -Wno-int-conversion -Wno-implicit-function-declaration -Wno-incompatible-pointer-types" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr \
@@ -95,7 +92,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
-make docdir=/usr/doc/$PKGNAM-$VERSION 
+make docdir=/usr/doc/$PKGNAM-$VERSION
 make docdir=/usr/doc/$PKGNAM-$VERSION DESTDIR=$PKG install-strip
 
 # Don't ship .la files:
@@ -108,7 +105,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
+  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
 fi
 
 cd $PKG
