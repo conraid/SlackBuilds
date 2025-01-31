@@ -2,7 +2,7 @@
 #
 # Slackware build script for ntopng
 #
-# Copyright 2013-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2013-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,11 +30,11 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=ntopng
-SRCVERSION=6.2
-VERSION=$(echo $SRCVERSION | head -c7)
+SRCVERSION=08a87f27fdc339d9979eed95832cb7ca885b16ba
+VERSION=6.3dev
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
-TMP=${TMP:-/tmp/pkg}
+TMP=${TMP:-/tmp/pkg-ntop} # I use a different directory than usual because to make things easier for me I have to delete the whole directory.
 PKG=$TMP/package-$PKGNAM/
 OUTPUT=${OUTPUT:-/tmp}
 
@@ -81,6 +81,19 @@ find -L . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
+fi
+
 ./autogen.sh
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 CFLAGS="$SLKCFLAGS" \
@@ -97,6 +110,10 @@ CXXFLAGS="$SLKCFLAGS -fpermissive" \
   --with-ndpi-includes=/usr/include/ndpi \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
+
+npm install --save-dev @babel/core
+jq -c '.devDependencies' package.json | jq -r -M | grep ':' | sed 's/:/@/' | sed 's|[", ^]||g' | npm install --save-dev
+npm run build:dev
 
 make
 make DESTDIR=$PKG install
@@ -126,7 +143,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
+  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
 fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
