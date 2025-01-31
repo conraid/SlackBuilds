@@ -2,7 +2,7 @@
 #
 # Slackware build script for obs-studio
 #
-# Copyright 2020-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2020-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=obs-studio
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=31.0.0
+SRCVERSION=31.0.1
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -104,14 +104,11 @@ cd build
 cmake -Wno-dev \
   -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS -Wno-error=calloc-transposed-args -Wno-error=deprecated-declarations" \
   -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -Wno-error=stringop-overflow -Wno-error=deprecated-declarations" \
-  -DUNIX_STRUCTURE=1 \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DCMAKE_BUILD_TYPE=Release \
-  -DENABLE_BROWSER=OFF \
   -DENABLE_VLC=OFF \
   -DENABLE_JACK=ON \
   -DENABLE_WAYLAND=OFF \
-  -DBUILD_BROWSER:BOOL=OFF \
   -DENABLE_VST=ON \
   -DENABLE_LIBFDK=ON \
   -DENABLE_NEW_MPEGTS_OUTPUT=On \
@@ -143,7 +140,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
+  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
 fi
 
 cd $PKG
