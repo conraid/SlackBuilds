@@ -2,7 +2,7 @@
 #
 # Slackware build script for gnome-color-manager
 #
-# Copyright 2022-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2022-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-color-manager
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=19b6f67dcd5f937747524d7b742c58edebb1d9a2
+SRCVERSION=bc48360574fe17e319d630a76e0eb358a0864878
 VERSION=$(echo $SRCVERSION | head -c7)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -143,7 +143,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
+  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
 fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
