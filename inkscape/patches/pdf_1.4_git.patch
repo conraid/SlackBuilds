@@ -1,0 +1,788 @@
+diff -Naupr a/src/extension/internal/pdfinput/pdf-input.cpp b/src/extension/internal/pdfinput/pdf-input.cpp
+--- a/src/extension/internal/pdfinput/pdf-input.cpp	2024-07-28 13:28:48.000000000 +0200
++++ b/src/extension/internal/pdfinput/pdf-input.cpp	2025-02-09 12:05:58.000000000 +0100
+@@ -431,7 +431,11 @@ static void copy_cairo_surface_to_pixbuf
+ 
+ bool PdfImportDialog::_onDraw(const Cairo::RefPtr<Cairo::Context>& cr) {
+     // Check if we have a thumbnail at all
+-    if (!_thumb_data && !_cairo_surfaces[_preview_page]) {
++    if (!_thumb_data
++#ifdef HAVE_POPPLER_CAIRO
++        && !_cairo_surfaces[_preview_page]
++#endif
++    ) {
+         return true;
+     }
+ 
+diff -Naupr a/src/extension/internal/pdfinput/pdf-parser.cpp b/src/extension/internal/pdfinput/pdf-parser.cpp
+--- a/src/extension/internal/pdfinput/pdf-parser.cpp	2024-07-28 13:27:55.000000000 +0200
++++ b/src/extension/internal/pdfinput/pdf-parser.cpp	2025-02-09 12:05:58.000000000 +0100
+@@ -810,11 +810,11 @@ void PdfParser::opSetExtGState(Object ar
+             _POPPLER_FREE(obj3);
+             if (_POPPLER_CALL_ARGS_DEREF(obj3, obj2.dictLookup, "G").isStream()) {
+                 if (_POPPLER_CALL_ARGS_DEREF(obj4, obj3.streamGetDict()->lookup, "Group").isDict()) {
+-                    GfxColorSpace *blendingColorSpace = nullptr;
++                    std::unique_ptr<GfxColorSpace> blendingColorSpace;
+                     GBool isolated = gFalse;
+                     GBool knockout = gFalse;
+                     if (!_POPPLER_CALL_ARGS_DEREF(obj5, obj4.dictLookup, "CS").isNull()) {
+-                        blendingColorSpace = GfxColorSpace::parse(nullptr, &obj5, nullptr, state);
++                        blendingColorSpace = std::unique_ptr<GfxColorSpace>(GfxColorSpace::parse(nullptr, &obj5, nullptr, state));
+                     }
+                     _POPPLER_FREE(obj5);
+                     if (_POPPLER_CALL_ARGS_DEREF(obj5, obj4.dictLookup, "I").isBool()) {
+@@ -835,7 +835,7 @@ void PdfParser::opSetExtGState(Object ar
+                             }
+                         }
+                     }
+-                    doSoftMask(&obj3, alpha, blendingColorSpace, isolated, knockout, funcs[0], &backdropColor);
++                    doSoftMask(&obj3, alpha, blendingColorSpace.get(), isolated, knockout, funcs[0], &backdropColor);
+                     if (funcs[0]) {
+                         delete funcs[0];
+                     }
+@@ -920,9 +920,6 @@ void PdfParser::doSoftMask(Object *str,
+ 	  alpha, transferFunc, backdropColor);
+   --formDepth;
+ 
+-  if (blendingColorSpace) {
+-    delete blendingColorSpace;
+-  }
+   _POPPLER_FREE(obj1);
+ }
+ 
+@@ -939,42 +936,43 @@ void PdfParser::opSetRenderingIntent(Obj
+  *
+  * Maintains a cache for named color spaces to avoid expensive re-parsing.
+  */
+-GfxColorSpace *PdfParser::lookupColorSpaceCopy(Object &arg)
++std::unique_ptr<GfxColorSpace> PdfParser::lookupColorSpaceCopy(Object &arg)
+ {
+     assert(!arg.isNull());
+-    GfxColorSpace *colorSpace = nullptr;
+ 
+     if (char const *name = arg.isName() ? arg.getName() : nullptr) {
+         auto const cache_name = std::to_string(formDepth) + "-" + name;
+-        if ((colorSpace = colorSpacesCache[cache_name].get())) {
+-            return colorSpace->copy();
++        if (auto cached = colorSpacesCache[cache_name].get()) {
++            return std::unique_ptr<GfxColorSpace>(cached->copy());
+         }
+ 
+-        Object obj = res->lookupColorSpace(name);
+-        if (obj.isNull()) {
+-            colorSpace = GfxColorSpace::parse(res, &arg, nullptr, state);
++        std::unique_ptr<GfxColorSpace> colorSpace;
++        if (auto obj = res->lookupColorSpace(name); !obj.isNull()) {
++            colorSpace = std::unique_ptr<GfxColorSpace>(GfxColorSpace::parse(res, &obj, nullptr, state));
+         } else {
+-            colorSpace = GfxColorSpace::parse(res, &obj, nullptr, state);
++            colorSpace = std::unique_ptr<GfxColorSpace>(GfxColorSpace::parse(res, &arg, nullptr, state));
+         }
+ 
+         if (colorSpace && colorSpace->getMode() != csPattern) {
+-            colorSpacesCache[cache_name].reset(colorSpace->copy());
++            colorSpacesCache[cache_name] = std::unique_ptr<GfxColorSpace>(colorSpace->copy());
+         }
++
++        return colorSpace;
+     } else {
+         // We were passed in an object directly.
+-        colorSpace = GfxColorSpace::parse(res, &arg, nullptr, state);
++        return std::unique_ptr<GfxColorSpace>(GfxColorSpace::parse(res, &arg, nullptr, state));
+     }
+-    return colorSpace;
+ }
+ 
+ /**
+  * Look up pattern/gradients from the GfxResource dictionary
+  */
+-GfxPattern *PdfParser::lookupPattern(Object *obj, GfxState *state)
++std::unique_ptr<GfxPattern> PdfParser::lookupPattern(Object *obj, GfxState *state)
+ {
+-    if (!obj->isName())
+-        return nullptr;
+-    return res->lookupPattern(obj->getName(), nullptr, state);
++    if (!obj->isName()) {
++        return {};
++    }
++    return std::unique_ptr<GfxPattern>(res->lookupPattern(obj->getName(), nullptr, state));
+ }
+ 
+ // TODO not good that numArgs is ignored but args[] is used:
+@@ -983,7 +981,7 @@ void PdfParser::opSetFillGray(Object arg
+   GfxColor color;
+   builder->beforeStateChange(state);
+   state->setFillPattern(nullptr);
+-  state->setFillColorSpace(new GfxDeviceGrayColorSpace());
++  state->setFillColorSpace(_POPPLER_CONSUME_UNIQPTR_ARG(std::make_unique<GfxDeviceGrayColorSpace>()));
+   color.c[0] = dblToCol(args[0].getNum());
+   state->setFillColor(&color);
+   builder->updateStyle(state);
+@@ -995,7 +993,7 @@ void PdfParser::opSetStrokeGray(Object a
+   GfxColor color;
+   builder->beforeStateChange(state);
+   state->setStrokePattern(nullptr);
+-  state->setStrokeColorSpace(new GfxDeviceGrayColorSpace());
++  state->setStrokeColorSpace(_POPPLER_CONSUME_UNIQPTR_ARG(std::make_unique<GfxDeviceGrayColorSpace>()));
+   color.c[0] = dblToCol(args[0].getNum());
+   state->setStrokeColor(&color);
+   builder->updateStyle(state);
+@@ -1008,7 +1006,7 @@ void PdfParser::opSetFillCMYKColor(Objec
+   int i;
+   builder->beforeStateChange(state);
+   state->setFillPattern(nullptr);
+-  state->setFillColorSpace(new GfxDeviceCMYKColorSpace());
++  state->setFillColorSpace(_POPPLER_CONSUME_UNIQPTR_ARG(std::make_unique<GfxDeviceCMYKColorSpace>()));
+   for (i = 0; i < 4; ++i) {
+     color.c[i] = dblToCol(args[i].getNum());
+   }
+@@ -1022,7 +1020,7 @@ void PdfParser::opSetStrokeCMYKColor(Obj
+   GfxColor color;
+   builder->beforeStateChange(state);
+   state->setStrokePattern(nullptr);
+-  state->setStrokeColorSpace(new GfxDeviceCMYKColorSpace());
++  state->setStrokeColorSpace(_POPPLER_CONSUME_UNIQPTR_ARG(std::make_unique<GfxDeviceCMYKColorSpace>()));
+   for (int i = 0; i < 4; ++i) {
+     color.c[i] = dblToCol(args[i].getNum());
+   }
+@@ -1036,7 +1034,7 @@ void PdfParser::opSetFillRGBColor(Object
+   GfxColor color;
+   builder->beforeStateChange(state);
+   state->setFillPattern(nullptr);
+-  state->setFillColorSpace(new GfxDeviceRGBColorSpace());
++  state->setFillColorSpace(_POPPLER_CONSUME_UNIQPTR_ARG(std::make_unique<GfxDeviceRGBColorSpace>()));
+   for (int i = 0; i < 3; ++i) {
+     color.c[i] = dblToCol(args[i].getNum());
+   }
+@@ -1049,7 +1047,7 @@ void PdfParser::opSetStrokeRGBColor(Obje
+   GfxColor color;
+   builder->beforeStateChange(state);
+   state->setStrokePattern(nullptr);
+-  state->setStrokeColorSpace(new GfxDeviceRGBColorSpace());
++  state->setStrokeColorSpace(_POPPLER_CONSUME_UNIQPTR_ARG(std::make_unique<GfxDeviceRGBColorSpace>()));
+   for (int i = 0; i < 3; ++i) {
+     color.c[i] = dblToCol(args[i].getNum());
+   }
+@@ -1061,14 +1059,14 @@ void PdfParser::opSetStrokeRGBColor(Obje
+ void PdfParser::opSetFillColorSpace(Object args[], int numArgs)
+ {
+   assert(numArgs >= 1);
+-  GfxColorSpace *colorSpace = lookupColorSpaceCopy(args[0]);
++  auto colorSpace = lookupColorSpaceCopy(args[0]);
+   builder->beforeStateChange(state);
+   state->setFillPattern(nullptr);
+ 
+   if (colorSpace) {
+     GfxColor color;
+-    state->setFillColorSpace(colorSpace);
+     colorSpace->getDefaultColor(&color);
++    state->setFillColorSpace(_POPPLER_CONSUME_UNIQPTR_ARG(colorSpace));
+     state->setFillColor(&color);
+     builder->updateStyle(state);
+   } else {
+@@ -1082,14 +1080,14 @@ void PdfParser::opSetStrokeColorSpace(Ob
+   assert(numArgs >= 1);
+   builder->beforeStateChange(state);
+ 
+-  GfxColorSpace *colorSpace = lookupColorSpaceCopy(args[0]);
++  auto colorSpace = lookupColorSpaceCopy(args[0]);
+ 
+   state->setStrokePattern(nullptr);
+ 
+   if (colorSpace) {
+     GfxColor color;
+-    state->setStrokeColorSpace(colorSpace);
+     colorSpace->getDefaultColor(&color);
++    state->setStrokeColorSpace(_POPPLER_CONSUME_UNIQPTR_ARG(colorSpace));
+     state->setStrokeColor(&color);
+     builder->updateStyle(state);
+   } else {
+@@ -1152,7 +1150,7 @@ void PdfParser::opSetFillColorN(Object a
+       builder->updateStyle(state);
+     }
+     if (auto pattern = lookupPattern(&(args[numArgs - 1]), state)) {
+-        state->setFillPattern(pattern);
++        state->setFillPattern(_POPPLER_CONSUME_UNIQPTR_ARG(pattern));
+         builder->updateStyle(state);
+     }
+ 
+@@ -1195,7 +1193,7 @@ void PdfParser::opSetStrokeColorN(Object
+       builder->updateStyle(state);
+     }
+     if (auto pattern = lookupPattern(&(args[numArgs - 1]), state)) {
+-        state->setStrokePattern(pattern);
++        state->setStrokePattern(_POPPLER_CONSUME_UNIQPTR_ARG(pattern));
+         builder->updateStyle(state);
+     }
+ 
+@@ -1572,11 +1570,11 @@ void PdfParser::doShadingPatternFillFall
+ // TODO not good that numArgs is ignored but args[] is used:
+ void PdfParser::opShFill(Object args[], int /*numArgs*/)
+ {
+-  GfxShading *shading = nullptr;
+   GfxPath *savedPath = nullptr;
+   bool savedState = false;
+ 
+-  if (!(shading = res->lookupShading(args[0].getName(), nullptr, state))) {
++  auto shading = std::unique_ptr<GfxShading>(res->lookupShading(args[0].getName(), nullptr, state));
++  if (!shading) {
+     return;
+   }
+ 
+@@ -1608,19 +1606,19 @@ void PdfParser::opShFill(Object args[],
+   // do shading type-specific operations
+   switch (shading->getType()) {
+   case 1: // Function-based shading
+-    doFunctionShFill(static_cast<GfxFunctionShading *>(shading));
++    doFunctionShFill(static_cast<GfxFunctionShading *>(shading.get()));
+     break;
+   case 2: // Axial shading
+   case 3: // Radial shading
+-      builder->addClippedFill(shading, stateToAffine(state));
++      builder->addClippedFill(shading.get(), stateToAffine(state));
+       break;
+   case 4: // Free-form Gouraud-shaded triangle mesh
+   case 5: // Lattice-form Gouraud-shaded triangle mesh
+-    doGouraudTriangleShFill(static_cast<GfxGouraudTriangleShading *>(shading));
++    doGouraudTriangleShFill(static_cast<GfxGouraudTriangleShading *>(shading.get()));
+     break;
+   case 6: // Coons patch mesh
+   case 7: // Tensor-product patch mesh
+-    doPatchMeshShFill(static_cast<GfxPatchMeshShading *>(shading));
++    doPatchMeshShFill(static_cast<GfxPatchMeshShading *>(shading.get()));
+     break;
+   }
+ 
+@@ -1629,8 +1627,6 @@ void PdfParser::opShFill(Object args[],
+     restoreState();
+     state->setPath(savedPath);
+   }
+-
+-  delete shading;
+ }
+ 
+ void PdfParser::doFunctionShFill(GfxFunctionShading *shading) {
+@@ -2284,35 +2280,40 @@ void PdfParser::doShowText(GooString *s)
+         // Get next unicode character, returning number of bytes used.
+         int n = font->getNextChar(p, len, &code, &u, &uLen, &dx, &dy, &originX, &originY);
+ 
++        dx *= state->getFontSize();
++        dy *= state->getFontSize();
++        originX *= state->getFontSize();
++        originY *= state->getFontSize();
++
++        // Save advances for SVG output with 'dx' and 'dy' attributes.
++        auto ax = dx;
++        auto ay = dy;
++
+         if (wMode != 0) {
+             // Vertical text (or invalid value).
+-            dx *= state->getFontSize();
+-            dy = dy * state->getFontSize() + state->getCharSpace();
++            dy += state->getCharSpace();
+             if (n == 1 && *p == ' ') {
+                 dy += state->getWordSpace();
+             }
+         } else {
+             // Horizontal text.
+-            dx = dx * state->getFontSize() + state->getCharSpace();
++            dx += state->getCharSpace();
+             if (n == 1 && *p == ' ') {
+                 dx += state->getWordSpace();
+             }
+-            dx *= state->getHorizScaling();
+-            dy *= state->getFontSize();
++            dx *= state->getHorizScaling(); // Applies to glyphs and char/word spacing.
++            ax *= state->getHorizScaling();
+         }
+ 
+         double tdx, tdy;
+         state->textTransformDelta(dx, dy, &tdx, &tdy);
+ 
+-        originX *= state->getFontSize();
+-        originY *= state->getFontSize();
+-
+         double tOriginX, tOriginY;
+         state->textTransformDelta(originX, originY, &tOriginX, &tOriginY);
+ 
+         // In Gfx.cc this is drawChar(...)
+         builder->addChar(state, state->getCurX() + riseX, state->getCurY() + riseY,
+-                         dx, dy, tOriginX, tOriginY, code, n, u, uLen);
++                         dx, dy, ax, ay, tOriginX, tOriginY, code, n, u, uLen);
+ 
+         // Move onto next unicode character.
+         state->shift(tdx, tdy);
+@@ -2400,6 +2401,7 @@ void PdfParser::doImage(Object * /*ref*/
+     int bits;
+     GBool interpolate;
+     StreamColorSpaceMode csMode;
++    GBool hasAlpha;
+     GBool mask;
+     GBool invert;
+     Object maskObj, smaskObj;
+@@ -2411,7 +2413,8 @@ void PdfParser::doImage(Object * /*ref*/
+     // get info from the stream
+     bits = 0;
+     csMode = streamCSNone;
+-    str->getImageParams(&bits, &csMode);
++    hasAlpha = false;
++    str->_POPPLER_GET_IMAGE_PARAMS(&bits, &csMode, &hasAlpha);
+     
+     // get stream dict
+     dict = str->getDict();
+@@ -2521,7 +2524,7 @@ void PdfParser::doImage(Object * /*ref*/
+         
+     } else {
+         // get color space and color map
+-        GfxColorSpace *colorSpace;
++        std::unique_ptr<GfxColorSpace> colorSpace;
+         _POPPLER_CALL_ARGS(obj1, dict->lookup, "ColorSpace");
+         if (obj1.isNull()) {
+             _POPPLER_FREE(obj1);
+@@ -2530,13 +2533,11 @@ void PdfParser::doImage(Object * /*ref*/
+         if (!obj1.isNull()) {
+             colorSpace = lookupColorSpaceCopy(obj1);
+         } else if (csMode == streamCSDeviceGray) {
+-            colorSpace = new GfxDeviceGrayColorSpace();
++            colorSpace = std::make_unique<GfxDeviceGrayColorSpace>();
+         } else if (csMode == streamCSDeviceRGB) {
+-            colorSpace = new GfxDeviceRGBColorSpace();
++            colorSpace = std::make_unique<GfxDeviceRGBColorSpace>();
+         } else if (csMode == streamCSDeviceCMYK) {
+-            colorSpace = new GfxDeviceCMYKColorSpace();
+-        } else {
+-            colorSpace = nullptr;
++            colorSpace = std::make_unique<GfxDeviceCMYKColorSpace>();
+         }
+         _POPPLER_FREE(obj1);
+         if (!colorSpace) {
+@@ -2547,10 +2548,9 @@ void PdfParser::doImage(Object * /*ref*/
+             _POPPLER_FREE(obj1);
+             _POPPLER_CALL_ARGS(obj1, dict->lookup, "D");
+         }
+-        GfxImageColorMap *colorMap = new GfxImageColorMap(bits, &obj1, colorSpace);
++        auto colorMap = std::make_unique<GfxImageColorMap>(bits, &obj1, _POPPLER_CONSUME_UNIQPTR_ARG(colorSpace));
+         _POPPLER_FREE(obj1);
+         if (!colorMap->isOk()) {
+-            delete colorMap;
+             goto err1;
+         }
+         
+@@ -2561,7 +2561,7 @@ void PdfParser::doImage(Object * /*ref*/
+         int maskWidth = 0;
+         int maskHeight = 0;
+         maskInvert = gFalse;
+-        GfxImageColorMap *maskColorMap = nullptr;
++        std::unique_ptr<GfxImageColorMap> maskColorMap;
+         _POPPLER_CALL_ARGS(maskObj, dict->lookup, "Mask");
+         _POPPLER_CALL_ARGS(smaskObj, dict->lookup, "SMask");
+         Dict* maskDict;
+@@ -2617,7 +2617,7 @@ void PdfParser::doImage(Object * /*ref*/
+ 	            _POPPLER_FREE(obj1);
+                     _POPPLER_CALL_ARGS(obj1, maskDict->lookup, "CS");
+             }
+-            GfxColorSpace *maskColorSpace = lookupColorSpaceCopy(obj1);
++            auto maskColorSpace = lookupColorSpaceCopy(obj1);
+             _POPPLER_FREE(obj1);
+             if (!maskColorSpace || maskColorSpace->getMode() != csDeviceGray) {
+                 goto err1;
+@@ -2627,10 +2627,9 @@ void PdfParser::doImage(Object * /*ref*/
+                 _POPPLER_FREE(obj1);
+                 _POPPLER_CALL_ARGS(obj1, maskDict->lookup, "D");
+             }
+-            maskColorMap = new GfxImageColorMap(maskBits, &obj1, maskColorSpace);
++            maskColorMap = std::make_unique<GfxImageColorMap>(maskBits, &obj1, _POPPLER_CONSUME_UNIQPTR_ARG(maskColorSpace));
+             _POPPLER_FREE(obj1);
+             if (!maskColorMap->isOk()) {
+-                delete maskColorMap;
+                 goto err1;
+             }
+             //~ handle the Matte entry
+@@ -2711,17 +2710,15 @@ void PdfParser::doImage(Object * /*ref*/
+         
+         // draw it
+         if (haveSoftMask) {
+-	    builder->addSoftMaskedImage(state, str, width, height, colorMap, interpolate,
+-				maskStr, maskWidth, maskHeight, maskColorMap, maskInterpolate);
+-            delete maskColorMap;
++	    builder->addSoftMaskedImage(state, str, width, height, colorMap.get(), interpolate,
++				maskStr, maskWidth, maskHeight, maskColorMap.get(), maskInterpolate);
+         } else if (haveExplicitMask) {
+- 	    builder->addMaskedImage(state, str, width, height, colorMap, interpolate,
++ 	    builder->addMaskedImage(state, str, width, height, colorMap.get(), interpolate,
+ 				maskStr, maskWidth, maskHeight, maskInvert, maskInterpolate);
+         } else {
+-	    builder->addImage(state, str, width, height, colorMap, interpolate,
+-		        haveColorKeyMask ? maskColors : static_cast<int *>(nullptr));
++	    builder->addImage(state, str, width, height, colorMap.get(), interpolate,
++		        haveColorKeyMask ? maskColors : nullptr);
+         }
+-        delete colorMap;
+         
+         _POPPLER_FREE(maskObj);
+         _POPPLER_FREE(smaskObj);
+@@ -2739,7 +2736,6 @@ void PdfParser::doForm(Object *str, doub
+ {
+     Dict *dict;
+     GBool transpGroup, isolated, knockout;
+-    GfxColorSpace *blendingColorSpace;
+     Object matrixObj, bboxObj;
+     double m[6], bbox[4];
+     Object resObj;
+@@ -2805,12 +2801,12 @@ void PdfParser::doForm(Object *str, doub
+ 
+     // check for a transparency group
+     transpGroup = isolated = knockout = gFalse;
+-    blendingColorSpace = nullptr;
++    std::unique_ptr<GfxColorSpace> blendingColorSpace;
+     if (_POPPLER_CALL_ARGS_DEREF(obj1, dict->lookup, "Group").isDict()) {
+         if (_POPPLER_CALL_ARGS_DEREF(obj2, obj1.dictLookup, "S").isName("Transparency")) {
+         transpGroup = gTrue;
+         if (!_POPPLER_CALL_ARGS_DEREF(obj3, obj1.dictLookup, "CS").isNull()) {
+-                blendingColorSpace = GfxColorSpace::parse(nullptr, &obj3, nullptr, state);
++            blendingColorSpace = std::unique_ptr<GfxColorSpace>(GfxColorSpace::parse(nullptr, &obj3, nullptr, state));
+         }
+         _POPPLER_FREE(obj3);
+         if (_POPPLER_CALL_ARGS_DEREF(obj3, obj1.dictLookup, "I").isBool()) {
+@@ -2828,12 +2824,9 @@ void PdfParser::doForm(Object *str, doub
+ 
+     // draw it
+     ++formDepth;
+-    doForm1(str, resDict, m, bbox, transpGroup, gFalse, blendingColorSpace, isolated, knockout);
++    doForm1(str, resDict, m, bbox, transpGroup, gFalse, blendingColorSpace.get(), isolated, knockout);
+     --formDepth;
+ 
+-    if (blendingColorSpace) {
+-        delete blendingColorSpace;
+-    }
+     _POPPLER_FREE(resObj);
+ }
+ 
+diff -Naupr a/src/extension/internal/pdfinput/pdf-parser.h b/src/extension/internal/pdfinput/pdf-parser.h
+--- a/src/extension/internal/pdfinput/pdf-parser.h	2024-04-22 23:00:30.000000000 +0200
++++ b/src/extension/internal/pdfinput/pdf-parser.h	2025-02-09 12:05:58.000000000 +0100
+@@ -138,7 +138,7 @@ public:
+     void loadPatternColorProfiles(Dict *resources);
+     void loadColorProfile();
+     void loadColorSpaceProfile(GfxColorSpace *space, Object *obj);
+-    GfxPattern *lookupPattern(Object *obj, GfxState *state);
++    std::unique_ptr<GfxPattern> lookupPattern(Object *obj, GfxState *state);
+ 
+     std::shared_ptr<CairoFontEngine> getFontEngine();
+ 
+@@ -177,7 +177,7 @@ private:
+     //! Caches color spaces by name
+     std::map<std::string, std::unique_ptr<GfxColorSpace>> colorSpacesCache;
+ 
+-    GfxColorSpace *lookupColorSpaceCopy(Object &);
++    std::unique_ptr<GfxColorSpace> lookupColorSpaceCopy(Object &);
+ 
+     void setDefaultApproximationPrecision(); // init color deltas
+     void pushOperator(const char *name);
+diff -Naupr a/src/extension/internal/pdfinput/poppler-cairo-font-engine.cpp b/src/extension/internal/pdfinput/poppler-cairo-font-engine.cpp
+--- a/src/extension/internal/pdfinput/poppler-cairo-font-engine.cpp	2024-04-22 23:00:30.000000000 +0200
++++ b/src/extension/internal/pdfinput/poppler-cairo-font-engine.cpp	2025-02-09 12:05:58.000000000 +0100
+@@ -421,9 +421,9 @@ CairoFreeTypeFont *CairoFreeTypeFont::cr
+                 FoFiTrueType *ff;
+ #endif
+                 if (!font_data.empty()) {
+-                    ff = FoFiTrueType::make((fontchar)font_data.data(), font_data.size());
++                    ff = FoFiTrueType::make((fontchar)font_data.data(), font_data.size(), 0);
+                 } else {
+-                    ff = FoFiTrueType::load(fileName.c_str());
++                    ff = FoFiTrueType::load(fileName.c_str(), 0);
+                 }
+                 if (!ff) {
+                     goto err2;
+@@ -446,9 +446,9 @@ CairoFreeTypeFont *CairoFreeTypeFont::cr
+             FoFiTrueType *ff;
+ #endif
+             if (!font_data.empty()) {
+-                ff = FoFiTrueType::make((fontchar)font_data.data(), font_data.size());
++                ff = FoFiTrueType::make((fontchar)font_data.data(), font_data.size(), 0);
+             } else {
+-                ff = FoFiTrueType::load(fileName.c_str());
++                ff = FoFiTrueType::load(fileName.c_str(), 0);
+             }
+             if (!ff) {
+                 error(errSyntaxError, -1, "failed to load truetype font\n");
+@@ -514,9 +514,9 @@ CairoFreeTypeFont *CairoFreeTypeFont::cr
+                     FoFiTrueType *ff;
+ #endif
+                     if (!font_data.empty()) {
+-                        ff = FoFiTrueType::make((fontchar)font_data.data(), font_data.size());
++                        ff = FoFiTrueType::make((fontchar)font_data.data(), font_data.size(), 0);
+                     } else {
+-                        ff = FoFiTrueType::load(fileName.c_str());
++                        ff = FoFiTrueType::load(fileName.c_str(), 0);
+                     }
+                     if (ff) {
+                         if (ff->isOpenTypeCFF()) {
+diff -Naupr a/src/extension/internal/pdfinput/poppler-transition-api.h b/src/extension/internal/pdfinput/poppler-transition-api.h
+--- a/src/extension/internal/pdfinput/poppler-transition-api.h	2024-05-22 20:57:29.000000000 +0200
++++ b/src/extension/internal/pdfinput/poppler-transition-api.h	2025-02-09 12:05:58.000000000 +0100
+@@ -15,6 +15,12 @@
+ #include <glib/poppler-features.h>
+ #include <poppler/UTF.h>
+ 
++#if POPPLER_CHECK_VERSION(24, 10, 0)
++#define _POPPLER_CONSUME_UNIQPTR_ARG(value) std::move(value)
++#else
++#define _POPPLER_CONSUME_UNIQPTR_ARG(value) value.release()
++#endif
++
+ #if POPPLER_CHECK_VERSION(24, 5, 0)
+ #define _POPPLER_HAS_UNICODE_BOM(value) (hasUnicodeByteOrderMark(value->toStr()))
+ #define _POPPLER_HAS_UNICODE_BOMLE(value) (hasUnicodeByteOrderMarkLE(value->toStr()))
+@@ -33,6 +39,12 @@
+ #define _POPPLER_FUNCTION_TYPE_STITCHING 3
+ #endif
+ 
++#if POPPLER_CHECK_VERSION(24,12,0)
++#define _POPPLER_GET_IMAGE_PARAMS(bits, csMode, hasAlpha) getImageParams(bits, csMode, hasAlpha)
++#else
++#define _POPPLER_GET_IMAGE_PARAMS(bits, csMode, hasAlpha) getImageParams(bits, csMode)
++#endif
++
+ #if POPPLER_CHECK_VERSION(22, 4, 0)
+ #define _POPPLER_FONTPTR_TO_GFX8(font_ptr) ((Gfx8BitFont *)font_ptr.get())
+ #else
+diff -Naupr a/src/extension/internal/pdfinput/svg-builder.cpp b/src/extension/internal/pdfinput/svg-builder.cpp
+--- a/src/extension/internal/pdfinput/svg-builder.cpp	2024-07-28 13:27:55.000000000 +0200
++++ b/src/extension/internal/pdfinput/svg-builder.cpp	2025-02-09 12:05:58.000000000 +0100
+@@ -780,7 +780,7 @@ void SvgBuilder::addShadedFill(GfxShadin
+ void SvgBuilder::setClip(GfxState *state, GfxClipType clip, bool is_bbox)
+ {
+     // When there's already a clip path, we add clipping groups to handle them.
+-    if (!is_bbox && _clip_history->hasClipPath() && !_clip_history->isCopied()) {
++    if (!is_bbox && _clip_history->hasClipPath()) {
+         _pushContainer("svg:g");
+         _clip_groups++;
+     }
+@@ -1250,7 +1250,7 @@ void SvgBuilder::updateFont(GfxState *st
+     TRACE(("updateFont()\n"));
+     updateTextMatrix(state, flip);    // Ensure that we have a text matrix built
+ 
+-    auto font = state->getFont();
++    auto font = state->getFont();  // GfxFont
+     auto font_id = font->getID()->num;
+ 
+     auto new_font_size = state->getFontSize();
+@@ -1436,7 +1436,7 @@ Inkscape::XML::Node* SvgBuilder::_flushT
+         Geom::Point delta_dpos;
+         if (glyphs_in_tspan != 0) {
+             // Subtract off previous glyph position and advance.
+-            delta_dpos = glyph.text_position - prev_glyph.text_position - prev_glyph.delta;
++            delta_dpos = glyph.text_position - prev_glyph.text_position - prev_glyph.advance;
+         }
+ 
+         // Eliminate small rounding errors.
+@@ -1449,6 +1449,7 @@ Inkscape::XML::Node* SvgBuilder::_flushT
+ 
+         delta_dpos[1] += glyph.rise;
+         delta_dpos[1] *= -1.0;   // flip it
++
+         delta_dpos *= Geom::Scale(text_scale);
+ 
+ 
+@@ -1510,17 +1511,28 @@ Inkscape::XML::Node* SvgBuilder::_flushT
+             }
+ 
+             // Remove ' 0's at end.
+-            while (dx_coords.ends_with("0 ")) {
++            while (dx_coords.ends_with(" 0 ")) {
+                 dx_coords.erase(dx_coords.length() - 2);
+             }
+-            while (dy_coords.ends_with("0 ")) {
++
++            while (dy_coords.ends_with(" 0 ")) {
+                 dy_coords.erase(dy_coords.length() - 2);
+             }
+ 
++            // Remove last entry if 0.
++            if (dx_coords == "0 ") {
++                dx_coords.clear();
++            }
++
++            if (dy_coords == "0 ") {
++                dy_coords.clear();
++            }
++
+             // Remove space at end.
+             if (dx_coords.length() > 0) {
+                 dx_coords.pop_back();
+             }
++
+             if (dy_coords.length() > 0) {
+                 dy_coords.pop_back();
+             }
+@@ -1711,6 +1723,10 @@ void SvgBuilder::_setTextStyle(Inkscape:
+ /**
+  * Renders the text as a path object using cairo and returns the node object.
+  *
++ * If the path is empty (e.g. due to trying to render a color bitmap font),
++ * return path node with empty "d" attribute. The aria attribute will still
++ * contain the original text.
++ *
+  * cairo_font   - The font that cairo can use to convert text to path.
+  * font_size    - The size of the text when drawing the path.
+  * transform    - The matrix which will place the text on the page, this is critical
+@@ -1722,8 +1738,13 @@ Inkscape::XML::Node *SvgBuilder::_render
+                                              const Geom::Affine &transform,
+                                              cairo_glyph_t *cairo_glyphs, unsigned int count)
+ {
+-    if (!cairo_glyphs || !cairo_font || _aria_label.empty())
+-        return nullptr;
++    Inkscape::XML::Node *path = _addToContainer("svg:path");
++    path->setAttribute("d", "");
++
++    if (!cairo_glyphs || !cairo_font || _aria_label.empty()) {
++        std::cerr << "SvgBuilder::_renderText: Invalid argument!" << std::endl;
++        return path;
++    }
+ 
+     // The surface isn't actually used, no rendering in cairo takes place.
+     cairo_surface_t *surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
+@@ -1738,16 +1759,17 @@ Inkscape::XML::Node *SvgBuilder::_render
+ 
+     // Failing to render text.
+     if (!pathv) {
+-        g_warning("Failed to render PDF text!");
+-        return nullptr;
++        std::cerr << "SvgBuilder::_renderText: Failed to render PDF text! " << _aria_label << std::endl;
++        return path;
+     }
+ 
+     auto textpath = sp_svg_write_path(*pathv);
+-    if (textpath.empty())
+-        return nullptr;
+-
+-    Inkscape::XML::Node *path = _addToContainer("svg:path");
+     path->setAttribute("d", textpath);
++
++    if (textpath.empty()) {
++        std::cerr << "SvgBuilder::_renderText: Empty path! " << _aria_label << std::endl;
++    }
++
+     return path;
+ }
+ 
+@@ -1785,9 +1807,13 @@ void SvgBuilder::endString(GfxState *sta
+  * dx, dy:  Advance of glyph.
+  * originX, originY
+  * code: 8-bit char code, 16 bit CID, or Unicode of glyph.
+- * u: Unicode mapping of character.
++ * u: Unicode mapping of character. "Unicode" is an unsigned int.
+  */
+-void SvgBuilder::addChar(GfxState *state, double x, double y, double dx, double dy, double originX, double originY,
++void SvgBuilder::addChar(GfxState *state,
++                         double x, double y,
++                         double dx, double dy,
++                         double ax, double ay,
++                         double originX, double originY,
+                          CharCode code, int /*nBytes*/, Unicode const *u, int uLen)
+ {
+     assert (state);
+@@ -1801,9 +1827,13 @@ void SvgBuilder::addChar(GfxState *state
+     }
+     _aria_space = false;
+ 
++    std::string utf8_code;
+     static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv1;
++    // Note std::wstring_convert and std::codecvt_utf are deprecated and will be removed in C++26.
+     if (u) {
+-        _aria_label += conv1.to_bytes(*u);
++        // 'u' maybe null if there is not a "ToUnicode" table in the PDF!
++        utf8_code = conv1.to_bytes(*u);
++        _aria_label += utf8_code;
+     }
+ 
+     // Skip control characters, found in LaTeX generated PDFs
+@@ -1820,23 +1850,15 @@ void SvgBuilder::addChar(GfxState *state
+     }
+ 
+     Geom::Point delta(dx, dy);
++    Geom::Point advance(ax, ay);
+ 
+     bool is_space = ( uLen == 1 && u[0] == 32 );
+-    // Skip beginning space
+-    if ( is_space && _glyphs.empty()) {
+-         _text_position += delta;
+-         return;
+-    }
+-    // Allow only one space in a row  WHY??
+-    if ( is_space && (_glyphs[_glyphs.size() - 1].code.size() == 1) &&
+-         (_glyphs[_glyphs.size() - 1].code[0] == 32) ) {
+-        _text_position += delta;
+-        return;
+-    }
+ 
+     SvgGlyph new_glyph;
++    new_glyph.code = utf8_code;
+     new_glyph.is_space = is_space;
+     new_glyph.delta = delta;
++    new_glyph.advance = advance;
+     new_glyph.position = Geom::Point( x - originX, y - originY );
+     new_glyph.origin = Geom::Point(originX, -originY);
+     new_glyph.text_position = _text_position;
+@@ -1849,23 +1871,6 @@ void SvgBuilder::addChar(GfxState *state
+     }
+     _text_position += delta;
+ 
+-    // Convert the character to UTF-8 since that's our SVG document's encoding
+-    {
+-        gunichar2 uu[8] = {0};
+-
+-        for (int i = 0; i < uLen; i++) {
+-            uu[i] = u[i];
+-        }
+-
+-        gchar *tmp = g_utf16_to_utf8(uu, uLen, nullptr, nullptr, nullptr);
+-        if ( tmp && *tmp ) {
+-            new_glyph.code = tmp;
+-        } else {
+-            new_glyph.code.clear();
+-        }
+-        g_free(tmp);
+-    }
+-
+     // Copy current style if it has changed since the previous glyph
+     if (_invalidated_style || _glyphs.empty()) {
+         _invalidated_style = false;
+@@ -1882,7 +1887,9 @@ void SvgBuilder::addChar(GfxState *state
+     }
+     new_glyph.font_specification = _font_specification;
+     new_glyph.rise = state->getRise();
+-
++    new_glyph.char_space = state->getCharSpace();
++    new_glyph.word_space = state->getWordSpace();
++    new_glyph.horiz_scaling = state->getHorizScaling() / 100.0;
+     _glyphs.push_back(new_glyph);
+ 
+     IFTRACE(
+diff -Naupr a/src/extension/internal/pdfinput/svg-builder.h b/src/extension/internal/pdfinput/svg-builder.h
+--- a/src/extension/internal/pdfinput/svg-builder.h	2024-07-28 13:27:55.000000000 +0200
++++ b/src/extension/internal/pdfinput/svg-builder.h	2025-02-09 12:05:58.000000000 +0100
+@@ -76,8 +76,12 @@ struct SvgGlyph {
+     Geom::Point position;      // Absolute glyph coords
+     Geom::Point text_position; // Absolute glyph coords in text space
+     Geom::Point origin;        // Origin of glyph (used for fixing vertical text position)
+-    Geom::Point delta;         // X, Y advance values
+-    double rise;               // Text rise parameter
++    Geom::Point delta;         // X, Y displacement values (distance between glyph origins)
++    Geom::Point advance;       // X, Y advance values
++    double rise;               // Text rise parameter (Ts operator)
++    double char_space;         // Character spacing   (Tc operator)
++    double word_space;         // Word spacing        (Tw operator)
++    double horiz_scaling;      // Horizontal scaling  (Tz operator)
+     Glib::ustring code;        // UTF-8 coded character
+     bool is_space;
+ 
+@@ -146,6 +150,7 @@ public:
+     void endString(GfxState *state);
+     void addChar(GfxState *state, double x, double y,
+                  double dx, double dy,
++                 double ax, double ay,
+                  double originX, double originY,
+                  CharCode code, int nBytes, Unicode const *u, int uLen);
+     void beginTextObject(GfxState *state);
