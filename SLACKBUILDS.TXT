@@ -682,15 +682,6 @@ SLACKBUILD DOWNLOAD: https://github.com/capstone-engine/capstone/archive/5.0.5/c
 SLACKBUILD MD5SUM: 25df2dcc262f308d38a92556ad944e6f
 SLACKBUILD SHORT DESCRIPTION:  capstone (multi-architecture disassembly framework)
 
-SLACKBUILD NAME: ccid
-SLACKBUILD LOCATION: ./ccid
-SLACKBUILD FILES: README ccid.SlackBuild ccid.info slack-desc slack-required
-SLACKBUILD VERSION: 1.6.1
-SLACKBUILD REQUIRES: pcsc-lite
-SLACKBUILD DOWNLOAD: https://ccid.apdu.fr/files/ccid-1.6.1.tar.xz
-SLACKBUILD MD5SUM: 7aa1260d2f6f1b45eec4dbc7d359f4f5
-SLACKBUILD SHORT DESCRIPTION:  ccid (PC/SC driver for USB CCID smart card readers)
-
 SLACKBUILD NAME: cfpeek
 SLACKBUILD LOCATION: ./cfpeek
 SLACKBUILD FILES: README cfpeek.SlackBuild cfpeek.info slack-desc
@@ -2540,7 +2531,7 @@ SLACKBUILD NAME: keepassxc
 SLACKBUILD LOCATION: ./keepassxc
 SLACKBUILD FILES: README doinst.sh keepassxc.SlackBuild keepassxc.info slack-desc slack-required
 SLACKBUILD VERSION: 2.7.9
-SLACKBUILD REQUIRES: botan libminizip pcsc-lite
+SLACKBUILD REQUIRES: botan libminizip 
 SLACKBUILD DOWNLOAD: https://github.com/keepassxreboot/keepassxc/releases/download/2.7.9/keepassxc-2.7.9-src.tar.xz
 SLACKBUILD MD5SUM: 1d135d224a4f6d4767caa9d8c254767e
 SLACKBUILD SHORT DESCRIPTION:  keepassxc (KeePass Cross-Platform Community Edition)
@@ -2666,7 +2657,7 @@ SLACKBUILD NAME: libasecnsp11
 SLACKBUILD LOCATION: ./libasecnsp11
 SLACKBUILD FILES: README libasecnsp11.SlackBuild libasecnsp11.info slack-desc slack-required
 SLACKBUILD VERSION: 1
-SLACKBUILD REQUIRES: pcsc-lite
+SLACKBUILD REQUIRES: 
 SLACKBUILD DOWNLOAD: http://www.regione.toscana.it/documents/10180/595930/smart_card.zip
 SLACKBUILD MD5SUM: 9075a7c4ae2645906e1068d0824c32ef
 SLACKBUILD SHORT DESCRIPTION:  libasecnsp11 (PKCS#11 library of the EuropeanHealtCard)
@@ -2738,7 +2729,7 @@ SLACKBUILD NAME: libcacard
 SLACKBUILD LOCATION: ./libcacard
 SLACKBUILD FILES: README libcacard.SlackBuild libcacard.info slack-desc slack-required
 SLACKBUILD VERSION: 2.8.1
-SLACKBUILD REQUIRES: pcsc-lite
+SLACKBUILD REQUIRES: 
 SLACKBUILD DOWNLOAD: https://www.spice-space.org/download/libcacard/libcacard-2.8.1.tar.xz
 SLACKBUILD MD5SUM: 2a431d2fbd76a3e294fc254b496cdc70
 SLACKBUILD SHORT DESCRIPTION:  libcacard (Virtual Smart Card Emulator library)
@@ -4615,20 +4606,11 @@ SLACKBUILD DOWNLOAD: https://launchpad.net/pbzip2/1.1/1.1.13/+download/pbzip2-1.
 SLACKBUILD MD5SUM: 4cb87da2dba05540afce162f34b3a9a6
 SLACKBUILD SHORT DESCRIPTION:  PBZIP2 (Parallel BZIP2)
 
-SLACKBUILD NAME: pcsc-lite
-SLACKBUILD LOCATION: ./pcsc-lite
-SLACKBUILD FILES: README SLACKWARE.README doinst.sh pcsc-lite.SlackBuild pcsc-lite.info rc.pcscd slack-desc
-SLACKBUILD VERSION: 2.3.1
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pcsclite.apdu.fr/files/pcsc-lite-2.3.1.tar.xz
-SLACKBUILD MD5SUM: 308886ae2c45fdd8dde33f0b1cf0b339
-SLACKBUILD SHORT DESCRIPTION:  pcsc-lite (Middleware to access a smart card using SCard API)
-
 SLACKBUILD NAME: pcsc-perl
 SLACKBUILD LOCATION: ./pcsc-perl
 SLACKBUILD FILES: README pcsc-perl.SlackBuild pcsc-perl.info slack-desc slack-required
 SLACKBUILD VERSION: 1.4.16
-SLACKBUILD REQUIRES: pcsc-lite
+SLACKBUILD REQUIRES: 
 SLACKBUILD DOWNLOAD: https://pcsc-perl.apdu.fr/Chipcard-PCSC-v1.4.16.tar.gz
 SLACKBUILD MD5SUM: 51f77496146132ed159d319ea14e5565
 SLACKBUILD SHORT DESCRIPTION:  pcsc-perl (Perl wrapper to pcsc-lite)
@@ -4637,7 +4619,7 @@ SLACKBUILD NAME: pcsc-tools
 SLACKBUILD LOCATION: ./pcsc-tools
 SLACKBUILD FILES: README pcsc-tools.SlackBuild pcsc-tools.info slack-desc slack-required
 SLACKBUILD VERSION: 1.7.2
-SLACKBUILD REQUIRES: pcsc-lite pcsc-perl
+SLACKBUILD REQUIRES:  pcsc-perl
 SLACKBUILD DOWNLOAD: https://pcsc-tools.apdu.fr/pcsc-tools-1.7.2.tar.bz2
 SLACKBUILD MD5SUM: 95d5f2c332700e63c66379c307c70b7b
 SLACKBUILD SHORT DESCRIPTION:  pcsc-tools (various tools to interact with pcsc-lite)
@@ -5492,7 +5474,7 @@ SLACKBUILD NAME: python-constantly
 SLACKBUILD LOCATION: ./python-constantly
 SLACKBUILD FILES: README python-constantly.SlackBuild python-constantly.info slack-desc slack-required
 SLACKBUILD VERSION: 23.10.4
-SLACKBUILD REQUIRES: python-versioneer
+SLACKBUILD REQUIRES: 
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/constantly/constantly-23.10.4.tar.gz
 SLACKBUILD MD5SUM: c090579309b2b34be04385b54b0a5a85
 SLACKBUILD SHORT DESCRIPTION:  python-constantly (Symbolic constants in Python)
@@ -6225,15 +6207,6 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/u/urwid/urwid-2.6.16.tar.gz
 SLACKBUILD MD5SUM: 214f9cea321ccae131cecfaef2a4aa9a
 SLACKBUILD SHORT DESCRIPTION:  python-urwid (Console user interface library for Python)
-
-SLACKBUILD NAME: python-versioneer
-SLACKBUILD LOCATION: ./python-versioneer
-SLACKBUILD FILES: README python-versioneer.SlackBuild python-versioneer.info slack-desc
-SLACKBUILD VERSION: 0.29
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/v/versioneer/versioneer-0.29.tar.gz
-SLACKBUILD MD5SUM: 1703d6ced3656553066fa71e42c5eee6
-SLACKBUILD SHORT DESCRIPTION:  python-versioneer (version-string management for VCS-controlled trees)
 
 SLACKBUILD NAME: python-vimgolf
 SLACKBUILD LOCATION: ./python-vimgolf
@@ -8237,7 +8210,7 @@ SLACKBUILD NAME: veracrypt
 SLACKBUILD LOCATION: ./veracrypt
 SLACKBUILD FILES: README doinst.sh files/veracrypt.desktop files/veracrypt.png patches/no-makeself.patch slack-desc slack-required veracrypt.SlackBuild veracrypt.info
 SLACKBUILD VERSION: 1.26.20
-SLACKBUILD REQUIRES: wxwidgets pcsc-lite
+SLACKBUILD REQUIRES: wxwidgets 
 SLACKBUILD DOWNLOAD: https://launchpad.net/veracrypt/trunk/1.26.20/+download/VeraCrypt_1.26.20_Source.tar.bz2
 SLACKBUILD MD5SUM: 24afe2eea308576bb407c5f883ac5810
 SLACKBUILD SHORT DESCRIPTION:  veracrypt (free disk encryption software)
