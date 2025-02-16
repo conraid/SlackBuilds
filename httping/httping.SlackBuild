@@ -2,7 +2,7 @@
 #
 # Slackware build script for httping (http://www.vanheusden.com/httping/)
 #
-# Copyright 2008-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2008-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ set -eu
 
 PRGNAM=HTTPing
 PKGNAM=httping
-VERSION=4.2.0
+VERSION=4.4.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 cd $(dirname $0) ; CWD=$(pwd)
@@ -124,7 +124,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
+  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
 fi
 
 cd $PKG
