@@ -106,15 +106,6 @@ SLACKBUILD DOWNLOAD: https://github.com/aircrack-ng/aircrack-ng/archive/1.7.tar.
 SLACKBUILD MD5SUM: a918ea7146f91d8c799fb770c38f4bec
 SLACKBUILD SHORT DESCRIPTION:  Aircrack-NG (the next generation of aircrack)
 
-SLACKBUILD NAME: akira
-SLACKBUILD LOCATION: ./akira
-SLACKBUILD FILES: README akira.SlackBuild akira.info doinst.sh slack-desc slack-required
-SLACKBUILD VERSION: 0.0.16
-SLACKBUILD REQUIRES: granite goocanvas
-SLACKBUILD DOWNLOAD: https://github.com/akiraux/Akira/archive/v0.0.16/Akira-0.0.16.tar.gz
-SLACKBUILD MD5SUM: 3b48db0624a6c33550c158076e4cad87
-SLACKBUILD SHORT DESCRIPTION:  akira (Native Linux App for UI and UX Design built in Vala and GTK)
-
 SLACKBUILD NAME: alien
 SLACKBUILD LOCATION: ./alien
 SLACKBUILD FILES: README alien.SlackBuild alien.info doinst.sh slack-desc
@@ -919,10 +910,10 @@ SLACKBUILD SHORT DESCRIPTION:  cppunit (C++ unit testing framework)
 SLACKBUILD NAME: cpr
 SLACKBUILD LOCATION: ./cpr
 SLACKBUILD FILES: README cpr.SlackBuild cpr.info slack-desc
-SLACKBUILD VERSION: 1.11.1
+SLACKBUILD VERSION: 1.11.2
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://codeload.github.com/libcpr/cpr/tar.gz/refs/tags/1.11.1
-SLACKBUILD MD5SUM: 4ceee26c1d16fa7b0ab766008a349d14
+SLACKBUILD DOWNLOAD: https://codeload.github.com/libcpr/cpr/tar.gz/refs/tags/1.11.2
+SLACKBUILD MD5SUM: 639cff98d5124cf06923a0975fb427d8
 SLACKBUILD SHORT DESCRIPTION:  cpr (Curl for People)
 
 SLACKBUILD NAME: cpuid
@@ -1816,15 +1807,6 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/g/goobook/goobook-3
 SLACKBUILD MD5SUM: 40f79c5ed0eedf33dfd78ee0777a469a
 SLACKBUILD SHORT DESCRIPTION:  GooBook (Access your Google contacts from the command line)
 
-SLACKBUILD NAME: goocanvas
-SLACKBUILD LOCATION: ./goocanvas
-SLACKBUILD FILES: README goocanvas.SlackBuild goocanvas.info patches/goocanvas-fix-docs.patch patches/goocanvas-incompatible-pointer.patch slack-desc
-SLACKBUILD VERSION: 3.0.0
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://download.gnome.org/sources/goocanvas/3.0/goocanvas-3.0.0.tar.xz
-SLACKBUILD MD5SUM: a0aafafa7107527c0c730ed967d4f653
-SLACKBUILD SHORT DESCRIPTION:  goocanvas (A cairo canvas widget for GTK)
-
 SLACKBUILD NAME: google-api-core
 SLACKBUILD LOCATION: ./google-api-core
 SLACKBUILD FILES: README google-api-core.SlackBuild google-api-core.info slack-desc
@@ -1887,15 +1869,6 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://github.com/orf/gping/archive/gping-v1.19.0/gping-gping-1.19.0.tar.gz
 SLACKBUILD MD5SUM: 
 SLACKBUILD SHORT DESCRIPTION:  gping (Ping, but with a graph)
-
-SLACKBUILD NAME: granite
-SLACKBUILD LOCATION: ./granite
-SLACKBUILD FILES: README granite.SlackBuild granite.info slack-desc
-SLACKBUILD VERSION: 7.6.0
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/elementary/granite/archive/6.2.0/granite-6.2.0.tar.gz
-SLACKBUILD MD5SUM: b5cb2159d784020667c87d21f82157c1
-SLACKBUILD SHORT DESCRIPTION:  granite (Library that extends GTK with common widgets and utilities)
 
 SLACKBUILD NAME: graphicsmagick
 SLACKBUILD LOCATION: ./graphicsmagick
@@ -2324,7 +2297,7 @@ SLACKBUILD NAME: inkscape
 SLACKBUILD LOCATION: ./inkscape
 SLACKBUILD FILES: README doinst.sh inkscape.SlackBuild inkscape.info patches/0001-Fix-building-with-poppler-25.02.0_final.patch patches/pdf_1.4_git.patch patches/series slack-desc slack-required
 SLACKBUILD VERSION: 1.4
-SLACKBUILD REQUIRES: libcdr numpy potrace scour double-conversion gdl dos2unix graphicsmagick pstoedit gtksourceview4 python-cssselect scour python-zstandard python-cachecontrol pyserial python-filelock beautifulsoup4
+SLACKBUILD REQUIRES: libcdr numpy potrace scour double-conversion gdl dos2unix graphicsmagick pstoedit gtksourceview4 python-cssselect scour python-zstandard python-cachecontrol pyserial python-filelock beautifulsoup4 lib2geom
 SLACKBUILD DOWNLOAD: https://media.inkscape.org/dl/resources/file/inkscape-1.4.tar.xz
 SLACKBUILD MD5SUM: a93f3a8eab82ef3d610f426bfe58e3df
 SLACKBUILD SHORT DESCRIPTION:  Open Source Scalable Vector Graphics Editor
@@ -2625,6 +2598,15 @@ SLACKBUILD REQUIRES: musl
 SLACKBUILD DOWNLOAD: https://registry.npmjs.org/lerna/-/lerna-8.2.0.tgz
 SLACKBUILD MD5SUM: 8c2d7be919ead85a514c4371d457e26e
 SLACKBUILD SHORT DESCRIPTION:  lerna (JavaScript tool)
+
+SLACKBUILD NAME: lib2geom
+SLACKBUILD LOCATION: ./lib2geom
+SLACKBUILD FILES: README lib2geom.SlackBuild lib2geom.info slack-desc slack-required
+SLACKBUILD VERSION: 1.4
+SLACKBUILD REQUIRES: double-conversion
+SLACKBUILD DOWNLOAD: https://gitlab.com/inkscape/lib2geom/-/archive/1.4/lib2geom-1.4.tar.bz2
+SLACKBUILD MD5SUM: c9dd75e19efbef3bd8e03adbfb9cff4b
+SLACKBUILD SHORT DESCRIPTION:  lib2geom (easy 2D graphics library)
 
 SLACKBUILD NAME: libaccounts-glib
 SLACKBUILD LOCATION: ./libaccounts-glib
@@ -3610,10 +3592,10 @@ SLACKBUILD SHORT DESCRIPTION:  mailspring-bin
 SLACKBUILD NAME: maldet
 SLACKBUILD LOCATION: ./maldet
 SLACKBUILD FILES: README doinst.sh files/rc.maldet maldet.SlackBuild maldet.info slack-desc
-SLACKBUILD VERSION: 1.6.5
+SLACKBUILD VERSION: 1.6.6
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/rfxn/linux-malware-detect/archive/1.6.5.tar.gz
-SLACKBUILD MD5SUM: 3abf06d83247159420d3804a7813588e
+SLACKBUILD DOWNLOAD: https://github.com/rfxn/linux-malware-detect/archive/1.6.6.tar.gz
+SLACKBUILD MD5SUM: fc50b69cc14ef9ff198005528985dc1e
 SLACKBUILD SHORT DESCRIPTION:  maldet (Linux Malware Detection (LMD))
 
 SLACKBUILD NAME: man-pages-it
@@ -4660,6 +4642,15 @@ SLACKBUILD DOWNLOAD: https://pdfgrep.org/download/pdfgrep-2.2.0.tar.gz
 SLACKBUILD MD5SUM: f74b5505e71e8bad576285c6bd1790d9
 SLACKBUILD SHORT DESCRIPTION:  pdfgrep (a commandline utility to search text in PDF files)
 
+SLACKBUILD NAME: pdfmixtool
+SLACKBUILD LOCATION: ./pdfmixtool
+SLACKBUILD FILES: README pdfmixtool.SlackBuild pdfmixtool.info slack-desc
+SLACKBUILD VERSION: 1.1.1
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://gitlab.com/scarpetta/pdfmixtool/-/archive/v1.1.1/pdfmixtool-v1.1.1.tar.gz
+SLACKBUILD MD5SUM: b1239a253e29eee762ae15c585908cb6
+SLACKBUILD SHORT DESCRIPTION:  pdfmixtool (Application to split, merge, rotate and mix PDF files)
+
 SLACKBUILD NAME: pdfsam-bin
 SLACKBUILD LOCATION: ./pdfsam-bin
 SLACKBUILD FILES: README doinst.sh files/icons/128x128.png files/icons/16x16.png files/icons/24x24.png files/icons/256x256.png files/icons/32x32.png files/icons/48x48.png files/icons/512x512.png files/icons/64x64.png files/icons/96x96.png files/pdfsam-basic.desktop files/pdfsam.desktop pdfsam-bin.SlackBuild pdfsam-bin.info slack-desc slack-required
@@ -4668,15 +4659,6 @@ SLACKBUILD REQUIRES: openjdk
 SLACKBUILD DOWNLOAD: https://github.com/torakiki/pdfsam/releases/download/v5.3.0/pdfsam-basic-5.3.0-linux-x64.tar.gz
 SLACKBUILD MD5SUM: 
 SLACKBUILD SHORT DESCRIPTION:  pdfsam-bin (PDF Split And Merge)
-
-SLACKBUILD NAME: pdftricks
-SLACKBUILD LOCATION: ./pdftricks
-SLACKBUILD FILES: README doinst.sh patches/meson.patch pdftricks.SlackBuild pdftricks.info slack-desc slack-required
-SLACKBUILD VERSION: 0.4.1
-SLACKBUILD REQUIRES: granite
-SLACKBUILD DOWNLOAD: https://github.com/muriloventuroso/pdftricks/archive/0.4.1/pdftricks-0.4.1.tar.gz
-SLACKBUILD MD5SUM: 46a1130c074721984e42a1f60283a5d2
-SLACKBUILD SHORT DESCRIPTION:  pdftricks (application fot small manipulations PDF files)
 
 SLACKBUILD NAME: pdsh
 SLACKBUILD LOCATION: ./pdsh
