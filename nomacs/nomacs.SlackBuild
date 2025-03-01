@@ -30,9 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=nomacs
-VERSION=3.19.1
-PLUGINVERSION=3.17.2285
-BUILD=${BUILD:-3}
+VERSION=3.21.0
+PLUGINVERSION=3.19.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -116,8 +116,9 @@ cmake -Wno-dev \
   -DUSE_SYSTEM_QUAZIP=ON \
   -DENABLE_HEIF=ON \
   -DENABLE_AVIF=ON \
+  -DENABLE_QUAZIP=ON \
   -DENABLE_JXL=ON \
-  -DQT_VERSION_MAJOR=5 \
+  -DQT_VERSION_MAJOR=6 \
   ..
 
 make
