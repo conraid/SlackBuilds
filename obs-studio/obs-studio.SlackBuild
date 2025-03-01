@@ -33,7 +33,7 @@ PRGNAM=obs-studio
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=31.0.1
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -75,10 +75,6 @@ rm -rf $PRGNAM-$SRCVERSION
 tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION.tar.gz
 cd $PRGNAM-$SRCVERSION
 
-# nv-codec-headers are kept back at version n12.1.14.0 due to OBS not supporting any newer version
-wget https://github.com/FFmpeg/nv-codec-headers/releases/download/n12.1.14.0/nv-codec-headers-12.1.14.0.tar.gz
-tar xvf nv-codec-headers-12.1.14.0.tar.gz
-
 chown -R root:root .
 find -L . \
   \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
@@ -115,7 +111,6 @@ cmake -Wno-dev \
   -DENABLE_WEBRTC=OFF \
   -DENABLE_AJA=OFF \
   -DOBS_VERSION_OVERRIDE="$VERSION" \
-  -DFFnvcodec_INCLUDE_DIR="$TMP/$PRGNAM-$SRCVERSION/nv-codec-headers-12.1.14.0/include/" \
   ..
 
 make
