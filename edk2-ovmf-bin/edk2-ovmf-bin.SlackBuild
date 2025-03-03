@@ -3,7 +3,7 @@
 # Slackware build script for edk2-ovmf
 #
 # Copyright 2023-2024 K. Eugene Carlson  Tsukuba, Japan
-# Copyright 2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2024-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,8 +31,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=edk2-ovmf
 PKGNAM=$(echo $PRGNAM)-bin
-VERSION=20241117
-FEDVER="fc40"
+VERSION=20250221
+FEDVER="fc43"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -80,7 +80,7 @@ cp usr/share/doc/edk2-ovmf/* $PKG/usr/doc/$PKGNAM-$VERSION
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
+  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
 fi
 
 cd $PKG
