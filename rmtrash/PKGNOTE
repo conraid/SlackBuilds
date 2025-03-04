@@ -1,0 +1,7 @@
+If you don't want to readjust the usage of rm and rmdir, a bash alias is probably a great solution for you. Just add the lines
+
+alias rm='rmtrash'
+alias rmdir='rmdirtrash'
+alias sudo='sudo '
+
+to your ~/.bashrc (or ~/.bash_aliases). Consider adding the --forbid-root option (see replacement option below)! The last line is optional, without you'll notice that rmtrash and rmdirtrash won't be called when using sudo.
