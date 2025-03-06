@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=fluffychat
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-bin
-SRCVERSION=1.7.1
+SRCVERSION=1.25.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -71,7 +71,7 @@ mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 
 mkdir -p $PKG/usr/share/$PKGNAM
-tar xvf $CWD/fluffychat-linux-x86.tar.gz -C $PKG/usr/share/$PKGNAM
+tar xvf $CWD/fluffychat-linux-x64.tar.gz -C $PKG/usr/share/$PKGNAM
 
 mkdir -p ${PKG}/usr/bin
 ln -s /usr/share/$PKGNAM/$PRGNAM ${PKG}/usr/bin/${PRGNAM}
