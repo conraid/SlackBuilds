@@ -2,7 +2,7 @@
 #
 # Slackware build script for phoneinfoga
 #
-# Copyright 2021 Corrado Franco (https://corradofranco.it)
+# Copyright 2021-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=phoneinfoga
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-bin
-SRCVERSION=2.3.8
+SRCVERSION=2.11.0
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -65,10 +65,14 @@ mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 mkdir -p $PRGNAM-$SRCVERSION
 cd $PRGNAM-$SRCVERSION
-tar xvf $CWD/PhoneInfoga_Linux_${ARCH}.tar.gz
+tar xvf $CWD/${PRGNAM}_Linux_${ARCH}.tar.gz
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find -L . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
 
 install -Dm755 $PRGNAM $PKG/usr/bin/$PRGNAM
 
@@ -78,6 +82,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
