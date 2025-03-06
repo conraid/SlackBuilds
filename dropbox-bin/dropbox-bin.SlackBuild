@@ -2,7 +2,7 @@
 #
 # Slackware build script for dropbox-bin
 #
-# Copyright 2020-2022 Corrado Franco (https://corradofranco.it)
+# Copyright 2020-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=dropbox
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-bin
-VERSION=156.4.4908
+VERSION=214.4.5217
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -53,10 +53,7 @@ if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
   exit 0
 fi
 
-if [ "$ARCH" = "i*86" ]; then
-  LIBDIRSUFFIX=""
-  ARCHTAR="x86"
-elif [ "$ARCH" = "x86_64" ]; then
+if [ "$ARCH" = "x86_64" ]; then
   LIBDIRSUFFIX="64"
   ARCHTAR="x86_64"
 else
@@ -93,7 +90,7 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
+  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
 fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
