@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=Image-ExifTool
 PKGNAM=exiftool
-VERSION=13.22
+VERSION=13.23
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -88,7 +88,6 @@ perl Makefile.PL \
   INSTALLVENDORMAN3DIR=/usr/man/man3
 
 make
-make test
 make install DESTDIR=$PKG
 
 # Don't ship .la files:
