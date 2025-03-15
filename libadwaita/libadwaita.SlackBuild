@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=libadwaita
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=1.6.2
+SRCVERSION=1.7.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -95,7 +95,7 @@ if [ -e $CWD/patches/ ]; then
   fi
 fi
 
-export CFLAGS="$SLKCFLAGS"
+export CFLAGS="$SLKCFLAGS -Wno-implicit-function-declaration"
 export CXXFLAGS="$SLKCFLAGS"
 mkdir meson-build
 cd meson-build
@@ -111,12 +111,14 @@ meson setup \
   --sbindir         /usr/sbin \
   --includedir      /usr/include \
   --datadir         /usr/share \
-  --buildtype       release \
   --default-library shared \
   --buildtype       plain \
   --auto-features   enabled \
   -D                b_lto=true \
   -D                b_pie=true \
+  -D                documentation=false \
+  -D                tests=false \
+  -D                examples=false \
   ..
 
 ninja
@@ -140,9 +142,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
