@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=notmuch
-VERSION=0.38.3
-BUILD=${BUILD:-5}
+VERSION=0.39
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -85,7 +85,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --localstatedir=/var \
   --mandir=/usr/man \
   --infodir=/usr/info \
-  --zshcompletiondir=/usr/share/zsh/site-functions \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
@@ -97,7 +96,7 @@ sed 's|INSTALL = .*[^D]$|& -D|' -i bindings/ruby/Makefile
 make -C bindings/ruby exec_prefix=$PKG/usr prefix=/usr install
 
 # Install python bindings
-cd bindings/python
+cd bindings/python-cffi
 python3 setup.py install --prefix=/usr --root=$PKG
 cd -
 
@@ -129,9 +128,6 @@ cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBui
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
