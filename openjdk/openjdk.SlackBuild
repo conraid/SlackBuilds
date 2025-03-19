@@ -30,8 +30,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=jdk
 PKGNAM=openjdk
-SRCVERSION=23.0.2
-VERSION=23.0.2
+SRCVERSION=24
+VERSION=24
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -93,9 +93,6 @@ chmod 755 $PKG/etc/profile.d/*
 )
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
