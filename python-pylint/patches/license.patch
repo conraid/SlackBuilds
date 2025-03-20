@@ -1,0 +1,19 @@
+Sottodirectory in comune: a/doc e pylint-3.3.6/doc
+Sottodirectory in comune: a/examples e pylint-3.3.6/examples
+Sottodirectory in comune: a/pylint e pylint-3.3.6/pylint
+Sottodirectory in comune: a/pylint.egg-info e pylint-3.3.6/pylint.egg-info
+diff -Naupt a/pyproject.toml pylint-3.3.6/pyproject.toml
+--- a/pyproject.toml	2025-03-20 12:25:02.000000000 +0100
++++ pylint-3.3.6/pyproject.toml	2025-03-20 13:56:13.715886565 +0100
+@@ -8,8 +8,7 @@ name = "pylint"
+ description = "python code static checker"
+ readme = "README.rst"
+ keywords = [ "lint", "linter", "python", "static code analysis" ]
+-license = "GPL-2.0-or-later"
+-license-files = [ "LICENSE", "CONTRIBUTORS.txt" ]
++license = { text = "GPL-2.0-or-later" }
+ authors = [
+   { name = "Python Code Quality Authority", email = "code-quality@python.org" },
+ ]
+Sottodirectory in comune: a/script e pylint-3.3.6/script
+Sottodirectory in comune: a/tests e pylint-3.3.6/tests
