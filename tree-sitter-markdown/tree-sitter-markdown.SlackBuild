@@ -2,7 +2,7 @@
 #
 # Slackware build script for tree-sitter-lua
 #
-# Copyright 2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2024-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=tree-sitter-markdown
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=0.3.2
+SRCVERSION=0.4.1
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -95,12 +95,20 @@ if [ -e $CWD/patches/ ]; then
   fi
 fi
 
-make PREFIX=/usr LIBDIR=/usr/lib$LIBDIRSUFFIX
-make DESTDIR="$PKG" PREFIX=/usr LIBDIR=/usr/lib$LIBDIRSUFFIX install
+mkdir -p build
+cd build
+cmake -Wno-dev \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  ..
+
+make
+make DESTDIR=$PKG install
+cd ..
 
 mkdir -p $PKG/usr/lib$LIBDIRSUFFIX/tree_sitter
-ln -s /usr/lib$LIBDIRSUFFIX/lib$PKGNAM.so \
-    $PKG/usr/lib$LIBDIRSUFFIX/tree_sitter/${PKGNAM#tree-sitter-}.so
+ln -s /usr/lib$LIBDIRSUFFIX/lib$PKGNAM.so $PKG/usr/lib$LIBDIRSUFFIX/tree_sitter/${PKGNAM#tree-sitter-}.so
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -119,9 +127,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
