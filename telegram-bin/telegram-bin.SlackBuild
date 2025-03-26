@@ -33,7 +33,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=telegram-bin
 PRGNAM=telegram
-SRCVERSION=5.12.3
+SRCVERSION=5.13.0
 VERSION=${SRCVERSION/.beta/}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -94,9 +94,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 install -Dm644 $CWD/files/$PRGNAM.desktop $PKG/usr/share/applications/$PRGNAM.desktop
