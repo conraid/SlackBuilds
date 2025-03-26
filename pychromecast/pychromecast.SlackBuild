@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=pychromecast
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=14.0.6
+SRCVERSION=14.0.7
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -83,6 +83,10 @@ if [ -e $CWD/patches/ ]; then
     done
   fi
 fi
+
+# Fix for slackware setuptools
+SETUP_TOOL_VERSION=$(python -c "import importlib.metadata; print(importlib.metadata.version('setuptools'))")
+sed "/setuptools/s/<.*78\.0/<=$SETUP_TOOL_VERSION/" -i pyproject.toml
 
 python3 -m build --wheel --no-isolation
 python3 -m installer --destdir "$PKG" dist/*.whl
