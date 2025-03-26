@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=SVT-AV1
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=v3.0.1
+SRCVERSION=v3.0.2
 VERSION=$(echo $SRCVERSION | tr - _ | sed 's/^v//')
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -126,9 +126,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
