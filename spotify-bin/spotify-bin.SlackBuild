@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=spotify
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-bin
-SRCVERSION=1.2.56.502.ga68d2d4f
+SRCVERSION=1.2.59.514.g834e17d4
 VERSION=$(echo $SRCVERSION | rev | cut -d. -f2- | rev)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -83,9 +83,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 install -Dm744 $PKG/usr/share/spotify/spotify.desktop $PKG/usr/share/applications/spotify.desktop
