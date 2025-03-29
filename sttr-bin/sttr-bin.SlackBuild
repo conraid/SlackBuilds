@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=sttr
 PKGNAM=sttr-bin
-SRCVERSION=0.2.24
+SRCVERSION=0.2.25
 VERSION=$(echo $SRCVERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -57,9 +57,9 @@ if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
 fi
 
 if [ "$ARCH" = "i386" ]; then
-  TARARCH="386"
+  TARARCH="i386"
 elif [ "$ARCH" = "x86_64" ]; then
-  TARARCH="amd64"
+  TARARCH="x86_64"
 elif [ "$ARCH" = "arm64" ]; then
   TARARCH="arm64"
 elif [ "$ARCH" = "aarch64" ]; then
@@ -74,7 +74,7 @@ cd $TMP
 rm -rf $PRGNAM-$SRCVERSION
 mkdir -p $PRGNAM-$SRCVERSION
 cd $PRGNAM-$SRCVERSION
-tar xvf $CWD/${PRGNAM}_${SRCVERSION}_linux_${TARARCH}.tar.gz
+tar xvf $CWD/${PRGNAM}_Linux_${TARARCH}.tar.gz
 
 chown -R root:root .
 find . \
@@ -91,9 +91,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
