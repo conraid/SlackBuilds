@@ -2,7 +2,7 @@
 #
 # Slackware build script for luceneplusplus
 #
-# Copyright 2016-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2016-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ PRGNAM=LucenePlusPlus
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=rel_3.0.9
 VERSION=$(echo $SRCVERSION | sed 's/rel_//')
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -95,19 +95,24 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
+
+sed -e '/cmake_minimum_required/s/VERSION [0-9.]*)/VERSION 3.5...4.0)/' \
+    -i CMakeLists.txt -i cmake/cotire.cmake -i src/core/CMakeLists.txt -i src/contrib/CMakeLists.txt
+
 mkdir -p build
 cd build
 cmake -Wno-dev \
   -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
-  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG -std=c++17 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DBOOST_NO_IOSTREAM" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DENABLE_DEMO=Off \
-  -DENABLE_TEST=Off \
-  -DBUILD_SHARED_LIBS=On \
+  -DENABLE_DEMO=OFF \
+  -DENABLE_TEST=OFF \
+  -DBUILD_SHARED_LIBS=ON \
   -DBoost_USE_STATIC_LIBS=OFF \
-  -DBoost_NO_BOOST_CMAKE=ON \
   -DLIB_DESTINATION=/usr/lib${LIBDIRSUFFIX} \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+  -DCMAKE_CXX_STANDARD=17 \
   ..
 
 make
@@ -126,9 +131,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
