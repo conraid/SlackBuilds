@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=collectd
 VERSION=5.12.0
-BUILD=${BUILD:-40}
+BUILD=${BUILD:-41}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -149,9 +149,6 @@ mv $PKG/etc/collectd/collectd.conf  $PKG/etc/collectd/collectd.conf.new
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
