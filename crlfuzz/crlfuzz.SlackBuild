@@ -33,7 +33,7 @@ PRGNAM=crlfuzz
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=1.4.1
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -95,8 +95,6 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
-export GOROOT="/usr/lib${LIBDIRSUFFIX}/go"
-export PATH="${GOROOT}/bin:${PATH}"
 export CGO_CPPFLAGS="${SLKCFLAGS}"
 export CGO_CFLAGS="${SLKCFLAGS}"
 export CGO_CXXFLAGS="${SLKCFLAGS}"
@@ -124,9 +122,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
