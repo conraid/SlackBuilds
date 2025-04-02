@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=bettercap
 VERSION=2.41.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -101,8 +101,6 @@ ln -rTsf $TMP/$PKGNAM/$PKGNAM-$VERSION go/src/github.com/bettercap/bettercap
 
 cd go/src/github.com/bettercap/bettercap
 
-export GOROOT="/usr/lib${LIBDIRSUFFIX}/go"
-export PATH="${GOROOT}/bin:${PATH}"
 export GOPATH="$TMP/$PKGNAM/go/"
 
 go build -o bettercap .
@@ -119,9 +117,6 @@ rm -r caplets/{.git,.gitignore,Makefile,README.md,LICENSE.md}
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
