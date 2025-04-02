@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=checksec
 PKGNAM=checksec
 VERSION=3.0.2
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -97,9 +97,6 @@ fi
 
 sed "/version/s/dev/$VERSION/" -i main.go
 
-export GOROOT="/usr/lib${LIBDIRSUFFIX}/go"
-export PATH="${GOROOT}/bin:${PATH}"
-
 go build
 install -Dm755 $PRGNAM $PKG/usr/bin/$PRGNAM
 mkdir -p $PKG/usr/share/{zsh/site-functions,bash-completion/completions}
@@ -117,9 +114,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
