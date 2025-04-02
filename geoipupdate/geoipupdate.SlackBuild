@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=geoipupdate
 VERSION=7.1.0
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -87,9 +87,6 @@ if [ -e $CWD/patches ]; then
   done
 fi
 
-export GOROOT="/usr/lib${LIBDIRSUFFIX}/go"
-export PATH="${GOROOT}/bin:${PATH}"
-
 sed 's/EditionIDs .*/EditionIDs GeoLite2-ASN GeoLite2-City GeoLite2-Country/' -i conf/GeoIP.conf.default
 
 CONFFILE=/etc/GeoIP.conf \
@@ -118,9 +115,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
