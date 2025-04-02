@@ -1,0 +1,19 @@
+diff -Naupr a/GNUmakefile b/GNUmakefile
+--- a/GNUmakefile	2022-01-28 22:50:48.000000000 +0100
++++ b/GNUmakefile	2025-04-02 11:55:43.012525924 +0200
+@@ -134,13 +134,13 @@ $(1) += $$(if $$(shell if $$(CC) $$(pats
+ endef
+ 
+ # This might be useful or not.
+-CFLAGS   :=
++CFLAGS    =
+ CPPFLAGS  =
+ LDFLAGS   =
+ LIBS      =
+ 
+ # Flags common to all executable targets
+-common_CFLAGS   :=
++common_CFLAGS    =
+ common_CPPFLAGS  =
+ common_LDFLAGS   =
+ common_LIBS      =
