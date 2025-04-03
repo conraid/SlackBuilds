@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libcurl-gnutls
 PRGNAM=curl
-VERSION=8.12.1 # This is the version in Slackware current
+VERSION=8.13.0 # This is the version in Slackware current
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -125,9 +125,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
