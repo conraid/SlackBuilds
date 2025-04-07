@@ -1,0 +1,77 @@
+diff -Naupr a/reformatter/CMakeLists.txt b/reformatter/CMakeLists.txt
+--- a/reformatter/CMakeLists.txt	2014-03-19 05:58:29.000000000 +0100
++++ b/reformatter/CMakeLists.txt	2025-04-07 21:50:48.893495465 +0200
+@@ -13,12 +13,12 @@
+ # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ 
+ # set up a paths
+-SET (binDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/bin)
++SET(binDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/bin)
+ 
+ # create a directories
+ FILE(MAKE_DIRECTORY ${binDir})
+ 
+-SET (SRCS json_reformat.c)
++SET(SRCS json_reformat.c)
+ 
+ # use the library we build, duh.
+ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/include)
+@@ -28,16 +28,16 @@ ADD_EXECUTABLE(json_reformat ${SRCS})
+ 
+ TARGET_LINK_LIBRARIES(json_reformat yajl_s)
+ 
+-# In some environments, we must explicitly link libm (like qnx,
+-# thanks @shahbag)
+-IF (NOT WIN32)
++# In some environments, we must explicitly link libm (like qnx, thanks @shahbag)
++IF(NOT WIN32)
+     TARGET_LINK_LIBRARIES(json_reformat m)
+-ENDIF (NOT WIN32)
+-
+-# copy the binary into the output directory
+-GET_TARGET_PROPERTY(binPath json_reformat LOCATION)
++ENDIF(NOT WIN32)
+ 
++# Copy the binary into the output directory (modern CMake)
+ ADD_CUSTOM_COMMAND(TARGET json_reformat POST_BUILD
+-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${binPath} ${binDir})
++    COMMAND ${CMAKE_COMMAND} -E copy_if_different 
++        "$<TARGET_FILE:json_reformat>" 
++        "${binDir}"
++)
+ 
+ INSTALL(TARGETS json_reformat RUNTIME DESTINATION bin)
+diff -Naupr a/verify/CMakeLists.txt b/verify/CMakeLists.txt
+--- a/verify/CMakeLists.txt	2014-03-19 05:58:29.000000000 +0100
++++ b/verify/CMakeLists.txt	2025-04-07 21:51:35.286696316 +0200
+@@ -13,12 +13,12 @@
+ # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ 
+ # set up some paths
+-SET (binDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/bin)
++SET(binDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/bin)
+ 
+ # create some directories
+ FILE(MAKE_DIRECTORY ${binDir})
+ 
+-SET (SRCS json_verify.c)
++SET(SRCS json_verify.c)
+ 
+ # use the library we build, duh.
+ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/include)
+@@ -28,10 +28,11 @@ ADD_EXECUTABLE(json_verify ${SRCS})
+ 
+ TARGET_LINK_LIBRARIES(json_verify yajl_s)
+ 
+-# copy in the binary
+-GET_TARGET_PROPERTY(binPath json_verify LOCATION)
+-
++# copy in the binary (modern CMake approach)
+ ADD_CUSTOM_COMMAND(TARGET json_verify POST_BUILD
+-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${binPath} ${binDir})
++    COMMAND ${CMAKE_COMMAND} -E copy_if_different 
++        "$<TARGET_FILE:json_verify>"  # Generator expression for executable path
++        "${binDir}"
++)
+ 
+ INSTALL(TARGETS json_verify RUNTIME DESTINATION bin)
