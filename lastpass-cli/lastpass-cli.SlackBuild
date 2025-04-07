@@ -2,7 +2,7 @@
 #
 # Slackware build script for lastpass-cli
 #
-# Copyright 2021-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2021-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ PRGNAM=lastpass-cli
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=1.6.1
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -104,6 +104,7 @@ cmake -Wno-dev \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DCMAKE_INSTALL_MANDIR=/usr/man \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   ..
 
 make
@@ -127,9 +128,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
