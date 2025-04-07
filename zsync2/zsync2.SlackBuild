@@ -33,7 +33,7 @@ PRGNAM=zsync2
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=93378467c5ee53a8e58c034b8fdc865452076ec1
 VERSION=$(echo $SRCVERSION | tr - _ | head -c7)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -106,6 +106,7 @@ cmake -Wno-dev \
   -DCMAKE_INSTALL_DOCDIR=/usr/doc/$PKGNAM-$VERSION \
   -DUSE_SYSTEM_CPR=ON \
   -DUSE_SYSTEM_ARGS=ON \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   ..
 
 make
@@ -129,9 +130,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 # Add a doinst.sh
 if [ -e $CWD/doinst.sh ]; then
