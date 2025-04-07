@@ -5,7 +5,7 @@
 # Based on https://slackbuilds.org/slackbuilds/14.2/multimedia/x265/x265.SlackBuild
 # (c) 2014-2018 Willy Sudiarto Raharjo <willysr@slackbuilds.org>
 
-# Copyright 2018-2020 Corrado Franco (https://corradofranco.it)
+# Copyright 2018-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=x265
 VERSION=3.4
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -58,14 +58,11 @@ if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
   exit 0
 fi
 
-if [ "$ARCH" = "i586" ]; then
-  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
-  LIBDIRSUFFIX=""
-elif [ "$ARCH" = "i686" ]; then
-  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+if [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=pentium4 -mtune=generic"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC -pipe -fomit-frame-pointer"
+  SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -80,7 +77,24 @@ tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
-chmod -R u+w,go+r-w,a+X-s .
+find -L . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
+
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
+fi
 
 mkdir -p build-{8,10,12}
 
@@ -88,7 +102,7 @@ if [ "$ARCH" = "x86_64" ]; then
 
   cd build-12
 
-  cmake \
+  cmake -Wno-dev \
     -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
     -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -DNDEBUG" \
     -DCMAKE_INSTALL_PREFIX=/usr \
@@ -99,12 +113,13 @@ if [ "$ARCH" = "x86_64" ]; then
     -DENABLE_CLI=OFF \
     -DENABLE_SHARED=OFF \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
     ../source
   make
 
   cd ../build-10
 
-  cmake \
+  cmake -Wno-dev \
     -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
     -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -DNDEBUG" \
     -DCMAKE_INSTALL_PREFIX=/usr \
@@ -114,6 +129,7 @@ if [ "$ARCH" = "x86_64" ]; then
     -DENABLE_CLI=OFF \
     -DENABLE_SHARED=OFF \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
     ../source
   make
 
@@ -122,7 +138,7 @@ if [ "$ARCH" = "x86_64" ]; then
   ln -s ../build-10/libx265.a libx265_main10.a
   ln -s ../build-12/libx265.a libx265_main12.a
 
-  cmake \
+  cmake -Wno-dev \
     -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
     -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -DNDEBUG" \
     -DCMAKE_INSTALL_PREFIX=/usr \
@@ -134,6 +150,7 @@ if [ "$ARCH" = "x86_64" ]; then
     -DLINKED_10BIT=ON \
     -DLINKED_12BIT=ON \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
     ../source
   make
 
@@ -152,8 +169,6 @@ else
   make
 
 fi
-
-
 
 make DESTDIR=$PKG install
 cd ..
