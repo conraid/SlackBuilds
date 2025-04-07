@@ -2,7 +2,7 @@
 #
 # Slackware build script for qtcurve
 #
-# Copyright 2008-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2008-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -28,9 +28,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=qtcurve
-SRCVERSION=be78a85b627e90d854da0de1049e8f191e67f228
+SRCVERSION=efb9e510f50f8147f05054d77c3ef433a8b9390e
 VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -38,12 +38,13 @@ OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="AUTHORS Bugs* COPYING README* ChangeLog.md README* TODO*"
 
-# Enable or disable QT/KDE 4/5 support
-# Set yes to QT5 and KDE5 (default in Slackware current)
+# Enable or disable QT/KDE 5/6 support
+# Set yes to QT6, QT5 and KDE5 (default in Slackware current)
 ENABLE_QT4=${ENABLE_QT4:-NO}
 ENABLE_QT5=${ENABLE_QT5:-YES}
-ENABLE_KDE4=${ENABLE_KDE4:-NO}
+ENABLE_QT6=${ENABLE_QT6:-YES}
 ENABLE_KDE5=${ENABLE_KDE5:-YES}
+ENABLE_KDE6=${ENABLE_KDE6:-NO}
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -92,10 +93,11 @@ if [ -e $CWD/patches/ ]; then
   done
 fi
 
-# Set QT/KDE 4/5 support
-[[ $ENABLE_QT4 == "YES" ]] && QT4="ON" || QT4="OFF"
+# Set QT/KDE 4/5/6 support
+[[ $ENABLE_QT6 == "YES" ]] && QT6="ON" || QT6="OFF"
 [[ $ENABLE_QT5 == "YES" ]] && QT5="ON" || QT5="OFF"
-[[ $ENABLE_KDE4 == "YES" ]] && KDE4="ON" || KDE4="OFF"
+[[ $ENABLE_QT4 == "YES" ]] && QT4="ON" || QT4="OFF"
+[[ $ENABLE_KDE6 == "YES" ]] && KDE6="ON" || KDE6="OFF"
 [[ $ENABLE_KDE5 == "YES" ]] && KDE5="ON" || KDE5="OFF"
 
 mkdir build
@@ -108,11 +110,11 @@ cmake \
  -DMAN_INSTALL_DIR=/usr/man \
  -DSYSCONF_INSTALL_DIR=/etc \
  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
- -DENABLE_TEST=OFF \
+ -DBUILD_TESTING=OFF \
  -DENABLE_QT4=$QT4 \
- -DQTC_QT4_ENABLE_KDE=$KDE4 \
+ -DENABLE_QT6=$QT6 \
+ -DQTC_QT6_ENABLE_KDE=$KDE6 \
  -DENABLE_QT5=$QT5 \
- -DQTC_QT5_ENABLE_KDE=$KDE5 \
  -DENABLE_GTK2=true \
  ..
 
@@ -129,9 +131,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
