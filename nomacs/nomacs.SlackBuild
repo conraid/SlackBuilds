@@ -31,8 +31,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=nomacs
 VERSION=3.21.0
-PLUGINVERSION=3.19.0
-BUILD=${BUILD:-4}
+PLUGINVERSION=3.21.0
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -119,6 +119,7 @@ cmake -Wno-dev \
   -DENABLE_QUAZIP=ON \
   -DENABLE_JXL=ON \
   -DQT_VERSION_MAJOR=6 \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   ..
 
 make
@@ -142,9 +143,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
