@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=encfs
 VERSION=1.9.5
-BUILD=${BUILD:-9}
+BUILD=${BUILD:-10}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -98,6 +98,7 @@ cmake -Wno-dev \
   -DINSTALL_LIBENCFS=ON \
   -DBUILD_SHARED_LIBS=ON \
   -DLIB_INSTALL_DIR=lib$LIBDIRSUFFIX \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   ..
 
 make
@@ -125,9 +126,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
