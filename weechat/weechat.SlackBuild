@@ -28,8 +28,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=weechat
-VERSION=4.6.0
-BUILD=${BUILD:-2}
+VERSION=4.6.1
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -80,19 +80,25 @@ find -L . \
 
 # Apply patches
 if [ -e $CWD/patches/ ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
 fi
 
 mkdir -p build
 cd build
 
-cmake \
+cmake -Wno-dev \
   -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DENABLE_MAN=On \
+  -DENABLE_MAN=ON \
   -DLIBDIR=/usr/lib${LIBDIRSUFFIX} \
   -DENABLE_PHP=OFF \
   -DENABLE_JAVASCRIPT=OFF \

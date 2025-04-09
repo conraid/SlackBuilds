@@ -1,0 +1,225 @@
+diff -Naupr a/src/core/core-crypto.c b/src/core/core-crypto.c
+--- a/src/core/core-crypto.c	2025-04-09 13:33:19.000000000 +0200
++++ b/src/core/core-crypto.c	2025-04-09 15:00:15.561973470 +0200
+@@ -29,6 +29,9 @@
+ #include <sys/stat.h>
+ #include <time.h>
+ #include <math.h>
++#ifndef estream_t
++#define estream_t FILE*
++#endif
+ #include <gcrypt.h>
+ 
+ /* Bring in htobe64 */
+diff -Naupr a/src/core/core-debug.c b/src/core/core-debug.c
+--- a/src/core/core-debug.c	2025-04-09 13:33:19.000000000 +0200
++++ b/src/core/core-debug.c	2025-04-09 15:01:28.838690097 +0200
+@@ -34,6 +34,10 @@
+ #include <wchar.h>
+ #include <time.h>
+ #include <sys/time.h>
++#include <stdio.h>
++#ifndef estream_t
++#define estream_t FILE*
++#endif
+ #include <gcrypt.h>
+ #include <curl/curl.h>
+ #include <zlib.h>
+diff -Naupr a/src/core/core-doc.c b/src/core/core-doc.c
+--- a/src/core/core-doc.c	2025-04-09 13:33:19.000000000 +0200
++++ b/src/core/core-doc.c	2025-04-09 15:01:16.864899791 +0200
+@@ -28,6 +28,9 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <locale.h>
++#ifndef estream_t
++#define estream_t FILE*
++#endif
+ #include <gcrypt.h>
+ #include <regex.h>
+ 
+diff -Naupr a/src/core/core-network.c b/src/core/core-network.c
+--- a/src/core/core-network.c	2025-04-09 13:33:19.000000000 +0200
++++ b/src/core/core-network.c	2025-04-09 15:01:12.492976354 +0200
+@@ -46,6 +46,10 @@
+ #include <netdb.h>
+ #include <resolv.h>
+ #include <errno.h>
++#include <stdio.h>
++#ifndef estream_t
++#define estream_t FILE*
++#endif
+ #include <gcrypt.h>
+ #include <sys/time.h>
+ #if defined(__OpenBSD__)
+diff -Naupr a/src/core/core-secure-buffer.c b/src/core/core-secure-buffer.c
+--- a/src/core/core-secure-buffer.c	2025-04-09 13:33:19.000000000 +0200
++++ b/src/core/core-secure-buffer.c	2025-04-09 15:01:53.509258070 +0200
+@@ -26,6 +26,9 @@
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <string.h>
++#ifndef estream_t
++#define estream_t FILE*
++#endif
+ #include <gcrypt.h>
+ 
+ #include "weechat.h"
+diff -Naupr a/src/core/core-secure-config.c b/src/core/core-secure-config.c
+--- a/src/core/core-secure-config.c	2025-04-09 13:33:19.000000000 +0200
++++ b/src/core/core-secure-config.c	2025-04-09 15:02:05.103055048 +0200
+@@ -26,6 +26,9 @@
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <string.h>
++#ifndef estream_t
++#define estream_t FILE*
++#endif
+ #include <gcrypt.h>
+ 
+ #include "weechat.h"
+diff -Naupr a/src/core/core-secure.c b/src/core/core-secure.c
+--- a/src/core/core-secure.c	2025-04-09 13:33:19.000000000 +0200
++++ b/src/core/core-secure.c	2025-04-09 15:02:16.721851599 +0200
+@@ -25,6 +25,9 @@
+ 
+ #include <stdlib.h>
+ #include <stdio.h>
++#ifndef estream_t
++#define estream_t FILE*
++#endif
+ #include <gcrypt.h>
+ 
+ #include "weechat.h"
+diff -Naupr a/src/core/core-string.c b/src/core/core-string.c
+--- a/src/core/core-string.c	2025-04-09 13:33:19.000000000 +0200
++++ b/src/core/core-string.c	2025-04-09 15:02:29.462628512 +0200
+@@ -33,6 +33,9 @@
+ #include <wctype.h>
+ #include <regex.h>
+ #include <stdint.h>
++#ifndef estream_t
++#define estream_t FILE*
++#endif
+ #include <gcrypt.h>
+ 
+ #ifdef HAVE_ICONV
+diff -Naupr a/src/plugins/irc/irc-sasl.c b/src/plugins/irc/irc-sasl.c
+--- a/src/plugins/irc/irc-sasl.c	2025-04-09 13:33:19.000000000 +0200
++++ b/src/plugins/irc/irc-sasl.c	2025-04-09 14:57:44.676616881 +0200
+@@ -24,6 +24,9 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <arpa/inet.h>
++#ifndef estream_t
++#define estream_t FILE*
++#endif
+ #include <gcrypt.h>
+ 
+ #include <gnutls/gnutls.h>
+diff -Naupr a/src/plugins/plugin-api.c b/src/plugins/plugin-api.c
+--- a/src/plugins/plugin-api.c	2025-04-09 13:33:19.000000000 +0200
++++ b/src/plugins/plugin-api.c	2025-04-09 14:57:27.430919085 +0200
+@@ -25,6 +25,10 @@
+ 
+ #include <stdlib.h>
+ #include <string.h>
++#include <stdio.h>
++#ifndef estream_t
++#define estream_t FILE*
++#endif
+ #include <gcrypt.h>
+ 
+ #include "../core/weechat.h"
+diff -Naupr a/src/plugins/relay/api/remote/relay-remote-event.c b/src/plugins/relay/api/remote/relay-remote-event.c
+--- a/src/plugins/relay/api/remote/relay-remote-event.c	2025-04-09 13:33:19.000000000 +0200
++++ b/src/plugins/relay/api/remote/relay-remote-event.c	2025-04-09 14:59:08.243152720 +0200
+@@ -26,6 +26,9 @@
+ #include <string.h>
+ #include <time.h>
+ #include <sys/time.h>
++#ifndef estream_t
++#define estream_t FILE*
++#endif
+ #include <gcrypt.h>
+ #include <gnutls/gnutls.h>
+ #include <cjson/cJSON.h>
+diff -Naupr a/src/plugins/relay/api/remote/relay-remote-network.c b/src/plugins/relay/api/remote/relay-remote-network.c
+--- a/src/plugins/relay/api/remote/relay-remote-network.c	2025-04-09 13:33:19.000000000 +0200
++++ b/src/plugins/relay/api/remote/relay-remote-network.c	2025-04-09 14:59:21.235925105 +0200
+@@ -25,6 +25,9 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <time.h>
++#ifndef estream_t
++#define estream_t FILE*
++#endif
+ #include <gcrypt.h>
+ 
+ #include <gnutls/gnutls.h>
+diff -Naupr a/src/plugins/relay/relay-auth.c b/src/plugins/relay/relay-auth.c
+--- a/src/plugins/relay/relay-auth.c	2025-04-09 13:33:19.000000000 +0200
++++ b/src/plugins/relay/relay-auth.c	2025-04-09 14:58:34.131750344 +0200
+@@ -23,6 +23,9 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <time.h>
++#ifndef estream_t
++#define estream_t FILE*
++#endif
+ #include <gcrypt.h>
+ 
+ #include "../weechat-plugin.h"
+diff -Naupr a/src/plugins/relay/relay-websocket.c b/src/plugins/relay/relay-websocket.c
+--- a/src/plugins/relay/relay-websocket.c	2025-04-09 13:33:19.000000000 +0200
++++ b/src/plugins/relay/relay-websocket.c	2025-04-09 14:58:47.780511214 +0200
+@@ -23,6 +23,9 @@
+ #include <unistd.h>
+ #include <stdio.h>
+ #include <string.h>
++#ifndef estream_t
++#define estream_t FILE*
++#endif
+ #include <gcrypt.h>
+ #include <zlib.h>
+ 
+diff -Naupr a/src/plugins/xfer/xfer-dcc.c b/src/plugins/xfer/xfer-dcc.c
+--- a/src/plugins/xfer/xfer-dcc.c	2025-04-09 13:33:19.000000000 +0200
++++ b/src/plugins/xfer/xfer-dcc.c	2025-04-09 14:57:10.138222124 +0200
+@@ -33,6 +33,9 @@
+ #include <time.h>
+ #include <netdb.h>
+ #include <errno.h>
++#ifndef estream_t
++#define estream_t FILE*
++#endif
+ #include <gcrypt.h>
+ 
+ #include "../weechat-plugin.h"
+diff -Naupr a/src/plugins/xfer/xfer.c b/src/plugins/xfer/xfer.c
+--- a/src/plugins/xfer/xfer.c	2025-04-09 13:33:19.000000000 +0200
++++ b/src/plugins/xfer/xfer.c	2025-04-09 14:56:44.598669715 +0200
+@@ -31,6 +31,9 @@
+ #include <sys/socket.h>
+ #include <netinet/in.h>
+ #include <netdb.h>
++#ifndef estream_t
++#define estream_t FILE*
++#endif
+ #include <gcrypt.h>
+ #include <arpa/inet.h>
+ 
+diff -Naupr a/src/plugins/xfer/xfer.h b/src/plugins/xfer/xfer.h
+--- a/src/plugins/xfer/xfer.h	2025-04-09 13:33:19.000000000 +0200
++++ b/src/plugins/xfer/xfer.h	2025-04-09 14:56:53.813508218 +0200
+@@ -22,6 +22,10 @@
+ 
+ #include <unistd.h>
+ #include <time.h>
++#include <stdio.h>
++#ifndef estream_t
++#define estream_t FILE*
++#endif
+ #include <gcrypt.h>
+ #include <sys/socket.h>
+ 
