@@ -325,19 +325,19 @@ SLACKBUILD SHORT DESCRIPTION:  autossh (Automatically restart SSH sessions and t
 SLACKBUILD NAME: aws-cli
 SLACKBUILD LOCATION: ./aws-cli
 SLACKBUILD FILES: README aws-cli.SlackBuild aws-cli.info slack-desc slack-required
-SLACKBUILD VERSION: 1.38.30
+SLACKBUILD VERSION: 1.38.31
 SLACKBUILD REQUIRES: cryptography python-botocore colorama python-dateutil python-jmespath rsa python-s3transfer ruyaml ruamel-yaml awscrt
-SLACKBUILD DOWNLOAD: https://github.com/aws/aws-cli/archive/1.38.30/aws-cli-1.38.30.tar.gz
-SLACKBUILD MD5SUM: 2491e3e9655656c527e2337434bd3c54
+SLACKBUILD DOWNLOAD: https://github.com/aws/aws-cli/archive/1.38.31/aws-cli-1.38.31.tar.gz
+SLACKBUILD MD5SUM: 9afc860e4bad51f39d38f11377939f7a
 SLACKBUILD SHORT DESCRIPTION:  aws-cli (Universal Command Line Interface for AWS)
 
 SLACKBUILD NAME: awscrt
 SLACKBUILD LOCATION: ./awscrt
 SLACKBUILD FILES: README awscrt.SlackBuild awscrt.info slack-desc
-SLACKBUILD VERSION: 0.25.7
+SLACKBUILD VERSION: 0.26.1
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/awscrt/awscrt-0.25.7.tar.gz
-SLACKBUILD MD5SUM: 59b2a5a2892beaa83d44b37942955f6c
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/awscrt/awscrt-0.26.1.tar.gz
+SLACKBUILD MD5SUM: e4865c9f344303794b68262d58f202b1
 SLACKBUILD SHORT DESCRIPTION:  awscrt (Python bindings for the AWS Common Runtime)
 
 SLACKBUILD NAME: ayatana-ido
@@ -360,9 +360,9 @@ SLACKBUILD SHORT DESCRIPTION:  babel-loader (Babel loader for webpack)
 
 SLACKBUILD NAME: balsa
 SLACKBUILD LOCATION: ./balsa
-SLACKBUILD FILES: README balsa.SlackBuild balsa.info doinst.sh slack-desc slack-required
+SLACKBUILD FILES: README balsa.SlackBuild balsa.info doinst.sh patches/balsa-gettext.patch patches/balsa-i18n.patch patches/balsa-man.patch patches/balsa-webkit2gtk-4.1.patch slack-desc slack-required
 SLACKBUILD VERSION: 2.6.4
-SLACKBUILD REQUIRES: libesmtp webkit2gtk4.0
+SLACKBUILD REQUIRES: libesmtp webkit2gtk4.1 python-html2text
 SLACKBUILD DOWNLOAD: https://pawsa.fedorapeople.org/balsa/balsa-2.6.4.tar.xz
 SLACKBUILD MD5SUM: bebd22cb6bac87ee05255c48ee1d28dd
 SLACKBUILD SHORT DESCRIPTION:  balsa (Email Client)
@@ -4222,10 +4222,10 @@ SLACKBUILD SHORT DESCRIPTION:  notmuch (thread-based email index, search and tag
 SLACKBUILD NAME: npm-check-updates
 SLACKBUILD LOCATION: ./npm-check-updates
 SLACKBUILD FILES: README npm-check-updates.SlackBuild npm-check-updates.info slack-desc slack-required
-SLACKBUILD VERSION: 17.1.16
+SLACKBUILD VERSION: 17.1.18
 SLACKBUILD REQUIRES: npm-check node-semver
-SLACKBUILD DOWNLOAD: http://registry.npmjs.org/npm-check-updates/-/npm-check-updates-17.1.16.tgz
-SLACKBUILD MD5SUM: 9a9071ea33183f0759190790bde10bd3
+SLACKBUILD DOWNLOAD: http://registry.npmjs.org/npm-check-updates/-/npm-check-updates-17.1.18.tgz
+SLACKBUILD MD5SUM: c601fd1ef187dc38ece74bb210da8094
 SLACKBUILD SHORT DESCRIPTION:  npm-check-updates (Find newer versions of npm package dependencies)
 
 SLACKBUILD NAME: npm-check
@@ -5455,10 +5455,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-bcrypt (password hashing)
 SLACKBUILD NAME: python-botocore
 SLACKBUILD LOCATION: ./python-botocore
 SLACKBUILD FILES: README python-botocore.SlackBuild python-botocore.info slack-desc slack-required
-SLACKBUILD VERSION: 1.37.30
+SLACKBUILD VERSION: 1.37.31
 SLACKBUILD REQUIRES: python-dateutil python-jmespath
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/botocore/botocore-1.37.30.tar.gz
-SLACKBUILD MD5SUM: 07d7667e92c1cb3285ddcd197089f540
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/botocore/botocore-1.37.31.tar.gz
+SLACKBUILD MD5SUM: 3d9bb3b72016139bd1ce90423b0f3afc
 SLACKBUILD SHORT DESCRIPTION:  python-botocore (The low-level, core functionality of boto 3)
 
 SLACKBUILD NAME: python-cachecontrol
@@ -5649,6 +5649,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/h/hstspreload/hstspreload-2025.1.1.tar.gz
 SLACKBUILD MD5SUM: 7e5103f10d23f11b41450eba8d45394e
 SLACKBUILD SHORT DESCRIPTION:  python-hstspreload (HSTS Preload list)
+
+SLACKBUILD NAME: python-html2text
+SLACKBUILD LOCATION: ./python-html2text
+SLACKBUILD FILES: README python-html2text.SlackBuild python-html2text.info slack-desc
+SLACKBUILD VERSION: 2024.2.26
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/h/html2text/html2text-2024.2.26.tar.gz
+SLACKBUILD MD5SUM: b67974402e2e3ea0e7d611ce3096388c
+SLACKBUILD SHORT DESCRIPTION:  python-html2text (Turn HTML into equivalent Markdown-structured text)
 
 SLACKBUILD NAME: python-httpcore
 SLACKBUILD LOCATION: ./python-httpcore
@@ -6985,10 +6994,10 @@ SLACKBUILD SHORT DESCRIPTION:  siege (http server benchmark)
 SLACKBUILD NAME: signal-desktop-bin
 SLACKBUILD LOCATION: ./signal-desktop-bin
 SLACKBUILD FILES: README doinst.sh signal-desktop-bin.SlackBuild signal-desktop-bin.info slack-desc
-SLACKBUILD VERSION: 7.49.0
+SLACKBUILD VERSION: 7.50.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://updates.signal.org/desktop/apt/pool/s/signal-desktop/signal-desktop_7.49.0_amd64.deb
-SLACKBUILD MD5SUM: 80446dabcb10c170e90fe181f33f6b76
+SLACKBUILD DOWNLOAD: https://updates.signal.org/desktop/apt/pool/s/signal-desktop/signal-desktop_7.50.0_amd64.deb
+SLACKBUILD MD5SUM: f11bd7236c40aad69f66d172f6f3e7a9
 SLACKBUILD SHORT DESCRIPTION:  signal-desktop-bin (Signal for Desktop)
 
 SLACKBUILD NAME: signon-kwallet-extension
@@ -8353,10 +8362,10 @@ SLACKBUILD SHORT DESCRIPTION:  vnStat (a console-based network traffic monitor)
 SLACKBUILD NAME: vscodium-bin
 SLACKBUILD LOCATION: ./vscodium-bin
 SLACKBUILD FILES: README doinst.sh files/codium.desktop slack-desc vscodium-bin.SlackBuild vscodium-bin.info
-SLACKBUILD VERSION: 1.99.02289
+SLACKBUILD VERSION: 1.99.12392
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/VSCodium/vscodium/releases/download/1.99.02289/VSCodium-linux-x64-1.99.02289.tar.gz
-SLACKBUILD MD5SUM: c687b7ba37750fb641327d132334595d
+SLACKBUILD DOWNLOAD: https://github.com/VSCodium/vscodium/releases/download/1.99.12392/VSCodium-linux-x64-1.99.12392.tar.gz
+SLACKBUILD MD5SUM: b811edc1c7dd96269c56a5efb6aa6b20
 SLACKBUILD SHORT DESCRIPTION:  vscodium-bin (Free/Libre Open Source Software Binaries of VSCode)
 
 SLACKBUILD NAME: vuescan-bin
@@ -8415,20 +8424,20 @@ SLACKBUILD SHORT DESCRIPTION:  webcoach (find performance problems on your web p
 
 SLACKBUILD NAME: webkit2gtk4.0
 SLACKBUILD LOCATION: ./webkit2gtk4.0
-SLACKBUILD FILES: README patches/3d5373575695b293b8559155431d0079a6153aff.patch patches/GStreamer.patch patches/icu76.patch patches/series patches/unhide-deprecated-api.patch slack-desc slack-required webkit2gtk4.0.SlackBuild webkit2gtk4.0.info
-SLACKBUILD VERSION: 2.46.4
+SLACKBUILD FILES: README patches/libgpgme-error.patch slack-desc slack-required webkit2gtk4.0.SlackBuild webkit2gtk4.0.info
+SLACKBUILD VERSION: 2.48.1
 SLACKBUILD REQUIRES: bubblewrap xdg-dbus-proxy libmanette libjxl libavif unifdef
-SLACKBUILD DOWNLOAD: https://www.webkitgtk.org/releases/webkitgtk-2.46.4.tar.xz
-SLACKBUILD MD5SUM: 97f2468a917bfd31c36753430b5a2494
+SLACKBUILD DOWNLOAD: https://www.webkitgtk.org/releases/webkitgtk-2.48.1.tar.xz
+SLACKBUILD MD5SUM: dce4acd27a743eb4be03ab4a7cd8353f
 SLACKBUILD SHORT DESCRIPTION:  webkit2gtk4.0 (Web content rendering)
 
 SLACKBUILD NAME: webkit2gtk4.1
 SLACKBUILD LOCATION: ./webkit2gtk4.1
-SLACKBUILD FILES: README patches/3d5373575695b293b8559155431d0079a6153aff.patch patches/GStreamer.patch patches/icu76.patch patches/series patches/unhide-deprecated-api.patch slack-desc slack-required webkit2gtk4.1.SlackBuild webkit2gtk4.1.info
-SLACKBUILD VERSION: 2.46.4
+SLACKBUILD FILES: README patches/libgpgme-error.patch slack-desc slack-required webkit2gtk4.1.SlackBuild webkit2gtk4.1.info
+SLACKBUILD VERSION: 2.48.1
 SLACKBUILD REQUIRES: bubblewrap xdg-dbus-proxy libmanette libjxl libavif unifdef
-SLACKBUILD DOWNLOAD: https://www.webkitgtk.org/releases/webkitgtk-2.46.4.tar.xz
-SLACKBUILD MD5SUM: 97f2468a917bfd31c36753430b5a2494
+SLACKBUILD DOWNLOAD: https://www.webkitgtk.org/releases/webkitgtk-2.48.1.tar.xz
+SLACKBUILD MD5SUM: dce4acd27a743eb4be03ab4a7cd8353f
 SLACKBUILD SHORT DESCRIPTION:  webkit2gtk4.1 (Web content rendering)
 
 SLACKBUILD NAME: websocketpp
@@ -8551,10 +8560,10 @@ SLACKBUILD SHORT DESCRIPTION:  wput (utility for putting files using the FTP pro
 SLACKBUILD NAME: wxpython
 SLACKBUILD LOCATION: ./wxpython
 SLACKBUILD FILES: README slack-desc slack-required wxpython.SlackBuild wxpython.info
-SLACKBUILD VERSION: 4.2.2
+SLACKBUILD VERSION: 4.2.3
 SLACKBUILD REQUIRES: wxwidgets python-attrdict3 numpy waf
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/w/wxPython/wxPython-4.2.2.tar.gz
-SLACKBUILD MD5SUM: 962fdea7ec4f93b59d17783d03eecf3a
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/w/wxPython/wxPython-4.2.3.tar.gz
+SLACKBUILD MD5SUM: d9b4c75202bb5d7d15a104c48b234807
 SLACKBUILD SHORT DESCRIPTION: 
 
 SLACKBUILD NAME: wxwidgets
