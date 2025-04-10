@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=balsa
 VERSION=2.6.4
-BUILD=${BUILD:-12}
+BUILD=${BUILD:-13}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -91,34 +91,46 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
-LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --infodir=/usr/info \
-  --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --enable-static=no \
-  --enable-shared=yes \
-  --without-gnome \
-  --with-gpgme=gpgme-config \
-  --with-rubrica \
-  --with-sqlite \
-  --with-gcr \
-  --with-libsecret \
-  --with-ldap \
-  --with-html-widget=webkit2 \
-  --with-spell-checker=gspell \
-  --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
+# Add missing file
+echo 'cs de el es fr sl' > doc/LINGUAS
 
-make
-make DESTDIR=$PKG install
+# Don't try to run gtk-update-icon-cache during packaging
+sed -i 's/gtk_update_icon_cache_program.found()/false/' images/meson.build
 
+export CFLAGS="$SLKCFLAGS"
+export CXXFLAGS="$SLKCFLAGS"
+mkdir meson-build
+cd meson-build
+meson setup \
+  --prefix          /usr \
+  --libdir          lib${LIBDIRSUFFIX} \
+  --libexecdir      /usr/libexec \
+  --sysconfdir      /etc \
+  --localstatedir   /var \
+  --mandir          /usr/man \
+  --infodir         /usr/info \
+  --bindir          /usr/bin \
+  --sbindir         /usr/sbin \
+  --includedir      /usr/include \
+  --datadir         /usr/share \
+  --buildtype       release \
+  --default-library shared \
+  --buildtype       plain \
+  --auto-features   enabled \
+  --wrap-mode       nodownload \
+  -D                b_lto=true \
+  -D                b_pie=true \
+  -D                ldap=true \
+  -D                rubrica=true \
+  -D                sqlite=true \
+  -D                gcr=true \
+  -D                spell-checker=gspell \
+  -D                gnome-desktop=false \
+  ..
+
+ninja
+DESTDIR=$PKG ninja install
+cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -137,9 +149,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG

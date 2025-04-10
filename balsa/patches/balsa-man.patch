@@ -1,0 +1,12 @@
+diff -Naupr a/meson.build b/meson.build
+--- a/meson.build	2022-09-20 20:43:44.000000000 +0200
++++ b/meson.build	2025-04-10 17:03:01.870423202 +0200
+@@ -539,7 +539,7 @@ configure_file(input         : file + '.
+                output        : file,
+                configuration : conf,
+                install       : true,
+-               install_dir   : join_paths(get_option('datadir'),
++               install_dir   : join_paths(get_option('prefix'),
+                                           'man/man1'))
+ 
+ file = 'balsa.spec'
