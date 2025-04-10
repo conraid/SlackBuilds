@@ -31,8 +31,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=webkitgtk
 PKGNAM=webkit2gtk4.1
-VERSION=2.46.4
-BUILD=${BUILD:-7}
+VERSION=2.48.1
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -94,9 +94,6 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
-# Ensure backward compatibility with the latest version of icu. Thanks to LFS
-echo 'add_compile_definitions("U_DEFINE_FALSE_AND_TRUE=1")' >> Source/WTF/wtf/CMakeLists.txt
-
 mkdir -p build
 cd build
 cmake -Wno-dev \
@@ -118,6 +115,8 @@ cmake -Wno-dev \
   -DUSE_LIBBACKTRACE=OFF \
   -DUSE_SYSTEM_MALLOC=ON \
   -DUSE_SYSTEM_SYSPROF_CAPTURE=NO \
+  -DUSE_FLITE=OFF \
+  -DENABLE_SPEECH_SYNTHESIS=OFF \
   ..
 
 if [ -z ${BUILDNOLIMIT:=""} ]; then
