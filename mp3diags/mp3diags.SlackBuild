@@ -2,7 +2,7 @@
 #
 # Slackware build script for mp3diags (http://mp3diags.sourceforge.net)
 #
-# Copyright 2009-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2009-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=MP3Diags-unstable
 PKGNAM=mp3diags
 VERSION=1.5.03
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -94,9 +94,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 install -Dm644 desktop/$PRGNAM.desktop $PKG/usr/share/applications/$PRGNAM.desktop
