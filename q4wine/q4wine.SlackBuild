@@ -28,14 +28,14 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=q4wine
-VERSION=1.3.13
-BUILD=${BUILD:-4}
+VERSION=1.4.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="ChangeLog INSTALL LICENSE README SEMDEBUG.TXT"
+DOCFILES="*.md COPYING"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -68,37 +68,30 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
+tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
 cd $PKGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# Fix man path
-sed 's|share/man|man|' -i src/CMakeLists.txt
-
-mkdir build
-cd build
+# I do not use the build dir to avoid an error
+# with the installation of the localization files.
+# The source dirs are always renewed when we run the script anyway
+# so using a separate dir is not that essential.
 cmake \
-  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_BUILD_TYPE=None \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
+  -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DUSE_GZIP=On \
-  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
-  ..
+  -DMANPAGE_ENTRY_PATH=/usr/man \
+  -DUSE_GZIP=ON \
+  .
 
 make
 make DESTDIR=$PKG install/strip
-cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
-
-if [ -d $PKG/usr/man ]; then
-  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
-  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
-fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
