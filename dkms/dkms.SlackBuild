@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=dkms
 VERSION=3.1.8
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -94,7 +94,7 @@ if [ -e $CWD/patches/ ]; then
 fi
 
 # Fix man path
-sed '/MAN/s|share/man|man|' -i Makefile
+sed -i '/MAN/s|share/man|man|' Makefile
 
 make DESTDIR=$PKG install
 rm -Rf $PKG/etc/kernel $PKG/usr/share
