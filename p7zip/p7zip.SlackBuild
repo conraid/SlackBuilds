@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=p7zip
 VERSION=17.05
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -89,7 +89,7 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
-sed -e 's|cp -r DOC|cp -r DOC/*|g' -e 's|${DEST_SHARE_DOC}/DOC|${DEST_SHARE_DOC}|g' -i install.sh
+sed -i -e 's|cp -r DOC|cp -r DOC/*|g' -e 's|${DEST_SHARE_DOC}/DOC|${DEST_SHARE_DOC}|g' install.sh
 make all3  OPTFLAGS="$SLKCFLAGS" \
   DEST_HOME=/usr \
   DEST_SHARE_DOC=/usr/doc/$PKGNAM-$VERSION \
@@ -128,9 +128,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
