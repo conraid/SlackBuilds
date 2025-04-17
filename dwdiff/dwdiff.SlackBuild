@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=dwdiff
 VERSION=2.1.4
-BUILD=${BUILD:-10}
+BUILD=${BUILD:-11}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -91,9 +91,9 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
-sed -e 's#/share/doc/#/doc/#'  \
-    -e 's#/share/man#/man#'  \
-    -i Makefile.in
+sed -i -e 's#/share/doc/#/doc/#'  \
+       -e 's#/share/man#/man#'  \
+       Makefile.in
 
 CFLAGS="$SLKCFLAGS" \
 ./configure \
