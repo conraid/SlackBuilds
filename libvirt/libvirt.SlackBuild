@@ -34,7 +34,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libvirt
 VERSION=11.2.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -145,22 +145,21 @@ install -Dm755 $CWD/files/rc.libvirt $PKG/etc/rc.d/rc.libvirt.new
 
 # We use "users" as our virtualization group, fix auth permissions, and
 # consider the fact that by default we got no certs
-sed -e 's|^\#unix_sock_group\ =\ "libvirt"|unix_sock_group = "users"|' \
-    -e 's|^\#unix_sock_rw_perms\ =\ "0770"|unix_sock_rw_perms = "0770"|' \
-    -e 's|^\#auth_unix_ro.*|auth_unix_ro = "none"|' \
-    -e 's|^\#auth_unix_rw.*|auth_unix_rw = "none"|' \
-    -e 's|^\#listen_tls|listen_tls|' \
-    -i $PKG/etc/libvirt/libvirtd.conf
+sed -i -e 's|^\#unix_sock_group\ =\ "libvirt"|unix_sock_group = "users"|' \
+       -e 's|^\#unix_sock_rw_perms\ =\ "0770"|unix_sock_rw_perms = "0770"|' \
+       -e 's|^\#auth_unix_ro.*|auth_unix_ro = "none"|' \
+       -e 's|^\#auth_unix_rw.*|auth_unix_rw = "none"|' \
+       -e 's|^\#listen_tls|listen_tls|' \
+       $PKG/etc/libvirt/libvirtd.conf
 
 # still, we use users as our virtualization group
-sed -e 's|^\#group\ =\ "root"|group = "users"|' -i $PKG/etc/libvirt/qemu.conf
+sed -i 's|^\#group\ =\ "root"|group = "users"|' $PKG/etc/libvirt/qemu.conf
 
 # disable seccomp support or else VMs won't start with new libvirt/qemu combo
 # 20220212 bkw: this file doesn't exist if qemu wasn't installed. and
 # since qemu isn't in REQUIRES, it's optional, so the build shouldn't fail.
 if [ -e $PKG/etc/libvirt/qemu.conf ]; then
-  sed -i  "s|^\#seccomp_sandbox = 1|seccomp_sandbox = 0|" \
-    $PKG/etc/libvirt/qemu.conf
+  sed -i "s|^\#seccomp_sandbox = 1|seccomp_sandbox = 0|" $PKG/etc/libvirt/qemu.conf
 fi
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
