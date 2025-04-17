@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=rawtherapee
 VERSION=5.11
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -90,9 +90,9 @@ if [ -e $CWD/patches/ ]; then
 fi
 
 # Fix man and doc path
-sed -e "s|/share/doc/rawtherapee|/doc/$PKGNAM-$VERSION|g" \
-    -e "s|/share/man/|/man/|g" \
-    -i CMakeLists.txt
+sed -i -e "s|/share/doc/rawtherapee|/doc/$PKGNAM-$VERSION|g" \
+       -e "s|/share/man/|/man/|g" \
+       CMakeLists.txt
 
 mkdir -p build
 cd build
@@ -127,9 +127,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
