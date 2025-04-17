@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=jsoncpp
 VERSION=1.9.6
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -109,7 +109,7 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 # Fix pkg-config file
-sed '/^includedir/s|/usr/||' -i $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/$PKGNAM.pc
+sed -i '/^includedir/s|/usr/||' $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/$PKGNAM.pc
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
