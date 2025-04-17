@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=signon-ui
 COMMIT=4368bb77d9d1abc2978af514225ba4a42c29a646
 VERSION=0.17_$(echo $COMMIT | head -c8)
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -89,7 +89,7 @@ if [ -e $CWD/patches/ ]; then
 fi
 
 # Do not install tests
-sed -e 's|src \\|src|' -e '/tests/d' -i signon-ui.pro
+sed -i -e 's|src \\|src|' -e '/tests/d' signon-ui.pro
 
 qmake-qt5 PREFIX=/usr \
           QMAKE_CFLAGS="" \
@@ -119,9 +119,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
