@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=httraqt
 VERSION=1.4.11
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -81,7 +81,7 @@ find -L . \
   -exec chmod 644 {} \;
 
 # it seems to not respect the directive in cmake
-sed '/^SET(USE_QT_VERSION/s/6/5/' -i CMakeLists.txt
+sed -i '/^SET(USE_QT_VERSION/s/6/5/' CMakeLists.txt
 
 mkdir -p build
 cd build
