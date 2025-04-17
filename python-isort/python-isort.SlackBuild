@@ -33,7 +33,7 @@ PRGNAM=isort
 PKGNAM=python-$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=6.0.1
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -84,10 +84,8 @@ find . \
 
 # Devendor toml
 rm -r isort/_vendored
-sed 's/from ._vendored //' -i isort/settings.py
-#sed 's/requires = \["hatchling", "hatch-vcs"\]/requires = []/' -i pyproject.toml
-
-
+sed -i 's/from ._vendored //' isort/settings.py
+#sed -i 's/requires = \["hatchling", "hatch-vcs"\]/requires = []/' pyproject.toml
 
 python3 -m build --wheel --no-isolation
 python3 -m installer --destdir "$PKG" dist/*.whl
@@ -106,9 +104,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
