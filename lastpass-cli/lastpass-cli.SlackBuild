@@ -33,7 +33,7 @@ PRGNAM=lastpass-cli
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=1.6.1
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -95,7 +95,8 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
-sed 's|share/man|man|' -i Makefile
+# fix man path
+sed -i 's|share/man|man|' Makefile
 
 mkdir -p build
 cd build
