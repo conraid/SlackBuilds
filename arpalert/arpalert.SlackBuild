@@ -35,7 +35,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=arpalert
 VERSION=2.0.12
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -94,7 +94,7 @@ if [ -e $CWD/patches ]; then
 fi
 
 # Fix glibc 2.32
-sed -e 's|sys/sysctl.h|linux/sysctl.h|g' -i capture.c -i config*
+sed -i 's|sys/sysctl.h|linux/sysctl.h|g' capture.c config*
 
 autoreconf -fiv
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
@@ -138,9 +138,6 @@ mv $PKG/etc/arpalert/arpalert.conf $PKG/etc/arpalert/arpalert.conf.new
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
