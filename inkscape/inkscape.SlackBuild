@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=inkscape
 VERSION=1.4
-BUILD=${BUILD:-8}
+BUILD=${BUILD:-9}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -92,7 +92,7 @@ if [ -e $CWD/patches ]; then
 fi
 
 # strip invalid tag
-sed -i /url/d org.inkscape.Inkscape.appdata.xml.in
+sed -i '/url/d' org.inkscape.Inkscape.appdata.xml.in
 
 # https://bugs.launchpad.net/inkscape/+bug/314381
 # a couple of files have executable bits set,
@@ -104,7 +104,7 @@ find . -name '*.h' | xargs chmod -x
 dos2unix -k -q share/extensions/*.py
 
 # Fix man page location:
-sed -i CMakeScripts/Pod2man.cmake -e "s/SHARE_INSTALL/CMAKE_INSTALL_PREFIX/g"
+sed -i "s/SHARE_INSTALL/CMAKE_INSTALL_PREFIX/g" CMakeScripts/Pod2man.cmake
 
 mkdir -p build
 cd build
