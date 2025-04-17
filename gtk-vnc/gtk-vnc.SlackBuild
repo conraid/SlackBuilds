@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=gtk-vnc
 VERSION=1.5.0
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -81,7 +81,7 @@ find -L . \
   -exec chmod 644 {} \;
 
 # Fix docdir
-sed "s|docs_dir = .*$|docs_dir = '/usr/doc/$PKGNAM-$VERSION/'|" -i docs/meson.build
+sed -i "s|docs_dir = .*$|docs_dir = '/usr/doc/$PKGNAM-$VERSION/'|" docs/meson.build
 
 export CFLAGS="$SLKCFLAGS"
 export CXXFLAGS="$SLKCFLAGS"
