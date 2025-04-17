@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=gstreamermm
 VERSION=1.10.0
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -96,7 +96,7 @@ fi
 # Fix to build with autotools-1.17. would not be good,
 # it should be done with autogen, but then it gives error.
 # So that's what I did for now.
-sed -e 's/1\.15/1.17/g' -i aclocal.m4 -i configure
+sed -i 's/1\.15/1.17/g' aclocal.m4 configure
 
 #NOCONFIGURE=1 ./autogen.sh
 LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
@@ -140,9 +140,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
