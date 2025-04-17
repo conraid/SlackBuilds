@@ -2,7 +2,7 @@
 #
 # Slackware build script for snowball
 #
-# Copyright 2023-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2023-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ PRGNAM=snowball
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=a10c9c43c4ec67772d25e360e90171904e318b40
 VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -98,8 +98,10 @@ fi
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 
-sed "s/^CFLAGS=/CFLAGS= $SLKCFLAGS /" -i GNUmakefile
-sed "s/^CPPFLAGS=/CPPFLAGS= $SLKCFLAGS /" -i GNUmakefile
+# Use our own CFLAGS
+sed -i -e "s/^CFLAGS=/CFLAGS= $SLKCFLAGS /" \
+       -e "s/^CPPFLAGS=/CPPFLAGS= $SLKCFLAGS /" \
+       GNUmakefile
 
 make
 
@@ -126,9 +128,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
