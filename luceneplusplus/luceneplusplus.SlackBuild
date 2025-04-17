@@ -33,7 +33,7 @@ PRGNAM=LucenePlusPlus
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=rel_3.0.9
 VERSION=$(echo $SRCVERSION | sed 's/rel_//')
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-7}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -96,8 +96,8 @@ if [ -e $CWD/patches ]; then
 fi
 
 
-sed -e '/cmake_minimum_required/s/VERSION [0-9.]*)/VERSION 3.5...4.0)/' \
-    -i CMakeLists.txt -i cmake/cotire.cmake -i src/core/CMakeLists.txt -i src/contrib/CMakeLists.txt
+sed -i -e '/cmake_minimum_required/s/VERSION [0-9.]*)/VERSION 3.5...4.0)/' \
+    CMakeLists.txt cmake/cotire.cmake src/core/CMakeLists.txt src/contrib/CMakeLists.txt
 
 mkdir -p build
 cd build
