@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=checksec
 PKGNAM=checksec
 VERSION=3.0.2
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -95,7 +95,7 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
-sed "/version/s/dev/$VERSION/" -i main.go
+sed -i "/version/s/dev/$VERSION/" main.go
 
 go build
 install -Dm755 $PRGNAM $PKG/usr/bin/$PRGNAM
