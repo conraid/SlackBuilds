@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=collectd
 VERSION=5.12.0
-BUILD=${BUILD:-41}
+BUILD=${BUILD:-42}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -79,7 +79,7 @@ find . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \+
 
-sed 's|@prefix@/var|/var|g' -i src/collectd.conf.*
+sed -i 's|@prefix@/var|/var|g' src/collectd.conf.*
 
 # Apply patches
 if [ -e $CWD/patches/ ]; then
