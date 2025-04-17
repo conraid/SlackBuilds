@@ -33,7 +33,7 @@ PRGNAM=libyuv
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=96f98f6915885f84b895dddcf8a553dc50a35aad
 VERSION=$(echo $SRCVERSION | tr - _ | head -c7)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -96,7 +96,7 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
-sed 's|yuvconvert ${JPEG_LIBRARY}|${ly_lib_shared} ${JPEG_LIBRARY}|' -i CMakeLists.txt
+sed -i 's|yuvconvert ${JPEG_LIBRARY}|${ly_lib_shared} ${JPEG_LIBRARY}|' CMakeLists.txt
 
 mkdir -p build
 cd build
