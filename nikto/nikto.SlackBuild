@@ -33,7 +33,7 @@ PKGNAM=nikto
 COMMIT=2.5.0
 SRCVERSION=$COMMIT
 VERSION=$(echo $COMMIT | head -c7)_git
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -84,7 +84,7 @@ find -L . \
 
 # Install
 mkdir -p $PKG/usr/share/nikto $PKG/etc
-sed -e '/Default plugin macros/ i\
+sed '/Default plugin macros/ i\
 EXECDIR=/usr/share/nikto				# Location of Nikto\
 PLUGINDIR=/usr/share/nikto/plugins			# Location of plugin dir\
 DBDIR=/usr/share/nikto/databases			# Location of database dir\
@@ -92,6 +92,7 @@ TEMPLATEDIR=/usr/share/nikto/templates		# Location of template dir\
 DOCDIR=/usr/share/nikto/docs			# Location of docs dir\
 \
 ' program/nikto.conf.default > $PKG/etc/nikto.conf.new
+
 cp -r program/* $PKG/usr/share/nikto/
 install -Dm755 $CWD/files/nikto.sh $PKG/usr/bin/nikto
 install -Dm644 documentation/nikto.1 $PKG/usr/man/man1/nikto.1
@@ -110,9 +111,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
