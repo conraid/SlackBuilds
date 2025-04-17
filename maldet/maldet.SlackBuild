@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=linux-malware-detect
 PKGNAM=maldet
 VERSION=1.6.6.1
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -86,12 +86,12 @@ DESTDIR=$PKG/usr/share/$PKGNAM
 mkdir -p $DESTDIR $PKG/usr/bin/
 cp -r files/* $DESTDIR
 
-sed -e "s|^inspath='/usr/local/maldetect'|inspath='/usr/share/maldet'|" \
-    -e 's|^intcnf="\$inspath/internals/internals.conf"|intcnf="/etc/maldet/internals.conf"|' \
-    -i $DESTDIR/$PKGNAM \
-    -i $PKG/usr/share/maldet/internals/internals.conf \
-    -i cron.d.pub \
-    -i cron.daily
+sed -i -e "s|^inspath='/usr/local/maldetect'|inspath='/usr/share/maldet'|" \
+       -e 's|^intcnf="\$inspath/internals/internals.conf"|intcnf="/etc/maldet/internals.conf"|' \
+       $DESTDIR/$PKGNAM \
+       $PKG/usr/share/maldet/internals/internals.conf \
+       cron.d.pub \
+       cron.daily
 
 mv $DESTDIR/$PKGNAM $PKG/usr/bin/$PKGNAM
 
@@ -99,23 +99,23 @@ mkdir -p $PKG/var/lib/$PKGNAM/{quarantine,sess,sigs,clean,tmp,pub,internals}
 mkdir -p $PKG/var/log/$PKGNAM
 mkdir -p $PKG/etc/{cron.d,cron.daily,$PKGNAM}
 
-sed -e 's|root /usr/local/maldetect/|/usr/bin/|' cron.d.pub > $PKG/etc/cron.d/maldet_pub
+sed 's|root /usr/local/maldetect/|/usr/bin/|' cron.d.pub > $PKG/etc/cron.d/maldet_pub
 chmod 644 $PKG//etc/cron.d/maldet_pub
-sed -e 's|/usr/local/maldetect|/usr/share/maldet|' cron.daily > $PKG/etc/cron.daily/maldet
+sed 's|/usr/local/maldetect|/usr/share/maldet|' cron.daily > $PKG/etc/cron.daily/maldet
 chmod 755 $PKG//etc/cron.daily/maldet
 
 mv $DESTDIR/conf.$PKGNAM $PKG/etc/$PKGNAM/maldet.conf.new
 mv $DESTDIR/internals/internals.conf $PKG/etc/$PKGNAM/internals.conf
 
-sed -e 's|^logdir="\$inspath/logs"|logdir="/var/log/maldet"|' \
-    -e 's|^inspath=/usr/local/maldetect|inspath="/usr/share/maldet"|' \
-    -e 's|^intcnf="$inspath/internals/internals.conf"|intcnf="/etc/maldet/internals.conf"|' \
-    -e 's|^confpath="\$inspath"|confpath="/etc/maldet"|' \
-    -e 's|^cnffile="conf.maldet"|cnffile="maldet.conf"|' \
-    -e 's|^varlibpath="\$inspath"|varlibpath="/var/lib/maldet"|' \
-    -e 's|^tmpdir="\$inspath/tmp"|tmpdir="$varlibpath/tmp"|' \
-    -e 's|inotify_log="$inspath/logs/|inotify_log="/var/log/maldet|' \
-    -i $PKG/etc/$PKGNAM/internals.conf
+sed -i -e 's|^logdir="\$inspath/logs"|logdir="/var/log/maldet"|' \
+       -e 's|^inspath=/usr/local/maldetect|inspath="/usr/share/maldet"|' \
+       -e 's|^intcnf="$inspath/internals/internals.conf"|intcnf="/etc/maldet/internals.conf"|' \
+       -e 's|^confpath="\$inspath"|confpath="/etc/maldet"|' \
+       -e 's|^cnffile="conf.maldet"|cnffile="maldet.conf"|' \
+       -e 's|^varlibpath="\$inspath"|varlibpath="/var/lib/maldet"|' \
+       -e 's|^tmpdir="\$inspath/tmp"|tmpdir="$varlibpath/tmp"|' \
+       -e 's|inotify_log="$inspath/logs/|inotify_log="/var/log/maldet|' \
+       $PKG/etc/$PKGNAM/internals.conf
 
 for FILE in $DESTDIR/ignore_{inotify,paths,file_ext,sigs}; do
   mv $FILE $PKG/etc/$PKGNAM/$(basename $FILE).new
@@ -145,9 +145,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
