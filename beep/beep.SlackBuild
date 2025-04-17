@@ -32,7 +32,7 @@ PRGNAM=beep
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=1.4.12
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -95,7 +95,7 @@ if [ -e $CWD/patches/ ]; then
   fi
 fi
 
-sed -e "s|^\(common_CFLAGS[[:space:]]\+=\)|\1 $SLKCFLAGS|" -i GNUmakefile
+sed -i "s|^\(common_CFLAGS[[:space:]]\+=\)|\1 $SLKCFLAGS|" GNUmakefile
 make prefix=/usr
 make prefix=/usr docdir=/usr/doc/$PKGNAM-$VERSION mandir=/usr/man DESTDIR=$PKG install
 
