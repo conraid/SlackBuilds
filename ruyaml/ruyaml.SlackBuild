@@ -2,7 +2,7 @@
 #
 # Slackware build script for ruamel-yaml
 #
-# Copyright 2020-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2020-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ PRGNAM=ruyaml
 PKGNAM=$(echo $PRGNAM | tr . -)
 SRCVERSION=0.91.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -82,7 +82,7 @@ find -L . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
-sed '/setuptools_scm_git_archive/d' -i pyproject.toml
+sed -i '/setuptools_scm_git_archive/d' pyproject.toml
 RUAMEL_NO_PIP_INSTALL_CHECK=1 CFLAGS="$SLKCFLAGS" python3 -m build --wheel --no-isolation
 python3 -m installer --destdir "$PKG" dist/*.whl
 
@@ -100,9 +100,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
