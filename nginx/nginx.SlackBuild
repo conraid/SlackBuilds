@@ -32,7 +32,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=nginx
-VERSION=1.27.4
+VERSION=1.27.5
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -87,10 +87,10 @@ find -L . \
 sed -i '/-Werror/d' auto/cc/gcc
 
 # Fix the nginx.conf file for html and virtual server directory.
-sed -e '/root[ ]*html/s|html;|/var/www/&|' \
-    -e '$s|.*|    include /etc/nginx/conf.d/\*.conf;\n&|' \
-    -e 's|^events.*|include /etc/nginx/modules/\*.conf;\n\n&|' \
-    -i conf/$PKGNAM.conf
+sed -i -e '/root[ ]*html/s|html;|/var/www/&|' \
+       -e '$s|.*|    include /etc/nginx/conf.d/\*.conf;\n&|' \
+       -e 's|^events.*|include /etc/nginx/modules/\*.conf;\n\n&|' \
+       conf/$PKGNAM.conf
 
 ./configure \
   --with-cc-opt="$SLKCFLAGS" \
@@ -205,9 +205,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
