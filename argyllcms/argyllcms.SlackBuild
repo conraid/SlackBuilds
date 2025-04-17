@@ -32,7 +32,7 @@ PRGNAM=Argyll
 PKGNAM=argyllcms
 SRCVERSION=3.3.0
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -96,7 +96,7 @@ if [ -e $CWD/patches/ ]; then
 fi
 
 # Use hwdb builtin, instead of the obsolete usb-db in the udev rules. (Thanks to Arch)
-sed 's|^TEST=="/lib/udev/usb-db", IMPORT{program}="usb-db %p"|IMPORT{builtin}="hwdb --subsystem=usb"|' -i usb/55-Argyll.rules
+sed -i 's|^TEST=="/lib/udev/usb-db", IMPORT{program}="usb-db %p"|IMPORT{builtin}="hwdb --subsystem=usb"|' usb/55-Argyll.rules
 
 export CCOPTFLAG="$SLKCFLAGS -fcommon"
 
@@ -126,9 +126,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
