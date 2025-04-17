@@ -50,7 +50,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=clamav
 SRCVERSION=1.4.2
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -112,7 +112,7 @@ fi
 sed -i "s/^\#DatabaseMirror.*/DatabaseMirror db.${COUNTRY}.clamav.net/" \
   etc/freshclam.conf.sample
 
-sed \
+sed -i \
   -e "s/^Example/#Example/" \
   -e "s/^\#LogSyslog/LogSyslog/" \
   -e "s/^\#LogFacility/LogFacility/" \
@@ -121,8 +121,9 @@ sed \
   -e "s/^\#AllowSupplementaryGroups.*/AllowSupplementaryGroups yes/" \
   -e "s/^\#DatabaseOwner.*/DatabaseOwner clamav/" \
   -e "s|^\#NotifyClamd.*|NotifyClamd /etc/clamd.conf|" \
-  -i etc/freshclam.conf.sample
-sed \
+  etc/freshclam.conf.sample
+
+sed -i \
   -e "s/^Example/#Example/" \
   -e "s/^\#LogSyslog/LogSyslog/" \
   -e "s/^\#LogFacility/LogFacility/" \
@@ -135,7 +136,7 @@ sed \
   -e "s/^\#User.*/User clamav/" \
   -e "s/^\#AllowSupplementaryGroups.*/AllowSupplementaryGroups yes/" \
   -e "s/^\#ExitOnOOM/ExitOnOOM/" \
-  -i etc/clamd.conf.sample
+  etc/clamd.conf.sample
 
 mkdir -p build
 cd build
@@ -222,9 +223,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
