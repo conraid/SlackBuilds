@@ -2,7 +2,7 @@
 #
 # Slackware build script for libircclient
 #
-# Copyright 2013-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2013-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libircclient
 VERSION=1.10
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -77,10 +77,11 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # headers in /usr/include/libircclient
-sed "s|@/include|&/libircclient|g" -i src/Makefile.in
+sed -i "s|@/include|&/libircclient|g" src/Makefile.in
 
 # support openssl 1.1
-sed -e 's/SSL_library_init/OPENSSL_init_ssl/' -i configure.in
+sed -i 's/SSL_library_init/OPENSSL_init_ssl/' configure.in
+
 autoreconf -vi
 
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
@@ -121,9 +122,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD${TAG}.txz
