@@ -33,7 +33,7 @@ PRGNAM=displaycal
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=3.9.15
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -96,11 +96,11 @@ if [ -e $CWD/patches/ ]; then
 fi
 
 # Fix doc and man path
-sed 's|share/man/|man/|' -i misc/DisplayCAL.spec -i util/check-install.sh
-sed  '/man1/s/os.path.dirname(data), //' -i DisplayCAL/setup.*
-sed 's|doc = os.path.join("share", doc)|doc = os.path.join("", doc)|' -i DisplayCAL/setup.py
+sed -i 's|share/man/|man/|' misc/DisplayCAL.spec util/check-install.sh
+sed -i '/man1/s/os.path.dirname(data), //' DisplayCAL/setup.*
+sed -i 's|doc = os.path.join("share", doc)|doc = os.path.join("", doc)|' DisplayCAL/setup.py
 
-sed '/debian.*rules/d' -i setup.py
+sed -i '/debian.*rules/d' setup.py
 
 CFLAGS="$SLKCFLAGS -Wno-incompatible-pointer-types" \
 python3 -m build --wheel --no-isolation
