@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=sslh
 VERSION=2.2.1
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -77,10 +77,10 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Fix slackware path in manpage
-sed 's|/init.d/sslh|/rc.d/rc.sslh|' -i sslh.pod
+sed -i 's|/init.d/sslh|/rc.d/rc.sslh|' sslh.pod
 
 # Fix MANDIR
-sed 's|share/man|man|' -i Makefile.in
+sed -i 's|share/man|man|' Makefile.in
 
 LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
 CFLAGS="$SLKCFLAGS" \
@@ -109,7 +109,7 @@ install -Dsm755 sslh-select $PKG/usr/sbin/sslh-select
 install -Dm755 $CWD/files/rc.sslh $PKG/etc/rc.d/rc.sslh.new
 
 # Install config files
-sed 's#/var/run/#/run/sslh/#' -i *.cfg
+sed -i 's|/var/run/|/run/sslh/|' *.cfg
 install -Dm644 basic.cfg $PKG/etc/default/sslh.new
 install -d -g nobody -o nobody $PKG/run/sslh
 
