@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=ClamAV-GUI
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 VERSION=1.1.2
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -82,8 +82,9 @@ find -L . \
   -exec chmod 644 {} \;
 
 # Change doc and man path
-sed -e "s|/share/doc/ClamAV-GUI|/doc/$PKGNAM-$VERSION|g" \
-  -e 's|/share/man/|/man/|g' -i clamav-gui.pro
+sed -i -e "s|/share/doc/ClamAV-GUI|/doc/$PKGNAM-$VERSION|g" \
+       -e 's|/share/man/|/man/|g' \
+       clamav-gui.pro
 
 qmake6 PREFIX=/usr QMAKE_CFLAGS="$SLKCFLAGS" QMAKE_CXXFLAGS="$SLKCFLAGS" -o Makefile $PKGNAM.pro
 
