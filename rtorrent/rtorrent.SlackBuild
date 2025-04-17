@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=rtorrent
 VERSION=0.15.2
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -81,7 +81,7 @@ find -L . \
   -exec chmod 644 {} \;
 
 # Fix error with cppunit
-sed '/AM_PATH_CPPUNIT/d' -i configure.ac
+sed -i '/AM_PATH_CPPUNIT/d' configure.ac
 
 autoreconf -fiv
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX} -lpthread" \
@@ -119,7 +119,7 @@ mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
