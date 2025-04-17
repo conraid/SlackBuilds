@@ -33,7 +33,7 @@ PRGNAM=pdfarranger
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=1.11.1
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -83,7 +83,7 @@ find -L . \
   -exec chmod 644 {} \;
 
 # fix man path
-sed 's|share/man|man|' -i setup.py
+sed -i 's|share/man|man|' setup.py
 
 CFLAGS="$SLKCFLAGS" python3 setup.py install --root=$PKG
 
@@ -101,9 +101,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
