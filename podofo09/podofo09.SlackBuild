@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=podofo
 PKGNAM=podofo09
 VERSION=0.9.8
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-7}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -89,8 +89,7 @@ if [ -e $CWD/patches/ ]; then
 fi
 
 # Fix include dir in pc file
-sed -e 's|@CMAKE_INSTALL_FULL_INCLUDEDIR@/podofo|@CMAKE_INSTALL_FULL_INCLUDEDIR@|' -i src/podofo/libpodofo.pc.in
-
+sed -i 's|@CMAKE_INSTALL_FULL_INCLUDEDIR@/podofo|@CMAKE_INSTALL_FULL_INCLUDEDIR@|' src/podofo/libpodofo.pc.in
 
 mkdir build
 cd build
