@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=scribus
 SRCVERSION=1.6.3
 VERSION=$(echo $SRCVERSION)
-BUILD=${BUILD:-7}
+BUILD=${BUILD:-8}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -88,9 +88,9 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
-sed -e 's|WANT_CPP17|WANT_CPP20|g' \
-    -e 's|CMAKE_CXX_STANDARD 17|CMAKE_CXX_STANDARD 20|g' \
-    -i CMakeLists.txt
+sed -i -e 's|WANT_CPP17|WANT_CPP20|g' \
+       -e 's|CMAKE_CXX_STANDARD 17|CMAKE_CXX_STANDARD 20|g' \
+       CMakeLists.txt
 
 mkdir -p build
 cd build
