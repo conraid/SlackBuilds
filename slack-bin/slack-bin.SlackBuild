@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=slack
 PKGNAM=slack-bin
 VERSION=4.43.51
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -94,7 +94,7 @@ if [ $ARCH = "x86_64" ]; then
 fi
 
 # Fix icon
-sed 's/^Icon=.*/Icon=slack/' -i $PKG/usr/share/applications/slack.desktop
+sed -i 's/^Icon=.*/Icon=slack/' $PKG/usr/share/applications/slack.desktop
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION/
 cp -a $PKG/usr/lib$LIBDIRSUFFIX/slack/LICENSE $PKG/usr/doc/$PKGNAM-$VERSION/
