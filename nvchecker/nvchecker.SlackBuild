@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=nvchecker
 VERSION=2.17
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -87,7 +87,7 @@ fi
 # but if they decided that way...
 # meanwhile removed those too many messages from the “info” level,
 # which I like to see because it shows me which packages have undergone the change.
-sed '/invalid version/s/warning/debug/' -i nvchecker_source/pypi.py
+sed -i '/invalid version/s/warning/debug/' nvchecker_source/pypi.py
 
 unshare -n python3 -m build --wheel --no-isolation
 make -C docs man
