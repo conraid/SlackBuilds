@@ -30,7 +30,7 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=hwinfo
-VERSION=23.5
+VERSION=24.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -76,24 +76,33 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-# disable regeneration of changelog and VERSION
-chmod -x ./git2log
-
 # Apply patches
-if [ -e $CWD/patches ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
+if [ -e $CWD/patches/ ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
 fi
+
+# Removed regeneration of changelog
+echo 'touch changelog' > git2log
 
 # Create VERSION file
 echo $VERSION > VERSION
 
 # Fix changelog issue
-sed '/^TARGETS/s/changelog//' -i Makefile
+sed -i '/^TARGETS/s/changelog//' Makefile
 
-# use our CFLAGS
-sed -i "s/?= -O2/?= $SLKCFLAGS/" Makefile.common
+# Use our CFLAGS
+sed -i "/RPM_OPT_FLAGS/s/?= -O2/?= $SLKCFLAGS/" Makefile.common
+
+# glibc 2.36+ includes fsconfig itself
+sed -i '/linux\/fs.h/d' src/hd/hd.c
 
 make LIBDIR=/usr/lib${LIBDIRSUFFIX} -j1 CFLAGS="$SLKCFLAGS -I${TMP}/$PKGNAM-$VERSION/src/hd -w"
 make DESTDIR=$PKG LIBDIR=/usr/lib${LIBDIRSUFFIX} install
@@ -105,16 +114,14 @@ find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cu
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 # Install man pages
-mkdir -p $PKG/usr/man/man1
-install -m644 doc/*.1 $PKG/usr/man/man1/
-install -Dm644 doc/hwinfo.8 $PKG/usr/man/man8/hwinfo.8
+mkdir -p $PKG/usr/man/man{1,8}
+install -m644 doc/*.1 -t $PKG/usr/man/man1/
+install -m644 doc/*.8 -t $PKG/usr/man/man8/
 
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
-
-# Remove empty dir
-rmdir $PKG/sbin
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
