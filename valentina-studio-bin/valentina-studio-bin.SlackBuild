@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=vstudio
 PKGNAM=valentina-studio-bin
-VERSION=15.1.4
+VERSION=15.1.5
 MAJVER=$(echo $VERSION | cut -d. -f1)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -87,9 +87,9 @@ mv $PKG/opt/VStudio/* $PKG/usr/share/$PRGNAM
 ln -s /usr/share/$PRGNAM/$PRGNAM $PKG/usr/bin/$PRGNAM
 rm -rf $PKG/opt
 
-sed -e "s|/opt/VStudio|/usr/share/$PRGNAM|" \
-  -i $PKG/usr/share/$PRGNAM/qt.conf \
-  -i $PKG/usr/share/applications/$PRGNAM.desktop
+sed -i -e "s|/opt/VStudio|/usr/share/$PRGNAM|" \
+       $PKG/usr/share/$PRGNAM/qt.conf \
+       $PKG/usr/share/applications/$PRGNAM.desktop
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
