@@ -34,7 +34,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=fail2ban
 SRCVERSION=1.1.0
 VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -94,7 +94,7 @@ for FILE in $(find $PKG/etc/fail2ban -type f); do
 done
 
 # Patch to Slackware version
-sed 's/paths-debian.conf/paths-slackware.conf/' -i $PKG/etc/fail2ban/jail.conf.new
+sed -i 's/paths-debian.conf/paths-slackware.conf/' $PKG/etc/fail2ban/jail.conf.new
 
 # install startup script
 install -D -m 0644 $CWD/files/rc.fail2ban $PKG/etc/rc.d/rc.fail2ban.new
@@ -121,9 +121,6 @@ cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBui
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
