@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=nomacs
 VERSION=3.21.0
 PLUGINVERSION=3.21.0
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -103,8 +103,8 @@ tar xvf $CWD/$PKGNAM-plugins-$PLUGINVERSION.tar.gz
 mv $PKGNAM-plugins-$PLUGINVERSION plugins
 
 # Fix man and plugin path
-sed 's|share/man/|man/|' -i cmake/UnixBuildTarget.cmake
-sed "s|lib/nomacs-plugins|lib${LIBDIRSUFFIX}/nomacs-plugins|" -i plugins/cmake/Utils.cmake
+sed -i 's|share/man/|man/|' cmake/UnixBuildTarget.cmake
+sed -i "s|lib/nomacs-plugins|lib${LIBDIRSUFFIX}/nomacs-plugins|" plugins/cmake/Utils.cmake
 
 mkdir -p build
 cd build
