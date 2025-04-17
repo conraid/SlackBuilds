@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=geoipupdate
 VERSION=7.1.0
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -87,7 +87,7 @@ if [ -e $CWD/patches ]; then
   done
 fi
 
-sed 's/EditionIDs .*/EditionIDs GeoLite2-ASN GeoLite2-City GeoLite2-Country/' -i conf/GeoIP.conf.default
+sed -i 's/EditionIDs .*/EditionIDs GeoLite2-ASN GeoLite2-City GeoLite2-Country/' conf/GeoIP.conf.default
 
 CONFFILE=/etc/GeoIP.conf \
 DATADIR=/usr/share/GeoIP \
