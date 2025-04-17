@@ -46,7 +46,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=postgresql
 VERSION=17.4
 PG_VERSION=$(echo $VERSION | cut -d. -f1)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -212,7 +212,7 @@ cd -
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
-sed -e "s|%PG_VERSION%|$PG_VERSION|g" \
+sed "s|%PG_VERSION%|$PG_VERSION|g" \
   $CWD/SLACKWARE.README > $PKG/usr/doc/$PKGNAM-$VERSION/README.SLACKWARE
 
 # base database directory
@@ -226,25 +226,23 @@ chmod 700 $PKG/var/lib/pgsql/$PG_VERSION/data
 # Install init script
 mkdir -p $PKG/etc/rc.d
 sed -e "s|%PG_VERSION%|$PG_VERSION|g" \
-  -e "s|%LIBDIRSUFFIX%|${LIBDIRSUFFIX}|g" \
-  $CWD/files/rc.$PKGNAM > $PKG/etc/rc.d/rc.$PKGNAM.new
+    -e "s|%LIBDIRSUFFIX%|${LIBDIRSUFFIX}|g" \
+    $CWD/files/rc.$PKGNAM > $PKG/etc/rc.d/rc.$PKGNAM.new
 
 # Install logrotate script
 mkdir -p $PKG/etc/logrotate.d
-sed "s|%PG_VERSION%|$PG_VERSION|g" \
-  $CWD/files/$PKGNAM.logrotate > $PKG/etc/logrotate.d/$PKGNAM.new
+sed "s|%PG_VERSION%|$PG_VERSION|g" $CWD/files/$PKGNAM.logrotate > $PKG/etc/logrotate.d/$PKGNAM.new
 
 # Install setup script
 mkdir -p $PKG/var/log/setup
-  sed -e "s%@PG_VERSION@%$PG_VERSION%" \
-  $CWD/files/setup.$PKGNAM  > $PKG/var/log/setup/setup.$PKGNAM
+sed "s%@PG_VERSION@%$PG_VERSION%" $CWD/files/setup.$PKGNAM > $PKG/var/log/setup/setup.$PKGNAM
 chmod 755 $PKG/var/log/setup/setup.$PKGNAM
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 sed -e "s|%LIBDIRSUFFIX%|${LIBDIRSUFFIX}|g" \
     -e "s|%PG_VERSION%|$PG_VERSION|g" \
-  $CWD/doinst.sh > $PKG/install/doinst.sh
+    $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
