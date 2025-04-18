@@ -33,7 +33,7 @@ PRGNAM=yt_dlp
 PKGNAM=yt-dlp
 SRCVERSION=2025.3.31
 VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -71,7 +71,8 @@ find -L . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
-sed 's|share/man|man|g' -i pyproject.toml
+# Fix man path
+sed -i 's|share/man|man|g' pyproject.toml
 
 unshare -n python3 -m build --wheel --no-isolation
 python3 -m installer --destdir "$PKG" dist/*.whl
