@@ -1,0 +1,12 @@
+diff -Naupr a/configure b/configure
+--- a/configure	2010-10-25 15:01:36.000000000 +0200
++++ b/configure	2025-04-18 15:31:07.487045873 +0200
+@@ -99,7 +99,7 @@ fi
+ #___________________________________________________________
+ #
+ echo "+ checking if libm works"
+-echo "main(){float x=sqrt(2.0);}" > $TCS
++echo -e "#include <math.h>\nint main(){float x=sqrt(2.0); return 0;}" > $TCS
+ $cc $TCS -o $TCX -lm > /dev/null 2>&1
+ if [ $? -eq 0 ]
+ then
