@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=zmap
 VERSION=4.3.2
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -81,10 +81,10 @@ find -L . \
   -exec chmod 644 {} \;
 
 # Fix man path
-sed 's|share/man/|man/|' -i src/CMakeLists.txt
+sed -i 's|share/man/|man/|' src/CMakeLists.txt
 
 # Fix install conf file
-sed '/install(SCRIPT InstallConfFiles.cmake)/d' -i CMakeLists.txt
+sed -i '/install(SCRIPT InstallConfFiles.cmake)/d' CMakeLists.txt
 
 cmake \
   -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
