@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=WhatWeb
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
 VERSION=0.5.5
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -69,10 +69,10 @@ if [ -e $CWD/patches ]; then
 fi
 
 # Fix man and doc path
-sed -e 's|share/man|man|' \
-    -e 's|share/doc|doc|' \
-    -e "/DOCPATH/s|\$(NAME)|\$(NAME)-$VERSION|" \
-    -i Makefile
+sed -i -e 's|share/man|man|' \
+       -e 's|share/doc|doc|' \
+       -e "/DOCPATH/s|\$(NAME)|\$(NAME)-$VERSION|" \
+       Makefile
 
 make DESTDIR=$PKG install
 
@@ -80,9 +80,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
