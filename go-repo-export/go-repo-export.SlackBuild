@@ -33,7 +33,7 @@ PRGNAM=cookbook
 PKGNAM=go-repo-export
 SRCVERSION=03739f5268d5915e0dc7e8815723575f4b457bda
 VERSION=$(echo $SRCVERSION | tr - _ | head -c7)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -107,9 +107,10 @@ export GOPROXY=direct
 go mod edit -replace=github.com/whyrusleeping/cbor-gen=github.com/whyrusleeping/cbor-gen@v0.1.0
 go mod tidy
 
-go build -o go-repo-export .
+mkdir -p build
+go build -o build/go-repo-export .
 
-install -Dm755 go-repo-export "$PKG/usr/bin/go-repo-export"
+install -Dm755 build/go-repo-export "$PKG/usr/bin/go-repo-export"
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
