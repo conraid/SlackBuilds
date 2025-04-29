@@ -30,10 +30,10 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=FeatureDetector
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
+PKGNAM="${PRGNAM,,}"
 SRCVERSION=077393260d5e0e19938582a33b9dd0e74baa8ff2
-VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-2}
+VERSION="${SRCVERSION:0:7}"
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
