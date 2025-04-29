@@ -30,10 +30,10 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=qt-heif-image-plugin
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
+PKGNAM="${PRGNAM,,}"
 SRCVERSION=0.3.4
-VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-3}
+VERSION="${SRCVERSION:0:7}"
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -125,9 +125,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
