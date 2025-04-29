@@ -29,8 +29,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=qtcurve
 SRCVERSION=efb9e510f50f8147f05054d77c3ef433a8b9390e
-VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-3}
+VERSION="${SRCVERSION:0:7}"
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
