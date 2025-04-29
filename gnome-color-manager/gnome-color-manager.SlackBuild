@@ -30,10 +30,10 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-color-manager
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
+PKGNAM="${PRGNAM,,}"
 SRCVERSION=fe6123fa4e74338a8aba943944b48e3f10429510
-VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-1}
+VERSION="${SRCVERSION:0:7}"
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
