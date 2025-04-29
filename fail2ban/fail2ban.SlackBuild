@@ -33,8 +33,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=fail2ban
 SRCVERSION=1.1.0
-VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-5}
+VERSION="${SRCVERSION:0:7}"
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
