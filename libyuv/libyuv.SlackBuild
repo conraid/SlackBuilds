@@ -30,10 +30,10 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=libyuv
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=96f98f6915885f84b895dddcf8a553dc50a35aad
-VERSION=$(echo $SRCVERSION | tr - _ | head -c7)
-BUILD=${BUILD:-3}
+PKGNAM="${PRGNAM,,}"
+SRCVERSION=9f9b5cf660dcfa0d3fdee41cf4ffbe4bb6e95114
+VERSION="${SRCVERSION:0:7}"
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
