@@ -31,8 +31,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=x264
 SRCVERSION=32c3b801191522961102d4bea292cdb61068d0dd
-VERSION=$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-1}
+VERSION="${SRCVERSION:0:7}"
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
