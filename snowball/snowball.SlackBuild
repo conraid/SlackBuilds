@@ -29,9 +29,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=snowball
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=fc69a2783c25eb506e38815f9471d5641045129a
-VERSION=$(echo $SRCVERSION | head -c7)
+PKGNAM="${PRGNAM,,}"
+SRCVERSION=2317fcc3f5b3395b35b4a378d9ac5a58427f4d74
+VERSION="${SRCVERSION:0:7}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
