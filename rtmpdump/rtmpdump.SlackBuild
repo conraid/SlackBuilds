@@ -31,8 +31,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=rtmpdump
 SRCVERSION=6f6bb1353fc84f4cc37138baa99f586750028a01
-VERSION=2.6_$(echo $SRCVERSION | head -c7)
-BUILD=${BUILD:-3}
+VERSION="2.6_${SRCVERSION:0:7}"
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
