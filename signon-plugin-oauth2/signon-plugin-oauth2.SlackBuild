@@ -31,8 +31,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=signon-plugin-oauth2
 COMMIT=d759439066f0a34e5ad352ebab0b3bb2790d429e
-VERSION=0.24_$(echo $COMMIT | head -c7)
-BUILD=${BUILD:-3}
+VERSION="0.24_${COMMIT:0:7}"
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -118,9 +118,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
