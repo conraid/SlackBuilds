@@ -30,9 +30,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=ntopng
-SRCVERSION=08a87f27fdc339d9979eed95832cb7ca885b16ba
-VERSION=6.3dev_$(echo $SRCVERSION | head -c 7)
-BUILD=${BUILD:-1}
+SRCVERSION=fe9b09a91fbcf7324d4ebe0da66570e1409df718
+VERSION="6.3dev_${SRCVERSION:0:7}"
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg-ntop} # I use a different directory than usual because to make things easier for me I have to delete the whole directory.
 PKG=$TMP/package-$PKGNAM/
