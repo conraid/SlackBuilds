@@ -8,10 +8,10 @@ Subject: Add ability to specify a list of destination ports
  2 files changed, 68 insertions(+), 44 deletions(-)
 
 diff --git a/nc.1 b/nc.1
-index 9d874e1..fc52dcf 100644
+index 49a3d4d..80c654c 100644
 --- a/nc.1
 +++ b/nc.1
-@@ -416,15 +416,35 @@ The
+@@ -417,15 +417,35 @@ The
  flag can be used to tell
  .Nm
  to report open ports,
@@ -51,7 +51,7 @@ index 9d874e1..fc52dcf 100644
  Alternatively, it might be useful to know which server software
  is running, and which versions.
 diff --git a/netcat.c b/netcat.c
-index b452a20..67a53da 100644
+index 9a73a7c..83a36b2 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -191,7 +191,7 @@ int minttl = -1;
@@ -94,7 +94,7 @@ index b452a20..67a53da 100644
  		if (s < 0)
  			err(1, NULL);
  
-@@ -1814,57 +1814,61 @@ strtoport(char *portstr, int udp)
+@@ -1810,57 +1810,61 @@ strtoport(char *portstr, int udp)
   * that we should try to connect to.
   */
  void

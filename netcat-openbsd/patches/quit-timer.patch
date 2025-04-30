@@ -8,7 +8,7 @@ Subject: New flag '-q' to specify a quit timer
  2 files changed, 58 insertions(+), 11 deletions(-)
 
 diff --git a/nc.1 b/nc.1
-index a45e184..ff628ae 100644
+index 478fedd..fbcc098 100644
 --- a/nc.1
 +++ b/nc.1
 @@ -41,6 +41,7 @@
@@ -36,7 +36,7 @@ index a45e184..ff628ae 100644
  Choose source and/or destination ports randomly
  instead of sequentially within a range or in the order that the system
 diff --git a/netcat.c b/netcat.c
-index 1162425..2752ee9 100644
+index 76bd3ab..5ead827 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -139,6 +139,7 @@ int	Nflag;					/* shutdown() network socket */
@@ -81,7 +81,7 @@ index 1162425..2752ee9 100644
  #ifdef HAVE_TLS
  		case 'R':
  			tls_cachanged = 1;
-@@ -1339,15 +1348,27 @@ readwrite(int net_fd)
+@@ -1335,15 +1344,27 @@ readwrite(int net_fd)
  	while (1) {
  		/* both inputs are gone, buffers are empty, we are done */
  		if (pfd[POLL_STDIN].fd == -1 && pfd[POLL_NETIN].fd == -1 &&
@@ -115,7 +115,7 @@ index 1162425..2752ee9 100644
  
  		/* poll */
  		num_fds = poll(pfd, 4, timeout);
-@@ -1504,6 +1525,13 @@ readwrite(int net_fd)
+@@ -1500,6 +1521,13 @@ readwrite(int net_fd)
  			if (pfd[POLL_NETOUT].fd != -1 && Nflag)
  				shutdown(pfd[POLL_NETOUT].fd, SHUT_WR);
  			pfd[POLL_NETOUT].fd = -1;
@@ -129,7 +129,7 @@ index 1162425..2752ee9 100644
  		}
  		/* net in gone and queue empty? */
  		if (pfd[POLL_NETIN].fd == -1 && netinbufpos == 0) {
-@@ -2110,6 +2138,7 @@ help(void)
+@@ -2106,6 +2134,7 @@ help(void)
  	\t-O length	TCP send buffer length\n\
  	\t-P proxyuser\tUsername for proxy authentication\n\
  	\t-p port\t	Specify local port for remote connects\n\
@@ -137,7 +137,7 @@ index 1162425..2752ee9 100644
  	\t-r		Randomize remote ports\n\
  	\t-S		Enable the TCP MD5 signature option\n\
  	\t-s sourceaddr	Local source address\n\
-@@ -2134,10 +2163,18 @@ usage(int ret)
+@@ -2130,10 +2159,18 @@ usage(int ret)
  	fprintf(stderr,
  	    "usage: nc [-46CDdFhklNnrStUuvz] [-I length] [-i interval] [-M ttl]\n"
  	    "\t  [-m minttl] [-O length] [-P proxy_username] [-p source_port]\n"

@@ -7,7 +7,7 @@ Subject: Fix connect() timeout
  1 file changed, 77 insertions(+), 5 deletions(-)
 
 diff --git a/netcat.c b/netcat.c
-index 8a59300..b005981 100644
+index d8d3acc..a30cb36 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -90,6 +90,7 @@
@@ -38,7 +38,7 @@ index 8a59300..b005981 100644
  int
  main(int argc, char *argv[])
  {
-@@ -1092,18 +1099,21 @@ remote_connect(const char *host, const char *port, struct addrinfo hints,
+@@ -1088,18 +1095,21 @@ remote_connect(const char *host, const char *port, struct addrinfo hints,
  			}
  		}
  
@@ -65,7 +65,7 @@ index 8a59300..b005981 100644
  		}
  
  		save_errno = errno;
-@@ -1145,6 +1155,68 @@ timeout_connect(int s, const struct sockaddr *name, socklen_t namelen)
+@@ -1141,6 +1151,68 @@ timeout_connect(int s, const struct sockaddr *name, socklen_t namelen)
  	return ret;
  }
  

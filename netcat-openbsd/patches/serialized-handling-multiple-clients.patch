@@ -7,7 +7,7 @@ Subject: Serialized handling of multiple clients
  1 file changed, 8 insertions(+), 9 deletions(-)
 
 diff --git a/netcat.c b/netcat.c
-index 35181ce..d2cfcd6 100644
+index 099e615..7e38132 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -713,7 +713,10 @@ main(int argc, char *argv[])
@@ -36,8 +36,8 @@ index 35181ce..d2cfcd6 100644
  			if (uflag && kflag) {
  				/*
  				 * For UDP and -k, don't connect the socket,
-@@ -811,8 +807,11 @@ main(int argc, char *argv[])
- 					err(1, "connect");
+@@ -807,8 +803,11 @@ main(int argc, char *argv[])
+ #endif
  			}
  
 -			if (!kflag)

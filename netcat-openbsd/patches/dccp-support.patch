@@ -8,7 +8,7 @@ Subject: New flag '-Z' for DCCP support
  2 files changed, 76 insertions(+), 13 deletions(-)
 
 diff --git a/nc.1 b/nc.1
-index ff628ae..bc7c915 100644
+index fbcc098..da37f06 100644
 --- a/nc.1
 +++ b/nc.1
 @@ -33,7 +33,7 @@
@@ -30,7 +30,7 @@ index ff628ae..bc7c915 100644
  Only scan for listening daemons, without sending any data to them.
  Cannot be used together with
 diff --git a/netcat.c b/netcat.c
-index 9fcf86d..3dc868a 100644
+index 47259d6..efa6618 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -146,6 +146,7 @@ int	rflag;					/* Random ports flag */
@@ -118,7 +118,7 @@ index 9fcf86d..3dc868a 100644
  		if (lflag)
  			errx(1, "no proxy support for listen");
  
-@@ -842,9 +870,11 @@ main(int argc, char *argv[])
+@@ -838,9 +866,11 @@ main(int argc, char *argv[])
  						continue;
  					}
  				}
@@ -132,7 +132,7 @@ index 9fcf86d..3dc868a 100644
  			}
  			if (Fflag)
  				fdpass(s);
-@@ -1058,6 +1088,21 @@ unix_listen(char *path)
+@@ -1054,6 +1084,21 @@ unix_listen(char *path)
  	return s;
  }
  
@@ -154,7 +154,7 @@ index 9fcf86d..3dc868a 100644
  /*
   * remote_connect()
   * Returns a socket connected to a remote host. Properly binds to a local
-@@ -1089,8 +1134,20 @@ remote_connect(const char *host, const char *port, struct addrinfo hints,
+@@ -1085,8 +1130,20 @@ remote_connect(const char *host, const char *port, struct addrinfo hints,
  #endif
  			memset(&ahints, 0, sizeof(struct addrinfo));
  			ahints.ai_family = res->ai_family;
@@ -177,7 +177,7 @@ index 9fcf86d..3dc868a 100644
  			ahints.ai_flags = AI_PASSIVE;
  			if ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
  				errx(1, "getaddrinfo: %s", gai_strerror(error));
-@@ -1120,16 +1177,18 @@ remote_connect(const char *host, const char *port, struct addrinfo hints,
+@@ -1116,16 +1173,18 @@ remote_connect(const char *host, const char *port, struct addrinfo hints,
  		    timeout)) == CONNECTION_SUCCESS)
  			break;
  
@@ -198,7 +198,7 @@ index 9fcf86d..3dc868a 100644
  				    error == CONNECTION_TIMEOUT ? "timed out" : "failed");
  		}
  
-@@ -1746,7 +1805,8 @@ build_ports(char *p)
+@@ -1742,7 +1801,8 @@ build_ports(char *p)
  	int hi, lo, cp;
  	int x = 0;
  
@@ -208,7 +208,7 @@ index 9fcf86d..3dc868a 100644
  	if (sv) {
  		if (asprintf(&portlist[0], "%d", ntohs(sv->s_port)) < 0)
  			err(1, "asprintf");
-@@ -2159,6 +2219,7 @@ help(void)
+@@ -2155,6 +2215,7 @@ help(void)
  	\t-w timeout	Timeout for connects and final net reads\n\
  	\t-X proto	Proxy protocol: \"4\", \"5\" (SOCKS) or \"connect\"\n\
  	\t-x addr[:port]\tSpecify proxy address and port\n\
@@ -216,7 +216,7 @@ index 9fcf86d..3dc868a 100644
  	\t-z		Zero-I/O mode [used for scanning]\n\
  	Port numbers can be individual or ranges: lo-hi [inclusive]\n");
  	exit(0);
-@@ -2168,7 +2229,7 @@ void
+@@ -2164,7 +2225,7 @@ void
  usage(int ret)
  {
  	fprintf(stderr,

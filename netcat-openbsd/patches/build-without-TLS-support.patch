@@ -26,7 +26,7 @@ index 93ca5ee..31d7536 100644
  PKG_CONFIG ?= pkg-config
  LIBS=  `$(PKG_CONFIG) --libs libbsd` -lresolv
 diff --git a/nc.1 b/nc.1
-index 5a2b7b1..44be0d9 100644
+index 596bd8e..2eb732e 100644
 --- a/nc.1
 +++ b/nc.1
 @@ -33,20 +33,14 @@
@@ -218,7 +218,7 @@ index 5a2b7b1..44be0d9 100644
  .It Fl z
  Only scan for listening daemons, without sending any data to them.
  Cannot be used together with
-@@ -521,16 +429,6 @@ the source port, with a timeout of 5 seconds:
+@@ -522,16 +430,6 @@ the source port, with a timeout of 5 seconds:
  .Pp
  .Dl $ nc -p 31337 -w 5 host.example.com 42
  .Pp
@@ -236,7 +236,7 @@ index 5a2b7b1..44be0d9 100644
  .Pp
  .Dl $ nc -u host.example.com 53
 diff --git a/netcat.c b/netcat.c
-index 161ade1..8a59300 100644
+index 216d3ec..d8d3acc 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -99,7 +99,9 @@
@@ -572,9 +572,9 @@ index 161ade1..8a59300 100644
 +				close(connfd);
 +#endif
  			}
- 			if (family == AF_UNIX && uflag) {
- 				if (connect(s, NULL, 0) == -1)
-@@ -686,7 +759,11 @@ main(int argc, char *argv[])
+ 
+ 			if (!kflag)
+@@ -682,7 +755,11 @@ main(int argc, char *argv[])
  
  		if ((s = unix_connect(host)) > 0) {
  			if (!zflag)
@@ -586,7 +586,7 @@ index 161ade1..8a59300 100644
  			close(s);
  		} else {
  			warn("%s", host);
-@@ -706,6 +783,7 @@ main(int argc, char *argv[])
+@@ -702,6 +779,7 @@ main(int argc, char *argv[])
  		for (s = -1, i = 0; portlist[i] != NULL; i++) {
  			if (s != -1)
  				close(s);
@@ -594,7 +594,7 @@ index 161ade1..8a59300 100644
  			tls_free(tls_ctx);
  			tls_ctx = NULL;
  
-@@ -716,6 +794,7 @@ main(int argc, char *argv[])
+@@ -712,6 +790,7 @@ main(int argc, char *argv[])
  					errx(1, "tls configuration failed (%s)",
  					    tls_error(tls_ctx));
  			}
@@ -602,7 +602,7 @@ index 161ade1..8a59300 100644
  			if (xflag)
  				s = socks_connect(host, portlist[i], hints,
  				    proxy, proxyport, proxyhints, socksv,
-@@ -745,6 +824,7 @@ main(int argc, char *argv[])
+@@ -741,6 +820,7 @@ main(int argc, char *argv[])
  			}
  			if (Fflag)
  				fdpass(s);
@@ -610,7 +610,7 @@ index 161ade1..8a59300 100644
  			else {
  				if (usetls)
  					tls_setup_client(tls_ctx, s, host);
-@@ -753,13 +833,19 @@ main(int argc, char *argv[])
+@@ -749,13 +829,19 @@ main(int argc, char *argv[])
  				if (tls_ctx)
  					timeout_tls(s, tls_ctx, tls_close);
  			}
@@ -630,7 +630,7 @@ index 161ade1..8a59300 100644
  
  	return ret;
  }
-@@ -801,6 +887,7 @@ unix_bind(char *path, int flags)
+@@ -797,6 +883,7 @@ unix_bind(char *path, int flags)
  	return s;
  }
  
@@ -638,7 +638,7 @@ index 161ade1..8a59300 100644
  int
  timeout_tls(int s, struct tls *tls_ctx, int (*func)(struct tls *))
  {
-@@ -888,6 +975,7 @@ tls_setup_server(struct tls *tls_ctx, int connfd, char *host)
+@@ -884,6 +971,7 @@ tls_setup_server(struct tls *tls_ctx, int connfd, char *host)
  	}
  	return NULL;
  }
@@ -646,7 +646,7 @@ index 161ade1..8a59300 100644
  
  /*
   * unix_connect()
-@@ -1134,7 +1222,11 @@ local_listen(const char *host, const char *port, struct addrinfo hints)
+@@ -1130,7 +1218,11 @@ local_listen(const char *host, const char *port, struct addrinfo hints)
   * Loop that polls on the network file descriptor and stdin.
   */
  void
@@ -658,7 +658,7 @@ index 161ade1..8a59300 100644
  {
  	struct pollfd pfd[4];
  	int stdin_fd = STDIN_FILENO;
-@@ -1234,12 +1326,17 @@ readwrite(int net_fd, struct tls *tls_ctx)
+@@ -1230,12 +1322,17 @@ readwrite(int net_fd, struct tls *tls_ctx)
  		/* try to read from stdin */
  		if (pfd[POLL_STDIN].revents & POLLIN && stdinbufpos < BUFSIZE) {
  			ret = fillbuf(pfd[POLL_STDIN].fd, stdinbuf,
@@ -677,7 +677,7 @@ index 161ade1..8a59300 100644
  				pfd[POLL_STDIN].fd = -1;
  			/* read something - poll net out */
  			if (stdinbufpos > 0)
-@@ -1251,12 +1348,17 @@ readwrite(int net_fd, struct tls *tls_ctx)
+@@ -1247,12 +1344,17 @@ readwrite(int net_fd, struct tls *tls_ctx)
  		/* try to write to network */
  		if (pfd[POLL_NETOUT].revents & POLLOUT && stdinbufpos > 0) {
  			ret = drainbuf(pfd[POLL_NETOUT].fd, stdinbuf,
@@ -696,7 +696,7 @@ index 161ade1..8a59300 100644
  				pfd[POLL_NETOUT].fd = -1;
  			/* buffer empty - remove self from polling */
  			if (stdinbufpos == 0)
-@@ -1268,12 +1370,17 @@ readwrite(int net_fd, struct tls *tls_ctx)
+@@ -1264,12 +1366,17 @@ readwrite(int net_fd, struct tls *tls_ctx)
  		/* try to read from network */
  		if (pfd[POLL_NETIN].revents & POLLIN && netinbufpos < BUFSIZE) {
  			ret = fillbuf(pfd[POLL_NETIN].fd, netinbuf,
@@ -715,7 +715,7 @@ index 161ade1..8a59300 100644
  				pfd[POLL_NETIN].fd = -1;
  			/* eof on net in - remove from pfd */
  			if (ret == 0) {
-@@ -1300,12 +1407,17 @@ readwrite(int net_fd, struct tls *tls_ctx)
+@@ -1296,12 +1403,17 @@ readwrite(int net_fd, struct tls *tls_ctx)
  		/* try to write to stdout */
  		if (pfd[POLL_STDOUT].revents & POLLOUT && netinbufpos > 0) {
  			ret = drainbuf(pfd[POLL_STDOUT].fd, netinbuf,
@@ -734,7 +734,7 @@ index 161ade1..8a59300 100644
  				pfd[POLL_STDOUT].fd = -1;
  			/* buffer empty - remove self from polling */
  			if (netinbufpos == 0)
-@@ -1329,7 +1441,11 @@ readwrite(int net_fd, struct tls *tls_ctx)
+@@ -1325,7 +1437,11 @@ readwrite(int net_fd, struct tls *tls_ctx)
  }
  
  ssize_t
@@ -746,7 +746,7 @@ index 161ade1..8a59300 100644
  {
  	ssize_t n;
  	ssize_t adjust;
-@@ -1337,16 +1453,22 @@ drainbuf(int fd, unsigned char *buf, size_t *bufpos, struct tls *tls)
+@@ -1333,16 +1449,22 @@ drainbuf(int fd, unsigned char *buf, size_t *bufpos, struct tls *tls)
  	if (fd == -1)
  		return -1;
  
@@ -769,7 +769,7 @@ index 161ade1..8a59300 100644
  	if (n <= 0)
  		return n;
  	/* adjust buffer */
-@@ -1358,7 +1480,11 @@ drainbuf(int fd, unsigned char *buf, size_t *bufpos, struct tls *tls)
+@@ -1354,7 +1476,11 @@ drainbuf(int fd, unsigned char *buf, size_t *bufpos, struct tls *tls)
  }
  
  ssize_t
@@ -781,7 +781,7 @@ index 161ade1..8a59300 100644
  {
  	size_t num = BUFSIZE - *bufpos;
  	ssize_t n;
-@@ -1366,16 +1492,22 @@ fillbuf(int fd, unsigned char *buf, size_t *bufpos, struct tls *tls)
+@@ -1362,16 +1488,22 @@ fillbuf(int fd, unsigned char *buf, size_t *bufpos, struct tls *tls)
  	if (fd == -1)
  		return -1;
  
@@ -804,7 +804,7 @@ index 161ade1..8a59300 100644
  	if (n <= 0)
  		return n;
  	*bufpos += n;
-@@ -1722,6 +1854,7 @@ process_tos_opt(char *s, int *val)
+@@ -1718,6 +1850,7 @@ process_tos_opt(char *s, int *val)
  	return 0;
  }
  
@@ -812,7 +812,7 @@ index 161ade1..8a59300 100644
  int
  process_tls_opt(char *s, int *flags)
  {
-@@ -1835,6 +1968,7 @@ report_tls(struct tls *tls_ctx, char *host)
+@@ -1831,6 +1964,7 @@ report_tls(struct tls *tls_ctx, char *host)
  		break;
  	}
  }
@@ -820,7 +820,7 @@ index 161ade1..8a59300 100644
  
  void
  report_sock(const char *msg, const struct sockaddr *sa, socklen_t salen,
-@@ -1876,17 +2010,12 @@ help(void)
+@@ -1872,17 +2006,12 @@ help(void)
  	fprintf(stderr, "\tCommand Summary:\n\
  	\t-4		Use IPv4\n\
  	\t-6		Use IPv6\n\
@@ -838,7 +838,7 @@ index 161ade1..8a59300 100644
  	\t-k		Keep inbound sockets open for multiple connects\n\
  	\t-l		Listen mode, for inbound connects\n\
  	\t-M ttl		Outgoing TTL / Hop Limit\n\
-@@ -1894,14 +2023,12 @@ help(void)
+@@ -1890,14 +2019,12 @@ help(void)
  	\t-N		Shutdown the network socket after EOF on stdin\n\
  	\t-n		Suppress name/port resolutions\n\
  	\t-O length	TCP send buffer length\n\
@@ -854,7 +854,7 @@ index 161ade1..8a59300 100644
  	\t-t		Answer TELNET negotiation\n\
  	\t-U		Use UNIX domain socket\n\
  	\t-u		UDP mode\n\
-@@ -1911,7 +2038,6 @@ help(void)
+@@ -1907,7 +2034,6 @@ help(void)
  	\t-w timeout	Timeout for connects and final net reads\n\
  	\t-X proto	Proxy protocol: \"4\", \"5\" (SOCKS) or \"connect\"\n\
  	\t-x addr[:port]\tSpecify proxy address and port\n\
@@ -862,7 +862,7 @@ index 161ade1..8a59300 100644
  	\t-z		Zero-I/O mode [used for scanning]\n\
  	Port numbers can be individual or ranges: lo-hi [inclusive]\n");
  	exit(0);
-@@ -1921,15 +2047,11 @@ void
+@@ -1917,15 +2043,11 @@ void
  usage(int ret)
  {
  	fprintf(stderr,

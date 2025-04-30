@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=netcat-openbsd
-VERSION=1.228
-BUILD=${BUILD:-2}
+VERSION=1.229
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -85,7 +85,7 @@ if [ -e $CWD/patches/series ]; then
   done
 fi
 
-make CFLAGS="$SLKCFLAGS -DDEBIAN_VERSION=\"\\\"10\\\"\" -I/usr/include/libbsd" LDFLAGS="-lbsd"
+make CFLAGS="$SLKCFLAGS -DDEBIAN_VERSION=\"\\\"10\\\"\" -I/usr/include/libbsd -Wno-incompatible-pointer-types" LDFLAGS="-lbsd"
 
 install -Dsm755 nc $PKG/usr/bin/nc-openbsd
 
@@ -102,9 +102,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
