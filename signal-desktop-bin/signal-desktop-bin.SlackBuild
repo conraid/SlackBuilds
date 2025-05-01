@@ -29,9 +29,9 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=signal-desktop
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-bin
-SRCVERSION=7.52.0
-VERSION=7.52.0
+PKGNAM="${PRGNAM,,}"-bin
+SRCVERSION=7.53.0
+VERSION=7.53.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
