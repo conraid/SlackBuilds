@@ -30,8 +30,8 @@ set -eu
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=Postman
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-bin
-VERSION=11.40.5
+PKGNAM="${PRGNAM,,}"-bin
+VERSION=11.43.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
