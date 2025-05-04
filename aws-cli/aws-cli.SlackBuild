@@ -25,14 +25,14 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=aws-cli
 PKGNAM=aws-cli
-SRCVERSION=1.40.6
-VERSION=1.40.6
+SRCVERSION=1.40.7
+VERSION=1.40.7
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
