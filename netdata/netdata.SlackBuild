@@ -39,13 +39,13 @@ elif ! grep ^netdata: /etc/group 2>&1 > /dev/null; then
   exit 1
 fi
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=netdata
-VERSION=2.4.0
-BUILD=${BUILD:-2}
+VERSION=2.5.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
