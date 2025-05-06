@@ -25,15 +25,15 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=maturin
 PKGNAM=python-$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=1.8.3
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -82,8 +82,9 @@ find . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
-MATURIN_SETUP_ARGS="--all-features" \
-python3 -m build --no-isolation
+cargo fetch --locked
+MATURIN_SETUP_ARGS="--frozen --all-features" \
+unshare -n python3 -m build --no-isolation
 python3 -m installer --destdir "$PKG" dist/*.whl
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
