@@ -25,15 +25,15 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=isort
 PKGNAM=python-$(echo $PRGNAM | tr A-Z a-z)
 SRCVERSION=6.0.1
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -87,7 +87,7 @@ rm -r isort/_vendored
 sed -i 's/from ._vendored //' isort/settings.py
 #sed -i 's/requires = \["hatchling", "hatch-vcs"\]/requires = []/' pyproject.toml
 
-python3 -m build --wheel --no-isolation
+unshare -n python3 -m build --wheel --no-isolation
 python3 -m installer --destdir "$PKG" dist/*.whl
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
