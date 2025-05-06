@@ -25,13 +25,13 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=SDL2
 PKGNAM=SDL2-static
-SRCVERSION=2.32.4 # This is the current version
-VERSION=$(echo $SRCVERSION | tr - _)
+SRCVERSION=2.32.6 # This is the current version
+VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
