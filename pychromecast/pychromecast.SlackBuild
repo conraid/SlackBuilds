@@ -25,15 +25,15 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=pychromecast
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
+PKGNAM="${PRGNAM,,}"
 SRCVERSION=14.0.7
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -88,7 +88,7 @@ fi
 SETUP_TOOL_VERSION=$(python -c "import importlib.metadata; print(importlib.metadata.version('setuptools'))")
 sed -i "/setuptools/s/<.*78\.0/<=$SETUP_TOOL_VERSION/" pyproject.toml
 
-python3 -m build --wheel --no-isolation
+unshare -n python3 -m build --wheel --no-isolation
 python3 -m installer --destdir "$PKG" dist/*.whl
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
