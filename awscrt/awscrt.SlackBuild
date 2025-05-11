@@ -25,14 +25,14 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=aws-crt-python
+PRGNAM=awscrt
 PKGNAM=awscrt
-SRCVERSION=0.26.1
-VERSION=0.26.1
+SRCVERSION=0.27.1
+VERSION=0.27.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -75,37 +75,6 @@ rm -rf $PRGNAM-$SRCVERSION
 tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz
 cd $PRGNAM-$SRCVERSION
 
-# I clone all the submodules because unfortunately
-# pypi no longer releases the source code,
-# and the GitHub tarball doesn't contain them.
-cd crt
-declare -A SUBMODULES
-
-SUBMODULES["aws-c-auth"]="cd9d6afcd42035d49bb2d0d3bef24b9faed57773"
-SUBMODULES["aws-c-cal"]="ff8801488d588067d021d131193681b591699477"
-SUBMODULES["aws-c-common"]="8ae8f48ebddb0ee2624d643952ac33afa5e8859e"
-SUBMODULES["aws-c-compression"]="f951ab2b819fc6993b6e5e6cfef64b1a1554bfc8"
-SUBMODULES["aws-c-event-stream"]="9312b052583183b98526aaeb91e5c72ec3db9627"
-SUBMODULES["aws-c-http"]="e526ac338ca414c01d3fc037da1c418c935808bc"
-SUBMODULES["aws-c-io"]="31d7361dd7517c54e697316fec6ded2ebe89fee9"
-SUBMODULES["aws-c-mqtt"]="fb651a4a59f28384fdb4938524192433492dead0"
-SUBMODULES["aws-c-s3"]="0770d353ce2d04af0f2b1ee3680a8f827f28263f"
-SUBMODULES["aws-c-sdkutils"]="ba6a28fab7ed5d7f1b3b1d12eb672088be093824"
-SUBMODULES["aws-checksums"]="66b447c0765a2caff2d806111e6ec1db2383e4d2"
-SUBMODULES["aws-lc"]="b1420f27a7c95762cd11b249ece3d049f530d9e6"
-SUBMODULES["s2n"]="b8a9aa4ee53661e829e011e6881d5252d794ba8c"
-BASE_URL="https://github.com/awslabs"
-for submodule in "${!SUBMODULES[@]}"; do
-    commit_hash=${SUBMODULES[$submodule]}
-    git clone --branch main --single-branch --depth 1 "$BASE_URL/$submodule.git"
-    cd $submodule
-    git fetch --depth 1 origin $commit_hash
-    git checkout $commit_hash
-    cd ..
-done
-
-cd ..
-
 chown -R root:root .
 find -L . \
   \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
@@ -113,7 +82,8 @@ find -L . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
-CFLAGS="$SLKCFLAGS -Wno-stringop-overflow -Wno-array-bounds" python3 setup.py install --root=$PKG
+unshare -n python3 -m build --wheel --no-isolation
+python3 -m installer --destdir "$PKG" dist/*.whl
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
