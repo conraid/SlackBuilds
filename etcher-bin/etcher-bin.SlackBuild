@@ -25,13 +25,13 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=balena-etcher
 PKGNAM=etcher-bin
-SRCVERSION=2.1.0
-VERSION=$(echo $SRCVERSION | tr - _)
+SRCVERSION=2.1.2
+VERSION=2.1.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -64,7 +64,7 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $PKG
-ar p $CWD/${PRGNAM}_${VERSION}_${DEBARCH}.deb data.tar.zst | tar -xv --zstd 
+ar p $CWD/${PRGNAM}_${VERSION}_${DEBARCH}.deb data.tar.zst | tar -xv --zstd
 
 chown -R root:root .
 find -L . \
@@ -80,9 +80,6 @@ rmdir $PKG/usr/share/doc
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
