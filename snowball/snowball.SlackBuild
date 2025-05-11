@@ -25,12 +25,12 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=snowball
 PKGNAM="${PRGNAM,,}"
-SRCVERSION=2317fcc3f5b3395b35b4a378d9ac5a58427f4d74
+SRCVERSION=0cf9793e0fb25a5f2b65c9deb9a7b8d3a79ba1ea
 VERSION="${SRCVERSION:0:7}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
