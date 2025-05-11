@@ -25,15 +25,15 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-color-manager
 PKGNAM="${PRGNAM,,}"
-SRCVERSION=fe6123fa4e74338a8aba943944b48e3f10429510
+SRCVERSION=9733723cec44c6feff1bc2b79645d1435e354acb
 VERSION="${SRCVERSION:0:7}"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
