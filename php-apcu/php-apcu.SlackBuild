@@ -23,14 +23,14 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=apcu
 PKGNAM=php-apcu
 VERSION=5.1.24
-BUILD=${BUILD:-9}
+BUILD=${BUILD:-10}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
