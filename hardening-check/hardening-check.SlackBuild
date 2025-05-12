@@ -25,13 +25,13 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=devscripts
 PKGNAM=hardening-check
-VERSION=2.25.11
+VERSION=2.25.12
 BUILD=${BUILD:-1}
 ARCH=noarch
 TAG=${TAG:-cf}
@@ -60,7 +60,7 @@ chmod -R u+w,go+r-w,a-s .
 install -Dm755 scripts/$PKGNAM.pl $PKG/usr/bin/$PKGNAM
 
 mkdir -p $PKG/usr/man/man1
-help2man -s 1 -N ./hardening-check.pl --version-string=$VERSION | gzip -9 > $PKG/usr/man/man1/$PKGNAM.1.gz
+help2man -s 1 -N scripts/hardening-check.pl --version-string=$VERSION | gzip -9 > $PKG/usr/man/man1/$PKGNAM.1.gz
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp COPYING $PKG/usr/doc/$PKGNAM-$VERSION
