@@ -25,13 +25,13 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=tree-sitter-query
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=0.5.1
-VERSION=$(echo $SRCVERSION | tr - _)
+PKGNAM="${PRGNAM,,}"
+SRCVERSION=0.6.0
+VERSION=0.6.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
