@@ -28,7 +28,7 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=inkscape
-VERSION=1.4
+VERSION=1.4.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -123,7 +123,6 @@ cmake -Wno-dev \
   -DWITH_IMAGE_MAGICK=OFF \
   -DBUILD_SHARED_LIBS=ON \
   -DBUILD_TESTING=OFF \
-  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   ..
 
 make
