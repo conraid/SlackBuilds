@@ -31,8 +31,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=neomutt
 SRCVERSION=20250510
-VERSION=20250510
-BUILD=${BUILD:-1}
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
