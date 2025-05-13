@@ -25,15 +25,15 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=git-cliff
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
+PKGNAM=${PRGNAM,,}
 SRCVERSION=2.8.0
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -98,17 +98,25 @@ if [ -e $CWD/patches/ ]; then
   fi
 fi
 
-CARGO_TARGET_DIR=target \
-CARGO_HOME=.cargo \
-CFLAGS+="$SLKCFLAGS  -ffat-lto-objects" \
-CXXFLAGS+="$SLKCFLAGS" \
-cargo build --release --no-default-features --target $CARGOTARGET
-mkdir -p completions/ man/
-OUT_DIR=completions/ "target/$CARGOTARGET/release/$PKGNAM-completions"
-OUT_DIR=man/ "target/$CARGOTARGET/release/$PKGNAM-mangen"
-#cargo install --frozen --offline --no-track --root "$PKG/usr" --path="."
+mkdir -p ".cargo"
+export CARGO_HOME=".cargo"
+export CFLAGS="$SLKCFLAGS -ffat-lto-objects"
+export CXXFLAGS="$SLKCFLAGS"
 
-install -Dm 755 "target/$CARGOTARGET/release/$PKGNAM" -t "$PKG/usr/bin"
+cargo fetch \
+    --locked
+
+cargo build \
+    --release \
+    --frozen \
+    --offline \
+    --no-default-features
+
+mkdir -p completions/ man/
+OUT_DIR=completions/ "target/release/$PKGNAM-completions"
+OUT_DIR=man/ "target/release/$PKGNAM-mangen"
+
+install -Dm 755 "target/release/$PKGNAM" -t "$PKG/usr/bin"
 install -Dm 644 "completions/$PKGNAM.bash" "$PKG/usr/share/bash-completion/completions/$PKGNAM"
 install -Dm 644 "completions/_$PKGNAM" -t "$PKG/usr/share/zsh/site-functions"
 install -Dm 644 "man/$PKGNAM.1" -t "$PKG/usr/man/man1"
@@ -130,9 +138,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
