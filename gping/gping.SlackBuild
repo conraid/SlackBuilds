@@ -25,14 +25,14 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gping
 PKGNAM="${PRGNAM,,}"
 SRCVERSION=gping-v1.19.0
 VERSION="${SRCVERSION#*-v}"
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -96,10 +96,19 @@ if [ -e $CWD/patches ]; then
     done
   fi
 fi
-CARGO_HOME=.cargo \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-cargo build --release
+
+mkdir -p ".cargo"
+export CARGO_HOME=".cargo"
+export CFLAGS="$SLKCFLAGS"
+export CXXFLAGS="$SLKCFLAGS"
+
+cargo fetch \
+    --locked
+
+cargo build \
+    --release \
+    --frozen \
+    --offline
 
 install -Dm755 "target/release/$PRGNAM" -t "$PKG/usr/bin"
 
