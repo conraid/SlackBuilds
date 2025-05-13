@@ -2,7 +2,7 @@
 #
 # Slackware build script for binwalk
 #
-# Copyright 2017-2024 Corrado Franco (https://corradofranco.it)
+# Copyright 2017-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -25,13 +25,13 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=binwalk
 VERSION=3.1.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -83,11 +83,28 @@ find . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \+
 
-CARGO_HOME=.cargo \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-cargo build --release --target $CARGOTARGET
-cargo install --no-track --root "$PKG/usr" --path="."
+mkdir -p ".cargo"
+export CARGO_HOME=".cargo"
+export CFLAGS="$SLKCFLAGS"
+export CXXFLAGS="$SLKCFLAGS"
+
+cargo fetch \
+    --locked
+
+cargo build \
+    --release \
+    --frozen \
+    --offline
+
+cargo install \
+    --frozen \
+    --offline \
+    --no-track \
+    --root "$PKG/usr" \
+    --path="."
+
+# Cleanup CARGO_HOME and possible unnecessary artifacts in $PKG.
+rm -rf "$CARGO_HOME" "$PKG/usr/.cargo" "$PKG/usr/.crates*"
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
@@ -103,9 +120,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required > $PKG/install/slack-required
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
