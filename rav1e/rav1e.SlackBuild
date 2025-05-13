@@ -25,15 +25,15 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=rav1e
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
+PKGNAM=${PRGNAM,,}
 SRCVERSION=0.7.1
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -98,13 +98,38 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
-CARGO_HOME=.cargo \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-cargo build --release $CARGOTARGET
-cargo cbuild --release --prefix="/usr" $CARGOTARGET
-cargo install --frozen --offline --no-track --path "." --root "${PKG}/usr"
-cargo cinstall --frozen --destdir=${PKG} --prefix=/usr --libdir=/usr/lib64
+mkdir -p ".cargo"
+export CARGO_HOME=".cargo"
+export CFLAGS="$SLKCFLAGS"
+export CXXFLAGS="$SLKCFLAGS"
+
+cargo fetch \
+    --locked
+
+cargo build \
+    --release \
+    --frozen \
+    --offline
+
+cargo cbuild \
+    --release \
+    --prefix="/usr"
+
+cargo install \
+    --frozen \
+    --offline \
+    --no-track \
+    --root "$PKG/usr" \
+    --path="."
+
+cargo cinstall \
+    --frozen \
+    --destdir=${PKG} \
+    --prefix=/usr \
+    --libdir=/usr/lib64
+
+# Cleanup CARGO_HOME and possible unnecessary artifacts in $PKG.
+rm -rf "$CARGO_HOME" "$PKG/usr/.cargo" "$PKG/usr/.crates*"
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -123,9 +148,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
