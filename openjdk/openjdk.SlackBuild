@@ -25,14 +25,14 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=jdk
 PKGNAM=openjdk
 SRCVERSION=24.0.1
-VERSION=24.0.1
-BUILD=${BUILD:-1}
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -55,7 +55,6 @@ else
 fi
 
 SOURCETGZ="$CWD/$PKGNAM-${SRCVERSION}_linux-${JAVA_ARCH}_bin.tar.gz"
-DVER=$(tar tf $SOURCETGZ | head -n 1 | cut -f 2 -d $(echo $PRGNAM | cut -b 3) | cut -f 1 -d /)
 
 # If the variable PRINT_PACKAGE_NAME is set, then this script will report what
 # the name of the created package would be, and then exit. This information
@@ -70,12 +69,13 @@ mkdir -p $TMP $PKG $OUTPUT
 cd $PKG
 mkdir -p usr/lib${LIBDIRSUFFIX}
 cd usr/lib${LIBDIRSUFFIX}
-tar xf $SOURCETGZ || exit 1
+tar xf $SOURCETGZ
 mkdir -p $PKG/etc/profile.d
 for file in $(ls $CWD/files/${PRGNAM}*) ; do
   cat $file | sed -e "s#lib/java#lib${LIBDIRSUFFIX}/java#" \
     > $PKG/etc/profile.d/$(basename $file)
 done
+chmod 755 $PKG/etc/profile.d/*
 
 chown -R root:root $PKG
 find $PKG \
@@ -83,11 +83,11 @@ find $PKG \
   -exec chmod 755 {} \; -o \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
-chmod 755 $PKG/etc/profile.d/*
+
 ( cd $PKG/usr/lib${LIBDIRSUFFIX}
-  mv ${PRGNAM}${DVER} java || exit 1
-  ln -sf java ${PRGNAM}${DVER}
-) || exit 1
+  mv ${PRGNAM}-${VERSION} java
+  ln -sf java ${PRGNAM}-${VERSION}
+)
 ( cd $PKG/usr/lib${LIBDIRSUFFIX}
    ln -sf ./java/lib/server/libjvm.so .
 )
