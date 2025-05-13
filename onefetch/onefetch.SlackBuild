@@ -25,15 +25,15 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=onefetch
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
+PKGNAM=${PRGNAM,,}
 SRCVERSION=2.24.0
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -97,10 +97,18 @@ if [ -e $CWD/patches ]; then
     done
   fi
 fi
-CARGO_HOME=.cargo \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-cargo build --release
+
+export CARGO_HOME=".cargo"
+export CFLAGS="$SLKCFLAGS"
+export CXXFLAGS="$SLKCFLAGS"
+
+cargo fetch \
+    --locked
+
+cargo build \
+    --release \
+    --frozen \
+    --offline
 
 install -Dm755 target/release/$PKGNAM $PKG/usr/bin/$PKGNAM
 install -Dm644 docs/$PKGNAM.1 $PKG/usr/man/man1/$PKGNAM.1
