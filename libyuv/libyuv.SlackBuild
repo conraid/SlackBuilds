@@ -25,13 +25,13 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=libyuv
 PKGNAM="${PRGNAM,,}"
-SRCVERSION=9f9b5cf660dcfa0d3fdee41cf4ffbe4bb6e95114
+SRCVERSION=0853c9353fc460df486a13ee13c5f5d18266a62b
 VERSION="${SRCVERSION:0:7}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -104,7 +104,6 @@ cmake -Wno-dev \
   -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   ..
 
 make
