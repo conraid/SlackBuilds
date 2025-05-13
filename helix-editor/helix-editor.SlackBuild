@@ -25,15 +25,15 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=helix
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-editor
+PKGNAM=${PRGNAM,,}-editor
 SRCVERSION=25.01.1
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -74,7 +74,7 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-#rm -rf $PRGNAM-$SRCVERSION
+rm -rf $PRGNAM-$SRCVERSION
 mkdir -p $PRGNAM-$SRCVERSION
 cd $PRGNAM-$SRCVERSION
 tar xvf $CWD/$PRGNAM-$SRCVERSION-source.tar.xz
@@ -99,10 +99,18 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
-CARGO_HOME=.cargo \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-cargo build --release
+mkdir -p ".cargo"
+export CARGO_HOME=".cargo"
+export CFLAGS="$SLKCFLAGS"
+export CXXFLAGS="$SLKCFLAGS"
+
+cargo fetch \
+    --locked
+
+cargo build \
+    --release \
+    --frozen \
+    --offline
 
 mkdir -p $PKG/usr/share/$PRGNAM
 cp -r runtime $PKG/usr/share/$PRGNAM
@@ -138,9 +146,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
