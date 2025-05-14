@@ -30,10 +30,10 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=isort
-PKGNAM=python-$(echo $PRGNAM | tr A-Z a-z)
+PKGNAM=python-${PRGNAM,,}
 SRCVERSION=6.0.1
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
