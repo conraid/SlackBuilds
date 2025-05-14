@@ -25,7 +25,7 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
@@ -33,7 +33,7 @@ PRGNAM=subtitlecomposer
 PKGNAM="${PRGNAM,,}"
 SRCVERSION=v0.8.1
 VERSION="${SRCVERSION#v}"
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
