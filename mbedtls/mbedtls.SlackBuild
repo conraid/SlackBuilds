@@ -25,12 +25,12 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=mbedtls
-VERSION=3.6.3
+VERSION=3.6.3.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -93,6 +93,10 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
+# Fix error in psa_exercise_key.c
+sed -i 's/unsigned char ciphertext\[32\]/unsigned char ciphertext[33]/' framework/tests/src/psa_exercise_key.c
+
+
 mkdir -p build
 cd build
 cmake -Wno-dev \
@@ -104,6 +108,7 @@ cmake -Wno-dev \
   -DUSE_SHARED_MBEDTLS_LIBRARY=ON \
   -DUSE_STATIC_MBEDTLS_LIBRARY=OFF \
   -DENABLE_TESTING=OFF \
+  -DMBEDTLS_FATAL_WARNINGS=OFF \
   ..
 
 make
