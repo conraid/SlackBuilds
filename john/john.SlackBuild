@@ -22,15 +22,15 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=john
 PKGNAM=john
 SRCVERSION=1.9.0-jumbo-1
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-11}
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-12}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -88,7 +88,7 @@ fi
 export PKG_CONFIG_PATH=/usr/lib${LIBDIRSUFFIX}/openssl-1.0/pkgconfig
 
 SLKCFLAGS="-DJOHN_SYSTEMWIDE=1 -Wall -O2 -fomit-frame-pointer"
-SLKCONF="--prefix=/usr --with-systemwide --disable-native-tests --enable-asan --enable-mpi --enable-openmp --enable-opencl --enable-pkg-config --enable-pcap"
+SLKCONF="--prefix=/usr --with-systemwide --disable-native-tests --enable-mpi --enable-openmp --enable-opencl --enable-pkg-config --enable-pcap"
 cd src
 
 autoreconf -fiv
@@ -200,9 +200,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
