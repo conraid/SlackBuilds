@@ -33,7 +33,7 @@ PRGNAM=shotcut
 PKGNAM="${PRGNAM,,}"
 SRCVERSION=25.05.11
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -102,6 +102,7 @@ cmake -Wno-dev \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DCMAKE_INSTALL_DOCDIR=/usr/doc/$PKGNAM-$VERSION \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   ..
 
 make
