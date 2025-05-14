@@ -325,19 +325,19 @@ SLACKBUILD SHORT DESCRIPTION:  autossh (Automatically restart SSH sessions and t
 SLACKBUILD NAME: aws-cli
 SLACKBUILD LOCATION: ./aws-cli
 SLACKBUILD FILES: README aws-cli.SlackBuild aws-cli.info slack-desc slack-required
-SLACKBUILD VERSION: 1.40.13
+SLACKBUILD VERSION: 1.40.14
 SLACKBUILD REQUIRES: cryptography python-botocore colorama python-dateutil python-jmespath rsa python-s3transfer ruyaml ruamel-yaml awscrt
-SLACKBUILD DOWNLOAD: https://github.com/aws/aws-cli/archive/1.40.13/aws-cli-1.40.13.tar.gz
-SLACKBUILD MD5SUM: 836638887d9632ff66bcfe2c224653dc
+SLACKBUILD DOWNLOAD: https://github.com/aws/aws-cli/archive/1.40.14/aws-cli-1.40.14.tar.gz
+SLACKBUILD MD5SUM: ccb86abb5e3056a7c14b7a7718061b2d
 SLACKBUILD SHORT DESCRIPTION:  aws-cli (Universal Command Line Interface for AWS)
 
 SLACKBUILD NAME: awscrt
 SLACKBUILD LOCATION: ./awscrt
 SLACKBUILD FILES: README awscrt.SlackBuild awscrt.info slack-desc
-SLACKBUILD VERSION: 0.27.1
+SLACKBUILD VERSION: 0.27.2
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/awscrt/awscrt-0.27.1.tar.gz
-SLACKBUILD MD5SUM: 007518789087fda274058683a7f2c035
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/awscrt/awscrt-0.27.2.tar.gz
+SLACKBUILD MD5SUM: 5b789d39573b4b1e06aef143a4381960
 SLACKBUILD SHORT DESCRIPTION:  awscrt (Python bindings for the AWS Common Runtime)
 
 SLACKBUILD NAME: ayatana-ido
@@ -3610,10 +3610,10 @@ SLACKBUILD SHORT DESCRIPTION:  masscan (Mass IP port scanner)
 SLACKBUILD NAME: mbedtls
 SLACKBUILD LOCATION: ./mbedtls
 SLACKBUILD FILES: README mbedtls.SlackBuild mbedtls.info slack-desc
-SLACKBUILD VERSION: 3.6.3
+SLACKBUILD VERSION: 3.6.3.1
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/Mbed-TLS/mbedtls/releases/download/mbedtls-3.6.3/mbedtls-3.6.3.tar.bz2
-SLACKBUILD MD5SUM: 42552d8ccd02b32d5a36e80fbf9b47f8
+SLACKBUILD DOWNLOAD: https://github.com/Mbed-TLS/mbedtls/releases/download/v3.6.3.1/mbedtls-3.6.3.1.tar.bz2
+SLACKBUILD MD5SUM: e4fd01e47eeb94f0015fb5b3d874a164
 SLACKBUILD SHORT DESCRIPTION:  mbedtls (Light-weight cryptographic and SSL/TLS library)
 
 SLACKBUILD NAME: md4c
@@ -5076,7 +5076,7 @@ SLACKBUILD SHORT DESCRIPTION:  pkgdiff (A tool for visualizing changes in Linux 
 
 SLACKBUILD NAME: pmacct
 SLACKBUILD LOCATION: ./pmacct
-SLACKBUILD FILES: README doinst.sh pmacct.SlackBuild pmacct.info rc.pmacctd slack-desc slack-required
+SLACKBUILD FILES: README doinst.sh patches/gcc15.patch pmacct.SlackBuild pmacct.info rc.pmacctd slack-desc slack-required
 SLACKBUILD VERSION: 1.7.9
 SLACKBUILD REQUIRES: libmaxminddb postgresql zeromq redis hiredis numactl
 SLACKBUILD DOWNLOAD: http://www.pmacct.net/pmacct-1.7.9.tar.gz
@@ -5500,10 +5500,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-bcrypt (password hashing)
 SLACKBUILD NAME: python-botocore
 SLACKBUILD LOCATION: ./python-botocore
 SLACKBUILD FILES: README python-botocore.SlackBuild python-botocore.info slack-desc slack-required
-SLACKBUILD VERSION: 1.38.13
+SLACKBUILD VERSION: 1.38.15
 SLACKBUILD REQUIRES: python-dateutil python-jmespath awscrt
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/botocore/botocore-1.38.13.tar.gz
-SLACKBUILD MD5SUM: e1415dd9c9b0289646219ba541af38b9
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/botocore/botocore-1.38.15.tar.gz
+SLACKBUILD MD5SUM: f82c10e34e95ec2c07e50c662486857e
 SLACKBUILD SHORT DESCRIPTION:  python-botocore (The low-level, core functionality of boto 3)
 
 SLACKBUILD NAME: python-cachecontrol
@@ -5842,10 +5842,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-magic (A python wrapper for libmagic)
 SLACKBUILD NAME: python-maturin
 SLACKBUILD LOCATION: ./python-maturin
 SLACKBUILD FILES: README python-maturin.SlackBuild python-maturin.info slack-desc slack-required
-SLACKBUILD VERSION: 1.8.4
+SLACKBUILD VERSION: 1.8.6
 SLACKBUILD REQUIRES: python-setuptools-rust python-semantic_version
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/m/maturin/maturin-1.8.4.tar.gz
-SLACKBUILD MD5SUM: 1773ff8c50ba884a50b7cd4fab355003
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/m/maturin/maturin-1.8.6.tar.gz
+SLACKBUILD MD5SUM: d4a7cad7caf907e50bdd5e9d93b3d395
 SLACKBUILD SHORT DESCRIPTION:  python-maturin (formerly pyo3-pack)
 
 SLACKBUILD NAME: python-mccabe
@@ -6688,10 +6688,10 @@ SLACKBUILD SHORT DESCRIPTION:  reaver (Brute force attack against Wifi Protected
 SLACKBUILD NAME: redis
 SLACKBUILD LOCATION: ./redis
 SLACKBUILD FILES: README doinst.sh files/rc.redis files/redis.logrotate patches/jemalloc.patch redis.SlackBuild redis.info slack-desc
-SLACKBUILD VERSION: 8.0.0
+SLACKBUILD VERSION: 8.0.1
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://download.redis.io/releases/redis-8.0.0.tar.gz
-SLACKBUILD MD5SUM: 942d8cb04a666042601f7de0f1172db0
+SLACKBUILD DOWNLOAD: https://download.redis.io/releases/redis-8.0.1.tar.gz
+SLACKBUILD MD5SUM: 065162870a195ac75c878c2e2e66f035
 SLACKBUILD SHORT DESCRIPTION:  Redis (Key-Value Store)
 
 SLACKBUILD NAME: reportlab
@@ -7057,10 +7057,10 @@ SLACKBUILD SHORT DESCRIPTION:  siege (http server benchmark)
 SLACKBUILD NAME: signal-desktop-bin
 SLACKBUILD LOCATION: ./signal-desktop-bin
 SLACKBUILD FILES: README doinst.sh signal-desktop-bin.SlackBuild signal-desktop-bin.info slack-desc
-SLACKBUILD VERSION: 7.53.0
+SLACKBUILD VERSION: 7.54.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://updates.signal.org/desktop/apt/pool/s/signal-desktop/signal-desktop_7.53.0_amd64.deb
-SLACKBUILD MD5SUM: 73d822ee5e62cd9e4b9c343992fa63ec
+SLACKBUILD DOWNLOAD: https://updates.signal.org/desktop/apt/pool/s/signal-desktop/signal-desktop_7.54.0_amd64.deb
+SLACKBUILD MD5SUM: 354662f986a703dd0c9385816fd33913
 SLACKBUILD SHORT DESCRIPTION:  signal-desktop-bin (Signal for Desktop)
 
 SLACKBUILD NAME: signon-kwallet-extension
@@ -7156,10 +7156,10 @@ SLACKBUILD SHORT DESCRIPTION:  sitemap-generator (Easily create XML sitemaps for
 SLACKBUILD NAME: sitespeedio
 SLACKBUILD LOCATION: ./sitespeedio
 SLACKBUILD FILES: PKGNOTE README sitespeedio.SlackBuild sitespeedio.info slack-desc
-SLACKBUILD VERSION: 37.5.1
+SLACKBUILD VERSION: 37.6.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/sitespeed.io/-/sitespeed.io-37.5.1.tgz
-SLACKBUILD MD5SUM: 8a25e928a834fb8b1007edd471b77e03
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/sitespeed.io/-/sitespeed.io-37.6.0.tgz
+SLACKBUILD MD5SUM: e9b7b3445f53d8123bb5783cbbac3369
 SLACKBUILD SHORT DESCRIPTION:  sitespeed.io (complete web performance tool)
 
 SLACKBUILD NAME: slack-bin
@@ -7291,10 +7291,10 @@ SLACKBUILD SHORT DESCRIPTION:  sniffnet (Application to comfortably monitor your
 SLACKBUILD NAME: snowball
 SLACKBUILD LOCATION: ./snowball
 SLACKBUILD FILES: README patches/dinamyclib.patch slack-desc snowball.SlackBuild snowball.info
-SLACKBUILD VERSION: 74293cac98c8df2a37fc2ed0130ccb4a0c40ebfd
+SLACKBUILD VERSION: 78eaccdb445d6d1c2db1f11987c653678301fba0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://codeload.github.com/snowballstem/snowball/tar.gz/74293cac98c8df2a37fc2ed0130ccb4a0c40ebfd
-SLACKBUILD MD5SUM: 8545ffa99ce1cc49cdded8c1dc1e7e2b
+SLACKBUILD DOWNLOAD: https://codeload.github.com/snowballstem/snowball/tar.gz/78eaccdb445d6d1c2db1f11987c653678301fba0
+SLACKBUILD MD5SUM: 292b21d21ed9080100fc6a46dd5627d9
 SLACKBUILD SHORT DESCRIPTION:  snowball (Snowball compiler and stemming algorithms)
 
 SLACKBUILD NAME: solaar
@@ -8425,10 +8425,10 @@ SLACKBUILD SHORT DESCRIPTION:  vnStat (a console-based network traffic monitor)
 SLACKBUILD NAME: vscodium-bin
 SLACKBUILD LOCATION: ./vscodium-bin
 SLACKBUILD FILES: README doinst.sh files/codium.desktop slack-desc vscodium-bin.SlackBuild vscodium-bin.info
-SLACKBUILD VERSION: 1.100.03093
+SLACKBUILD VERSION: 1.100.13210
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/VSCodium/vscodium/releases/download/1.100.03093/VSCodium-linux-x64-1.100.03093.tar.gz
-SLACKBUILD MD5SUM: 3db083e76ac3c3b46b1199be31c0cf3c
+SLACKBUILD DOWNLOAD: https://github.com/VSCodium/vscodium/releases/download/1.100.13210/VSCodium-linux-x64-1.100.13210.tar.gz
+SLACKBUILD MD5SUM: 142c1d9e57214ac6c93a7dc3b406a575
 SLACKBUILD SHORT DESCRIPTION:  vscodium-bin (Free/Libre Open Source Software Binaries of VSCode)
 
 SLACKBUILD NAME: vuescan-bin
