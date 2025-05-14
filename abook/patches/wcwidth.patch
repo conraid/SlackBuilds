@@ -1,0 +1,12 @@
+diff -Naupr a/mbswidth.c b/mbswidth.c
+--- a/mbswidth.c	2025-01-19 18:25:00.000000000 +0100
++++ b/mbswidth.c	2025-05-14 17:38:09.028431700 +0200
+@@ -62,7 +62,7 @@
+ #ifndef HAVE_DECL_WCWIDTH
+ #	warn "this configure-time declaration test was not run"
+ #endif
+-#if !HAVE_DECL_WCWIDTH
++#ifndef HAVE_DECL_WCWIDTH
+ int wcwidth ();
+ #endif
+ 
