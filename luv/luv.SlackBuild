@@ -30,8 +30,8 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=luv
-SRCVERSION=1.51.0-0
-VERSION="${SRCVERSION%%-*}"
+SRCVERSION=1.51.0-1
+VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -89,16 +89,17 @@ for ver in 5.1 5.2 5.3 5.4; do
       incdir="/usr/include"
     fi
 
-    cmake -GNinja \
-      -Bbuild-lua${ver//./} \
-      -DLUA=/usr/bin/lua${ver} \
-      -DLUA_INCDIR=${incdir} \
-      -DLUADIR=/usr/share/lua/${ver} \
-      -DLIBDIR=/usr/lib$LIBDIRSUFFIX/lua/${ver} \
-      -DWITH_SHARED_LIBUV=ON \
-      -DLUA_BUILD_TYPE=System \
-      -DCMAKE_INSTALL_PREFIX=/usr \
-      "luv-${SRCVERSION//_/-}"
+    cmake -Wno-dev \
+        -GNinja \
+        -Bbuild-lua${ver//./} \
+        -DLUA=/usr/bin/lua${ver} \
+        -DLUA_INCDIR=${incdir} \
+        -DLUADIR=/usr/share/lua/${ver} \
+        -DLIBDIR=/usr/lib$LIBDIRSUFFIX/lua/${ver} \
+        -DWITH_SHARED_LIBUV=ON \
+        -DLUA_BUILD_TYPE=System \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        "luv-${SRCVERSION//_/-}"
 
     ninja -C "build-lua${ver//./}"
     DESTDIR="$PKG" ninja -C "build-lua${ver//./}" install
@@ -109,15 +110,15 @@ sed -i -r "s/\/lib(\"|\/)/\/lib$LIBDIRSUFFIX\1/g" CMakeLists.txt
 
 mkdir -p build
 cmake -Wno-dev \
-  -GNinja \
-  -Bbuild \
-  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_INSTALL_PREFIX=/usr \
-  -DWITH_SHARED_LIBUV=ON \
-  -DLUA_BUILD_TYPE=System \
-  -DBUILD_MODULE=OFF \
-  -DBUILD_SHARED_LIBS=ON
+    -GNinja \
+    -Bbuild \
+    -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DWITH_SHARED_LIBUV=ON \
+    -DLUA_BUILD_TYPE=System \
+    -DBUILD_MODULE=OFF \
+    -DBUILD_SHARED_LIBS=ON
 
 ninja -C "build"
 DESTDIR="${PKG}" ninja -C "build" install
