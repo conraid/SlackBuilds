@@ -25,15 +25,15 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=typing_extensions
 PKGNAM=python-$(echo $PRGNAM | tr A-Z a-z | tr _ -)
 SRCVERSION=4.13.2
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-1}
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
