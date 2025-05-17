@@ -25,7 +25,7 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
@@ -33,7 +33,7 @@ PRGNAM=FeatureDetector
 PKGNAM="${PRGNAM,,}"
 SRCVERSION=077393260d5e0e19938582a33b9dd0e74baa8ff2
 VERSION="${SRCVERSION:0:7}"
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
