@@ -25,14 +25,14 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 #
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=ntopng
-SRCVERSION=fe9b09a91fbcf7324d4ebe0da66570e1409df718
-VERSION="6.3dev_${SRCVERSION:0:7}"
-BUILD=${BUILD:-2}
+SRCVERSION=6.4
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg-ntop} # I use a different directory than usual because to make things easier for me I have to delete the whole directory.
 PKG=$TMP/package-$PKGNAM/
