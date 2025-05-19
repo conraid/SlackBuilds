@@ -25,15 +25,15 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=hidapi
 PKGNAM=hidapi
-SRCVERSION=hidapi-0.14.0
+SRCVERSION=hidapi-0.15.0
 VERSION=${SRCVERSION#*-}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
