@@ -25,12 +25,12 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=dropbox
 PKGNAM="${PRGNAM,,}"-bin
-VERSION=223.4.4909
+VERSION=224.4.4811
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
