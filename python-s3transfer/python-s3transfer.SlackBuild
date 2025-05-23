@@ -25,14 +25,14 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=s3transfer
-PKGNAM=python-$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=0.12.0
-VERSION=$(echo $SRCVERSION | tr - _)
+PKGNAM=python-${PRGNAM,,}
+SRCVERSION=0.13.0
+VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
