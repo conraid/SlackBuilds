@@ -1,0 +1,333 @@
+diff -Naupr a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2020-12-10 03:04:24.000000000 +0100
++++ b/CMakeLists.txt	2025-05-25 20:58:26.017659863 +0200
+@@ -12,7 +12,7 @@ set (APPLICATION_NAME "PDF Slicer")
+ set (APPLICATION_WEBSITE "https://junrrein.github.io/pdfslicer/")
+ set (GETTEXT_PACKAGE ${APPLICATION_ID})
+ set (LINUX_LOCALE_DIR "${CMAKE_INSTALL_PREFIX}/share/locale/")
+-set (VERSION 1.8.8)
++set (VERSION 1.8.9)
+ 
+ set (SOURCE_DATA_DIR ${CMAKE_SOURCE_DIR}/data)
+ 
+diff -Naupr a/README.md b/README.md
+--- a/README.md	2020-12-10 03:04:24.000000000 +0100
++++ b/README.md	2025-05-25 20:58:26.017659863 +0200
+@@ -4,7 +4,7 @@
+ 
+ # PDF Slicer
+ 
+-This is a simple application for extracting, merging, rotating and reordering pages of PDF documents,
++This is a simple application to extract, merge, rotate and reorder pages of PDF documents,
+ with undo/redo support.
+ 
+ ![](docs/readme-screenshot-1.png)
+@@ -16,6 +16,8 @@ with undo/redo support.
+ # Table of Contents
+ 
+ * [Installing](#installing)
++  * [Linux](#linux)
++  * [Windows](#windows)
+ * [Contributing](#contributing)
+   * [Translations](#translations)
+   * [Code](#code)
+@@ -27,8 +29,14 @@ with undo/redo support.
+ 
+ # Installing
+ 
++## Linux
++
+ You can install PDF Slicer using Flatpak. [Get it from Flathub](https://flathub.org/apps/details/com.github.junrrein.PDFSlicer).
+ 
++## Windows
++
++You can get the latest installer from the [Releases page](https://github.com/junrrein/pdfslicer/releases/latest).
++
+ # Contributing
+ 
+ ## Translations
+diff -Naupr a/src/application/interactivepagewidget.cpp b/src/application/interactivepagewidget.cpp
+--- a/src/application/interactivepagewidget.cpp	2020-12-10 03:04:24.000000000 +0100
++++ b/src/application/interactivepagewidget.cpp	2025-05-25 20:58:26.024053604 +0200
+@@ -79,9 +79,9 @@ void InteractivePageWidget::changeSize(i
+     m_pageWidget.changeSize(targetSize);
+ }
+ 
+-void InteractivePageWidget::renderPage()
++void InteractivePageWidget::setImage(const Glib::RefPtr<Gdk::Pixbuf>& image)
+ {
+-    m_pageWidget.renderPage();
++    m_pageWidget.setImage(image);
+ }
+ 
+ void InteractivePageWidget::showSpinner()
+diff -Naupr a/src/application/interactivepagewidget.hpp b/src/application/interactivepagewidget.hpp
+--- a/src/application/interactivepagewidget.hpp	2020-12-10 03:04:24.000000000 +0100
++++ b/src/application/interactivepagewidget.hpp	2025-05-25 20:58:26.024053604 +0200
+@@ -54,8 +54,9 @@ public:
+                             const InteractivePageWidget& b);
+ 
+     // Interface of Slicer::PageWidget
++    const Glib::RefPtr<const Page>& page() const;
+     void changeSize(int targetSize);
+-    void renderPage();
++    void setImage(const Glib::RefPtr<Gdk::Pixbuf>& image);
+     void showSpinner();
+     void showPage();
+     void setRenderingTask(const std::weak_ptr<Task>& task);
+@@ -77,7 +78,6 @@ private:
+     Gtk::Label m_fileNameLabel;
+     Gtk::Label m_pageNumberLabel;
+ 
+-    const Glib::RefPtr<const Page>& page() const;
+     void setupWidgets();
+     void setupSignalHandlers();
+ };
+diff -Naupr a/src/application/pagewidget.cpp b/src/application/pagewidget.cpp
+--- a/src/application/pagewidget.cpp	2020-12-10 03:04:24.000000000 +0100
++++ b/src/application/pagewidget.cpp	2025-05-25 20:58:26.024053604 +0200
+@@ -53,9 +53,9 @@ void PageWidget::setupWidgets()
+     show_all();
+ }
+ 
+-void PageWidget::renderPage()
++void PageWidget::setImage(const Glib::RefPtr<Gdk::Pixbuf>& image)
+ {
+-    m_thumbnail.set(PageRenderer{m_page}.render(m_targetSize));
++    m_thumbnail.set(image);
+ }
+ 
+ void PageWidget::showSpinner()
+diff -Naupr a/src/application/pagewidget.hpp b/src/application/pagewidget.hpp
+--- a/src/application/pagewidget.hpp	2020-12-10 03:04:24.000000000 +0100
++++ b/src/application/pagewidget.hpp	2025-05-25 20:58:26.024053604 +0200
+@@ -38,7 +38,7 @@ public:
+     ~PageWidget() override = default;
+ 
+     void changeSize(int targetSize);
+-    void renderPage();
++    void setImage(const Glib::RefPtr<Gdk::Pixbuf>& image);
+     void showSpinner();
+     void showPage();
+     void setRenderingTask(const std::weak_ptr<Task>& task);
+diff -Naupr a/src/application/previewwindow.cpp b/src/application/previewwindow.cpp
+--- a/src/application/previewwindow.cpp	2020-12-10 03:04:24.000000000 +0100
++++ b/src/application/previewwindow.cpp	2025-05-25 20:58:26.024053604 +0200
+@@ -118,21 +118,10 @@ void PreviewWindow::loadCustomCSS()
+ 
+ void PreviewWindow::renderPage()
+ {
+-    std::weak_ptr<PageWidget> weakWidget = m_pageWidget;
+-
+-    auto funcExecute = [weakWidget]() {
+-        if (auto widget = weakWidget.lock(); widget != nullptr)
+-            widget->renderPage();
+-    };
+-
+-    auto funcPostExecute = [weakWidget]() {
+-        if (auto widget = weakWidget.lock(); widget != nullptr)
+-            widget->showPage();
+-    };
+-
+-    auto task = std::make_shared<Task>(funcExecute, funcPostExecute);
+-    m_pageWidget->setRenderingTask(task);
+-    m_taskRunner.queueFront(task);
++    auto task = std::make_shared<RenderTask<PageWidget>>(m_pageWidget,
++                                                         m_zoomLevel.currentLevel());
++    m_pageWidget->setRenderingTask(std::static_pointer_cast<Task>(task));
++    m_taskRunner.queueFront(std::static_pointer_cast<Task>(task));
+ }
+ 
+ } // namespace Slicer
+diff -Naupr a/src/application/task.cpp b/src/application/task.cpp
+--- a/src/application/task.cpp	2020-12-10 03:04:24.000000000 +0100
++++ b/src/application/task.cpp	2025-05-25 20:58:26.024659742 +0200
+@@ -18,13 +18,6 @@
+ 
+ namespace Slicer {
+ 
+-Task::Task(const std::function<void()>& funcExecute,
+-           const std::function<void()>& funcPostExecute)
+-    : m_funcExecute{funcExecute}
+-    , m_funcPostExecute{funcPostExecute}
+-{
+-}
+-
+ bool Task::isCanceled() const
+ {
+     return m_isCanceled;
+@@ -35,14 +28,4 @@ void Task::cancel()
+     m_isCanceled = true;
+ }
+ 
+-void Task::execute()
+-{
+-    m_funcExecute();
+-}
+-
+-void Task::postExecute()
+-{
+-    m_funcPostExecute();
+-}
+-
+ } // namespace Slicer
+diff -Naupr a/src/application/task.hpp b/src/application/task.hpp
+--- a/src/application/task.hpp	2020-12-10 03:04:24.000000000 +0100
++++ b/src/application/task.hpp	2025-05-25 20:58:26.024659742 +0200
+@@ -18,25 +18,72 @@
+ #define SLICER_TASK_HPP
+ 
+ #include <atomic>
+-#include <functional>
++#include <memory>
++#include "pagerenderer.hpp"
+ 
+ namespace Slicer {
+ 
+ class Task {
+ public:
+-	Task(const std::function<void()>& funcExecute,
+-         const std::function<void()>& funcPostExecute);
++    Task(const Task&) = delete;
++    Task& operator=(const Task&) = delete;
++    Task(Task&&) = delete;
++    Task& operator=(Task&& src) = delete;
+ 
+     [[nodiscard]] bool isCanceled() const;
+ 
+ 	void cancel();
+-	void execute();
+-	void postExecute();
++    virtual void execute() = 0;
++    virtual void postExecute(){};
++
++    virtual ~Task() = default;
+ 
+ private:
+ 	std::atomic_bool m_isCanceled = false;
+-	std::function<void()> m_funcExecute;
+-	std::function<void()> m_funcPostExecute;
++};
++
++template <typename T>
++class RenderTask : public Task {
++public:
++    RenderTask(std::weak_ptr<T> weakWidget,
++               int targetSize)
++        : m_weakWidget{weakWidget}
++        , m_targetSize{targetSize}
++    {
++    }
++
++    RenderTask(const RenderTask&) = delete;
++    RenderTask& operator=(const RenderTask&) = delete;
++    RenderTask(RenderTask&&) = delete;
++    RenderTask& operator=(RenderTask&& src) = delete;
++
++    void execute() override
++    {
++        auto widget = m_weakWidget.lock();
++
++        if (widget == nullptr)
++            return;
++
++        m_renderedPage = PageRenderer{widget->page()}.render(m_targetSize);
++    }
++
++    void postExecute() override
++    {
++        auto widget = m_weakWidget.lock();
++
++        if (widget == nullptr)
++            return;
++
++        widget->setImage(m_renderedPage);
++        widget->showPage();
++    }
++
++    ~RenderTask() override = default;
++
++private:
++    std::weak_ptr<T> m_weakWidget;
++    const int m_targetSize;
++    Glib::RefPtr<Gdk::Pixbuf> m_renderedPage;
+ };
+ 
+ } // namespace Slicer
+diff -Naupr a/src/application/taskrunner.cpp b/src/application/taskrunner.cpp
+--- a/src/application/taskrunner.cpp	2020-12-10 03:04:24.000000000 +0100
++++ b/src/application/taskrunner.cpp	2025-05-25 20:58:26.024659742 +0200
+@@ -16,6 +16,7 @@
+ 
+ #include "taskrunner.hpp"
+ #include <glibmm/main.h>
++#include <gsl/gsl>
+ 
+ namespace Slicer {
+ 
+@@ -61,11 +62,9 @@ void TaskRunner::runTask(const std::shar
+     if (task->isCanceled())
+         return;
+ 
+-    Glib::signal_idle().connect([task]() {
++    Glib::signal_idle().connect_once([task]() {
+         if (!task->isCanceled())
+             task->postExecute();
+-
+-        return false;
+     });
+ }
+ 
+@@ -75,9 +74,9 @@ int TaskRunner::numberOfThreads()
+ 
+     // Use only half of the CPU's cores
+     if (numberOfCores >= 2)
+-        return numberOfCores / 2;
+-    else
+-        return 1;
++        return gsl::narrow<int>(numberOfCores / 2);
++
++    return 1;
+ }
+ 
+ } // namespace Slicer
+diff -Naupr a/src/application/view.cpp b/src/application/view.cpp
+--- a/src/application/view.cpp	2020-12-10 03:04:24.000000000 +0100
++++ b/src/application/view.cpp	2025-05-25 20:58:26.024659742 +0200
+@@ -257,21 +257,9 @@ int View::sortFunction(Gtk::FlowBoxChild
+ 
+ void View::renderPage(const std::shared_ptr<InteractivePageWidget>& pageWidget)
+ {
+-    std::weak_ptr<InteractivePageWidget> weakWidget = pageWidget;
+-
+-    auto funcExecute = [weakWidget]() {
+-        if (auto widget = weakWidget.lock(); widget != nullptr)
+-            widget->renderPage();
+-    };
+-
+-    auto funcPostExecute = [weakWidget]() {
+-        if (auto widget = weakWidget.lock(); widget != nullptr)
+-            widget->showPage();
+-    };
+-
+-    auto task = std::make_shared<Task>(funcExecute, funcPostExecute);
+-    pageWidget->setRenderingTask(task);
+-    m_taskRunner.queueBack(task);
++    auto task = std::make_shared<RenderTask<InteractivePageWidget>>(pageWidget, m_pageWidgetSize);
++    pageWidget->setRenderingTask(std::static_pointer_cast<Task>(task));
++    m_taskRunner.queueBack(std::static_pointer_cast<Task>(task));
+ }
+ 
+ void View::cancelRenderingTasks()
+diff -Naupr a/src/backend/pagerenderer.cpp b/src/backend/pagerenderer.cpp
+--- a/src/backend/pagerenderer.cpp	2020-12-10 03:04:24.000000000 +0100
++++ b/src/backend/pagerenderer.cpp	2025-05-25 20:58:26.026145070 +0200
+@@ -29,7 +29,7 @@ PageRenderer::RenderDimensions PageRende
+ {
+     const Page::Size outputSize = m_page->scaledRotatedSize(targetSize);
+     const Page::Size rotatedSize = m_page->rotatedSize();
+-    double scale;
++    double scale = NAN;
+ 
+     if (rotatedSize.width >= rotatedSize.height)
+         scale = static_cast<double>(outputSize.width) / rotatedSize.width;

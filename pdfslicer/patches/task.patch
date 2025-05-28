@@ -1,0 +1,12 @@
+diff -Naupr a/src/application/task.hpp c/src/application/task.hpp
+--- a/src/application/task.hpp	2020-12-10 03:04:24.000000000 +0100
++++ c/src/application/task.hpp	2025-05-25 21:12:19.449103565 +0200
+@@ -23,6 +23,8 @@
+ namespace Slicer {
+ 
+ class Task {
++protected:
++    Task() = default;
+ public:
+ 	Task(const std::function<void()>& funcExecute,
+          const std::function<void()>& funcPostExecute);
