@@ -334,10 +334,10 @@ SLACKBUILD SHORT DESCRIPTION:  autossh (Automatically restart SSH sessions and t
 SLACKBUILD NAME: aws-cli
 SLACKBUILD LOCATION: ./aws-cli
 SLACKBUILD FILES: README aws-cli.SlackBuild aws-cli.info slack-desc slack-required
-SLACKBUILD VERSION: 1.40.24
-SLACKBUILD REQUIRES: cryptography python-botocore colorama python-dateutil python-jmespath rsa python-s3transfer ruyaml ruamel-yaml awscrt
-SLACKBUILD DOWNLOAD: https://github.com/aws/aws-cli/archive/1.40.24/aws-cli-1.40.24.tar.gz
-SLACKBUILD MD5SUM: efc3f6fae09a8e175b720149a37640ed
+SLACKBUILD VERSION: 1.40.25
+SLACKBUILD REQUIRES: python-python-cryptography python-botocore colorama python-dateutil python-jmespath rsa python-s3transfer ruyaml ruamel-yaml awscrt
+SLACKBUILD DOWNLOAD: https://github.com/aws/aws-cli/archive/1.40.25/aws-cli-1.40.25.tar.gz
+SLACKBUILD MD5SUM: 905df47ba381aa76e4ba0ccf69742bee
 SLACKBUILD SHORT DESCRIPTION:  aws-cli (Universal Command Line Interface for AWS)
 
 SLACKBUILD NAME: awscrt
@@ -817,15 +817,6 @@ SLACKBUILD DOWNLOAD: https://github.com/CLD2Owners/cld2/archive/b56fa78a2fe44ac2
 SLACKBUILD MD5SUM: 6a23d18bd8fbf50d5d85374888ee000b
 SLACKBUILD SHORT DESCRIPTION:  cld2 (Compact Language Detector 2)
 
-SLACKBUILD NAME: click
-SLACKBUILD LOCATION: ./click
-SLACKBUILD FILES: README click.SlackBuild click.info slack-desc
-SLACKBUILD VERSION: 8.2.1
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/click/click-8.2.1.tar.gz
-SLACKBUILD MD5SUM: 438cfd4974584ae4f960ffeab32e8991
-SLACKBUILD SHORT DESCRIPTION:  click (Python composable command line utility)
-
 SLACKBUILD NAME: cmocka
 SLACKBUILD LOCATION: ./cmocka
 SLACKBUILD FILES: README cmocka.SlackBuild cmocka.info slack-desc
@@ -969,15 +960,6 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://github.com/dwisiswant0/crlfuzz/archive/v1.4.1/crlfuzz-1.4.1.tar.gz
 SLACKBUILD MD5SUM: 2428a7315134fc541bd065fa78b870f6
 SLACKBUILD SHORT DESCRIPTION:  crlfuzz (A fast tool to scan CRLF vulnerability)
-
-SLACKBUILD NAME: cryptography
-SLACKBUILD LOCATION: ./cryptography
-SLACKBUILD FILES: README cryptography.SlackBuild cryptography.info slack-desc slack-required
-SLACKBUILD VERSION: 45.0.3
-SLACKBUILD REQUIRES:  pyasn1 asn1crypto python-setuptools-rust python-semantic_version python-maturin
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/cryptography/cryptography-45.0.3.tar.gz
-SLACKBUILD MD5SUM: 1e3b6a299fbbe74b9a68e1b2dbdcb96b
-SLACKBUILD SHORT DESCRIPTION:  cryptography (Python cryptography library)
 
 SLACKBUILD NAME: csscss
 SLACKBUILD LOCATION: ./csscss
@@ -1729,10 +1711,10 @@ SLACKBUILD SHORT DESCRIPTION:  gitdb (IO of git-style object databases)
 SLACKBUILD NAME: github-cli
 SLACKBUILD LOCATION: ./github-cli
 SLACKBUILD FILES: README github-cli.SlackBuild github-cli.info slack-desc
-SLACKBUILD VERSION: 2.73.0
+SLACKBUILD VERSION: 2.74.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/cli/cli/archive/v2.73.0/cli-2.73.0.tar.gz
-SLACKBUILD MD5SUM: 0dbdbd3af4fc71c60998a3e1aebc55e2
+SLACKBUILD DOWNLOAD: https://github.com/cli/cli/archive/v2.74.0/cli-2.74.0.tar.gz
+SLACKBUILD MD5SUM: 55c77b5520089a5d087ac834642ae2d2
 SLACKBUILD SHORT DESCRIPTION:  github-cli (GitHub’s official command line tool)
 
 SLACKBUILD NAME: gitkraken-bin
@@ -2233,10 +2215,10 @@ SLACKBUILD SHORT DESCRIPTION:  hyperscan (High-performance regular expression ma
 SLACKBUILD NAME: i2util
 SLACKBUILD LOCATION: ./i2util
 SLACKBUILD FILES: README i2util.SlackBuild i2util.info slack-desc
-SLACKBUILD VERSION: 5.2.0-3.b1
+SLACKBUILD VERSION: 5.2.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/perfsonar/i2util/archive/v5.2.0-3.b1/i2util-5.2.0-3.b1.tar.gz
-SLACKBUILD MD5SUM: 57d183c5d009c548ba1c0013f3bd49ab
+SLACKBUILD DOWNLOAD: https://github.com/perfsonar/i2util/archive/v5.2.0/i2util-5.2.0.tar.gz
+SLACKBUILD MD5SUM: c6b0c8c1c4e5bf59b41fcd33e9244520
 SLACKBUILD SHORT DESCRIPTION:  I2util (error logging and command-line parsing)
 
 SLACKBUILD NAME: icdiff
@@ -3697,6 +3679,15 @@ SLACKBUILD DOWNLOAD: https://registry.npmjs.org/minimalcss/-/minimalcss-0.11.3.t
 SLACKBUILD MD5SUM: 8e3a0a834908f00292ae92472a72fcda
 SLACKBUILD SHORT DESCRIPTION:  minimalcss (Extract the minimal CSS used in a set of URLs)
 
+SLACKBUILD NAME: mitmproxy-bin
+SLACKBUILD LOCATION: ./mitmproxy-bin
+SLACKBUILD FILES: README mitmproxy-bin.SlackBuild mitmproxy-bin.info slack-desc
+SLACKBUILD VERSION: 12.1.1
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://downloads.mitmproxy.org/12.1.1/mitmproxy-12.1.1-linux-x86_64.tar.gz
+SLACKBUILD MD5SUM: bff9342ade0945706b8bc71bbf48f694
+SLACKBUILD SHORT DESCRIPTION:  mitmproxy-bin (SSL-capable man-in-the-middle HTTP proxy)
+
 SLACKBUILD NAME: mjpegtools
 SLACKBUILD LOCATION: ./mjpegtools
 SLACKBUILD FILES: README mjpegtools.SlackBuild mjpegtools.info slack-desc
@@ -3772,10 +3763,10 @@ SLACKBUILD SHORT DESCRIPTION:  msgpack-python (MessagePack for Python)
 SLACKBUILD NAME: msmtp
 SLACKBUILD LOCATION: ./msmtp
 SLACKBUILD FILES: README msmtp.SlackBuild msmtp.info slack-desc
-SLACKBUILD VERSION: 1.8.28
+SLACKBUILD VERSION: 1.8.29
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://marlam.de/msmtp/releases/msmtp-1.8.28.tar.xz
-SLACKBUILD MD5SUM: 6e5f7919bc72c9c5739ddd9ad575a742
+SLACKBUILD DOWNLOAD: https://marlam.de/msmtp/releases/msmtp-1.8.29.tar.xz
+SLACKBUILD MD5SUM: ceee0173419207cf843e547dfd3a6297
 SLACKBUILD SHORT DESCRIPTION:  msmtp (SMTP client)
 
 SLACKBUILD NAME: mtpfs
@@ -4565,7 +4556,7 @@ SLACKBUILD NAME: paramiko
 SLACKBUILD LOCATION: ./paramiko
 SLACKBUILD FILES: README paramiko.SlackBuild paramiko.info slack-desc slack-required
 SLACKBUILD VERSION: 3.5.1
-SLACKBUILD REQUIRES: cryptography pyasn1 pynacl python-bcrypt
+SLACKBUILD REQUIRES: python-python-cryptography pyasn1 pynacl python-bcrypt
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/paramiko/paramiko-3.5.1.tar.gz
 SLACKBUILD MD5SUM: b8af8e2ab2b82825b1487ee1547be693
 SLACKBUILD SHORT DESCRIPTION:  paramiko (Python SSH module)
@@ -5194,10 +5185,10 @@ SLACKBUILD SHORT DESCRIPTION:  postgresql (object-relational database management
 SLACKBUILD NAME: postman-bin
 SLACKBUILD LOCATION: ./postman-bin
 SLACKBUILD FILES: README doinst.sh files/postman.desktop postman-bin.SlackBuild postman-bin.info slack-desc
-SLACKBUILD VERSION: 11.45.2
+SLACKBUILD VERSION: 11.47.1
 SLACKBUILD REQUIRES: 
 SLACKBUILD DOWNLOAD: https://dl.pstmn.io/download/latest/linux64
-SLACKBUILD MD5SUM: 87d6bdb194c0c99a10655b176bed3438
+SLACKBUILD MD5SUM: b219b926dfdea4276048f573ba09b435
 SLACKBUILD SHORT DESCRIPTION:  postman (Build, test, and document your APIs faster)
 
 SLACKBUILD NAME: potrace
@@ -5500,10 +5491,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-automat (Self-service finite-state machine
 SLACKBUILD NAME: python-awesomeversion
 SLACKBUILD LOCATION: ./python-awesomeversion
 SLACKBUILD FILES: README python-awesomeversion.SlackBuild python-awesomeversion.info slack-desc slack-required
-SLACKBUILD VERSION: 24.6.0
+SLACKBUILD VERSION: 25.5.0
 SLACKBUILD REQUIRES: python-poetry-core
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/awesomeversion/awesomeversion-24.6.0.tar.gz
-SLACKBUILD MD5SUM: 0705b6c4a812e0a936817afac592c87b
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/awesomeversion/awesomeversion-25.5.0.tar.gz
+SLACKBUILD MD5SUM: 6a856dd9259882e7bddec6cee62920a9
 SLACKBUILD SHORT DESCRIPTION:  python-awesomeversion (One version package to rule them all)
 
 SLACKBUILD NAME: python-bcrypt
@@ -5518,10 +5509,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-bcrypt (password hashing)
 SLACKBUILD NAME: python-botocore
 SLACKBUILD LOCATION: ./python-botocore
 SLACKBUILD FILES: README python-botocore.SlackBuild python-botocore.info slack-desc slack-required
-SLACKBUILD VERSION: 1.38.25
+SLACKBUILD VERSION: 1.38.26
 SLACKBUILD REQUIRES: python-dateutil python-jmespath awscrt
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/botocore/botocore-1.38.25.tar.gz
-SLACKBUILD MD5SUM: 2b4593e2e0edea8694256fb071e0e3bf
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/botocore/botocore-1.38.26.tar.gz
+SLACKBUILD MD5SUM: a27d009fb1c94c7e716383ae70d615ab
 SLACKBUILD SHORT DESCRIPTION:  python-botocore (The low-level, core functionality of boto 3)
 
 SLACKBUILD NAME: python-cachecontrol
@@ -5569,6 +5560,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/C/Cheetah3/Cheetah3
 SLACKBUILD MD5SUM: 56bb5475917036ff22498caccaf1f29f
 SLACKBUILD SHORT DESCRIPTION:  python-cheetah3 (Template engine and code-generation tool)
 
+SLACKBUILD NAME: python-click
+SLACKBUILD LOCATION: ./python-click
+SLACKBUILD FILES: README python-click.SlackBuild python-click.info slack-desc
+SLACKBUILD VERSION: 8.2.1
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/click/click-8.2.1.tar.gz
+SLACKBUILD MD5SUM: 438cfd4974584ae4f960ffeab32e8991
+SLACKBUILD SHORT DESCRIPTION:  python-click (Python composable command line utility)
+
 SLACKBUILD NAME: python-commonmark
 SLACKBUILD LOCATION: ./python-commonmark
 SLACKBUILD FILES: README python-commonmark.SlackBuild python-commonmark.info slack-desc
@@ -5586,6 +5586,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/constantly/constantly-23.10.4.tar.gz
 SLACKBUILD MD5SUM: c090579309b2b34be04385b54b0a5a85
 SLACKBUILD SHORT DESCRIPTION:  python-constantly (Symbolic constants in Python)
+
+SLACKBUILD NAME: python-cryptography
+SLACKBUILD LOCATION: ./python-cryptography
+SLACKBUILD FILES: README python-cryptography.SlackBuild python-cryptography.info slack-desc slack-required
+SLACKBUILD VERSION: 45.0.3
+SLACKBUILD REQUIRES: pyasn1 asn1crypto python-setuptools-rust python-semantic_version python-maturin
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/cryptography/cryptography-45.0.3.tar.gz
+SLACKBUILD MD5SUM: 1e3b6a299fbbe74b9a68e1b2dbdcb96b
+SLACKBUILD SHORT DESCRIPTION:  python-cryptography (Python cryptography library)
 
 SLACKBUILD NAME: python-cssselect
 SLACKBUILD LOCATION: ./python-cssselect
@@ -5906,7 +5915,7 @@ SLACKBUILD NAME: python-oauthlib
 SLACKBUILD LOCATION: ./python-oauthlib
 SLACKBUILD FILES: README python-oauthlib.SlackBuild python-oauthlib.info slack-desc slack-required
 SLACKBUILD VERSION: 3.2.2
-SLACKBUILD REQUIRES: cryptography
+SLACKBUILD REQUIRES: python-python-cryptography
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/o/oauthlib/oauthlib-3.2.2.tar.gz
 SLACKBUILD MD5SUM: 2f7b898cc1af8c1409cc329e8843ea8f
 SLACKBUILD SHORT DESCRIPTION:  python-oauthlib (OAuth Implementation)
@@ -6859,10 +6868,10 @@ SLACKBUILD SHORT DESCRIPTION:  rtorrent (command-line torrent client)
 SLACKBUILD NAME: ruamel-yaml
 SLACKBUILD LOCATION: ./ruamel-yaml
 SLACKBUILD FILES: README ruamel-yaml.SlackBuild ruamel-yaml.info slack-desc
-SLACKBUILD VERSION: 0.18.11
+SLACKBUILD VERSION: 0.18.12
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/ruamel.yaml/ruamel.yaml-0.18.11.tar.gz
-SLACKBUILD MD5SUM: 30684c4dd1862b0ee7873a0fabc601fe
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/ruamel.yaml/ruamel.yaml-0.18.12.tar.gz
+SLACKBUILD MD5SUM: 00564edeae2bbc0376d4c1cab3451712
 SLACKBUILD SHORT DESCRIPTION:  ruamel-yaml (YAML parser/emitter for Python)
 
 SLACKBUILD NAME: ruyaml
@@ -7004,7 +7013,7 @@ SLACKBUILD NAME: secretstorage
 SLACKBUILD LOCATION: ./secretstorage
 SLACKBUILD FILES: README secretstorage.SlackBuild secretstorage.info slack-desc slack-required
 SLACKBUILD VERSION: 3.3.3
-SLACKBUILD REQUIRES: cryptography
+SLACKBUILD REQUIRES: python-python-cryptography
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/secretstorage/SecretStorage-3.3.3.tar.gz
 SLACKBUILD MD5SUM: c6ff1cc866d2f1d274b75c6490726b1b
 SLACKBUILD SHORT DESCRIPTION:  secretstorage: secretstorage (securely storing passwords and secrets)
@@ -7678,10 +7687,10 @@ SLACKBUILD SHORT DESCRIPTION:  stylelint-config-standard (The standard config fo
 SLACKBUILD NAME: stylelint
 SLACKBUILD LOCATION: ./stylelint
 SLACKBUILD FILES: README slack-desc stylelint.SlackBuild stylelint.info
-SLACKBUILD VERSION: 16.19.1
+SLACKBUILD VERSION: 16.20.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/stylelint/-/stylelint-16.19.1.tgz
-SLACKBUILD MD5SUM: 3942e22dac1c0cf2c73a0c0242a30e66
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/stylelint/-/stylelint-16.20.0.tgz
+SLACKBUILD MD5SUM: 26eb676a5f1bc903439bc0694ddc8730
 SLACKBUILD SHORT DESCRIPTION:  stylelint (css linter)
 
 SLACKBUILD NAME: stylua
