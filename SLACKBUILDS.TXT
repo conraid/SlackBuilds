@@ -695,7 +695,7 @@ SLACKBUILD NAME: cairosvg
 SLACKBUILD LOCATION: ./cairosvg
 SLACKBUILD FILES: README cairosvg.SlackBuild cairosvg.info slack-desc slack-required
 SLACKBUILD VERSION: 2.8.2
-SLACKBUILD REQUIRES: cairocffi cssselect2 defusedxml tinycss2
+SLACKBUILD REQUIRES: cairocffi cssselect2 python-defusedxml tinycss2
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/C/CairoSVG/cairosvg-2.8.2.tar.gz
 SLACKBUILD MD5SUM: 4dfbb616d8ed54678eae2549bc751f8d
 SLACKBUILD SHORT DESCRIPTION:  cairosvg (A Simple SVG Converter based on Cairo)
@@ -1095,15 +1095,6 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/d/decorator/decorator-5.2.1.tar.gz
 SLACKBUILD MD5SUM: 984649ae1fd174f9a82369e7c9cc56e6
 SLACKBUILD SHORT DESCRIPTION:  decorator (decorator module for Python)
-
-SLACKBUILD NAME: defusedxml
-SLACKBUILD LOCATION: ./defusedxml
-SLACKBUILD FILES: README defusedxml.SlackBuild defusedxml.info slack-desc
-SLACKBUILD VERSION: 0.7.1
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/d/defusedxml/defusedxml-0.7.1.tar.gz
-SLACKBUILD MD5SUM: a50e7f21aa60a741efe6b1b658dfb3f8
-SLACKBUILD SHORT DESCRIPTION:  defusedxml (XML bomb protection for Python stdlib modules)
 
 SLACKBUILD NAME: detox
 SLACKBUILD LOCATION: ./detox
@@ -5389,6 +5380,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pynvim/pynvim-0.5
 SLACKBUILD MD5SUM: b88c3de6718c3ae6f0b85acbe5edb950
 SLACKBUILD SHORT DESCRIPTION:  pynvim (python client and plugin host for neovim)
 
+SLACKBUILD NAME: pyopenssl
+SLACKBUILD LOCATION: ./pyopenssl
+SLACKBUILD FILES: README pyopenssl.SlackBuild pyopenssl.info slack-desc slack-required
+SLACKBUILD VERSION: 25.0.0
+SLACKBUILD REQUIRES: python-cryptography
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pyopenssl/pyopenssl-25.0.0.tar.gz
+SLACKBUILD MD5SUM: b5b79d0bab00c40160cf983ef7ac3771
+SLACKBUILD SHORT DESCRIPTION:  pyopenssl (Python wrapper around the OpenSSL library)
+
 SLACKBUILD NAME: pypubsub
 SLACKBUILD LOCATION: ./pypubsub
 SLACKBUILD FILES: README pypubsub.SlackBuild pypubsub.info slack-desc
@@ -5614,6 +5614,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/python-dateutil/p
 SLACKBUILD MD5SUM: 81cb6aad924ef40ebfd3d62eaebe47c6
 SLACKBUILD SHORT DESCRIPTION:  python-dateutil (Python extensions datetime)
 
+SLACKBUILD NAME: python-defusedxml
+SLACKBUILD LOCATION: ./python-defusedxml
+SLACKBUILD FILES: README python-defusedxml.SlackBuild python-defusedxml.info slack-desc
+SLACKBUILD VERSION: 0.7.1
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/d/defusedxml/defusedxml-0.7.1.tar.gz
+SLACKBUILD MD5SUM: a50e7f21aa60a741efe6b1b658dfb3f8
+SLACKBUILD SHORT DESCRIPTION:  python-defusedxml (XML bomb protection for Python stdlib modules)
+
 SLACKBUILD NAME: python-dill
 SLACKBUILD LOCATION: ./python-dill
 SLACKBUILD FILES: README python-dill.SlackBuild python-dill.info slack-desc
@@ -5821,6 +5830,24 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/i/isort/isort-6.0.1
 SLACKBUILD MD5SUM: b5365c66250ac30d368eed25c3920918
 SLACKBUILD SHORT DESCRIPTION:  python-isort (sort imports alphabetically)
 
+SLACKBUILD NAME: python-itemadapter
+SLACKBUILD LOCATION: ./python-itemadapter
+SLACKBUILD FILES: README python-itemadapter.SlackBuild python-itemadapter.info slack-desc
+SLACKBUILD VERSION: 0.11.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/i/itemadapter/itemadapter-0.11.0.tar.gz
+SLACKBUILD MD5SUM: 098605736b3b553bb43b7119912b0819
+SLACKBUILD SHORT DESCRIPTION:  python-itemadapter (Common interface for data container classes)
+
+SLACKBUILD NAME: python-itemloaders
+SLACKBUILD LOCATION: ./python-itemloaders
+SLACKBUILD FILES: README python-itemloaders.SlackBuild python-itemloaders.info slack-desc slack-required
+SLACKBUILD VERSION: 1.3.2
+SLACKBUILD REQUIRES: python-jmespath python-parsel python-itemadapter
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/i/itemloaders/itemloaders-1.3.2.tar.gz
+SLACKBUILD MD5SUM: 07e11fabfc7d85ff84d6e22abcb26eb5
+SLACKBUILD SHORT DESCRIPTION:  python-itemloaders (Python Item Loaders)
+
 SLACKBUILD NAME: python-jmespath
 SLACKBUILD LOCATION: ./python-jmespath
 SLACKBUILD FILES: README python-jmespath.SlackBuild python-jmespath.info slack-desc
@@ -5920,6 +5947,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/o/oauthlib/oauthlib
 SLACKBUILD MD5SUM: 2f7b898cc1af8c1409cc329e8843ea8f
 SLACKBUILD SHORT DESCRIPTION:  python-oauthlib (OAuth Implementation)
 
+SLACKBUILD NAME: python-parsel
+SLACKBUILD LOCATION: ./python-parsel
+SLACKBUILD FILES: README python-parsel.SlackBuild python-parsel.info slack-desc slack-required
+SLACKBUILD VERSION: 1.9.1
+SLACKBUILD REQUIRES: python-cssselect python-jmespath python-w3lib
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/parsel/parsel-1.9.1.tar.gz
+SLACKBUILD MD5SUM: cd242530b761e477244eeac2caeadb85
+SLACKBUILD SHORT DESCRIPTION:  python-parsel (HTML and XML parsing library)
+
 SLACKBUILD NAME: python-pikepdf
 SLACKBUILD LOCATION: ./python-pikepdf
 SLACKBUILD FILES: README python-pikepdf.SlackBuild python-pikepdf.info slack-desc slack-required
@@ -5983,6 +6019,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/progress/progress
 SLACKBUILD MD5SUM: 7389594900723583f14a97669ba4ef0a
 SLACKBUILD SHORT DESCRIPTION:  python-progress (Easy progress reporting for Python)
 
+SLACKBUILD NAME: python-protego
+SLACKBUILD LOCATION: ./python-protego
+SLACKBUILD FILES: README python-protego.SlackBuild python-protego.info slack-desc
+SLACKBUILD VERSION: 0.4.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/protego/protego-0.4.0.tar.gz
+SLACKBUILD MD5SUM: 88cf91f9691acb9bfb12fcedb4b8b8c9
+SLACKBUILD SHORT DESCRIPTION:  python-protego (robots.txt parser)
+
 SLACKBUILD NAME: python-pycodestyle
 SLACKBUILD LOCATION: ./python-pycodestyle
 SLACKBUILD FILES: README python-pycodestyle.SlackBuild python-pycodestyle.info slack-desc
@@ -5991,6 +6036,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pycodestyle/pycodestyle-2.13.0.tar.gz
 SLACKBUILD MD5SUM: 4e0e9d54c06f24a457a552e8e038f9d2
 SLACKBUILD SHORT DESCRIPTION:  python-pycodestyle (Simple Python style checker in one Python file)
+
+SLACKBUILD NAME: python-pydispatcher
+SLACKBUILD LOCATION: ./python-pydispatcher
+SLACKBUILD FILES: README python-pydispatcher.SlackBuild python-pydispatcher.info slack-desc
+SLACKBUILD VERSION: 2.0.7
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pydispatcher/PyDispatcher-2.0.7.tar.gz
+SLACKBUILD MD5SUM: b0a10a4811f1c1f8c1d419df3e95b494
+SLACKBUILD SHORT DESCRIPTION:  python-pydispatcher (Observable signal implementation for python)
 
 SLACKBUILD NAME: python-pylast
 SLACKBUILD LOCATION: ./python-pylast
@@ -6046,6 +6100,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pyzmq/pyzmq-26.4.
 SLACKBUILD MD5SUM: a0489198bb10530e7c137d16fc25a057
 SLACKBUILD SHORT DESCRIPTION:  python-pyzmq (Python3 bindings for 0MQ)
 
+SLACKBUILD NAME: python-queuelib
+SLACKBUILD LOCATION: ./python-queuelib
+SLACKBUILD FILES: README python-queuelib.SlackBuild python-queuelib.info slack-desc
+SLACKBUILD VERSION: 1.8.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/q/queuelib/queuelib-1.8.0.tar.gz
+SLACKBUILD MD5SUM: a30a7c7600a403eef1108c6ed5477ae7
+SLACKBUILD SHORT DESCRIPTION:  python-queuelib (Collection of persistent (disk-based) queues)
+
 SLACKBUILD NAME: python-rapidfuzz
 SLACKBUILD LOCATION: ./python-rapidfuzz
 SLACKBUILD FILES: README python-rapidfuzz.SlackBuild python-rapidfuzz.info slack-desc slack-required
@@ -6090,6 +6153,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/regex/regex-2024.11.6.tar.gz
 SLACKBUILD MD5SUM: 02b86394591ba39d34bc35d11e9e7d96
 SLACKBUILD SHORT DESCRIPTION:  python-regex (Alternative python regular expression module)
+
+SLACKBUILD NAME: python-requests-file
+SLACKBUILD LOCATION: ./python-requests-file
+SLACKBUILD FILES: README python-requests-file.SlackBuild python-requests-file.info slack-desc
+SLACKBUILD VERSION: 2.1.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/requests-file/requests_file-2.1.0.tar.gz
+SLACKBUILD MD5SUM: 7ae75e6288e4721cf544de5b64cff431
+SLACKBUILD SHORT DESCRIPTION:  python-requests-file (File transport adapter for Requests)
 
 SLACKBUILD NAME: python-requests-oauthlib
 SLACKBUILD LOCATION: ./python-requests-oauthlib
@@ -6181,6 +6253,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/S/Send2Trash/Send2T
 SLACKBUILD MD5SUM: 7bcae0e6d450c1004fd98a977f5648c2
 SLACKBUILD SHORT DESCRIPTION:  python-send2trash (Python library to natively send files to Trash)
 
+SLACKBUILD NAME: python-service-identity
+SLACKBUILD LOCATION: ./python-service-identity
+SLACKBUILD FILES: README python-service-identity.SlackBuild python-service-identity.info slack-desc slack-required
+SLACKBUILD VERSION: 24.2.0
+SLACKBUILD REQUIRES: python-attrs python-cryptography pyasn1 pyasn1-modules python-hatch-fancy-pypi-readme
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/service-identity/service_identity-24.2.0.tar.gz
+SLACKBUILD MD5SUM: e575db51719742ec39191c896e4c2971
+SLACKBUILD SHORT DESCRIPTION:  python-service-identity (Service identity verification for pyOpenSSL)
+
 SLACKBUILD NAME: python-setuptools-rust
 SLACKBUILD LOCATION: ./python-setuptools-rust
 SLACKBUILD FILES: README python-setuptools-rust.SlackBuild python-setuptools-rust.info slack-desc
@@ -6270,6 +6351,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/tld/tld-0.13.1.tar.gz
 SLACKBUILD MD5SUM: 1241cea226199e4174637e24fd7e5506
 SLACKBUILD SHORT DESCRIPTION:  python-tld
+
+SLACKBUILD NAME: python-tldextract
+SLACKBUILD LOCATION: ./python-tldextract
+SLACKBUILD FILES: README python-tldextract.SlackBuild python-tldextract.info slack-desc slack-required
+SLACKBUILD VERSION: 5.3.0
+SLACKBUILD REQUIRES: python-filelock python-requests-file
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/tldextract/tldextract-5.3.0.tar.gz
+SLACKBUILD MD5SUM: ccea326bdc2f82eec670de0db9f22ae8
+SLACKBUILD SHORT DESCRIPTION:  python-tldextract (Python TLD Extract)
 
 SLACKBUILD NAME: python-toml-sort
 SLACKBUILD LOCATION: ./python-toml-sort
@@ -6387,6 +6477,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/v/vimgolf/vimgolf-0.5.1.tar.gz
 SLACKBUILD MD5SUM: 00c39cd232542127b3f9cd7fb3dbcf71
 SLACKBUILD SHORT DESCRIPTION:  python-vimgolf (vimgolf client)
+
+SLACKBUILD NAME: python-w3lib
+SLACKBUILD LOCATION: ./python-w3lib
+SLACKBUILD FILES: README python-w3lib.SlackBuild python-w3lib.info slack-desc
+SLACKBUILD VERSION: 2.3.1
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/w/w3lib/w3lib-2.3.1.tar.gz
+SLACKBUILD MD5SUM: 7ef432898835f79a3c11100a992dbd03
+SLACKBUILD SHORT DESCRIPTION:  python-w3lib
 
 SLACKBUILD NAME: python-websocket-client
 SLACKBUILD LOCATION: ./python-websocket-client
@@ -6963,6 +7062,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://github.com/scour-project/scour/archive/v0.38.2.tar.gz
 SLACKBUILD MD5SUM: ae30f52602802f8c7df3a32e1f72b325
 SLACKBUILD SHORT DESCRIPTION:  scour (SVG scrubber)
+
+SLACKBUILD NAME: scrapy
+SLACKBUILD LOCATION: ./scrapy
+SLACKBUILD FILES: README scrapy.SlackBuild scrapy.info slack-desc slack-required
+SLACKBUILD VERSION: 2.13.1
+SLACKBUILD REQUIRES: python-parsel python-twisted python-cryptography pyopenssl python-service-identity python-w3lib python-zope-interface python-cssselect python-defusedxml python-itemadapter python-itemloaders python-pydispatcher python-protego python-queuelib python-tldextract python-botocore python-h2 python-hpack python-zstandard
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/scrapy/scrapy-2.13.1.tar.gz
+SLACKBUILD MD5SUM: afc05e12eaaddea30979dd4babc0f119
+SLACKBUILD SHORT DESCRIPTION:  scrapy (A fast high-level scraping and web crawling framework)
 
 SLACKBUILD NAME: screamingfrogseospider-bin
 SLACKBUILD LOCATION: ./screamingfrogseospider-bin
