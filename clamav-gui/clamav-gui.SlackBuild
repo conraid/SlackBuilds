@@ -25,13 +25,13 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=ClamAV-GUI
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-VERSION=1.1.3
+PKGNAM=${PRGNAM,,}
+VERSION=1.1.4
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
