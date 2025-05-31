@@ -25,13 +25,14 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PKGNAM=securefs
-VERSION=0.13.1
-BUILD=${BUILD:-2}
+PRGNAM=securefs
+PKGNAM=securefs-static
+VERSION=1.1.1
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -55,66 +56,25 @@ if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
   exit 0
 fi
 
-if [ "$ARCH" = "i686" ]; then
-  SLKCFLAGS="-O2 -march=pentium4 -mtune=generic"
-  LIBDIRSUFFIX=""
-elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC -pipe -fomit-frame-pointer"
-  LIBDIRSUFFIX="64"
-else
-  SLKCFLAGS="-O2"
-  LIBDIRSUFFIX=""
+if ! [ "$ARCH" = "x86_64" ]; then
+    echo "This build script is for x86_64 only."
+    exit 1
 fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM
-# Use git to fix error with tar.gz
-git clone --branch $VERSION --single-branch --depth 1 https://github.com/netheril96/securefs
-cd $PKGNAM
-git submodule init
-git submodule update
-
-chown -R root:root .
-find -L . \
-  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
-  -exec chmod 755 {} \; -o \
-  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
-  -exec chmod 644 {} \;
-
-mkdir -p build
-cd build
-cmake -Wno-dev \
-  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_INSTALL_PREFIX=/usr \
-  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
-  ..
-
-# fix regression in 0.13.0
-    sed -i 's/"-march=x86-64 -mtune=generic -O2 -pipe -fno-plt"//' external/cryptopp/CMakeFiles/{cryptest.dir/flags.make,cryptopp-static.dir/flags.make,cryptopp-object.dir/flags.make}
-
-make
-make DESTDIR=$PKG install
-
-# Don't ship .la files:
-rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
-cd ..
-
-find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
-find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
-
-if [ -d $PKG/usr/man ]; then
-  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
-  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
-fi
+rm -rf $PRGNAM-$VERSION
+mkdir -p $PRGNAM-$VERSION
+cd $PRGNAM-$VERSION
+unzip $CWD/$PRGNAM-linux-amd64-release.zip
+install -Dsm755 $PRGNAM -t $PKG/usr/bin
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/files/LICENSE.md > $PKG/usr/doc/$PKGNAM-$VERSION/LICENSE.md
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
