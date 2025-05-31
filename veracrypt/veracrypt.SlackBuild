@@ -25,15 +25,15 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=VeraCrypt
 PKGNAM="${PRGNAM,,}"
-SRCVERSION=1.26.20
+SRCVERSION=1.26.24
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
