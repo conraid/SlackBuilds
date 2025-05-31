@@ -1,0 +1,21 @@
+diff -Naupr a/Cargo.toml b/Cargo.toml
+--- a/Cargo.toml	1970-01-01 01:00:00.000000000 +0100
++++ b/Cargo.toml	2025-05-31 16:10:24.368864330 +0200
+@@ -1,17 +1,9 @@
+ [workspace]
+ members = ["mitmproxy-linux", "mitmproxy-linux-ebpf", "mitmproxy-linux-ebpf-common"]
+ default-members = [
+-    ".",
+-    "mitmproxy-contentviews",
+-    "mitmproxy-highlight",
+-    "mitmproxy-rs",
+     "mitmproxy-linux",
+     "mitmproxy-linux-ebpf-common",
+-    "mitmproxy-macos/certificate-truster",
+-    "mitmproxy-windows/redirector",
+-    "wireguard-test-client",
+ ]
+-
+ [workspace.package]
+ authors = [
+     "Fabio Valentini <decathorpe@gmail.com>",
