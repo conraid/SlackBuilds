@@ -369,11 +369,11 @@ SLACKBUILD SHORT DESCRIPTION:  babel-loader (Babel loader for webpack)
 
 SLACKBUILD NAME: balsa
 SLACKBUILD LOCATION: ./balsa
-SLACKBUILD FILES: README balsa.SlackBuild balsa.info doinst.sh patches/balsa-gettext.patch patches/balsa-i18n.patch patches/balsa-man.patch patches/balsa-webkit2gtk-4.1.patch slack-desc slack-required
-SLACKBUILD VERSION: 2.6.4
+SLACKBUILD FILES: README balsa.SlackBuild balsa.info doinst.sh slack-desc slack-required
+SLACKBUILD VERSION: 2.6.5
 SLACKBUILD REQUIRES: libesmtp webkit2gtk4.1 python-html2text
-SLACKBUILD DOWNLOAD: https://pawsa.fedorapeople.org/balsa/balsa-2.6.4.tar.xz
-SLACKBUILD MD5SUM: bebd22cb6bac87ee05255c48ee1d28dd
+SLACKBUILD DOWNLOAD: https://gitlab.gnome.org/GNOME/balsa/-/archive/2.6.5/balsa-2.6.5.tar.bz2
+SLACKBUILD MD5SUM: 891a10149d443c7d005b2767ea727187
 SLACKBUILD SHORT DESCRIPTION:  balsa (Email Client)
 
 SLACKBUILD NAME: bash-language-server
@@ -855,7 +855,7 @@ SLACKBUILD SHORT DESCRIPTION:  coffeescript (Unfancy JavaScript)
 
 SLACKBUILD NAME: collectd
 SLACKBUILD LOCATION: ./collectd
-SLACKBUILD FILES: README collectd.SlackBuild collectd.info doinst.sh patches/623e95394e0e62e7f9ced2104b786d21e9c0bf53.patch patches/mount.patch rc.collectd slack-desc slack-required
+SLACKBUILD FILES: README collectd.SlackBuild collectd.info doinst.sh patches/623e95394e0e62e7f9ced2104b786d21e9c0bf53.patch patches/ansidecl.patch patches/mount.patch rc.collectd slack-desc slack-required
 SLACKBUILD VERSION: 5.12.0
 SLACKBUILD REQUIRES: audit hiredis libdbi libesmtp libmemcached libmicrohttpd liboping libstatgrab libvirt rrdtool yajl postgresql
 SLACKBUILD DOWNLOAD: https://github.com/collectd/collectd/releases/download/collectd-5.12.0/collectd-5.12.0.tar.bz2
@@ -1062,7 +1062,7 @@ SLACKBUILD SHORT DESCRIPTION:  darkstat (packet sniffing daemon that serves stat
 
 SLACKBUILD NAME: darktable
 SLACKBUILD LOCATION: ./darktable
-SLACKBUILD FILES: README darktable.SlackBuild darktable.info doinst.sh slack-desc slack-required
+SLACKBUILD FILES: README darktable.SlackBuild darktable.info doinst.sh patches/gcc15.patch slack-desc slack-required
 SLACKBUILD VERSION: 5.0.1
 SLACKBUILD REQUIRES: flickcurl graphicsmagick pugixml gmic libavif libheif SDL2-static colord-gtk osm-gps-map python-jsonschema python-attrs
 SLACKBUILD DOWNLOAD: https://github.com/darktable-org/darktable/releases/download/release-5.0.1/darktable-5.0.1.tar.xz
@@ -1503,7 +1503,7 @@ SLACKBUILD SHORT DESCRIPTION:  flatpak (Linux application sandboxing and distrib
 
 SLACKBUILD NAME: flickcurl
 SLACKBUILD LOCATION: ./flickcurl
-SLACKBUILD FILES: README flickcurl.SlackBuild flickcurl.info slack-desc
+SLACKBUILD FILES: README flickcurl.SlackBuild flickcurl.info patches/a5cc2a5d2fc7074f50fbaa772232b6e0fea7ce89.patch patches/a99721524c3ad1afa128e9ec492921abc4bac1ff.patch patches/b2d64c8289ef519e5265a73148b650b053cc0ae6.patch patches/cce202afcf820918891251e1fa3801c7931b73ee.patch patches/gcc15.patch slack-desc
 SLACKBUILD VERSION: 1.26
 SLACKBUILD REQUIRES: 
 SLACKBUILD DOWNLOAD: http://download.dajobe.org/flickcurl/flickcurl-1.26.tar.gz
@@ -1590,15 +1590,6 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://github.com/google/gdata-python-client/archive/3541dfa420b9095ffcfb28c59994b65dfe465ffd.tar.gz
 SLACKBUILD MD5SUM: baec6196b513956f8445b48ef854f29f
 SLACKBUILD SHORT DESCRIPTION:  gdata-python-client (API to Google services in python)
-
-SLACKBUILD NAME: gdl
-SLACKBUILD LOCATION: ./gdl
-SLACKBUILD FILES: README gdl.SlackBuild gdl.info slack-desc
-SLACKBUILD VERSION: 3.40.0
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://ftp.gnome.org/pub/GNOME/sources/gdl/3.40/gdl-3.40.0.tar.xz
-SLACKBUILD MD5SUM: 21df1254b49b74a498feb99be57364d0
-SLACKBUILD SHORT DESCRIPTION:  gdl (GNOME Docking Library)
 
 SLACKBUILD NAME: gengetopt
 SLACKBUILD LOCATION: ./gengetopt
@@ -2270,7 +2261,7 @@ SLACKBUILD NAME: inkscape
 SLACKBUILD LOCATION: ./inkscape
 SLACKBUILD FILES: README doinst.sh inkscape.SlackBuild inkscape.info slack-desc slack-required
 SLACKBUILD VERSION: 1.4.2
-SLACKBUILD REQUIRES: libcdr numpy potrace scour double-conversion gdl dos2unix graphicsmagick pstoedit python-cssselect scour python-zstandard python-cachecontrol pyserial python-filelock beautifulsoup4 lib2geom typst
+SLACKBUILD REQUIRES: libcdr numpy potrace scour double-conversion dos2unix graphicsmagick pstoedit python-cssselect scour python-zstandard python-cachecontrol pyserial python-filelock beautifulsoup4 lib2geom typst
 SLACKBUILD DOWNLOAD: https://media.inkscape.org/dl/resources/file/inkscape-1.4.2.tar.xz
 SLACKBUILD MD5SUM: 0c24e84085bed3f0237d1cdf0856a855
 SLACKBUILD SHORT DESCRIPTION:  inkscape (Open Source Scalable Vector Graphics Editor)
@@ -3123,7 +3114,7 @@ SLACKBUILD SHORT DESCRIPTION:  liboping (Generate ICMP echo requests)
 
 SLACKBUILD NAME: libosinfo
 SLACKBUILD LOCATION: ./libosinfo
-SLACKBUILD FILES: README libosinfo.SlackBuild libosinfo.info patches/add_slackware_data.patch slack-desc slack-required
+SLACKBUILD FILES: README libosinfo.SlackBuild libosinfo.info patches/162.patch patches/add_slackware_data.patch slack-desc slack-required
 SLACKBUILD VERSION: 1.12.0
 SLACKBUILD REQUIRES: osinfo-db
 SLACKBUILD DOWNLOAD: https://releases.pagure.org/libosinfo/libosinfo-1.12.0.tar.xz
@@ -6167,7 +6158,7 @@ SLACKBUILD NAME: python-mitmproxy-linux
 SLACKBUILD LOCATION: ./python-mitmproxy-linux
 SLACKBUILD FILES: README patches/cargo.patch python-mitmproxy-linux.SlackBuild python-mitmproxy-linux.info slack-desc slack-required
 SLACKBUILD VERSION: 0.12.5
-SLACKBUILD REQUIRES: bpf-linker python-maturin rustup
+SLACKBUILD REQUIRES: bpf-linker python-maturin
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/m/mitmproxy-linux/mitmproxy_linux-0.12.5.tar.gz
 SLACKBUILD MD5SUM: 307e8f35be7a60c2e288019e9dab660f
 SLACKBUILD SHORT DESCRIPTION:  python-mitmproxy-linux (redirects traffic to mitmproxy via eBPF)
@@ -6225,6 +6216,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pep517/pep517-0.13.1.tar.gz
 SLACKBUILD MD5SUM: fcf81721b503ebaf63c8dccc576191f4
 SLACKBUILD SHORT DESCRIPTION:  python-pep517 (PEP 517 build backend)
+
+SLACKBUILD NAME: python-pexpect
+SLACKBUILD LOCATION: ./python-pexpect
+SLACKBUILD FILES: README patches/794.patch patches/python-pexpect-fix-test.patch python-pexpect.SlackBuild python-pexpect.info slack-desc slack-required
+SLACKBUILD VERSION: 4.9.0
+SLACKBUILD REQUIRES: python-ptyprocess
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pexpect/pexpect-4.9.0.tar.gz
+SLACKBUILD MD5SUM: f48d48325ee7f1221add0396ea9e2f14
+SLACKBUILD SHORT DESCRIPTION:  python-pexpect (Python module for controlling interactive programs)
 
 SLACKBUILD NAME: python-pikepdf
 SLACKBUILD LOCATION: ./python-pikepdf
@@ -6315,6 +6315,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/protego/protego-0.4.0.tar.gz
 SLACKBUILD MD5SUM: 88cf91f9691acb9bfb12fcedb4b8b8c9
 SLACKBUILD SHORT DESCRIPTION:  python-protego (robots.txt parser)
+
+SLACKBUILD NAME: python-ptyprocess
+SLACKBUILD LOCATION: ./python-ptyprocess
+SLACKBUILD FILES: README patches/75.patch python-ptyprocess.SlackBuild python-ptyprocess.info slack-desc
+SLACKBUILD VERSION: 0.7.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/ptyprocess/ptyprocess-0.7.0.tar.gz
+SLACKBUILD MD5SUM: 9da200c397cb1752209a6b718b6cfc68
+SLACKBUILD SHORT DESCRIPTION:  python-ptyprocess (Run a subprocess in a pseudo terminal)
 
 SLACKBUILD NAME: python-publicsuffix2
 SLACKBUILD LOCATION: ./python-publicsuffix2
@@ -7326,7 +7335,7 @@ SLACKBUILD SHORT DESCRIPTION:  ruamel-yaml (YAML parser/emitter for Python)
 
 SLACKBUILD NAME: rustup
 SLACKBUILD LOCATION: ./rustup
-SLACKBUILD FILES: README rustup.SlackBuild rustup.info slack-desc
+SLACKBUILD FILES: README files/rustup.sh rustup.SlackBuild rustup.info slack-desc
 SLACKBUILD VERSION: 1.28.2
 SLACKBUILD REQUIRES: 
 SLACKBUILD DOWNLOAD: https://github.com/rust-lang/rustup/archive/1.28.2/rustup-1.28.2.tar.gz
