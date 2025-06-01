@@ -1,0 +1,22 @@
+From a99721524c3ad1afa128e9ec492921abc4bac1ff Mon Sep 17 00:00:00 2001
+From: Dave Beckett <dave@dajobe.org>
+Date: Sun, 18 Jan 2015 10:42:54 -0800
+Subject: [PATCH] (flickcurl_array_join): Do not add trailing , closes #27
+
+---
+ src/common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/common.c b/src/common.c
+index e32f856e..1fcc67d8 100644
+--- a/src/common.c
++++ b/src/common.c
+@@ -1934,7 +1934,7 @@ flickcurl_array_join(const char *array[], char delim)
+     size_t item_len = strlen(array[i]);
+     memcpy(p, array[i], item_len);
+     p += item_len;
+-    if(i < array_size)
++    if(i < array_size - 1)
+       *p++ = delim;
+   }
+   *p = '\0';

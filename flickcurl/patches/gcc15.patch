@@ -1,0 +1,759 @@
+diff -Naupr a/src/activity-api.c b/src/activity-api.c
+--- a/src/activity-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/activity-api.c	2025-06-01 14:05:40.710750248 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/activity.c b/src/activity.c
+--- a/src/activity.c	2014-06-01 01:16:49.000000000 +0200
++++ b/src/activity.c	2025-06-01 14:05:40.713333881 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ static void
+diff -Naupr a/src/args.c b/src/args.c
+--- a/src/args.c	2012-08-29 05:42:02.000000000 +0200
++++ b/src/args.c	2025-06-01 14:05:40.714826805 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ void
+diff -Naupr a/src/auth-api.c b/src/auth-api.c
+--- a/src/auth-api.c	2014-06-01 01:16:49.000000000 +0200
++++ b/src/auth-api.c	2025-06-01 14:05:40.715675485 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/blog.c b/src/blog.c
+--- a/src/blog.c	2012-08-29 04:58:29.000000000 +0200
++++ b/src/blog.c	2025-06-01 14:05:40.710985587 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ static void
+diff -Naupr a/src/blogs-api.c b/src/blogs-api.c
+--- a/src/blogs-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/blogs-api.c	2025-06-01 14:05:40.711497638 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/category.c b/src/category.c
+--- a/src/category.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/category.c	2025-06-01 14:05:40.709718380 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/collection.c b/src/collection.c
+--- a/src/collection.c	2014-06-01 01:16:49.000000000 +0200
++++ b/src/collection.c	2025-06-01 14:05:40.711205323 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/collections-api.c b/src/collections-api.c
+--- a/src/collections-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/collections-api.c	2025-06-01 14:05:40.708234184 +0200
+@@ -36,6 +36,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/comments.c b/src/comments.c
+--- a/src/comments.c	2012-08-29 04:58:29.000000000 +0200
++++ b/src/comments.c	2025-06-01 14:05:40.715023859 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/common.c b/src/common.c
+--- a/src/common.c	2014-06-01 20:02:58.000000000 +0200
++++ b/src/common.c	2025-06-01 14:05:40.712669366 +0200
+@@ -60,6 +60,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ #include <libxml/xmlsave.h>
+ 
+diff -Naupr a/src/commons-api.c b/src/commons-api.c
+--- a/src/commons-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/commons-api.c	2025-06-01 14:05:40.710842083 +0200
+@@ -43,6 +43,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/config.c b/src/config.c
+--- a/src/config.c	2014-05-31 23:58:56.000000000 +0200
++++ b/src/config.c	2025-06-01 14:05:40.709950444 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ #undef CONFIG_DEBUG
+diff -Naupr a/src/contacts-api.c b/src/contacts-api.c
+--- a/src/contacts-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/contacts-api.c	2025-06-01 14:05:40.706472612 +0200
+@@ -42,6 +42,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/contacts.c b/src/contacts.c
+--- a/src/contacts.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/contacts.c	2025-06-01 14:05:40.712455238 +0200
+@@ -35,6 +35,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/context.c b/src/context.c
+--- a/src/context.c	2012-08-29 04:58:29.000000000 +0200
++++ b/src/context.c	2025-06-01 14:05:40.706981679 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /* This is the element name and the label - lazy */
+diff -Naupr a/src/exif.c b/src/exif.c
+--- a/src/exif.c	2012-08-29 04:58:29.000000000 +0200
++++ b/src/exif.c	2025-06-01 14:05:40.709165688 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/favorites-api.c b/src/favorites-api.c
+--- a/src/favorites-api.c	2013-06-17 19:42:59.000000000 +0200
++++ b/src/favorites-api.c	2025-06-01 14:05:40.707378192 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/galleries-api.c b/src/galleries-api.c
+--- a/src/galleries-api.c	2014-05-31 23:58:56.000000000 +0200
++++ b/src/galleries-api.c	2025-06-01 14:05:40.708800762 +0200
+@@ -36,6 +36,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/gallery.c b/src/gallery.c
+--- a/src/gallery.c	2012-08-29 07:15:21.000000000 +0200
++++ b/src/gallery.c	2025-06-01 14:05:40.711790892 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/group.c b/src/group.c
+--- a/src/group.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/group.c	2025-06-01 14:05:40.711091420 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/groups-api.c b/src/groups-api.c
+--- a/src/groups-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/groups-api.c	2025-06-01 14:05:40.706348731 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/groups-members-api.c b/src/groups-members-api.c
+--- a/src/groups-members-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/groups-members-api.c	2025-06-01 14:05:40.706770492 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/groups-pools-api.c b/src/groups-pools-api.c
+--- a/src/groups-pools-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/groups-pools-api.c	2025-06-01 14:05:40.712133499 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/institution.c b/src/institution.c
+--- a/src/institution.c	2014-06-01 20:02:58.000000000 +0200
++++ b/src/institution.c	2025-06-01 14:05:40.713521872 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/interestingness-api.c b/src/interestingness-api.c
+--- a/src/interestingness-api.c	2013-06-17 19:42:59.000000000 +0200
++++ b/src/interestingness-api.c	2025-06-01 14:05:40.706239374 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/legacy-auth.c b/src/legacy-auth.c
+--- a/src/legacy-auth.c	2013-06-17 19:42:59.000000000 +0200
++++ b/src/legacy-auth.c	2025-06-01 14:05:40.710641861 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ 
+diff -Naupr a/src/location.c b/src/location.c
+--- a/src/location.c	2014-06-01 20:02:58.000000000 +0200
++++ b/src/location.c	2025-06-01 14:05:40.713245215 +0200
+@@ -38,6 +38,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/machinetags-api.c b/src/machinetags-api.c
+--- a/src/machinetags-api.c	2014-05-31 23:58:56.000000000 +0200
++++ b/src/machinetags-api.c	2025-06-01 14:05:40.712332485 +0200
+@@ -36,6 +36,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/machinetags.c b/src/machinetags.c
+--- a/src/machinetags.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/machinetags.c	2025-06-01 14:05:40.708323882 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/members.c b/src/members.c
+--- a/src/members.c	2012-08-29 04:58:29.000000000 +0200
++++ b/src/members.c	2025-06-01 14:05:40.707080721 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/method.c b/src/method.c
+--- a/src/method.c	2014-06-01 20:02:58.000000000 +0200
++++ b/src/method.c	2025-06-01 14:05:40.706683463 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/note.c b/src/note.c
+--- a/src/note.c	2012-08-29 04:58:29.000000000 +0200
++++ b/src/note.c	2025-06-01 14:05:40.715785404 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/oauth.c b/src/oauth.c
+--- a/src/oauth.c	2014-06-01 20:02:58.000000000 +0200
++++ b/src/oauth.c	2025-06-01 14:05:40.714190305 +0200
+@@ -28,6 +28,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ /* Only used in the test in this file so needs to be in the library */
+ int flickcurl_oauth_build_key(flickcurl_oauth_data* od);
+diff -Naupr a/src/panda-api.c b/src/panda-api.c
+--- a/src/panda-api.c	2014-05-31 22:07:20.000000000 +0200
++++ b/src/panda-api.c	2025-06-01 14:05:40.710154740 +0200
+@@ -36,6 +36,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ static char**
+diff -Naupr a/src/people-api.c b/src/people-api.c
+--- a/src/people-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/people-api.c	2025-06-01 14:05:40.713075301 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/perms.c b/src/perms.c
+--- a/src/perms.c	2014-06-01 20:02:58.000000000 +0200
++++ b/src/perms.c	2025-06-01 14:05:40.706592106 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/person.c b/src/person.c
+--- a/src/person.c	2014-06-01 20:02:58.000000000 +0200
++++ b/src/person.c	2025-06-01 14:05:40.710258198 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ static const char* flickcurl_person_field_label[PERSON_FIELD_LAST+1] = {
+diff -Naupr a/src/photo.c b/src/photo.c
+--- a/src/photo.c	2014-06-01 20:02:58.000000000 +0200
++++ b/src/photo.c	2025-06-01 14:05:40.708447566 +0200
+@@ -33,6 +33,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ static const char* flickcurl_photo_field_label[PHOTO_FIELD_LAST+1] = {
+diff -Naupr a/src/photos-api.c b/src/photos-api.c
+--- a/src/photos-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/photos-api.c	2025-06-01 14:05:40.707835283 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/photos-comments-api.c b/src/photos-comments-api.c
+--- a/src/photos-comments-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/photos-comments-api.c	2025-06-01 14:05:40.714722888 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/photos-geo-api.c b/src/photos-geo-api.c
+--- a/src/photos-geo-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/photos-geo-api.c	2025-06-01 14:05:40.709565298 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/photos-licenses-api.c b/src/photos-licenses-api.c
+--- a/src/photos-licenses-api.c	2013-06-17 19:42:59.000000000 +0200
++++ b/src/photos-licenses-api.c	2025-06-01 14:05:40.707277730 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ static int
+diff -Naupr a/src/photos-notes-api.c b/src/photos-notes-api.c
+--- a/src/photos-notes-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/photos-notes-api.c	2025-06-01 14:05:40.711692234 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/photos-people-api.c b/src/photos-people-api.c
+--- a/src/photos-people-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/photos-people-api.c	2025-06-01 14:05:40.708673483 +0200
+@@ -36,6 +36,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/photos-transform-api.c b/src/photos-transform-api.c
+--- a/src/photos-transform-api.c	2013-06-17 19:42:59.000000000 +0200
++++ b/src/photos-transform-api.c	2025-06-01 14:05:40.709258897 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/photos-upload-api.c b/src/photos-upload-api.c
+--- a/src/photos-upload-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/photos-upload-api.c	2025-06-01 14:05:40.712244383 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/photoset.c b/src/photoset.c
+--- a/src/photoset.c	2012-08-29 04:58:29.000000000 +0200
++++ b/src/photoset.c	2025-06-01 14:05:40.707175839 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/photosets-api.c b/src/photosets-api.c
+--- a/src/photosets-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/photosets-api.c	2025-06-01 14:05:40.708997635 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/photosets-comments-api.c b/src/photosets-comments-api.c
+--- a/src/photosets-comments-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/photosets-comments-api.c	2025-06-01 14:05:40.707514756 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/place.c b/src/place.c
+--- a/src/place.c	2014-06-01 20:02:58.000000000 +0200
++++ b/src/place.c	2025-06-01 14:05:40.710477159 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ static const char* flickcurl_place_type_label[FLICKCURL_PLACE_LAST+1] = {
+diff -Naupr a/src/places-api.c b/src/places-api.c
+--- a/src/places-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/places-api.c	2025-06-01 14:05:40.715122162 +0200
+@@ -43,6 +43,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/prefs-api.c b/src/prefs-api.c
+--- a/src/prefs-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/prefs-api.c	2025-06-01 14:05:40.709462861 +0200
+@@ -36,6 +36,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/reflection-api.c b/src/reflection-api.c
+--- a/src/reflection-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/reflection-api.c	2025-06-01 14:05:40.709815510 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/serializer.c b/src/serializer.c
+--- a/src/serializer.c	2014-06-01 01:16:49.000000000 +0200
++++ b/src/serializer.c	2025-06-01 14:05:40.711322359 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ /* Public namespaces */
+ #define DC_NS       "http://purl.org/dc/elements/1.1/"
+diff -Naupr a/src/sha1.c b/src/sha1.c
+--- a/src/sha1.c	2013-04-11 06:52:16.000000000 +0200
++++ b/src/sha1.c	2025-06-01 14:05:40.714598333 +0200
+@@ -95,6 +95,7 @@ A million repetitions of "a"
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ #define u32 uint32_t
+diff -Naupr a/src/shape.c b/src/shape.c
+--- a/src/shape.c	2014-06-01 20:02:58.000000000 +0200
++++ b/src/shape.c	2025-06-01 14:05:40.709351435 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/size.c b/src/size.c
+--- a/src/size.c	2012-08-29 04:58:29.000000000 +0200
++++ b/src/size.c	2025-06-01 14:05:40.706863383 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/stat.c b/src/stat.c
+--- a/src/stat.c	2012-08-29 04:58:29.000000000 +0200
++++ b/src/stat.c	2025-06-01 14:05:40.711596243 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/stats-api.c b/src/stats-api.c
+--- a/src/stats-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/stats-api.c	2025-06-01 14:05:40.707617323 +0200
+@@ -36,6 +36,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/tags-api.c b/src/tags-api.c
+--- a/src/tags-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/tags-api.c	2025-06-01 14:05:40.714448107 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ 
+diff -Naupr a/src/tags.c b/src/tags.c
+--- a/src/tags.c	2013-01-17 01:14:48.000000000 +0100
++++ b/src/tags.c	2025-06-01 14:05:40.712010566 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/test-api.c b/src/test-api.c
+--- a/src/test-api.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/test-api.c	2025-06-01 14:05:40.711922117 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/ticket.c b/src/ticket.c
+--- a/src/ticket.c	2012-08-29 04:58:29.000000000 +0200
++++ b/src/ticket.c	2025-06-01 14:05:40.715353470 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/upload-api.c b/src/upload-api.c
+--- a/src/upload-api.c	2013-06-17 19:42:59.000000000 +0200
++++ b/src/upload-api.c	2025-06-01 14:05:40.712553883 +0200
+@@ -43,6 +43,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/urls-api.c b/src/urls-api.c
+--- a/src/urls-api.c	2012-08-27 17:43:44.000000000 +0200
++++ b/src/urls-api.c	2025-06-01 14:05:40.710059745 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/user_upload_status.c b/src/user_upload_status.c
+--- a/src/user_upload_status.c	2014-05-31 21:54:54.000000000 +0200
++++ b/src/user_upload_status.c	2025-06-01 14:05:40.710375610 +0200
+@@ -32,6 +32,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/src/video.c b/src/video.c
+--- a/src/video.c	2009-12-21 04:24:14.000000000 +0100
++++ b/src/video.c	2025-06-01 14:05:40.715446264 +0200
+@@ -40,6 +40,7 @@
+ 
+ #include <flickcurl.h>
+ #include <flickcurl_internal.h>
++#include <stdlib.h>
+ 
+ 
+ /**
+diff -Naupr a/utils/codegen.c b/utils/codegen.c
+--- a/utils/codegen.c	2014-05-31 23:58:56.000000000 +0200
++++ b/utils/codegen.c	2025-06-01 14:05:40.703020701 +0200
+@@ -289,6 +289,7 @@ main(int argc, char *argv[])
+ "\n"
+ "#include <flickcurl.h>\n"
+ "#include <flickcurl_internal.h>\n"
++#include <stdlib.h>
+ "\n"
+ "\n"
+           );

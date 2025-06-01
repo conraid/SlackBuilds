@@ -1,0 +1,37 @@
+From cce202afcf820918891251e1fa3801c7931b73ee Mon Sep 17 00:00:00 2001
+From: Dave Beckett <dave@dajobe.org>
+Date: Thu, 28 May 2015 21:57:26 -0700
+Subject: [PATCH] Properly initialize oauth request/access token call params
+
+(flickcurl_oauth_create_request_token,
+flickcurl_oauth_create_access_token): Call flickcurl_init_params to init
+params, not flickcurl_end_params
+
+This closes #30
+https://github.com/dajobe/flickcurl/issues/30
+---
+ src/oauth.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/oauth.c b/src/oauth.c
+index 8ac4e3c1..95f09a24 100644
+--- a/src/oauth.c
++++ b/src/oauth.c
+@@ -709,7 +709,7 @@ flickcurl_oauth_create_request_token(flickcurl* fc, const char* callback)
+   int i;
+   int count;
+ 
+-  flickcurl_end_params(fc);
++  flickcurl_init_params(fc, 0);
+ 
+   /* Require signature */
+   flickcurl_set_sign(fc);
+@@ -857,7 +857,7 @@ flickcurl_oauth_create_access_token(flickcurl* fc, const char* verifier)
+   if(!verifier)
+     return 1;
+ 
+-  flickcurl_end_params(fc);
++  flickcurl_init_params(fc, 0);
+ 
+   /* Require signature */
+   flickcurl_set_sign(fc);

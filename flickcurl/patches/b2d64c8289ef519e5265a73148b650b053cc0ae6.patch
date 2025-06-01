@@ -1,0 +1,32 @@
+From b2d64c8289ef519e5265a73148b650b053cc0ae6 Mon Sep 17 00:00:00 2001
+From: Dave Beckett <dave@dajobe.org>
+Date: Sun, 31 May 2015 20:29:00 -0700
+Subject: [PATCH] collections.getTree - handle now args case.  Closes #31
+
+---
+ utils/commands.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/utils/commands.c b/utils/commands.c
+index fe3a05e3..dca6bba2 100644
+--- a/utils/commands.c
++++ b/utils/commands.c
+@@ -3749,10 +3749,14 @@ command_collections_getTree(flickcurl* fc, int argc, char *argv[])
+   char *user_id = NULL;
+   flickcurl_collection *collection = NULL;
+ 
+-  if(strcmp(argv[1], "-"))
+-    collection_id = argv[1];
+-  if(strcmp(argv[2], "-"))
+-    user_id = argv[2];
++  if(argc >1) {
++    if(strcmp(argv[1], "-"))
++      collection_id = argv[1];
++    if(argc >2) {
++      if(strcmp(argv[2], "-"))
++        user_id = argv[2];
++    }
++  }
+ 
+   collection = flickcurl_collections_getTree(fc, collection_id, user_id);
+   if(collection) {
