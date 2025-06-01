@@ -26,7 +26,7 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 # Bail out if user or group isn't valid on your system
 # For slackbuilds.org, assigned postgres uid/gid are 209/209
@@ -46,7 +46,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=postgresql
 VERSION=17.4
 PG_VERSION=$(echo $VERSION | cut -d. -f1)
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
