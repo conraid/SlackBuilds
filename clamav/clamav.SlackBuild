@@ -29,7 +29,7 @@
 
 # Based on https://slackbuilds.org/slackbuilds/14.2/system/clamav/clamav.SlackBuild
 
-set -eu
+set -euo pipefail
 
 # You must have clamav user and group to run this script
 #
@@ -49,8 +49,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=clamav
 SRCVERSION=1.4.2
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-3}
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
