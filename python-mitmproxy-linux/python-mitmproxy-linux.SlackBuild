@@ -33,7 +33,7 @@ PRGNAM=mitmproxy_linux
 PKGNAM=python-${PRGNAM//_/-}
 SRCVERSION=0.12.5
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -104,7 +104,7 @@ export CARGO_HOME="$TMPDIR/cargo"
 export PATH="$CARGO_HOME/bin:$PATH"
 
 # Install toolchain nightly and source code
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly --profile minimal
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly --profile minimal --no-modify-path
 source "$CARGO_HOME/env"
 rustup component add rust-src
 cd -
