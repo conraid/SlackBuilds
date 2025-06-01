@@ -33,7 +33,7 @@ PRGNAM=rustup
 PKGNAM=${PRGNAM,,}
 SRCVERSION=1.28.2
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -118,6 +118,8 @@ cargo install \
     --no-track \
     --root "$PKG/usr" \
     --path="."
+
+ln -s /usr/bin/rustup-init $PKG/usr/bin/rustup
 
 # Cleanup CARGO_HOME and possible unnecessary artifacts in $PKG.
 rm -rf "$CARGO_HOME" "$PKG/usr/.cargo" "$PKG/usr/.crates*"
