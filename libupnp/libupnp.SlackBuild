@@ -29,9 +29,10 @@ set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
+PRGNAM=pupnp
 PKGNAM=libupnp
-VERSION=1.14.20
-BUILD=${BUILD:-2}
+VERSION=1.14.21
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -69,9 +70,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
-cd $PKGNAM-$VERSION
+rm -rf $PRGNAM-release-$VERSION
+tar xvf $CWD/$PRGNAM-release-$VERSION.tar.gz
+cd $PRGNAM-release-$VERSION
 
 chown -R root:root .
 find . \
@@ -80,25 +81,20 @@ find . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \+
 
-LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib$LIBDIRSUFFIX \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --infodir=/usr/info \
-  --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --enable-static=no \
-  --enable-shared=yes \
-  --enable-ipv6=yes \
-  --host=$ARCH-slackware-linux \
-  --build=$ARCH-slackware-linux
+mkdir -p build
+cd build
+cmake -Wno-dev \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DUPNP_BUILD_STATIC=OFF \
+  -DBUILD_TESTING=OFF \
+  -DUPNP_ENABLE_OPEN_SSL=ON \
+  ..
 
 make
 make DESTDIR=$PKG install
+cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
