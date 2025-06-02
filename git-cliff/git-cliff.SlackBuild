@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=git-cliff
 PKGNAM=${PRGNAM,,}
-SRCVERSION=2.8.0
+SRCVERSION=2.9.0
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -102,21 +102,24 @@ mkdir -p ".cargo"
 export CARGO_HOME=".cargo"
 export CFLAGS="$SLKCFLAGS -ffat-lto-objects"
 export CXXFLAGS="$SLKCFLAGS"
+TARGET="$(rustc -vV | sed -n 's/host: //p')"
 
 cargo fetch \
-    --locked
+    --locked \
+    --target "$TARGET"
 
 cargo build \
     --release \
     --frozen \
     --offline \
-    --no-default-features
+    --no-default-features \
+    --target "$TARGET"
 
 mkdir -p completions/ man/
-OUT_DIR=completions/ "target/release/$PKGNAM-completions"
-OUT_DIR=man/ "target/release/$PKGNAM-mangen"
+OUT_DIR=completions/ "target/$TARGET/release/$PKGNAM-completions"
+OUT_DIR=man/ "target/$TARGET/release/$PKGNAM-mangen"
 
-install -Dm 755 "target/release/$PKGNAM" -t "$PKG/usr/bin"
+install -Dm 755 "target/$TARGET/release/$PKGNAM" -t "$PKG/usr/bin"
 install -Dm 644 "completions/$PKGNAM.bash" "$PKG/usr/share/bash-completion/completions/$PKGNAM"
 install -Dm 644 "completions/_$PKGNAM" -t "$PKG/usr/share/zsh/site-functions"
 install -Dm 644 "man/$PKGNAM.1" -t "$PKG/usr/man/man1"
