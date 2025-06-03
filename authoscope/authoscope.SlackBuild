@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=authoscope
 VERSION=0.8.1
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -100,17 +100,22 @@ mkdir -p ".cargo"
 export CARGO_HOME=".cargo"
 export CFLAGS="$SLKCFLAGS"
 export CXXFLAGS="$SLKCFLAGS"
+TARGET="$(rustc -vV | sed -n 's/host: //p')"
 
 cargo fetch \
-    --locked
+    --locked \
+    --target "$TARGET"
 
 cargo build \
     --release \
     --frozen \
-    --offline
+    --offline \
+    --target "$TARGET"
 
-# Install bin
-install -Dm 755 target/release/$PKGNAM target/release/badtouch -t "$PKG/usr/bin"
+install -Dm 755 target/$TARGET/release/$PKGNAM target/$TARGET/release/badtouch -t "$PKG/usr/bin"
+
+# Cleanup CARGO_HOME and possible unnecessary artifacts in $PKG.
+rm -rf "$CARGO_HOME" "$PKG/usr/.cargo" "$PKG/usr/.crates*"
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
