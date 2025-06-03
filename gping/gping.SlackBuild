@@ -32,7 +32,7 @@ PRGNAM=gping
 PKGNAM="${PRGNAM,,}"
 SRCVERSION=gping-v1.19.0
 VERSION="${SRCVERSION#*-v}"
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -59,15 +59,12 @@ fi
 if [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=pentium4 -mtune=generic"
   LIBDIRSUFFIX=""
-  CARGOTARGET="--target i686-unknown-linux-gnu"
 elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC"
   LIBDIRSUFFIX="64"
-  CARGOTARGET="--target x86_64-unknown-linux-gnu"
 else
   SLKCFLAGS="-O2"
   LIBDIRSUFFIX=""
-  CARGOTARGET=""
 fi
 
 rm -rf $PKG
@@ -101,16 +98,22 @@ mkdir -p ".cargo"
 export CARGO_HOME=".cargo"
 export CFLAGS="$SLKCFLAGS"
 export CXXFLAGS="$SLKCFLAGS"
+TARGET="$(rustc -vV | sed -n 's/host: //p')"
 
 cargo fetch \
-    --locked
+    --locked \
+    --target "$TARGET"
 
 cargo build \
     --release \
     --frozen \
-    --offline
+    --offline \
+    --target "$TARGET"
 
-install -Dm755 "target/release/$PRGNAM" -t "$PKG/usr/bin"
+install -Dm755 "target/$TARGET/release/$PRGNAM" -t "$PKG/usr/bin"
+
+# Cleanup CARGO_HOME and possible unnecessary artifacts in $PKG.
+rm -rf "$CARGO_HOME" "$PKG/usr/.cargo" "$PKG/usr/.crates*"
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
