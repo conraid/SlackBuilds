@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=binwalk
 VERSION=3.1.0
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -87,21 +87,25 @@ mkdir -p ".cargo"
 export CARGO_HOME=".cargo"
 export CFLAGS="$SLKCFLAGS"
 export CXXFLAGS="$SLKCFLAGS"
+TARGET="$(rustc -vV | sed -n 's/host: //p')"
 
 cargo fetch \
-    --locked
+    --locked \
+    --target "$TARGET"
 
 cargo build \
     --release \
     --frozen \
-    --offline
+    --offline \
+    --target "$TARGET"
 
 cargo install \
     --frozen \
     --offline \
     --no-track \
     --root "$PKG/usr" \
-    --path="."
+    --path="." \
+    --target "$TARGET"
 
 # Cleanup CARGO_HOME and possible unnecessary artifacts in $PKG.
 rm -rf "$CARGO_HOME" "$PKG/usr/.cargo" "$PKG/usr/.crates*"
