@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=balsa
 VERSION=2.6.5
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -96,6 +96,9 @@ echo 'cs de el es fr sl' > doc/LINGUAS
 
 # Don't try to run gtk-update-icon-cache during packaging
 sed -i 's/gtk_update_icon_cache_program.found()/false/' images/meson.build
+
+# Fix man path
+sed -i "/install_dir.*,$/s|get_option('datadir')|''|" meson.build
 
 export CFLAGS="$SLKCFLAGS"
 export CXXFLAGS="$SLKCFLAGS"
