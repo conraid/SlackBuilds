@@ -33,7 +33,7 @@ PRGNAM=displaycal
 PKGNAM="${PRGNAM,,}"
 SRCVERSION=3.9.16
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -96,7 +96,10 @@ if [ -e $CWD/patches/ ]; then
 fi
 
 # Fix doc and man path
-sed -i 's|share/man/|man/|' misc/DisplayCAL.spec util/check-install.sh
+sed -i -e 's|share/man/|man/|' \
+    -e "s|share/doc/displaycal|doc/$PKGNAM-$VERSION|" \
+    -e "s|share/doc/DisplayCAL*|doc/$PKGNAM-$VERSION|" \
+    misc/DisplayCAL.spec util/check-install.sh
 sed -i '/man1/s/os.path.dirname(data), //' DisplayCAL/setup.*
 sed -i 's|doc = os.path.join("share", doc)|doc = os.path.join("", doc)|' DisplayCAL/setup.py
 
