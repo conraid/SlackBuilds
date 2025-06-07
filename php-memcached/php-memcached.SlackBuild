@@ -28,10 +28,10 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=memcached
-PKGNAM=php-$(echo $PRGNAM | tr A-Z a-z)
+PKGNAM=php-${PRGNAM,,}
 SRCVERSION=3.3.0
 VERSION="${SRCVERSION:0:7}"
-BUILD=${BUILD:-11}
+BUILD=${BUILD:-12}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
