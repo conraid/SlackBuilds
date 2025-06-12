@@ -32,7 +32,7 @@ PRGNAM=libmediainfo
 PKGNAM="${PRGNAM,,}"
 SRCVERSION=25.04
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -97,7 +97,6 @@ fi
 cd Project/GNU/Library
 
 ./autogen.sh
-
 LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \

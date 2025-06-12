@@ -1,0 +1,12 @@
+diff -Naupr a/Source/MediaInfo/Export/Export_Graph.cpp b/Source/MediaInfo/Export/Export_Graph.cpp
+--- a/Source/MediaInfo/Export/Export_Graph.cpp	2025-04-30 11:19:27.000000000 +0200
++++ b/Source/MediaInfo/Export/Export_Graph.cpp	2025-06-12 13:42:24.837610753 +0200
+@@ -116,7 +116,7 @@ Ztring Dot2Svg(const Ztring& Dot)
+     GVC_t* Context=NULL;
+     graph_t* Graph=NULL;
+     char* Buffer=NULL;
+-    unsigned int Size;
++    size_t Size;
+     bool Cairo=false;
+ 
+     if (!Export_Graph::Load())
