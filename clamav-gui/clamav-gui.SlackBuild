@@ -29,9 +29,9 @@ set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=ClamAV-GUI
+PRGNAM=clamav-gui
 PKGNAM=${PRGNAM,,}
-VERSION=1.1.4
+VERSION=1.1.5
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -70,9 +70,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-QT6-$VERSION
-tar xvf $CWD/$PRGNAM-QT6-$VERSION.tar.gz
-cd $PRGNAM-QT6-$VERSION
+rm -rf $PRGNAM-$VERSION
+tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
+cd $PRGNAM-$VERSION
 
 chown -R root:root .
 find -L . \
@@ -81,12 +81,25 @@ find -L . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
+# Apply patches
+if [ -e $CWD/patches/ ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
+fi
+
 # Change doc and man path
 sed -i -e "s|/share/doc/ClamAV-GUI|/doc/$PKGNAM-$VERSION|g" \
        -e 's|/share/man/|/man/|g' \
        clamav-gui.pro
 
-qmake6 PREFIX=/usr QMAKE_CFLAGS="$SLKCFLAGS" QMAKE_CXXFLAGS="$SLKCFLAGS" -o Makefile $PKGNAM.pro
+qmake-qt5 PREFIX=/usr QMAKE_CFLAGS="$SLKCFLAGS" QMAKE_CXXFLAGS="$SLKCFLAGS" -o Makefile $PKGNAM.pro
 
 make
 make INSTALL_ROOT=$PKG install
