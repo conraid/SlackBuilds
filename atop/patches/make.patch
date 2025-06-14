@@ -1,7 +1,7 @@
 diff -Naupr a/Makefile b/Makefile
---- a/Makefile	2024-07-27 10:46:29.000000000 +0200
-+++ b/Makefile	2024-07-27 12:17:39.207304058 +0200
-@@ -3,25 +3,24 @@
+--- a/Makefile	2025-06-14 10:18:40.000000000 +0200
++++ b/Makefile	2025-06-14 13:57:51.708121356 +0200
+@@ -3,18 +3,17 @@
  # Gerlof Langeveld - gerlof.langeveld@atoptool.nl
  #
  DESTDIR  =
@@ -26,15 +26,16 @@ diff -Naupr a/Makefile b/Makefile
  ROTPATH  = /etc/logrotate.d
  PMPATH1  = /usr/lib/pm-utils/sleep.d
  PMPATH2  = /usr/lib64/pm-utils/sleep.d
- PMPATHD  = /usr/lib/systemd/system-sleep
+@@ -24,6 +23,8 @@ PKG_CONFIG ?= pkg-config
  
- PKG_CONFIG ?= pkg-config
--CFLAGS  += -O2 -I. -Wall $(shell $(PKG_CONFIG) --cflags glib-2.0)  -Wno-stringop-truncation -Wmissing-prototypes -Wmissing-declarations -Wformat-security # -DNOPERFEVENT   # -DHTTPSTATS
-+CFLAGS  += $(PKGFLAGS) -O2 -I. -Wall $(shell pkg-config --cflags glib-2.0)  -Wno-stringop-truncation -Wmissing-prototypes -Wmissing-declarations -Wformat-security # -DNOPERFEVENT   # -DHTTPSTATS
- LDFLAGS += $(shell $(PKG_CONFIG) --libs glib-2.0)
- OBJMOD0  = version.o
- OBJMOD1  = various.o  deviate.o   procdbase.o
-@@ -97,18 +96,17 @@ install:	genericinstall
+ override CFLAGS  := -O2 -I. -Wall $(shell $(PKG_CONFIG) --cflags glib-2.0) -Wmissing-prototypes -Wmissing-declarations -Wformat-security $(CFLAGS) # -DNOPERFEVENT   # -DHTTPSTATS
+ 
++override CFLAGS  := $(PKGFLAGS) -O2 -I. -Wall $(shell pkg-config --cflags glib-2.0) -Wmissing-prototypes -Wmissing-declarations -Wformat-security $(CFLAGS) # -DNOPERFEVENT   # -DHTTPSTATS
++
+ CC_CHECK := $(shell echo | $(CC) -dM -E - | grep -q __clang__ && echo clang || echo gcc)
+ ifeq ($(CC_CHECK),gcc)
+     override CFLAGS += -Wno-stringop-truncation
+@@ -105,18 +106,17 @@ install:	genericinstall
  sysvinstall:	genericinstall
  		if [ ! -d $(DESTDIR)$(INIPATH) ]; 			\
  		then	mkdir -p  $(DESTDIR)$(INIPATH);	fi
@@ -61,21 +62,3 @@ diff -Naupr a/Makefile b/Makefile
  		touch             $(DESTDIR)$(LOGPATH)/dummy_before
  		touch             $(DESTDIR)$(LOGPATH)/dummy_after
  		#
-@@ -190,7 +188,7 @@ versdate.h:
- 		./mkdate
- 
- atop.o:		atop.h	photoproc.h photosyst.h  acctproc.h showgeneric.h
--atopsar.o:	atop.h	photoproc.h photosyst.h                           
-+atopsar.o:	atop.h	photoproc.h photosyst.h
- rawlog.o:	atop.h	photoproc.h photosyst.h  rawlog.h   showgeneric.h
- various.o:	atop.h                           acctproc.h
- ifprop.o:	atop.h	            photosyst.h             ifprop.h
-@@ -205,7 +203,7 @@ photosyst.o:	atop.h	            photosys
- cgroups.o:	atop.h	            cgroups.h
- showgeneric.o:	atop.h	photoproc.h photosyst.h  cgroups.h showgeneric.h showlinux.h
- showlinux.o:	atop.h	photoproc.h photosyst.h  cgroups.h showgeneric.h showlinux.h
--showsys.o:	atop.h  photoproc.h photosyst.h  showgeneric.h 
-+showsys.o:	atop.h  photoproc.h photosyst.h  showgeneric.h
- showprocs.o:	atop.h	photoproc.h photosyst.h  cgroups.h showgeneric.h showlinux.h
- drawbar.o:	atop.h	            photosyst.h            showgeneric.h
- version.o:	version.c version.h versdate.h
