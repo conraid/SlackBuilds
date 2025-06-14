@@ -25,12 +25,12 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=spotify
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)-bin
-SRCVERSION=1.2.60.564.gcc6305cb
+PKGNAM=${PRGNAM,,}-bin
+SRCVERSION=1.2.63.394.g126b0d89
 VERSION=$(echo $SRCVERSION | rev | cut -d. -f2- | rev)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
