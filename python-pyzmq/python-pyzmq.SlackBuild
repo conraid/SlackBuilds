@@ -25,13 +25,13 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=pyzmq
-PKGNAM=python-$(echo $PRGNAM | tr A-Z a-z)
-VERSION=26.4.0
+PKGNAM=python-${PRGNAM,,}
+VERSION=27.0.0
 VERSION=$(echo $VERSION | tr - _)
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
