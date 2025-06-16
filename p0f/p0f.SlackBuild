@@ -25,13 +25,13 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 #
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=p0f
 VERSION=3.09b
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -69,9 +69,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tgz
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM-upstream-$VERSION
+tar xvf $CWD/$PKGNAM-upstream-$VERSION.tar.bz2
+cd $PKGNAM-upstream-$VERSION
 
 chown -R root:root .
 find . \
