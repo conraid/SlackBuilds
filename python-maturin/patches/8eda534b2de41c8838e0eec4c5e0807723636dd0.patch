@@ -1,0 +1,31 @@
+From 8eda534b2de41c8838e0eec4c5e0807723636dd0 Mon Sep 17 00:00:00 2001
+From: Ben Gollmer <ben@dangerdevices.com>
+Date: Tue, 10 Jun 2025 12:37:48 -0700
+Subject: [PATCH] Compression level must be `None` for the `stored` method
+
+---
+ src/module_writer.rs | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/src/module_writer.rs b/src/module_writer.rs
+index fb3e71fe7..8bc8e5809 100644
+--- a/src/module_writer.rs
++++ b/src/module_writer.rs
+@@ -255,10 +255,13 @@ impl CompressionOptions {
+         let mut options =
+             zip::write::SimpleFileOptions::default().compression_method(method.into());
+         // `zip` also has default compression levels, which should match our own, but we pass them
+-        // explicitly to ensure consistency.
+-        options = options.compression_level(Some(
+-            self.compression_level.unwrap_or(method.default_level()),
+-        ));
++        // explicitly to ensure consistency. The exception is the `Stored` method, which must have
++        // a `compression_level` of `None`.
++        options = options.compression_level(if method == CompressionMethod::Stored {
++            None
++        } else {
++            Some(self.compression_level.unwrap_or(method.default_level()))
++        });
+         options
+     }
+ }

@@ -1,0 +1,41 @@
+From 2719d410c6c2a7f1b989dbe034b3b9f8f88af75f Mon Sep 17 00:00:00 2001
+From: Ben Gollmer <ben@dangerdevices.com>
+Date: Tue, 10 Jun 2025 12:36:04 -0700
+Subject: [PATCH] Test wheel writer with no compression
+
+---
+ src/module_writer.rs | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/src/module_writer.rs b/src/module_writer.rs
+index a1201546b..fb3e71fe7 100644
+--- a/src/module_writer.rs
++++ b/src/module_writer.rs
+@@ -1610,4 +1610,27 @@ mod tests {
+ 
+         Ok(())
+     }
++
++    #[test]
++    fn wheel_writer_no_compression() -> Result<(), Box<dyn std::error::Error>> {
++        let metadata = Metadata24::new("dummy".to_string(), Version::new([1, 0]));
++        let tmp_dir = TempDir::new()?;
++
++        let writer = WheelWriter::new(
++            "no compression",
++            tmp_dir.path(),
++            &metadata,
++            &[],
++            Override::empty(),
++            CompressionOptions {
++                compression_method: CompressionMethod::Stored,
++                ..Default::default()
++            },
++        )?;
++
++        writer.finish()?;
++        tmp_dir.close()?;
++
++        Ok(())
++    }
+ }
