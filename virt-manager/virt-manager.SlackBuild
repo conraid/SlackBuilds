@@ -25,13 +25,13 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=virt-manager
 VERSION=5.0.0
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -93,6 +93,9 @@ if [ -e $CWD/patches/ ]; then
   fi
 fi
 
+sed -i "s|install_dir:.*datadir[[:space:]]*/[[:space:]]*'man'[[:space:]]*/[[:space:]]*'man1'|install_dir: 'man/man1'|" man/meson.build
+
+
 export CFLAGS="$SLKCFLAGS"
 export CXXFLAGS="$SLKCFLAGS"
 mkdir meson-build
@@ -140,9 +143,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
