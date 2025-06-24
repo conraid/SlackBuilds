@@ -29,11 +29,11 @@ set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=displaycal
+PRGNAM=DisplayCAL
 PKGNAM="${PRGNAM,,}"
 SRCVERSION=3.9.16
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -71,9 +71,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$SRCVERSION
-tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz
-cd $PRGNAM-$SRCVERSION
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz
+cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 find . \
@@ -97,11 +97,15 @@ fi
 
 # Fix doc and man path
 sed -i -e 's|share/man/|man/|' \
-    -e "s|share/doc/displaycal|doc/$PKGNAM-$VERSION|" \
-    -e "s|share/doc/DisplayCAL*|doc/$PKGNAM-$VERSION|" \
-    misc/DisplayCAL.spec util/check-install.sh
+       -e "s|usr/share/doc-base/displaycal*|usr/doc/$PRGNAM-$VERSION|" \
+       -e "s|usr/share/doc/displaycal|usr/doc/$PRGNAM-$VERSION|" \
+       -e "s|usr/share/doc/DisplayCAL*|usr/doc/$PRGNAM-$VERSION|" \
+       misc/DisplayCAL.spec util/check-install.sh
+sed -i "s|usr/share/doc/displaycal|usr/doc/$PRGNAM-$VERSION|" misc/displaycal-readme
 sed -i '/man1/s/os.path.dirname(data), //' DisplayCAL/setup.*
-sed -i 's|doc = os.path.join("share", doc)|doc = os.path.join("", doc)|' DisplayCAL/setup.py
+sed -i -e 's|doc = os.path.join("share", doc)|doc = os.path.join("", doc)|' \
+       -e "s|os.path.join(os.path.dirname(data), \"doc-base\")|os.path.join(\"\", doc)|" \
+       DisplayCAL/setup.py
 
 sed -i '/debian.*rules/d' setup.py
 
