@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=libmpdclient
 PKGNAM=${PRGNAM,,}
-SRCVERSION=2.22
+SRCVERSION=2.23
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -94,6 +94,10 @@ if [ -e $CWD/patches/ ]; then
     done
   fi
 fi
+
+# Fix doc path
+sed -i "s|join_paths(get_option('datadir'), 'doc', meson.project_name())|join_paths('/usr', 'doc', meson.project_name() + '-' + meson.project_version())|" meson.build
+
 
 export CFLAGS="$SLKCFLAGS"
 export CXXFLAGS="$SLKCFLAGS"
