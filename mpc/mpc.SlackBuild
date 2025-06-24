@@ -33,7 +33,7 @@ PRGNAM=mpc
 PKGNAM=${PRGNAM,,}
 SRCVERSION=0.35
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -94,6 +94,11 @@ if [ -e $CWD/patches/ ]; then
     done
   fi
 fi
+
+# Fix doc path
+sed -i -e "s|join_paths(get_option('datadir'), 'doc', meson.project_name())|join_paths('/usr', 'doc', meson.project_name() + '-' + meson.project_version())|g" \
+       -e "s|join_paths(get_option('datadir'), 'doc', meson.project_name(), 'contrib')|join_paths('/usr', 'doc', meson.project_name() + '-' + meson.project_version(), 'contrib')|g"\
+       meson.build
 
 export CFLAGS="$SLKCFLAGS"
 export CXXFLAGS="$SLKCFLAGS"
