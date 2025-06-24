@@ -33,7 +33,7 @@ PRGNAM=shotcut
 PKGNAM="${PRGNAM,,}"
 SRCVERSION=25.05.11
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -95,12 +95,16 @@ if [ -e $CWD/patches/ ]; then
   fi
 fi
 
+# Fix man path
+sed -i 's|DESTINATION ${CMAKE_INSTALL_DATADIR}/man/man1|DESTINATION man/man1|' src/CMakeLists.txt
+
 mkdir -p build
 cd build
 cmake -Wno-dev \
   -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG -DSHOTCUT_NOUPGRADE" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
+  -DCMAKE_INSTALL_MANDIR=/usr/man \
   -DCMAKE_INSTALL_DOCDIR=/usr/doc/$PKGNAM-$VERSION \
   -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   ..
