@@ -39,12 +39,12 @@ elif ! grep -q "^tor:" /etc/group; then
   exit 1
 fi
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=tor
-VERSION=0.4.8.16
+VERSION=0.4.8.17
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
