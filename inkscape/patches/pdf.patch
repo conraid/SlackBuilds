@@ -1,0 +1,33 @@
+diff --git a/src/extension/internal/pdfinput/pdf-parser.cpp b/src/extension/internal/pdfinput/pdf-parser.cpp
+index 0185d0841b..4071e464a4 100644
+--- a/src/extension/internal/pdfinput/pdf-parser.cpp
++++ b/src/extension/internal/pdfinput/pdf-parser.cpp
+@@ -2322,7 +2322,7 @@ void PdfParser::doShowText(GooString *s) {
+         state->textTransformDelta(originX, originY, &tOriginX, &tOriginY);
+ 
+         // In Gfx.cc this is drawChar(...)
+-        builder->addChar(state, state->getCurX() + riseX, state->getCurY() + riseY,
++        builder->addChar(state, state->_POPPLER_GET_CUR_TEXT_X() + riseX, state->_POPPLER_GET_CUR_TEXT_Y() + riseY,
+                          dx, dy, ax, ay, tOriginX, tOriginY, code, n, u, uLen);
+ 
+         // Move onto next unicode character.
+diff --git a/src/extension/internal/pdfinput/poppler-transition-api.h b/src/extension/internal/pdfinput/poppler-transition-api.h
+index e70d419af5..866b630bb6 100644
+--- a/src/extension/internal/pdfinput/poppler-transition-api.h
++++ b/src/extension/internal/pdfinput/poppler-transition-api.h
+@@ -19,10 +19,14 @@
+ #define _POPPLER_TEXT_SHIFT_WITH_USER_COORDS(dx, dy) textShiftWithUserCoords(dx, dy)
+ #define _POPPLER_FOFI_TRUETYPE_MAKE(font_data, faceIndex) FoFiTrueType::make(std::span(font_data), faceIndex)
+ #define _POPPLER_FOFI_TYPE1C_MAKE(font_data) FoFiType1C::make(std::span(font_data))
++#define _POPPLER_GET_CUR_TEXT_X() getCurTextX()
++#define _POPPLER_GET_CUR_TEXT_Y() getCurTextY()
+ #else
+ #define _POPPLER_TEXT_SHIFT_WITH_USER_COORDS(dx, dy) shift(dx, dy)
+ #define _POPPLER_FOFI_TRUETYPE_MAKE(font_data, faceIndex) FoFiTrueType::make((fontchar)font_data.data(), font_data.size(), faceIndex)
+ #define _POPPLER_FOFI_TYPE1C_MAKE(font_data) FoFiType1C::make((fontchar)font_data.data(), font_data.size())
++#define _POPPLER_GET_CUR_TEXT_X() getCurX()
++#define _POPPLER_GET_CUR_TEXT_Y() getCurY()
+ #endif
+ 
+ #if POPPLER_CHECK_VERSION(25, 6, 0)
+
