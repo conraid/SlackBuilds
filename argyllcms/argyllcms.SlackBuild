@@ -25,14 +25,14 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=Argyll
 PKGNAM=argyllcms
-SRCVERSION=3.3.0
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+SRCVERSION=3.4.0
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -98,10 +98,11 @@ fi
 # Use hwdb builtin, instead of the obsolete usb-db in the udev rules. (Thanks to Arch)
 sed -i 's|^TEST=="/lib/udev/usb-db", IMPORT{program}="usb-db %p"|IMPORT{builtin}="hwdb --subsystem=usb"|' usb/55-Argyll.rules
 
-export CCOPTFLAG="$SLKCFLAGS -fcommon"
+export CCOPTFLAG="$SLKCFLAGS -fcommon -std=gnu89 -D_GNU_SOURCE -DUNIX"
+export CCFLAGS="$SLKCFLAGS -fcommon -std=gnu89 -D_GNU_SOURCE -DUNIX"
 
-jam -q -fJambase -j${JOBS:-2} -sPREFIX=/usr -sDESTDIR="${PKG}" -sREFSUBDIR=share/$PKGNAM/ref all
-jam -q -fJambase -j${JOBS:-2} -sPREFIX=/usr -sDESTDIR="${PKG}" -sREFSUBDIR=share/$PKGNAM/ref install
+jam -q -fJambase -j${JOBS:-1} -sPREFIX=/usr -sDESTDIR="${PKG}" -sREFSUBDIR=share/$PKGNAM/ref all
+jam -q -fJambase -j${JOBS:-1} -sPREFIX=/usr -sDESTDIR="${PKG}" -sREFSUBDIR=share/$PKGNAM/ref install
 
 rm "${PKG}"/usr/bin/License.txt
 rm {doc,ref}/afiles
