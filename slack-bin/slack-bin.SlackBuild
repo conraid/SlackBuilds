@@ -24,13 +24,13 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <https://www.gnu.org/licenses/>.
 
-set -eu
+set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=slack
 PKGNAM=slack-bin
-VERSION=4.43.51
-BUILD=${BUILD:-2}
+VERSION=4.45.64
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
