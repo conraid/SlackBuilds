@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=audit-userspace
 PKGNAM=audit
-VERSION=4.0.5
+VERSION=4.1.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -118,7 +118,7 @@ CXXFLAGS="$SLKCFLAGS -fcommon" \
   --build=$ARCH-slackware-linux
 
 make
-make DESTDIR=$PKG install
+make DESTDIR=$PKG install-strip
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
