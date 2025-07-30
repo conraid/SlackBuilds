@@ -32,13 +32,13 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=pupnp
 PKGNAM=libupnp
 VERSION=1.14.24
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="LICENSE THANKS TODO"
+DOCFILES="COPYING *.md Changelog THANKS"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -113,6 +113,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+
+# Fix broken cmake files (Thanks to Arch)
+sed -i -e 's|/COMPONENT||g' -e 's|/UPNP_Development||g' $PKG/usr/lib$LIBDIRSUFFIX/cmake/*/*.cmake
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
