@@ -25,15 +25,15 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=aMule
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
+PKGNAM=${PRGNAM,,}
 SRCVERSION=2.3.3
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-22}
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-23}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -95,6 +95,9 @@ if [ -e $CWD/patches/ ]; then
   fi
 fi
 
+# Fix CMAKE MINIMUM in included projects
+sed -i '/CMAKE_MINIMUM_REQUIRED/d' src/libs/ec/abstracts/CMakeLists.txt
+
 mkdir -p build
 cd build
 cmake -Wno-dev \
@@ -115,6 +118,7 @@ cmake -Wno-dev \
   -DBUILD_FILEVIEW=ON \
   -DENABLE_NLS=ON \
   -DBUILD_TESTING=OFF \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   ..
 
 make
