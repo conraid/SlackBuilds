@@ -33,7 +33,7 @@ PRGNAM=pipewire
 PKGNAM=pipewire-jack
 SRCVERSION=1.4.7
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -111,9 +111,14 @@ meson setup \
   --sysconfdir=/etc \
   --localstatedir=/var \
   --buildtype=release \
-  -Djack=disabled \
+  -Dudevrulesdir=/lib/udev/rules.d \
+  -Dman=enabled \
+  -Dffmpeg=enabled \
+  -Dvulkan=enabled \
+  -Djack=enabled \
   -Dpipewire-jack=enabled \
   -Dsession-managers=[] \
+  -Drlimits-install=false \
   ..
 
 ninja
@@ -121,8 +126,15 @@ mkdir -p $PKG/usr/lib$LIBDIRSUFFIX/pipewire-0.3/jack/
 cp -P pipewire-jack/src/libjack* $PKG/usr/lib$LIBDIRSUFFIX/pipewire-0.3/jack/ || true
 install -Dm755 pipewire-jack/src/pw-jack -t $PKG/usr/bin/
 install -Dm755 pipewire-jack/src/video-dsp-play -t $PKG/usr/bin/
+install -Dm755 pipewire-jack/src/ump-source -t $PKG/usr/bin/
+
 
 cd ..
+
+install -Dm644 /dev/null $PKG/usr/share/pipewire/media-session.d/with-jack
+
+# directories for overrides
+mkdir -p $PKG/etc/pipewire/jack.conf.d
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
