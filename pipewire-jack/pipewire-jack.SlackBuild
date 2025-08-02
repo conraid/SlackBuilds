@@ -33,7 +33,7 @@ PRGNAM=pipewire
 PKGNAM=pipewire-jack
 SRCVERSION=1.4.7
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -118,7 +118,6 @@ meson setup \
   -Djack=enabled \
   -Dpipewire-jack=enabled \
   -Dsession-managers=[] \
-  -Drlimits-install=false \
   ..
 
 ninja
