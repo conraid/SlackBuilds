@@ -25,15 +25,15 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=flameshot
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-SRCVERSION=12.1.0
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-2}
+PKGNAM=${PRGNAM,,}
+SRCVERSION=13.0.0
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
