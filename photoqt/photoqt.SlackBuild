@@ -25,13 +25,16 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
 set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=photoqt
 VERSION=4.9.2
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
