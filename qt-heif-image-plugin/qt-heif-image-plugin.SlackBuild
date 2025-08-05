@@ -25,7 +25,7 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
@@ -33,7 +33,7 @@ PRGNAM=qt-heif-image-plugin
 PKGNAM="${PRGNAM,,}"
 SRCVERSION=0.3.4
 VERSION="${SRCVERSION:0:7}"
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
