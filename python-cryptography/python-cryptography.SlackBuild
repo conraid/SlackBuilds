@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cryptography
 PKGNAM=python-${PRGNAM//-/_}
-VERSION=45.0.5
+VERSION=45.0.6
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -74,7 +74,7 @@ find . \
 # pytest-benchmark nor are benchmark tests interesting for a distribution.
 rm -rf tests/bench
 
-unshare -n python3 -m build --wheel --no-isolation
+python3 -m build --wheel --no-isolation
 python3 -m installer --destdir "$PKG" dist/*.whl
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
