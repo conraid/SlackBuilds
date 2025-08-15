@@ -1,0 +1,14 @@
+diff -Naupr a/cli/CMakeLists.txt c/cli/CMakeLists.txt
+--- a/cli/CMakeLists.txt	2021-11-26 07:44:20.000000000 +0100
++++ c/cli/CMakeLists.txt	2025-08-15 10:35:15.682009479 +0200
+@@ -51,8 +51,9 @@ set_target_properties(apngasm-cli
+ 
+ # Link to built apngasm library
+ target_link_libraries(apngasm-cli
+-  apngasm
++  PRIVATE
+   ${Boost_LIBRARIES}
++  apngasm-dynamic
+ )
+ 
+ # Installation
