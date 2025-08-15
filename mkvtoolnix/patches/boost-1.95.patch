@@ -1,0 +1,55 @@
+diff -Naupr a/Rakefile b/Rakefile
+--- a/Rakefile	2025-07-27 18:23:09.000000000 +0200
++++ b/Rakefile	2025-08-12 10:55:06.000000000 +0200
+@@ -1090,7 +1090,6 @@ end
+ # libraries required for all programs via mtxcommon
+ $common_libs = [
+   :boost_filesystem,
+-  :boost_system,
+   :flac,
+   :z,
+   :pugixml,
+diff -Naupr a/ac/boost.m4 b/ac/boost.m4
+--- a/ac/boost.m4	2025-07-27 18:23:09.000000000 +0200
++++ b/ac/boost.m4	2025-08-12 10:55:06.000000000 +0200
+@@ -1,5 +1,5 @@
+ # boost's headers must be present.
+-AX_BOOST_BASE([1.66.0])
++AX_BOOST_BASE([1.74.0])
+ 
+ AC_MSG_CHECKING([for Boost's multi-precision library with GMP backend])
+ 
+@@ -37,7 +37,9 @@ fi
+ AC_MSG_RESULT([yes])
+ 
+ # boost::system must be present.
+-AX_BOOST_SYSTEM()
++AX_BOOST_CHECK_HEADERS([boost/system/error_code.hpp],,[
++  AC_MSG_ERROR([Boost's system library is required but wasn't found])
++])
+ 
+ # boost::filesystem must be present.
+ AX_BOOST_FILESYSTEM()
+@@ -46,10 +48,6 @@ if test x"$ax_cv_boost_filesystem" != "x
+   AC_MSG_ERROR(The Boost Filesystem Library was not found.)
+ fi
+ 
+-if test x"$ax_cv_boost_system" != "xyes"; then
+-  AC_MSG_ERROR(The Boost System Library was not found.)
+-fi
+-
+ AX_BOOST_CHECK_HEADERS([boost/operators.hpp],,[
+   AC_MSG_ERROR([Boost's Operators library is required but wasn't found])
+ ])
+diff -Naupr a/build-config.in b/build-config.in
+--- a/build-config.in	2025-07-27 18:23:09.000000000 +0200
++++ b/build-config.in	2025-08-12 10:55:06.000000000 +0200
+@@ -78,7 +78,6 @@ WINDRES = @WINDRES@
+ BOOST_CPPFLAGS = @BOOST_CPPFLAGS@
+ BOOST_FILESYSTEM_LIB = @BOOST_FILESYSTEM_LIB@
+ BOOST_LDFLAGS = @BOOST_LDFLAGS@
+-BOOST_SYSTEM_LIB = @BOOST_SYSTEM_LIB@
+ CMARK_CFLAGS = @CMARK_CFLAGS@
+ CMARK_LIBS = @CMARK_LIBS@
+ COMPILER_TYPE = @COMPILER_TYPE@
+diff -Naupr a/packaging/debian/create_files.rb b/packaging/debian/create_files.rb
