@@ -1,0 +1,78 @@
+diff -Naupr a/cmake/dependencies.cmake b/cmake/dependencies.cmake
+--- a/cmake/dependencies.cmake	2024-02-18 19:18:26.000000000 +0100
++++ b/cmake/dependencies.cmake	2025-08-15 12:03:59.738392318 +0200
+@@ -7,7 +7,6 @@ find_package(Boost COMPONENTS
+   filesystem
+   iostreams
+   regex
+-  system
+   thread
+   REQUIRED
+ )
+diff -Naupr a/src/contrib/CMakeLists.txt b/src/contrib/CMakeLists.txt
+--- a/src/contrib/CMakeLists.txt	2024-02-18 19:18:26.000000000 +0100
++++ b/src/contrib/CMakeLists.txt	2025-08-15 11:56:23.531292603 +0200
+@@ -67,7 +67,6 @@ target_link_libraries(lucene++-contrib
+     Boost::filesystem
+     Boost::iostreams
+     Boost::regex
+-    Boost::system
+     Boost::thread
+     ZLIB::ZLIB
+     lucene++::lucene++)
+diff -Naupr a/src/core/CMakeLists.txt b/src/core/CMakeLists.txt
+--- a/src/core/CMakeLists.txt	2024-02-18 19:18:26.000000000 +0100
++++ b/src/core/CMakeLists.txt	2025-08-15 11:56:38.958033565 +0200
+@@ -57,7 +57,6 @@ target_link_libraries(lucene++
+     Boost::filesystem
+     Boost::iostreams
+     Boost::regex
+-    Boost::system
+     Boost::thread
+     ZLIB::ZLIB
+ )
+diff -Naupr a/src/demo/deletefiles/CMakeLists.txt b/src/demo/deletefiles/CMakeLists.txt
+--- a/src/demo/deletefiles/CMakeLists.txt	2024-02-18 19:18:26.000000000 +0100
++++ b/src/demo/deletefiles/CMakeLists.txt	2025-08-15 12:01:42.034781039 +0200
+@@ -38,7 +38,6 @@ target_link_libraries(deletefiles
+     Boost::filesystem
+     Boost::iostreams
+     Boost::regex
+-    Boost::system
+     Boost::thread
+     ZLIB::ZLIB
+     lucene++::lucene++
+diff -Naupr a/src/demo/indexfiles/CMakeLists.txt b/src/demo/indexfiles/CMakeLists.txt
+--- a/src/demo/indexfiles/CMakeLists.txt	2024-02-18 19:18:26.000000000 +0100
++++ b/src/demo/indexfiles/CMakeLists.txt	2025-08-15 12:00:53.407624647 +0200
+@@ -39,7 +39,6 @@ target_link_libraries(indexfiles
+     Boost::filesystem
+     Boost::iostreams
+     Boost::regex
+-    Boost::system
+     Boost::thread
+     ZLIB::ZLIB
+     lucene++::lucene++
+diff -Naupr a/src/demo/searchfiles/CMakeLists.txt b/src/demo/searchfiles/CMakeLists.txt
+--- a/src/demo/searchfiles/CMakeLists.txt	2024-02-18 19:18:26.000000000 +0100
++++ b/src/demo/searchfiles/CMakeLists.txt	2025-08-15 12:01:11.096317764 +0200
+@@ -38,7 +38,6 @@ target_link_libraries(searchfiles
+     Boost::filesystem
+     Boost::iostreams
+     Boost::regex
+-    Boost::system
+     Boost::thread
+     ZLIB::ZLIB
+     lucene++::lucene++
+diff -Naupr a/src/test/CMakeLists.txt b/src/test/CMakeLists.txt
+--- a/src/test/CMakeLists.txt	2024-02-18 19:18:26.000000000 +0100
++++ b/src/test/CMakeLists.txt	2025-08-15 12:01:23.149108666 +0200
+@@ -58,8 +58,6 @@ target_link_libraries(lucene++-tester
+     Boost::date_time
+     Boost::filesystem
+     Boost::iostreams
+-    Boost::regex
+-    Boost::system
+     Boost::thread
+     ZLIB::ZLIB
+     gtest_main
