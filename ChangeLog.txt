@@ -1,3 +1,63 @@
+Sat Aug 16 13:39:02 UTC 2025
+Pat has updated opencv, thankfully.
+Thanks to Pat for all the work he does.
+aide-0.19.2-x86_64-1cf.txz:  Upgraded.
+appstream-1.0.6-x86_64-1cf.txz:  Upgraded.
+asio-1.36.0-x86_64-1cf.txz:  Upgraded.
+aws-cli-1.42.11-x86_64-1cf.txz:  Upgraded.
+checkbashisms-2.25.18-noarch-1cf.txz:  Upgraded.
+cpuid2cpuflags-17-x86_64-1cf.txz:  Upgraded.
+google-api-python-client-2.179.0-x86_64-1cf.txz:  Upgraded.
+gping-1.20.1-x86_64-1cf.txz:  Upgraded.
+hardening-check-2.25.18-noarch-1cf.txz:  Upgraded.
+hashcat-7.1.0-x86_64-1cf.txz:  Upgraded.
+lighttpd-1.4.80-x86_64-1cf.txz:  Upgraded.
+netdata-2.6.2-x86_64-1cf.txz:  Upgraded.
+nginx-1.29.1-x86_64-1cf.txz:  Upgraded.
+openjph-0.21.5-x86_64-1cf.txz:  Upgraded.
+postman-bin-11.58.3-x86_64-1cf.txz:  Upgraded.
+python-botocore-1.40.11-x86_64-1cf.txz:  Upgraded.
+python-filelock-3.19.1-x86_64-1cf.txz:  Upgraded.
+signal-desktop-bin-7.66.0-x86_64-1cf.txz:  Upgraded.
+varnish-7.7.2-x86_64-1cf.txz:  Upgraded.
+vscodium-bin-1.103.15418-x86_64-1cf.txz:  Upgraded.
++--------------------------+
+Fri Aug 15 15:32:44 UTC 2025
+Recompiled OpenCV to complete G’MIC build; otherwise, it failed.
+Appears to work at runtime, but not fully guaranteed.
+OpenCV might need recompiling with the new OpenEXR version,
+though forum discussions suggest otherwise.
+I’m not engaging in forum debates due to health reasons.
+In addition, for some software I had to create patches
+(not all of them, I found some in their git)
+so that only the headers would be detected,
+not the boost_system libraries. Let me know if everything is OK.
+apngasm-3.1.10-x86_64-16cf.txz:  Rebuilt.
+  Recompiled against boost-1.89.0.
+darktable-5.2.1-x86_64-2cf.txz:  Rebuilt.
+  Recompiled against Imath-3.2.0.
+gmic-3.5.5-x86_64-3cf.txz:  Rebuilt.
+inkscape-1.4.2-x86_64-8cf.txz:  Rebuilt.
+  Recompiled against boost-1.89.0.
+kimageformats6-6.15.0-x86_64-2cf.txz:  Rebuilt.
+  Recompiled against Imath-3.2.0.
+libjxl-0.11.1-x86_64-5cf.txz:  Rebuilt.
+  Recompiled against Imath-3.2.0.
+libtorrent-rasterbar-2.0.11-x86_64-4cf.txz:  Rebuilt.
+  Recompiled against boost-1.89.0.
+luceneplusplus-3.0.9-x86_64-10cf.txz:  Rebuilt.
+  Recompiled against boost-1.89.0.
+meson-python-0.18.0-x86_64-2cf:  Removed.
+  Now in current.
+mkvtoolnix-94.0-x86_64-2cf.txz:  Rebuilt.
+  Recompiled against boost-1.89.0.
+numpy-2.3.2-x86_64-1cf:  Removed.
+  Now in current.
+poedit-3.6.3-x86_64-2cf.txz:  Rebuilt.
+  Recompiled against boost-1.89.0.
+python-pyproject-metadata-0.9.1-x86_64-1cf:  Removed.
+  Now in current.
++--------------------------+
 Wed Aug 13 12:42:10 UTC 2025
 Found a European encrypted cloud service, GDPR compliant: https://filen.io/
 Created two packages for it; later I might create an rc.filen script to start
@@ -5545,49 +5605,3 @@ weechat-4.4.0-x86_64-1cf.txz:  Upgraded.
 wp-cli-2.11.0-x86_64-1cf.txz:  Upgraded.
 yt-dlp-2024.8.6-x86_64-1cf.txz:  Upgraded.
 +--------------------------+
-Fri Aug 16 11:08:07 UTC 2024
-apngasm-3.1.10-x86_64-12cf.txz:  Rebuilt.
-Recompiled against boost-1.86.0.
-audit-4.0.2-x86_64-1cf.txz:  Upgraded.
-cpprestsdk-2.10.19-x86_64-5cf.txz:  Rebuilt.
-Recompiled against boost-1.86.0.
-inkscape-1.3.2-x86_64-17cf.txz:  Rebuilt.
-Recompiled against boost-1.86.0.
-libtorrent-rasterbar-2.0.10-x86_64-6cf.txz:  Rebuilt.
-Recompiled against boost-1.86.0.
-luceneplusplus-3.0.9-x86_64-4cf.txz:  Rebuilt.
-Recompiled against boost-1.86.0.
-luminance-hdr-2.6.1.1-x86_64-21cf.txz:  Rebuilt.
-Recompiled against boost-1.86.0.
-mkvtoolnix-82.0-x86_64-4cf.txz:  Rebuilt.
-Recompiled against boost-1.86.0.
-mp3diags-1.5.03-x86_64-4cf.txz:  Rebuilt.
-Recompiled against boost-1.86.0.
-poedit-3.4.4-x86_64-4cf.txz:  Rebuilt.
-Recompiled against boost-1.86.0.
-+--------------------------+
-Thu Aug 15 15:49:08 UTC 2024
-I should recompile against ffmpeg even the two webkit packages.
-But I have an old computer, it takes me tens of hours,
-and in this heat I don't feel like keeping it on,
-otherwise I'll melt.
-If some program doesn't work, let me know,
-but until the temperatures drop, it will be tough.
-Fuck those who say climate change doesn't exist.
-chromaprint-1.5.1-x86_64-2cf.txz:  Rebuilt.
-Recompiled against ffmpeg-7.0.2.
-cmus-2.11.0-x86_64-2cf.txz:  Rebuilt.
-Recompiled against ffmpeg-7.0.2.
-libde265-1.0.15-x86_64-3cf.txz:  Rebuilt.
-Recompiled against ffmpeg-7.0.2.
-libopenshot-0.3.3-x86_64-2cf.txz:  Rebuilt.
-Recompiled against ffmpeg-7.0.2.
-obs-studio-30.2.2-x86_64-1cf.txz:  Upgraded.
-Recompiled against ffmpeg-7.0.2.
-spek-0.8.5-x86_64-2cf.txz:  Rebuilt.
-Recompiled against ffmpeg-7.0.2.
-subtitlecomposer-0.8.1-x86_64-2cf.txz:  Rebuilt.
-Recompiled against ffmpeg-7.0.2.
-uthash-2.3.0-noarch-1cf.txz:  Added.
-x264-4613ac3-x86_64-2cf.txz:  Rebuilt.
-Recompiled against ffmpeg-7.0.2.
