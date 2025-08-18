@@ -1,0 +1,14 @@
+diff -Naupr a/src/main.rs b/src/main.rs
+--- a/src/main.rs	2024-06-22 20:04:36.000000000 +0200
++++ b/src/main.rs	2025-08-18 15:09:12.159926527 +0200
+@@ -103,7 +103,9 @@ fn main() {
+         }
+     } else {
+         // Set `RUST_BACKTRACE` so we get a better backtrace for reporting.
+-        env::set_var("RUST_BACKTRACE", "1");
++        unsafe {
++            env::set_var("RUST_BACKTRACE", "1");
++        }
+ 
+         // Run the command and get the stderr, checking for a backtrace.
+         let mut args = vec!["run-gui"];
