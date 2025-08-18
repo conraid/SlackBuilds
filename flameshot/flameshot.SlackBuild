@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=flameshot
 PKGNAM=${PRGNAM,,}
-SRCVERSION=13.0.1
+SRCVERSION=13.1.0
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -104,7 +104,6 @@ cmake -Wno-dev \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DCMAKE_INSTALL_MANDIR=/usr/man \
   -DCMAKE_INSTALL_DOCDIR=/usr/doc/$PKGNAM-$VERSION \
-  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   ..
 
 make
