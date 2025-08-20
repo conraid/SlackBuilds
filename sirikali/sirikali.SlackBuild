@@ -25,13 +25,13 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=SiriKali
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
-VERSION=1.8.2
+PKGNAM=${PRGNAM,,}
+VERSION=1.8.3
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
