@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=bpf-linker
 PKGNAM=${PRGNAM,,}
-SRCVERSION=0.9.14
+SRCVERSION=0.9.15
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -104,9 +104,16 @@ export CFLAGS="$SLKCFLAGS"
 export CXXFLAGS="$SLKCFLAGS"
 TARGET="$(rustc -vV | sed -n 's/host: //p')"
 
+cargo clean
+rm -rf .cargo $CARGO_HOME
+
 cargo fetch \
     --locked \
     --target "$TARGET"
+
+sed -i '1i [workspace]' \
+  .cargo/registry/src/index.crates.io-*/aya-rustc-llvm-proxy-0.9.5/Cargo.toml
+
 
 cargo build \
     --release \
