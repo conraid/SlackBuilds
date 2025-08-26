@@ -25,12 +25,12 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 #
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=beautifulsoup4
-VERSION=4.13.4
+VERSION=4.13.5
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
