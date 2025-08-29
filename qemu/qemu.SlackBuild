@@ -29,7 +29,7 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=qemu
-SRCVERSION=10.0.3
+SRCVERSION=10.1.0
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -150,9 +150,9 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-plugins \
   --enable-slirp \
   --enable-tpm \
-  --enable-avx2 \
-  --enable-avx512bw \
   --enable-gtk-clipboard \
+  --enable-auth-pam \
+  --enable-virtfs \
   --audio-drv-list="alsa,sdl,pa,jack" \
   $targets
 
