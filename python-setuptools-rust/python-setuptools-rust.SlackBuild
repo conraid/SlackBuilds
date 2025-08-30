@@ -25,14 +25,14 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=setuptools_rust
 PKGNAM=python-$(echo $PRGNAM | tr A-Z a-z | tr _ -)
-SRCVERSION=1.11.1
-VERSION=$(echo $SRCVERSION | tr - _)
+SRCVERSION=1.12.0
+VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
