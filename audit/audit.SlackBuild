@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=audit-userspace
 PKGNAM=audit
-VERSION=4.1.1
+VERSION=4.1.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -105,17 +105,19 @@ CXXFLAGS="$SLKCFLAGS -fcommon" \
   --mandir=/usr/man \
   --infodir=/usr/info \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --enable-static=no \
+  --enable-static=yes \
   --enable-shared=yes \
   --with-python3=yes \
   --with-libwrap \
   --with-libcap-ng=yes \
   --enable-gssapi-krb5=yes \
-  --enable-systemd=no \
   --with-libcap-ng=yes \
   --with-io_uring=yes \
+  --with-golang=no \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
+
+# --enable-static=yes to prevent errors with testing. They suggest this in the GitHub issues.
 
 make
 make DESTDIR=$PKG install-strip
