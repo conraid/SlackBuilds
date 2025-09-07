@@ -38,9 +38,9 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=kismet
-SRCVERSION=2023-07-R2
+SRCVERSION=2025-09-R1
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -92,9 +92,6 @@ if [ -e $CWD/patches/ ]; then
   done
 fi
 
-# Fix python install
-sed -i '/\$(PYTHON)/s/\(setup\.py install\)/\1 --root="$(DESTDIR)"/' */Makefile.in
-
 # Set correct mangrp
 sed -i 's|@mangrp@|root|g' Makefile.inc.in
 
@@ -112,6 +109,8 @@ CXXFLAGS="$SLKCFLAGS -fpermissive" \
   --mandir=/usr/man \
   --infodir=/usr/info \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
+  --disable-mosquitto \
+  --enable-protobuf \
   --build=$ARCH-slackware-linux
 
 make all plugins
