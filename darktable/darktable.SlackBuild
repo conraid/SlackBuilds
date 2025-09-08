@@ -30,8 +30,9 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=darktable
-VERSION=5.2.1
-BUILD=${BUILD:-2}
+SRCVERSION=5.2.1
+VERSION="${SRCVERSION:0:7}"
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -69,9 +70,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.xz
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.?z
+cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 find -L . \
@@ -93,6 +94,8 @@ if [ -e $CWD/patches/ ]; then
   fi
 fi
 
+export CC=clang
+export CXX=clang++
 
 mkdir -p build
 cd build
@@ -111,16 +114,18 @@ cmake \
   -DDONT_USE_INTERNAL_LUA=ON \
   -DUSE_LIBSECRET=ON \
   -DBUILD_CURVE_TOOLS=ON \
-  -DBUILD_BATTERY_INDICATOR=ON \
   -DBUILD_NOISE_TOOLS=ON \
   -DCUSTOM_CFLAGS=ON \
   -DBUILD_SHARED_LIBS=ON \
   -DUSE_COLORD=ON \
-  -DDONT_USE_INTERNAL_LIBRAW=ON \
-  -DRAWSPEED_ENABLE_LTO=OFF \
+  -DRAWSPEED_ENABLE_LTO=ON \
   -DUSE_LIBRAW=ON \
+  -DBUILD_CMSTEST=OFF \
+  -DTESTBUILD_OPENCL_PROGRAMS=OFF \
+  -DENABLE_RAWSPEED=ON \
   ..
 
+make -j$(nproc)
 make DESTDIR=$PKG install
 ln -s darktable/libdarktable.so $PKG/usr/lib$LIBDIRSUFFIX/libdarktable.so
 cd -
