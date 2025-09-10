@@ -1,0 +1,32 @@
+From 5df522e53fea7f07f113c2d83093cd789f8496ef Mon Sep 17 00:00:00 2001
+From: Tim Stack <timothyshanestack@gmail.com>
+Date: Tue, 9 Sep 2025 06:30:55 -0700
+Subject: [PATCH] [configure] check for windows.h in addition to windres
+
+Fixes #1538
+---
+ configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index b17f62d68e..cfdff655e9 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -109,7 +109,7 @@ AS_CASE(["$host_os"],
+     )
+ )
+ 
+-AC_CHECK_HEADERS(execinfo.h pty.h util.h zlib.h bzlib.h libutil.h sys/ttydefaults.h libproc.h uniwidth.h sys/sysctl.h)
++AC_CHECK_HEADERS(execinfo.h pty.h util.h zlib.h bzlib.h libutil.h sys/ttydefaults.h libproc.h uniwidth.h sys/sysctl.h windows.h)
+ 
+ AS_IF([test "x$ac_cv_header_uniwidth_h" != "xyes"], [
+   AC_MSG_ERROR([uniwidth.h header from libunistring was not found])dnl
+@@ -290,7 +290,7 @@ AM_CONDITIONAL(HAVE_CARGO, test x"$CARGO_CMD" != x"")
+ AM_CONDITIONAL(HAVE_LIBCURL, test x"$LIBCURL" != x"")
+ AM_CONDITIONAL([CROSS_COMPILING], [ test x"$cross_compiling" != x"no" ])
+ AM_CONDITIONAL(HAVE_CHECK_JSONSCHEMA, test x"$CHECK_JSONSCHEMA" != x"")
+-AM_CONDITIONAL(HAVE_WINDRES, test x"$WINDRES" != x"")
++AM_CONDITIONAL(HAVE_WINDRES, test x"$WINDRES" != x"" && "x$ac_cv_header_windows_h" != x"no")
+ 
+ AS_VAR_SET(USER_CXXFLAGS, ["$CXXFLAGS"])
+ AC_SUBST(USER_CXXFLAGS)
