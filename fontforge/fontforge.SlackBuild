@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=fontforge
 VERSION=20230101
 SRCFREETYPE=$(freetype-config --ftversion) #Freetype version in -current
-BUILD=${BUILD:-12}
+BUILD=${BUILD:-13}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -106,14 +106,13 @@ cmake -Wno-dev -GNinja \
   -DCMAKE_INSTALL_MANDIR=/usr/man \
   -DCMAKE_INSTALL_DOCDIR=/usr/doc/$PKGNAM-$VERSION \
   -DENABLE_X11=ON \
-	-DENABLE_MAINTAINER_TOOLS=TRUE \
-	-DENABLE_FONTFORGE_EXTRAS=TRUE \
-	-DUNIX=TRUE \
+  -DENABLE_MAINTAINER_TOOLS=ON \
+  -DENABLE_FONTFORGE_EXTRAS=ON \
+  -DUNIX=ON \
   -DBUILD_TESTING=OFF \
+  -DENABLE_DOCS=ON \
+  -DENABLE_PYTHON_EXTENSION=ON \
   ..
-
-# fix -R linker
-sed -i 's|-R/usr|-Wl,-R/usr|g' *.*
 
 ninja
 DESTDIR=$PKG ninja install
