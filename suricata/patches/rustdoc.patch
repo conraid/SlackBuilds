@@ -1,0 +1,20 @@
+diff -Naupr a/configure.ac b/configure.ac
+--- a/configure.ac	2025-09-16 04:07:12.000000000 +0200
++++ b/configure.ac	2025-09-16 17:30:43.928937873 +0200
+@@ -2098,16 +2098,6 @@ fi
+         AC_MSG_ERROR([cargo required])
+     fi
+ 
+-    # Check for rustdoc, respecting RUSTDOC environment variable
+-    AC_ARG_VAR([RUSTDOC], [Rustdoc command])
+-    if test -z "$RUSTDOC"; then
+-        RUSTDOC="rustdoc"
+-    fi
+-    AC_PATH_PROG(RUSTDOC, $RUSTDOC, "no")
+-    if test "$RUSTDOC" = "no"; then
+-        AC_MSG_ERROR([rustdoc required])
+-    fi
+-
+     AC_DEFINE([HAVE_RUST],[1],[Enable Rust language])
+     AM_CONDITIONAL([HAVE_RUST],true)
+     AC_SUBST([CARGO], [$CARGO])
