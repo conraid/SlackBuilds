@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=mu
 VERSION=1.12.13
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -91,7 +91,9 @@ fi
 
 export CFLAGS="$SLKCFLAGS"
 export CXXFLAGS="$SLKCFLAGS"
-./autogen.sh \
+mkdir meson-build
+cd meson-build
+meson setup \
   --prefix          /usr \
   --libdir          lib${LIBDIRSUFFIX} \
   --libexecdir      /usr/libexec \
@@ -107,10 +109,18 @@ export CXXFLAGS="$SLKCFLAGS"
   --default-library shared \
   --buildtype       plain \
   --auto-features   enabled \
-  --wrap-mode       nodownload
+  --wrap-mode       nodownload \
+  -D                b_lto=true \
+  -D                b_pie=true \
+  -D                use-embedded-fmt=true \
+  -D                use-embedded-cli11=true \
+  -D                cld2=enabled \
+  -D                tests=disabled \
+  ..
 
-make
-DESTDIR=$PKG make install
+ninja
+DESTDIR=$PKG ninja install
+cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
