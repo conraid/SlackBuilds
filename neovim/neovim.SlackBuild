@@ -30,7 +30,8 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=neovim
-VERSION=0.11.4
+SRCVERSION=19ba5899460ffdbf159ad4323ae5f3af6ce2eb53
+VERSION=${SRCVERSION:0:7}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -69,9 +70,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
+cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 find . \
@@ -136,10 +137,8 @@ install -Dm644 runtime/nvim.desktop $PKG/usr/share/applications/nvim.desktop
 install -Dm644 runtime/nvim.png $PKG/usr/share/pixmaps/nvim.png
 install -Dm644 runtime/nvim.appdata.xml $PKG/usr/share/metainfo/nvim.appdata.xml
 
-# Add vim runtimepath to neovim
-echo "set runtimepath+=/usr/share/vim/vimfiles" > $PKG/usr/share/nvim/slackers.vim
-mkdir -p $PKG/etc/xdg/nvim
-echo "source /usr/share/nvim/slackers.vim" > $PKG/etc/xdg/nvim/sysinit.vim
+# Add bash completion
+install -Dm644 contrib/nvim.bash $PKG/usr/share/bash-completion/completions/nvim
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
