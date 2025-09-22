@@ -25,13 +25,13 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=shorewall6
 VERSION=5.2.8
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 ARCH=noarch
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -64,6 +64,11 @@ find -L . \
 
 ./configure
 DESTDIR=$PKG ./install.sh
+
+if [ -d $PKG/usr/man ]; then
+  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+fi
 
 # Remove empty directories
 rm -rf $PKG/usr/share/shorewall
