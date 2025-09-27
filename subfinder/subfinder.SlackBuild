@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=subfinder
 PKGNAM="${PRGNAM,,}"
-SRCVERSION=2.8.0
+SRCVERSION=2.9.0
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -98,14 +98,10 @@ fi
 export CGO_CPPFLAGS="${SLKCFLAGS}"
 export CGO_CFLAGS="${SLKCFLAGS}"
 export CGO_CXXFLAGS="${SLKCFLAGS}"
-export GOFLAGS="-buildmode=pie -trimpath -ldflags=-linkmode=external -mod=readonly -modcacherw"
+export GOFLAGS='-buildmode=pie -trimpath -mod=readonly -modcacherw -v -ldflags=-linkmode=external -ldflags=-s -ldflags=-w'
 
-cd v2/cmd/subfinder
-
-go build .
+go build -o subfinder cmd/subfinder/main.go
 install -Dm755 subfinder $PKG/usr/bin/subfinder
-
-cd -
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
