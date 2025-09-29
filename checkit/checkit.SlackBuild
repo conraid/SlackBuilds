@@ -25,19 +25,19 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 #
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=checkit
-VERSION=0.5.3
-BUILD=${BUILD:-2}
+VERSION=0.5.4
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="AUTHORS COPYING ChangeLog INSTALL NEWS README"
+DOCFILES="AUTHORS COPYING ChangeLog INSTALL NEWS README*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -110,7 +110,7 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
