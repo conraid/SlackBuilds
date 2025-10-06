@@ -1,0 +1,68 @@
+diff -Naupr a/scribus/plugins/import/pdf/importpdf.cpp b/scribus/plugins/import/pdf/importpdf.cpp
+--- a/scribus/plugins/import/pdf/importpdf.cpp	2025-09-03 17:07:05.000000000 +0200
++++ b/scribus/plugins/import/pdf/importpdf.cpp	2025-10-06 14:38:26.792054416 +0200
+@@ -928,25 +928,25 @@ QRectF PdfPlug::getCBox(int box, int pgN
+ 
+ QString PdfPlug::UnicodeParsedString(const GooString *s1)
+ {
+-	if (!s1 || s1->getLength() == 0)
++	if (!s1 || s1->size() == 0)
+ 		return QString();
+ 	bool isUnicode;
+ 	int i;
+ 	Unicode u;
+ 	QString result;
+-	if ((s1->getChar(0) & 0xff) == 0xfe && (s1->getLength() > 1 && (s1->getChar(1) & 0xff) == 0xff))
++	if ((s1->getChar(0) & 0xff) == 0xfe && (s1->size() > 1 && (s1->getChar(1) & 0xff) == 0xff))
+ 	{
+ 		isUnicode = true;
+ 		i = 2;
+-		result.reserve((s1->getLength() - 2) / 2);
++		result.reserve((s1->size() - 2) / 2);
+ 	}
+ 	else
+ 	{
+ 		isUnicode = false;
+ 		i = 0;
+-		result.reserve(s1->getLength());
++		result.reserve(s1->size());
+ 	}
+-	while (i < s1->getLength())
++	while (i < s1->size())
+ 	{
+ 		if (isUnicode)
+ 		{
+diff -Naupr a/scribus/plugins/import/pdf/slaoutput.cpp b/scribus/plugins/import/pdf/slaoutput.cpp
+--- a/scribus/plugins/import/pdf/slaoutput.cpp	2025-09-03 17:07:05.000000000 +0200
++++ b/scribus/plugins/import/pdf/slaoutput.cpp	2025-10-06 15:25:51.579274493 +0200
+@@ -4087,25 +4087,25 @@ void SlaOutputDev::pushGroup(const QStri
+ 
+ QString SlaOutputDev::UnicodeParsedString(const GooString *s1) const
+ {
+-	if (!s1 || s1->getLength() == 0)
++	if (!s1 || s1->size() == 0)
+ 		return QString();
+ 	bool isUnicode;
+ 	int i;
+ 	Unicode u;
+ 	QString result;
+-	if ((s1->getChar(0) & 0xff) == 0xfe && (s1->getLength() > 1 && (s1->getChar(1) & 0xff) == 0xff))
++	if ((s1->getChar(0) & 0xff) == 0xfe && (s1->size() > 1 && (s1->getChar(1) & 0xff) == 0xff))
+ 	{
+ 		isUnicode = true;
+ 		i = 2;
+-		result.reserve((s1->getLength() - 2) / 2);
++		result.reserve((s1->size() - 2) / 2);
+ 	}
+ 	else
+ 	{
+ 		isUnicode = false;
+ 		i = 0;
+-		result.reserve(s1->getLength());
++		result.reserve(s1->size());
+ 	}
+-	while (i < s1->getLength())
++	while (i < s1->size())
+ 	{
+ 		if (isUnicode)
+ 		{
