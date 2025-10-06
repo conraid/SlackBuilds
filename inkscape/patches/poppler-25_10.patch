@@ -1,0 +1,46 @@
+diff -Naupr a/src/extension/internal/pdfinput/pdf-parser.cpp b/src/extension/internal/pdfinput/pdf-parser.cpp
+--- a/src/extension/internal/pdfinput/pdf-parser.cpp	2025-04-27 20:26:33.000000000 +0200
++++ b/src/extension/internal/pdfinput/pdf-parser.cpp	2025-10-06 12:05:00.091214481 +0200
+@@ -2256,7 +2256,7 @@ void PdfParser::doShowText(GooString *s)
+     auto font = state->getFont();
+     int wMode = font->getWMode(); // Vertical/Horizontal/Invalid
+ 
+-    builder->beginString(state, s->getLength());
++    builder->beginString(state, s->size());
+ 
+     // handle a Type 3 char
+     if (font->getType() == fontType3) {
+@@ -2267,7 +2267,7 @@ void PdfParser::doShowText(GooString *s)
+     state->textTransformDelta(0, state->getRise(), &riseX, &riseY);
+ 
+     auto p = s->getCString(); // char* or const char*
+-    int len = s->getLength();
++    int len = s->size();
+ 
+     while (len > 0) {
+ 
+diff -Naupr a/src/extension/internal/pdfinput/poppler-utils.cpp b/src/extension/internal/pdfinput/poppler-utils.cpp
+--- a/src/extension/internal/pdfinput/poppler-utils.cpp	2025-04-27 20:26:33.000000000 +0200
++++ b/src/extension/internal/pdfinput/poppler-utils.cpp	2025-10-06 12:18:26.363412083 +0200
+@@ -164,7 +164,7 @@ void InkFontDict::hashFontObject1(const
+         case objString:
+             h->hash('s');
+             s = obj->getString();
+-            h->hash(s->c_str(), s->getLength());
++            h->hash(s->c_str(), s->size());
+             break;
+         case objName:
+             h->hash('n');
+@@ -582,10 +582,10 @@ std::string getDictString(Dict *dict, co
+ std::string getString(const GooString *value)
+ {
+     if (_POPPLER_HAS_UNICODE_BOM(value)) {
+-        return g_convert(value->getCString () + 2, value->getLength () - 2,
++        return g_convert(value->getCString () + 2, value->size () - 2,
+                          "UTF-8", "UTF-16BE", NULL, NULL, NULL);
+     } else if (_POPPLER_HAS_UNICODE_BOMLE(value)) {
+-        return g_convert(value->getCString () + 2, value->getLength () - 2,
++        return g_convert(value->getCString () + 2, value->size () - 2,
+                          "UTF-8", "UTF-16LE", NULL, NULL, NULL);
+     }
+     return value->toStr();
