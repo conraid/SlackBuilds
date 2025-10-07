@@ -160,15 +160,6 @@ SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/apngdis/apngdis-2.9-src.zi
 SLACKBUILD MD5SUM: 807ca18154d57ac18d63f54147c07804
 SLACKBUILD SHORT DESCRIPTION:  apngdis (APNG Disassembler)
 
-SLACKBUILD NAME: appstream
-SLACKBUILD LOCATION: ./appstream
-SLACKBUILD FILES: README appstream.SlackBuild appstream.info slack-desc slack-required
-SLACKBUILD VERSION: 1.1.1
-SLACKBUILD REQUIRES: libxmlb libfyaml
-SLACKBUILD DOWNLOAD: https://www.freedesktop.org/software/appstream/releases/AppStream-1.1.1.tar.xz
-SLACKBUILD MD5SUM: 6a91a71c8a5983f83e4c172e3e27f179
-SLACKBUILD SHORT DESCRIPTION:  AppStream (standard for creating app stores across distributions)
-
 SLACKBUILD NAME: argbash
 SLACKBUILD LOCATION: ./argbash
 SLACKBUILD FILES: README argbash.SlackBuild argbash.info slack-desc
@@ -343,10 +334,10 @@ SLACKBUILD SHORT DESCRIPTION:  autossh (Automatically restart SSH sessions and t
 SLACKBUILD NAME: aws-cli
 SLACKBUILD LOCATION: ./aws-cli
 SLACKBUILD FILES: README aws-cli.SlackBuild aws-cli.info slack-desc slack-required
-SLACKBUILD VERSION: 1.42.45
+SLACKBUILD VERSION: 1.42.46
 SLACKBUILD REQUIRES: python-cryptography python-botocore colorama python-dateutil python-jmespath rsa python-s3transfer ruyaml ruamel-yaml awscrt
-SLACKBUILD DOWNLOAD: https://github.com/aws/aws-cli/archive/1.42.45/aws-cli-1.42.45.tar.gz
-SLACKBUILD MD5SUM: d02d0e960f2892922e7f7fc76924a551
+SLACKBUILD DOWNLOAD: https://github.com/aws/aws-cli/archive/1.42.46/aws-cli-1.42.46.tar.gz
+SLACKBUILD MD5SUM: f49d916a3b92c79f5bf9a56628374fa1
 SLACKBUILD SHORT DESCRIPTION:  aws-cli (Universal Command Line Interface for AWS)
 
 SLACKBUILD NAME: awscrt
@@ -829,10 +820,10 @@ SLACKBUILD SHORT DESCRIPTION:  clamav-gui (Front-End for ClamAV)
 SLACKBUILD NAME: clamav
 SLACKBUILD LOCATION: ./clamav
 SLACKBUILD FILES: PKGNOTE README clamav.SlackBuild clamav.info doinst.sh files/clamd.conf files/freshclam.conf files/logrotate.clamav files/rc.clamav slack-desc slack-required
-SLACKBUILD VERSION: 1.4.2
+SLACKBUILD VERSION: 1.4.3
 SLACKBUILD REQUIRES: libmspack
-SLACKBUILD DOWNLOAD: http://www.clamav.net/downloads/production/clamav-1.4.2.tar.gz
-SLACKBUILD MD5SUM: 94b1c8a660139139e0c501a0e360f649
+SLACKBUILD DOWNLOAD: http://www.clamav.net/downloads/production/clamav-1.4.3.tar.gz
+SLACKBUILD MD5SUM: 098ae7acb72ce3316c4e2c647f2aab66
 SLACKBUILD SHORT DESCRIPTION:  clamav (open source antivirus engine)
 
 SLACKBUILD NAME: clapper
@@ -1559,7 +1550,7 @@ SLACKBUILD NAME: flatpak
 SLACKBUILD LOCATION: ./flatpak
 SLACKBUILD FILES: README doinst.sh flatpak.SlackBuild flatpak.info slack-desc slack-required
 SLACKBUILD VERSION: 1.16.1
-SLACKBUILD REQUIRES: xdg-desktop-portal-gtk bubblewrap ostree  appstream
+SLACKBUILD REQUIRES: xdg-desktop-portal-gtk bubblewrap ostree
 SLACKBUILD DOWNLOAD: https://github.com/flatpak/flatpak/releases/download/1.16.1/flatpak-1.16.1.tar.xz
 SLACKBUILD MD5SUM: d1c142279ee460f6a196fa67fb9874de
 SLACKBUILD SHORT DESCRIPTION:  flatpak (Linux application sandboxing and distribution framework)
@@ -1590,6 +1581,15 @@ SLACKBUILD REQUIRES: libspiro
 SLACKBUILD DOWNLOAD: https://github.com/fontforge/fontforge/releases/download/20230101/fontforge-20230101.tar.xz
 SLACKBUILD MD5SUM: 7043f25368ed25bcd75d168564919fb7
 SLACKBUILD SHORT DESCRIPTION:  fontforge (Font editor)
+
+SLACKBUILD NAME: foremost
+SLACKBUILD LOCATION: ./foremost
+SLACKBUILD FILES: README foremost.SlackBuild foremost.info patches/foremost-1.5.7-fno-common.patch patches/foremost-broken-jpeg.patch patches/foremost-makefile.patch slack-desc
+SLACKBUILD VERSION: 1.5.7
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: http://foremost.sourceforge.net/pkg/foremost-1.5.7.tar.gz
+SLACKBUILD MD5SUM: 860119c49665c2a3fb2b0b1d3dbad02a
+SLACKBUILD SHORT DESCRIPTION:  foremost (a console program to recover files)
 
 SLACKBUILD NAME: forkstat
 SLACKBUILD LOCATION: ./forkstat
@@ -2675,7 +2675,7 @@ SLACKBUILD NAME: libadwaita
 SLACKBUILD LOCATION: ./libadwaita
 SLACKBUILD FILES: README doinst.sh libadwaita.SlackBuild libadwaita.info slack-desc slack-required
 SLACKBUILD VERSION: 1.8.0
-SLACKBUILD REQUIRES: appstream
+SLACKBUILD REQUIRES: 
 SLACKBUILD DOWNLOAD: https://download.gnome.org/sources/libadwaita/1.8/libadwaita-1.8.0.tar.xz
 SLACKBUILD MD5SUM: 1320dcde814b4b426f9f0720c2730d45
 SLACKBUILD SHORT DESCRIPTION:  libadwaita (Building blocks for modern adaptive GNOME applications)
@@ -2913,15 +2913,6 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://dev-www.libreoffice.org/src/libfreehand/libfreehand-0.1.2.tar.xz
 SLACKBUILD MD5SUM: c3788f5686839fd097bd77d8f51c3d04
 SLACKBUILD SHORT DESCRIPTION:  libfreehand (Adobe FreeHand Import Library)
-
-SLACKBUILD NAME: libfyaml
-SLACKBUILD LOCATION: ./libfyaml
-SLACKBUILD FILES: README libfyaml.SlackBuild libfyaml.info slack-desc
-SLACKBUILD VERSION: 0.9
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/pantoniou/libfyaml/releases/download/v0.9/libfyaml-0.9.tar.gz
-SLACKBUILD MD5SUM: d32c0fc52a73c4b9e9c4a386effb2f2e
-SLACKBUILD SHORT DESCRIPTION:  libfyaml (A fancy 1.2 YAML and JSON parser/writer)
 
 SLACKBUILD NAME: libgovirt
 SLACKBUILD LOCATION: ./libgovirt
@@ -4006,10 +3997,10 @@ SLACKBUILD SHORT DESCRIPTION:  mutagen (Python 2/3 module for handling audio met
 SLACKBUILD NAME: mysqltuner
 SLACKBUILD LOCATION: ./mysqltuner
 SLACKBUILD FILES: README mysqltuner.SlackBuild mysqltuner.info slack-desc
-SLACKBUILD VERSION: 2.6.0
+SLACKBUILD VERSION: 2.7.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/major/MySQLTuner-perl/archive/v2.6.0/MySQLTuner-perl-2.6.0.tar.gz
-SLACKBUILD MD5SUM: d9e89c4d12844746ff200cd95bcf80f0
+SLACKBUILD DOWNLOAD: https://github.com/major/MySQLTuner-perl/archive/v2.7.0/MySQLTuner-perl-2.7.0.tar.gz
+SLACKBUILD MD5SUM: a2a3f7a48519f519c61146652d3dbc95
 SLACKBUILD SHORT DESCRIPTION:  mysqltuner (MySQL Tuning Script)
 
 SLACKBUILD NAME: mystiq
@@ -4339,10 +4330,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-gyp (Node.js native addon build tool)
 SLACKBUILD NAME: node-less
 SLACKBUILD LOCATION: ./node-less
 SLACKBUILD FILES: README node-less.SlackBuild node-less.info slack-desc slack-required
-SLACKBUILD VERSION: 4.4.1
+SLACKBUILD VERSION: 4.4.2
 SLACKBUILD REQUIRES: lerna
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/less/-/less-4.4.1.tgz
-SLACKBUILD MD5SUM: 5c9cc9b171b96a16cd46c282e45635aa
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/less/-/less-4.4.2.tgz
+SLACKBUILD MD5SUM: f8df7ff70afef1f9b654c5ac1c8f17b9
 SLACKBUILD SHORT DESCRIPTION:  node-less (A standalone compiler for the LESS CSS language)
 
 SLACKBUILD NAME: node-libcli
@@ -4735,10 +4726,10 @@ SLACKBUILD SHORT DESCRIPTION:  packETH (ethernet packet generator)
 SLACKBUILD NAME: pandoc-bin
 SLACKBUILD LOCATION: ./pandoc-bin
 SLACKBUILD FILES: README pandoc-bin.SlackBuild pandoc-bin.info slack-desc
-SLACKBUILD VERSION: 3.8.1
+SLACKBUILD VERSION: 3.8.2
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/jgm/pandoc/releases/download/3.8.1/pandoc-3.8.1-linux-amd64.tar.gz
-SLACKBUILD MD5SUM: c2241eee3f78a0c925206e7dd391f00f
+SLACKBUILD DOWNLOAD: https://github.com/jgm/pandoc/releases/download/3.8.2/pandoc-3.8.2-linux-amd64.tar.gz
+SLACKBUILD MD5SUM: 3f753c6441d4f89da4dc46f00f603062
 SLACKBUILD SHORT DESCRIPTION:  pandoc-bin (Universal markup converter)
 
 SLACKBUILD NAME: paperkey
@@ -5086,10 +5077,10 @@ SLACKBUILD SHORT DESCRIPTION:  perl-unix-syslog (interface to the UNIX syslog ca
 SLACKBUILD NAME: phan
 SLACKBUILD LOCATION: ./phan
 SLACKBUILD FILES: README files/LICENSE files/LICENSE.LANGUAGE_SERVER files/LICENSE.PHP_PARSER phan.SlackBuild phan.info slack-desc slack-required
-SLACKBUILD VERSION: 5.5.1
+SLACKBUILD VERSION: 5.5.2
 SLACKBUILD REQUIRES: php-ast
-SLACKBUILD DOWNLOAD: https://github.com/phan/phan/releases/download/5.5.1/phan.phar
-SLACKBUILD MD5SUM: 1c79fea288cf56e03b57810ad9c36bcf
+SLACKBUILD DOWNLOAD: https://github.com/phan/phan/releases/download/5.5.2/phan.phar
+SLACKBUILD MD5SUM: 1b093feb8d62813bafb446dd80d32a1e
 SLACKBUILD SHORT DESCRIPTION:  phan (a static analyzer for PHP)
 
 SLACKBUILD NAME: phive
@@ -5689,10 +5680,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-aiohappyeyeballs (Happy Eyeballs for async
 SLACKBUILD NAME: python-aiohttp
 SLACKBUILD LOCATION: ./python-aiohttp
 SLACKBUILD FILES: README python-aiohttp.SlackBuild python-aiohttp.info slack-desc slack-required
-SLACKBUILD VERSION: 3.12.15
+SLACKBUILD VERSION: 3.13.0
 SLACKBUILD REQUIRES: python-pkgconfig python-aiohappyeyeballs python-multidict python-aiosignal python-frozenlist python-yarl
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/aiohttp/aiohttp-3.12.15.tar.gz
-SLACKBUILD MD5SUM: 2fdd3437623fa0d86313a3a3c7d1e2b5
+SLACKBUILD DOWNLOAD: https://github.com/aio-libs/aiohttp/releases/download/v3.13.0/aiohttp-3.13.0.tar.gz
+SLACKBUILD MD5SUM: b39c2e4849ac86f6cb32570dc1fd338a
 SLACKBUILD SHORT DESCRIPTION:  python-aiohttp (Async http client/server framework)
 
 SLACKBUILD NAME: python-aiomcache
@@ -5779,19 +5770,19 @@ SLACKBUILD SHORT DESCRIPTION:  python-arsenic (Asynchronous WebDriver client)
 SLACKBUILD NAME: python-asgiref
 SLACKBUILD LOCATION: ./python-asgiref
 SLACKBUILD FILES: README python-asgiref.SlackBuild python-asgiref.info slack-desc
-SLACKBUILD VERSION: 3.9.2
+SLACKBUILD VERSION: 3.10.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/asgiref/asgiref-3.9.2.tar.gz
-SLACKBUILD MD5SUM: 6281a0541574b46fde3d09db79746048
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/asgiref/asgiref-3.10.0.tar.gz
+SLACKBUILD MD5SUM: 6799fce19314e0aaeb789a6d0f6d45fa
 SLACKBUILD SHORT DESCRIPTION:  python-asgiref (Reference ASGI adapters and channel layers)
 
 SLACKBUILD NAME: python-astroid
 SLACKBUILD LOCATION: ./python-astroid
 SLACKBUILD FILES: README python-astroid.SlackBuild python-astroid.info slack-desc
-SLACKBUILD VERSION: 3.3.11
+SLACKBUILD VERSION: 4.0.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/astroid/astroid-3.3.11.tar.gz
-SLACKBUILD MD5SUM: dd3fe65dbe3cce1bd152bbfa0a9528e0
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/astroid/astroid-4.0.0.tar.gz
+SLACKBUILD MD5SUM: 212e098ef1dc06bb8b661add7ee94d45
 SLACKBUILD SHORT DESCRIPTION:  python-astroid (new abstract syntax tree from Python's ast)
 
 SLACKBUILD NAME: python-attrdict3
@@ -5806,10 +5797,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-attrdict3 (A dictionary that allows attrib
 SLACKBUILD NAME: python-attrs
 SLACKBUILD LOCATION: ./python-attrs
 SLACKBUILD FILES: README python-attrs.SlackBuild python-attrs.info slack-desc slack-required
-SLACKBUILD VERSION: 25.3.0
+SLACKBUILD VERSION: 25.4.0
 SLACKBUILD REQUIRES: python-hatch-fancy-pypi-readme
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/attrs/attrs-25.3.0.tar.gz
-SLACKBUILD MD5SUM: 173fe452e1fe986051d9bc194ed59525
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/attrs/attrs-25.4.0.tar.gz
+SLACKBUILD MD5SUM: 6197561dfec99660529830edcfeee0ba
 SLACKBUILD SHORT DESCRIPTION:  python-attrs (Attributes without boilerplate)
 
 SLACKBUILD NAME: python-automat
@@ -5851,10 +5842,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-blinker (Fast, simple object-to-object & b
 SLACKBUILD NAME: python-botocore
 SLACKBUILD LOCATION: ./python-botocore
 SLACKBUILD FILES: README python-botocore.SlackBuild python-botocore.info slack-desc slack-required
-SLACKBUILD VERSION: 1.40.45
+SLACKBUILD VERSION: 1.40.46
 SLACKBUILD REQUIRES: python-dateutil python-jmespath awscrt
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/botocore/botocore-1.40.45.tar.gz
-SLACKBUILD MD5SUM: 3a7798583de1cd7548d68a290f7be198
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/botocore/botocore-1.40.46.tar.gz
+SLACKBUILD MD5SUM: 9fdf61ad0d899bbaa22a7ae94464d8c0
 SLACKBUILD SHORT DESCRIPTION:  python-botocore (The low-level, core functionality of boto 3)
 
 SLACKBUILD NAME: python-browser-cookie3
@@ -6076,10 +6067,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-flask
 SLACKBUILD NAME: python-frozenlist
 SLACKBUILD LOCATION: ./python-frozenlist
 SLACKBUILD FILES: README python-frozenlist.SlackBuild python-frozenlist.info slack-desc slack-required
-SLACKBUILD VERSION: 1.7.0
+SLACKBUILD VERSION: 1.8.0
 SLACKBUILD REQUIRES: python-expandvars
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/f/frozenlist/frozenlist-1.7.0.tar.gz
-SLACKBUILD MD5SUM: 3820fe3685c2d9f544d7a0d4041c089a
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/f/frozenlist/frozenlist-1.8.0.tar.gz
+SLACKBUILD MD5SUM: 3d8350ebe62603b7be5f516292c7aa6c
 SLACKBUILD SHORT DESCRIPTION:  python-frozenlist (Immutable list-like structure)
 
 SLACKBUILD NAME: python-fuse
@@ -6436,10 +6427,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-mpegdash (MPEG-DASH MPD Parser
 SLACKBUILD NAME: python-multidict
 SLACKBUILD LOCATION: ./python-multidict
 SLACKBUILD FILES: README python-multidict.SlackBuild python-multidict.info slack-desc
-SLACKBUILD VERSION: 6.6.4
+SLACKBUILD VERSION: 6.7.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/m/multidict/multidict-6.6.4.tar.gz
-SLACKBUILD MD5SUM: 479587db63b5fe7f74a921b51bdbd371
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/m/multidict/multidict-6.7.0.tar.gz
+SLACKBUILD MD5SUM: cba8e65b4c65d889395672fd62de5183
 SLACKBUILD SHORT DESCRIPTION:  python-multidict (Asyncio-based multidict implementation for Python)
 
 SLACKBUILD NAME: python-netifaces
@@ -6562,10 +6553,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-progress (Easy progress reporting for Pyth
 SLACKBUILD NAME: python-propcache
 SLACKBUILD LOCATION: ./python-propcache
 SLACKBUILD FILES: README python-propcache.SlackBuild python-propcache.info slack-desc slack-required
-SLACKBUILD VERSION: 0.3.2
+SLACKBUILD VERSION: 0.4.0
 SLACKBUILD REQUIRES: python-expandvars python-pep517
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/propcache/propcache-0.3.2.tar.gz
-SLACKBUILD MD5SUM: 1c073b491620a9f6d568276d61f80277
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/propcache/propcache-0.4.0.tar.gz
+SLACKBUILD MD5SUM: 594e67d42a1cc5ca668e03a99e0beec8
 SLACKBUILD SHORT DESCRIPTION:  python-propcache (Fast property caching)
 
 SLACKBUILD NAME: python-protego
@@ -6607,19 +6598,19 @@ SLACKBUILD SHORT DESCRIPTION:  python-pycodestyle (Simple Python style checker i
 SLACKBUILD NAME: python-pydantic-core
 SLACKBUILD LOCATION: ./python-pydantic-core
 SLACKBUILD FILES: README python-pydantic-core.SlackBuild python-pydantic-core.info slack-desc slack-required
-SLACKBUILD VERSION: 2.40.1
+SLACKBUILD VERSION: 2.41.1
 SLACKBUILD REQUIRES: python-maturin python-typing-extensions
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pydantic-core/pydantic_core-2.40.1.tar.gz
-SLACKBUILD MD5SUM: 1de2ee883925fdf1ac8d90a641265763
+SLACKBUILD DOWNLOAD: https://github.com/pydantic/pydantic-core/archive/v2.41.1/pydantic-core-2.41.1.tar.gz
+SLACKBUILD MD5SUM: 9df10ea84612e7afc6988391d12bfdd5
 SLACKBUILD SHORT DESCRIPTION:  python-pydantic-core (Core validation logic for pydantic in rust)
 
 SLACKBUILD NAME: python-pydantic
 SLACKBUILD LOCATION: ./python-pydantic
 SLACKBUILD FILES: README python-pydantic.SlackBuild python-pydantic.info slack-desc slack-required
-SLACKBUILD VERSION: 2.11.9
+SLACKBUILD VERSION: 2.11.10
 SLACKBUILD REQUIRES: python-annotated-types python-pydantic-core python-typing-inspection python-typing-extensions python-hatch-fancy-pypi-readme
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pydantic/pydantic-2.11.9.tar.gz
-SLACKBUILD MD5SUM: 40710323d4273536c49c73ca0fa6b1fc
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pydantic/pydantic-2.11.10.tar.gz
+SLACKBUILD MD5SUM: bcf758c5e049647bb55a169771865462
 SLACKBUILD SHORT DESCRIPTION:  python-pydantic (Data parsing and validation using Python)
 
 SLACKBUILD NAME: python-pydispatcher
@@ -6652,10 +6643,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-pylast (A Python interface to Last.fm and 
 SLACKBUILD NAME: python-pylint
 SLACKBUILD LOCATION: ./python-pylint
 SLACKBUILD FILES: README patches/license.patch python-pylint.SlackBuild python-pylint.info slack-desc slack-required
-SLACKBUILD VERSION: 3.3.8
+SLACKBUILD VERSION: 3.3.9
 SLACKBUILD REQUIRES: python-astroid colorama python-dill python-isort python-mccabe python-platformdirs python-tomlkit python-sphinx-reredirects
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pylint/pylint-3.3.8.tar.gz
-SLACKBUILD MD5SUM: 35e340abe2f828eb76878e7043cac5c6
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pylint/pylint-3.3.9.tar.gz
+SLACKBUILD MD5SUM: feb4627c4480f4d48d18bfbc5fd6c8b7
 SLACKBUILD SHORT DESCRIPTION:  python-pylint (python code checker)
 
 SLACKBUILD NAME: python-pyperclip
@@ -7201,10 +7192,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-xlib (XLib in pure Python)
 SLACKBUILD NAME: python-yarl
 SLACKBUILD LOCATION: ./python-yarl
 SLACKBUILD FILES: README python-yarl.SlackBuild python-yarl.info slack-desc slack-required
-SLACKBUILD VERSION: 1.20.1
+SLACKBUILD VERSION: 1.22.0
 SLACKBUILD REQUIRES: python-pep517 python-expandvars python-propcache
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/y/yarl/yarl-1.20.1.tar.gz
-SLACKBUILD MD5SUM: 23352fbc2b165825d4a33682c91788bc
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/y/yarl/yarl-1.22.0.tar.gz
+SLACKBUILD MD5SUM: 21bde2ca6df9bfc66b1810461e0ded05
 SLACKBUILD SHORT DESCRIPTION:  python-yarl (Yet another URL library)
 
 SLACKBUILD NAME: python-ytmusicapi
@@ -7219,10 +7210,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-ytmusicapi (Unofficial API for YouTube Mus
 SLACKBUILD NAME: python-zeroconf
 SLACKBUILD LOCATION: ./python-zeroconf
 SLACKBUILD FILES: README python-zeroconf.SlackBuild python-zeroconf.info slack-desc slack-required
-SLACKBUILD VERSION: 0.147.2
+SLACKBUILD VERSION: 0.148.0
 SLACKBUILD REQUIRES: python-ifaddr python-netifaces python-poetry-core
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/z/zeroconf/zeroconf-0.147.2.tar.gz
-SLACKBUILD MD5SUM: 5af1301383217c291404adc36df78db9
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/z/zeroconf/zeroconf-0.148.0.tar.gz
+SLACKBUILD MD5SUM: adda1c72099e20b2968ff7f22d9f6f36
 SLACKBUILD SHORT DESCRIPTION:  python-zeroconf (mDNS service discovery in pure Python)
 
 SLACKBUILD NAME: python-zope-interface
@@ -8335,10 +8326,10 @@ SLACKBUILD SHORT DESCRIPTION:  sqlitebrowser (QT GUI editor for SQLite databases
 SLACKBUILD NAME: sqlmap
 SLACKBUILD LOCATION: ./sqlmap
 SLACKBUILD FILES: README doinst.sh slack-desc sqlmap.SlackBuild sqlmap.info
-SLACKBUILD VERSION: 1.9.9
+SLACKBUILD VERSION: 1.9.10
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/sqlmapproject/sqlmap/archive/1.9.9.tar.gz
-SLACKBUILD MD5SUM: cc8d6d023a4158b74f5795fdb95c8a73
+SLACKBUILD DOWNLOAD: https://github.com/sqlmapproject/sqlmap/archive/1.9.10.tar.gz
+SLACKBUILD MD5SUM: 33ae46f114b2e14c8074362d3488412e
 SLACKBUILD SHORT DESCRIPTION:  sqlmap (Automatic SQL injection and database takeover tool)
 
 SLACKBUILD NAME: squid
@@ -8497,10 +8488,10 @@ SLACKBUILD SHORT DESCRIPTION:  stem (Python controller library for Tor)
 SLACKBUILD NAME: sttr-bin
 SLACKBUILD LOCATION: ./sttr-bin
 SLACKBUILD FILES: README slack-desc sttr-bin.SlackBuild sttr-bin.info
-SLACKBUILD VERSION: 0.2.27
+SLACKBUILD VERSION: 0.2.28
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/abhimanyu003/sttr/releases/download/v0.2.27/sttr_Linux_x86_64.tar.gz
-SLACKBUILD MD5SUM: 679e933358dcf97155300ca3b459a178
+SLACKBUILD DOWNLOAD: https://github.com/abhimanyu003/sttr/releases/download/v0.2.28/sttr_Linux_x86_64.tar.gz
+SLACKBUILD MD5SUM: 806961e309bb5198e2b097821ff5ebf5
 SLACKBUILD SHORT DESCRIPTION:  sttr-bin (cli app to perform various operations on string)
 
 SLACKBUILD NAME: stylelint-config-recommended
@@ -8515,10 +8506,10 @@ SLACKBUILD SHORT DESCRIPTION:  stylelint-config-recommended (The recommended con
 SLACKBUILD NAME: stylelint-config-standard
 SLACKBUILD LOCATION: ./stylelint-config-standard
 SLACKBUILD FILES: README slack-desc slack-required stylelint-config-standard.SlackBuild stylelint-config-standard.info
-SLACKBUILD VERSION: 39.0.0
+SLACKBUILD VERSION: 39.0.1
 SLACKBUILD REQUIRES: stylelint
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/stylelint-config-standard/-/stylelint-config-standard-39.0.0.tgz
-SLACKBUILD MD5SUM: 4c17fa1a754d9d51fd229d8b487eb617
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/stylelint-config-standard/-/stylelint-config-standard-39.0.1.tgz
+SLACKBUILD MD5SUM: a982b103cebb194cba8b6050e4242391
 SLACKBUILD SHORT DESCRIPTION:  stylelint-config-standard (The standard config for stylelint)
 
 SLACKBUILD NAME: stylelint
@@ -8659,10 +8650,10 @@ SLACKBUILD SHORT DESCRIPTION:  teamviewer (remote control application)
 SLACKBUILD NAME: telegram-bin
 SLACKBUILD LOCATION: ./telegram-bin
 SLACKBUILD FILES: README doinst.sh files/telegram.desktop files/telegram.png slack-desc telegram-bin.SlackBuild telegram-bin.info
-SLACKBUILD VERSION: 6.1.3
+SLACKBUILD VERSION: 6.1.4
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/telegramdesktop/tdesktop/releases/download/v6.1.3/tsetup.6.1.3.tar.xz
-SLACKBUILD MD5SUM: abeac072722997ec1c67d45d0c368174
+SLACKBUILD DOWNLOAD: https://github.com/telegramdesktop/tdesktop/releases/download/v6.1.4/tsetup.6.1.4.tar.xz
+SLACKBUILD MD5SUM: 15b93b97c8e93f2ab6d73601a133015d
 SLACKBUILD SHORT DESCRIPTION:  telegram (messaging app)
 
 SLACKBUILD NAME: tellico
@@ -8803,10 +8794,10 @@ SLACKBUILD SHORT DESCRIPTION:  tomb (system for file encryption)
 SLACKBUILD NAME: tor
 SLACKBUILD LOCATION: ./tor
 SLACKBUILD FILES: README doinst.sh files/rc.tor patches/torrc.patch slack-desc tor.SlackBuild tor.info
-SLACKBUILD VERSION: 0.4.8.18
+SLACKBUILD VERSION: 0.4.8.19
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://www.torproject.org/dist/tor-0.4.8.18.tar.gz
-SLACKBUILD MD5SUM: eb4441a25562c3498f9ca5c3c1b6fb56
+SLACKBUILD DOWNLOAD: https://www.torproject.org/dist/tor-0.4.8.19.tar.gz
+SLACKBUILD MD5SUM: 94d89e48170bb9002d5a4fa79e021c80
 SLACKBUILD SHORT DESCRIPTION:  tor (The onion router)
 
 SLACKBUILD NAME: torrent-file-editor
@@ -9325,10 +9316,10 @@ SLACKBUILD SHORT DESCRIPTION:  vnStat (a console-based network traffic monitor)
 SLACKBUILD NAME: vscodium-bin
 SLACKBUILD LOCATION: ./vscodium-bin
 SLACKBUILD FILES: README doinst.sh files/codium.desktop slack-desc vscodium-bin.SlackBuild vscodium-bin.info
-SLACKBUILD VERSION: 1.104.26450
+SLACKBUILD VERSION: 1.104.36664
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/VSCodium/vscodium/releases/download/1.104.26450/VSCodium-linux-x64-1.104.26450.tar.gz
-SLACKBUILD MD5SUM: 96d9641da9c21def0c621bdaf2d6df77
+SLACKBUILD DOWNLOAD: https://github.com/VSCodium/vscodium/releases/download/1.104.36664/VSCodium-linux-x64-1.104.36664.tar.gz
+SLACKBUILD MD5SUM: 27a66e2b08c17a0c00cab19bd3adbc29
 SLACKBUILD SHORT DESCRIPTION:  vscodium-bin (Free/Libre Open Source Software Binaries of VSCode)
 
 SLACKBUILD NAME: vuescan-bin
