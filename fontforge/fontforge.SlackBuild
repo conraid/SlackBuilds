@@ -30,9 +30,9 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=fontforge
-VERSION=20230101
+VERSION=20251009
 SRCFREETYPE=$(freetype-config --ftversion) #Freetype version in -current
-BUILD=${BUILD:-13}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
