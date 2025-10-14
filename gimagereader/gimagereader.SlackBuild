@@ -33,7 +33,7 @@ PRGNAM=gimagereader
 PKGNAM="${PRGNAM,,}"
 SRCVERSION=3.4.3
 VERSION="${SRCVERSION:0:7}"
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -94,7 +94,6 @@ if [ -e $CWD/patches ]; then
     done
   fi
 fi
-export PKG_CONFIG_PATH=/usr/lib$LIBDIRSUFFIX/podofo09/pkgconfig
 
 sed -i -e "s|\"share/doc/gimagereader\"|\"doc/$PKGNAM-$VERSION\"|" \
        -e 's|QuaZip-Qt5-1\.0|QuaZip-Qt5-1.1|' \
