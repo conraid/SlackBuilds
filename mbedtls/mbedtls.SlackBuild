@@ -30,7 +30,7 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=mbedtls
-VERSION=3.6.3.1
+VERSION=4.0.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -93,17 +93,12 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
-# Fix error in psa_exercise_key.c
-sed -i 's/unsigned char ciphertext\[32\]/unsigned char ciphertext[33]/' framework/tests/src/psa_exercise_key.c
-
-
 mkdir -p build
 cd build
 cmake -Wno-dev \
   -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DLIB_INSTALL_DIR=/usr/lib${LIBDIRSUFFIX} \
   -DCMAKE_SKIP_RPATH=ON \
   -DUSE_SHARED_MBEDTLS_LIBRARY=ON \
   -DUSE_STATIC_MBEDTLS_LIBRARY=OFF \
