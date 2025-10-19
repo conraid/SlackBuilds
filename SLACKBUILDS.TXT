@@ -2824,6 +2824,15 @@ SLACKBUILD DOWNLOAD: ftp://ftp.slackware.com/pub/slackware/slackware64-current/s
 SLACKBUILD MD5SUM: 3b5aae755714b338af0f66726bceb62a
 SLACKBUILD SHORT DESCRIPTION:  libcurl-gnutls (An URL retrieval library linked against gnutls)
 
+SLACKBUILD NAME: libdatachannel
+SLACKBUILD LOCATION: ./libdatachannel
+SLACKBUILD FILES: README libdatachannel.SlackBuild libdatachannel.info slack-desc slack-required
+SLACKBUILD VERSION: 0.23.2
+SLACKBUILD REQUIRES: libjuice libsrtp plog usrsctp nlohmann-json
+SLACKBUILD DOWNLOAD: https://github.com/paullouisageneau/libdatachannel/archive/v0.23.2/libdatachannel-0.23.2.tar.gz
+SLACKBUILD MD5SUM: c27ce5de22ffc94276bf048f36b96b00
+SLACKBUILD SHORT DESCRIPTION:  libdatachannel (C/C++ WebRTC network library featuring Data Channels)
+
 SLACKBUILD NAME: libdbi-drivers
 SLACKBUILD LOCATION: ./libdbi-drivers
 SLACKBUILD FILES: README libdbi-drivers.SlackBuild libdbi-drivers.info slack-desc slack-required
@@ -2967,6 +2976,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/project/libircclient/libircclient/1.10/libircclient-1.10.tar.gz
 SLACKBUILD MD5SUM: 7dec70a16abbaf5147d21729b325b180
 SLACKBUILD SHORT DESCRIPTION:  libircclient (a small client-server IRC protocol library)
+
+SLACKBUILD NAME: libjuice
+SLACKBUILD LOCATION: ./libjuice
+SLACKBUILD FILES: README libjuice.SlackBuild libjuice.info slack-desc
+SLACKBUILD VERSION: 1.6.2
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/paullouisageneau/libjuice/archive/v1.6.2/libjuice-1.6.2.tar.gz
+SLACKBUILD MD5SUM: 5222c5b9a076a848e419b29c88167a3e
+SLACKBUILD SHORT DESCRIPTION:  libjuice (UDP Interactive Connectivity Establishment library)
 
 SLACKBUILD NAME: libjxl
 SLACKBUILD LOCATION: ./libjxl
@@ -3309,6 +3327,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://github.com/fontforge/libspiro/releases/download/20240903/libspiro-dist-20240903.tar.gz
 SLACKBUILD MD5SUM: d768580c1009284362d9f277d5bf37e9
 SLACKBUILD SHORT DESCRIPTION:  libspiro (Simplifies the drawing of beautiful curves)
+
+SLACKBUILD NAME: libsrtp
+SLACKBUILD LOCATION: ./libsrtp
+SLACKBUILD FILES: README libsrtp.SlackBuild libsrtp.info slack-desc
+SLACKBUILD VERSION: 2.7.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/cisco/libsrtp/archive/v2.7.0/libsrtp-2.7.0.tar.gz
+SLACKBUILD MD5SUM: ec04a3c04da42ceede025b51fbdeeebf
+SLACKBUILD SHORT DESCRIPTION:  libsrtp (Library for SRTP)
 
 SLACKBUILD NAME: libstatgrab
 SLACKBUILD LOCATION: ./libstatgrab
@@ -3700,10 +3727,10 @@ SLACKBUILD SHORT DESCRIPTION:  masscan (Mass IP port scanner)
 SLACKBUILD NAME: mbedtls
 SLACKBUILD LOCATION: ./mbedtls
 SLACKBUILD FILES: README mbedtls.SlackBuild mbedtls.info slack-desc
-SLACKBUILD VERSION: 4.0.0
+SLACKBUILD VERSION: 3.6.5
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/Mbed-TLS/mbedtls/releases/download/mbedtls-4.0.0/mbedtls-4.0.0.tar.bz2
-SLACKBUILD MD5SUM: a158a8a34f1979b0834c4fbd3bf6a320
+SLACKBUILD DOWNLOAD: https://github.com/Mbed-TLS/mbedtls/releases/download/mbedtls-3.6.5/mbedtls-3.6.5.tar.bz2
+SLACKBUILD MD5SUM: bc79602daf85f1cf35a686b53056de58
 SLACKBUILD SHORT DESCRIPTION:  mbedtls (Light-weight cryptographic and SSL/TLS library)
 
 SLACKBUILD NAME: md4c
@@ -4527,9 +4554,9 @@ SLACKBUILD SHORT DESCRIPTION:  oauth2client (OAuth 2.0 Python library)
 
 SLACKBUILD NAME: obs-studio
 SLACKBUILD LOCATION: ./obs-studio
-SLACKBUILD FILES: README obs-studio.SlackBuild obs-studio.info patches/browser.patch patches/int.patch slack-desc slack-required
+SLACKBUILD FILES: README obs-studio.SlackBuild obs-studio.info patches/browser.patch patches/int.patch patches/private.patch slack-desc slack-required
 SLACKBUILD VERSION: 32.0.1
-SLACKBUILD REQUIRES: jack x264 mbedtls libajantv2 libfdk-aac srt librist nlohmann-json websocketpp asio libvpl uthash simde
+SLACKBUILD REQUIRES: jack x264 mbedtls libajantv2 libfdk-aac srt librist nlohmann-json websocketpp asio libvpl uthash simde libdatachannel
 SLACKBUILD DOWNLOAD: https://github.com/obsproject/obs-studio/archive/32.0.1/obs-studio-32.0.1.tar.gz
 SLACKBUILD MD5SUM: 6f835466e17f13ba89b24d82e8232dd3
 SLACKBUILD SHORT DESCRIPTION:  obs-studio (Open Broadcaster Software)
@@ -5281,6 +5308,15 @@ SLACKBUILD DOWNLOAD: https://github.com/lvc/pkgdiff/archive/7300902964c8eb747aac
 SLACKBUILD MD5SUM: 9adb0e97e4747ba19d52fe9ca97214eb
 SLACKBUILD SHORT DESCRIPTION:  pkgdiff (A tool for visualizing changes in Linux software packages)
 
+SLACKBUILD NAME: plog
+SLACKBUILD LOCATION: ./plog
+SLACKBUILD FILES: README plog.SlackBuild plog.info slack-desc
+SLACKBUILD VERSION: 1.1.11
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/SergiusTheBest/plog/archive/1.1.11/plog-1.1.11.tar.gz
+SLACKBUILD MD5SUM: 755990d33e8d26cd24c179e57acde5e3
+SLACKBUILD SHORT DESCRIPTION:  plog (Portable, simple and extensible C++ logging library)
+
 SLACKBUILD NAME: pmacct
 SLACKBUILD LOCATION: ./pmacct
 SLACKBUILD FILES: README doinst.sh patches/gcc15.patch pmacct.SlackBuild pmacct.info rc.pmacctd slack-desc slack-required
@@ -5473,10 +5509,10 @@ SLACKBUILD SHORT DESCRIPTION:  putty (A Free Telnet/SSH Client)
 SLACKBUILD NAME: pv
 SLACKBUILD LOCATION: ./pv
 SLACKBUILD FILES: README pv.SlackBuild pv.info slack-desc
-SLACKBUILD VERSION: 1.9.42
+SLACKBUILD VERSION: 1.9.44
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: http://www.ivarch.com/programs/sources/pv-1.9.42.tar.gz
-SLACKBUILD MD5SUM: 4e79c217673adc8c8425b8e422793519
+SLACKBUILD DOWNLOAD: http://www.ivarch.com/programs/sources/pv-1.9.44.tar.gz
+SLACKBUILD MD5SUM: 50b01dbb6a93da0050e6d101c9a0131f
 SLACKBUILD SHORT DESCRIPTION:  pv (Pipe Viewer)
 
 SLACKBUILD NAME: pwgen
@@ -8020,10 +8056,10 @@ SLACKBUILD SHORT DESCRIPTION:  sitemap-generator (Easily create XML sitemaps for
 SLACKBUILD NAME: sitespeedio
 SLACKBUILD LOCATION: ./sitespeedio
 SLACKBUILD FILES: PKGNOTE README sitespeedio.SlackBuild sitespeedio.info slack-desc
-SLACKBUILD VERSION: 38.4.1
+SLACKBUILD VERSION: 38.5.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/sitespeed.io/-/sitespeed.io-38.4.1.tgz
-SLACKBUILD MD5SUM: fd595615101aa3db16be488c4b421af8
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/sitespeed.io/-/sitespeed.io-38.5.0.tgz
+SLACKBUILD MD5SUM: 1a525dc98f8e1e256344008390ce8dd1
 SLACKBUILD SHORT DESCRIPTION:  sitespeed.io (complete web performance tool)
 
 SLACKBUILD NAME: slack-bin
@@ -9160,6 +9196,15 @@ SLACKBUILD DOWNLOAD: http://spice-space.org/download/usbredir/usbredir-0.15.0.ta
 SLACKBUILD MD5SUM: 5ebe2bb840fd538a95c9089d0a782458
 SLACKBUILD SHORT DESCRIPTION:  usbredir (usb redirection protocol)
 
+SLACKBUILD NAME: usrsctp
+SLACKBUILD LOCATION: ./usrsctp
+SLACKBUILD FILES: README slack-desc usrsctp.SlackBuild usrsctp.info
+SLACKBUILD VERSION: 0.9.5.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/sctplab/usrsctp/archive/0.9.5.0/usrsctp-0.9.5.0.tar.gz
+SLACKBUILD MD5SUM: 9da8688d84668b86c6cdbb759b500985
+SLACKBUILD SHORT DESCRIPTION:  usrsctp (A portable SCTP userland stack)
+
 SLACKBUILD NAME: uthash
 SLACKBUILD LOCATION: ./uthash
 SLACKBUILD FILES: README slack-desc uthash.SlackBuild uthash.info
@@ -9298,10 +9343,10 @@ SLACKBUILD SHORT DESCRIPTION:  vnStat (a console-based network traffic monitor)
 SLACKBUILD NAME: vscodium-bin
 SLACKBUILD LOCATION: ./vscodium-bin
 SLACKBUILD FILES: README doinst.sh files/codium.desktop slack-desc vscodium-bin.SlackBuild vscodium-bin.info
-SLACKBUILD VERSION: 1.105.16954
+SLACKBUILD VERSION: 1.105.16999
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/VSCodium/vscodium/releases/download/1.105.16954/VSCodium-linux-x64-1.105.16954.tar.gz
-SLACKBUILD MD5SUM: 9add8726155a0f86aef6e67a68ae1447
+SLACKBUILD DOWNLOAD: https://github.com/VSCodium/vscodium/releases/download/1.105.16999/VSCodium-linux-x64-1.105.16999.tar.gz
+SLACKBUILD MD5SUM: 84cb0b32f26ff8156d6987760aef6ae7
 SLACKBUILD SHORT DESCRIPTION:  vscodium-bin (Free/Libre Open Source Software Binaries of VSCode)
 
 SLACKBUILD NAME: vuescan-bin
