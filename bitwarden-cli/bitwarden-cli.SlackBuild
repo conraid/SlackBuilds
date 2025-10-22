@@ -67,7 +67,6 @@ DESTDIR=$PKG npm install --omit=dev --user root --location=global --prefix $PKG/
 chmod -R u=rwX,go=rX $PKG
 chown -R root:root $PKG
 
-
 # Remove root node_modules
 rm -rf $PKG/usr/lib${LIBDIRSUFFIX}/node_modules/root
 

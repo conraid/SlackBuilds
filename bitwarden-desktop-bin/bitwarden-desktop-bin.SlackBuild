@@ -59,7 +59,7 @@ mkdir -p $PKG $OUTPUT
 cd $PKG
 
 # Install binary
-install -Dm755 $CWD/$PRGNAM-$VERSION-x86_64.AppImage $PKG/usr/bin/$PKGNAM
+install -Dm755 $CWD/$PRGNAM-$VERSION-x86_64.AppImage $PKG/usr/bin/$PRGNAM
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $CWD/files/LICENSE* $PKG/usr/doc/$PKGNAM-$VERSION || true
