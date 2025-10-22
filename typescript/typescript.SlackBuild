@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=typescript
 VERSION=5.9.3
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -63,6 +63,11 @@ cd $PKG
 
 mkdir -p $PKG/usr/lib$LIBDIRSUFFIX
 DESTDIR=$PKG npm install --user root --location=global --prefix $PKG/usr $CWD/$PKGNAM-$VERSION.tgz
+
+
+
+# Remove root node_modules
+rm -rf $PKG/usr/lib${LIBDIRSUFFIX}/node_modules/root
 
 # Remove empty dir
 rmdir $PKG/usr/etc || true
