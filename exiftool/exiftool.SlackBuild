@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=Image-ExifTool
 PKGNAM=exiftool
-VERSION=13.39
+VERSION=13.40
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -103,6 +103,9 @@ fi
 
 # Remove perllocal.pod and other special files
 find $PKG -name perllocal.pod -o -name ".packlist" -o -name "*.bs" | xargs rm -f || true
+
+# Remove root node_modules
+rm -rf $PKG/usr/lib${LIBDIRSUFFIX}/node_modules/root
 
 # Remove empty directories
 find $PKG -depth -type d -empty -delete
