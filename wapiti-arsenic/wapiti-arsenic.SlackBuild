@@ -25,14 +25,14 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=wapiti_arsenic
 PKGNAM=$(echo $PRGNAM | tr A-Z a-z | tr _ -)
-SRCVERSION=28.2
-VERSION=$(echo $SRCVERSION | tr - _)
+SRCVERSION=28.4
+VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -83,7 +83,7 @@ find . \
   -exec chmod 644 {} \;
 
 # Fix to use poetry-core
-sed -i -e '/requires/s/poetry>=0.12/poetry-core/' -e 's/poetry\./poetry.core./'  pyproject.toml
+sed -i -e '/requires/s/poetry/poetry-core/' -e 's/poetry\./poetry.core./'  pyproject.toml
 
 unshare -n python3 -m build --wheel --no-isolation
 python3 -m installer --destdir "$PKG" dist/*.whl
