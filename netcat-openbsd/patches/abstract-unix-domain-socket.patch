@@ -15,7 +15,7 @@ Forwarded: not-needed
  2 files changed, 55 insertions(+), 23 deletions(-)
 
 diff --git a/nc.1 b/nc.1
-index d30389a..8285c10 100644
+index 91b719e..5b2e224 100644
 --- a/nc.1
 +++ b/nc.1
 @@ -235,6 +235,9 @@ Cannot be used together with
@@ -29,7 +29,7 @@ index d30389a..8285c10 100644
  Use UDP instead of TCP.
  Cannot be used together with
 diff --git a/netcat.c b/netcat.c
-index 14264eb..482f977 100644
+index 2690f9e..1487fbc 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -98,6 +98,7 @@
@@ -40,7 +40,7 @@ index 14264eb..482f977 100644
  #include <stdarg.h>
  #include <stdio.h>
  #include <stdlib.h>
-@@ -208,6 +209,7 @@ int	timeout_connect(int, const struct sockaddr *, socklen_t);
+@@ -209,6 +210,7 @@ int	timeout_connect(int, const struct sockaddr *, socklen_t);
  int	socks_connect(const char *, const char *, struct addrinfo,
  	    const char *, const char *, struct addrinfo, int, const char *);
  int	udptest(int);
@@ -48,7 +48,7 @@ index 14264eb..482f977 100644
  void	connection_info(const char *, const char *, const char *, const char *);
  int	unix_bind(char *, int);
  int	unix_connect(char *);
-@@ -931,6 +933,46 @@ main(int argc, char *argv[])
+@@ -936,6 +938,46 @@ main(int argc, char *argv[])
  	return ret;
  }
  
@@ -95,7 +95,7 @@ index 14264eb..482f977 100644
  /*
   * unix_bind()
   * Returns a unix socket bound to the given path
-@@ -939,24 +981,17 @@ int
+@@ -944,24 +986,17 @@ int
  unix_bind(char *path, int flags)
  {
  	struct sockaddr_un s_un;
@@ -125,7 +125,7 @@ index 14264eb..482f977 100644
  		save_errno = errno;
  		close(s);
  		errno = save_errno;
-@@ -1066,7 +1101,10 @@ int
+@@ -1071,7 +1106,10 @@ int
  unix_connect(char *path)
  {
  	struct sockaddr_un s_un;
@@ -137,7 +137,7 @@ index 14264eb..482f977 100644
  
  	if (uflag) {
  		if ((s = unix_bind(unix_dg_tmp_socket, SOCK_CLOEXEC)) == -1)
-@@ -1076,16 +1114,7 @@ unix_connect(char *path)
+@@ -1081,16 +1119,7 @@ unix_connect(char *path)
  			return -1;
  	}
  

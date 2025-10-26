@@ -7,7 +7,7 @@ Subject: Fix UDP scan timeout
  1 file changed, 14 insertions(+), 7 deletions(-)
 
 diff --git a/netcat.c b/netcat.c
-index 5ead827..47259d6 100644
+index bda96ce..1c9144f 100644
 --- a/netcat.c
 +++ b/netcat.c
 @@ -129,6 +129,8 @@
@@ -19,7 +19,7 @@ index 5ead827..47259d6 100644
  /* Command Line Options */
  int	dflag;					/* detached, no stdin */
  int	Fflag;					/* fdpass sock to stdout */
-@@ -1794,19 +1796,24 @@ build_ports(char *p)
+@@ -1799,19 +1801,24 @@ build_ports(char *p)
  int
  udptest(int s)
  {
