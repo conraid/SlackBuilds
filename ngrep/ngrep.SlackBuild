@@ -25,13 +25,13 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=ngrep
-VERSION=1_47
-BUILD=${BUILD:-2}
+VERSION=1.48.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -107,10 +107,9 @@ CXXFLAGS="$SLKCFLAGS" \
   --mandir=/usr/man \
   --infodir=/usr/info \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --with-pcap-includes=/usr/include/pcap \
   --disable-pcap-restart \
   --enable-ipv6 \
-  --enable-pcre \
+  --enable-pcre2 \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
