@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=nghttp2
 PKGNAM=nghttp2-app
-VERSION=1.67.1 # Same version of the Slackware package nghttp2.
+VERSION=1.68.0 # Same version of the Slackware package nghttp2.
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -104,6 +104,9 @@ CXXFLAGS="$SLKCFLAGS" \
 make
 make DESTDIR=$PKG install
 make -C lib DESTDIR=$PKG uninstall
+
+# Remove root node_modules
+rm -rf $PKG/usr/lib${LIBDIRSUFFIX}/node_modules/root
 
 # Remove empty dir and dir exists in slackware package
 rm -rf $PKG/usr/{include,lib*,share}
