@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=wxPython
 PKGNAM=${PRGNAM,,}
-SRCVERSION=4.2.3
+SRCVERSION=4.2.4
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,7 +72,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PRGNAM-$SRCVERSION
-tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz
 cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
