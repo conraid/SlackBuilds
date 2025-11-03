@@ -30,7 +30,7 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=neovim
-SRCVERSION=a053186aa71d2c9fc108fd84cfce5f1a15004c05
+SRCVERSION=0.11.5
 VERSION=${SRCVERSION:0:7}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -71,7 +71,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$SRCVERSION
-tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$VERSION.tar.gz
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
 cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
@@ -136,9 +136,6 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 install -Dm644 runtime/nvim.desktop $PKG/usr/share/applications/nvim.desktop
 install -Dm644 runtime/nvim.png $PKG/usr/share/pixmaps/nvim.png
 install -Dm644 runtime/nvim.appdata.xml $PKG/usr/share/metainfo/nvim.appdata.xml
-
-# Add bash completion
-install -Dm644 contrib/nvim.bash $PKG/usr/share/bash-completion/completions/nvim
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
