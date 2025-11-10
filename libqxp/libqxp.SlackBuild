@@ -25,14 +25,14 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=libqxp
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
+PKGNAM=${PRGNAM,,}
 SRCVERSION=0.0.2
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-3}
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
