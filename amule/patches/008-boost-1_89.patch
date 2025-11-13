@@ -1,0 +1,47 @@
+diff -Naupr d/src/LibSocketAsio.cpp c/src/LibSocketAsio.cpp
+--- d/src/LibSocketAsio.cpp	2025-11-13 09:42:03.920210053 +0100
++++ c/src/LibSocketAsio.cpp	2025-11-13 09:47:32.959497734 +0100
+@@ -43,6 +43,7 @@
+ #include <algorithm>	// Needed for std::min - Boost up to 1.54 fails to compile with MSVC 2013 otherwise
+ 
+ #include <boost/asio.hpp>
++#include <chrono>
+ #include <boost/bind.hpp>
+ #include <boost/version.hpp>
+ 
+@@ -300,7 +301,7 @@ public:
+ 			// Close prevents creation of any more callbacks, but does not clear any callbacks already
+ 			// sitting in Asio's event queue (I have seen such a crash).
+ 			// So create a delay timer so they can be called until core is notified.
+-			m_timer.expires_from_now(boost::posix_time::seconds(1));
++            m_timer.expires_after(std::chrono::seconds(1));
+ 			m_timer.async_wait(m_strand.wrap(boost::bind(& CAsioSocketImpl::HandleDestroy, this)));
+ 		}
+ 	}
+@@ -619,7 +620,7 @@ private:
+ 	bool			m_eventPending;
+ 	char *			m_sendBuffer;
+ 	io_context::strand	m_strand;		// handle synchronisation in io_service thread pool
+-	deadline_timer	m_timer;
++    boost::asio::steady_timer m_timer;
+ 	bool			m_connected;
+ 	bool			m_closed;
+ 	bool			m_isDestroying;		// true if Destroy() was called
+@@ -1049,7 +1050,7 @@ public:
+ 			// Close prevents creation of any more callbacks, but does not clear any callbacks already
+ 			// sitting in Asio's event queue (I have seen such a crash).
+ 			// So create a delay timer so they can be called until core is notified.
+-			m_timer.expires_from_now(boost::posix_time::seconds(1));
++            m_timer.expires_after(std::chrono::seconds(1));
+ 			m_timer.async_wait(m_strand.wrap(boost::bind(& CAsioUDPSocketImpl::HandleDestroy, this)));
+ 		}
+ 	}
+@@ -1163,7 +1164,7 @@ private:
+ 	CMuleUDPSocket *	m_muleSocket;
+ 	bool				m_OK;
+ 	io_context::strand	m_strand;		// handle synchronisation in io_service thread pool
+-	deadline_timer		m_timer;
++    boost::asio::steady_timer m_timer;
+ 	amuleIPV4Address	m_address;
+ 
+ 	// One fix receive buffer
