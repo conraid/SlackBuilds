@@ -30,8 +30,8 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=ntopng
-SRCVERSION=6.4
-VERSION="${SRCVERSION//-/_}"
+SRCVERSION=6.6
+VERSION="${SRCVERSION:0:7}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg-ntop} # I use a different directory than usual because to make things easier for me I have to delete the whole directory.
@@ -73,6 +73,14 @@ cd $TMP
 rm -rf $PKGNAM-$SRCVERSION
 tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION.tar.gz
 cd $PKGNAM-$SRCVERSION
+
+if [ ! -d "clickhouse-cpp" ] || [ -z "$(ls -A clickhouse-cpp)" ]; then
+    cd third-party
+    git clone https://github.com/ClickHouse/clickhouse-cpp/
+    cd clickhouse-cpp
+    git checkout 69195246a3b39542c397ef27df9f46ec4a4bf206
+    cd ../..
+fi
 
 chown -R root:root .
 find -L . \
