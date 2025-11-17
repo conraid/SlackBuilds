@@ -31,14 +31,12 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=reportlab
 PKGNAM=python-reportlab
-VERSION=4.4.4
+VERSION=4.4.5
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
-
-DOCFILES="*.md *.txt"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -59,10 +57,6 @@ fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
-cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
-cd $PRGNAM-$VERSION
 
 chown -R root:root .
 find -L . \
@@ -71,8 +65,7 @@ find -L . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
-unshare -n python3 -m build --wheel --no-isolation
-python3 -m installer --destdir "$PKG" dist/*.whl
+python3 -m installer --destdir "$PKG" $CWD/$PRGNAM-$VERSION-py3-none-any.whl
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
@@ -83,7 +76,6 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
