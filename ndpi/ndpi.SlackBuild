@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=nDPI
 PKGNAM="${PRGNAM,,}"
-SRCVERSION=4.14
+SRCVERSION=5.0
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -90,11 +90,19 @@ sed -i -e "/^libdir/s|/lib$|/lib$LIBDIRSUFFIX|" \
        -e "/^CFLAGS/s|-O2 -g|$SLKCFLAGS|" \
        src/lib/Makefile.in
 
+# Configure, build, and install:
+if [ ! -r configure ]; then
+  if [ -x ./autogen.sh ]; then
+    NOCONFIGURE=1 ./autogen.sh
+  else
+    autoreconf -vif
+  fi
+fi
 LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
-./autogen.sh \
-  --libdir=/lib$LIBDIRSUFFIX \
+./configure \
+  --libdir=/usr/lib$LIBDIRSUFFIX \
   --prefix=/usr
 
 make
