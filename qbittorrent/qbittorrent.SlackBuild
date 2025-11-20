@@ -30,7 +30,7 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=qbittorrent
-VERSION=5.1.3
+VERSION=5.1.4
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -83,6 +83,7 @@ find -L . \
 mkdir -p build-nox
 cd build-nox
 cmake -Wno-dev \
+  -DQT_NO_PRIVATE_MODULE_WARNING=ON \
   -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
