@@ -31,14 +31,15 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=webkitgtk
 PKGNAM=webkit2gtk4.1
-VERSION=2.50.1
-BUILD=${BUILD:-2}
+VERSION=2.50.2
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="NEWS"
+BUILDNOLIMIT=${BUILDNOLIMIT:-1}
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -94,13 +95,15 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
+export CC=clang CXX=clang++
+
 mkdir -p build
 cd build
 cmake -Wno-dev \
   -DPORT=GTK \
   -GNinja \
-  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG -g0" \
-  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG -g0" \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG -g0 -fcf-protection=none" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG -g0 -fcf-protection=none" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DLIB_INSTALL_DIR=/usr/lib${LIBDIRSUFFIX} \
@@ -119,20 +122,16 @@ cmake -Wno-dev \
   -DENABLE_SPEECH_SYNTHESIS=OFF \
   ..
 
-if [ -z ${BUILDNOLIMIT:=""} ]; then
-    # The build might crash on high specs machines because ninja eat all
-    # of the resources, so let's try to limit it to half the available ones
-    # Thanks to SBo
-    "${NINJA:=ninja}" -j$(expr $(nproc) / 2)
-else
+# The build might crash on high specs machines because ninja eat all
+# of the resources, so let's try to limit it to half the available ones
+# Thanks to SBo
+if [ "${BUILDNOLIMIT:-0}" -eq 1 ]; then
     "${NINJA:=ninja}"
+else
+    "${NINJA:=ninja}" -j$(($(nproc) / 2))
 fi
-DESTDIR=$PKG $NINJA -j1 install
 
-# Rename WebKitWebDriver if exists to fix comptability with 4.0 version
-if [ -f $PKG/usr/bin/WebKitWebDriver ]; then
-    mv $PKG/usr/bin/WebKitWebDriver $PKG/usr/bin/WebKitWebDriver-4.1
-fi
+DESTDIR=$PKG $NINJA -j1 install
 
 cd ..
 
