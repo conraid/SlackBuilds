@@ -1,0 +1,20 @@
+diff -aur john-1.9.0-jumbo-1/run/ssh2john.py john-1.9.0-jumbo-1.new/run/ssh2john.py
+--- john-1.9.0-jumbo-1/run/ssh2john.py	2018-04-25 21:44:22.000000000 +0200
++++ john-1.9.0-jumbo-1.new/run/ssh2john.py	2023-09-02 16:23:21.941258047 +0200
+@@ -24,6 +24,7 @@
+ # 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
+ 
+ import base64
++import codecs
+ import sys
+ import binascii
+ from struct import unpack
+@@ -100,7 +101,7 @@
+     # if we trudged to the end of the file, just try to cope.
+     try:
+         data = ''.join(lines[start:end]).encode()
+-        data = base64.decodestring(data)
++        data = codecs.decode(data, 'base64_codec')
+     except base64.binascii.Error:
+         e = sys.exc_info()[1]
+         raise Exception('base64 decoding error: ' + str(e))
