@@ -29,9 +29,9 @@ set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=requests-futures
-PKGNAM=python-${PRGNAM,,}
-SRCVERSION=1.0.1
+PRGNAM=requests_futures
+PKGNAM=python-${PRGNAM//_/-}
+SRCVERSION=1.0.2
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
