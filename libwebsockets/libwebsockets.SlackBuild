@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=libwebsockets
 PKGNAM="${PRGNAM,,}"
-SRCVERSION=4.4.1
+SRCVERSION=4.5.0
 VERSION="${SRCVERSION:0:7}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -122,7 +122,6 @@ cmake -Wno-dev \
   -DLWS_WITHOUT_BUILTIN_SHA1=OFF \
   -DLWS_UNIX_SOCK=ON \
   -DLWS_IPV6=ON \
-  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   ..
 
 make
