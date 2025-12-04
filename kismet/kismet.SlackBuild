@@ -40,7 +40,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=kismet
 SRCVERSION=2025-09-R1
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -111,10 +111,13 @@ CXXFLAGS="$SLKCFLAGS -fpermissive" \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
   --disable-mosquitto \
   --enable-protobuf \
+  --enable-wifi-coconut \
+  --with-suidgroup=234 \
+  --enable-python-tools \
   --build=$ARCH-slackware-linux
 
 make all plugins
-make DESTDIR=$PKG suidinstall
+make DESTDIR=$PKG suidinstall plugins-install
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
