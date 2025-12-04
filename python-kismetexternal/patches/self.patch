@@ -1,0 +1,30 @@
+diff -Naupr a/kismetexternal/__init__.py b/kismetexternal/__init__.py
+--- a/kismetexternal/__init__.py	2023-02-21 03:38:40.000000000 +0100
++++ b/kismetexternal/__init__.py	2025-12-04 19:19:13.752398107 +0100
+@@ -50,7 +50,16 @@ class ExternalInterface(object):
+     """
+     External interface super-class
+     """
+-    def __init__(self, config):
++    def __init__(self, infd, outfd):
++        self.infd = infd
++        self.outfd = outfd
++
++        class Config:
++            def __init__(self, infd, outfd):
++                self.infd = infd
++                self.outfd = outfd
++        
++        self.config = Config(infd, outfd)
+         """
+         Initialize the external interface; interfaces launched by Kismet are
+         mapped to a pipe passed via --in-fd and --out-fd arguments; remote
+@@ -59,7 +68,7 @@ class ExternalInterface(object):
+         :return: nothing
+         """
+ 
+-        self.set_config(config)
++        self.set_config(self.config)
+ 
+         self.loop = asyncio.get_event_loop()
+ 
