@@ -587,7 +587,7 @@ SLACKBUILD NAME: bup
 SLACKBUILD LOCATION: ./bup
 SLACKBUILD FILES: README bup.SlackBuild bup.info slack-desc slack-required
 SLACKBUILD VERSION: 0.33.9
-SLACKBUILD REQUIRES: par2cmdline pylibacl python-fuse pyxattr pandoc-bin
+SLACKBUILD REQUIRES: par2cmdline pylibacl python-fuse python-pyxattr pandoc-bin
 SLACKBUILD DOWNLOAD: https://github.com/bup/bup/archive/0.33.9/bup-0.33.9.tar.gz
 SLACKBUILD MD5SUM: 617fd6f98b8c2c60fc58050f3a1262b4
 SLACKBUILD SHORT DESCRIPTION:  bup (backup system)
@@ -1091,7 +1091,7 @@ SLACKBUILD NAME: displaycal
 SLACKBUILD LOCATION: ./displaycal
 SLACKBUILD FILES: PKGNOTE README displaycal.SlackBuild displaycal.info slack-desc slack-required
 SLACKBUILD VERSION: 3.9.17
-SLACKBUILD REQUIRES: argyllcms wxwidgets python-send2trash pychromecast python-casttube python-ifaddr python-netifaces python-zeroconf wxpython
+SLACKBUILD REQUIRES: argyllcms wxwidgets python-send2trash pychromecast python-casttube python-ifaddr python-netifaces python-zeroconf python-wxpython
 SLACKBUILD DOWNLOAD: https://github.com/eoyilmaz/displaycal-py3/releases/download/3.9.17/displaycal-3.9.17.tar.gz
 SLACKBUILD MD5SUM: 09d6279eaf7c60591a7c1c8af6e3d4bc
 SLACKBUILD SHORT DESCRIPTION:  displaycal (DisplayCAL Modernization Project)
@@ -2225,7 +2225,7 @@ SLACKBUILD NAME: inkscape
 SLACKBUILD LOCATION: ./inkscape
 SLACKBUILD FILES: README doinst.sh inkscape.SlackBuild inkscape.info patches/1fdfb889bba9ee146c8b826e97bc58a88cb1e529.patch patches/f58ba5e7782a646dbdc87344fd42884deebad6e6.patch patches/pdf.patch patches/poppler-25_10.patch patches/poppler_25_07-updated.patch patches/series slack-desc slack-required
 SLACKBUILD VERSION: 1.4.2
-SLACKBUILD REQUIRES: libcdr potrace scour double-conversion dos2unix graphicsmagick pstoedit python-cssselect scour python-zstandard python-cachecontrol pyserial python-filelock python-beautifulsoup4 lib2geom typst
+SLACKBUILD REQUIRES: libcdr potrace python-scour double-conversion dos2unix graphicsmagick pstoedit python-cssselect python-scour python-zstandard python-cachecontrol pyserial python-filelock python-beautifulsoup4 lib2geom typst
 SLACKBUILD DOWNLOAD: https://media.inkscape.org/dl/resources/file/inkscape-1.4.2.tar.xz
 SLACKBUILD MD5SUM: 0c24e84085bed3f0237d1cdf0856a855
 SLACKBUILD SHORT DESCRIPTION:  inkscape (Open Source Scalable Vector Graphics Editor)
@@ -5636,7 +5636,7 @@ SLACKBUILD NAME: python-beautifulsoup4
 SLACKBUILD LOCATION: ./python-beautifulsoup4
 SLACKBUILD FILES: README python-beautifulsoup4.SlackBuild python-beautifulsoup4.info slack-desc slack-required
 SLACKBUILD VERSION: 4.14.3
-SLACKBUILD REQUIRES: soupsieve
+SLACKBUILD REQUIRES: python-soupsieve
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/beautifulsoup4/beautifulsoup4-4.14.3.tar.gz
 SLACKBUILD MD5SUM: c7e801c7d4e2300c1112eeb0b21ccb9b
 SLACKBUILD SHORT DESCRIPTION:  python-beautifulsoup4 (Python HTML/XML parser)
@@ -6622,6 +6622,24 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pyspnego/pyspnego
 SLACKBUILD MD5SUM: f1e4eb073641fc00dfd0ce053963c73b
 SLACKBUILD SHORT DESCRIPTION:  python-pyspnego (Windows Negotiate Authentication Client and Server)
 
+SLACKBUILD NAME: python-pythondialog
+SLACKBUILD LOCATION: ./python-pythondialog
+SLACKBUILD FILES: README python-pythondialog.SlackBuild python-pythondialog.info slack-desc
+SLACKBUILD VERSION: 3.5.3
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pythondialog/pythondialog-3.5.3.tar.gz
+SLACKBUILD MD5SUM: 94a9236e427de783fa3ee8288834f7f1
+SLACKBUILD SHORT DESCRIPTION:  pythondialog (python dialog wrapper)
+
+SLACKBUILD NAME: python-pytube3
+SLACKBUILD LOCATION: ./python-pytube3
+SLACKBUILD FILES: README python-pytube3.SlackBuild python-pytube3.info slack-desc
+SLACKBUILD VERSION: 9.6.4
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pytube3/pytube3-9.6.4.tar.gz
+SLACKBUILD MD5SUM: f26c6cb03cd2f3db257b18fda2ab5d93
+SLACKBUILD SHORT DESCRIPTION:  pytube3 (Python 3 library for downloading YouTube Videos)
+
 SLACKBUILD NAME: python-pytz
 SLACKBUILD LOCATION: ./python-pytz
 SLACKBUILD FILES: README python-pytz.SlackBuild python-pytz.info slack-desc
@@ -6630,6 +6648,24 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pytz/pytz-2025.2.tar.gz
 SLACKBUILD MD5SUM: 6a7760c71e38b6c75577b34b18b89d5b
 SLACKBUILD SHORT DESCRIPTION:  python-pytz (World Timezone Definitions for Python)
+
+SLACKBUILD NAME: python-pyudev
+SLACKBUILD LOCATION: ./python-pyudev
+SLACKBUILD FILES: README python-pyudev.SlackBuild python-pyudev.info slack-desc
+SLACKBUILD VERSION: 0.24.4
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pyudev/pyudev-0.24.4.tar.gz
+SLACKBUILD MD5SUM: 2d2e6f68b60c3bf3ffc2b7c8df8d18ac
+SLACKBUILD SHORT DESCRIPTION:  pyudev (pure Python libudev binding)
+
+SLACKBUILD NAME: python-pyxattr
+SLACKBUILD LOCATION: ./python-pyxattr
+SLACKBUILD FILES: README python-pyxattr.SlackBuild python-pyxattr.info slack-desc
+SLACKBUILD VERSION: 0.8.1
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pyxattr/pyxattr-0.8.1.tar.gz
+SLACKBUILD MD5SUM: b741f7a2ce0f602416be777bce03a6e1
+SLACKBUILD SHORT DESCRIPTION:  pyxattr (A python module to manipulate the extended attributes)
 
 SLACKBUILD NAME: python-pyzmq
 SLACKBUILD LOCATION: ./python-pyzmq
@@ -6648,6 +6684,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/q/queuelib/queuelib-1.8.0.tar.gz
 SLACKBUILD MD5SUM: a30a7c7600a403eef1108c6ed5477ae7
 SLACKBUILD SHORT DESCRIPTION:  python-queuelib (Collection of persistent (disk-based) queues)
+
+SLACKBUILD NAME: python-ranger
+SLACKBUILD LOCATION: ./python-ranger
+SLACKBUILD FILES: README doinst.sh python-ranger.SlackBuild python-ranger.info slack-desc
+SLACKBUILD VERSION: 1.9.4
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/ranger/ranger/archive/v1.9.4/ranger-1.9.4.tar.gz
+SLACKBUILD MD5SUM: b63f1a53f97bf9c74e5856769351eb0a
+SLACKBUILD SHORT DESCRIPTION:  ranger (A simple, vim-like file manager)
 
 SLACKBUILD NAME: python-rapidfuzz
 SLACKBUILD LOCATION: ./python-rapidfuzz
@@ -6820,6 +6865,24 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/s3transfer/s3tran
 SLACKBUILD MD5SUM: 8be597569deb76004da45a021f05e0ea
 SLACKBUILD SHORT DESCRIPTION: 
 
+SLACKBUILD NAME: python-scapy
+SLACKBUILD LOCATION: ./python-scapy
+SLACKBUILD FILES: README python-scapy.SlackBuild python-scapy.info slack-desc
+SLACKBUILD VERSION: 2.6.1
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/secdev/scapy/archive/v2.6.1.tar.gz
+SLACKBUILD MD5SUM: 40bb3c65315757f7e35f758158cf6a2b
+SLACKBUILD SHORT DESCRIPTION:  Scapy (interactive packet manipulation tool)
+
+SLACKBUILD NAME: python-scour
+SLACKBUILD LOCATION: ./python-scour
+SLACKBUILD FILES: README python-scour.SlackBuild python-scour.info slack-desc
+SLACKBUILD VERSION: 0.38.2
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/scour-project/scour/archive/v0.38.2.tar.gz
+SLACKBUILD MD5SUM: ae30f52602802f8c7df3a32e1f72b325
+SLACKBUILD SHORT DESCRIPTION:  scour (SVG scrubber)
+
 SLACKBUILD NAME: python-scrapy
 SLACKBUILD LOCATION: ./python-scrapy
 SLACKBUILD FILES: README python-scrapy.SlackBuild python-scrapy.info slack-desc slack-required
@@ -6901,6 +6964,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/sherlock-project/
 SLACKBUILD MD5SUM: ba795b1d36e626a38e0e92226e67cf83
 SLACKBUILD SHORT DESCRIPTION:  python-sherlock-project (Hunt down social media accounts)
 
+SLACKBUILD NAME: python-simplejson
+SLACKBUILD LOCATION: ./python-simplejson
+SLACKBUILD FILES: README python-simplejson.SlackBuild python-simplejson.info slack-desc
+SLACKBUILD VERSION: 3.20.2
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/simplejson/simplejson-3.20.2.tar.gz
+SLACKBUILD MD5SUM: 2b51376ed91109e4041a056a8f59ee73
+SLACKBUILD SHORT DESCRIPTION:  simplejson (extensible JSON encoder and decoder for Python)
+
 SLACKBUILD NAME: python-slip
 SLACKBUILD LOCATION: ./python-slip
 SLACKBUILD FILES: README python-slip.SlackBuild python-slip.info slack-desc slack-required
@@ -6909,6 +6981,15 @@ SLACKBUILD REQUIRES: python-decorator
 SLACKBUILD DOWNLOAD: https://github.com/nphilipp/python-slip/releases/download/python-slip-0.6.5/python-slip-0.6.5.tar.bz2
 SLACKBUILD MD5SUM: 28ae5f93853466c44ec96706ba2a1eb4
 SLACKBUILD SHORT DESCRIPTION:  python-slip (convenience, extension and workaround code)
+
+SLACKBUILD NAME: python-slpkg
+SLACKBUILD LOCATION: ./python-slpkg
+SLACKBUILD FILES: README doinst.sh python-slpkg.SlackBuild python-slpkg.info slack-desc slack-required
+SLACKBUILD VERSION: 5.4.5
+SLACKBUILD REQUIRES: python-sqlalchemy python-progress python-pysocks python-pythondialog
+SLACKBUILD DOWNLOAD: https://gitlab.com/dslackw/slpkg/-/archive/5.4.5/slpkg-5.4.5.tar.bz2
+SLACKBUILD MD5SUM: 474150d45b0aa1c0710ef0ffa915fef5
+SLACKBUILD SHORT DESCRIPTION:  slpkg (Slackware Packaging Tool)
 
 SLACKBUILD NAME: python-sniffio
 SLACKBUILD LOCATION: ./python-sniffio
@@ -6919,6 +7000,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/sniffio/sniffio-1
 SLACKBUILD MD5SUM: 1673edc4dfeb739130a87bcd7b477864
 SLACKBUILD SHORT DESCRIPTION:  python-sniffio (async library)
 
+SLACKBUILD NAME: python-solaar
+SLACKBUILD LOCATION: ./python-solaar
+SLACKBUILD FILES: README doinst.sh python-solaar.SlackBuild python-solaar.info slack-desc slack-required
+SLACKBUILD VERSION: 1.1.16
+SLACKBUILD REQUIRES: python-pyudev python-xlib python-evdev
+SLACKBUILD DOWNLOAD: https://github.com/pwr-Solaar/Solaar/archive/refs/tags/1.1.16/Solaar-1.1.16.tar.gz
+SLACKBUILD MD5SUM: 812b82c03826539e0159b7973212507b
+SLACKBUILD SHORT DESCRIPTION:  solaar (Linux device manager for a wide range of Logitech devices)
+
 SLACKBUILD NAME: python-sortedcontainers
 SLACKBUILD LOCATION: ./python-sortedcontainers
 SLACKBUILD FILES: README python-sortedcontainers.SlackBuild python-sortedcontainers.info slack-desc
@@ -6927,6 +7017,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/sortedcontainers/sortedcontainers-2.4.0.tar.gz
 SLACKBUILD MD5SUM: 50eeb6cb739568b590b28f9a3f445c78
 SLACKBUILD SHORT DESCRIPTION:  python-sortedcontainers (SortedList, SortedDict, and SortedSet)
+
+SLACKBUILD NAME: python-soupsieve
+SLACKBUILD LOCATION: ./python-soupsieve
+SLACKBUILD FILES: README python-soupsieve.SlackBuild python-soupsieve.info slack-desc
+SLACKBUILD VERSION: 2.8
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/soupsieve/soupsieve-2.8.tar.gz
+SLACKBUILD MD5SUM: 111f637c4017009883667bea09b0a442
+SLACKBUILD SHORT DESCRIPTION:  soupsieve (A modern CSS selector implementation for BeautifulSoup)
 
 SLACKBUILD NAME: python-speedometer
 SLACKBUILD LOCATION: ./python-speedometer
@@ -6981,6 +7080,15 @@ SLACKBUILD REQUIRES: greenlet psycopg2
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/S/SQLAlchemy/sqlalchemy-2.0.44.tar.gz
 SLACKBUILD MD5SUM: 7659edd862c2b507f9fc4b466d319a4d
 SLACKBUILD SHORT DESCRIPTION:  sqlalchemy (The Python SQL Toolkit and Object Relational Mapper)
+
+SLACKBUILD NAME: python-ssh-audit
+SLACKBUILD LOCATION: ./python-ssh-audit
+SLACKBUILD FILES: README python-ssh-audit.SlackBuild python-ssh-audit.info slack-desc
+SLACKBUILD VERSION: 3.3.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/ssh-audit/ssh_audit-3.3.0.tar.gz
+SLACKBUILD MD5SUM: 68b9eab3d0ad3d8b0fc89c6ae453ae69
+SLACKBUILD SHORT DESCRIPTION:  ssh-audit (SSH server & client auditing)
 
 SLACKBUILD NAME: python-sshtunnel
 SLACKBUILD LOCATION: ./python-sshtunnel
@@ -7414,6 +7522,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/w/wsproto/wsproto-1
 SLACKBUILD MD5SUM: b6374a15a82ca55b23cecc31a489deee
 SLACKBUILD SHORT DESCRIPTION:  python-wsproto (Sans-IO WebSocket protocol implementation
 
+SLACKBUILD NAME: python-wxpython
+SLACKBUILD LOCATION: ./python-wxpython
+SLACKBUILD FILES: README python-wxpython.SlackBuild python-wxpython.info slack-desc slack-required
+SLACKBUILD VERSION: 4.2.4
+SLACKBUILD REQUIRES: wxwidgets python-attrdict3 waf
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/w/wxPython/wxpython-4.2.4.tar.gz
+SLACKBUILD MD5SUM: 8c6907318643eea97e685fd4add16860
+SLACKBUILD SHORT DESCRIPTION:  python-wxpython (Cross platform GUI toolkit for Python)
+
 SLACKBUILD NAME: python-xlib
 SLACKBUILD LOCATION: ./python-xlib
 SLACKBUILD FILES: README python-xlib.SlackBuild python-xlib.info slack-desc
@@ -7454,16 +7571,25 @@ SLACKBUILD NAME: python-yewtube
 SLACKBUILD LOCATION: ./python-yewtube
 SLACKBUILD FILES: README python-yewtube.SlackBuild python-yewtube.info slack-desc slack-required
 SLACKBUILD VERSION: 2.12.1
-SLACKBUILD REQUIRES: python-httpx python-pyperclip youtube-search-python python-pylast python-httpcore
+SLACKBUILD REQUIRES: python-httpx python-pyperclip python-youtube-search-python python-pylast python-httpcore
 SLACKBUILD DOWNLOAD: https://github.com/mps-youtube/yewtube/archive/refs/tags/v2.12.1.tar.gz
 SLACKBUILD MD5SUM: 94698e8e39861c31ee57a81f56ca8bb4
 SLACKBUILD SHORT DESCRIPTION:  yewtube (Terminal-based YouTube player and downloader)
+
+SLACKBUILD NAME: python-youtube-search-python
+SLACKBUILD LOCATION: ./python-youtube-search-python
+SLACKBUILD FILES: README python-youtube-search-python.SlackBuild python-youtube-search-python.info slack-desc
+SLACKBUILD VERSION: 1.6.6
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/y/youtube-search-python/youtube-search-python-1.6.6.tar.gz
+SLACKBUILD MD5SUM: 87875ed4d48765fda5645863dbc29ccb
+SLACKBUILD SHORT DESCRIPTION:  youtube-search-python (Search for YouTube videos)
 
 SLACKBUILD NAME: python-yt-dlp
 SLACKBUILD LOCATION: ./python-yt-dlp
 SLACKBUILD FILES: README python-yt-dlp.SlackBuild python-yt-dlp.info slack-desc slack-required
 SLACKBUILD VERSION: 2025.11.12
-SLACKBUILD REQUIRES: mutagen pycryptodomex python-websockets atomicparsley pyxattr rtmpdump
+SLACKBUILD REQUIRES: mutagen pycryptodomex python-websockets atomicparsley python-pyxattr rtmpdump
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/y/yt-dlp/yt_dlp-2025.11.12.tar.gz
 SLACKBUILD MD5SUM: c0ad050d8ae13b85e550088b91cd633b
 SLACKBUILD SHORT DESCRIPTION:  yt-dlp (youtube downloader)
@@ -7503,42 +7629,6 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/z/zstandard/zstandard-0.25.0.tar.gz
 SLACKBUILD MD5SUM: e4a09d8862314d35ed2d4b95f610f25d
 SLACKBUILD SHORT DESCRIPTION:  python-zstandard (Python bindings to the zstd compression library)
-
-SLACKBUILD NAME: pythondialog
-SLACKBUILD LOCATION: ./pythondialog
-SLACKBUILD FILES: README pythondialog.SlackBuild pythondialog.info slack-desc
-SLACKBUILD VERSION: 3.5.3
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pythondialog/pythondialog-3.5.3.tar.gz
-SLACKBUILD MD5SUM: 94a9236e427de783fa3ee8288834f7f1
-SLACKBUILD SHORT DESCRIPTION:  pythondialog (python dialog wrapper)
-
-SLACKBUILD NAME: pytube3
-SLACKBUILD LOCATION: ./pytube3
-SLACKBUILD FILES: README pytube3.SlackBuild pytube3.info slack-desc
-SLACKBUILD VERSION: 9.6.4
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pytube3/pytube3-9.6.4.tar.gz
-SLACKBUILD MD5SUM: f26c6cb03cd2f3db257b18fda2ab5d93
-SLACKBUILD SHORT DESCRIPTION:  pytube3 (Python 3 library for downloading YouTube Videos)
-
-SLACKBUILD NAME: pyudev
-SLACKBUILD LOCATION: ./pyudev
-SLACKBUILD FILES: README pyudev.SlackBuild pyudev.info slack-desc
-SLACKBUILD VERSION: 0.24.4
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pyudev/pyudev-0.24.4.tar.gz
-SLACKBUILD MD5SUM: 2d2e6f68b60c3bf3ffc2b7c8df8d18ac
-SLACKBUILD SHORT DESCRIPTION:  pyudev (pure Python libudev binding)
-
-SLACKBUILD NAME: pyxattr
-SLACKBUILD LOCATION: ./pyxattr
-SLACKBUILD FILES: README pyxattr.SlackBuild pyxattr.info slack-desc
-SLACKBUILD VERSION: 0.8.1
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pyxattr/pyxattr-0.8.1.tar.gz
-SLACKBUILD MD5SUM: b741f7a2ce0f602416be777bce03a6e1
-SLACKBUILD SHORT DESCRIPTION:  pyxattr (A python module to manipulate the extended attributes)
 
 SLACKBUILD NAME: q4wine
 SLACKBUILD LOCATION: ./q4wine
@@ -7710,15 +7800,6 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: http://www.colm.net/files/ragel/ragel-6.10.tar.gz
 SLACKBUILD MD5SUM: 748cae8b50cffe9efcaa5acebc6abf0d
 SLACKBUILD SHORT DESCRIPTION:  ragel (State Machine Compiler)
-
-SLACKBUILD NAME: ranger
-SLACKBUILD LOCATION: ./ranger
-SLACKBUILD FILES: README doinst.sh ranger.SlackBuild ranger.info slack-desc
-SLACKBUILD VERSION: 1.9.4
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/ranger/ranger/archive/v1.9.4/ranger-1.9.4.tar.gz
-SLACKBUILD MD5SUM: b63f1a53f97bf9c74e5856769351eb0a
-SLACKBUILD SHORT DESCRIPTION:  ranger (A simple, vim-like file manager)
 
 SLACKBUILD NAME: rav1e
 SLACKBUILD LOCATION: ./rav1e
@@ -7945,24 +8026,6 @@ SLACKBUILD DOWNLOAD: https://github.com/ofalk/scanssh/archive/2.1.3.1/scanssh-2.
 SLACKBUILD MD5SUM: 95bdbeed6b3fc64592b90e88aaf5c5b3
 SLACKBUILD SHORT DESCRIPTION:  ScanSSH (protocol scanner)
 
-SLACKBUILD NAME: scapy
-SLACKBUILD LOCATION: ./scapy
-SLACKBUILD FILES: README scapy.SlackBuild scapy.info slack-desc
-SLACKBUILD VERSION: 2.6.1
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/secdev/scapy/archive/v2.6.1.tar.gz
-SLACKBUILD MD5SUM: 40bb3c65315757f7e35f758158cf6a2b
-SLACKBUILD SHORT DESCRIPTION:  Scapy (interactive packet manipulation tool)
-
-SLACKBUILD NAME: scour
-SLACKBUILD LOCATION: ./scour
-SLACKBUILD FILES: README scour.SlackBuild scour.info slack-desc
-SLACKBUILD VERSION: 0.38.2
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/scour-project/scour/archive/v0.38.2.tar.gz
-SLACKBUILD MD5SUM: ae30f52602802f8c7df3a32e1f72b325
-SLACKBUILD SHORT DESCRIPTION:  scour (SVG scrubber)
-
 SLACKBUILD NAME: screentest
 SLACKBUILD LOCATION: ./screentest
 SLACKBUILD FILES: README screentest.SlackBuild screentest.info slack-desc
@@ -8152,15 +8215,6 @@ SLACKBUILD DOWNLOAD: https://github.com/simd-everywhere/simde/archive/v0.8.2/sim
 SLACKBUILD MD5SUM: 14323994d1f791e985c59ddf0b559e35
 SLACKBUILD SHORT DESCRIPTION:  simde (SIMD Everywhere)
 
-SLACKBUILD NAME: simplejson
-SLACKBUILD LOCATION: ./simplejson
-SLACKBUILD FILES: README simplejson.SlackBuild simplejson.info slack-desc
-SLACKBUILD VERSION: 3.20.2
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/simplejson/simplejson-3.20.2.tar.gz
-SLACKBUILD MD5SUM: 2b51376ed91109e4041a056a8f59ee73
-SLACKBUILD SHORT DESCRIPTION:  simplejson (extensible JSON encoder and decoder for Python)
-
 SLACKBUILD NAME: simplenote-bin
 SLACKBUILD LOCATION: ./simplenote-bin
 SLACKBUILD FILES: README doinst.sh simplenote-bin.SlackBuild simplenote-bin.info slack-desc
@@ -8214,15 +8268,6 @@ SLACKBUILD REQUIRES: libewf-legacy
 SLACKBUILD DOWNLOAD: https://github.com/sleuthkit/sleuthkit/releases/download/sleuthkit-4.14.0/sleuthkit-4.14.0.tar.gz
 SLACKBUILD MD5SUM: ec5b930669fc6276b6275d26f27bffab
 SLACKBUILD SHORT DESCRIPTION:  sleuthkit (tsk)
-
-SLACKBUILD NAME: slpkg
-SLACKBUILD LOCATION: ./slpkg
-SLACKBUILD FILES: README doinst.sh slack-desc slack-required slpkg.SlackBuild slpkg.info
-SLACKBUILD VERSION: 5.4.5
-SLACKBUILD REQUIRES: python-sqlalchemy python-progress python-pysocks pythondialog
-SLACKBUILD DOWNLOAD: https://gitlab.com/dslackw/slpkg/-/archive/5.4.5/slpkg-5.4.5.tar.bz2
-SLACKBUILD MD5SUM: 474150d45b0aa1c0710ef0ffa915fef5
-SLACKBUILD SHORT DESCRIPTION:  slpkg (Slackware Packaging Tool)
 
 SLACKBUILD NAME: slurm
 SLACKBUILD LOCATION: ./slurm
@@ -8332,15 +8377,6 @@ SLACKBUILD DOWNLOAD: https://codeload.github.com/snowballstem/snowball/tar.gz/cf
 SLACKBUILD MD5SUM: 6ec7091685a64159eef616fd60e6386c
 SLACKBUILD SHORT DESCRIPTION:  snowball (Snowball compiler and stemming algorithms)
 
-SLACKBUILD NAME: solaar
-SLACKBUILD LOCATION: ./solaar
-SLACKBUILD FILES: README doinst.sh slack-desc slack-required solaar.SlackBuild solaar.info
-SLACKBUILD VERSION: 1.1.16
-SLACKBUILD REQUIRES: pyudev python-xlib python-evdev
-SLACKBUILD DOWNLOAD: https://github.com/pwr-Solaar/Solaar/archive/refs/tags/1.1.16/Solaar-1.1.16.tar.gz
-SLACKBUILD MD5SUM: 812b82c03826539e0159b7973212507b
-SLACKBUILD SHORT DESCRIPTION:  solaar (Linux device manager for a wide range of Logitech devices)
-
 SLACKBUILD NAME: soundkonverter
 SLACKBUILD LOCATION: ./soundkonverter
 SLACKBUILD FILES: README doinst.sh patches/git.patch slack-desc soundkonverter.SlackBuild soundkonverter.info
@@ -8358,15 +8394,6 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://gitlab.com/soundtouch/soundtouch/-/archive/2.3.1/soundtouch-2.3.1.tar.bz2
 SLACKBUILD MD5SUM: 2db9a50f0a8e659e1db2762e17bb82bd
 SLACKBUILD SHORT DESCRIPTION:  soundtouch (Sound processing library)
-
-SLACKBUILD NAME: soupsieve
-SLACKBUILD LOCATION: ./soupsieve
-SLACKBUILD FILES: README slack-desc soupsieve.SlackBuild soupsieve.info
-SLACKBUILD VERSION: 2.8
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/soupsieve/soupsieve-2.8.tar.gz
-SLACKBUILD MD5SUM: 111f637c4017009883667bea09b0a442
-SLACKBUILD SHORT DESCRIPTION:  soupsieve (A modern CSS selector implementation for BeautifulSoup)
 
 SLACKBUILD NAME: spek
 SLACKBUILD LOCATION: ./spek
@@ -8493,15 +8520,6 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://github.com/ssdeep-project/ssdeep/releases/download/release-2.14.1/ssdeep-2.14.1.tar.gz
 SLACKBUILD MD5SUM: ed4f374e20ffec72e679f56c32218581
 SLACKBUILD SHORT DESCRIPTION:  ssdeep (program for computing context triggered piecewise hashes)
-
-SLACKBUILD NAME: ssh-audit
-SLACKBUILD LOCATION: ./ssh-audit
-SLACKBUILD FILES: README slack-desc ssh-audit.SlackBuild ssh-audit.info
-SLACKBUILD VERSION: 3.3.0
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/ssh-audit/ssh_audit-3.3.0.tar.gz
-SLACKBUILD MD5SUM: 68b9eab3d0ad3d8b0fc89c6ae453ae69
-SLACKBUILD SHORT DESCRIPTION:  ssh-audit (SSH server & client auditing)
 
 SLACKBUILD NAME: ssh-tools
 SLACKBUILD LOCATION: ./ssh-tools
@@ -9466,15 +9484,6 @@ SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/wput/wput-0.6.2.tgz
 SLACKBUILD MD5SUM: a14c4c13d91d04d6119bdc977e8a8bdf
 SLACKBUILD SHORT DESCRIPTION:  wput (utility for putting files using the FTP protocol)
 
-SLACKBUILD NAME: wxpython
-SLACKBUILD LOCATION: ./wxpython
-SLACKBUILD FILES: README slack-desc slack-required wxpython.SlackBuild wxpython.info
-SLACKBUILD VERSION: 4.2.4
-SLACKBUILD REQUIRES: wxwidgets python-attrdict3 waf
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/w/wxPython/wxpython-4.2.4.tar.gz
-SLACKBUILD MD5SUM: 8c6907318643eea97e685fd4add16860
-SLACKBUILD SHORT DESCRIPTION: 
-
 SLACKBUILD NAME: wxwidgets
 SLACKBUILD LOCATION: ./wxwidgets
 SLACKBUILD FILES: README slack-desc slack-required wxwidgets.SlackBuild wxwidgets.info
@@ -9536,7 +9545,7 @@ SLACKBUILD VERSION: 0.1.6
 SLACKBUILD REQUIRES: 
 SLACKBUILD DOWNLOAD: https://github.com/flatpak/xdg-dbus-proxy/releases/download/0.1.6/xdg-dbus-proxy-0.1.6.tar.xz
 SLACKBUILD MD5SUM: 6d38a1b6bba80a3134270204558ba17e
-SLACKBUILD SHORT DESCRIPTION:  xdg-dbus-proxy ()
+SLACKBUILD SHORT DESCRIPTION:  xdg-dbus-proxy (filtering proxy for D-Bus connections)
 
 SLACKBUILD NAME: xdg-desktop-portal-gtk
 SLACKBUILD LOCATION: ./xdg-desktop-portal-gtk
@@ -9645,15 +9654,6 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://registry.npmjs.org/yarn/-/yarn-1.22.22.tgz
 SLACKBUILD MD5SUM: fbb8ac5ea2a88c51885e7302103e1d14
 SLACKBUILD SHORT DESCRIPTION:  yarn (Fast, reliable, and secure dependency management)
-
-SLACKBUILD NAME: youtube-search-python
-SLACKBUILD LOCATION: ./youtube-search-python
-SLACKBUILD FILES: README slack-desc youtube-search-python.SlackBuild youtube-search-python.info
-SLACKBUILD VERSION: 1.6.6
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/y/youtube-search-python/youtube-search-python-1.6.6.tar.gz
-SLACKBUILD MD5SUM: 87875ed4d48765fda5645863dbc29ccb
-SLACKBUILD SHORT DESCRIPTION:  youtube-search-python (Search for YouTube videos)
 
 SLACKBUILD NAME: zeromq
 SLACKBUILD LOCATION: ./zeromq
