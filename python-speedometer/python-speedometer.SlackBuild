@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# Slackware build script for swagger
+# Slackware build script for speedometer
 #
-# Copyright 2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2022-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,9 +29,9 @@ set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=wapiti_swagger
-PKGNAM=${PRGNAM//_/-}
-SRCVERSION=0.1.9
+PRGNAM=Speedometer
+PKGNAM=python-${PRGNAM,,}
+SRCVERSION=2.9
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -57,17 +57,6 @@ if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
   exit 0
 fi
 
-if [ "$ARCH" = "i686" ]; then
-  SLKCFLAGS="-O2 -march=pentium4 -mtune=generic"
-  LIBDIRSUFFIX=""
-elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC -pipe -fomit-frame-pointer"
-  LIBDIRSUFFIX="64"
-else
-  SLKCFLAGS="-O2"
-  LIBDIRSUFFIX=""
-fi
-
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
@@ -76,7 +65,7 @@ tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz
 cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
-find . \
+find .\
   \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
   -exec chmod 755 {} \; -o \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
