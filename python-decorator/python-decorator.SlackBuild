@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# Slackware build script for mitmproxy
+# Slackware build script for decorator
 #
-# Copyright 2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2017-2025 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,17 +29,16 @@ set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=mitmproxy
-PKGNAM=${PRGNAM,,}
-SRCVERSION=12.2.1
-VERSION="${SRCVERSION//-/_}"
+PRGNAM=decorator
+PKGNAM=python-decorator
+VERSION=5.2.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="LICENSE *.md *.rst"
+DOCFILES="CHANGES* LICENSE* *.pdf docs/README*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -53,7 +52,7 @@ fi
 # the name of the created package would be, and then exit. This information
 # could be useful to other scripts.
 if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
-  echo "$PKGNAM-$VERSION-$ARCH-$BUILD.txz "
+  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
   exit 0
 fi
 
@@ -71,16 +70,16 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$SRCVERSION
-tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz
-cd $PRGNAM-$SRCVERSION
+rm -rf $PRGNAM-$VERSION
+tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
+cd $PRGNAM-$VERSION
 
 chown -R root:root .
 find . \
-  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
-  -exec chmod 755 {} \; -o \
+  \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \+ -o \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
-  -exec chmod 644 {} \;
+  -exec chmod 644 {} \+
 
 unshare -n python3 -m build --wheel --no-isolation
 python3 -m installer --destdir "$PKG" dist/*.whl
