@@ -3,6 +3,6 @@ diff -Naupr a/frontend/cmake/os-linux.cmake b/frontend/cmake/os-linux.cmake
 +++ b/frontend/cmake/os-linux.cmake	2025-10-19 13:24:44.165269321 +0200
 @@ -1,3 +1,4 @@
 +find_package(Qt6 REQUIRED COMPONENTS GuiPrivate)
- target_sources(obs-studio PRIVATE utility/platform-x11.cpp utility/system-info-posix.cpp utility/CrashHandler_Linux.cpp)
- target_compile_definitions(
-   obs-studio
+ target_sources(
+    obs-studio
+    PRIVATE 
