@@ -304,24 +304,6 @@ SLACKBUILD DOWNLOAD: http://www.harding.motd.ca/autossh/autossh-1.4g.tgz
 SLACKBUILD MD5SUM: 2b804bc1bf6d2f2afaa526d02df7c0a2
 SLACKBUILD SHORT DESCRIPTION:  autossh (Automatically restart SSH sessions and tunnels)
 
-SLACKBUILD NAME: aws-cli
-SLACKBUILD LOCATION: ./aws-cli
-SLACKBUILD FILES: README aws-cli.SlackBuild aws-cli.info slack-desc slack-required
-SLACKBUILD VERSION: 1.43.9
-SLACKBUILD REQUIRES: python-cryptography python-botocore python-colorama python-dateutil python-jmespath rsa python-s3transfer ruyaml ruamel-yaml awscrt
-SLACKBUILD DOWNLOAD: https://github.com/aws/aws-cli/archive/1.43.9/aws-cli-1.43.9.tar.gz
-SLACKBUILD MD5SUM: 1ce823c01648c567fa5740f6e6ec8f82
-SLACKBUILD SHORT DESCRIPTION:  aws-cli (Universal Command Line Interface for AWS)
-
-SLACKBUILD NAME: awscrt
-SLACKBUILD LOCATION: ./awscrt
-SLACKBUILD FILES: README awscrt.SlackBuild awscrt.info slack-desc
-SLACKBUILD VERSION: 0.29.2
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/awscrt/awscrt-0.29.2.tar.gz
-SLACKBUILD MD5SUM: cd3125de066756b1b4299e31eed14a20
-SLACKBUILD SHORT DESCRIPTION:  awscrt (Python bindings for the AWS Common Runtime)
-
 SLACKBUILD NAME: ayatana-ido
 SLACKBUILD LOCATION: ./ayatana-ido
 SLACKBUILD FILES: README ayatana-ido.SlackBuild ayatana-ido.info slack-desc
@@ -3638,7 +3620,7 @@ SLACKBUILD NAME: mitmproxy
 SLACKBUILD LOCATION: ./mitmproxy
 SLACKBUILD FILES: README mitmproxy.SlackBuild mitmproxy.info slack-desc slack-required
 SLACKBUILD VERSION: 12.2.1
-SLACKBUILD REQUIRES: python-aioquic msgpack-python python-argon2-cffi python-asgiref python-cryptography python-flask python-h11 python-h2 python-hyperframe python-kaitaistruct python-ldap3 python-mitmproxy-rs python-libpass python-publicsuffix2 pyopenssl python-pyperclip ruamel-yaml python-sortedcontainers python-tornado python-typing-extensions python-urwid python-wsproto python-zstandard
+SLACKBUILD REQUIRES: python-aioquic msgpack-python python-argon2-cffi python-asgiref python-cryptography python-flask python-h11 python-h2 python-hyperframe python-kaitaistruct python-ldap3 python-mitmproxy-rs python-libpass python-publicsuffix2 pyopenssl python-pyperclip python- python-sortedcontainers python-tornado python-typing-extensions python-urwid python-wsproto python-zstandard
 SLACKBUILD DOWNLOAD: https://github.com/mitmproxy/mitmproxy/archive/v12.2.1/mitmproxy-12.2.1.tar.gz
 SLACKBUILD MD5SUM: 995267b397035c4cfc1d454ef3669925
 SLACKBUILD SHORT DESCRIPTION:  mitmproxy (SSL-capable man-in-the-middle HTTP proxy)
@@ -4375,10 +4357,10 @@ SLACKBUILD SHORT DESCRIPTION:  nyx (Command-line status monitor for tor)
 SLACKBUILD NAME: obs-studio
 SLACKBUILD LOCATION: ./obs-studio
 SLACKBUILD FILES: README obs-studio.SlackBuild obs-studio.info patches/browser.patch patches/int.patch patches/private.patch slack-desc slack-required
-SLACKBUILD VERSION: 32.0.2
+SLACKBUILD VERSION: 32.0.3
 SLACKBUILD REQUIRES: jack x264 mbedtls libajantv2 libfdk-aac srt librist nlohmann-json websocketpp asio libvpl uthash simde libdatachannel rnnoise
-SLACKBUILD DOWNLOAD: https://github.com/obsproject/obs-studio/archive/32.0.2/obs-studio-32.0.2.tar.gz
-SLACKBUILD MD5SUM: 5f222e6ded01370fb01173fc7523f918
+SLACKBUILD DOWNLOAD: https://github.com/obsproject/obs-studio/archive/32.0.3/obs-studio-32.0.3.tar.gz
+SLACKBUILD MD5SUM: ce9edc0ed708f7557e7a2887a17a2d9d
 SLACKBUILD SHORT DESCRIPTION:  obs-studio (Open Broadcaster Software)
 
 SLACKBUILD NAME: offlineimap3
@@ -5221,10 +5203,10 @@ SLACKBUILD SHORT DESCRIPTION:  postgresql (object-relational database management
 SLACKBUILD NAME: postman-bin
 SLACKBUILD LOCATION: ./postman-bin
 SLACKBUILD FILES: README doinst.sh files/postman.desktop postman-bin.SlackBuild postman-bin.info slack-desc
-SLACKBUILD VERSION: 11.73.5
+SLACKBUILD VERSION: 11.74.5
 SLACKBUILD REQUIRES: 
 SLACKBUILD DOWNLOAD: https://dl.pstmn.io/download/latest/linux64
-SLACKBUILD MD5SUM: 8a5252edb5a561f238661366b521ccbb
+SLACKBUILD MD5SUM: f067a2d6bdd6ad63ae7053c416601c39
 SLACKBUILD SHORT DESCRIPTION:  postman (Build, test, and document your APIs faster)
 
 SLACKBUILD NAME: potrace
@@ -5641,6 +5623,24 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/awesomeversion/aw
 SLACKBUILD MD5SUM: 62e9715757b58286f257471ab6b1eaf4
 SLACKBUILD SHORT DESCRIPTION:  python-awesomeversion (One version package to rule them all)
 
+SLACKBUILD NAME: python-aws-cli
+SLACKBUILD LOCATION: ./python-aws-cli
+SLACKBUILD FILES: README python-aws-cli.SlackBuild python-aws-cli.info slack-desc slack-required
+SLACKBUILD VERSION: 1.43.10
+SLACKBUILD REQUIRES: python-cryptography python-botocore python-colorama python-dateutil python-jmespath python-rsa python-s3transfer python-ruyaml python-ruamel-yaml python-awscrt
+SLACKBUILD DOWNLOAD: https://github.com/aws/aws-cli/archive/1.43.10/aws-cli-1.43.10.tar.gz
+SLACKBUILD MD5SUM: a54401d9afb4863d1b7e1d4190a13017
+SLACKBUILD SHORT DESCRIPTION:  python-aws-cli (Universal Command Line Interface for AWS)
+
+SLACKBUILD NAME: python-awscrt
+SLACKBUILD LOCATION: ./python-awscrt
+SLACKBUILD FILES: README python-awscrt.SlackBuild python-awscrt.info slack-desc
+SLACKBUILD VERSION: 0.29.2
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/awscrt/awscrt-0.29.2.tar.gz
+SLACKBUILD MD5SUM: cd3125de066756b1b4299e31eed14a20
+SLACKBUILD SHORT DESCRIPTION:  python-awscrt (Python bindings for the AWS Common Runtime)
+
 SLACKBUILD NAME: python-bcrypt
 SLACKBUILD LOCATION: ./python-bcrypt
 SLACKBUILD FILES: README python-bcrypt.SlackBuild python-bcrypt.info slack-desc slack-required
@@ -5671,10 +5671,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-blinker (Fast, simple object-to-object & b
 SLACKBUILD NAME: python-botocore
 SLACKBUILD LOCATION: ./python-botocore
 SLACKBUILD FILES: README python-botocore.SlackBuild python-botocore.info slack-desc slack-required
-SLACKBUILD VERSION: 1.42.3
-SLACKBUILD REQUIRES: python-dateutil python-jmespath awscrt
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/botocore/botocore-1.42.3.tar.gz
-SLACKBUILD MD5SUM: 843e117c30263055615169f6a76f8f14
+SLACKBUILD VERSION: 1.42.4
+SLACKBUILD REQUIRES: python-dateutil python-jmespath python-awscrt
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/b/botocore/botocore-1.42.4.tar.gz
+SLACKBUILD MD5SUM: 9ce77f20751fd8caedc638264281b06a
 SLACKBUILD SHORT DESCRIPTION:  python-botocore (The low-level, core functionality of boto 3)
 
 SLACKBUILD NAME: python-browser-cookie3
@@ -6427,10 +6427,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-pkgconfig (A Python interface to the pkg-c
 SLACKBUILD NAME: python-platformdirs
 SLACKBUILD LOCATION: ./python-platformdirs
 SLACKBUILD FILES: README python-platformdirs.SlackBuild python-platformdirs.info slack-desc slack-required
-SLACKBUILD VERSION: 4.5.0
+SLACKBUILD VERSION: 4.5.1
 SLACKBUILD REQUIRES:  
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/platformdirs/platformdirs-4.5.0.tar.gz
-SLACKBUILD MD5SUM: e3a2646918667a859323d03fb6515975
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/platformdirs/platformdirs-4.5.1.tar.gz
+SLACKBUILD MD5SUM: e1000e5728e36717b1832e77dc3590c9
 SLACKBUILD SHORT DESCRIPTION:  python-platformdirs (determine platform-specific directories)
 
 SLACKBUILD NAME: python-playsound
@@ -6783,6 +6783,33 @@ SLACKBUILD REQUIRES: python-maturin
 SLACKBUILD DOWNLOAD: https://github.com/crate-py/rpds/releases/download/v0.30.0/rpds_py-0.30.0.tar.gz
 SLACKBUILD MD5SUM: 9a598f792d702fd0547a36ccc999ef91
 SLACKBUILD SHORT DESCRIPTION:  python-rpds-py (Python bindings to the Rust rpds crate)
+
+SLACKBUILD NAME: python-rsa
+SLACKBUILD LOCATION: ./python-rsa
+SLACKBUILD FILES: README python-rsa.SlackBuild python-rsa.info slack-desc slack-required
+SLACKBUILD VERSION: 4.9.1
+SLACKBUILD REQUIRES: pyasn1 python-poetry-core
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/rsa/rsa-4.9.1.tar.gz
+SLACKBUILD MD5SUM: a1d93db78c604788f56a84f6df6f1eee
+SLACKBUILD SHORT DESCRIPTION:  python-rsa (Pure-Python RSA implementation)
+
+SLACKBUILD NAME: python-ruamel-yaml
+SLACKBUILD LOCATION: ./python-ruamel-yaml
+SLACKBUILD FILES: README python-ruamel-yaml.SlackBuild python-ruamel-yaml.info slack-desc
+SLACKBUILD VERSION: 0.18.16
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/ruamel.yaml/ruamel.yaml-0.18.16.tar.gz
+SLACKBUILD MD5SUM: ebfbf2a54d9a5b768bc849f4b2c43efc
+SLACKBUILD SHORT DESCRIPTION:  python-ruamel-yaml (YAML parser/emitter for Python)
+
+SLACKBUILD NAME: python-ruyaml
+SLACKBUILD LOCATION: ./python-ruyaml
+SLACKBUILD FILES: README python-ruyaml.SlackBuild python-ruyaml.info slack-desc
+SLACKBUILD VERSION: 0.91.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/ruyaml/ruyaml-0.91.0.tar.gz
+SLACKBUILD MD5SUM: 49cc0db04b65085e57c67398801a85c3
+SLACKBUILD SHORT DESCRIPTION:  python-ruyaml (YAML parser/emitter for Python)
 
 SLACKBUILD NAME: python-s3transfer
 SLACKBUILD LOCATION: ./python-s3transfer
@@ -7630,15 +7657,6 @@ SLACKBUILD DOWNLOAD: https://github.com/oetiker/rrdtool-1.x/releases/download/v1
 SLACKBUILD MD5SUM: bcbdb069e74fc866fb92deb6697c5392
 SLACKBUILD SHORT DESCRIPTION:  RRDtool (Round Robin Database Tool)
 
-SLACKBUILD NAME: rsa
-SLACKBUILD LOCATION: ./rsa
-SLACKBUILD FILES: README rsa.SlackBuild rsa.info slack-desc slack-required
-SLACKBUILD VERSION: 4.9.1
-SLACKBUILD REQUIRES: pyasn1 python-poetry-core
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/rsa/rsa-4.9.1.tar.gz
-SLACKBUILD MD5SUM: a1d93db78c604788f56a84f6df6f1eee
-SLACKBUILD SHORT DESCRIPTION:  rsa (Pure-Python RSA implementation)
-
 SLACKBUILD NAME: rtmpdump
 SLACKBUILD LOCATION: ./rtmpdump
 SLACKBUILD FILES: README patches/librtmp-makefile.patch rtmpdump.SlackBuild rtmpdump.info slack-desc
@@ -7657,15 +7675,6 @@ SLACKBUILD DOWNLOAD: https://github.com/rakshasa/rtorrent/archive/v0.16.5/rtorre
 SLACKBUILD MD5SUM: a0bc8ddb5eb73315736a3e56ac83ec6a
 SLACKBUILD SHORT DESCRIPTION:  rtorrent (command-line torrent client)
 
-SLACKBUILD NAME: ruamel-yaml
-SLACKBUILD LOCATION: ./ruamel-yaml
-SLACKBUILD FILES: README ruamel-yaml.SlackBuild ruamel-yaml.info slack-desc
-SLACKBUILD VERSION: 0.18.16
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/ruamel.yaml/ruamel.yaml-0.18.16.tar.gz
-SLACKBUILD MD5SUM: ebfbf2a54d9a5b768bc849f4b2c43efc
-SLACKBUILD SHORT DESCRIPTION:  ruamel-yaml (YAML parser/emitter for Python)
-
 SLACKBUILD NAME: rustup
 SLACKBUILD LOCATION: ./rustup
 SLACKBUILD FILES: README files/rustup.sh rustup.SlackBuild rustup.info slack-desc
@@ -7675,20 +7684,11 @@ SLACKBUILD DOWNLOAD: https://github.com/rust-lang/rustup/archive/1.28.2/rustup-1
 SLACKBUILD MD5SUM: 4e5019cd8f7bca3fa31d15cdaf5a70d1
 SLACKBUILD SHORT DESCRIPTION:  rustup (The Rust toolchain installer)
 
-SLACKBUILD NAME: ruyaml
-SLACKBUILD LOCATION: ./ruyaml
-SLACKBUILD FILES: README ruyaml.SlackBuild ruyaml.info slack-desc
-SLACKBUILD VERSION: 0.91.0
-SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/ruyaml/ruyaml-0.91.0.tar.gz
-SLACKBUILD MD5SUM: 49cc0db04b65085e57c67398801a85c3
-SLACKBUILD SHORT DESCRIPTION:  ruyaml (YAML parser/emitter for Python)
-
 SLACKBUILD NAME: s3fs-fuse
 SLACKBUILD LOCATION: ./s3fs-fuse
 SLACKBUILD FILES: README s3fs-fuse.SlackBuild s3fs-fuse.info slack-desc slack-required
 SLACKBUILD VERSION: 1.96
-SLACKBUILD REQUIRES: aws-cli
+SLACKBUILD REQUIRES: python-aws-cli
 SLACKBUILD DOWNLOAD: https://github.com/s3fs-fuse/s3fs-fuse/archive/v1.96/s3fs-fuse-1.96.tar.gz
 SLACKBUILD MD5SUM: 4f4ba8b8ae1aa313699391fb8f0d12fa
 SLACKBUILD SHORT DESCRIPTION:  s3fs-fuse (FUSE-based file system backed by Amazon S3)
@@ -8596,10 +8596,10 @@ SLACKBUILD SHORT DESCRIPTION:  teamviewer (remote control application)
 SLACKBUILD NAME: telegram-bin
 SLACKBUILD LOCATION: ./telegram-bin
 SLACKBUILD FILES: README doinst.sh files/telegram.desktop files/telegram.png slack-desc telegram-bin.SlackBuild telegram-bin.info
-SLACKBUILD VERSION: 6.3.4
+SLACKBUILD VERSION: 6.3.6
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/telegramdesktop/tdesktop/releases/download/v6.3.4/tsetup.6.3.4.tar.xz
-SLACKBUILD MD5SUM: fdeac87dc5dec139d3c31bf11837b89d
+SLACKBUILD DOWNLOAD: https://github.com/telegramdesktop/tdesktop/releases/download/v6.3.6/tsetup.6.3.6.tar.xz
+SLACKBUILD MD5SUM: e6716bec176fd60dc2e65d3962c17fd9
 SLACKBUILD SHORT DESCRIPTION:  telegram (messaging app)
 
 SLACKBUILD NAME: tellico
