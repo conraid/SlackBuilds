@@ -1,0 +1,12 @@
+diff -Naurp a/setup.py b/setup.py
+--- a/setup.py	2022-01-02 22:45:09.000000000 +0100
++++ b/setup.py	2025-12-06 17:03:06.509505036 +0100
+@@ -3,8 +3,6 @@ from setuptools import setup, find_packa
+ import pkg_resources
+ import sys
+ import os
+-import fastentrypoints
+-
+ 
+ try:
+     if int(pkg_resources.get_distribution("pip").version.split('.')[0]) < 6:
