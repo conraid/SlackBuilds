@@ -23,13 +23,13 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=wxWidgets
 PKGNAM=$(echo $PRGNAM | tr [:upper:] [:lower:])
-VERSION=3.2.8
+VERSION=3.2.9
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
