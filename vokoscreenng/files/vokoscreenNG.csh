@@ -1,0 +1,3 @@
+#!/bin/csh
+
+setenv XDG_SESSION_TYPE ${XDG_SESSION_TYPE:-X11}
