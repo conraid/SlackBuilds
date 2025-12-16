@@ -30,9 +30,9 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libopenshot
-SRCVERSION=0.4.0
+SRCVERSION=0.5.0
 VERSION="${SRCVERSION:0:7}"
-BUILD=${BUILD:-12}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
