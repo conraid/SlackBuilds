@@ -1,0 +1,43 @@
+Slackware Current Repository by Conraid
+
+======================================================================
+
+docker (manager for applications in Linux containers)
+
+Docker is an open-source project to easily create lightweight,
+portable, self-sufficient containers from any application.  The same
+container that a developer builds and tests on a laptop can run at
+scale, in production, on VMs, bare metal, OpenStack clusters, public
+clouds and more.
+
+HOME: https://www.docker.com/products/container-runtime
+
+======================================================================
+NOTE: 
+
+
+To have the docker daemon start and stop with your host,
+add to /etc/rc.d/rc.local:
+
+  if [ -x /etc/rc.d/rc.docker ]; then
+    /etc/rc.d/rc.docker start
+  fi
+
+and to /etc/rc.d/rc.local_shutdown (creating it if needed):
+
+  if [ -x /etc/rc.d/rc.docker ]; then
+    /etc/rc.d/rc.docker stop
+  fi
+
+If you are interested in enabling cgroup memory resource control over
+swap as well, then append "swapaccount=1" to your kernel's parameters.
+This is often in /etc/lilo.conf, on the "append" variable.
+
+NOTE: google-go-lang is only needed at compile time - not needed for
+runtime.
+
+Docker doesn't support x86, only x86_64.
+
+======================
+REQUIRES: containerd libseccomp tini 
+
