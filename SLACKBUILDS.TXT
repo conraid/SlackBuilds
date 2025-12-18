@@ -799,6 +799,15 @@ SLACKBUILD DOWNLOAD: https://github.com/martinh/libconfuse/releases/download/v3.
 SLACKBUILD MD5SUM: a183cef2cecdd3783436ff8de500d274
 SLACKBUILD SHORT DESCRIPTION:  Confuse (configuration file parser library)
 
+SLACKBUILD NAME: containerd
+SLACKBUILD LOCATION: ./containerd
+SLACKBUILD FILES: README containerd.SlackBuild containerd.info slack-desc slack-required
+SLACKBUILD VERSION: 2.2.0
+SLACKBUILD REQUIRES: runc
+SLACKBUILD DOWNLOAD: https://github.com/containerd/containerd/archive/v2.2.0/containerd-2.2.0.tar.gz
+SLACKBUILD MD5SUM: a109512b8375bc0929d0ba46040bb0b1
+SLACKBUILD SHORT DESCRIPTION:  containerd (a daemon to control runC)
+
 SLACKBUILD NAME: converseen
 SLACKBUILD LOCATION: ./converseen
 SLACKBUILD FILES: README converseen.SlackBuild converseen.info doinst.sh slack-desc
@@ -1050,6 +1059,33 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: http://www.mavetju.org/download/dnstracer-1.10.tar.bz2
 SLACKBUILD MD5SUM: 1ce6960647637383466349b0aff2e10e
 SLACKBUILD SHORT DESCRIPTION:  dnstracer (trace a chain of DNS servers to the source)
+
+SLACKBUILD NAME: docker-cli
+SLACKBUILD LOCATION: ./docker-cli
+SLACKBUILD FILES: README docker-cli.SlackBuild docker-cli.info slack-desc slack-required
+SLACKBUILD VERSION: 29.1.3
+SLACKBUILD REQUIRES: docker
+SLACKBUILD DOWNLOAD: https://github.com/docker/cli/archive/v29.1.3/cli-29.1.3.tar.gz
+SLACKBUILD MD5SUM: ede30cc8f983895b13eb12308d1950e0
+SLACKBUILD SHORT DESCRIPTION:  docker-cli (The Docker CLI)
+
+SLACKBUILD NAME: docker-compose
+SLACKBUILD LOCATION: ./docker-compose
+SLACKBUILD FILES: README docker-compose.SlackBuild docker-compose.info slack-desc slack-required
+SLACKBUILD VERSION: 5.0.1
+SLACKBUILD REQUIRES: docker
+SLACKBUILD DOWNLOAD: https://github.com/docker/compose/archive/v5.0.1/compose-5.0.1.tar.gz
+SLACKBUILD MD5SUM: 3e5860067e23c13f914515b23d93ea4f
+SLACKBUILD SHORT DESCRIPTION:  docker-compose (multi-container orchestration for docker)
+
+SLACKBUILD NAME: docker
+SLACKBUILD LOCATION: ./docker
+SLACKBUILD FILES: PKGNOTE README docker.SlackBuild docker.info doinst.sh files/docker.default files/docker.logrotate files/rc.docker slack-desc slack-required
+SLACKBUILD VERSION: 29.1.3
+SLACKBUILD REQUIRES: tini libseccomp containerd
+SLACKBUILD DOWNLOAD: https://github.com/moby/moby/archive/refs/tags/docker-v29.1.3.tar.gz
+SLACKBUILD MD5SUM: 8a9539d6e23758a3185bd12e97503e96
+SLACKBUILD SHORT DESCRIPTION:  docker (manager for applications in Linux containers)
 
 SLACKBUILD NAME: dos2unix
 SLACKBUILD LOCATION: ./dos2unix
@@ -2302,6 +2338,15 @@ SLACKBUILD DOWNLOAD: https://github.com/lastpass/lastpass-cli/releases/download/
 SLACKBUILD MD5SUM: 5a31742edd8755aead705782d109d300
 SLACKBUILD SHORT DESCRIPTION:  lastpass-cli (LastPass command line interface tool)
 
+SLACKBUILD NAME: lazydocker
+SLACKBUILD LOCATION: ./lazydocker
+SLACKBUILD FILES: README lazydocker.SlackBuild lazydocker.info slack-desc
+SLACKBUILD VERSION: 0.24.2
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/jesseduffield/lazydocker/archive/v0.24.2/lazydocker-0.24.2.tar.gz
+SLACKBUILD MD5SUM: 7715edbb1818dd407328eb8c49a1804a
+SLACKBUILD SHORT DESCRIPTION:  lazydocker (The lazier way to manage everything docker)
+
 SLACKBUILD NAME: lazyssh
 SLACKBUILD LOCATION: ./lazyssh
 SLACKBUILD FILES: README lazyssh.SlackBuild lazyssh.info slack-desc
@@ -2913,6 +2958,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://github.com/osmocom/rtl-sdr/archive/v2.0.2/rtl-sdr-2.0.2.tar.gz
 SLACKBUILD MD5SUM: 3cccc2704e1bf48304e448958fc25820
 SLACKBUILD SHORT DESCRIPTION:  librtlsdr (Software defined radio receiver for Realtek RTL2832U)
+
+SLACKBUILD NAME: libseccomp
+SLACKBUILD LOCATION: ./libseccomp
+SLACKBUILD FILES: README libseccomp.SlackBuild libseccomp.info slack-desc
+SLACKBUILD VERSION: 2.6.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/seccomp/libseccomp/releases/download/v2.6.0/libseccomp-2.6.0.tar.gz
+SLACKBUILD MD5SUM: 2d42bcde31fd6e994fcf251a1f71d487
+SLACKBUILD SHORT DESCRIPTION:  libseccomp (High level interface to the Kernel's seccomp filter)
 
 SLACKBUILD NAME: libsixel
 SLACKBUILD LOCATION: ./libsixel
@@ -5397,6 +5451,33 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://launchpad.net/python-distutils-extra/trunk/2.39/+download/python-distutils-extra-2.39.tar.gz
 SLACKBUILD MD5SUM: 16e06db0ef73a35b4bff4b9eed5699b5
 SLACKBUILD SHORT DESCRIPTION:  python-distutils-extra (Enhancements to the Python build system)
+
+SLACKBUILD NAME: python-docker-pycreds
+SLACKBUILD LOCATION: ./python-docker-pycreds
+SLACKBUILD FILES: README python-docker-pycreds.SlackBuild python-docker-pycreds.info slack-desc
+SLACKBUILD VERSION: 0.4.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/d/docker-pycreds/docker-pycreds-0.4.0.tar.gz
+SLACKBUILD MD5SUM: 322f570cea6b4661c6ac335683988e18
+SLACKBUILD SHORT DESCRIPTION: 
+
+SLACKBUILD NAME: python-docker
+SLACKBUILD LOCATION: ./python-docker
+SLACKBUILD FILES: README python-docker.SlackBuild python-docker.info slack-desc slack-required
+SLACKBUILD VERSION: 7.1.0
+SLACKBUILD REQUIRES: python-paramiko python-websocket-client python-docker-pycreds
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/d/docker/docker-7.1.0.tar.gz
+SLACKBUILD MD5SUM: 04e92a7b6dc8b88dde3c7cca6850b277
+SLACKBUILD SHORT DESCRIPTION:  python-docker (A Python library for the Docker Engine API)
+
+SLACKBUILD NAME: python-dockerpty
+SLACKBUILD LOCATION: ./python-dockerpty
+SLACKBUILD FILES: README python-dockerpty.SlackBuild python-dockerpty.info slack-desc
+SLACKBUILD VERSION: 0.4.1
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/d/dockerpty/dockerpty-0.4.1.tar.gz
+SLACKBUILD MD5SUM: 028bacb34536f3ee6a2ccd668c27e8e4
+SLACKBUILD SHORT DESCRIPTION:  python-dockerpty
 
 SLACKBUILD NAME: python-docopt
 SLACKBUILD LOCATION: ./python-docopt
@@ -7972,6 +8053,15 @@ SLACKBUILD DOWNLOAD: https://github.com/rakshasa/rtorrent/archive/v0.16.5/rtorre
 SLACKBUILD MD5SUM: a0bc8ddb5eb73315736a3e56ac83ec6a
 SLACKBUILD SHORT DESCRIPTION:  rtorrent (command-line torrent client)
 
+SLACKBUILD NAME: runc
+SLACKBUILD LOCATION: ./runc
+SLACKBUILD FILES: README runc.SlackBuild runc.info slack-desc slack-required
+SLACKBUILD VERSION: 1.4.0
+SLACKBUILD REQUIRES: go-md2man
+SLACKBUILD DOWNLOAD: https://github.com/opencontainers/runc/archive/v1.4.0/runc-1.4.0.tar.gz
+SLACKBUILD MD5SUM: 4b5e866609af0f566c7887a1e4284385
+SLACKBUILD SHORT DESCRIPTION:  runc (a CLI tool for spawning and running containers)
+
 SLACKBUILD NAME: rustup
 SLACKBUILD LOCATION: ./rustup
 SLACKBUILD FILES: README files/rustup.sh rustup.SlackBuild rustup.info slack-desc
@@ -8870,7 +8960,7 @@ SLACKBUILD VERSION: 0.19.0
 SLACKBUILD REQUIRES: 
 SLACKBUILD DOWNLOAD: https://github.com/krallin/tini/archive/v0.19.0/tini-0.19.0.tar.gz
 SLACKBUILD MD5SUM: 72935bca9232313409a052833068fb1d
-SLACKBUILD SHORT DESCRIPTION:  tini (A tiny but valid `init` for containers)
+SLACKBUILD SHORT DESCRIPTION:  tini (A tiny but valid "init" for containers)
 
 SLACKBUILD NAME: tinyxml2
 SLACKBUILD LOCATION: ./tinyxml2
