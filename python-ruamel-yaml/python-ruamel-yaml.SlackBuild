@@ -29,11 +29,12 @@ set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=ruamel.yaml
-PKGNAM=python-$(echo $PRGNAM | tr . -)
-SRCVERSION=0.18.16
+PRGNAM=ruamel_yaml
+DIRNAM=ruamel.yaml
+PKGNAM=python-$(echo $PRGNAM | tr _ -)
+SRCVERSION=0.18.17
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -71,9 +72,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$SRCVERSION
+rm -rf $DIRNAM-$SRCVERSION
 tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz
-cd $PRGNAM-$SRCVERSION
+cd $DIRNAM-$SRCVERSION
 
 chown -R root:root .
 find -L . \
