@@ -30,9 +30,9 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=darktable
-SRCVERSION=5.2.1
+SRCVERSION=5.4.0
 VERSION="${SRCVERSION:0:7}"
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
