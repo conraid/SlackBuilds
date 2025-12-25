@@ -33,8 +33,8 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=photoqt
-VERSION=4.9.2
-BUILD=${BUILD:-7}
+VERSION=5.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -102,10 +102,11 @@ cmake -Wno-dev \
   -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DFREEIMAGE=OFF \
-  -DDEVIL=OFF \
-  -DVIDEO_MPV=OFF \
-  -DCHROMECAST=OFF \
+  -DWITH_FREEIMAGE=OFF \
+  -DWITH_DEVIL=OFF \
+  -DWITH_VIDEO_MPV=OFF \
+  -DWITH_CHROMECAST=OFF \
+  -DWITH_TESTING=OFF \
   ..
 
 make
