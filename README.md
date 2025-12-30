@@ -9,11 +9,13 @@ Each directory contains everything (SlackBuild script, slack-desc file, plus all
 To *make package from slackbuild* do
 
 Download source code:
+
 ```bash
   source .info
   curl -JOL $DOWNLOAD
 ```
 or
+
 ```bash
   source .info
   wget [--no-check-certificate] [--content-disposition] $DOWNLOAD
@@ -25,7 +27,9 @@ If exists FILENAME variable means that it contains the filename.
 
 if exists DOWNLOAD__* extra variables, do also
 
+```bash
  wget --no-check-certificate --content-disposition $DOWNLOAD [$DOWNLOAD_1] [$DOWNLOAD_2]
+```
 
 ## Build
 
