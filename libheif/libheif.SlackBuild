@@ -29,8 +29,8 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libheif
-VERSION=1.20.2
-BUILD=${BUILD:-4}
+VERSION=1.21.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -110,6 +110,13 @@ cmake -Wno-dev \
   -DWITH_OPENJPH_ENCODER=ON \
   -DWITH_OpenJPEG_DECODER=ON \
   -DWITH_OpenJPEG_ENCODER=ON \
+  -DWITH_UNCOMPRESSED_CODEC=ON \
+  -DWITH_VVDEC=ON \
+  -DWITH_VVENC=ON \
+  -DWITH_GDK_PIXBUF=OFF \
+  -DWITH_EXAMPLE_HEIF_THUMB=OFF \
+  -DWITH_AOM_DECODER=OFF \
+  -DWITH_AOM_ENCODER=OFF \
   ..
 
 make
