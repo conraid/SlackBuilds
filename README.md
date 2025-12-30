@@ -28,6 +28,8 @@ If exists FILENAME variable means that it contains the filename.
 if exists DOWNLOAD__* extra variables, do also
 
 ```bash
+ curl -JOL $DOWNLOAD
+ (or)
  wget --no-check-certificate --content-disposition $DOWNLOAD [$DOWNLOAD_1] [$DOWNLOAD_2]
 ```
 
