@@ -42,6 +42,8 @@ To build:
 
 This command builds a package which will be created in the same directory.
 
+MAIN git repository: https://codeberg.org/conraid/SlackBuilds
+
 ## Note
 
 If you have any questions or requests, you can contact me at slackers.it (at) gmail (dot) com
