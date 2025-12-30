@@ -9,14 +9,15 @@ Each directory contains everything (SlackBuild script, slack-desc file, plus all
 To *make package from slackbuild* do
 
 Download source code:
-
+```bash
   source .info
-
   curl -JOL $DOWNLOAD
-
+```
 or
-
+```bash
+  source .info
   wget [--no-check-certificate] [--content-disposition] $DOWNLOAD
+```
 
 wget, with some servers, doesn't set the correct filename
 
@@ -29,8 +30,9 @@ if exists DOWNLOAD__* extra variables, do also
 ## Build
 
 To build:
-
+```bash
   sh .SlackBuild
+```bash
 
 This command builds a package which will be created in the same directory.
 
