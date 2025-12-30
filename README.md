@@ -1,4 +1,4 @@
-# Slackers 
+# Slackers
 
 Slackware Current Repository by Conraid
 
@@ -11,6 +11,7 @@ To *make package from slackbuild* do
 Download source code:
 
   source .info
+
   curl -JOL $DOWNLOAD
 
 or
