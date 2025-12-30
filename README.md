@@ -32,7 +32,7 @@ if exists DOWNLOAD__* extra variables, do also
 To build:
 ```bash
   sh .SlackBuild
-```bash
+```
 
 This command builds a package which will be created in the same directory.
 
