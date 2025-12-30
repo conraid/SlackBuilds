@@ -30,9 +30,9 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=nomacs
-VERSION=3.21.1
+VERSION=3.22.0
 PLUGINVERSION=3.21.1
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -98,13 +98,9 @@ fi
 python scripts/versionupdate.py installer/nomacs-setup.wxi --copy
 
 cd ImageLounge
-rm -rf plugins || true
-tar xvf $CWD/$PKGNAM-plugins-$PLUGINVERSION.tar.gz
-mv $PKGNAM-plugins-$PLUGINVERSION plugins
 
 # Fix man and plugin path
 sed -i 's|share/man/|man/|' cmake/UnixBuildTarget.cmake
-sed -i "s|lib/nomacs-plugins|lib${LIBDIRSUFFIX}/nomacs-plugins|" plugins/cmake/Utils.cmake
 
 mkdir -p build
 cd build
@@ -112,14 +108,12 @@ cmake -Wno-dev \
   -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
-  -DUSE_SYSTEM_QUAZIP=ON \
   -DENABLE_HEIF=ON \
   -DENABLE_AVIF=ON \
   -DENABLE_QUAZIP=ON \
+  -DUSE_SYSTEM_QUAZIP=ON \
   -DENABLE_JXL=ON \
-  -DQT_VERSION_MAJOR=6 \
-  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+  -DENABLE_TESTING=OFF \
   ..
 
 make
