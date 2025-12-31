@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=tree-sitter-lua
 PKGNAM=${PRGNAM,,}
-SRCVERSION=0.4.0
+SRCVERSION=0.4.1
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -95,7 +95,7 @@ if [ -e $CWD/patches/ ]; then
   fi
 fi
 
-tree-sitter generate --no-bindings src/grammar.json
+tree-sitter generate src/grammar.json
 make PREFIX=/usr LIBDIR=/usr/lib$LIBDIRSUFFIX
 make DESTDIR="$PKG" PREFIX=/usr LIBDIR=/usr/lib$LIBDIRSUFFIX install
 
