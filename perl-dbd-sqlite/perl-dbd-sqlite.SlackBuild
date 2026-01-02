@@ -2,7 +2,7 @@
 #
 # Slackware build script for perl-dbd-sqlite
 #
-# Copyright 2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2025-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -25,14 +25,14 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=DBD-SQLite
 PKGNAM=perl-dbd-sqlite
-SRCVERSION=1.76
-VERSION=$(echo $SRCVERSION | tr - _)
+SRCVERSION=1.78
+VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -106,6 +106,9 @@ fi
 # Remove perllocal.pod and other special files
 find $PKG -name perllocal.pod -o -name ".packlist" -o -name "*.bs" | xargs rm -f || true
 
+# Remove root node_modules
+rm -rf $PKG/usr/lib${LIBDIRSUFFIX}/node_modules/root
+
 # Remove empty directories
 find $PKG -depth -type d -empty -delete
 
@@ -115,9 +118,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
