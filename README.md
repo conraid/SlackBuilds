@@ -46,6 +46,8 @@ MAIN git repository: https://codeberg.org/conraid/SlackBuilds
 
 ## Note
 
+Use them at your own risk; no one will support you if your system fails.
+
 If you have any questions or requests, you can contact me at slackers.it (at) gmail (dot) com
 
 All scrips are released under the GPL License.
