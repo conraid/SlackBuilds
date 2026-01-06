@@ -2,7 +2,7 @@
 #
 # Slackware build script for vokoscreenng
 #
-# Copyright 2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2025-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=vokoscreenNG
 PKGNAM=${PRGNAM,,}
-SRCVERSION=4.7.0
+SRCVERSION=4.8.1
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -102,7 +102,7 @@ make
 install -Dm755 $PRGNAM $PKG/usr/bin/$PRGNAM
 install -Dm644 src/applications/$PRGNAM.desktop $PKG/usr/share/applications/$PRGNAM.desktop
 install -Dm644 src/applications/$PRGNAM.png $PKG/usr/share/pixmaps/$PRGNAM.png
-install -Dm644 info-licences-changelog-install/flatpak/vokoscreenNG.appdata.xml $PKG/usr/share/metainfo/vokoscreenNG.appdata.xml
+install -Dm644 info-licences-changelog-install/vokoscreen-flatpak-qt/vokoscreenNG.appdata.xml $PKG/usr/share/metainfo/vokoscreenNG.appdata.xml
 install -Dm755 $CWD/files/$PRGNAM.*sh -t $PKG/etc/profile.d/
 
 # Don't ship .la files:
