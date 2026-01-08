@@ -2,7 +2,7 @@
 #
 # Slackware build script for docker-compose
 #
-# Copyright 2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2025-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ PRGNAM=compose
 PKGNAM=docker-${PRGNAM,,}
 SRCVERSION=5.0.1
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -104,7 +104,9 @@ GO_LDFLAGS="-linkmode=external -compressdwarf=false -X=github.com/docker/compose
 
 go build -ldflags "${GO_LDFLAGS}" -trimpath -tags "e2e,kube" -o compose ./cmd
 
-install -Dm755 compose $PKG/usr/bin/docker-compose
+install -Dm755 compose $PKG/usr/lib$LIBDIRSUFFIX/docker/cli-plugins/docker-compose
+mkdir -p $PKG/usr/bin
+ln -sf /usr/lib$LIBDIRSUFFIX/docker/cli-plugins/docker-compose $PKG/usr/bin/docker-compose
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
