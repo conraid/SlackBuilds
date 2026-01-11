@@ -1,0 +1,12 @@
+diff -Naurp a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2026-01-11 11:44:35.000000000 +0100
++++ b/CMakeLists.txt	2026-01-11 15:35:17.621761278 +0100
+@@ -52,7 +52,7 @@ macro(add_parser name)
+     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/bindings/c/tree-sitter-${name}.pc.in"
+                    "${CMAKE_CURRENT_BINARY_DIR}/tree-sitter-${name}.pc" @ONLY)
+ 
+-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/bindings/c/tree-sitter-${name}.h"
++    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/bindings/c/tree-sitter/tree-sitter-${name}.h"
+             DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/tree_sitter")
+     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/tree-sitter-${name}.pc"
+             DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
