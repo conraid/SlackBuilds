@@ -2,7 +2,7 @@
 #
 # Slackware build script for mailspring-bin
 #
-# Copyright 2022-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2022-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=mailspring
 PKGNAM=${PRGNAM,,}-bin
-SRCVERSION=1.16.0
+SRCVERSION=1.17.0
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -61,7 +61,7 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $PKG
-ar p $CWD/${PRGNAM}-${VERSION}-amd64.deb data.tar.xz | tar -Jxv
+ar p $CWD/${PRGNAM}-${VERSION}-amd64.deb data.tar.zst | tar -xv --zstd
 
 chown -R root:root .
 find . \
