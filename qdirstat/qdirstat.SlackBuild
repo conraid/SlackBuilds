@@ -2,7 +2,7 @@
 #
 # Slackware build script for qdirstat
 #
-# Copyright 2019-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2019-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -25,13 +25,13 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=qdirstat
-VERSION=1.9
-BUILD=${BUILD:-2}
+VERSION=2.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -94,7 +94,7 @@ sed -i 's|share/man|man|' man/man.pro
 sed -i "s|share/doc/qdirstat|doc/$PKGNAM-$VERSION|" doc/doc.pro doc/stats/stats.pro
 
 # Check cflags for qmake
-qmake-qt5 PREFIX=/usr QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" -o Makefile $PKGNAM.pro
+qmake6 PREFIX=/usr QMAKE_CFLAGS="" QMAKE_CXXFLAGS="" QMAKE_CFLAGS_RELEASE="$SLKCFLAGS" QMAKE_CXXFLAGS_RELEASE="$SLKCFLAGS" -o Makefile $PKGNAM.pro
 
 make
 make INSTALL_ROOT=$PKG install
