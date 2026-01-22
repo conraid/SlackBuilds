@@ -2,7 +2,7 @@
 #
 # Slackware build script for go-repo-export
 #
-# Copyright 2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2025-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -25,15 +25,15 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cookbook
 PKGNAM=go-repo-export
-SRCVERSION=03739f5268d5915e0dc7e8815723575f4b457bda
+SRCVERSION=01641415c58c1e40e059e40e38455cec06ddd455
 VERSION="${SRCVERSION:0:7}"
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -102,10 +102,7 @@ export CGO_CFLAGS="$SLKCFLAGS"
 export CGO_CXXFLAGS="$SLKCFLAGS"
 export GOFLAGS="-buildmode=pie -trimpath -mod=readonly -modcacherw"
 export GOPATH="$(pwd)/build"
-export GOPROXY=direct
-
-go mod edit -replace=github.com/whyrusleeping/cbor-gen=github.com/whyrusleeping/cbor-gen@v0.1.0
-go mod tidy
+export GOPROXY=https://proxy.golang.org,direct
 
 mkdir -p build
 go build -o build/go-repo-export .
