@@ -3,7 +3,7 @@
 # Slackware build script for lua (http://www.lua.org/)
 #
 # Copyright 2008 Menno Duursma from SlackBuilds.org
-# Copyright 2015-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2015-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@
 # Modified by Aaron W. Hsu
 # Modified by Corrado Franco <https://corradofranco.it>
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
@@ -36,7 +36,7 @@ PRGNAM=lua
 PKGNAM=lua51
 VERSION=5.1.5
 MAINVERSION=$(echo $VERSION | cut -d. -f-2)
-BUILD=${BUILD:-9}
+BUILD=${BUILD:-10}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -100,7 +100,7 @@ sed -i -r -e "/^LUA_(SO|A|T)=/ s/lua/lua$MAINVERSION/" \
           -e "/^LUAC_T=/ s/luac/luac$MAINVERSION/" \
           src/Makefile
 
-make CFLAGS="$SLKCFLAGS" MYLIBS="-lncurses" linux
+make CFLAGS="$SLKCFLAGS \$(MYCFLAGS)" linux
 
 make linux install \
 TO_BIN="lua$MAINVERSION luac$MAINVERSION" \
