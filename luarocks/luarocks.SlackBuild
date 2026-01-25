@@ -2,7 +2,7 @@
 #
 # Slackware build script for luarocks
 #
-# Copyright 2018-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2018-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=luarocks
 VERSION=3.13.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -95,9 +95,9 @@ CXXFLAGS="$SLKCFLAGS" \
 --prefix=/usr \
 
 make ./build/luarocks ./build/luarocks-admin LUA_INCDIR=/usr/include/ ./build/config-5.4.lua
-make LUA_VERSION=5.1 LUA_INTERPRETER=lua5.1 LUA_INCDIR=/usr/include/lua5.1 ./build/config-5.1.lua
-make LUA_VERSION=5.2 LUA_INTERPRETER=lua5.2 LUA_INCDIR=/usr/include/lua5.2 ./build/config-5.2.lua
-make LUA_VERSION=5.3 LUA_INTERPRETER=lua5.3 LUA_INCDIR=/usr/include/lua5.3 ./build/config-5.3.lua
+make LUA_VERSION=5.1 LUA_INTERPRETER=lua5.1 LUA_INCDIR=/usr/include/lua5.1 LUA=/usr/bin/lua5.1 ./build/config-5.1.lua
+make LUA_VERSION=5.2 LUA_INTERPRETER=lua5.2 LUA_INCDIR=/usr/include/lua5.2 LUA=/usr/bin/lua5.2 ./build/config-5.2.lua
+make LUA_VERSION=5.3 LUA_INTERPRETER=lua5.3 LUA_INCDIR=/usr/include/lua5.3 LUA=/usr/bin/lua5.3 ./build/config-5.3.lua
 
 make DESTDIR=$PKG install
 make DESTDIR=$PKG LUA_VERSION=5.1 install-config
