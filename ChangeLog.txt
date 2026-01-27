@@ -1,3 +1,19 @@
+Tue Jan 27 13:14:49 UTC 2026
+docker-29.2.0-x86_64-1cf.txz:  Upgraded.
+docker-cli-29.2.0-x86_64-1cf.txz:  Upgraded.
+hwinfo-25.1-x86_64-1cf.txz:  Upgraded.
+libyuv-f95782d-x86_64-1cf.txz:  Upgraded.
+neovim-d436059-x86_64-1cf.txz:  Upgraded.
+  Neovim 0.11 is intended to build with tree-sitter 0.25.x
+  and is not compatible with 0.26.
+npm-check-updates-19.3.2-x86_64-1cf.txz:  Upgraded.
+par2cmdline-1.1.0-x86_64-1cf.txz:  Upgraded.
+pdfsam-bin-5.4.5-x86_64-1cf.txz:  Upgraded.
+python-aws-cli-1.44.25-x86_64-1cf.txz:  Upgraded.
+python-botocore-1.42.35-x86_64-1cf.txz:  Upgraded.
+python-uv-build-0.9.27-x86_64-1cf.txz:  Upgraded.
+python-wcwidth-0.5.0-x86_64-1cf.txz:  Upgraded.
++--------------------------+
 Mon Jan 26 11:31:00 UTC 2026
 From now on, packages are built against glibc 2.43 (from current’s testing branch),
 so I can’t guarantee they’ll work on older versions.
@@ -6768,40 +6784,3 @@ Now in current.
 pcsc-lite-2.3.1-x86_64-2cf.txz:  Removed.
 Now in current.
 +--------------------------+
-Sun Jan 26 22:27:28 UTC 2025
-libjxl-0.11.1-x86_64-3cf.txz:  Rebuilt.
-Removed GIMP plugin. Pardon.
-+--------------------------+
-Sun Jan 26 21:55:24 UTC 2025
-dcraw-9.28.0-x86_64-5cf.txz:  Rebuilt.
-Removed rawphoto plugin.
-gmic-3.5.0-x86_64-4cf.txz:  Rebuilt.
-GIMP plugin still doesn't compile, I read that they are working on it.
-heif-gimp-plugin-d6bea52-x86_64-4cf.txz:  Removed.
-HEIF, and JPEG-XL are now part of Gimp,
-but unfortunately Pat compiled it without their support :(
-libjxl-0.11.1-x86_64-2cf.txz:  Rebuilt.
-Recompiled against gimp-3.00_RC2
-+--------------------------+
-Sun Jan 26 12:56:06 UTC 2025
-I compiled wxWidgets with gtk3 and qt5, just as Alien Bob also did,
-so I renamed the package from wxgtk to wxwidgets.
-wx-gtk2 is not used by any package so much.
-Actually wx-qt5 is not used at the moment either,
-but it can always be useful to some of you.
-While I was at it I added support for Microsoft compression formats, via libmspack.
-I also wanted to compile wx-gtk4, but it gives error.
-I still used autotools because cmake does not install locales
-and does not handle libsuffix well.
-clamav-1.4.2-x86_64-2cf.txz:  Rebuilt.
-I used the external library libmspack.
-exiftool-13.16-x86_64-1cf.txz:  Upgraded.
-libmspack-0.11alpha-x86_64-1cf.txz:  Added.
-python-evdev-1.8.0-x86_64-1cf.txz:  Upgraded.
-shotcut-25.01.25-x86_64-1cf.txz:  Upgraded.
-stylelint-16.14.0-x86_64-1cf.txz:  Upgraded.
-wxgtk-3.2.6-x86_64-1cf.txz:  Removed.
-Renamed in wxwidgets.
-wxwidgets-3.2.6-x86_64-1cf.txz:  Added.
-Support wx-gtk3 and wx-qt5.
-yt-dlp-2025.1.26-x86_64-1cf.txz:  Upgraded.
