@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libheif
 VERSION=1.21.2
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -95,7 +95,6 @@ fi
 mkdir -p build
 cd build
 cmake -Wno-dev \
-  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
@@ -106,7 +105,6 @@ cmake -Wno-dev \
   -DWITH_JPEG_ENCODER=ON \
   -DWITH_FFMPEG_DECODER=ON \
   -DWITH_FFMPEG_DECODER_PLUGIN=ON \
-  -DWITH_SvtEnc=ON \
   -DWITH_OPENJPH_ENCODER=ON \
   -DWITH_OpenJPEG_DECODER=ON \
   -DWITH_OpenJPEG_ENCODER=ON \
