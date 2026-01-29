@@ -2,7 +2,7 @@
 #
 # Slackware build script for bup
 #
-# Copyright 2019-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2019-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=bup
-SRCVERSION=0.33.9
+SRCVERSION=0.33.10
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -75,7 +75,7 @@ tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRcVERSION.tar.gz
 cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
-find -L . \
+find . \
   \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
   -exec chmod 755 {} \; -o \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
