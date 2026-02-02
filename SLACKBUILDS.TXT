@@ -289,10 +289,10 @@ SLACKBUILD SHORT DESCRIPTION:  audiotube (Client for YouTube Music)
 SLACKBUILD NAME: audit
 SLACKBUILD LOCATION: ./audit
 SLACKBUILD FILES: README audit.SlackBuild audit.info doinst.sh files/rc.auditd slack-desc
-SLACKBUILD VERSION: 4.1.2
+SLACKBUILD VERSION: 4.1.3
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/linux-audit/audit-userspace/archive/v4.1.2/audit-userspace-4.1.2.tar.gz
-SLACKBUILD MD5SUM: 6c02718852fb6993c8a97dd39c1ffc1b
+SLACKBUILD DOWNLOAD: https://github.com/linux-audit/audit-userspace/archive/v4.1.3/audit-userspace-4.1.3.tar.gz
+SLACKBUILD MD5SUM: a9d5eab335c7a5400115c3e49abddcc6
 SLACKBUILD SHORT DESCRIPTION:  audit (Userspace components of the audit framework)
 
 SLACKBUILD NAME: authoscope
@@ -1242,11 +1242,11 @@ SLACKBUILD SHORT DESCRIPTION:  etcher-bin (Flash images to SD cards & USB drives
 
 SLACKBUILD NAME: ettercap
 SLACKBUILD LOCATION: ./ettercap
-SLACKBUILD FILES: README doinst.sh ettercap.SlackBuild ettercap.info patches/40534662043b7d831d1f6c70448afa9d374a9b63.patch patches/cmake-hardbuzz.patch slack-desc slack-required
-SLACKBUILD VERSION: 0.8.3.1
-SLACKBUILD REQUIRES: libbsd libnet geoip
-SLACKBUILD DOWNLOAD: https://github.com/Ettercap/ettercap/releases/download/v0.8.3.1/ettercap-0.8.3.1.tar.gz
-SLACKBUILD MD5SUM: aec144118be53679f906843ff3054ee0
+SLACKBUILD FILES: README doinst.sh ettercap.SlackBuild ettercap.info slack-desc slack-required
+SLACKBUILD VERSION: 0.8.4
+SLACKBUILD REQUIRES: libbsd libnet
+SLACKBUILD DOWNLOAD: https://github.com/Ettercap/ettercap/releases/download/v0.8.4/ettercap-0.8.4.tar.gz
+SLACKBUILD MD5SUM: e58e611d94d41bac7d47b07e0ea4a330
 SLACKBUILD SHORT DESCRIPTION:  ettercap (Program for sniff and monitoring the network)
 
 SLACKBUILD NAME: evtest
@@ -1518,6 +1518,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://download.gnome.org/sources/gcab/1.6/gcab-1.6.tar.xz
 SLACKBUILD MD5SUM: 13795d44b27c6b84107a83315edcfb01
 SLACKBUILD SHORT DESCRIPTION:  gcab (A GObject library to create cabinet files)
+
+SLACKBUILD NAME: gearlever
+SLACKBUILD LOCATION: ./gearlever
+SLACKBUILD FILES: README doinst.sh gearlever.SlackBuild gearlever.info slack-desc slack-required
+SLACKBUILD VERSION: 4.3.0
+SLACKBUILD REQUIRES: python-ftputil python-desktop-entry-lib p7zip libadwaita
+SLACKBUILD DOWNLOAD: https://github.com/mijorus/gearlever/archive/4.3.0/gearlever-4.3.0.tar.gz
+SLACKBUILD MD5SUM: 7a25da914c2543f7c1b4c49b04ec198f
+SLACKBUILD SHORT DESCRIPTION:  gearlever (Manage AppImages with ease)
 
 SLACKBUILD NAME: gengetopt
 SLACKBUILD LOCATION: ./gengetopt
@@ -5392,10 +5401,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-cached-property (decorator for caching pro
 SLACKBUILD NAME: python-cachetools
 SLACKBUILD LOCATION: ./python-cachetools
 SLACKBUILD FILES: README python-cachetools.SlackBuild python-cachetools.info slack-desc
-SLACKBUILD VERSION: 6.2.6
+SLACKBUILD VERSION: 7.0.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/cachetools/cachetools-6.2.6.tar.gz
-SLACKBUILD MD5SUM: d3f1fac09946b982613c648c9437f649
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/cachetools/cachetools-7.0.0.tar.gz
+SLACKBUILD MD5SUM: 945d3a5ae572c413c6d8dc40a1223a23
 SLACKBUILD SHORT DESCRIPTION:  cachetools (Python Extensible memoizing collections and decorators)
 
 SLACKBUILD NAME: python-cairocffi
@@ -5623,6 +5632,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/d/defusedxml/defuse
 SLACKBUILD MD5SUM: a50e7f21aa60a741efe6b1b658dfb3f8
 SLACKBUILD SHORT DESCRIPTION:  python-defusedxml (XML bomb protection for Python stdlib modules)
 
+SLACKBUILD NAME: python-desktop-entry-lib
+SLACKBUILD LOCATION: ./python-desktop-entry-lib
+SLACKBUILD FILES: README python-desktop-entry-lib.SlackBuild python-desktop-entry-lib.info slack-desc
+SLACKBUILD VERSION: 5.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/d/desktop-entry-lib/desktop_entry_lib-5.0.tar.gz
+SLACKBUILD MD5SUM: 1374b11e7332a341838b81d6af834f51
+SLACKBUILD SHORT DESCRIPTION:  python-desktop-entry-lib (library for working with .desktop files)
+
 SLACKBUILD NAME: python-dill
 SLACKBUILD LOCATION: ./python-dill
 SLACKBUILD FILES: README python-dill.SlackBuild python-dill.info slack-desc
@@ -5829,6 +5847,15 @@ SLACKBUILD REQUIRES: python-expandvars
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/f/frozenlist/frozenlist-1.8.0.tar.gz
 SLACKBUILD MD5SUM: 3d8350ebe62603b7be5f516292c7aa6c
 SLACKBUILD SHORT DESCRIPTION:  python-frozenlist (Immutable list-like structure)
+
+SLACKBUILD NAME: python-ftputil
+SLACKBUILD LOCATION: ./python-ftputil
+SLACKBUILD FILES: README python-ftputil.SlackBuild python-ftputil.info slack-desc
+SLACKBUILD VERSION: 5.1.0
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/f/ftputil/ftputil-5.1.0.tar.gz
+SLACKBUILD MD5SUM: 3d782b1b037286f9844a105d16e577e6
+SLACKBUILD SHORT DESCRIPTION:  python-ftputil (High-level FTP client library for Python)
 
 SLACKBUILD NAME: python-fuse
 SLACKBUILD LOCATION: ./python-fuse
@@ -8047,10 +8074,10 @@ SLACKBUILD SHORT DESCRIPTION:  urlwatch (Watch web pages and arbitrary URLs for 
 SLACKBUILD NAME: python-urwid
 SLACKBUILD LOCATION: ./python-urwid
 SLACKBUILD FILES: README python-urwid.SlackBuild python-urwid.info slack-desc
-SLACKBUILD VERSION: 3.0.3
+SLACKBUILD VERSION: 3.0.5
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/u/urwid/urwid-3.0.3.tar.gz
-SLACKBUILD MD5SUM: 0ed7f3cf33545912b9ad0d8f2200863b
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/u/urwid/urwid-3.0.5.tar.gz
+SLACKBUILD MD5SUM: ee84dfeeac19cb4b09a9d90b64029c20
 SLACKBUILD SHORT DESCRIPTION:  python-urwid (Console user interface library for Python)
 
 SLACKBUILD NAME: python-userpath
@@ -9172,10 +9199,10 @@ SLACKBUILD SHORT DESCRIPTION:  sqlitebrowser (QT GUI editor for SQLite databases
 SLACKBUILD NAME: sqlmap
 SLACKBUILD LOCATION: ./sqlmap
 SLACKBUILD FILES: README doinst.sh slack-desc sqlmap.SlackBuild sqlmap.info
-SLACKBUILD VERSION: 1.10
+SLACKBUILD VERSION: 1.10.2
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/sqlmapproject/sqlmap/archive/1.10.tar.gz
-SLACKBUILD MD5SUM: 9811101144bb1c0bc8462bff36231073
+SLACKBUILD DOWNLOAD: https://github.com/sqlmapproject/sqlmap/archive/1.10.2.tar.gz
+SLACKBUILD MD5SUM: 6fd1f0e68d04dccdc12e0f3496b0cdc6
 SLACKBUILD SHORT DESCRIPTION:  sqlmap (Automatic SQL injection and database takeover tool)
 
 SLACKBUILD NAME: squid
@@ -9919,10 +9946,10 @@ SLACKBUILD SHORT DESCRIPTION:  vokoscreenng (screencast creator)
 SLACKBUILD NAME: vscodium-bin
 SLACKBUILD LOCATION: ./vscodium-bin
 SLACKBUILD FILES: README doinst.sh files/codium.desktop slack-desc vscodium-bin.SlackBuild vscodium-bin.info
-SLACKBUILD VERSION: 1.108.10359
+SLACKBUILD VERSION: 1.108.20787
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/VSCodium/vscodium/releases/download/1.108.10359/VSCodium-linux-x64-1.108.10359.tar.gz
-SLACKBUILD MD5SUM: 42e81fb3dc4216f4f8bdec4858b1ebf5
+SLACKBUILD DOWNLOAD: https://github.com/VSCodium/vscodium/releases/download/1.108.20787/VSCodium-linux-x64-1.108.20787.tar.gz
+SLACKBUILD MD5SUM: cd7fb143da1bcc7f9811f725fd0c48d6
 SLACKBUILD SHORT DESCRIPTION:  vscodium-bin (Free/Libre Open Source Software Binaries of VSCode)
 
 SLACKBUILD NAME: vuescan-bin
