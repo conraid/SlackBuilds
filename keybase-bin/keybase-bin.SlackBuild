@@ -2,7 +2,7 @@
 #
 # Slackware build script for keybase-bin
 #
-# Copyright 2020-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2020-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -25,12 +25,12 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=keybase
 PKGNAM="${PRGNAM,,}"-bin
-VERSION=6.5.1
+VERSION=6.5.2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -84,10 +84,12 @@ find . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \+
 
-# Change for Slackware
+# Changes for Slackware
 rm -rf $PKG/usr/share/doc # Removed debian changelog
 rm -rf $PKG/usr/lib/systemd # Removed systemd
+rm -rf $PKG/etc/apt # Removed apt files
 mv $PKG/usr/lib $PKG/usr/lib64 # in slackware mozilla is under lib64
+
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
@@ -95,7 +97,6 @@ find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r st
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 cp $PKG/opt/keybase/LICENSE* $PKG/usr/doc/$PKGNAM-$VERSION
-mv $PKG/etc/cron.daily $PKG/usr/doc/$PKGNAM-$VERSION # cron.daily is for debian style distro
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
