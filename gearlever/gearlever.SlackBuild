@@ -33,7 +33,7 @@ PRGNAM=gearlever
 PKGNAM=${PRGNAM,,}
 SRCVERSION=4.3.0
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -96,7 +96,7 @@ if [ -e $CWD/patches/ ]; then
 fi
 
 sed -i "s/7zz/7z/g" src/providers/AppImageProvider.py
-sed -i "s|get_appimage_offset|/usr/lib$LIBDIRSUFFIX/gearlever/get_appimage_offset|g" src/providers/AppImageProvider.py
+sed -i "s|get_appimage_offset|/usr/share/gearlever/get_appimage_offset|g" src/providers/AppImageProvider.py
 
 export CFLAGS="$SLKCFLAGS"
 export CXXFLAGS="$SLKCFLAGS"
@@ -126,6 +126,8 @@ meson setup \
 ninja
 DESTDIR=$PKG ninja install
 cd ..
+
+install -Dm755 "build-aux/get_appimage_offset.sh" "${PKG}/usr/share/gearlever/get_appimage_offset"
 
 rm $PKG/usr/share/icons/hicolor/scalable/actions/meson.build
 rm $PKG/usr/share/${PKGNAM}/${PKGNAM}/meson.build
