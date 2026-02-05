@@ -2,7 +2,7 @@
 #
 # Slackware build script for yaml-cpp
 #
-# Copyright 2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2025-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=yaml-cpp
 PKGNAM=${PRGNAM,,}
-SRCVERSION=0.8.0
+SRCVERSION=0.9.0
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -71,9 +71,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$SRCVERSION
-tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/v$SRCVERSION.tar.gz
-cd $PRGNAM-$SRCVERSION
+rm -rf $PRGNAM-$SRCVERSION || rm -rf $PRGNAM-$PRGNAM-$VERSION
+tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$PRGNAM-$PRGNAM-$SRCVERSION.tar.gz
+cd $PRGNAM-$SRCVERSION || cd $PRGNAM-$PRGNAM-$VERSION
 
 chown -R root:root .
 find . \
@@ -108,7 +108,6 @@ cmake -Wno-dev \
   -DYAML_CPP_BUILD_TESTS=OFF \
   -DBUILD_SHARED_LIBS=ON \
   -DYAML_BUILD_SHARED_LIBS=ON \
-  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   ..
 
 make
