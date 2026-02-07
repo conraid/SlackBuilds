@@ -2,7 +2,7 @@
 #
 # Slackware build script for python-evdev
 #
-# Copyright 2019-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2019-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -25,13 +25,13 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=evdev
-PKGNAM=python-$(echo $PRGNAM | tr A-Z a-z)
-VERSION=1.9.2
+PKGNAM=python-${PRGNAM,,}
+VERSION=1.9.3
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
