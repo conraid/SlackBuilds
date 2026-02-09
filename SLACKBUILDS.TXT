@@ -108,7 +108,7 @@ SLACKBUILD SHORT DESCRIPTION:  alien (converting program)
 
 SLACKBUILD NAME: amule
 SLACKBUILD LOCATION: ./amule
-SLACKBUILD FILES: README amule.SlackBuild amule.info doinst.sh patches/001-9bcd201.patch patches/002-8085232.patch patches/003-f186b3a.patch patches/004-d22e057.patch patches/005-9e1d9eb.patch patches/006-a667c61.patch patches/007-212b189.patch patches/008-boost-1_89.patch slack-desc slack-required
+SLACKBUILD FILES: README amule.SlackBuild amule.info doinst.sh patches/001-9bcd201.patch patches/002-8085232.patch patches/003-f186b3a.patch patches/004-d22e057.patch patches/005-9e1d9eb.patch patches/006-a667c61.patch patches/007-212b189.patch patches/007b-4a1b78a2.patch patches/008-boost-1_89.patch patches/libupnp.patch slack-desc slack-required
 SLACKBUILD VERSION: 2.3.3
 SLACKBUILD REQUIRES: wxwidgets libupnp geoip
 SLACKBUILD DOWNLOAD: http://downloads.sourceforge.net/amule/aMule-2.3.3.tar.xz
@@ -1005,6 +1005,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://www.dechifro.org/dcraw/archive/dcraw-9.28.0.tar.gz
 SLACKBUILD MD5SUM: e89175c1a7551a70744769049a139f9b
 SLACKBUILD SHORT DESCRIPTION:  DCRaw (command line tool to decode raw digital photos)
+
+SLACKBUILD NAME: depfinder
+SLACKBUILD LOCATION: ./depfinder
+SLACKBUILD FILES: README depfinder.SlackBuild depfinder.info slack-desc slack-required
+SLACKBUILD VERSION: 1.4.4
+SLACKBUILD REQUIRES: python-txt2tags
+SLACKBUILD DOWNLOAD: https://github.com/gapan/depfinder/archive/1.4.4/depfinder-1.4.4.tar.gz
+SLACKBUILD MD5SUM: 4580c949714d66ebb5b925218d05a207
+SLACKBUILD SHORT DESCRIPTION:  depfinder (A tool that finds dependencies of slackware packages)
 
 SLACKBUILD NAME: detox
 SLACKBUILD LOCATION: ./detox
@@ -3115,10 +3124,10 @@ SLACKBUILD SHORT DESCRIPTION:  libtpms (library for emulating TPM 1.2 and 2.0)
 SLACKBUILD NAME: libupnp
 SLACKBUILD LOCATION: ./libupnp
 SLACKBUILD FILES: README libupnp.SlackBuild libupnp.info slack-desc
-SLACKBUILD VERSION: 1.14.26
+SLACKBUILD VERSION: 1.14.29
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/pupnp/pupnp/archive/release-1.14.26/pupnp-release-1.14.26.tar.gz
-SLACKBUILD MD5SUM: 6832b3e4757e0c27d83223ea3b00c0d8
+SLACKBUILD DOWNLOAD: https://github.com/pupnp/pupnp/archive/release-1.14.29/pupnp-release-1.14.29.tar.gz
+SLACKBUILD MD5SUM: 3ee0796997c2b40e9731285a076581a0
 SLACKBUILD SHORT DESCRIPTION:  libupnp (Portable SDK for UPnP Devices)
 
 SLACKBUILD NAME: libvhdi
@@ -4123,10 +4132,10 @@ SLACKBUILD SHORT DESCRIPTION:  nuttcp (TCP/UDP network testing tool)
 SLACKBUILD NAME: nvtop
 SLACKBUILD LOCATION: ./nvtop
 SLACKBUILD FILES: README nvtop.SlackBuild nvtop.info slack-desc
-SLACKBUILD VERSION: 3.3.1
+SLACKBUILD VERSION: 3.3.2
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/Syllo/nvtop/archive/3.3.1/nvtop-3.3.1.tar.gz
-SLACKBUILD MD5SUM: 2d18f977b4e2c84c69bd4967a4e5557d
+SLACKBUILD DOWNLOAD: https://github.com/Syllo/nvtop/archive/3.3.2/nvtop-3.3.2.tar.gz
+SLACKBUILD MD5SUM: e0d26fe977ecd90fc88afbbdfa8eb572
 SLACKBUILD SHORT DESCRIPTION:  nvtop (GPU & Accelerator process monitoring)
 
 SLACKBUILD NAME: nwipe
@@ -5230,10 +5239,10 @@ SLACKBUILD SHORT DESCRIPTION:  asn1crypto (Python ASN.1 library)
 SLACKBUILD NAME: python-astroid
 SLACKBUILD LOCATION: ./python-astroid
 SLACKBUILD FILES: README python-astroid.SlackBuild python-astroid.info slack-desc
-SLACKBUILD VERSION: 4.0.4
+SLACKBUILD VERSION: 4.1.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/astroid/astroid-4.0.4.tar.gz
-SLACKBUILD MD5SUM: 6c5366cc73a00f38e03c32e7898dbdaf
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/astroid/astroid-4.1.0.tar.gz
+SLACKBUILD MD5SUM: 3634c92384c65695b21d6c53e89378e7
 SLACKBUILD SHORT DESCRIPTION:  python-astroid (new abstract syntax tree from Python's ast)
 
 SLACKBUILD NAME: python-attrdict3
@@ -5545,10 +5554,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-constantly (Symbolic constants in Python)
 SLACKBUILD NAME: python-coverage
 SLACKBUILD LOCATION: ./python-coverage
 SLACKBUILD FILES: README python-coverage.SlackBuild python-coverage.info slack-desc
-SLACKBUILD VERSION: 7.13.3
+SLACKBUILD VERSION: 7.13.4
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/coverage/coverage-7.13.3.tar.gz
-SLACKBUILD MD5SUM: 839126ed682d32273e7aee83b12fb04e
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/c/coverage/coverage-7.13.4.tar.gz
+SLACKBUILD MD5SUM: de88ed95f9d421400cc1b90fb1247d89
 SLACKBUILD SHORT DESCRIPTION:  python-coverage (Code coverage measurement for Python)
 
 SLACKBUILD NAME: python-cryptography
@@ -6049,10 +6058,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-hyperlink (A featureful, correct URL for P
 SLACKBUILD NAME: python-icdiff
 SLACKBUILD LOCATION: ./python-icdiff
 SLACKBUILD FILES: README python-icdiff.SlackBuild python-icdiff.info slack-desc
-SLACKBUILD VERSION: 2.0.9
+SLACKBUILD VERSION: 2.0.10
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/jeffkaufman/icdiff/archive/release-2.0.9/icdiff-release-2.0.9.tar.gz
-SLACKBUILD MD5SUM: e24056130264752f2957e40fe30c5820
+SLACKBUILD DOWNLOAD: https://github.com/jeffkaufman/icdiff/archive/release-2.0.10/icdiff-release-2.0.10.tar.gz
+SLACKBUILD MD5SUM: aa866d077f7e8229fa6c947759b43fae
 SLACKBUILD SHORT DESCRIPTION:  icdiff (improved colored diff )
 
 SLACKBUILD NAME: python-ifaddr
@@ -6184,10 +6193,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-jaraco-functools (Functools like those fou
 SLACKBUILD NAME: python-jaraco-text
 SLACKBUILD LOCATION: ./python-jaraco-text
 SLACKBUILD FILES: README python-jaraco-text.SlackBuild python-jaraco-text.info slack-desc slack-required
-SLACKBUILD VERSION: 4.0.0
+SLACKBUILD VERSION: 4.1.0
 SLACKBUILD REQUIRES: python-jaraco-context python-autocommand python-jaraco-functools python-more-itertools python-inflect
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/j/jaraco-text/jaraco_text-4.0.0.tar.gz
-SLACKBUILD MD5SUM: 3c519c7a49d6448e6dc2073d466afd39
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/j/jaraco-text/jaraco_text-4.1.0.tar.gz
+SLACKBUILD MD5SUM: 2f79b7acda36179806642b80995942a1
 SLACKBUILD SHORT DESCRIPTION:  python-jaraco-text (Module for text manipulation)
 
 SLACKBUILD NAME: python-jmespath
@@ -7729,6 +7738,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/termcolor/termcol
 SLACKBUILD MD5SUM: 30b9a5ef79026a6073009f045e17f04c
 SLACKBUILD SHORT DESCRIPTION:  python-termcolor (ANSI Color formatting for output in terminal)
 
+SLACKBUILD NAME: python-textconfig
+SLACKBUILD LOCATION: ./python-textconfig
+SLACKBUILD FILES: README python-textconfig.SlackBuild python-textconfig.info slack-desc
+SLACKBUILD VERSION: 0.2
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://github.com/gapan/textconfig/archive/0.2/textconfig-0.2.tar.gz
+SLACKBUILD MD5SUM: 1ea3a747ef10988a1beb9d85de6ae95c
+SLACKBUILD SHORT DESCRIPTION:  python-textconfig (python text configuration file reading/writing)
+
 SLACKBUILD NAME: python-texttable
 SLACKBUILD LOCATION: ./python-texttable
 SLACKBUILD FILES: README python-texttable.SlackBuild python-texttable.info slack-desc
@@ -7891,6 +7909,15 @@ SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/twisted/twisted-2
 SLACKBUILD MD5SUM: 85d7a8d1552151cfd9e42417ab2ff875
 SLACKBUILD SHORT DESCRIPTION:  python-twisted (Event-driven networking engine written in Python)
 
+SLACKBUILD NAME: python-txt2tags
+SLACKBUILD LOCATION: ./python-txt2tags
+SLACKBUILD FILES: README python-txt2tags.SlackBuild python-txt2tags.info slack-desc
+SLACKBUILD VERSION: 3.9
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/txt2tags/txt2tags-3.9.tar.gz
+SLACKBUILD MD5SUM: 8e01e8fe401eddbbb34c41bf5fb7a0f2
+SLACKBUILD SHORT DESCRIPTION:  python-txt2tags (Convert plain text into many markup languages)
+
 SLACKBUILD NAME: python-typeguard
 SLACKBUILD LOCATION: ./python-typeguard
 SLACKBUILD FILES: README python-typeguard.SlackBuild python-typeguard.info slack-desc slack-required
@@ -7912,10 +7939,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-types-psutil (Typing stubs for psutil)
 SLACKBUILD NAME: python-types-setuptools
 SLACKBUILD LOCATION: ./python-types-setuptools
 SLACKBUILD FILES: README python-types-setuptools.SlackBuild python-types-setuptools.info slack-desc
-SLACKBUILD VERSION: 80.10.0.20260124
+SLACKBUILD VERSION: 81.0.0.20260209
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/types-setuptools/types_setuptools-80.10.0.20260124.tar.gz
-SLACKBUILD MD5SUM: 8169fabc81a034c732621826a8c478b3
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/t/types-setuptools/types_setuptools-81.0.0.20260209.tar.gz
+SLACKBUILD MD5SUM: 9698def8a9e3c497d262c8dde5d96709
 SLACKBUILD SHORT DESCRIPTION:  python-types-setuptools (Typing stubs for setuptools)
 
 SLACKBUILD NAME: python-typing-extensions
