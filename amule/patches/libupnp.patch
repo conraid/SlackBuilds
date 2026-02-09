@@ -1,0 +1,52 @@
+diff -Naupr a/src/UPnPBase.cpp b/src/UPnPBase.cpp
+--- a/src/UPnPBase.cpp	2021-02-08 00:07:22.000000000 +0100
++++ b/src/UPnPBase.cpp	2026-02-09 12:20:41.400891811 +0100
+@@ -665,7 +665,7 @@ bool CUPnPService::Execute(
+ 		GetAbsControlURL().c_str(),
+ 		GetServiceType().c_str(),
+ 		NULL, ActionDoc,
+-		static_cast<Upnp_FunPtr>(&CUPnPControlPoint::Callback),
++		static_cast<Upnp_FunPtr>(&CUPnPControlPoint::CallbackWrapper),
+ 		NULL);
+ 	return true;
+ #endif
+@@ -842,7 +842,7 @@ m_WanService(NULL)
+ 	AddDebugLogLineN(logUPnP, msg);
+ 	msg.str("");
+ 	ret = UpnpRegisterClient(
+-		static_cast<Upnp_FunPtr>(&CUPnPControlPoint::Callback),
++		static_cast<Upnp_FunPtr>(&CUPnPControlPoint::CallbackWrapper),
+ 		&m_UPnPClientHandle,
+ 		&m_UPnPClientHandle);
+ 	if (ret != UPNP_E_SUCCESS) {
+@@ -1127,6 +1127,14 @@ bool CUPnPControlPoint::PrivateDeletePor
+ 	return ret;
+ }
+ 
++// Wrapper for old Upnp_FunPtr signature
++int CUPnPControlPoint::CallbackWrapper(
++    Upnp_EventType_e EventType,
++    void *Event,
++    void *Cookie)
++{
++    return Callback(EventType, Event, Cookie);
++}
+ 
+ // This function is static
+ #if UPNP_VERSION >= 10800
+diff -Naupr a/src/UPnPBase.h b/src/UPnPBase.h
+--- a/src/UPnPBase.h	2021-02-08 00:07:22.000000000 +0100
++++ b/src/UPnPBase.h	2026-02-09 12:26:30.605458098 +0100
+@@ -501,6 +501,12 @@ public:
+ 		void* Cookie);
+ #endif
+ 
++    // Wrapper for legacy Upnp_FunPtr signature
++    static int CallbackWrapper(
++	   	Upnp_EventType_e EventType,
++	    void *Event,
++	    void *Cookie);
++
+ private:
+ 	void OnEventReceived(
+ 		const std::string &Sid,
