@@ -2,7 +2,7 @@
 #
 # Slackware build script for rest
 #
-# Copyright 2021-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2021-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,17 +29,17 @@ set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=rest
-PKGNAM=${PRGNAM,,}
-SRCVERSION=0.9.1
+PRGNAM=librest
+PKGNAM=rest
+SRCVERSION=0.10.2
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-8}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="AUTHORS COPYING ChangeLog INSTALL README"
+DOCFILES="AUTHORS COPYING NEWS README*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -72,7 +72,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PRGNAM-$SRCVERSION
-tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.xz
+tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.bz2
 cd $PRGNAM-$SRCVERSION
 
 chown -R root:root .
