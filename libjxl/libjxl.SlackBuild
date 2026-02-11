@@ -2,7 +2,7 @@
 #
 # Slackware build script for libjxl
 #
-# Copyright 2022-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2022-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=libjxl
 PKGNAM=${PRGNAM,,}
-SRCVERSION=0.11.1
+SRCVERSION=0.11.2
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -117,7 +117,6 @@ cmake -Wno-dev \
   -DJPEGXL_ENABLE_VIEWERS=ON \
   -DJPEGXL_FORCE_SYSTEM_GTEST=ON \
   -DJPEGXL_FORCE_SYSTEM_BROTLI=OFF \
-  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   ..
 
 make
