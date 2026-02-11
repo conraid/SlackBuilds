@@ -1,0 +1,34 @@
+From da1852e4a8e6f81fe12e92323a38356bf41604a8 Mon Sep 17 00:00:00 2001
+From: Matthias Andree <matthias.andree@gmx.de>
+Date: Fri, 20 Jun 2025 22:45:43 +0200
+Subject: [PATCH] libraw: update configure.ac for libtool 2.
+
+---
+ rtengine/libraw/configure.ac | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/rtengine/libraw/configure.ac b/rtengine/libraw/configure.ac
+index 092182727f..b1c38e458c 100644
+--- a/rtengine/libraw/configure.ac
++++ b/rtengine/libraw/configure.ac
+@@ -1,17 +1,14 @@
+ # Initialization
+-AC_INIT([LibRaw], m4_esyscmd([./version.sh]), [info@libraw.org], [], [http://www.libraw.org])
++AC_INIT([LibRaw],[m4_esyscmd(./version.sh)],[info@libraw.org],[],[http://www.libraw.org])
+ AM_INIT_AUTOMAKE([foreign no-define])
+-#AM_SILENT_RULES([yes])
++dnl AM_SILENT_RULES([yes])
+ AC_CONFIG_MACRO_DIR([m4])
+ AC_CANONICAL_HOST
+ 
+ # Tools to use
+ AC_PROG_CXX
+ AC_PROG_CC
+-AC_PROG_LIBTOOL
+-AC_ENABLE_SHARED
+-AC_ENABLE_STATIC
+-AC_LIBTOOL_WIN32_DLL
++LT_INIT([win32-dll])
+ AC_LIBTOOL_SETUP
+ AC_SUBST(LIBTOOL_DEPS)
+ 
