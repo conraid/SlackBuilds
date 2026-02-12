@@ -5,7 +5,7 @@
 # Based on https://slackbuilds.org/slackbuilds/14.2/multimedia/x265/x265.SlackBuild
 # (c) 2014-2018 Willy Sudiarto Raharjo <willysr@slackbuilds.org>
 
-# Copyright 2018-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2018-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -28,13 +28,13 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=x265
-VERSION=3.4
-BUILD=${BUILD:-2}
+VERSION=4.1
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -72,9 +72,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.gz
-cd $PKGNAM-$VERSION
+rm -rf ${PKGNAM}_${VERSION}
+tar xvf $CWD/${PKGNAM}_${VERSION}.tar.gz
+cd ${PKGNAM}_${VERSION}
 
 chown -R root:root .
 find -L . \
@@ -113,7 +113,6 @@ if [ "$ARCH" = "x86_64" ]; then
     -DENABLE_CLI=OFF \
     -DENABLE_SHARED=OFF \
     -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
     ../source
   make
 
@@ -129,7 +128,6 @@ if [ "$ARCH" = "x86_64" ]; then
     -DENABLE_CLI=OFF \
     -DENABLE_SHARED=OFF \
     -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
     ../source
   make
 
@@ -150,7 +148,6 @@ if [ "$ARCH" = "x86_64" ]; then
     -DLINKED_10BIT=ON \
     -DLINKED_12BIT=ON \
     -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
     ../source
   make
 
