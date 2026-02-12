@@ -2,7 +2,7 @@
 #
 # Slackware build script for testssl.sh
 #
-# Copyright 2019-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2019-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=testssl.sh
 PKGNAM=testssl_sh
-VERSION=3.2.2
+VERSION=3.2.3
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -64,10 +64,18 @@ find . \
   -exec chmod 644 {} \+
 
 # Apply patches
-if [ -e $CWD/patches/ ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
+if compgen -G "$CWD/patches/*.patch" > /dev/null; then
+  if [ -f "$CWD/patches/series" ]; then
+    while IFS= read -r PATCH; do
+      [ -z "$PATCH" ] && continue
+      [ "${PATCH#\#}" != "$PATCH" ] && continue
+      patch -p1 -i "$CWD/patches/$PATCH"
+    done < "$CWD/patches/series"
+  else
+    for PATCH in "$CWD"/patches/*.patch; do
+      patch -p1 -i "$PATCH"
+    done
+  fi
 fi
 
 install -Dm755 testssl.sh $PKG/usr/bin/testssl.sh
