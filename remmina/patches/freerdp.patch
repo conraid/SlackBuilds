@@ -1,0 +1,16 @@
+diff -Naupr a/plugins/rdp/rdp_monitor.c b/plugins/rdp/rdp_monitor.c
+--- a/plugins/rdp/rdp_monitor.c	2026-02-14 13:16:54.000000000 +0100
++++ b/plugins/rdp/rdp_monitor.c	2026-02-14 14:26:22.706673757 +0100
+@@ -199,7 +199,11 @@ void remmina_rdp_monitor_get (rfContext
+     freerdp_settings_set_pointer(settings, FreeRDP_MonitorDefArray, rdp_monitors);
+ #endif
+ 	freerdp_settings_set_uint32(settings, FreeRDP_MonitorCount, index);
+-	rdpMonitor* srdp_monitors = freerdp_settings_get_pointer_writable(settings, FreeRDP_MonitorDefArray);
++    rdpMonitor* srdp_monitors = NULL;
++    freerdp_settings_get_pointer_writable(settings,
++                                       FreeRDP_MonitorDefArray,
++                                       (void**)&srdp_monitors);
++
+ 	
+ 	/* Subtract monitor shift from monitor variables for server-side use.
+ 	 * We maintain monitor shift value as Window requires the primary monitor to have a
