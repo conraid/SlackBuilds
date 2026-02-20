@@ -2,7 +2,7 @@
 #
 # Slackware build script for rtmpdump
 #
-# Copyright 2017-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2017-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -25,14 +25,14 @@
 #
 # Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=rtmpdump
-SRCVERSION=6f6bb1353fc84f4cc37138baa99f586750028a01
-VERSION="2.6_${SRCVERSION:0:7}"
-BUILD=${BUILD:-4}
+SRCVERSION=2.6
+VERSION="${SRCVERSION:0:7}"
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -70,9 +70,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$SRCVERSION || rm -rf $SRCVERSION
-tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION
-cd $PKGNAM-$SRCVERSION || cd $SRCVERSION
+rm -rf $PKGNAM-$SRCVERSION
+tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.xz
+cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
 find -L . \
@@ -82,10 +82,17 @@ find -L . \
   -exec chmod 644 {} \;
 
 # Apply patches
-if [ -e $CWD/patches ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
+if compgen -G "$CWD/patches/*.patch" > /dev/null; then
+  if [ -f "$CWD/patches/series" ]; then
+    while IFS= read -r PATCH; do
+      [ -z "$PATCH" ] && continue
+      patch -p1 -i "$CWD/patches/$PATCH"
+    done < "$CWD/patches/series"
+  else
+    for PATCH in "$CWD"/patches/*.patch; do
+      patch -p1 -i "$PATCH"
+    done
+  fi
 fi
 
 sed -i -e 's/^CRYPTO=OPENSSL/#CRYPTO=OPENSSL/' \
