@@ -1,0 +1,216 @@
+#!/bin/bash
+#
+# Slackware build script for wine
+#
+# Copyright 2015-2026 Corrado Franco (https://corradofranco.it)
+# All rights reserved.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version, with the following exception:
+# the text of the GPL license may be omitted.
+
+# This program is distributed in the hope that it will be useful, but
+# without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose. Compiling,
+# interpreting, executing or merely reading the text of the program
+# may result in lapses of consciousness and/or very being, up to and
+# including the end of all existence and the Universe as we know it.
+# See the GNU General Public License for more details.
+
+# You may have received a copy of the GNU General Public License along
+# with this program (most likely, a file named COPYING).  If not, see
+# <http://www.gnu.org/licenses/>.
+#
+# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+#
+# This script is to pure 64bit version or pure 32bit version. Not multilib
+
+
+set -euo pipefail
+
+cd $(dirname $0) ; CWD=$(pwd)
+
+PRGNAM=wine
+PKGNAM=wine
+SRCVERSION=11.3
+STAGEVERSION=11.3
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-1}
+TAG=${TAG:-cf}
+TMP=${TMP:-/tmp/pkg}
+PKG=$TMP/package-$PRGNAM
+OUTPUT=${OUTPUT:-/tmp}
+
+STAGING=${STAGING:-YES}
+
+# Add the "Gecko", Wine's own implementation of Internet Explorer. (Thanks to Alien)
+# For matching wine-gecko & wine versions, see https://gitlab.winehq.org/wine/wine/-/wikis/Gecko
+GECKO=${GECKO:-2.47.4}
+
+# Add the "Mono", Wine's own implementation of the .NET Framework.
+# For matching wine-mono & wine versions, see https://gitlab.winehq.org/wine/wine/-/wikis/Wine-Mono
+MONO=${MONO:-11.0.0}
+
+DOCFILES="ANNOUNCE AUTHORS COPYING.LIB LICENSE* README VERSION"
+
+if [ -z ${ARCH:=""} ]; then
+  case "$( uname -m )" in
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
+  esac
+fi
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
+  exit 0
+fi
+
+if [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC -pipe -fomit-frame-pointer"
+  LIBDIRSUFFIX="64"
+else
+  echo "This script is only for 64bit"
+  exit 1
+fi
+
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+rm -rf $PRGNAM-$SRCVERSION $PRGNAM-staging-$STAGEVERSION
+tar xvf $CWD/$PRGNAM-$SRCVERSION.tar.xz
+
+# Apply staging patches
+if [ -e $CWD/$PRGNAM-staging-$STAGEVERSION.tar.gz ] && [ $STAGING = "YES" ]; then
+  echo "Apply staging patches..."
+
+  tar xvf $CWD/$PRGNAM-staging-$STAGEVERSION.tar.gz
+  cd $TMP/$PRGNAM-staging-$STAGEVERSION/
+    if [ -e $CWD/patches-staging ]; then
+      if [ -e $CWD/patches-staging/series ]; then
+        for PATCH in $(cat $CWD/patches-staging/series); do
+          patch -p1 -i $CWD/patches-staging/$PATCH
+        done
+      else
+        for PATCH in $CWD/patches-staging/*.patch; do
+          patch -p1 -i $PATCH
+        done
+      fi
+    fi
+    cd staging
+    ./patchinstall.py --backend=patch --all -d $TMP/$PRGNAM-$SRCVERSION
+    cd ..
+  cd ..
+fi
+
+cd $TMP/$PRGNAM-$SRCVERSION
+
+# Apply patches
+if [ -e $CWD/patches ]; then
+  if [ -e $CWD/patches/series ]; then
+    for PATCH in $(cat $CWD/patches/series); do
+      patch -p1 -i $CWD/patches/$PATCH
+    done
+  else
+    for PATCH in $CWD/patches/*.patch; do
+      patch -p1 -i $PATCH
+    done
+  fi
+fi
+
+chown -R root:root .
+find -L . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \; -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
+
+# Fix opencl.h header
+sed 's|OpenCL/opencl.h|CL/opencl.h|g' -i configure*
+
+autoreconf -f
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+  --prefix=/usr \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --sysconfdir=/etc \
+  --localstatedir=/var \
+  --mandir=/usr/man \
+  --infodir=/usr/info \
+  --docdir=/usr/doc/$PKGNAM-$VERSION \
+  --with-gnutls=yes \
+  --with-opengl \
+  --with-x \
+  --enable-win64 \
+  --with-gstreamer \
+  --disable-tests \
+  --enable-archs=x86_64,i386 \
+  --without-oss \
+  --without-capi \
+  --host=$ARCH-slackware-linux \
+  --build=$ARCH-slackware-linux
+
+make
+make DESTDIR=$PKG install
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
+
+# Add Wine's built-in replacement for Microsoft's Internet Explorer (Thanks to Arch):
+tar xvf $CWD/wine-gecko-$GECKO-x86.tar.xz
+tar xvf $CWD/wine-gecko-$GECKO-x86_64.tar.xz
+mkdir -p $PKG/usr/share/wine/gecko
+cp -dr --no-preserve='ownership' wine-gecko-$GECKO-x86{,_64} $PKG/usr/share/wine/gecko/
+
+#Add Wine's built-in replacement for Microsoft's .NET Framework (Thanks to Arch):
+tar xvf $CWD/$PRGNAM-mono-$MONO-x86.tar.xz
+mkdir -p $PKG/usr/share/wine/mono
+cp -dr --no-preserve='ownership' wine-mono-$MONO $PKG/usr/share/wine/mono/
+
+# Add the font converter programs:
+if [ -e tools/sfnt2fon/sfnt2fon ]; then
+  install -Dm755 tools/sfnt2fon/sfnt2fon $PKG/usr/bin/sfnt2fon
+fi
+
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+
+if [ -d $PKG/usr/man ]; then
+  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+fi
+
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+
+# Add a desktop and icon files for wine's desktop files (Thanks to Alien and Simone Giustetti):
+install -Dm744 $CWD/files/*.desktop -t $PKG/usr/share/applications/
+install -Dm744 programs/winecfg/logo.svg ${PKG}/usr/share/icons/hicolor/scalable/apps/wine.svg
+install -Dm744 programs/cmd/wcmd.svg -t ${PKG}/usr/share/icons/hicolor/scalable/apps/
+for CMD in iexplore notepad regedit taskmgr winecfg winefile; do
+  install -Dm744 programs/$CMD/$CMD.svg -t ${PKG}/usr/share/icons/hicolor/scalable/apps/
+done
+install -Dm744 $CWD/files/*.png -t $PKG/usr/share/pixmaps/
+
+# Add a desktop menu for WINE related applications:
+install -Dm744 $CWD/files/wine.menu ${PKG}/etc/xdg/menus/applications-merged/wine.menu
+
+# Font aliasing settings for Win32 applications (Thanks to Arch):
+mkdir -p $PKG/usr/share/fontconfig/conf.{avail,default}
+install -m644 "$CWD/files/30-win32-aliases.conf" "$PKG/usr/share/fontconfig/conf.avail"
+ln -s ../conf.avail/30-win32-aliases.conf "$PKG/usr/share/fontconfig/conf.default/30-win32-aliases.conf"
+install -Dm644 "$CWD/files/wine-binfmt.conf" "$PKG/usr/lib/binfmt.d/wine.conf"
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
