@@ -2,7 +2,7 @@
 #
 # Slackware build script for pydantic-core
 #
-# Copyright 2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2025-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,9 +29,9 @@ set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=pydantic-core
+PRGNAM=pydantic_core
 PKGNAM=python-${PRGNAM//_/-}
-SRCVERSION=2.41.5
+SRCVERSION=2.42.0
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
