@@ -2,7 +2,7 @@
 #
 # Slackware build script for libpeas
 #
-# Copyright 2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2025-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=libpeas
 PKGNAM=${PRGNAM,,}
-SRCVERSION=2.2.0
+SRCVERSION=2.2.1
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -83,14 +83,16 @@ find . \
   -exec chmod 644 {} \;
 
 # Apply patches
-if [ -e $CWD/patches/ ]; then
-  if [ -e $CWD/patches/series ]; then
-    for PATCH in $(cat $CWD/patches/series); do
-      patch -p1 -i $CWD/patches/$PATCH
-    done
+if compgen -G "$CWD/patches/*.patch" > /dev/null; then
+  if [ -f "$CWD/patches/series" ]; then
+    while IFS= read -r PATCH; do
+      [ -z "$PATCH" ] && continue
+      [ "${PATCH#\#}" != "$PATCH" ] && continue
+      patch -p1 -i "$CWD/patches/$PATCH"
+    done < "$CWD/patches/series"
   else
-    for PATCH in $CWD/patches/*.patch; do
-      patch -p1 -i $PATCH
+    for PATCH in "$CWD"/patches/*.patch; do
+      patch -p1 -i "$PATCH"
     done
   fi
 fi
