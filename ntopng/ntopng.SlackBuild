@@ -2,7 +2,7 @@
 #
 # Slackware build script for ntopng
 #
-# Copyright 2013-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2013-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=ntopng
 SRCVERSION=6.6
 VERSION="${SRCVERSION:0:7}"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg-ntop} # I use a different directory than usual because to make things easier for me I have to delete the whole directory.
 PKG=$TMP/package-$PKGNAM/
@@ -90,14 +90,16 @@ find -L . \
   -exec chmod 644 {} \;
 
 # Apply patches
-if [ -e $CWD/patches/ ]; then
-  if [ -e $CWD/patches/series ]; then
-    for PATCH in $(cat $CWD/patches/series); do
-      patch -p1 -i $CWD/patches/$PATCH
-    done
+if compgen -G "$CWD/patches/*.patch" > /dev/null; then
+  if [ -f "$CWD/patches/series" ]; then
+    while IFS= read -r PATCH; do
+      [ -z "$PATCH" ] && continue
+      [ "${PATCH#\#}" != "$PATCH" ] && continue
+      patch -p1 -i "$CWD/patches/$PATCH"
+    done < "$CWD/patches/series"
   else
-    for PATCH in $CWD/patches/*.patch; do
-      patch -p1 -i $PATCH
+    for PATCH in "$CWD"/patches/*.patch; do
+      patch -p1 -i "$PATCH"
     done
   fi
 fi
