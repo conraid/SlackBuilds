@@ -30,9 +30,9 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=gmic
-SRCVERSION=3.6.6
+SRCVERSION=3.7.1
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -80,10 +80,18 @@ find -L . \
   -exec chmod 644 {} \;
 
 # Apply patches
-if [ -e $CWD/patches/ ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
+if compgen -G "$CWD/patches/*.patch" > /dev/null; then
+  if [ -f "$CWD/patches/series" ]; then
+    while IFS= read -r PATCH; do
+      [ -z "$PATCH" ] && continue
+      [ "${PATCH#\#}" != "$PATCH" ] && continue
+      patch -p1 -i "$CWD/patches/$PATCH"
+    done < "$CWD/patches/series"
+  else
+    for PATCH in "$CWD"/patches/*.patch; do
+      patch -p1 -i "$PATCH"
+    done
+  fi
 fi
 
 cd src
