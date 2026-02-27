@@ -1,29 +1,29 @@
-# JACK Servers in this Package
+=== JACK Servers in this Package ===
 
-This package includes **both the classic JACK server ("jackd") and the D-Bus enabled server ("jackdbus")**. You can choose which one to use depending on your workflow.
+This package includes both the classic JACK server ("jackd") and the D-Bus enabled server ("jackdbus").
+You can choose which one to use depending on your workflow.
 
-## Classic JACK ("jackd")
+== Classic JACK ("jackd") ==
 
 - Uses the traditional `.jackdrc` configuration file.
 - Recommended if you prefer manual control or use `qjackctl` in classic mode.
 - Example to start:
 
-```bash
-jackd -d alsa -d hw:0
+# jackd -d alsa -d hw:0
 
-## D-Bus JACK ("jackdbus")
+== D-Bus JACK ("jackdbus") ==
 
 D-Bus JACK provides integration with desktop environments and tools like `qjackctl`.
 
 **Important notes:**
 
-- `.jackdrc` and some classic `qjackctl` settings are ignored.
+- ".jackdrc" and some classic "qjackctl" settings are ignored.
 
 **Example to start D-Bus JACK:**
 
-```bash
-jack_control start
+# jack_control start
 
-## IMPORTANT
+== IMPORTANT ==
 
-**Do not run `jackd` and `jackdbus` at the same time** — this may cause conflicts accessing the audio hardware.
+**Do not run "jackd" and "jackdbus" at the same time**
+  this may cause conflicts accessing the audio hardware.
