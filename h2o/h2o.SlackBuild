@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=h2o
 PKGNAM=${PRGNAM,,}
-SRCVERSION=a9ba592b904684b8d12e9a825e4a579c31999c2b
+SRCVERSION=725e54bc932fbe0c6e208db4e71eb1df79ec43ff
 VERSION=${SRCVERSION:0:7}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -83,14 +83,16 @@ find . \
   -exec chmod 644 {} \;
 
 # Apply patches
-if [ -e $CWD/patches/ ]; then
-  if [ -e $CWD/patches/series ]; then
-    for PATCH in $(cat $CWD/patches/series); do
-      patch -p1 -i $CWD/patches/$PATCH
-    done
+if compgen -G "$CWD/patches/*.patch" > /dev/null; then
+  if [ -f "$CWD/patches/series" ]; then
+    while IFS= read -r PATCH; do
+      [ -z "$PATCH" ] && continue
+      [ "${PATCH#\#}" != "$PATCH" ] && continue
+      patch -p1 -i "$CWD/patches/$PATCH"
+    done < "$CWD/patches/series"
   else
-    for PATCH in $CWD/patches/*.patch; do
-      patch -p1 -i $PATCH
+    for PATCH in "$CWD"/patches/*.patch; do
+      patch -p1 -i "$PATCH"
     done
   fi
 fi
