@@ -26,14 +26,14 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 #
-# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+# Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 
 set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libvirt
-VERSION=12.0.0
+VERSION=12.1.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -42,8 +42,12 @@ OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="AUTHORS ChangeLog COPYING* INSTALL README NEWS TODO"
 
+# Some optional dependencies checks
 audit="dis" ; if pkg-config --exists audit ; then audit="en" ; fi
 libiscsi="dis" ; if pkg-config --exists libiscsi ; then libiscsi="en" ; fi
+bash_completion="" ; if pkg-config --exists bash-completion ; then
+  bash_completion="-Dbash_completion=enabled -Dbash_completion_dir=/usr/share/bash-completion/completions"
+fi
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -87,11 +91,24 @@ find . \
   -exec chmod 644 {} \+
 
 # Apply patches
-if [ -e $CWD/patches/ ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
+if compgen -G "$CWD/patches/*.patch" > /dev/null; then
+  if [ -f "$CWD/patches/series" ]; then
+    while IFS= read -r PATCH; do
+      [ -z "$PATCH" ] && continue
+      [ "${PATCH#\#}" != "$PATCH" ] && continue
+      patch -p1 -i "$CWD/patches/$PATCH"
+    done < "$CWD/patches/series"
+  else
+    for PATCH in "$CWD"/patches/*.patch; do
+      patch -p1 -i "$PATCH"
+    done
+  fi
 fi
+
+# we have sysctld files in /etc/sysctl.d
+sed -i "s|prefix / 'lib' / 'sysctl.d'|sysconfdir / 'sysctl.d'|" src/remote/meson.build
+
+sed -i 's|@VIRTGROUP@|users|g' src/remote/libvirtd.rules
 
 export CFLAGS="$SLKCFLAGS"
 export CXXFLAGS="$SLKCFLAGS"
@@ -117,14 +134,13 @@ meson setup \
   -D                b_lto=true \
   -D                b_pie=true \
   -D                docdir=/usr/doc/$PKGNAM-$VERSION \
-  -D                bash_completion=enabled \
-  -D                bash_completion_dir=/usr/share/bash-completion/completions \
   -D                qemu_group=users \
   -D                qemu_user=root \
   -D                runstatedir=/run \
   -D                audit=${audit}abled \
   -D                libiscsi=${libiscsi}abled \
   -D                init_script=none \
+  $bash_completion \
   ..
 
 ninja

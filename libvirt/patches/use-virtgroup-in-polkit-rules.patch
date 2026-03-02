@@ -1,0 +1,15 @@
+diff -Nur libvirt-4.6.0.orig/src/remote/libvirtd.rules libvirt-4.6.0/src/remote/libvirtd.rules
+--- libvirt-4.6.0.orig/src/remote/libvirtd.rules	2018-02-26 03:02:18.496310271 -0600
++++ libvirt-4.6.0/src/remote/libvirtd.rules	2018-08-12 21:55:35.293691409 -0500
+@@ -1,9 +1,9 @@
+-// Allow any user in the 'libvirt' group to connect to system libvirtd
++// Allow any user in the '@VIRTGROUP@' group to connect to system libvirtd
+ // without entering a password.
+ 
+ polkit.addRule(function(action, subject) {
+     if (action.id == "org.libvirt.unix.manage" &&
+-        subject.isInGroup("libvirt")) {
++        subject.isInGroup("@VIRTGROUP@")) {
+         return polkit.Result.YES;
+     }
+ });
