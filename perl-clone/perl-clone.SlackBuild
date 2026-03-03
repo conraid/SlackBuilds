@@ -2,7 +2,7 @@
 #
 # Slackware build script for perl-clone
 #
-# Copyright 2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2025-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,16 +23,16 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 #
-# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+# Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=Clone
 PKGNAM=perl-clone
-SRCVERSION=0.47
-VERSION=$(echo $SRCVERSION | tr - _)
+SRCVERSION=0.48
+VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -82,6 +82,7 @@ find . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
+PERL_MM_USE_DEFAULT=1 \
 perl Makefile.PL \
   PREFIX=/usr \
   INSTALLDIRS=vendor \
@@ -106,6 +107,9 @@ fi
 # Remove perllocal.pod and other special files
 find $PKG -name perllocal.pod -o -name ".packlist" -o -name "*.bs" | xargs rm -f || true
 
+# Remove root node_modules
+rm -rf $PKG/usr/lib${LIBDIRSUFFIX}/node_modules/root
+
 # Remove empty directories
 find $PKG -depth -type d -empty -delete
 
@@ -115,9 +119,6 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
-fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
