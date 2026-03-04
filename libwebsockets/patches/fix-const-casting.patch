@@ -1,0 +1,36 @@
+diff -Naupr a/lib/core-net/socks5-client.c b/lib/core-net/socks5-client.c
+--- a/lib/core-net/socks5-client.c	2026-03-04 14:06:10.000000000 +0100
++++ b/lib/core-net/socks5-client.c	2026-03-04 16:18:28.332437829 +0100
+@@ -39,15 +39,15 @@ lws_set_socks(struct lws_vhost *vhost, c
+ 	vhost->socks_user[0] = '\0';
+ 	vhost->socks_password[0] = '\0';
+ 
+-	p_at = strrchr(socks, '@');
+-	if (p_at) { /* auth is around */
++	p_at = (char *)strrchr(socks, '@');
++    if (p_at) { /* auth is around */
+ 		if (lws_ptr_diff_size_t(p_at, socks) > (sizeof(user) +
+ 							sizeof(password) - 2)) {
+ 			lwsl_vhost_err(vhost, "auth too long");
+ 			goto bail;
+ 		}
+ 
+-		p_colon = strchr(socks, ':');
++        p_colon = (char *)strchr(socks, ':');
+ 		if (p_colon) {
+ 			if (lws_ptr_diff_size_t(p_colon, socks) >
+ 							     sizeof(user) - 1) {
+diff -Naupr a/lib/roles/http/server/server.c b/lib/roles/http/server/server.c
+--- a/lib/roles/http/server/server.c	2026-03-04 14:06:10.000000000 +0100
++++ b/lib/roles/http/server/server.c	2026-03-04 16:19:17.184532345 +0100
+@@ -1350,8 +1350,8 @@ lws_http_proxy_start(struct lws *wsi, co
+ 	if (hit->origin[0] == '+')
+ 		unix_skt = 1;
+ 
+-	pcolon = strchr(hit->origin, ':');
+-	pslash = strchr(hit->origin, '/');
++    pcolon = (char *)strchr(hit->origin, ':');
++	pslash = (char *)strchr(hit->origin, '/');
+ 	if (!pslash) {
+ 		lwsl_err("Proxy mount origin '%s' must have /\n", hit->origin);
+ 		return -1;
