@@ -23,7 +23,7 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 #
-# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+# Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 
 set -euo pipefail
 
@@ -33,7 +33,7 @@ PRGNAM=lazysql
 PKGNAM=${PRGNAM,,}
 SRCVERSION=0.4.8
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -97,13 +97,26 @@ if compgen -G "$CWD/patches/*.patch" > /dev/null; then
   fi
 fi
 
+# Use vendor mode if directory is present; otherwise, fallback to readonly
+# to prevent automatic go.mod updates during the build process.
+if [ -d vendor ]; then
+  MOD_STRATEGY="-mod=vendor"
+else
+  MOD_STRATEGY="-mod=readonly"
+fi
+
 export CGO_CPPFLAGS="$SLKCFLAGS"
 export CGO_CFLAGS="$SLKCFLAGS"
 export CGO_CXXFLAGS="$SLKCFLAGS"
-export GOFLAGS="-buildmode=pie -trimpath -mod=readonly -modcacherw -v -ldflags=-linkmode=external -ldflags=-s -ldflags=-w"
 
-go build -o $PKGNAM
-install -Dm755 $PKGNAM $PKG/usr/bin/$PKGNAM
+export GOPATH="$(pwd)/.gocache"
+export GOPROXY="https://proxy.golang.org,direct"
+
+export GOFLAGS="$MOD_STRATEGY -buildmode=pie -trimpath -modcacherw"
+LIB_LDFLAGS="-linkmode=external -s -w"
+
+mkdir -p "$PKG"/usr/bin
+go build -ldflags="$LIB_LDFLAGS" -o "$PKG"/usr/bin/$PRGNAM .
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
