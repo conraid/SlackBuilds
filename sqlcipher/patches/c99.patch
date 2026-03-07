@@ -1,0 +1,11 @@
+diff -Naupr a/src/tclsqlite.c b/src/tclsqlite.c
+--- a/src/tclsqlite.c	2025-04-17 22:50:18.000000000 +0200
++++ b/src/tclsqlite.c	2025-05-14 14:24:47.980251855 +0200
+@@ -63,6 +63,7 @@
+ # include <stdlib.h>
+ # include <string.h>
+ # include <assert.h>
++# include <stdint.h>
+   typedef unsigned char u8;
+ # ifndef SQLITE_PTRSIZE
+ #   if defined(__SIZEOF_POINTER__)
