@@ -2,7 +2,7 @@
 #
 # Slackware build script for crlfuzz
 #
-# Copyright 2021-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2021-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,17 +23,17 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 #
-# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+# Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=crlfuzz
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
+PKGNAM=${PRGNAM,,}
 SRCVERSION=1.4.1
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-4}
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -95,15 +95,26 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
-export CGO_CPPFLAGS="${SLKCFLAGS}"
-export CGO_CFLAGS="${SLKCFLAGS}"
-export CGO_CXXFLAGS="${SLKCFLAGS}"
-export GOFLAGS="-buildmode=pie -trimpath -ldflags=-linkmode=external -mod=readonly -modcacherw"
+# Use vendor mode if directory is present; otherwise, fallback to readonly
+# to prevent automatic go.mod updates during the build process.
+if [ -d vendor ]; then
+  MOD_STRATEGY="-mod=vendor"
+else
+  MOD_STRATEGY="-mod=readonly"
+fi
 
-cd cmd/crlfuzz
-go build .
-install -Dm755 crlfuzz $PKG/usr/bin/$PKGNAM
-cd -
+export CGO_CPPFLAGS="$SLKCFLAGS"
+export CGO_CFLAGS="$SLKCFLAGS"
+export CGO_CXXFLAGS="$SLKCFLAGS"
+
+export GOPATH="$(pwd)/.gocache"
+export GOPROXY="https://proxy.golang.org,direct"
+
+export GOFLAGS="$MOD_STRATEGY -buildmode=pie -trimpath -modcacherw"
+LIB_LDFLAGS="-linkmode=external -s -w"
+
+mkdir -p "$PKG"/usr/bin
+go build -ldflags="$LIB_LDFLAGS" -o "$PKG"/usr/bin/$PRGNAM ./cmd/$PRGNAM
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
