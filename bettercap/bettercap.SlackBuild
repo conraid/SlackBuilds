@@ -2,7 +2,7 @@
 #
 # Slackware build script for bettercap
 #
-# Copyright 2019-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2019-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 #
-# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+# Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 
 set -euo pipefail
 
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=bettercap
 VERSION=2.41.5
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -83,28 +83,40 @@ find -L . \
   -exec chmod 644 {} \;
 
 # Apply patches
-if [ -e $CWD/patches/ ]; then
-  if [ -e $CWD/patches/series ]; then
-    for PATCH in $(cat $CWD/patches/series); do
-      patch -p1 -i $CWD/patches/$PATCH
-    done
+if compgen -G "$CWD/patches/*.patch" > /dev/null; then
+  if [ -f "$CWD/patches/series" ]; then
+    while IFS= read -r PATCH; do
+      [ -z "$PATCH" ] && continue
+      [ "${PATCH#\#}" != "$PATCH" ] && continue
+      patch -p1 -i "$CWD/patches/$PATCH"
+    done < "$CWD/patches/series"
   else
-    for PATCH in $CWD/patches/*.patch; do
-      patch -p1 -i $PATCH
+    for PATCH in "$CWD"/patches/*.patch; do
+      patch -p1 -i "$PATCH"
     done
   fi
 fi
 
-cd ..
-mkdir -p go/src/github.com/bettercap
-ln -rTsf $TMP/$PKGNAM/$PKGNAM-$VERSION go/src/github.com/bettercap/bettercap
+# Use vendor mode if directory is present; otherwise, fallback to readonly
+# to prevent automatic go.mod updates during the build process.
+if [ -d vendor ]; then
+  MOD_STRATEGY="-mod=vendor"
+else
+  MOD_STRATEGY="-mod=readonly"
+fi
 
-cd go/src/github.com/bettercap/bettercap
+export CGO_CPPFLAGS="$SLKCFLAGS"
+export CGO_CFLAGS="$SLKCFLAGS"
+export CGO_CXXFLAGS="$SLKCFLAGS"
 
-export GOPATH="$TMP/$PKGNAM/go/"
+export GOPATH="$(pwd)/.gocache"
+export GOPROXY="https://proxy.golang.org,direct"
 
-go build -o bettercap .
-install -Dm755 bettercap $PKG/usr/bin/bettercap
+export GOFLAGS="$MOD_STRATEGY -buildmode=pie -trimpath -modcacherw"
+LIB_LDFLAGS="-linkmode=external -s -w"
+
+mkdir -p "$PKG"/usr/bin
+go build -ldflags="$LIB_LDFLAGS" -o "$PKG"/usr/bin/ ./...
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
