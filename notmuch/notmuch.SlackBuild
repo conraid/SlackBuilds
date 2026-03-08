@@ -2,7 +2,7 @@
 #
 # Slackware build script for notmuch
 #
-# Copyright 2015-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2015-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,15 +23,15 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 #
-# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+# Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 
 set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=notmuch
-VERSION=0.39
-BUILD=${BUILD:-3}
+VERSION=0.40
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -76,6 +76,7 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
+GMIME_SESSION_KEYS=no \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
@@ -89,7 +90,11 @@ CXXFLAGS="$SLKCFLAGS" \
   --build=$ARCH-slackware-linux
 
 make
+make ruby-bindings
 make DESTDIR=$PKG install
+
+# Install emacs parts
+make DESTDIR="$PKG" install-emacs
 
 # Install ruby bindings
 sed -i 's|INSTALL = .*[^D]$|& -D|' bindings/ruby/Makefile
@@ -97,7 +102,8 @@ make -C bindings/ruby exec_prefix=$PKG/usr prefix=/usr install
 
 # Install python bindings
 cd bindings/python-cffi
-python3 setup.py install --prefix=/usr --root=$PKG
+  python3 -m build --wheel --no-isolation
+  python3 -m installer --destdir "$PKG" dist/*.whl
 cd -
 
 # Don't ship .la files:
