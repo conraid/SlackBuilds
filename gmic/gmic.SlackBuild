@@ -23,20 +23,22 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 #
-# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+# Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 #
 set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=gmic
-SRCVERSION=3.7.1
+SRCVERSION=3.7.3
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
+
+DOCFILES="README* COPYING *.md"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -94,16 +96,42 @@ if compgen -G "$CWD/patches/*.patch" > /dev/null; then
   fi
 fi
 
-cd src
-# Fix path
-sed -i -e "s|\$(SHARE)/doc/gmic|\$(PREFIX)doc/gmic-$VERSION|g" \
-       -e 's|$(SHARE)/man|$(PREFIX)/man|' \
-       Makefile
+cmake -B build -S . -Wno-dev \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DCMAKE_INSTALL_MANDIR=/usr/man \
+  -DENABLE_DYNAMIC_LINKING=ON \
+  -DBUILD_LIB_STATIC=OFF \
+  -DENABLE_OPENCV=ON
+cmake --build build
+DESTDIR="$PKG" cmake --install build
 
-make -j1 LIB=lib$LIBDIRSUFFIX CFLAGS="$SLKCFLAGS" lib libc cli_shared gmic_qt_shared zart_shared gimp_shared
-make DESTDIR=$PKG LIB=lib$LIBDIRSUFFIX install
+export LDFLAGS="-L../build"
+cmake -B build-qt -S gmic-qt -Wno-dev \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DCMAKE_INSTALL_MANDIR=/usr/man \
+  -DENABLE_DYNAMIC_LINKING=ON \
+  -DCMAKE_PREFIX_PATH=$PKG/usr \
+  -DBUILD_WITH_QT6=ON \
+  -DGMIC_QT_HOST=none
+cmake --build build-qt
+DESTDIR="$PKG" cmake --install build-qt
+install -Dm644 resources/gmic_cluts.gmz -t $PKG/usr/share/gmic
 
-cd ..
+cmake -B build-gimp -S gmic-qt -Wno-dev \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DCMAKE_INSTALL_MANDIR=/usr/man \
+  -DENABLE_DYNAMIC_LINKING=ON \
+  -DCMAKE_PREFIX_PATH=$PKG/usr \
+  -DBUILD_WITH_QT6=ON \
+  -DGMIC_QT_HOST=gimp3
+cmake --build build-gimp
+DESTDIR="$PKG" cmake --install build-gimp
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -111,18 +139,23 @@ rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
+# Install icons and desktop file
+for size in 16 32 48 64; do
+    install -Dm644 gmic-qt/icons/application/${size}-gmic_qt.png $PKG/usr/share/icons/hicolor/${size}x${size}/apps/gmic_qt.png
+done
+install -Dm644 gmic-qt/icons/application/gmic_qt.svg $PKG/usr/share/icons/hicolor/scalable/apps/gmic_qt.svg
+install -Dm644 gmic-qt/gmic_qt.desktop $PKG/usr/share/applications/gmic_qt.desktop
+
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cp -a COPYING README* $PKG/usr/doc/$PKGNAM-$VERSION || true
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 # Remove root node_modules
 rm -rf $PKG/usr/lib${LIBDIRSUFFIX}/node_modules/root
-
-# Remove empty dir
-rmdir $PKG/usr/share || true
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
