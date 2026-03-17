@@ -2,7 +2,7 @@
 #
 # Slackware build script for varnish
 #
-# Copyright 2015-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2015-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 #
-# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+# Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 
 # IMPORTANT
 #
@@ -38,7 +38,7 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=varnish
-VERSION=8.0.0
+VERSION=8.0.1
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -89,13 +89,21 @@ find -L . \
   -exec chmod 644 {} \;
 
 # Apply patches
-if [ -e $CWD/patches/ ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
+if compgen -G "$CWD/patches/*.patch" > /dev/null; then
+  if [ -f "$CWD/patches/series" ]; then
+    while IFS= read -r PATCH; do
+      [ -z "$PATCH" ] && continue
+      [ "${PATCH#\#}" != "$PATCH" ] && continue
+      patch -p1 -i "$CWD/patches/$PATCH"
+    done < "$CWD/patches/series"
+  else
+    for PATCH in "$CWD"/patches/*.patch; do
+      patch -p1 -i "$PATCH"
+    done
+  fi
 fi
 
-CFLAGS="$SLKCFLAGS" \
+CFLAGS="$SLKCFLAGS -Wno-error=discarded-qualifiers" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr \
