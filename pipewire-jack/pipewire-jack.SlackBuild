@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=pipewire
 PKGNAM=pipewire-jack
-SRCVERSION=1.6.1
+SRCVERSION=1.6.2
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -95,7 +95,7 @@ if [ -e $CWD/patches ]; then
   fi
 fi
 
-export CFLAGS="$SLKCFLAGS"
+export CFLAGS="$SLKCFLAGS -Wno-error=discarded-qualifiers"
 export CXXFLAGS="$SLKCFLAGS"
 mkdir meson-build
 cd meson-build
