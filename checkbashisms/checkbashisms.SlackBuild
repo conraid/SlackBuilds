@@ -23,7 +23,7 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 #
-# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+# Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 
 set -euo pipefail
 
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=devscripts
 PKGNAM=checkbashisms
-VERSION=2.26.5
+VERSION=2.26.6
 BUILD=${BUILD:-1}
 ARCH=noarch
 TAG=${TAG:-cf}
@@ -58,10 +58,18 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 # Apply patches
-if [ -e $CWD/patches/ ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
+if compgen -G "$CWD/patches/*.patch" > /dev/null; then
+  if [ -f "$CWD/patches/series" ]; then
+    while IFS= read -r PATCH; do
+      [ -z "$PATCH" ] && continue
+      [ "${PATCH#\#}" != "$PATCH" ] && continue
+      patch -p1 -i "$CWD/patches/$PATCH"
+    done < "$CWD/patches/series"
+  else
+    for PATCH in "$CWD"/patches/*.patch; do
+      patch -p1 -i "$PATCH"
+    done
+  fi
 fi
 
 install -Dm755 scripts/$PKGNAM.pl $PKG/usr/bin/$PKGNAM
