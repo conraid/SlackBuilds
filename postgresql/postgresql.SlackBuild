@@ -24,7 +24,7 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 #
-# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+# Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 
 set -euo pipefail
 
@@ -46,7 +46,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=postgresql
 VERSION=18.3
 PG_VERSION=$(echo $VERSION | cut -d. -f1)
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
