@@ -3,7 +3,7 @@
 # Slackware build script for freeimpi
 #
 # Copyright 2019, Wayne Cuddy, wcuddyATgmailDOTcom
-# Copyright 2024-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2024-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -24,14 +24,14 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 #
-# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+# Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 
 set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=freeipmi
 PKGNAM=${PRGNAM,,}
-SRCVERSION=1.6.16
+SRCVERSION=1.6.17
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -84,14 +84,16 @@ find . \
 
 
 # Apply patches
-if [ -e $CWD/patches/ ]; then
-  if [ -e $CWD/patches/series ]; then
-    for PATCH in $(cat $CWD/patches/series); do
-      patch -p1 -i $CWD/patches/$PATCH
-    done
+if compgen -G "$CWD/patches/*.patch" > /dev/null; then
+  if [ -f "$CWD/patches/series" ]; then
+    while IFS= read -r PATCH; do
+      [ -z "$PATCH" ] && continue
+      [ "${PATCH#\#}" != "$PATCH" ] && continue
+      patch -p1 -i "$CWD/patches/$PATCH"
+    done < "$CWD/patches/series"
   else
-    for PATCH in $CWD/patches/*.patch; do
-      patch -p1 -i $PATCH
+    for PATCH in "$CWD"/patches/*.patch; do
+      patch -p1 -i "$PATCH"
     done
   fi
 fi
