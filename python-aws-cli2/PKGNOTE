@@ -1,0 +1,38 @@
+AWS-CLI V2 FOR SLACKWARE - PACKAGE NOTES
+-----------------------------------------
+
+Why this package is built this way:
+
+This package installs the AWS CLI v2 into an isolated environment
+located in /opt/aws-cli2/.
+
+Unlike version 1, AWS CLI v2 requires a very strict set of
+dependencies (such as specific versions of awscrt, botocore, and
+docutils). On a stable system like Slackware, forcing these
+specific versions into the global Python site-packages would lead
+to several issues:
+
+1. Dependency Hell: Many of the required libraries (e.g., jmespath
+   or docutils) are shared by other system tools. Forcing AWS-specific
+   versions globally could break other installed software.
+
+2. System Cleanliness: By encapsulating the entire stack within
+   /opt/aws-cli2/, we ensure that the system's primary Python
+   environment remains pristine and unaffected by the CLI's
+   requirements.
+
+3. Reliability: This approach bundles all necessary C-extensions
+   (like awscrt) and Python modules into a single, dedicated Virtual
+   Environment. This ensures the CLI always runs with the exact
+   environment tested by the developers, preventing crashes caused
+   by library mismatches after a system update.
+
+Technical Implementation:
+
+* The core files and the Python Virtual Environment reside in
+  /opt/aws-cli2/.
+* A wrapper script is provided in /usr/bin/aws to allow global
+  access without needing to manually activate the environment.
+* All dependencies are compiled and bundled during the build
+  process, making this a self-contained package.
+
