@@ -43,8 +43,7 @@ to several issues:
 3. Reliability: This approach bundles all necessary C-extensions
    (like awscrt) and Python modules into a single, dedicated Virtual
    Environment. This ensures the CLI always runs with the exact
-   environment tested by the developers, preventing crashes caused
-   by library mismatches after a system update.
+   environment tested by the developers.
 
 Technical Implementation:
 
@@ -55,5 +54,6 @@ Technical Implementation:
 * All dependencies are compiled and bundled during the build
   process, making this a self-contained package.
 
+Please test this implementation and report any issues.
 
 ======================
