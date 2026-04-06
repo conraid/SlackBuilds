@@ -34,7 +34,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=wine
 PKGNAM=wine
-SRCVERSION=11.5
+SRCVERSION=11.6
 STAGEVERSION=11.3
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
@@ -168,7 +168,7 @@ tar xvf $CWD/wine-gecko-$GECKO-x86_64.tar.xz
 mkdir -p $PKG/usr/share/wine/gecko
 cp -dr --no-preserve='ownership' wine-gecko-$GECKO-x86{,_64} $PKG/usr/share/wine/gecko/
 
-#Add Wine's built-in replacement for Microsoft's .NET Framework (Thanks to Arch):
+# Add Wine's built-in replacement for Microsoft's .NET Framework (Thanks to Arch):
 tar xvf $CWD/$PRGNAM-mono-$MONO-x86.tar.xz
 mkdir -p $PKG/usr/share/wine/mono
 cp -dr --no-preserve='ownership' wine-mono-$MONO $PKG/usr/share/wine/mono/
@@ -187,7 +187,9 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
