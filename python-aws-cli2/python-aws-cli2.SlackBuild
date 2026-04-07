@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=aws-cli
 PKGNAM=python-aws-cli2
-SRCVERSION=2.34.24
+SRCVERSION=2.34.25
 VERSION="${SRCVERSION:0:7}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -97,7 +97,9 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
