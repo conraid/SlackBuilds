@@ -34,7 +34,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=moby-docker
 PKGNAM=docker
-VERSION=29.3.1
+VERSION=29.4.0
 COMMIT=fbf3ed2
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -126,7 +126,9 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
