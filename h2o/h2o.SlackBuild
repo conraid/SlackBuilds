@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=h2o
 PKGNAM=${PRGNAM,,}
-SRCVERSION=77288edcfbed39faa2db47160d2c98915bdbd0c1
+SRCVERSION=5def6149b1361776bd5abc0e4d46fb95dba5a6b0
 VERSION=${SRCVERSION:0:7}
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -132,7 +132,9 @@ fi
 install -Dm644 examples/h2o/h2o.conf "$PKG/etc/h2o.conf.new"
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
