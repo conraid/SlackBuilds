@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=igbinary
 PKGNAM=php-$PRGNAM
 VERSION=3.2.17RC1
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -107,7 +107,9 @@ find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r st
 install -Dm644 igbinary.php.ini $PKG/etc/php.d/igbinary.ini.new
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
