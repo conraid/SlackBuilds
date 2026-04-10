@@ -30,7 +30,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=apcu
 PKGNAM=php-apcu
 VERSION=5.1.28
-BUILD=${BUILD:-6}
+BUILD=${BUILD:-7}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -101,7 +101,9 @@ rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 strip --strip-unneeded $PKG/usr/lib${LIBDIRSUFFIX}/php/extensions/apcu.so
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
