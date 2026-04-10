@@ -28,7 +28,7 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=filezilla
-SRCVERSION=3.69.6
+SRCVERSION=3.70.0
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -69,7 +69,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PKGNAM-$SRCVERSION
-tar xvf $CWD/FileZilla_${SRCVERSION}_src.tar.xz
+tar xvf $CWD/FileZilla_${SRCVERSION}*_src.tar.xz
 cd $PKGNAM-$SRCVERSION
 
 chown -R root:root .
@@ -112,6 +112,10 @@ CXXFLAGS="$SLKCFLAGS" \
   --disable-manualupdatecheck \
   --enable-locales \
   --with-pugixml=system \
+  --enable-ftp=yes \
+  --enable-sftp=yes \
+  --enable-storj=yes \
+  --enable-gui=yes \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
@@ -126,7 +130,9 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
