@@ -33,7 +33,7 @@ PRGNAM=msgpack
 PKGNAM=php-$PRGNAM
 VERSION=3.0.0
 VERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-21}
+BUILD=${BUILD:-22}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -109,7 +109,9 @@ mkdir -p $PKG/etc/php.d
 echo "extension=msgpack.so" > $PKG/etc/php.d/msgpack.ini.new
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
