@@ -1,0 +1,11 @@
+prefix=/tmp/pkg/package-uplink-c/usr
+exec_prefix=${prefix}
+includedir=${prefix}/include
+libdir=${exec_prefix}/lib
+
+Name: uplink
+Description: C library for Storj V3 Network.
+Version: 0.0.0
+Cflags: -I${includedir}
+Libs: -L${libdir} -luplink
+Libs.private: -lpthread
