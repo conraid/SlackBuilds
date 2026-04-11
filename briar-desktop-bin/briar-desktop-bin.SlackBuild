@@ -2,7 +2,7 @@
 #
 # Slackware build script for briar-desktop-bin
 #
-# Copyright 2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2025-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,14 +23,14 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 #
-# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+# Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 
 set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=briar-desktop
 PKGNAM=briar-desktop-bin
-SRCVERSION=0.6.3-beta
+SRCVERSION=0.6.5-beta
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -95,7 +95,7 @@ for size in 16 32 48 64 128 192; do
 done
 
 # Install xml file
-install -Dm644 $CWD/org.briarproject.Briar.metainfo.xml "$PKG/usr/share/metainfo/org.briarproject.Briar.metainfo.xml"
+install -Dm644 $CWD/files/org.briarproject.Briar.metainfo.xml "$PKG/usr/share/metainfo/org.briarproject.Briar.metainfo.xml"
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
