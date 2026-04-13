@@ -27,13 +27,16 @@ set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PKGNAM=converseen
-VERSION=0.15.2.2
+PRGNAM=Converseen
+PKGNAM=${PRGNAM,,}
+VERSION=0.15.2.3
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
+
+DOCFILES="COPYING* README*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -65,9 +68,9 @@ fi
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PKGNAM-$VERSION
-tar xvf $CWD/$PKGNAM-$VERSION.tar.bz2
-cd $PKGNAM-$VERSION
+rm -rf $PRGNAM-$VERSION
+tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
+cd $PRGNAM-$VERSION
 
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
@@ -75,9 +78,10 @@ chmod -R u+w,go+r-w,a-s .
 mkdir -p build
 cd build
 cmake \
-  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
-  -DCMAKE_BUILD_TYPE=none \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
+  -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
+  -DUSE_QT6=ON \
   ..
 
 make
@@ -85,8 +89,11 @@ make DESTDIR=$PKG install
 cd ..
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cp COPYING INSTALL $PKG/usr/doc/$PKGNAM-$VERSION || true
-cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBuild
+shopt -s nullglob
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
+
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
