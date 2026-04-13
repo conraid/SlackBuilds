@@ -31,15 +31,15 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=webkitgtk
 PKGNAM=webkit2gtk4.1
-VERSION=2.52.0
-BUILD=${BUILD:-2}
+VERSION=2.52.2
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 DOCFILES="NEWS"
-BUILDNOLIMIT=${BUILDNOLIMIT:-2}
+BUILDNOLIMIT=${BUILDNOLIMIT:-1}
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -120,6 +120,7 @@ cmake -Wno-dev \
   -DUSE_SYSTEM_SYSPROF_CAPTURE=NO \
   -DUSE_FLITE=OFF \
   -DENABLE_SPEECH_SYNTHESIS=OFF \
+  -DENABLE_DOCUMENTATION=OFF \
   ..
 
 # The build might crash on high specs machines because ninja eat all
@@ -147,7 +148,9 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
