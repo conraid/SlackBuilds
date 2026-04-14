@@ -1,0 +1,5 @@
+The 'hwlatdetect' utility requires the kernel to be compiled
+with CONFIG_HWLAT_TRACER=y. If this option is not set in your
+current kernel, hwlatdetect will fail with a "DetectorNotAvailable"
+error. Other tools like 'cyclictest' will work regardless of this
+setting.
