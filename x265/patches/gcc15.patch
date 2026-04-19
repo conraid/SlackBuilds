@@ -1,12 +1,5 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>
-Date: Thu, 5 Jun 2025 21:45:58 +0200
-Subject: [PATCH] Fix build with GCC 15
-
----
- source/dynamicHDR10/json11/json11.cpp | 1 +
- 1 file changed, 1 insertion(+)
-
+Subject: Fix build failure with GCC 15.1 and glibc 2.41
+Bug: https://bitbucket.org/multicoreware/x265_git/issues/1000/
 diff --git a/source/dynamicHDR10/json11/json11.cpp b/source/dynamicHDR10/json11/json11.cpp
 index 762577735466..74f990a51683 100644
 --- a/source/dynamicHDR10/json11/json11.cpp
