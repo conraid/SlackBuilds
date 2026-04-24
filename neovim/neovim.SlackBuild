@@ -30,15 +30,15 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=neovim
-SRCVERSION=0.12.1
+SRCVERSION=0.12.2
 VERSION=${SRCVERSION:0:7}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="BACKERS* CONTRIBUTING* LICENSE README*"
+DOCFILES="CONTRIBUTING* LICENSE* README* *.md"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
@@ -106,7 +106,6 @@ cmake \
   -DCMAKE_INSTALL_MANDIR=man \
   -DCOMPILE_LUA=ON \
   -DENABLE_TRANSLATIONS=ON \
-  -DUSE_BUNDLED_BUSTED=OFF \
   ..
 
 ninja
