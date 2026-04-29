@@ -28,10 +28,10 @@ SLACKBUILD SHORT DESCRIPTION:  accounts-qml-module (QML bindings for libaccounts
 SLACKBUILD NAME: acme_sh
 SLACKBUILD LOCATION: ./acme_sh
 SLACKBUILD FILES: README acme_sh.SlackBuild acme_sh.info slack-desc
-SLACKBUILD VERSION: 3.1.2
+SLACKBUILD VERSION: 3.1.3
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/acmesh-official/acme.sh/archive/3.1.2/acme.sh-3.1.2.tar.gz
-SLACKBUILD MD5SUM: 293e383a12b04b5116cabcb7db4d43e6
+SLACKBUILD DOWNLOAD: https://github.com/acmesh-official/acme.sh/archive/3.1.3/acme.sh-3.1.3.tar.gz
+SLACKBUILD MD5SUM: d10d143796d588e45cb821357a6a050b
 SLACKBUILD SHORT DESCRIPTION:  acme_sh (ACME client protocol)
 
 SLACKBUILD NAME: acpiclient
@@ -172,10 +172,10 @@ SLACKBUILD SHORT DESCRIPTION:  argbash (Bash argument parsing code generator)
 SLACKBUILD NAME: args
 SLACKBUILD LOCATION: ./args
 SLACKBUILD FILES: README args.SlackBuild args.info slack-desc
-SLACKBUILD VERSION: 6.4.13
+SLACKBUILD VERSION: 6.4.15
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/Taywee/args/archive/refs/tags/6.4.13.tar.gz
-SLACKBUILD MD5SUM: 0db6e12465a568b01616fc92c9f8160e
+SLACKBUILD DOWNLOAD: https://github.com/Taywee/args/archive/refs/tags/6.4.15.tar.gz
+SLACKBUILD MD5SUM: b12cf46a2be154fc00f068bf37f7fb91
 SLACKBUILD SHORT DESCRIPTION:  args (Simple header-only C++ argument parser library)
 
 SLACKBUILD NAME: argyllcms
@@ -560,7 +560,7 @@ SLACKBUILD NAME: browsertime
 SLACKBUILD LOCATION: ./browsertime
 SLACKBUILD FILES: PKGNOTE README browsertime.SlackBuild browsertime.info slack-desc
 SLACKBUILD VERSION: 26.3.2
-SLACKBUILD REQUIRES: 
+SLACKBUILD REQUIRES: musl
 SLACKBUILD DOWNLOAD: https://registry.npmjs.org/browsertime/-/browsertime-26.3.2.tgz
 SLACKBUILD MD5SUM: ad9f736662cff68c1ee818e577ad83c1
 SLACKBUILD SHORT DESCRIPTION:  browsertime (Web Performance Timeline)
@@ -1216,10 +1216,10 @@ SLACKBUILD SHORT DESCRIPTION:  edk2-ovmf-bin (Secure Boot enabled UEFI firmware 
 SLACKBUILD NAME: element-desktop-bin
 SLACKBUILD LOCATION: ./element-desktop-bin
 SLACKBUILD FILES: README doinst.sh element-desktop-bin.SlackBuild element-desktop-bin.info slack-desc
-SLACKBUILD VERSION: 1.12.15
+SLACKBUILD VERSION: 1.12.16
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://packages.element.io/debian/pool/main/e/element-desktop/element-desktop_1.12.15_amd64.deb
-SLACKBUILD MD5SUM: 2be300444fad7b98280cc52064ea44de
+SLACKBUILD DOWNLOAD: https://packages.element.io/debian/pool/main/e/element-desktop/element-desktop_1.12.16_amd64.deb
+SLACKBUILD MD5SUM: 7968fb011ebb90de0c7bfbeb600d44c4
 SLACKBUILD SHORT DESCRIPTION:  element-desktop-bin (Glossy Matrix collaboration client)
 
 SLACKBUILD NAME: encfs
@@ -5014,10 +5014,10 @@ SLACKBUILD SHORT DESCRIPTION:  phpspy (Low-overhead sampling profiler for PHP 7)
 SLACKBUILD NAME: phpstan-bin
 SLACKBUILD LOCATION: ./phpstan-bin
 SLACKBUILD FILES: README files/LICENSE files/phpstan.sh phpstan-bin.SlackBuild phpstan-bin.info slack-desc
-SLACKBUILD VERSION: 2.1.51
+SLACKBUILD VERSION: 2.1.53
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/phpstan/phpstan/releases/download/2.1.51/phpstan.phar
-SLACKBUILD MD5SUM: 45fb72cc6a672f7ffb6535ae90caccd7
+SLACKBUILD DOWNLOAD: https://github.com/phpstan/phpstan/releases/download/2.1.53/phpstan.phar
+SLACKBUILD MD5SUM: 25ce56f76dc434fc64c3aeaa85dd0a29
 SLACKBUILD SHORT DESCRIPTION:  phpstan-bin (PHP Static Analysis Tool)
 
 SLACKBUILD NAME: pipewire-jack
@@ -5307,6 +5307,15 @@ SLACKBUILD REQUIRES: python-poetry-core
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/aiohappyeyeballs/aiohappyeyeballs-2.6.1.tar.gz
 SLACKBUILD MD5SUM: 2fa845a1ce2f7730045fa763aa9987f8
 SLACKBUILD SHORT DESCRIPTION:  python-aiohappyeyeballs (Happy Eyeballs for asyncio)
+
+SLACKBUILD NAME: python-aiohttp-socks
+SLACKBUILD LOCATION: ./python-aiohttp-socks
+SLACKBUILD FILES: README python-aiohttp-socks.SlackBuild python-aiohttp-socks.info slack-desc
+SLACKBUILD VERSION: 0.11.0
+SLACKBUILD REQUIRES: python-aiohttp
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/a/aiohttp_socks/aiohttp_socks-0.11.0.tar.gz
+SLACKBUILD MD5SUM: 2febde5df0e14fc02ab32068ccf280ff
+SLACKBUILD SHORT DESCRIPTION:  python-aiohttp-socks (Proxy (HTTP, SOCKS) connector for aiohttp)
 
 SLACKBUILD NAME: python-aiohttp
 SLACKBUILD LOCATION: ./python-aiohttp
@@ -6085,10 +6094,10 @@ SLACKBUILD SHORT DESCRIPTION:  gitdb (IO of git-style object databases)
 SLACKBUILD NAME: python-gitpython
 SLACKBUILD LOCATION: ./python-gitpython
 SLACKBUILD FILES: README python-gitpython.SlackBuild python-gitpython.info slack-desc slack-required
-SLACKBUILD VERSION: 3.1.48
+SLACKBUILD VERSION: 3.1.49
 SLACKBUILD REQUIRES: python-gitdb
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/G/GitPython/gitpython-3.1.48.tar.gz
-SLACKBUILD MD5SUM: f2ec34a83bcec90e0c26b037ce4bcb70
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/G/GitPython/gitpython-3.1.49.tar.gz
+SLACKBUILD MD5SUM: 246992442c377e33e5bd8be2af002c38
 SLACKBUILD SHORT DESCRIPTION:  gitpython (Python git library)
 
 SLACKBUILD NAME: python-google-api-core
@@ -7012,10 +7021,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-playsound (Pure Python library for playing
 SLACKBUILD NAME: python-playwright
 SLACKBUILD LOCATION: ./python-playwright
 SLACKBUILD FILES: README python-playwright.SlackBuild python-playwright.info slack-desc slack-required
-SLACKBUILD VERSION: 1.58.0
+SLACKBUILD VERSION: 1.59.0
 SLACKBUILD REQUIRES: python-greenlet python-typing-extensions python-pyee
-SLACKBUILD DOWNLOAD: https://github.com/microsoft/playwright-python/archive/v1.58.0/playwright-python-1.58.0.tar.gz
-SLACKBUILD MD5SUM: 5402f212ad34e2ac65bee6ffaeedbad1
+SLACKBUILD DOWNLOAD: https://github.com/microsoft/playwright-python/archive/v1.59.0/playwright-python-1.59.0.tar.gz
+SLACKBUILD MD5SUM: 301e41e67eb069f31131320b2963cf08
 SLACKBUILD SHORT DESCRIPTION:  python-playwright (A high-level API to automate web browsers)
 
 SLACKBUILD NAME: python-poetry-core
@@ -7516,10 +7525,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-regex (Alternative python regular expressi
 SLACKBUILD NAME: python-reportlab
 SLACKBUILD LOCATION: ./python-reportlab
 SLACKBUILD FILES: README python-reportlab.SlackBuild python-reportlab.info slack-desc
-SLACKBUILD VERSION: 4.4.10
+SLACKBUILD VERSION: 4.5.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/reportlab/reportlab-4.4.10.tar.gz
-SLACKBUILD MD5SUM: 3ba48d879d65838503c10729f30bedb2
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/reportlab/reportlab-4.5.0.tar.gz
+SLACKBUILD MD5SUM: 4b014ea801d430ace312a1ab114a4155
 SLACKBUILD SHORT DESCRIPTION:  python-reportlab (PDF generation toolkit using python)
 
 SLACKBUILD NAME: python-reppy2
@@ -7669,10 +7678,10 @@ SLACKBUILD SHORT DESCRIPTION:  scour (SVG scrubber)
 SLACKBUILD NAME: python-scrapy
 SLACKBUILD LOCATION: ./python-scrapy
 SLACKBUILD FILES: README python-scrapy.SlackBuild python-scrapy.info slack-desc slack-required
-SLACKBUILD VERSION: 2.15.1
+SLACKBUILD VERSION: 2.15.2
 SLACKBUILD REQUIRES: python-parsel python-twisted python-cryptography python-pyopenssl python-service-identity python-w3lib python-zope-interface python-cssselect python-defusedxml python-itemadapter python-itemloaders python-pydispatcher python-protego python-queuelib python-tldextract python-botocore python-h2 python-hpack python-zstandard
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/scrapy/scrapy-2.15.1.tar.gz
-SLACKBUILD MD5SUM: 012c7b186f78e8d16452f470385d55ea
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/scrapy/scrapy-2.15.2.tar.gz
+SLACKBUILD MD5SUM: d787620c17c9206015c8529aa0867ff4
 SLACKBUILD SHORT DESCRIPTION:  python-scrapy (A fast high-level scraping and web crawling framework)
 
 SLACKBUILD NAME: python-secretstorage
@@ -7809,6 +7818,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/s/sniffio/sniffio-1.3.1.tar.gz
 SLACKBUILD MD5SUM: 1673edc4dfeb739130a87bcd7b477864
 SLACKBUILD SHORT DESCRIPTION:  python-sniffio (async library)
+
+SLACKBUILD NAME: python-socks
+SLACKBUILD LOCATION: ./python-socks
+SLACKBUILD FILES: README python-socks.SlackBuild python-socks.info slack-desc
+SLACKBUILD VERSION: 2.8.1
+SLACKBUILD REQUIRES: python-anyio
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/python-socks/python_socks-2.8.1.tar.gz
+SLACKBUILD MD5SUM: df656a3d4bb45b621d47c4b3e1076e37
+SLACKBUILD SHORT DESCRIPTION:  python-socks (Core proxy client functionality for Python)
 
 SLACKBUILD NAME: python-solaar
 SLACKBUILD LOCATION: ./python-solaar
@@ -8003,7 +8021,7 @@ SLACKBUILD NAME: python-theharvester
 SLACKBUILD LOCATION: ./python-theharvester
 SLACKBUILD FILES: README python-theharvester.SlackBuild python-theharvester.info slack-desc slack-required
 SLACKBUILD VERSION: 4.10.1
-SLACKBUILD REQUIRES: python-aiodns python-aiofiles python-aiohttp python-aiomultiprocess python-aiosqlite python-censys python-netaddr python-playwright python-dateutil python-httpx python-retrying python-ujson python-shodan python-uvicorn
+SLACKBUILD REQUIRES: python-aiodns python-aiofiles python-aiohttp-socks python-aiomultiprocess python-aiosqlite python-censys python-netaddr python-playwright python-dateutil python-httpx python-retrying python-ujson python-shodan python-uvicorn python-socks
 SLACKBUILD DOWNLOAD: https://github.com/laramies/theHarvester/archive/4.10.1/theHarvester-4.10.1.tar.gz
 SLACKBUILD MD5SUM: 34f384ceeebdc4adebbb05644b3d34ec
 SLACKBUILD SHORT DESCRIPTION:  python-theharvester (E-mails, subdomains and names Harvester - OSINT)
@@ -9245,7 +9263,7 @@ SLACKBUILD NAME: sitespeedio
 SLACKBUILD LOCATION: ./sitespeedio
 SLACKBUILD FILES: PKGNOTE README sitespeedio.SlackBuild sitespeedio.info slack-desc
 SLACKBUILD VERSION: 39.5.0
-SLACKBUILD REQUIRES: 
+SLACKBUILD REQUIRES: musl
 SLACKBUILD DOWNLOAD: https://registry.npmjs.org/sitespeed.io/-/sitespeed.io-39.5.0.tgz
 SLACKBUILD MD5SUM: 2fc1bd11086e8445c1d7573a751c0be4
 SLACKBUILD SHORT DESCRIPTION:  sitespeed.io (complete web performance tool)
@@ -9433,10 +9451,10 @@ SLACKBUILD SHORT DESCRIPTION:  sqlcheck (Automatically identify anti-patterns in
 SLACKBUILD NAME: sqlcipher
 SLACKBUILD LOCATION: ./sqlcipher
 SLACKBUILD FILES: README patches/c99.patch slack-desc sqlcipher.SlackBuild sqlcipher.info
-SLACKBUILD VERSION: 4.14.0
+SLACKBUILD VERSION: 4.15.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://www.zetetic.net/downloads/sqlcipher/verify/4.14.0/sqlcipher-4.14.0.zip
-SLACKBUILD MD5SUM: 1f023f25c39f9159a8c3ea61eadb056d
+SLACKBUILD DOWNLOAD: https://github.com/sqlcipher/sqlcipher/archive/v4.15.0/sqlcipher-4.15.0.tar.gz
+SLACKBUILD MD5SUM: 21345782eeff2f568bb084417e0c9c58
 SLACKBUILD SHORT DESCRIPTION:  sqlcipher (256 bit AES encryption SQLite extension)
 
 SLACKBUILD NAME: sqlitebrowser
@@ -10072,10 +10090,10 @@ SLACKBUILD SHORT DESCRIPTION:  unoconv (Universal Office Converter)
 SLACKBUILD NAME: unrar
 SLACKBUILD LOCATION: ./unrar
 SLACKBUILD FILES: README files/unrar-nonfree.1.gz files/unrar.1.gz slack-desc unrar.SlackBuild unrar.info
-SLACKBUILD VERSION: 7.2.5
+SLACKBUILD VERSION: 7.2.6
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: http://www.rarlab.com/rar/unrarsrc-7.2.5.tar.gz
-SLACKBUILD MD5SUM: 725b78e1f02e6e2cbae22ab9c27ebbc7
+SLACKBUILD DOWNLOAD: http://www.rarlab.com/rar/unrarsrc-7.2.6.tar.gz
+SLACKBUILD MD5SUM: 29cac05b33a4d7654527669ff8bcd903
 SLACKBUILD SHORT DESCRIPTION:  unrar (unpacker for the RAR archive format)
 
 SLACKBUILD NAME: unrtf
@@ -10090,10 +10108,10 @@ SLACKBUILD SHORT DESCRIPTION:  UnRTF
 SLACKBUILD NAME: uplink-c
 SLACKBUILD LOCATION: ./uplink-c
 SLACKBUILD FILES: README libuplink.pc slack-desc uplink-c.SlackBuild uplink-c.info
-SLACKBUILD VERSION: 1.14.0
+SLACKBUILD VERSION: 1.14.1
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/storj/uplink-c/archive/v1.14.0/uplink-c-1.14.0.tar.gz
-SLACKBUILD MD5SUM: 819fcf6ccc7ed835957c37e18779a6f2
+SLACKBUILD DOWNLOAD: https://github.com/storj/uplink-c/archive/v1.14.1/uplink-c-1.14.1.tar.gz
+SLACKBUILD MD5SUM: 7200241686c34722a58bd542855331ce
 SLACKBUILD SHORT DESCRIPTION:  uplink-c (C library for Storj V3 Network)
 
 SLACKBUILD NAME: usrsctp
