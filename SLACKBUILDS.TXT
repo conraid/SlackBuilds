@@ -1474,14 +1474,14 @@ SLACKBUILD DOWNLOAD: https://ftp.gnu.org/gnu/freeipmi/freeipmi-1.6.17.tar.gz
 SLACKBUILD MD5SUM: ff87c6782991d119eff630e3a58a602f
 SLACKBUILD SHORT DESCRIPTION:  freeipmi (IPMI remote console and system management software)
 
-SLACKBUILD NAME: freetube
-SLACKBUILD LOCATION: ./freetube
-SLACKBUILD FILES: README doinst.sh freetube.SlackBuild freetube.info slack-desc
+SLACKBUILD NAME: freetube-bin
+SLACKBUILD LOCATION: ./freetube-bin
+SLACKBUILD FILES: README doinst.sh freetube-bin.SlackBuild freetube-bin.info slack-desc
 SLACKBUILD VERSION: 0.23.12
 SLACKBUILD REQUIRES: 
 SLACKBUILD DOWNLOAD: https://github.com/FreeTubeApp/FreeTube/releases/download/v0.23.12-beta/freetube_0.23.12_beta_amd64.deb
 SLACKBUILD MD5SUM: 27b4ccf83b41294064571d6d8f5ae231
-SLACKBUILD SHORT DESCRIPTION:  freetube (An Open Source YouTube app for privacy)
+SLACKBUILD SHORT DESCRIPTION:  freetube-bin (An Open Source YouTube app for privacy)
 
 SLACKBUILD NAME: ftjam
 SLACKBUILD LOCATION: ./ftjam
@@ -3226,7 +3226,7 @@ SLACKBUILD FILES: README libyuv.SlackBuild libyuv.info slack-desc
 SLACKBUILD VERSION: 94644361b4fc21befdadbf425a5d256b17f20565
 SLACKBUILD REQUIRES: 
 SLACKBUILD DOWNLOAD: https://chromium.googlesource.com/libyuv/libyuv/+archive/94644361b4fc21befdadbf425a5d256b17f20565.tar.gz
-SLACKBUILD MD5SUM: 0cd9e8bc6076a0f86c3b16a1e45c835e
+SLACKBUILD MD5SUM: 8b8e8236d5649a106b1d7601e4e5c770
 SLACKBUILD SHORT DESCRIPTION:  libyuv (Library for YUV scaling)
 
 SLACKBUILD NAME: libzen
@@ -3744,7 +3744,7 @@ SLACKBUILD SHORT DESCRIPTION:  netcat-openbsd (reads and writes data across netw
 
 SLACKBUILD NAME: netdata
 SLACKBUILD LOCATION: ./netdata
-SLACKBUILD FILES: README doinst.sh files/rc.netdata netdata.SlackBuild netdata.info slack-desc slack-required
+SLACKBUILD FILES: README doinst.sh files/rc.netdata netdata.SlackBuild netdata.info patches/logrotate-use-netdata-user-and-group.diff slack-desc slack-required
 SLACKBUILD VERSION: 2.10.3
 SLACKBUILD REQUIRES: python-psycopg2 freeipmi snappy mongo-c-driver
 SLACKBUILD DOWNLOAD: https://github.com/netdata/netdata/releases/download/v2.10.3/netdata-v2.10.3.tar.gz
