@@ -23,15 +23,16 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 #
-# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+# Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 
 set -euo pipefail
 
-cd $(dirname $0) ; CWD=$(pwd)
+cd $(dirname $0)
+CWD=$(pwd)
 
 PKGNAM=browsertime
 VERSION=26.3.2
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -40,22 +41,43 @@ OUTPUT=${OUTPUT:-/tmp}
 DOCFILES="LICENSE *.md"
 
 if [ -z ${ARCH:=""} ]; then
-  case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
-  esac
+	case "$(uname -m)" in
+	i?86) ARCH=i686 ;;
+	arm*) ARCH=arm ;;
+	*) ARCH=$(uname -m) ;;
+	esac
 fi
 
 # If the variable PRINT_PACKAGE_NAME is set, then this script will report what
 # the name of the created package would be, and then exit. This information
 # could be useful to other scripts.
 if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
-  echo "$PKGNAM-$VERSION-$ARCH-$BUILD.txz"
-  exit 0
+	echo "$PKGNAM-$VERSION-$ARCH-$BUILD.txz"
+	exit 0
 fi
 
-[ "$ARCH" = "x86_64" ] && LIBDIRSUFFIX="64" || LIBDIRSUFFIX=""
+case "$ARCH" in
+x86_64)
+	NODE_PLAT="linux-x64"
+	LIBDIRSUFFIX="64"
+	;;
+i686)
+	NODE_PLAT="linux-ia32"
+	LIBDIRSUFFIX=""
+	;;
+arm*)
+	NODE_PLAT="linux-arm"
+	LIBDIRSUFFIX=""
+	;;
+aarch64)
+	NODE_PLAT="linux-arm64"
+	LIBDIRSUFFIX=""
+	;;
+*)
+	echo "$ARCH is not supported"
+	exit 1
+	;;
+esac
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
@@ -63,11 +85,42 @@ mkdir -p $TMP $PKG $OUTPUT
 mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}
 DESTDIR=$PKG npm install --user root --location=global --prefix $PKG/usr $CWD/$PKGNAM-$VERSION.tgz
 
+# Remove root node_modules
+rm -rf $PKG/usr/lib${LIBDIRSUFFIX}/node_modules/root
+
+# Remove empty dir
+rmdir $PKG/usr/etc || true
+
+# Remove unneeded files.
+find $PKG/usr \( -name '.git*' -o -name '.travis.yml' \) -exec rm -f {} \;
+
+# Remove occurrences of $PKG
+find $PKG -name "package.json" \
+	-exec sed -e "s|${TMP}/${PKGNAM}-build||" \
+	-e "s|${TMP}/${PKGNAM}-${VERSION}|/usr/lib${LIBDIRSUFFIX}/node_modules/${PKGNAM}|" \
+	-e "s|$CWD||g" \
+	-i '{}' \;
+
+# Remove prebuilds not matching our platform
+find $PKG/usr/lib${LIBDIRSUFFIX}/node_modules -type d -name "prebuilds" | while read PREPATH; do
+	echo "Processing prebuilds in: $PREPATH"
+
+	pushd "$PREPATH" >/dev/null
+	for DIR in */; do
+		DIR_NAME=${DIR%/}
+		if [ "$DIR_NAME" != "$NODE_PLAT" ]; then
+			echo "  Removing unused platform: $DIR_NAME"
+			rm -rf "$DIR_NAME"
+		fi
+	done
+	popd >/dev/null
+done
+
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
+cat $CWD/$PKGNAM.SlackBuild >$PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/slack-desc >$PKG/install/slack-desc
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
