@@ -32,9 +32,9 @@ CWD=$(pwd)
 
 PRGNAM=libyuv
 PKGNAM="${PRGNAM,,}"
-SRCVERSION=94644361b4fc21befdadbf425a5d256b17f20565
+SRCVERSION=f2ac6db694d1e5b0af1d7b05dc431e0e455fe228
 VERSION="${SRCVERSION:0:7}"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -106,6 +106,7 @@ mkdir -p build
 cd build
 cmake -Wno-dev \
 	-DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
+	-DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS -DNDEBUG" \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DCMAKE_INSTALL_PREFIX=/usr \
 	..
@@ -116,6 +117,9 @@ cd ..
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
+
+# Don't ship .a files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.a
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2>/dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2>/dev/null || true
