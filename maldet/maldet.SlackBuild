@@ -2,7 +2,7 @@
 #
 # Slackware build script for maldet
 #
-# Copyright 2018-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2018-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,16 +23,16 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 #
-# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+# Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=linux-malware-detect
 PKGNAM=maldet
-VERSION=1.6.6.1
-BUILD=${BUILD:-2}
+VERSION=2.0.1
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -140,7 +140,9 @@ mkdir -p $PKG/etc/rc.d
 cat $CWD/files/rc.maldet > $PKG/etc/rc.d/rc.maldet.new
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
