@@ -26,11 +26,12 @@
 # Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 
 set -euo pipefail
-cd $(dirname $0) ; CWD=$(pwd)
+cd $(dirname $0)
+CWD=$(pwd)
 
 PKGNAM=libcurl-gnutls
 PRGNAM=curl
-VERSION=8.19.0 # This is the version in Slackware current
+VERSION=8.20.0 # This is the version in Slackware current
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -40,10 +41,10 @@ OUTPUT=${OUTPUT:-/tmp}
 DOCFILES="COPYING* README*"
 
 if [ -z ${ARCH:=""} ]; then
-  case "$( uname -m )" in
-    i?86) ARCH=i686 ;;
-    arm*) ARCH=arm ;;
-       *) ARCH=$( uname -m ) ;;
+  case "$(uname -m)" in
+  i?86) ARCH=i686 ;;
+  arm*) ARCH=arm ;;
+  *) ARCH=$(uname -m) ;;
   esac
 fi
 
@@ -81,13 +82,13 @@ find -L . \
   -exec chmod 644 {} \;
 
 # Apply patches
-if compgen -G "$CWD/patches/*.patch" > /dev/null; then
+if compgen -G "$CWD/patches/*.patch" >/dev/null; then
   if [ -f "$CWD/patches/series" ]; then
     while IFS= read -r PATCH; do
       [ -z "$PATCH" ] && continue
       [ "${PATCH#\#}" != "$PATCH" ] && continue
       patch -p1 -i "$CWD/patches/$PATCH"
-    done < "$CWD/patches/series"
+    done <"$CWD/patches/series"
   else
     for PATCH in "$CWD"/patches/*.patch; do
       patch -p1 -i "$PATCH"
@@ -96,9 +97,9 @@ if compgen -G "$CWD/patches/*.patch" > /dev/null; then
 fi
 
 LDFLAGS="-L/usr/lib$LIBDIRSUFFIX" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  ./configure \
   --prefix=/usr \
   --libdir=/usr/lib$LIBDIRSUFFIX \
   --sysconfdir=/etc \
@@ -124,22 +125,24 @@ CURLLIB=$(echo $PKG/usr/lib$LIBDIRSUFFIX/libcurl.so.4.?.? | cut -d. -f3-)
 
 mv ${PKG}/usr/lib${LIBDIRSUFFIX}/libcurl{,-gnutls}.so.$CURLLIB
 rm ${PKG}/usr/lib${LIBDIRSUFFIX}/libcurl.so*
-for VERSIONLIB in 3 4 4.0.0 4.1.0 4.2.0 4.3.0 4.4.0 4.5.0 4.6.0; do
+for VERSIONLIB in 3 4 4.0.0 4.1.0 4.2.0 4.3.0 4.4.0 4.5.0 4.6.0 4.7.0; do
   ln -s libcurl-gnutls.so.$CURLLIB $PKG/usr/lib${LIBDIRSUFFIX}/libcurl-gnutls.so.${VERSIONLIB}
 done
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
-find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
-find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2>/dev/null || true
+find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2>/dev/null || true
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
-cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
+shopt -u nullglob
+cat $CWD/$PKGNAM.SlackBuild >$PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/slack-desc >$PKG/install/slack-desc
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
