@@ -1,0 +1,40 @@
+From 9f1fa4ac53cf83a4cdd7155cc487212bf8bc08af Mon Sep 17 00:00:00 2001
+From: Bryan Lai <bryanlais@gmail.com>
+Date: Sun, 11 Feb 2024 15:15:20 +0800
+Subject: [PATCH] Make compatible with python cryptography>=42
+
+- the _backend workaround [0] stops working as upstream switches to the
+  new rust backend. To fix this, we now only validate the suffix of the
+  digest.
+
+- import X25519PublicKey from the updated path.
+
+[0] https://github.com/torproject/stem/commit/a41767c7363b2164cad7d666a927ff8eead75799
+---
+ stem/descriptor/hidden_service.py         | 10 +++++++++-
+ stem/descriptor/server_descriptor.py      | 11 ++++++++++-
+ test/unit/descriptor/hidden_service_v3.py |  2 +-
+ 3 files changed, 20 insertions(+), 3 deletions(-)
+
+diff --git a/stem/descriptor/server_descriptor.py b/stem/descriptor/server_descriptor.py
+index baa14969..6d190208 100644
+--- a/stem/descriptor/server_descriptor.py
++++ b/stem/descriptor/server_descriptor.py
+@@ -772,7 +772,16 @@ def __init__(self, raw_contents: bytes, validate: bool = False, skip_crypto_vali
+       if not skip_crypto_validation and stem.prereq.is_crypto_available():
+         signed_digest = self._digest_for_signature(self.signing_key, self.signature)
+ 
+-        if signed_digest != self.digest():
++
++        # When signing, the cryptography module includes a constant prefix
++        # indicating the hash algorithm used. Tor doesn't. This causes
++        # signature validation failures and unfortunately cryptography have
++        # no nice way of excluding these. To work around this, we only
++        # validate that the digest ends with the correct suffix.
++        #
++        #   https://github.com/pyca/cryptography/issues/3713
++        #
++        if not signed_digest.endswith(self.digest()):
+           raise ValueError('Decrypted digest does not match local digest (calculated: %s, local: %s)' % (signed_digest, self.digest()))
+ 
+         if self.onion_key_crosscert and stem.prereq.is_crypto_available():

@@ -1,0 +1,14 @@
+diff --git a/stem/descriptor/__init__.py b/stem/descriptor/__init__.py
+index 070b8684..86f4ca02 100644
+--- a/stem/descriptor/__init__.py
++++ b/stem/descriptor/__init__.py
+@@ -1375,9 +1375,6 @@ def create_signing_key(private_key = None):
+     def no_op(*args, **kwargs):
+       return 1
+ 
+-    private_key._backend._lib.EVP_PKEY_CTX_set_signature_md = no_op
+-    private_key._backend.openssl_assert = no_op
+-
+   public_key = private_key.public_key()
+   public_digest = b'\n' + public_key.public_bytes(
+     encoding = serialization.Encoding.PEM,
