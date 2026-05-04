@@ -27,10 +27,11 @@
 
 set -euo pipefail
 
-cd $(dirname $0) ; CWD=$(pwd)
+cd $(dirname $0)
+CWD=$(pwd)
 
 PKGNAM=neomutt
-SRCVERSION=20260406
+SRCVERSION=20260504
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -39,10 +40,10 @@ PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 if [ -z ${ARCH:=""} ]; then
-  case "$( uname -m )" in
+  case "$(uname -m)" in
     i?86) ARCH=i686 ;;
     arm*) ARCH=arm ;;
-       *) ARCH=$( uname -m ) ;;
+    *) ARCH=$(uname -m) ;;
   esac
 fi
 
@@ -95,8 +96,8 @@ if compgen -G "$CWD/patches/*.patch" > /dev/null; then
 fi
 
 CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
+  CXXFLAGS="$SLKCFLAGS" \
+  ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
   --localstatedir=/var \
@@ -105,26 +106,23 @@ CXXFLAGS="$SLKCFLAGS" \
   --sysconfdir=/etc/$PKGNAM \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
   --with-mailpath=/var/spool/mail \
-  --ssl \
-  --sasl \
-  --gss \
+  --with-lock=fcntl \
+  --autocrypt \
+  --fmemopen \
   --gdbm \
   --gpgme \
-  --notmuch \
-  --lua \
-  --locales-fix \
-  --disable-idn \
+  --gss \
   --idn2 \
-  --lmdb \
-  --sqlite \
-  --full-doc \
-  --autocrypt \
-  --lz4  \
-  --zlib \
-  --zstd  \
   --kyotocabinet \
-  --autocrypt \
-  --ubsan \
+  --lmdb \
+  --lua \
+  --lz4 \
+  --notmuch \
+  --sasl \
+  --sqlite \
+  --ssl \
+  --zlib \
+  --zstd \
   --host=$ARCH-slackware-linux \
   --build=$ARCH-slackware-linux
 
@@ -139,7 +137,10 @@ find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r st
 
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
-  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+  for i in $(find $PKG/usr/man -type l); do
+    ln -s $(readlink $i).gz $i.gz
+    rm $i
+  done
 fi
 
 # Rename conf files
@@ -163,7 +164,3 @@ cp -r data/colorschemes $PKG/usr/doc/$PKGNAM-$VERSION
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
-
-
-
-
