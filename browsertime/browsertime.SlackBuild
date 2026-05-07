@@ -27,11 +27,10 @@
 
 set -euo pipefail
 
-cd $(dirname $0)
-CWD=$(pwd)
+cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=browsertime
-VERSION=27.0.4
+VERSION=27.1.0
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
