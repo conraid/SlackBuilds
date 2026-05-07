@@ -2,7 +2,7 @@
 #
 # Slackware build script for mutagen
 #
-# Copyright 2018-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2018-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 #
-# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+# Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 
 set -euo pipefail
 
@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=mutagen
 PKGNAM=python-mutagen
 VERSION=1.47.0
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -41,10 +41,10 @@ OUTPUT=${OUTPUT:-/tmp}
 DOCFILES="COPYING NEWS README*"
 
 if [ -z ${ARCH:=""} ]; then
-  case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-     *) ARCH=$( uname -m ) ;;
+  case "$(uname -m)" in
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    *) ARCH=$(uname -m) ;;
   esac
 fi
 
@@ -55,7 +55,6 @@ if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
   echo "$PKGNAM-$VERSION-$ARCH-${BUILD}${TAG}.txz"
   exit 0
 fi
-
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
@@ -71,10 +70,7 @@ find . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \+
 
-# Fix man path
-sed -i 's|share/man|man|g' setup*
-
-unshare -n python3 -m build --wheel --no-isolation
+python3 -m build --wheel --no-isolation
 python3 -m installer --destdir "$PKG" dist/*.whl
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
@@ -82,11 +78,16 @@ find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r st
 
 if [ -d $PKG/usr/man ]; then
   find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
-  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+  for i in $(find $PKG/usr/man -type l); do
+    ln -s $(readlink $i).gz $i.gz
+    rm $i
+  done
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
