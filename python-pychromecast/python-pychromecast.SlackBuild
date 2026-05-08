@@ -33,7 +33,7 @@ PRGNAM=pychromecast
 PKGNAM=python-"${PRGNAM,,}"
 SRCVERSION=14.0.10
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -43,9 +43,9 @@ DOCFILES="LICENSE *.md *.rst"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-     *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -86,11 +86,13 @@ if compgen -G "$CWD/patches/*.patch" > /dev/null; then
   fi
 fi
 
-# Fix for slackware setuptools
+# Fix for slackware wheel
 SETUP_TOOL_VERSION=$(python -c "import importlib.metadata; print(importlib.metadata.version('setuptools'))")
-sed -i "/setuptools/s/<.*78\.0/<=$SETUP_TOOL_VERSION/" pyproject.toml
+WHEEL_VERSION=$(python -c "import importlib.metadata; print(importlib.metadata.version('wheel'))")
 
-unshare -n python3 -m build --wheel --no-isolation
+sed -i "s/\(setuptools>=[^,]*\),<[^,]*\"/\1,<=$SETUP_TOOL_VERSION\"/g; s/\(wheel>=[^,]*\),<[^\"]*\"/\1,<=$WHEEL_VERSION\"/g" pyproject.toml
+
+python3 -m build --wheel --no-isolation
 python3 -m installer --destdir "$PKG" dist/*.whl
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
@@ -102,11 +104,16 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
