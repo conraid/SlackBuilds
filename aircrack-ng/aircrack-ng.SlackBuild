@@ -2,7 +2,7 @@
 #
 # Slackware build script for aircrack (http://www.aircrack-ng.org)
 #
-# Copyright 2008-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2008-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,14 +23,14 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=aircrack-ng
 SRCVERSION=1.7
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-5}
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-7}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -42,7 +42,7 @@ if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
     i?86) ARCH=i686 ;;
     arm*) ARCH=arm ;;
-       *) ARCH=$( uname -m ) ;;
+    *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -73,10 +73,18 @@ tar xvf $CWD/$PKGNAM-$SRCVERSION.tar.gz || tar xvf $CWD/$SRCVERSION.tar.gz
 cd $PKGNAM-$SRCVERSION
 
 # Apply patches
-if [ -e $CWD/patches/ ]; then
-  for PATCH in $CWD/patches/*.patch; do
-    patch -p1 -i $PATCH
-  done
+if compgen -G "$CWD/patches/*.patch" > /dev/null; then
+  if [ -f "$CWD/patches/series" ]; then
+    while IFS= read -r PATCH; do
+      [ -z "$PATCH" ] && continue
+      [ "${PATCH#\#}" != "$PATCH" ] && continue
+      patch -p1 -i "$CWD/patches/$PATCH"
+    done < "$CWD/patches/series"
+  else
+    for PATCH in "$CWD"/patches/*.patch; do
+      patch -p1 -i "$PATCH"
+    done
+  fi
 fi
 
 NOCONFIGURE=1 ./autogen.sh
@@ -95,9 +103,9 @@ function relinkp2 {
 trap relinkp2 EXIT
 
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS -fcommon" \
-CXXFLAGS="$SLKCFLAGS -fcommon" \
-./configure \
+  CFLAGS="$SLKCFLAGS -fcommon" \
+  CXXFLAGS="$SLKCFLAGS -fcommon" \
+  ./configure \
   --prefix=/usr \
   --libdir=/usr/lib$LIBDIRSUFFIX \
   --sysconfdir=/etc \
@@ -128,14 +136,18 @@ fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
-cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true 
+shopt -s nullglob
+cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
+
 # Add test and ext_scripts
 cp -a test scripts $PKG/usr/doc/$PKGNAM-$VERSION
+find $PKG/usr/doc -type d -exec chmod 755 {} \+
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
+  cat $CWD/slack-required > $PKG/install/slack-required
 fi
 
 cd $PKG
