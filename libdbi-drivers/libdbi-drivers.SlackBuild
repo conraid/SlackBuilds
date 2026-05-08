@@ -2,7 +2,7 @@
 #
 # Slackware build script for libdbi-drivers (http://libdbi.sourceforge.net/)
 #
-# Copyright 2009-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2009-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,13 +23,13 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=libdbi-drivers
 VERSION=0.9.0
-BUILD=${BUILD:-12}
+BUILD=${BUILD:-14}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -41,7 +41,7 @@ if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
     i?86) ARCH=i686 ;;
     arm*) ARCH=arm ;;
-       *) ARCH=$( uname -m ) ;;
+    *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -75,9 +75,9 @@ chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS -Wno-int-conversion -Wno-implicit-function-declaration -Wno-incompatible-pointer-types" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
+  CFLAGS="$SLKCFLAGS -Wno-int-conversion -Wno-implicit-function-declaration -Wno-incompatible-pointer-types" \
+  CXXFLAGS="$SLKCFLAGS" \
+  ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
   --with-dbi-libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -99,13 +99,15 @@ make docdir=/usr/doc/$PKGNAM-$VERSION DESTDIR=$PKG install-strip
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
+  cat $CWD/slack-required > $PKG/install/slack-required
 fi
 
 cd $PKG
