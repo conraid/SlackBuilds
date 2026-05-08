@@ -33,7 +33,7 @@ PRGNAM=wxpython
 PKGNAM=python-${PRGNAM,,}
 SRCVERSION=4.2.5
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -43,9 +43,9 @@ DOCFILES="LICENSE *.md *.rst"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-     *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -97,8 +97,10 @@ if compgen -G "$CWD/patches/*.patch" > /dev/null; then
   fi
 fi
 
+export PYTHONUTF8=1
+
 DOXYGEN=/usr/bin/doxygen WAF=/usr/bin/waf \
-python3 build.py build --use_syswx --release --nodoc
+  python3 build.py build --use_syswx --release --nodoc
 python3 build.py install --destdir="$PKG"
 
 # Install icons. Thanks to SBo.
@@ -126,6 +128,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
