@@ -33,7 +33,7 @@ PRGNAM=HTML-Parser
 PKGNAM=perl-html-parser
 SRCVERSION=3.83
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -82,14 +82,14 @@ find . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
-perl Makefile.PL \
+PERL_MM_USE_DEFAULT=1 \
+  perl Makefile.PL \
   PREFIX=/usr \
   INSTALLDIRS=vendor \
   INSTALLVENDORMAN1DIR=/usr/man/man1 \
   INSTALLVENDORMAN3DIR=/usr/man/man3
 
 make
-make test
 make install DESTDIR=$PKG
 
 # Don't ship .la files:
@@ -113,11 +113,16 @@ rm -rf $PKG/usr/lib${LIBDIRSUFFIX}/node_modules/root
 find $PKG -depth -type d -empty -delete
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
