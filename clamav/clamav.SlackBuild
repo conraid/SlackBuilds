@@ -50,7 +50,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=clamav
 SRCVERSION=1.5.2
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -61,9 +61,9 @@ DOCFILES="AUTHORS BUGS COPYING* ChangeLog FAQ INSTALL NEWS README UPGRADE docs/*
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -218,11 +218,16 @@ chown -R clamav:clamav $PKG/var/lib/clamav $PKG/var/log/clamav \
   $PKG/run/clamav
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
