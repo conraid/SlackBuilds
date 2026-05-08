@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PKGNAM=wol_qt
 VERSION=2.4
 LINETVERSION=1.4
-BUILD=${BUILD:-5}
+BUILD=${BUILD:-6}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -123,6 +123,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then 
+  cat $CWD/slack-required > $PKG/install/slack-required 
+fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 install -Dm644 $CWD/files/$PKGNAM.desktop $PKG/usr/share/applications/$PKGNAM.desktop
