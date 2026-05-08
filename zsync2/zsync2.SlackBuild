@@ -33,7 +33,7 @@ PRGNAM=zsync2
 PKGNAM="${PRGNAM,,}"
 SRCVERSION=93378467c5ee53a8e58c034b8fdc865452076ec1
 VERSION="${SRCVERSION:0:7}"
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -130,6 +130,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then 
+  cat $CWD/slack-required > $PKG/install/slack-required 
+fi
 
 # Add a doinst.sh
 if [ -e $CWD/doinst.sh ]; then
