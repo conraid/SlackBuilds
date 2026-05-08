@@ -32,7 +32,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 PRGNAM=webkitgtk
 PKGNAM=webkit2gtk4.1
 VERSION=2.52.3
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -45,7 +45,7 @@ if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
     i?86) ARCH=i686 ;;
     arm*) ARCH=arm ;;
-       *) ARCH=$( uname -m ) ;;
+    *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -126,9 +126,9 @@ cmake -Wno-dev \
 # of the resources, so let's try to limit it to half the available ones
 # Thanks to SBo
 if [ "${BUILDNOLIMIT:-0}" -eq 1 ]; then
-    "${NINJA:=ninja}"
+  "${NINJA:=ninja}"
 else
-    "${NINJA:=ninja}" -j$(($(nproc) / 2))
+  "${NINJA:=ninja}" -j$(($(nproc) / 2))
 fi
 
 DESTDIR=$PKG $NINJA -j1 install
@@ -154,6 +154,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
