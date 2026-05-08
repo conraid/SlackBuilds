@@ -2,7 +2,7 @@
 #
 # Slackware build script for torsocks
 #
-# Copyright 2015-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2015-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,15 +23,15 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 #
-# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+# Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=torsocks
 VERSION=2.3.0
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -43,8 +43,8 @@ if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
     i?86) ARCH=i686 ;;
     arm*) ARCH=arm ;;
-       *) ARCH=$( uname -m ) ;;
-    esac
+    *) ARCH=$( uname -m ) ;;
+  esac
 fi
 
 # If the variable PRINT_PACKAGE_NAME is set, then this script will report what
@@ -76,12 +76,12 @@ cd $PKGNAM-$VERSION
 chown -R root:root .
 chmod -R u+w,go+r-w,a-s .
 
-./autogen.sh 
+./autogen.sh
 
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
   --sysconfdir=/etc \
@@ -104,8 +104,8 @@ find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cu
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
 if [ -d $PKG/usr/man ]; then
-    find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
-    for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+  find $PKG/usr/man -type f -exec chmod 644 {} \; -exec gzip -9 {} \;
+  for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 fi
 
 # Rename config file
@@ -115,13 +115,15 @@ mv $PKG/etc/tor/torsocks.conf $PKG/etc/tor/torsocks.conf.new
 install -Dm644 extras/torsocks-bash_completion /usr/share/bash-completion/completions/torsocks
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBuild
 
-mkdir -p $PKG/install 
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
+  cat $CWD/slack-required > $PKG/install/slack-required
 fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
