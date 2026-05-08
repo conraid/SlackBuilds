@@ -29,7 +29,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=collectd
 VERSION=5.12.0
-BUILD=${BUILD:-53}
+BUILD=${BUILD:-54}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -136,7 +136,9 @@ find $PKG -name perllocal.pod | xargs -r rm -f
 rm -rf $PKG/usr/lib/perl5/5.*
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 
 # Add a sample directory:
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION/examples
@@ -151,6 +153,9 @@ mv $PKG/etc/collectd/collectd.conf  $PKG/etc/collectd/collectd.conf.new
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
