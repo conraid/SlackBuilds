@@ -44,7 +44,7 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=tor
-VERSION=0.4.9.7
+VERSION=0.4.9.8
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
@@ -55,9 +55,9 @@ DOCFILES="AUTHORS ChangeLog INSTALL LICENSE README ReleaseNotes"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -110,9 +110,9 @@ if compgen -G "$CWD/patches/*.patch" > /dev/null; then
 fi
 
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
   --sysconfdir=/etc \
