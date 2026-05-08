@@ -33,7 +33,7 @@ PRGNAM=msgpack
 PKGNAM=php-$PRGNAM
 VERSION=3.0.0
 VERSION=$(echo $VERSION | tr - _)
-BUILD=${BUILD:-22}
+BUILD=${BUILD:-23}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -116,6 +116,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
