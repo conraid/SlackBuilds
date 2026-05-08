@@ -2,7 +2,7 @@
 #
 # Slackware build script for cadence
 #
-# Copyright 2021-2025 Corrado Franco (https://corradofranco.it)
+# Copyright 2021-2026 Corrado Franco (https://corradofranco.it)
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,17 +23,17 @@
 # with this program (most likely, a file named COPYING).  If not, see
 # <http://www.gnu.org/licenses/>.
 #
-# Latest version of this SlackBuild at https://github.com/conraid/SlackBuilds
+# Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 
-set -eu
+set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=Cadence
-PKGNAM=$(echo $PRGNAM | tr A-Z a-z)
+PKGNAM=${PRGNAM,,}
 SRCVERSION=0.9.2
-VERSION=$(echo $SRCVERSION | tr - _)
-BUILD=${BUILD:-3}
+VERSION="${SRCVERSION//-/_}"
+BUILD=${BUILD:-4}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -43,9 +43,9 @@ DOCFILES="COPYING* README*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -96,16 +96,16 @@ if [ -e $CWD/patches ]; then
 fi
 
 CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-make
+  CXXFLAGS="$SLKCFLAGS" \
+  make
 make install DESTDIR=$PKG PREFIX=/usr
 
 # removing claudia, as its runtime dependency ladish (dead) depends on flowcanvas (dead)
 # Thanks to archlinux
 rm -rfv "${PKG}/usr/bin/claudia"* \
-        "${PKG}/usr/share/applications/claudia"* \
-        "${PKG}/usr/share/${PKGNAM}/"{icons,src}/{,ui_}claudia* \
-        "${PKG}/usr/share/icons/hicolor/"{128x128,16x16,256x256,48x48,scalable}/apps/claudia*
+  "${PKG}/usr/share/applications/claudia"* \
+  "${PKG}/usr/share/${PKGNAM}/"{icons,src}/{,ui_}claudia* \
+  "${PKG}/usr/share/icons/hicolor/"{128x128,16x16,256x256,48x48,scalable}/apps/claudia*
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -119,13 +119,15 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 if [ -e $CWD/slack-required ]; then
-  cat $CWD/slack-required | tee $PKG/install/slack-required $PKG/usr/doc/$PKGNAM-$VERSION/slack-required > /dev/null 2>&1
+  cat $CWD/slack-required > $PKG/install/slack-required
 fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
