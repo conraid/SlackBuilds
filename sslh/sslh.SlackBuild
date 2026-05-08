@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=sslh
 VERSION=2.3.1
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -114,12 +114,17 @@ install -Dm644 basic.cfg $PKG/etc/default/sslh.new
 install -d -g nobody -o nobody $PKG/run/sslh
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -u nullglob
 cat $CWD/${PKGNAM}.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/${PKGNAM}.SlackBuild
 cat $CWD/files/COPYING > $PKG/usr/doc/$PKGNAM-$VERSION/COPYING
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
