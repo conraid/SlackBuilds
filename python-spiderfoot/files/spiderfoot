@@ -1,0 +1,5 @@
+#!/bin/bash
+(
+  cd /usr/share/spiderfoot || exit 1
+  python3 ./sf.py "${@}"
+)

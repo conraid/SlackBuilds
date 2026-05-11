@@ -1,0 +1,24 @@
+diff -Naupr a/spiderfoot/db.py b/spiderfoot/db.py
+--- a/spiderfoot/db.py	2022-04-07 08:51:35.000000000 +0200
++++ b/spiderfoot/db.py	2026-05-11 13:08:29.079192457 +0200
+@@ -17,7 +17,7 @@ import re
+ import sqlite3
+ import threading
+ import time
+-
++import logging
+ 
+ class SpiderFootDb:
+     """SpiderFoot database
+@@ -342,7 +342,10 @@ class SpiderFootDb:
+         with self.dbhLock:
+             try:
+                 self.dbh.execute('SELECT COUNT(*) FROM tbl_scan_config')
+-                self.conn.create_function("REGEXP", 2, __dbregex__)
++                try:
++                    self.conn.create_function("REGEXP", 2, __dbregex__)
++                except Exception as e:
++                    logging.debug(f"Could not create REGEXP function: {e}")
+             except sqlite3.Error:
+                 init = True
+                 try:
