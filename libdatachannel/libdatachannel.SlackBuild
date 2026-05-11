@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=libdatachannel
 PKGNAM=${PRGNAM,,}
-SRCVERSION=0.24.2
+SRCVERSION=0.24.3
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -97,7 +97,6 @@ if compgen -G "$CWD/patches/*.patch" > /dev/null; then
   fi
 fi
 
-
 mkdir -p build
 cd build
 cmake -Wno-dev \
@@ -143,15 +142,14 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then 
-  cat $CWD/slack-required > $PKG/install/slack-required 
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
 fi
 
 # Add a doinst.sh
 if [ -e $CWD/doinst.sh ]; then
   cat $CWD/doinst.sh > $PKG/install/doinst.sh
 fi
-
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
