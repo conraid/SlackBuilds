@@ -33,7 +33,7 @@ PRGNAM=vokoscreenNG
 PKGNAM=${PRGNAM,,}
 SRCVERSION=4.9.0
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-3}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -43,9 +43,9 @@ DOCFILES="COPYING info-licences-changelog-install/Third-Party-License/*"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
-  i?86) ARCH=i686 ;;
-  arm*) ARCH=arm ;;
-  *) ARCH=$( uname -m ) ;;
+    i?86) ARCH=i686 ;;
+    arm*) ARCH=arm ;;
+    *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -119,13 +119,15 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then 
-  cat $CWD/slack-required > $PKG/install/slack-required 
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
 fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
