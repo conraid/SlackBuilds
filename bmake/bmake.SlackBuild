@@ -26,12 +26,11 @@
 # Latest version of this SlackBuild at https://codeberg.org/conraid/SlackBuilds
 
 set -euo pipefail
-cd $(dirname $0)
-CWD=$(pwd)
+cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=bmake
 PKGNAM=${PRGNAM,,}
-SRCVERSION=20260406
+SRCVERSION=20260508
 VERSION="${SRCVERSION//-/_}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
