@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cookbook
 PKGNAM=go-repo-export
-SRCVERSION=32ab8b1a59aaa196b16aedc5f62911f2a45b58ab
+SRCVERSION=03ddc92709cfbd8af90f98a84a9a6731b0982661
 VERSION="${SRCVERSION:0:7}"
 BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
@@ -139,6 +139,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
