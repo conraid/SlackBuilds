@@ -1288,10 +1288,10 @@ SLACKBUILD SHORT DESCRIPTION:  edk2-ovmf-bin (Secure Boot enabled UEFI firmware 
 SLACKBUILD NAME: element-desktop-bin
 SLACKBUILD LOCATION: ./element-desktop-bin
 SLACKBUILD FILES: README doinst.sh element-desktop-bin.SlackBuild element-desktop-bin.info slack-desc
-SLACKBUILD VERSION: 1.12.17
+SLACKBUILD VERSION: 1.12.18
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://packages.element.io/debian/pool/main/e/element-desktop/element-desktop_1.12.17_amd64.deb
-SLACKBUILD MD5SUM: e8bb0aa8f7a2cf075d8f474a2895d530
+SLACKBUILD DOWNLOAD: https://packages.element.io/debian/pool/main/e/element-desktop/element-desktop_1.12.18_amd64.deb
+SLACKBUILD MD5SUM: 184f85eb3b06c4e0bf587c4597bc5088
 SLACKBUILD SHORT DESCRIPTION:  element-desktop-bin (Glossy Matrix collaboration client)
 
 SLACKBUILD NAME: encfs
@@ -1870,13 +1870,22 @@ SLACKBUILD DOWNLOAD: https://github.com/ashaduri/gsmartcontrol/archive/v2.0.2/gs
 SLACKBUILD MD5SUM: 1bf7d5a093fecb0cb2425b35de803b7a
 SLACKBUILD SHORT DESCRIPTION:  gsmartcontrol (Hard disk drive and SSD health inspection tool)
 
+SLACKBUILD NAME: gst-devtools
+SLACKBUILD LOCATION: ./gst-devtools
+SLACKBUILD FILES: README gst-devtools.SlackBuild gst-devtools.info slack-desc
+SLACKBUILD VERSION: 1.28.2
+SLACKBUILD REQUIRES: 
+SLACKBUILD DOWNLOAD: https://gstreamer.freedesktop.org/src/gst-devtools/gst-devtools-1.28.2.tar.xz
+SLACKBUILD MD5SUM: f112b3d4aeebcb635503b1510796f9d5
+SLACKBUILD SHORT DESCRIPTION:  gst-devtools (GStreamer development tools)
+
 SLACKBUILD NAME: gst-plugins-rs
 SLACKBUILD LOCATION: ./gst-plugins-rs
 SLACKBUILD FILES: README gst-plugins-rs.SlackBuild gst-plugins-rs.info slack-desc slack-required
-SLACKBUILD VERSION: 0.14.5
-SLACKBUILD REQUIRES: vvdec
-SLACKBUILD DOWNLOAD: https://github.com/GStreamer/gst-plugins-rs/archive/0.14.5/gst-plugins-rs-0.14.5.tar.gz
-SLACKBUILD MD5SUM: 4ddd1d87315f0a00f7b4a1a9d80a1ca1
+SLACKBUILD VERSION: 0.15.2
+SLACKBUILD REQUIRES: vvdec gst-devtools
+SLACKBUILD DOWNLOAD: https://github.com/GStreamer/gst-plugins-rs/archive/0.15.2/gst-plugins-rs-0.15.2.tar.gz
+SLACKBUILD MD5SUM: 48ee539f419d8fb440ef4018d8eefaa3
 SLACKBUILD SHORT DESCRIPTION:  gst-plugins-rs (GStreamer plugins written in Rust)
 
 SLACKBUILD NAME: gst-plugins-ugly
@@ -2536,14 +2545,14 @@ SLACKBUILD DOWNLOAD: https://dbmx.net/kyotocabinet/pkg/kyotocabinet-1.2.80.tar.g
 SLACKBUILD MD5SUM: 08ff1dc20c27d1a76d5ff5147414ba1a
 SLACKBUILD SHORT DESCRIPTION:  kyotocabinet (straightforward implementation of DBM)
 
-SLACKBUILD NAME: ladspa_sdk
-SLACKBUILD LOCATION: ./ladspa_sdk
-SLACKBUILD FILES: README doinst.sh ladspa_sdk.SlackBuild ladspa_sdk.info patches/fix-memleak-in-plugin-scanning.patch slack-desc
+SLACKBUILD NAME: ladspa-sdk
+SLACKBUILD LOCATION: ./ladspa-sdk
+SLACKBUILD FILES: README doinst.sh ladspa-sdk.SlackBuild ladspa-sdk.info patches/fix-memleak-in-plugin-scanning.patch slack-desc
 SLACKBUILD VERSION: 1.17
 SLACKBUILD REQUIRES: 
 SLACKBUILD DOWNLOAD: http://www.ladspa.org/download/ladspa_sdk_1.17.tgz
-SLACKBUILD MD5SUM: 59294cb5e0d3507667c52f5695b97197
-SLACKBUILD SHORT DESCRIPTION:  ladspa_sdk (Sound Plugin SDK)
+SLACKBUILD MD5SUM: f4a2fb40405d1fc746d10fe0d3536db1
+SLACKBUILD SHORT DESCRIPTION:  ladspa-sdk (Sound Plugin SDK)
 
 SLACKBUILD NAME: lastpass-cli
 SLACKBUILD LOCATION: ./lastpass-cli
@@ -2962,10 +2971,10 @@ SLACKBUILD SHORT DESCRIPTION:  libmd (Message Digest functions from BSD systems)
 SLACKBUILD NAME: libmediainfo
 SLACKBUILD LOCATION: ./libmediainfo
 SLACKBUILD FILES: README libmediainfo.SlackBuild libmediainfo.info patches/graphviz13.patch slack-desc slack-required
-SLACKBUILD VERSION: 26.01
+SLACKBUILD VERSION: 26.05
 SLACKBUILD REQUIRES: libzen tinyxml2 
-SLACKBUILD DOWNLOAD: https://mediaarea.net/download/source/libmediainfo/26.01/libmediainfo_26.01.tar.xz
-SLACKBUILD MD5SUM: c3a550fe81e84572f69a345379acbf71
+SLACKBUILD DOWNLOAD: https://mediaarea.net/download/source/libmediainfo/26.05/libmediainfo_26.05.tar.xz
+SLACKBUILD MD5SUM: 54ae5a89fb6677384293b6646feed76e
 SLACKBUILD SHORT DESCRIPTION:  libmediainfo (shared library for mediainfo)
 
 SLACKBUILD NAME: libmemcached
@@ -3628,10 +3637,10 @@ SLACKBUILD SHORT DESCRIPTION:  mdk4 (Wireless Exploitation Framework)
 SLACKBUILD NAME: mediainfo
 SLACKBUILD LOCATION: ./mediainfo
 SLACKBUILD FILES: README doinst.sh mediainfo.SlackBuild mediainfo.info slack-desc slack-required
-SLACKBUILD VERSION: 26.01
+SLACKBUILD VERSION: 26.05
 SLACKBUILD REQUIRES: libmediainfo wxwidgets
-SLACKBUILD DOWNLOAD: https://mediaarea.net/download/source/mediainfo/26.01/mediainfo_26.01.tar.xz
-SLACKBUILD MD5SUM: 5acf80580627e513537c40247c0fe58a
+SLACKBUILD DOWNLOAD: https://mediaarea.net/download/source/mediainfo/26.05/mediainfo_26.05.tar.xz
+SLACKBUILD MD5SUM: 809e8ef24eb8ef07a58e49814e185ad9
 SLACKBUILD SHORT DESCRIPTION:  mediainfo (Supplies technical and tag information about media files)
 
 SLACKBUILD NAME: medusa
@@ -4042,10 +4051,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-browserify (browser-side require() the node.
 SLACKBUILD NAME: node-browsertime
 SLACKBUILD LOCATION: ./node-browsertime
 SLACKBUILD FILES: PKGNOTE README node-browsertime.SlackBuild node-browsertime.info slack-desc slack-required
-SLACKBUILD VERSION: 27.1.0
+SLACKBUILD VERSION: 27.2.0
 SLACKBUILD REQUIRES: musl
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/browsertime/-/browsertime-27.1.0.tgz
-SLACKBUILD MD5SUM: cf24318d5283cf78eca409cabe2e8418
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/browsertime/-/browsertime-27.2.0.tgz
+SLACKBUILD MD5SUM: 9b1acb52e281b7331b8c43cce181c0b3
 SLACKBUILD SHORT DESCRIPTION:  node-browsertime (Web Performance Timeline)
 
 SLACKBUILD NAME: node-clean-css-cli
@@ -4159,10 +4168,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-mkdirp (node.js mkdir)
 SLACKBUILD NAME: node-nan
 SLACKBUILD LOCATION: ./node-nan
 SLACKBUILD FILES: README node-nan.SlackBuild node-nan.info slack-desc
-SLACKBUILD VERSION: 2.26.2
+SLACKBUILD VERSION: 2.27.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/nodejs/nan/archive/v2.26.2/nan-2.26.2.tar.gz
-SLACKBUILD MD5SUM: 70ab8ddf03bdfc50e0ddd6cddfef03fe
+SLACKBUILD DOWNLOAD: https://github.com/nodejs/nan/archive/v2.27.0/nan-2.27.0.tar.gz
+SLACKBUILD MD5SUM: 66d650fd1bf75f891f42d7c94d7bc446
 SLACKBUILD SHORT DESCRIPTION:  nan (Native Abstractions for Node.js )
 
 SLACKBUILD NAME: node-nativefier
@@ -4213,10 +4222,10 @@ SLACKBUILD SHORT DESCRIPTION:  node-semver (The semantic versioner for npm)
 SLACKBUILD NAME: node-sitespeedio
 SLACKBUILD LOCATION: ./node-sitespeedio
 SLACKBUILD FILES: PKGNOTE README node-sitespeedio.SlackBuild node-sitespeedio.info slack-desc slack-required
-SLACKBUILD VERSION: 40.3.0
+SLACKBUILD VERSION: 40.4.0
 SLACKBUILD REQUIRES: musl
-SLACKBUILD DOWNLOAD: https://registry.npmjs.org/sitespeed.io/-/sitespeed.io-40.3.0.tgz
-SLACKBUILD MD5SUM: 37a76fa35008964a29055c993dd84865
+SLACKBUILD DOWNLOAD: https://registry.npmjs.org/sitespeed.io/-/sitespeed.io-40.4.0.tgz
+SLACKBUILD MD5SUM: 074c7f51ae5eeb6c2709a50efe41b69b
 SLACKBUILD SHORT DESCRIPTION:  node-sitespeedio (complete web performance tool)
 
 SLACKBUILD NAME: node-stylus
@@ -4276,10 +4285,10 @@ SLACKBUILD SHORT DESCRIPTION:  notmuch (thread-based email index, search and tag
 SLACKBUILD NAME: npm-check-updates
 SLACKBUILD LOCATION: ./npm-check-updates
 SLACKBUILD FILES: README npm-check-updates.SlackBuild npm-check-updates.info slack-desc slack-required
-SLACKBUILD VERSION: 22.1.1
+SLACKBUILD VERSION: 22.2.0
 SLACKBUILD REQUIRES: npm-check node-semver
-SLACKBUILD DOWNLOAD: http://registry.npmjs.org/npm-check-updates/-/npm-check-updates-22.1.1.tgz
-SLACKBUILD MD5SUM: a18982463198e5b41966917679b30f7b
+SLACKBUILD DOWNLOAD: http://registry.npmjs.org/npm-check-updates/-/npm-check-updates-22.2.0.tgz
+SLACKBUILD MD5SUM: ec0abb4988c9e878520f97e1be3fc11a
 SLACKBUILD SHORT DESCRIPTION:  npm-check-updates (Find newer versions of npm package dependencies)
 
 SLACKBUILD NAME: npm-check
@@ -4897,10 +4906,10 @@ SLACKBUILD SHORT DESCRIPTION:  perl-ipc-system-simple (Run commands simply with 
 SLACKBUILD NAME: perl-libwww
 SLACKBUILD LOCATION: ./perl-libwww
 SLACKBUILD FILES: README perl-libwww.SlackBuild perl-libwww.info slack-desc slack-required
-SLACKBUILD VERSION: 6.82
+SLACKBUILD VERSION: 6.83
 SLACKBUILD REQUIRES: perl-encode-locale perl-file-listing perl-html-parser perl-http-cookiejar perl-http-cookies perl-http-daemon perl-http-date perl-http-negotiate perl-lwp-mediatypes perl-net-http perl-try-tiny perl-www-robotrules perl-lwp-protocol-https
-SLACKBUILD DOWNLOAD: https://cpan.metacpan.org/authors/id/O/OA/OALDERS/libwww-perl-6.82.tar.gz
-SLACKBUILD MD5SUM: 50ff700dbb03d3ba06e950cd896e1e91
+SLACKBUILD DOWNLOAD: https://cpan.metacpan.org/authors/id/O/OA/OALDERS/libwww-perl-6.83.tar.gz
+SLACKBUILD MD5SUM: dfca8f917f4727ddbdf3d81d0979172f
 SLACKBUILD SHORT DESCRIPTION:  perl-libwww (The World-Wide Web library for Perl)
 
 SLACKBUILD NAME: perl-libxml
@@ -7111,10 +7120,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-mitmproxy-rs (Python bindings for mitmprox
 SLACKBUILD NAME: python-mitmproxy
 SLACKBUILD LOCATION: ./python-mitmproxy
 SLACKBUILD FILES: README python-mitmproxy.SlackBuild python-mitmproxy.info slack-desc slack-required
-SLACKBUILD VERSION: 12.2.2
+SLACKBUILD VERSION: 12.2.3
 SLACKBUILD REQUIRES: python-aioquic python-msgpack python-argon2-cffi python-asgiref python-cryptography python-flask python-h11 python-h2 python-hyperframe python-kaitaistruct python-ldap3 python-mitmproxy-rs python-libpass python-publicsuffix2 python-pyopenssl python-pyperclip python-ruamel-yaml python-sortedcontainers python-tornado python-typing-extensions python-urwid python-wsproto python-zstandard
-SLACKBUILD DOWNLOAD: https://github.com/mitmproxy/mitmproxy/archive/v12.2.2/mitmproxy-12.2.2.tar.gz
-SLACKBUILD MD5SUM: 3b389bb6f895eb5e2422e8d11dda0c36
+SLACKBUILD DOWNLOAD: https://github.com/mitmproxy/mitmproxy/archive/v12.2.3/mitmproxy-12.2.3.tar.gz
+SLACKBUILD MD5SUM: dc77ce213574876d72612e40f1c4b789
 SLACKBUILD SHORT DESCRIPTION:  mitmproxy (SSL-capable man-in-the-middle HTTP proxy)
 
 SLACKBUILD NAME: python-mopidy-bandcamp
@@ -7170,6 +7179,15 @@ SLACKBUILD REQUIRES:
 SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/m/mopidy-soundcloud/Mopidy-SoundCloud-3.0.2.tar.gz
 SLACKBUILD MD5SUM: 09442620e7487b3659a7b95a2f45aa6f
 SLACKBUILD SHORT DESCRIPTION:  mopidy-soundcloud (extension for playing music from SoundCloud)
+
+SLACKBUILD NAME: python-mopidy-spotify
+SLACKBUILD LOCATION: ./python-mopidy-spotify
+SLACKBUILD FILES: README python-mopidy-spotify.SlackBuild python-mopidy-spotify.info slack-desc slack-required
+SLACKBUILD VERSION: 4.1.1
+SLACKBUILD REQUIRES: gst-plugins-rs python-mopidy python-pykka
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/m/mopidy-spotify/Mopidy-Spotify-4.1.1.tar.gz
+SLACKBUILD MD5SUM: abb8d410908bc3f07174614f8d0ea07e
+SLACKBUILD SHORT DESCRIPTION:  python-mopidy-spotify (Mopidy extension for Spotify)
 
 SLACKBUILD NAME: python-mopidy-tidal
 SLACKBUILD LOCATION: ./python-mopidy-tidal
@@ -7372,10 +7390,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-outcome (Capture the outcome of Python fun
 SLACKBUILD NAME: python-pandas
 SLACKBUILD LOCATION: ./python-pandas
 SLACKBUILD FILES: README python-pandas.SlackBuild python-pandas.info slack-desc slack-required
-SLACKBUILD VERSION: 3.0.2
+SLACKBUILD VERSION: 3.0.3
 SLACKBUILD REQUIRES: python-pytz
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pandas/pandas-3.0.2.tar.gz
-SLACKBUILD MD5SUM: 66a07b8707d0ee56885ff8f2c55496d6
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/p/pandas/pandas-3.0.3.tar.gz
+SLACKBUILD MD5SUM: 245273b0e22f26fd6c2d48eb84ab2c68
 SLACKBUILD SHORT DESCRIPTION:  python-pandas
 
 SLACKBUILD NAME: python-paramiko
@@ -8137,10 +8155,10 @@ SLACKBUILD SHORT DESCRIPTION:  python-regex (Alternative python regular expressi
 SLACKBUILD NAME: python-reportlab
 SLACKBUILD LOCATION: ./python-reportlab
 SLACKBUILD FILES: README python-reportlab.SlackBuild python-reportlab.info slack-desc
-SLACKBUILD VERSION: 4.5.0
+SLACKBUILD VERSION: 4.5.1
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/reportlab/reportlab-4.5.0.tar.gz
-SLACKBUILD MD5SUM: 4b014ea801d430ace312a1ab114a4155
+SLACKBUILD DOWNLOAD: https://pypi.python.org/packages/source/r/reportlab/reportlab-4.5.1.tar.gz
+SLACKBUILD MD5SUM: 71a48d602e10bf739fa91d90370ccfaa
 SLACKBUILD SHORT DESCRIPTION:  python-reportlab (PDF generation toolkit using python)
 
 SLACKBUILD NAME: python-reppy2
@@ -10207,10 +10225,10 @@ SLACKBUILD SHORT DESCRIPTION:  sqlcheck (Automatically identify anti-patterns in
 SLACKBUILD NAME: sqlcipher
 SLACKBUILD LOCATION: ./sqlcipher
 SLACKBUILD FILES: README patches/c99.patch slack-desc sqlcipher.SlackBuild sqlcipher.info
-SLACKBUILD VERSION: 4.15.0
+SLACKBUILD VERSION: 4.16.0
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/sqlcipher/sqlcipher/archive/v4.15.0/sqlcipher-4.15.0.tar.gz
-SLACKBUILD MD5SUM: 21345782eeff2f568bb084417e0c9c58
+SLACKBUILD DOWNLOAD: https://github.com/sqlcipher/sqlcipher/archive/v4.16.0/sqlcipher-4.16.0.tar.gz
+SLACKBUILD MD5SUM: 3506c989d623524767387f88de01fefd
 SLACKBUILD SHORT DESCRIPTION:  sqlcipher (256 bit AES encryption SQLite extension)
 
 SLACKBUILD NAME: sqlitebrowser
@@ -10522,10 +10540,10 @@ SLACKBUILD SHORT DESCRIPTION:  teamviewer (remote control application)
 SLACKBUILD NAME: telegram-bin
 SLACKBUILD LOCATION: ./telegram-bin
 SLACKBUILD FILES: README doinst.sh files/telegram.desktop files/telegram.png slack-desc telegram-bin.SlackBuild telegram-bin.info
-SLACKBUILD VERSION: 6.7.8
+SLACKBUILD VERSION: 6.8.2
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/telegramdesktop/tdesktop/releases/download/v6.7.8/tsetup.6.7.8.tar.xz
-SLACKBUILD MD5SUM: 12158c884db80c92e6544912c9c73174
+SLACKBUILD DOWNLOAD: https://github.com/telegramdesktop/tdesktop/releases/download/v6.8.2/tsetup.6.8.2.tar.xz
+SLACKBUILD MD5SUM: 201471279918ec98e83bf58a6e08ea69
 SLACKBUILD SHORT DESCRIPTION:  telegram (messaging app)
 
 SLACKBUILD NAME: tellico
@@ -10684,10 +10702,10 @@ SLACKBUILD SHORT DESCRIPTION:  trousers (TSS implementation by IBM)
 SLACKBUILD NAME: trufflehog
 SLACKBUILD LOCATION: ./trufflehog
 SLACKBUILD FILES: README slack-desc trufflehog.SlackBuild trufflehog.info
-SLACKBUILD VERSION: 3.95.2
+SLACKBUILD VERSION: 3.95.3
 SLACKBUILD REQUIRES: 
-SLACKBUILD DOWNLOAD: https://github.com/trufflesecurity/trufflehog/archive/v3.95.2/trufflehog-3.95.2.tar.gz
-SLACKBUILD MD5SUM: 29878273133995331e724eaa8071db6a
+SLACKBUILD DOWNLOAD: https://github.com/trufflesecurity/trufflehog/archive/v3.95.3/trufflehog-3.95.3.tar.gz
+SLACKBUILD MD5SUM: 16ce60525f704405746c3d44f42c6a5f
 SLACKBUILD SHORT DESCRIPTION:  trufflehog (Find, verify, and analyze leaked credentials)
 
 SLACKBUILD NAME: tufw
