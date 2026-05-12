@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=node-sass
 VERSION=9.0.0
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -54,7 +54,6 @@ if [ ! -z "${PRINT_PACKAGE_NAME:-""}" ]; then
 fi
 
 [ "$ARCH" = "x86_64" ] && LIBDIRSUFFIX="64" || LIBDIRSUFFIX=""
-
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
@@ -80,8 +79,6 @@ if ! [ -e $PKG/usr/bin/$PKGNAM ]; then
   mkdir -p $PKG/usr/bin
   ln -s /usr/lib$LIBDIRSUFFIX/node_modules/$PKGNAM/bin/$PKGNAM $PKG/usr/bin/$PKGNAM
 fi
-
-
 
 # Remove root node_modules
 rm -rf $PKG/usr/lib${LIBDIRSUFFIX}/node_modules/root
