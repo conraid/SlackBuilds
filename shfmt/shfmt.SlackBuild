@@ -33,7 +33,7 @@ PRGNAM=sh
 PKGNAM=shfmt
 SRCVERSION=3.13.1
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -45,7 +45,7 @@ if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
     i?86) ARCH=i686 ;;
     arm*) ARCH=arm ;;
-       *) ARCH=$( uname -m ) ;;
+    *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -97,22 +97,18 @@ if compgen -G "$CWD/patches/*.patch" > /dev/null; then
   fi
 fi
 
+MOD_STRATEGY="-mod=readonly"
 export CGO_CPPFLAGS="$SLKCFLAGS"
 export CGO_CFLAGS="$SLKCFLAGS"
 export CGO_CXXFLAGS="$SLKCFLAGS"
-export GOFLAGS="-buildmode=pie -trimpath -mod=readonly -modcacherw"
-export GOPATH="$(pwd)/build"
-export GOPROXY=direct
-
-#go mod vendor -v
-LD_FLAGS="-compressdwarf=false -linkmode=external -X main.version=$VERSION"
-go build -v \
-         -ldflags "$LD_FLAGS" \
-         ./cmd/shfmt/...
+export GOPATH="$(pwd)/.gocache"
+export GOPROXY="https://proxy.golang.org,direct"
+export GOFLAGS="$MOD_STRATEGY -buildmode=pie -trimpath -modcacherw"
+LIB_LDFLAGS="-compressdwarf=false -linkmode=external -X main.version=$VERSION"
+mkdir -p "$PKG"/usr/bin
+go build -ldflags="$LIB_LDFLAGS" -o "$PKG"/usr/bin/$PKGNAM ./cmd/$PKGNAM
 
 scdoc < cmd/shfmt/shfmt.1.scd > shfmt.1
-
-install -Dm755 -t "$PKG/usr/bin" shfmt
 install -Dm644 -t "$PKG/usr/man/man1" shfmt.1
 
 # Don't ship .la files:
@@ -134,6 +130,9 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
