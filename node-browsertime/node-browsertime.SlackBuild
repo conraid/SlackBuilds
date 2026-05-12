@@ -31,8 +31,8 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=browsertime
 PKGNAM=node-browsertime
-VERSION=27.1.0
-BUILD=${BUILD:-2}
+VERSION=27.2.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -114,7 +114,6 @@ if [ -d "$PKG/usr/lib${LIBDIRSUFFIX}/node_modules" ]; then
     done
   done
 fi
-
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
 cat $CWD/$PKGNAM.SlackBuild >$PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
