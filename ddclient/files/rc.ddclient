@@ -1,0 +1,71 @@
+#!/bin/bash
+# ddclient init script for Slackware
+
+set -euo pipefail
+
+CONF=/etc/ddclient/ddclient.conf
+
+# Check if the configuration file exists
+if [ ! -f "$CONF" ]; then
+  echo "Error: $CONF not found."
+  exit 1
+fi
+
+ddclient_start() {
+  if pgrep ddclient > /dev/null 2>&1; then
+    echo "ddclient is already running."
+  else
+    echo -n "Starting ddclient:  "
+    /usr/sbin/ddclient
+    echo "Done."
+  fi
+}
+
+ddclient_stop() {
+  if pgrep ddclient > /dev/null 2>&1; then
+    echo -n "Shutting down ddclient:  "
+    pkill ddclient
+    echo "Done."
+  else
+    echo "ddclient is not running."
+  fi
+}
+
+ddclient_status() {
+  pids=$(pgrep ddclient)
+  if [ -n "$pids" ]; then
+    for p in $pids; do
+      echo "ddclient (pid $p) is running."
+      ps up "$p"
+    done
+  else
+    echo "ddclient is stopped."
+  fi
+}
+
+ddclient_restart() {
+  ddclient_stop
+  sleep 1
+  ddclient_start
+}
+
+case "$1" in
+  start)
+    ddclient_start
+    ;;
+  stop)
+    ddclient_stop
+    ;;
+  restart)
+    ddclient_restart
+    ;;
+  status)
+    ddclient_status
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|status}"
+    exit 1
+    ;;
+esac
+
+exit 0
