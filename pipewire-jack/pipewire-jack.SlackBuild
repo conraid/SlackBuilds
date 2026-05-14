@@ -31,9 +31,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=pipewire
 PKGNAM=pipewire-jack
-SRCVERSION=1.6.4
+SRCVERSION=1.6.5
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -144,7 +144,6 @@ install -Dm755 pipewire-jack/src/pw-jack -t $PKG/usr/bin/
 install -Dm755 pipewire-jack/src/video-dsp-play -t $PKG/usr/bin/
 install -Dm755 pipewire-jack/src/ump-source -t $PKG/usr/bin/
 
-
 cd ..
 
 install -Dm644 /dev/null $PKG/usr/share/pipewire/media-session.d/with-jack
@@ -175,8 +174,8 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then 
-  cat $CWD/slack-required > $PKG/install/slack-required 
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
 fi
 
 cd $PKG
