@@ -32,8 +32,8 @@ set -euo pipefail
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=nginx
-VERSION=1.30.0
-BUILD=${BUILD:-2}
+VERSION=1.31.0
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -155,7 +155,6 @@ rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs -r strip --strip-unneeded 2> /dev/null || true
 find $PKG | xargs file | grep "current ar archive" | cut -f 1 -d : | xargs -r strip -g 2> /dev/null || true
 
-
 mkdir -p $PKG/usr/man/man8
 install -m 0644 objs/$PKGNAM.8 $PKG/usr/man/man8
 find $PKG/usr/man -type f -exec gzip -9 {} \;
@@ -207,8 +206,8 @@ cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-if [ -e $CWD/slack-required ]; then 
-  cat $CWD/slack-required > $PKG/install/slack-required 
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
 fi
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
