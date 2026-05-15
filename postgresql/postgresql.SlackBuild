@@ -44,9 +44,9 @@ fi
 cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=postgresql
-VERSION=18.3
+VERSION=18.4
 PG_VERSION=$(echo $VERSION | cut -d. -f1)
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PKGNAM
@@ -210,7 +210,9 @@ for i in $(ls ../$PKGNAM/$PG_VERSION/lib/pkgconfig/*) ; do ln -sf $i ; done
 cd -
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+shopt -s nullglob
 cp -a $DOCFILES $PKG/usr/doc/$PKGNAM-$VERSION || true
+shopt -u nullglob
 cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
 sed "s|%PG_VERSION%|$PG_VERSION|g" \
   $CWD/SLACKWARE.README > $PKG/usr/doc/$PKGNAM-$VERSION/README.SLACKWARE
@@ -240,6 +242,9 @@ chmod 755 $PKG/var/log/setup/setup.$PKGNAM
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -e $CWD/slack-required ]; then
+  cat $CWD/slack-required > $PKG/install/slack-required
+fi
 sed -e "s|%LIBDIRSUFFIX%|${LIBDIRSUFFIX}|g" \
     -e "s|%PG_VERSION%|$PG_VERSION|g" \
     $CWD/doinst.sh > $PKG/install/doinst.sh
