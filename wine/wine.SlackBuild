@@ -27,17 +27,16 @@
 #
 # This script is to pure 64bit version or pure 32bit version. Not multilib
 
-
 set -euo pipefail
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=wine
 PKGNAM=wine
-SRCVERSION=11.8
-STAGEVERSION=11.3
+SRCVERSION=11.9
+STAGEVERSION=${STAGEVERSION:-$SRCVERSION}
 VERSION="${SRCVERSION//-/_}"
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-cf}
 TMP=${TMP:-/tmp/pkg}
 PKG=$TMP/package-$PRGNAM
@@ -45,21 +44,13 @@ OUTPUT=${OUTPUT:-/tmp}
 
 STAGING=${STAGING:-YES}
 
-# Add the "Gecko", Wine's own implementation of Internet Explorer. (Thanks to Alien)
-# For matching wine-gecko & wine versions, see https://gitlab.winehq.org/wine/wine/-/wikis/Gecko
-GECKO=${GECKO:-2.47.4}
-
-# Add the "Mono", Wine's own implementation of the .NET Framework.
-# For matching wine-mono & wine versions, see https://gitlab.winehq.org/wine/wine/-/wikis/Wine-Mono
-MONO=${MONO:-11.0.0}
-
 DOCFILES="ANNOUNCE AUTHORS COPYING.LIB LICENSE* README VERSION"
 
 if [ -z ${ARCH:=""} ]; then
   case "$( uname -m )" in
     i?86) ARCH=i686 ;;
     arm*) ARCH=arm ;;
-       *) ARCH=$( uname -m ) ;;
+    *) ARCH=$( uname -m ) ;;
   esac
 fi
 
@@ -75,7 +66,7 @@ if [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC -pipe -fomit-frame-pointer"
   LIBDIRSUFFIX="64"
 else
-  echo "This script is only for 64bit"
+  echo "This script is only for x86_64"
   exit 1
 fi
 
@@ -91,20 +82,20 @@ if [ -e $CWD/$PRGNAM-staging-$STAGEVERSION.tar.gz ] && [ $STAGING = "YES" ]; the
 
   tar xvf $CWD/$PRGNAM-staging-$STAGEVERSION.tar.gz
   cd $TMP/$PRGNAM-staging-$STAGEVERSION/
-    if [ -e $CWD/patches-staging ]; then
-      if [ -e $CWD/patches-staging/series ]; then
-        for PATCH in $(cat $CWD/patches-staging/series); do
-          patch -p1 -i $CWD/patches-staging/$PATCH
-        done
-      else
-        for PATCH in $CWD/patches-staging/*.patch; do
-          patch -p1 -i $PATCH
-        done
-      fi
+  if [ -e $CWD/patches-staging ]; then
+    if [ -e $CWD/patches-staging/series ]; then
+      for PATCH in $(cat $CWD/patches-staging/series); do
+        patch -p1 -i $CWD/patches-staging/$PATCH
+      done
+    else
+      for PATCH in $CWD/patches-staging/*.patch; do
+        patch -p1 -i $PATCH
+      done
     fi
-    cd staging
-    ./patchinstall.py --backend=patch --all -d $TMP/$PRGNAM-$SRCVERSION
-    cd ..
+  fi
+  cd staging
+  ./patchinstall.py --backend=patch --all -d $TMP/$PRGNAM-$SRCVERSION
+  cd ..
   cd ..
 fi
 
@@ -135,8 +126,8 @@ sed 's|OpenCL/opencl.h|CL/opencl.h|g' -i configure*
 
 autoreconf -f
 CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
+  CXXFLAGS="$SLKCFLAGS" \
+  ./configure \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
   --sysconfdir=/etc \
@@ -161,17 +152,6 @@ make DESTDIR=$PKG install
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
-
-# Add Wine's built-in replacement for Microsoft's Internet Explorer (Thanks to Arch):
-tar xvf $CWD/wine-gecko-$GECKO-x86.tar.xz
-tar xvf $CWD/wine-gecko-$GECKO-x86_64.tar.xz
-mkdir -p $PKG/usr/share/wine/gecko
-cp -dr --no-preserve='ownership' wine-gecko-$GECKO-x86{,_64} $PKG/usr/share/wine/gecko/
-
-# Add Wine's built-in replacement for Microsoft's .NET Framework (Thanks to Arch):
-tar xvf $CWD/$PRGNAM-mono-$MONO-x86.tar.xz
-mkdir -p $PKG/usr/share/wine/mono
-cp -dr --no-preserve='ownership' wine-mono-$MONO $PKG/usr/share/wine/mono/
 
 # Add the font converter programs:
 if [ -e tools/sfnt2fon/sfnt2fon ]; then
